@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>SyslogAppender xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../apidocs/org/apache/logging/log4j/core/appender/SyslogAppender.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_comment"> * Licensed to the Apache Software Foundation (ASF) under one or more</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_comment"> * contributor license agreements. See the NOTICE file distributed with</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_comment"> * this work for additional information regarding copyright ownership.</em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_comment"> * The ASF licenses this file to You under the Apache license, Version 2.0</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_comment"> * (the "License"); you may not use this file except in compliance with</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_comment"> * the License. You may obtain a copy of the License at</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_comment"> *      <a href="http://www.apache.org/licenses/LICENSE-2." target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.</a>0</em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_comment"> * See the license for the specific language governing permissions and</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_comment"> * limitations under the license.</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.core.appender;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> java.io.Serializable;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> java.nio.charset.Charset;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.Filter;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.Layout;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.Configuration;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.Plugin;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginAliases;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginAttribute;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginElement;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginFactory;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.layout.LoggerFields;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.layout.Rfc5424Layout;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.layout.SyslogLayout;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.net.AbstractSocketManager;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.net.Advertiser;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.net.Facility;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.net.Protocol;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.net.ssl.SslConfiguration;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.EnglishEnums;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> * The Syslog Appender.</em>
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  @Plugin(name = <span class="jxr_string">"Syslog"</span>, category = <span class="jxr_string">"Core"</span>, elementType = <span class="jxr_string">"appender"</span>, printObject = <strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/SyslogAppender.html">SyslogAppender</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/SocketAppender.html">SocketAppender</a> {
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String RFC5424 = <span class="jxr_string">"RFC5424"</span>;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/SyslogAppender.html">SyslogAppender</a>(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter,
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>                               <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> ignoreExceptions, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush,
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>                               <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/AbstractSocketManager.html">AbstractSocketManager</a> manager, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/Advertiser.html">Advertiser</a> advertiser) {
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>          <strong class="jxr_keyword">super</strong>(name, layout, filter, manager, ignoreExceptions, immediateFlush, advertiser);
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      }
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">     * Create a SyslogAppender.</em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">     * @param host The name of the host to connect to.</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     * @param port The port to connect to on the target host.</em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     * @param protocolStr The Protocol to use.</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     * @param sslConfig TODO</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * @param connectTimeoutMillis the connect timeout in milliseconds.</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     * @param reconnectionDelayMillis The interval in which failed writes should be retried.</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">     * @param immediateFail True if the write should fail if no socket is immediately available.</em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">     * @param name The name of the Appender.</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">     * @param immediateFlush "true" if data should be flushed on each write.</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     * @param ignoreExceptions If {@code "true"} (default) exceptions encountered when appending events are logged;</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">     *                         otherwise they are propagated to the caller.</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     * @param facility The Facility is used to try to classify the message.</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     * @param id The default structured data id to use when formatting according to RFC 5424.</em>
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">     * @param enterpriseNumber The IANA enterprise number.</em>
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">     * @param includeMdc Indicates whether data from the ThreadContextMap will be included in the RFC 5424 Syslog</em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">     * record. Defaults to "true:.</em>
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">     * @param mdcId The id to use for the MDC Structured Data Element.</em>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">     * @param mdcPrefix The prefix to add to MDC key names.</em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">     * @param eventPrefix The prefix to add to event key names.</em>
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">     * @param newLine If true, a newline will be appended to the end of the syslog record. The default is false.</em>
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">     * @param escapeNL String that should be used to replace newlines within the message text.</em>
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">     * @param appName The value to use as the APP-NAME in the RFC 5424 syslog record.</em>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">     * @param msgId The default value to be used in the MSGID field of RFC 5424 syslog records.</em>
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">     * @param excludes A comma separated list of mdc keys that should be excluded from the LogEvent.</em>
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">     * @param includes A comma separated list of mdc keys that should be included in the FlumeEvent.</em>
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">     * @param required A comma separated list of mdc keys that must be present in the MDC.</em>
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">     * @param format If set to "RFC5424" the data will be formatted in accordance with RFC 5424. Otherwise,</em>
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">     * it will be formatted as a BSD Syslog record.</em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">     * @param filter A Filter to determine if the event should be handled by this Appender.</em>
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     * @param config The Configuration.</em>
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">     * @param charsetName The character set to use when converting the syslog String to a byte array.</em>
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">     * @param exceptionPattern The converter pattern to use for formatting exceptions.</em>
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">     * @param loggerFields The logger fields</em>
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">     * @param advertise Whether to advertise</em>
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">     * @param connectTimeoutMillis the connect timeout in milliseconds.</em>
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">     * @return A SyslogAppender.</em>
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      @PluginFactory
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/SyslogAppender.html">SyslogAppender</a> createAppender(
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <em class="jxr_comment">// @formatter:off</em>
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>              @PluginAttribute(<span class="jxr_string">"host"</span>) <strong class="jxr_keyword">final</strong> String host,
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>              @PluginAttribute(value = <span class="jxr_string">"port"</span>, defaultInt = 0) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> port,
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>             @PluginAttribute(<span class="jxr_string">"protocol"</span>) <strong class="jxr_keyword">final</strong> String protocolStr,
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>             @PluginElement(<span class="jxr_string">"SSL"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/ssl/SslConfiguration.html">SslConfiguration</a> sslConfig,
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>             @PluginAttribute(value = <span class="jxr_string">"connectTimeoutMillis"</span>, defaultInt = 0) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> connectTimeoutMillis,
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>             @PluginAliases(<span class="jxr_string">"reconnectionDelay"</span>) <em class="jxr_comment">// deprecated</em>
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>             @PluginAttribute(value = <span class="jxr_string">"reconnectionDelayMillis"</span>, defaultInt = 0) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> reconnectionDelayMillis,
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>             @PluginAttribute(value = <span class="jxr_string">"immediateFail"</span>, defaultBoolean = <strong class="jxr_keyword">true</strong>) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFail,
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>             @PluginAttribute(<span class="jxr_string">"name"</span>) <strong class="jxr_keyword">final</strong> String name,
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>             @PluginAttribute(value = <span class="jxr_string">"immediateFlush"</span>, defaultBoolean = <strong class="jxr_keyword">true</strong>) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush,
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>             @PluginAttribute(value = <span class="jxr_string">"ignoreExceptions"</span>, defaultBoolean = <strong class="jxr_keyword">true</strong>) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> ignoreExceptions,
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>             @PluginAttribute(value = <span class="jxr_string">"facility"</span>, defaultString = <span class="jxr_string">"LOCAL0"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/Facility.html">Facility</a> facility,
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>             @PluginAttribute(<span class="jxr_string">"id"</span>) <strong class="jxr_keyword">final</strong> String id,
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>             @PluginAttribute(value = <span class="jxr_string">"enterpriseNumber"</span>, defaultInt = Rfc5424Layout.DEFAULT_ENTERPRISE_NUMBER) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> enterpriseNumber,
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>             @PluginAttribute(value = <span class="jxr_string">"includeMdc"</span>, defaultBoolean = <strong class="jxr_keyword">true</strong>) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> includeMdc,
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>             @PluginAttribute(<span class="jxr_string">"mdcId"</span>) <strong class="jxr_keyword">final</strong> String mdcId,
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>             @PluginAttribute(<span class="jxr_string">"mdcPrefix"</span>) <strong class="jxr_keyword">final</strong> String mdcPrefix,
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>             @PluginAttribute(<span class="jxr_string">"eventPrefix"</span>) <strong class="jxr_keyword">final</strong> String eventPrefix,
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>             @PluginAttribute(value = <span class="jxr_string">"newLine"</span>, defaultBoolean = false) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> newLine,
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>             @PluginAttribute(<span class="jxr_string">"newLineEscape"</span>) <strong class="jxr_keyword">final</strong> String escapeNL,
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>             @PluginAttribute(<span class="jxr_string">"appName"</span>) <strong class="jxr_keyword">final</strong> String appName,
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>             @PluginAttribute(<span class="jxr_string">"messageId"</span>) <strong class="jxr_keyword">final</strong> String msgId,
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>             @PluginAttribute(<span class="jxr_string">"mdcExcludes"</span>) <strong class="jxr_keyword">final</strong> String excludes,
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>             @PluginAttribute(<span class="jxr_string">"mdcIncludes"</span>) <strong class="jxr_keyword">final</strong> String includes,
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>             @PluginAttribute(<span class="jxr_string">"mdcRequired"</span>) <strong class="jxr_keyword">final</strong> String required,
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>             @PluginAttribute(<span class="jxr_string">"format"</span>) <strong class="jxr_keyword">final</strong> String format,
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>             @PluginElement(<span class="jxr_string">"Filter"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter,
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config,
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>             @PluginAttribute(value = <span class="jxr_string">"charset"</span>, defaultString = <span class="jxr_string">"UTF-8"</span>) <strong class="jxr_keyword">final</strong> Charset charsetName,
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>             @PluginAttribute(<span class="jxr_string">"exceptionPattern"</span>) <strong class="jxr_keyword">final</strong> String exceptionPattern,
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>             @PluginElement(<span class="jxr_string">"LoggerFields"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/LoggerFields.html">LoggerFields</a>[] loggerFields, @PluginAttribute(value = <span class="jxr_string">"advertise"</span>, defaultBoolean = false) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> advertise) {
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         <em class="jxr_comment">// @formatter:on</em>
+<a class="jxr_linenumber" name="L130" href="#L130">130</a> 
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         <em class="jxr_comment">// TODO: add Protocol to TypeConverters</em>
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/Protocol.html">Protocol</a> protocol = EnglishEnums.valueOf(Protocol.<strong class="jxr_keyword">class</strong>, protocolStr);
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> useTlsMessageFormat = sslConfig != <strong class="jxr_keyword">null</strong> || protocol == Protocol.SSL;
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout = RFC5424.equalsIgnoreCase(format) ?
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>             Rfc5424Layout.createLayout(facility, id, enterpriseNumber, includeMdc, mdcId, mdcPrefix, eventPrefix, newLine,
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>                 escapeNL, appName, msgId, excludes, includes, required, exceptionPattern, useTlsMessageFormat, loggerFields,
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>                 config) :
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>             SyslogLayout.createLayout(facility, newLine, escapeNL, charsetName);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> 
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">if</strong> (name == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>             LOGGER.error(<span class="jxr_string">"No name provided for SyslogAppender"</span>);
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         }
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/AbstractSocketManager.html">AbstractSocketManager</a> manager = createSocketManager(name, protocol, host, port, connectTimeoutMillis,
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>                 sslConfig, reconnectionDelayMillis, immediateFail, layout);
+<a class="jxr_linenumber" name="L146" href="#L146">146</a> 
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/SyslogAppender.html">SyslogAppender</a>(name, layout, filter, ignoreExceptions, immediateFlush, manager,
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>                 advertise ? config.getAdvertiser() : <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>     }
+<a class="jxr_linenumber" name="L150" href="#L150">150</a> }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+</body>
+</html>

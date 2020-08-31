@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+<duplication lines="60" tokens="276">
+<file line="98" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/MessageFormatMessage.java"/>
+<file line="97" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/StringFormattedMessage.java"/>
+<codefragment>
+<![CDATA[
+        final MessageFormatMessage that = (MessageFormatMessage) o;
+
+        if (messagePattern != null ? !messagePattern.equals(that.messagePattern) : that.messagePattern != null) {
+            return false;
+        }
+        if (!Arrays.equals(stringArgs, that.stringArgs)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = messagePattern != null ? messagePattern.hashCode() : 0;
+        result = HASHVAL * result + (stringArgs != null ? Arrays.hashCode(stringArgs) : 0);
+        return result;
+    }
+
+
+    @Override
+    public String toString() {
+        return "StringFormatMessage[messagePattern=" + messagePattern + ", args=" +
+            Arrays.toString(argArray) +  "]";
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        getFormattedMessage();
+        out.writeUTF(formattedMessage);
+        out.writeUTF(messagePattern);
+        out.writeInt(argArray.length);
+        stringArgs = new String[argArray.length];
+        int i = 0;
+        for (final Object obj : argArray) {
+            stringArgs[i] = obj.toString();
+            ++i;
+        }
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        formattedMessage = in.readUTF();
+        messagePattern = in.readUTF();
+        final int length = in.readInt();
+        stringArgs = new String[length];
+        for (int i = 0; i < length; ++i) {
+            stringArgs[i] = in.readUTF();
+        }
+    }
+
+    /**
+     * Always returns null.
+     *
+     * @return null
+     */
+    public Throwable getThrowable() {
+        return null;
+    }
+}
+]]>
+</codefragment>
+</duplication>
+<duplication lines="35" tokens="168">
+<file line="172" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/FormattedMessage.java"/>
+<file line="120" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/MessageFormatMessage.java"/>
+<file line="119" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/StringFormattedMessage.java"/>
+<codefragment>
+<![CDATA[
+        return "FormattedMessage[messagePattern=" + messagePattern + ", args=" +
+            Arrays.toString(argArray) +  "]";
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        getFormattedMessage();
+        out.writeUTF(formattedMessage);
+        out.writeUTF(messagePattern);
+        out.writeInt(argArray.length);
+        stringArgs = new String[argArray.length];
+        int i = 0;
+        for (final Object obj : argArray) {
+            stringArgs[i] = obj.toString();
+            ++i;
+        }
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        formattedMessage = in.readUTF();
+        messagePattern = in.readUTF();
+        final int length = in.readInt();
+        stringArgs = new String[length];
+        for (int i = 0; i < length; ++i) {
+            stringArgs[i] = in.readUTF();
+        }
+    }
+
+    /**
+     * Always returns null.
+     *
+     * @return null
+     */
+    public Throwable getThrowable() {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="12" tokens="118">
+<file line="111" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/ExtendedThreadInformation.java"/>
+<file line="134" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/ExtendedThreadInformation.java"/>
+<codefragment>
+<![CDATA[
+            case WAITING: {
+                final StackTraceElement element = info.getStackTrace()[0];
+                final String className = element.getClassName();
+                final String method = element.getMethodName();
+                if (className.equals("java.lang.Object") && method.equals("wait")) {
+                    sb.append(" (on object monitor");
+                    if (info.getLockOwnerName() != null) {
+                        sb.append(" owned by \"");
+                        sb.append(info.getLockOwnerName()).append("\" Id=").append(info.getLockOwnerId());
+                    }
+                    sb.append(")");
+                } else if (className.equals("java.lang.Thread") && method.equals("join")) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="23" tokens="103">
+<file line="150" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/FormattedMessage.java"/>
+<file line="98" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/MessageFormatMessage.java"/>
+<file line="97" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/StringFormattedMessage.java"/>
+<codefragment>
+<![CDATA[
+        final FormattedMessage that = (FormattedMessage) o;
+
+        if (messagePattern != null ? !messagePattern.equals(that.messagePattern) : that.messagePattern != null) {
+            return false;
+        }
+        if (!Arrays.equals(stringArgs, that.stringArgs)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = messagePattern != null ? messagePattern.hashCode() : 0;
+        result = HASHVAL * result + (stringArgs != null ? Arrays.hashCode(stringArgs) : 0);
+        return result;
+    }
+
+
+    @Override
+    public String toString() {
+        return "FormattedMessage[messagePattern=" + messagePattern + ", args=" +
+]]>
+</codefragment>
+</duplication>
+<duplication lines="13" tokens="100">
+<file line="121" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/ExtendedThreadInformation.java"/>
+<file line="146" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/api/src/main/java/org/apache/logging/log4j/message/ExtendedThreadInformation.java"/>
+<codefragment>
+<![CDATA[
+                    sb.append(")");
+                } else if (className.equals("java.lang.Thread") && method.equals("join")) {
+                    sb.append(" (on completion of thread ").append(info.getLockOwnerId()).append(")");
+                } else {
+                    sb.append(" (parking for lock");
+                    if (info.getLockOwnerName() != null) {
+                        sb.append(" owned by \"");
+                        sb.append(info.getLockOwnerName()).append("\" Id=").append(info.getLockOwnerId());
+                    }
+                    sb.append(")");
+                }
+                break;
+            }
+]]>
+</codefragment>
+</duplication>
+</pmd-cpd>

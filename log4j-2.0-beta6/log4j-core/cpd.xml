@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+<duplication lines="24" tokens="211">
+<file line="84" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
+<file line="104" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
+<codefragment>
+<![CDATA[
+            for (final Map.Entry<String, String> entry : rootNode.getAttributes().entrySet()) {
+                if ("status".equalsIgnoreCase(entry.getKey())) {
+                    status = Level.toLevel(getSubst().replace(entry.getValue()), null);
+                    if (status == null) {
+                        status = Level.ERROR;
+                        messages.add("Invalid status specified: " + entry.getValue() + ". Defaulting to ERROR");
+                    }
+                } else if ("dest".equalsIgnoreCase(entry.getKey())) {
+                    final String dest = entry.getValue();
+                    if (dest != null) {
+                        if (dest.equalsIgnoreCase("err")) {
+                            stream = System.err;
+                        } else {
+                            try {
+                                final File destFile = FileUtils.fileFromURI(new URI(dest));
+                                stream = new PrintStream(new FileOutputStream(destFile));
+                            } catch (final URISyntaxException use) {
+                                System.err.println("Unable to write to " + dest + ". Writing to stdout");
+                            }
+                        }
+                    }
+                } else if ("verbose".equalsIgnoreCase(entry.getKey())) {
+                    verbose = Boolean.parseBoolean(getSubst().replace(entry.getValue()));
+                } else if ("packages".equalsIgnoreCase(entry.getKey())) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="45" tokens="181">
+<file line="137" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/async/AsyncLoggerConfig.java"/>
+<file line="430" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/config/LoggerConfig.java"/>
+<codefragment>
+<![CDATA[
+    }
+
+    /**
+     * Factory method to create a LoggerConfig.
+     *
+     * @param additivity True if additive, false otherwise.
+     * @param levelName The Level to be associated with the Logger.
+     * @param loggerName The name of the Logger.
+     * @param includeLocation "true" if location should be passed downstream
+     * @param refs An array of Appender names.
+     * @param properties Properties to pass to the Logger.
+     * @param config The Configuration.
+     * @param filter A Filter.
+     * @return A new LoggerConfig.
+     */
+    @PluginFactory
+    public static LoggerConfig createLogger(
+            @PluginAttr("additivity") final String additivity,
+            @PluginAttr("level") final String levelName,
+            @PluginAttr("name") final String loggerName,
+            @PluginAttr("includeLocation") final String includeLocation,
+            @PluginElement("appender-ref") final AppenderRef[] refs,
+            @PluginElement("properties") final Property[] properties,
+            @PluginConfiguration final Configuration config,
+            @PluginElement("filters") final Filter filter) {
+        if (loggerName == null) {
+            LOGGER.error("Loggers cannot be configured without a name");
+            return null;
+        }
+
+        final List<AppenderRef> appenderRefs = Arrays.asList(refs);
+        Level level;
+        try {
+            level = Level.toLevel(levelName, Level.ERROR);
+        } catch (final Exception ex) {
+            LOGGER.error(
+                    "Invalid Log level specified: {}. Defaulting to Error",
+                    levelName);
+            level = Level.ERROR;
+        }
+        final String name = loggerName.equals("root") ? "" : loggerName;
+        final boolean additive = additivity == null ? true : Boolean
+                .parseBoolean(additivity);
+
+        return new AsyncLoggerConfig(name, appenderRefs, filter, level,
+]]>
+</codefragment>
+</duplication>
+<duplication lines="23" tokens="169">
+<file line="68" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java"/>
+<file line="68" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java"/>
+<codefragment>
+<![CDATA[
+            final String trace = t.getExtendedStackTrace(options.getPackages());
+            final int len = toAppendTo.length();
+            if (len > 0 && !Character.isWhitespace(toAppendTo.charAt(len - 1))) {
+                toAppendTo.append(" ");
+            }
+            if (!options.allLines() || !Constants.LINE_SEP.equals(options.getSeparator())) {
+                final StringBuilder sb = new StringBuilder();
+                final String[] array = trace.split(Constants.LINE_SEP);
+                final int limit = options.minLines(array.length) - 1;
+                for (int i = 0; i <= limit; ++i) {
+                    sb.append(array[i]);
+                    if (i < limit) {
+                        sb.append(options.getSeparator());
+                    }
+                }
+                toAppendTo.append(sb.toString());
+
+            } else {
+                toAppendTo.append(trace);
+            }
+        }
+    }
+}
+]]>
+</codefragment>
+</duplication>
+<duplication lines="26" tokens="165">
+<file line="124" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/filter/MapFilter.java"/>
+<file line="109" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/filter/StructuredDataFilter.java"/>
+<file line="119" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/filter/ThreadContextMapFilter.java"/>
+<codefragment>
+<![CDATA[
+            LOGGER.error("keys and values must be specified for the MapFilter");
+            return null;
+        }
+        final Map<String, List<String>> map = new HashMap<String, List<String>>();
+        for (final KeyValuePair pair : pairs) {
+            final String key = pair.getKey();
+            if (key == null) {
+                LOGGER.error("A null key is not valid in MapFilter");
+                continue;
+            }
+            final String value = pair.getValue();
+            if (value == null) {
+                LOGGER.error("A null value for key " + key + " is not allowed in MapFilter");
+                continue;
+            }
+            List<String> list = map.get(pair.getKey());
+            if (list != null) {
+                list.add(value);
+            } else {
+                list = new ArrayList<String>();
+                list.add(value);
+                map.put(pair.getKey(), list);
+            }
+        }
+        if (map.size() == 0) {
+            LOGGER.error("MapFilter is not configured with any valid key value pairs");
+]]>
+</codefragment>
+</duplication>
+<duplication lines="26" tokens="157">
+<file line="196" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/async/AsyncLoggerConfig.java"/>
+<file line="492" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/config/LoggerConfig.java"/>
+<codefragment>
+<![CDATA[
+    @Plugin(name = "asyncRoot", category = "Core", printObject = true)
+    public static class RootLogger extends LoggerConfig {
+
+        @PluginFactory
+        public static LoggerConfig createLogger(
+                @PluginAttr("additivity") final String additivity,
+                @PluginAttr("level") final String levelName,
+                @PluginAttr("includeLocation") final String includeLocation,
+                @PluginElement("appender-ref") final AppenderRef[] refs,
+                @PluginElement("properties") final Property[] properties,
+                @PluginConfiguration final Configuration config,
+                @PluginElement("filters") final Filter filter) {
+            final List<AppenderRef> appenderRefs = Arrays.asList(refs);
+            Level level;
+            try {
+                level = Level.toLevel(levelName, Level.ERROR);
+            } catch (final Exception ex) {
+                LOGGER.error(
+                        "Invalid Log level specified: {}. Defaulting to Error",
+                        levelName);
+                level = Level.ERROR;
+            }
+            final boolean additive = additivity == null ? true : Boolean
+                    .parseBoolean(additivity);
+
+            return new AsyncLoggerConfig(LogManager.ROOT_LOGGER_NAME,
+]]>
+</codefragment>
+</duplication>
+<duplication lines="43" tokens="157">
+<file line="108" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/net/JMSQueueManager.java"/>
+<file line="109" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/net/JMSTopicManager.java"/>
+<codefragment>
+<![CDATA[
+            super.send(object, info.session, info.sender);
+        } catch (final Exception ex) {
+            cleanup(true);
+            throw ex;
+        }
+    }
+
+    @Override
+    public void releaseSub() {
+        if (info != null) {
+            cleanup(false);
+        }
+    }
+
+    private void cleanup(final boolean quiet) {
+        try {
+            info.session.close();
+        } catch (final Exception e) {
+            if (!quiet) {
+                LOGGER.error("Error closing session for " + getName(), e);
+            }
+        }
+        try {
+            info.conn.close();
+        } catch (final Exception e) {
+            if (!quiet) {
+                LOGGER.error("Error closing connection for " + getName(), e);
+            }
+        }
+        info = null;
+    }
+
+    /**
+     * Data for the factory.
+     */
+    private static class FactoryData {
+        private final String factoryName;
+        private final String providerURL;
+        private final String urlPkgPrefixes;
+        private final String securityPrincipalName;
+        private final String securityCredentials;
+        private final String factoryBindingName;
+        private final String queueBindingName;
+]]>
+</codefragment>
+</duplication>
+<duplication lines="15" tokens="142">
+<file line="113" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
+<file line="137" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
+<codefragment>
+<![CDATA[
+                    setName(getSubst().replace(entry.getValue()));
+                } else if ("monitorInterval".equalsIgnoreCase(entry.getKey())) {
+                    final int interval = Integer.parseInt(getSubst().replace(entry.getValue()));
+                    if (interval > 0 && configFile != null) {
+                        monitor = new FileConfigurationMonitor(this, configFile, listeners, interval);
+                    }
+                } else if ("advertiser".equalsIgnoreCase(entry.getKey())) {
+                    final String advertiserString = getSubst().replace(entry.getValue());
+                    if (advertiserString != null)
+                    {
+                        @SuppressWarnings("unchecked")
+                        final PluginType<Advertiser> type = getPluginManager().getPluginType(advertiserString);
+                        if (type != null)
+                        {
+                            final Class<Advertiser> clazz = type.getPluginClass();
+]]>
+</codefragment>
+</duplication>
+<duplication lines="23" tokens="139">
+<file line="212" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/layout/HTMLLayout.java"/>
+<file line="241" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/layout/XMLLayout.java"/>
+<codefragment>
+<![CDATA[
+    private void appendThrowableAsHTML(final Throwable throwable, final StringBuilder sbuf) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        try {
+            throwable.printStackTrace(pw);
+        } catch (final RuntimeException ex) {
+            // Ignore the exception.
+        }
+        pw.flush();
+        final LineNumberReader reader = new LineNumberReader(new StringReader(sw.toString()));
+        final ArrayList<String> lines = new ArrayList<String>();
+        try {
+          String line = reader.readLine();
+          while (line != null) {
+            lines.add(line);
+            line = reader.readLine();
+          }
+        } catch (final IOException ex) {
+            if (ex instanceof InterruptedIOException) {
+                Thread.currentThread().interrupt();
+            }
+            lines.add(ex.toString());
+        }
+]]>
+</codefragment>
+</duplication>
+<duplication lines="29" tokens="134">
+<file line="55" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/FastRollingFileAppender.java"/>
+<file line="53" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/RollingFileAppender.java"/>
+<codefragment>
+<![CDATA[
+            boolean immediateFlush, Advertiser advertiser) {
+        super(name, layout, filter, handleException, immediateFlush, manager);
+        if (advertiser != null) {
+            Map<String, String> configuration = new HashMap<String, String>(
+                    layout.getContentFormat());
+            configuration.put("contentType", layout.getContentType());
+            configuration.put("name", name);
+            advertisement = advertiser.advertise(configuration);
+        }
+        this.fileName = fileName;
+        this.filePattern = filePattern;
+        this.advertiser = advertiser;
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        if (advertiser != null) {
+            advertiser.unadvertise(advertisement);
+        }
+    }
+
+    /**
+     * Write the log entry rolling over the file when required.
+     *
+     * @param event The LogEvent.
+     */
+    @Override
+    public void append(final LogEvent event) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="33" tokens="131">
+<file line="88" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/filter/BurstFilter.java"/>
+<file line="56" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/filter/DynamicThresholdFilter.java"/>
+<file line="44" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/filter/ThresholdFilter.java"/>
+<codefragment>
+<![CDATA[
+    }
+
+    @Override
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg,
+                         final Object... params) {
+        return filter(level);
+    }
+
+    @Override
+    public Result filter(final Logger logger, final Level level, final Marker marker, final Object msg,
+                         final Throwable t) {
+        return filter(level);
+    }
+
+    @Override
+    public Result filter(final Logger logger, final Level level, final Marker marker, final Message msg,
+                         final Throwable t) {
+        return filter(level);
+    }
+
+    @Override
+    public Result filter(final LogEvent event) {
+        return filter(event.getLevel());
+    }
+
+    /**
+     * Decide if we're going to log <code>event</code> based on whether the
+     * maximum burst of log statements has been exceeded.
+     *
+     * @param level The log level.
+     * @return The onMatch value if the filter passes, onMismatch otherwise.
+     */
+    private Result filter(final Level level) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="21" tokens="128">
+<file line="47" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/FastFileAppender.java"/>
+<file line="45" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/FileAppender.java"/>
+<codefragment>
+<![CDATA[
+            boolean immediateFlush, Advertiser advertiser) {
+        super(name, layout, filter, handleException, immediateFlush, manager);
+        if (advertiser != null) {
+            Map<String, String> configuration = new HashMap<String, String>(
+                    layout.getContentFormat());
+            configuration.putAll(manager.getContentFormat());
+            configuration.put("contentType", layout.getContentType());
+            configuration.put("name", name);
+            advertisement = advertiser.advertise(configuration);
+        }
+        this.fileName = filename;
+        this.advertiser = advertiser;
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        if (advertiser != null) {
+            advertiser.unadvertise(advertisement);
+        }
+    }
+]]>
+</codefragment>
+</duplication>
+<duplication lines="41" tokens="126">
+<file line="57" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/GZCompressAction.java"/>
+<file line="58" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/ZipCompressAction.java"/>
+<codefragment>
+<![CDATA[
+    public GZCompressAction(final File source, final File destination, final boolean deleteSource) {
+        if (source == null) {
+            throw new NullPointerException("source");
+        }
+
+        if (destination == null) {
+            throw new NullPointerException("destination");
+        }
+
+        this.source = source;
+        this.destination = destination;
+        this.deleteSource = deleteSource;
+    }
+
+    /**
+     * Compress.
+     *
+     * @return true if successfully compressed.
+     * @throws IOException on IO exception.
+     */
+    @Override
+    public boolean execute() throws IOException {
+        return execute(source, destination, deleteSource);
+    }
+
+    /**
+     * Compress a file.
+     *
+     * @param source       file to compress, may not be null.
+     * @param destination  compressed file, may not be null.
+     * @param deleteSource if true, attempt to delete file on completion.  Failure to delete
+     *                     does not cause an exception to be thrown or affect return value.
+     * @return true if source file compressed.
+     * @throws IOException on IO exception.
+     */
+    public static boolean execute(final File source, final File destination, final boolean deleteSource)
+        throws IOException {
+        if (source.exists()) {
+            final FileInputStream fis = new FileInputStream(source);
+            final FileOutputStream fos = new FileOutputStream(destination);
+            final GZIPOutputStream gzos = new GZIPOutputStream(fos);
+]]>
+</codefragment>
+</duplication>
+<duplication lines="34" tokens="123">
+<file line="160" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/FastRollingFileAppender.java"/>
+<file line="142" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/RollingFileAppender.java"/>
+<codefragment>
+<![CDATA[
+                .valueOf(suppress);
+        final boolean isFlush = immediateFlush == null ? true : Boolean
+                .valueOf(immediateFlush);
+        boolean isAdvertise = advertise == null ? false : Boolean
+                .valueOf(advertise);
+
+        if (name == null) {
+            LOGGER.error("No name provided for FileAppender");
+            return null;
+        }
+
+        if (fileName == null) {
+            LOGGER.error("No filename was provided for FileAppender with name "
+                    + name);
+            return null;
+        }
+
+        if (filePattern == null) {
+            LOGGER.error("No filename pattern provided for FileAppender with name "
+                    + name);
+            return null;
+        }
+
+        if (policy == null) {
+            LOGGER.error("A TriggeringPolicy must be provided");
+            return null;
+        }
+
+        if (strategy == null) {
+            strategy = DefaultRolloverStrategy.createStrategy(null, null,
+                    "true", config);
+        }
+
+        final FastRollingFileManager manager = FastRollingFileManager
+]]>
+</codefragment>
+</duplication>
+<duplication lines="25" tokens="118">
+<file line="69" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/FastFileManager.java"/>
+<file line="64" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/FastRollingFileManager.java"/>
+<codefragment>
+<![CDATA[
+                isFlush, advertiseURI), FACTORY);
+    }
+
+    public Boolean isEndOfBatch() {
+        return isEndOfBatch.get();
+    }
+
+    public void setEndOfBatch(boolean isEndOfBatch) {
+        this.isEndOfBatch.set(Boolean.valueOf(isEndOfBatch));
+    }
+
+    @Override
+    protected synchronized void write(byte[] bytes, int offset, int length) {
+        super.write(bytes, offset, length); // writes to dummy output stream
+
+        if (length > buffer.remaining()) {
+            flush();
+        }
+        buffer.put(bytes, offset, length);
+        if (isImmediateFlush || isEndOfBatch.get() == Boolean.TRUE) {
+            flush();
+        }
+    }
+
+    @Override
+]]>
+</codefragment>
+</duplication>
+<duplication lines="16" tokens="115">
+<file line="146" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/FastRollingFileAppender.java"/>
+<file line="129" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/RollingFileAppender.java"/>
+<codefragment>
+<![CDATA[
+            @PluginAttr("name") final String name,
+            @PluginAttr("immediateFlush") final String immediateFlush,
+            @PluginElement("policy") final TriggeringPolicy policy,
+            @PluginElement("strategy") RolloverStrategy strategy,
+            @PluginElement("layout") Layout<S> layout,
+            @PluginElement("filter") final Filter filter,
+            @PluginAttr("suppressExceptions") final String suppress,
+            @PluginAttr("advertise") final String advertise,
+            @PluginAttr("advertiseURI") final String advertiseURI,
+            @PluginConfiguration final Configuration config) {
+
+        final boolean isAppend = append == null ? true : Boolean
+                .valueOf(append);
+        final boolean handleExceptions = suppress == null ? true : Boolean
+                .valueOf(suppress);
+        final boolean isFlush = immediateFlush == null ? true : Boolean
+]]>
+</codefragment>
+</duplication>
+<duplication lines="19" tokens="109">
+<file line="137" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
+<file line="166" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
+<codefragment>
+<![CDATA[
+                final StatusListener listener = statusIter.next();
+                if (listener instanceof StatusConsoleListener) {
+                    found = true;
+                    ((StatusConsoleListener) listener).setLevel(status);
+                    if (!verbose) {
+                        ((StatusConsoleListener) listener).setFilters(VERBOSE_CLASSES);
+                    }
+                }
+            }
+            if (!found && status != Level.OFF) {
+                final StatusConsoleListener listener = new StatusConsoleListener(status, stream);
+                if (!verbose) {
+                    listener.setFilters(VERBOSE_CLASSES);
+                }
+                ((StatusLogger) LOGGER).registerListener(listener);
+                for (final String msg : messages) {
+                    LOGGER.error(msg);
+                }
+            }
+]]>
+</codefragment>
+</duplication>
+<duplication lines="26" tokens="108">
+<file line="89" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/FastFileManager.java"/>
+<file line="93" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta6/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/FastRollingFileManager.java"/>
+<codefragment>
+<![CDATA[
+            flush();
+        }
+    }
+
+    @Override
+    public void flush() {
+        buffer.flip();
+        try {
+            randomAccessFile.write(buffer.array(), 0, buffer.limit());
+        } catch (IOException ex) {
+            String msg = "Error writing to RandomAccessFile " + getName();
+            throw new AppenderRuntimeException(msg, ex);
+        }
+        buffer.clear();
+    }
+
+    @Override
+    public void close() {
+        flush();
+        try {
+            randomAccessFile.close();
+        } catch (final IOException ex) {
+            LOGGER.error("Unable to close RandomAccessFile " + getName() + ". "
+                    + ex);
+        }
+    }
+]]>
+</codefragment>
+</duplication>
+</pmd-cpd>

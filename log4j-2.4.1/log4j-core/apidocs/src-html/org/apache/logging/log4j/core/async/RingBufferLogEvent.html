@@ -1,0 +1,370 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License. You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the license for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the license.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span>package org.apache.logging.log4j.core.async;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.io.IOException;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.util.HashMap;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.util.Map;<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>import org.apache.logging.log4j.Level;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.apache.logging.log4j.Marker;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.apache.logging.log4j.ThreadContext.ContextStack;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.apache.logging.log4j.core.LogEvent;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.logging.log4j.core.config.Property;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.logging.log4j.core.impl.Log4jLogEvent;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.apache.logging.log4j.core.impl.ThrowableProxy;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.logging.log4j.core.lookup.StrSubstitutor;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.logging.log4j.message.Message;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.apache.logging.log4j.message.SimpleMessage;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.logging.log4j.util.Strings;<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>import com.lmax.disruptor.EventFactory;<a name="line.35"></a>
+<span class="sourceLineNo">036</span><a name="line.36"></a>
+<span class="sourceLineNo">037</span>/**<a name="line.37"></a>
+<span class="sourceLineNo">038</span> * When the Disruptor is started, the RingBuffer is populated with event objects. These objects are then re-used during<a name="line.38"></a>
+<span class="sourceLineNo">039</span> * the life of the RingBuffer.<a name="line.39"></a>
+<span class="sourceLineNo">040</span> */<a name="line.40"></a>
+<span class="sourceLineNo">041</span>public class RingBufferLogEvent implements LogEvent {<a name="line.41"></a>
+<span class="sourceLineNo">042</span><a name="line.42"></a>
+<span class="sourceLineNo">043</span>    /** The {@code EventFactory} for {@code RingBufferLogEvent}s. */<a name="line.43"></a>
+<span class="sourceLineNo">044</span>    public static final Factory FACTORY = new Factory();<a name="line.44"></a>
+<span class="sourceLineNo">045</span><a name="line.45"></a>
+<span class="sourceLineNo">046</span>    private static final long serialVersionUID = 8462119088943934758L;<a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span>    /**<a name="line.48"></a>
+<span class="sourceLineNo">049</span>     * Creates the events that will be put in the RingBuffer.<a name="line.49"></a>
+<span class="sourceLineNo">050</span>     */<a name="line.50"></a>
+<span class="sourceLineNo">051</span>    private static class Factory implements EventFactory&lt;RingBufferLogEvent&gt; {<a name="line.51"></a>
+<span class="sourceLineNo">052</span><a name="line.52"></a>
+<span class="sourceLineNo">053</span>        @Override<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        public RingBufferLogEvent newInstance() {<a name="line.54"></a>
+<span class="sourceLineNo">055</span>            return new RingBufferLogEvent();<a name="line.55"></a>
+<span class="sourceLineNo">056</span>        }<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    }<a name="line.57"></a>
+<span class="sourceLineNo">058</span><a name="line.58"></a>
+<span class="sourceLineNo">059</span>    private transient AsyncLogger asyncLogger;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    private String loggerName;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    private Marker marker;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    private String fqcn;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    private Level level;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    private Message message;<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    private transient Throwable thrown;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    private ThrowableProxy thrownProxy;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    private Map&lt;String, String&gt; contextMap;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    private ContextStack contextStack;<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    private String threadName;<a name="line.69"></a>
+<span class="sourceLineNo">070</span>    private StackTraceElement location;<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    private long currentTimeMillis;<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    private boolean endOfBatch;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>    private boolean includeLocation;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>    private long nanoTime;<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>    public void setValues(final AsyncLogger asyncLogger, final String loggerName, final Marker marker,<a name="line.76"></a>
+<span class="sourceLineNo">077</span>            final String fqcn, final Level level, final Message data, final Throwable throwable,<a name="line.77"></a>
+<span class="sourceLineNo">078</span>            final Map&lt;String, String&gt; map, final ContextStack contextStack, final String threadName,<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            final StackTraceElement location, final long currentTimeMillis, final long nanoTime) {<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        this.asyncLogger = asyncLogger;<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        this.loggerName = loggerName;<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        this.marker = marker;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        this.fqcn = fqcn;<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        this.level = level;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>        this.message = data;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        this.thrown = throwable;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        this.thrownProxy = null;<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        this.contextMap = map;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        this.contextStack = contextStack;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        this.threadName = threadName;<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        this.location = location;<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        this.currentTimeMillis = currentTimeMillis;<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        this.nanoTime = nanoTime;<a name="line.93"></a>
+<span class="sourceLineNo">094</span>    }<a name="line.94"></a>
+<span class="sourceLineNo">095</span><a name="line.95"></a>
+<span class="sourceLineNo">096</span>    /**<a name="line.96"></a>
+<span class="sourceLineNo">097</span>     * Event processor that reads the event from the ringbuffer can call this method.<a name="line.97"></a>
+<span class="sourceLineNo">098</span>     * <a name="line.98"></a>
+<span class="sourceLineNo">099</span>     * @param endOfBatch flag to indicate if this is the last event in a batch from the RingBuffer<a name="line.99"></a>
+<span class="sourceLineNo">100</span>     */<a name="line.100"></a>
+<span class="sourceLineNo">101</span>    public void execute(final boolean endOfBatch) {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        this.endOfBatch = endOfBatch;<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        asyncLogger.actualAsyncLog(this);<a name="line.103"></a>
+<span class="sourceLineNo">104</span>    }<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>    /**<a name="line.106"></a>
+<span class="sourceLineNo">107</span>     * Returns {@code true} if this event is the end of a batch, {@code false} otherwise.<a name="line.107"></a>
+<span class="sourceLineNo">108</span>     * <a name="line.108"></a>
+<span class="sourceLineNo">109</span>     * @return {@code true} if this event is the end of a batch, {@code false} otherwise<a name="line.109"></a>
+<span class="sourceLineNo">110</span>     */<a name="line.110"></a>
+<span class="sourceLineNo">111</span>    @Override<a name="line.111"></a>
+<span class="sourceLineNo">112</span>    public boolean isEndOfBatch() {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>        return endOfBatch;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>    }<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>    @Override<a name="line.116"></a>
+<span class="sourceLineNo">117</span>    public void setEndOfBatch(final boolean endOfBatch) {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        this.endOfBatch = endOfBatch;<a name="line.118"></a>
+<span class="sourceLineNo">119</span>    }<a name="line.119"></a>
+<span class="sourceLineNo">120</span><a name="line.120"></a>
+<span class="sourceLineNo">121</span>    @Override<a name="line.121"></a>
+<span class="sourceLineNo">122</span>    public boolean isIncludeLocation() {<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        return includeLocation;<a name="line.123"></a>
+<span class="sourceLineNo">124</span>    }<a name="line.124"></a>
+<span class="sourceLineNo">125</span><a name="line.125"></a>
+<span class="sourceLineNo">126</span>    @Override<a name="line.126"></a>
+<span class="sourceLineNo">127</span>    public void setIncludeLocation(final boolean includeLocation) {<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        this.includeLocation = includeLocation;<a name="line.128"></a>
+<span class="sourceLineNo">129</span>    }<a name="line.129"></a>
+<span class="sourceLineNo">130</span><a name="line.130"></a>
+<span class="sourceLineNo">131</span>    @Override<a name="line.131"></a>
+<span class="sourceLineNo">132</span>    public String getLoggerName() {<a name="line.132"></a>
+<span class="sourceLineNo">133</span>        return loggerName;<a name="line.133"></a>
+<span class="sourceLineNo">134</span>    }<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>    @Override<a name="line.136"></a>
+<span class="sourceLineNo">137</span>    public Marker getMarker() {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        return marker;<a name="line.138"></a>
+<span class="sourceLineNo">139</span>    }<a name="line.139"></a>
+<span class="sourceLineNo">140</span><a name="line.140"></a>
+<span class="sourceLineNo">141</span>    @Override<a name="line.141"></a>
+<span class="sourceLineNo">142</span>    public String getLoggerFqcn() {<a name="line.142"></a>
+<span class="sourceLineNo">143</span>        return fqcn;<a name="line.143"></a>
+<span class="sourceLineNo">144</span>    }<a name="line.144"></a>
+<span class="sourceLineNo">145</span><a name="line.145"></a>
+<span class="sourceLineNo">146</span>    @Override<a name="line.146"></a>
+<span class="sourceLineNo">147</span>    public Level getLevel() {<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        if (level == null) {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>            level = Level.OFF; // LOG4J2-462, LOG4J2-465<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        }<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        return level;<a name="line.151"></a>
+<span class="sourceLineNo">152</span>    }<a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>    @Override<a name="line.154"></a>
+<span class="sourceLineNo">155</span>    public Message getMessage() {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        if (message == null) {<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            message = new SimpleMessage(Strings.EMPTY);<a name="line.157"></a>
+<span class="sourceLineNo">158</span>        }<a name="line.158"></a>
+<span class="sourceLineNo">159</span>        return message;<a name="line.159"></a>
+<span class="sourceLineNo">160</span>    }<a name="line.160"></a>
+<span class="sourceLineNo">161</span><a name="line.161"></a>
+<span class="sourceLineNo">162</span>    @Override<a name="line.162"></a>
+<span class="sourceLineNo">163</span>    public Throwable getThrown() {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        // after deserialization, thrown is null but thrownProxy may be non-null<a name="line.164"></a>
+<span class="sourceLineNo">165</span>        if (thrown == null) {<a name="line.165"></a>
+<span class="sourceLineNo">166</span>            if (thrownProxy != null) {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                thrown = thrownProxy.getThrowable();<a name="line.167"></a>
+<span class="sourceLineNo">168</span>            }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>        }<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        return thrown;<a name="line.170"></a>
+<span class="sourceLineNo">171</span>    }<a name="line.171"></a>
+<span class="sourceLineNo">172</span><a name="line.172"></a>
+<span class="sourceLineNo">173</span>    @Override<a name="line.173"></a>
+<span class="sourceLineNo">174</span>    public ThrowableProxy getThrownProxy() {<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        // lazily instantiate the (expensive) ThrowableProxy<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        if (thrownProxy == null) {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>            if (thrown != null) {<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                thrownProxy = new ThrowableProxy(thrown);<a name="line.178"></a>
+<span class="sourceLineNo">179</span>            }<a name="line.179"></a>
+<span class="sourceLineNo">180</span>        }<a name="line.180"></a>
+<span class="sourceLineNo">181</span>        return this.thrownProxy;<a name="line.181"></a>
+<span class="sourceLineNo">182</span>    }<a name="line.182"></a>
+<span class="sourceLineNo">183</span><a name="line.183"></a>
+<span class="sourceLineNo">184</span>    @Override<a name="line.184"></a>
+<span class="sourceLineNo">185</span>    public Map&lt;String, String&gt; getContextMap() {<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        return contextMap;<a name="line.186"></a>
+<span class="sourceLineNo">187</span>    }<a name="line.187"></a>
+<span class="sourceLineNo">188</span><a name="line.188"></a>
+<span class="sourceLineNo">189</span>    @Override<a name="line.189"></a>
+<span class="sourceLineNo">190</span>    public ContextStack getContextStack() {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        return contextStack;<a name="line.191"></a>
+<span class="sourceLineNo">192</span>    }<a name="line.192"></a>
+<span class="sourceLineNo">193</span><a name="line.193"></a>
+<span class="sourceLineNo">194</span>    @Override<a name="line.194"></a>
+<span class="sourceLineNo">195</span>    public String getThreadName() {<a name="line.195"></a>
+<span class="sourceLineNo">196</span>        return threadName;<a name="line.196"></a>
+<span class="sourceLineNo">197</span>    }<a name="line.197"></a>
+<span class="sourceLineNo">198</span><a name="line.198"></a>
+<span class="sourceLineNo">199</span>    @Override<a name="line.199"></a>
+<span class="sourceLineNo">200</span>    public StackTraceElement getSource() {<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        return location;<a name="line.201"></a>
+<span class="sourceLineNo">202</span>    }<a name="line.202"></a>
+<span class="sourceLineNo">203</span><a name="line.203"></a>
+<span class="sourceLineNo">204</span>    @Override<a name="line.204"></a>
+<span class="sourceLineNo">205</span>    public long getTimeMillis() {<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        return currentTimeMillis;<a name="line.206"></a>
+<span class="sourceLineNo">207</span>    }<a name="line.207"></a>
+<span class="sourceLineNo">208</span>    <a name="line.208"></a>
+<span class="sourceLineNo">209</span>    @Override<a name="line.209"></a>
+<span class="sourceLineNo">210</span>    public long getNanoTime() {<a name="line.210"></a>
+<span class="sourceLineNo">211</span>        return nanoTime;<a name="line.211"></a>
+<span class="sourceLineNo">212</span>    }<a name="line.212"></a>
+<span class="sourceLineNo">213</span><a name="line.213"></a>
+<span class="sourceLineNo">214</span>    /**<a name="line.214"></a>
+<span class="sourceLineNo">215</span>     * Merges the contents of the specified map into the contextMap, after replacing any variables in the property<a name="line.215"></a>
+<span class="sourceLineNo">216</span>     * values with the StrSubstitutor-supplied actual values.<a name="line.216"></a>
+<span class="sourceLineNo">217</span>     * <a name="line.217"></a>
+<span class="sourceLineNo">218</span>     * @param properties configured properties<a name="line.218"></a>
+<span class="sourceLineNo">219</span>     * @param strSubstitutor used to lookup values of variables in properties<a name="line.219"></a>
+<span class="sourceLineNo">220</span>     */<a name="line.220"></a>
+<span class="sourceLineNo">221</span>    public void mergePropertiesIntoContextMap(final Map&lt;Property, Boolean&gt; properties,<a name="line.221"></a>
+<span class="sourceLineNo">222</span>            final StrSubstitutor strSubstitutor) {<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        if (properties == null) {<a name="line.223"></a>
+<span class="sourceLineNo">224</span>            return; // nothing to do<a name="line.224"></a>
+<span class="sourceLineNo">225</span>        }<a name="line.225"></a>
+<span class="sourceLineNo">226</span><a name="line.226"></a>
+<span class="sourceLineNo">227</span>        final Map&lt;String, String&gt; map = contextMap == null ? new HashMap&lt;String, String&gt;()<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                : new HashMap&lt;&gt;(contextMap);<a name="line.228"></a>
+<span class="sourceLineNo">229</span><a name="line.229"></a>
+<span class="sourceLineNo">230</span>        for (final Map.Entry&lt;Property, Boolean&gt; entry : properties.entrySet()) {<a name="line.230"></a>
+<span class="sourceLineNo">231</span>            final Property prop = entry.getKey();<a name="line.231"></a>
+<span class="sourceLineNo">232</span>            if (map.containsKey(prop.getName())) {<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                continue; // contextMap overrides config properties<a name="line.233"></a>
+<span class="sourceLineNo">234</span>            }<a name="line.234"></a>
+<span class="sourceLineNo">235</span>            final String value = entry.getValue().booleanValue() ? strSubstitutor.replace(prop.getValue()) : prop<a name="line.235"></a>
+<span class="sourceLineNo">236</span>                    .getValue();<a name="line.236"></a>
+<span class="sourceLineNo">237</span>            map.put(prop.getName(), value);<a name="line.237"></a>
+<span class="sourceLineNo">238</span>        }<a name="line.238"></a>
+<span class="sourceLineNo">239</span>        contextMap = map;<a name="line.239"></a>
+<span class="sourceLineNo">240</span>    }<a name="line.240"></a>
+<span class="sourceLineNo">241</span><a name="line.241"></a>
+<span class="sourceLineNo">242</span>    /**<a name="line.242"></a>
+<span class="sourceLineNo">243</span>     * Release references held by ring buffer to allow objects to be garbage-collected.<a name="line.243"></a>
+<span class="sourceLineNo">244</span>     */<a name="line.244"></a>
+<span class="sourceLineNo">245</span>    public void clear() {<a name="line.245"></a>
+<span class="sourceLineNo">246</span>        setValues(null, // asyncLogger<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                null, // loggerName<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                null, // marker<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                null, // fqcn<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                null, // level<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                null, // data<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                null, // t<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                null, // map<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                null, // contextStack<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                null, // threadName<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                null, // location<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                0, // currentTimeMillis<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                0 // nanoTime<a name="line.258"></a>
+<span class="sourceLineNo">259</span>        );<a name="line.259"></a>
+<span class="sourceLineNo">260</span>    }<a name="line.260"></a>
+<span class="sourceLineNo">261</span><a name="line.261"></a>
+<span class="sourceLineNo">262</span>    private void writeObject(final java.io.ObjectOutputStream out) throws IOException {<a name="line.262"></a>
+<span class="sourceLineNo">263</span>        getThrownProxy(); // initialize the ThrowableProxy before serializing<a name="line.263"></a>
+<span class="sourceLineNo">264</span>        out.defaultWriteObject();<a name="line.264"></a>
+<span class="sourceLineNo">265</span>    }<a name="line.265"></a>
+<span class="sourceLineNo">266</span><a name="line.266"></a>
+<span class="sourceLineNo">267</span>    /**<a name="line.267"></a>
+<span class="sourceLineNo">268</span>     * Creates and returns a new immutable copy of this {@code RingBufferLogEvent}.<a name="line.268"></a>
+<span class="sourceLineNo">269</span>     * <a name="line.269"></a>
+<span class="sourceLineNo">270</span>     * @return a new immutable copy of the data in this {@code RingBufferLogEvent}<a name="line.270"></a>
+<span class="sourceLineNo">271</span>     */<a name="line.271"></a>
+<span class="sourceLineNo">272</span>    public LogEvent createMemento() {<a name="line.272"></a>
+<span class="sourceLineNo">273</span>        final LogEvent result = new Log4jLogEvent.Builder(this).build();<a name="line.273"></a>
+<span class="sourceLineNo">274</span>        return result;<a name="line.274"></a>
+<span class="sourceLineNo">275</span>    }<a name="line.275"></a>
+<span class="sourceLineNo">276</span><a name="line.276"></a>
+<span class="sourceLineNo">277</span>    /**<a name="line.277"></a>
+<span class="sourceLineNo">278</span>     * Initializes the specified {@code Log4jLogEvent.Builder} from this {@code RingBufferLogEvent}.<a name="line.278"></a>
+<span class="sourceLineNo">279</span>     * @param builder the builder whose fields to populate<a name="line.279"></a>
+<span class="sourceLineNo">280</span>     */<a name="line.280"></a>
+<span class="sourceLineNo">281</span>    public void initializeBuilder(Log4jLogEvent.Builder builder) {<a name="line.281"></a>
+<span class="sourceLineNo">282</span>        builder.setContextMap(contextMap) //<a name="line.282"></a>
+<span class="sourceLineNo">283</span>                .setContextStack(contextStack) //<a name="line.283"></a>
+<span class="sourceLineNo">284</span>                .setEndOfBatch(endOfBatch) //<a name="line.284"></a>
+<span class="sourceLineNo">285</span>                .setIncludeLocation(includeLocation) //<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                .setLevel(getLevel()) // ensure non-null<a name="line.286"></a>
+<span class="sourceLineNo">287</span>                .setLoggerFqcn(fqcn) //<a name="line.287"></a>
+<span class="sourceLineNo">288</span>                .setLoggerName(loggerName) //<a name="line.288"></a>
+<span class="sourceLineNo">289</span>                .setMarker(marker) //<a name="line.289"></a>
+<span class="sourceLineNo">290</span>                .setMessage(getMessage()) // ensure non-null<a name="line.290"></a>
+<span class="sourceLineNo">291</span>                .setNanoTime(nanoTime) //<a name="line.291"></a>
+<span class="sourceLineNo">292</span>                .setSource(location) //<a name="line.292"></a>
+<span class="sourceLineNo">293</span>                .setThreadName(threadName) //<a name="line.293"></a>
+<span class="sourceLineNo">294</span>                .setThrown(getThrown()) // may deserialize from thrownProxy<a name="line.294"></a>
+<span class="sourceLineNo">295</span>                .setThrownProxy(thrownProxy) // avoid unnecessarily creating thrownProxy<a name="line.295"></a>
+<span class="sourceLineNo">296</span>                .setTimeMillis(currentTimeMillis);        <a name="line.296"></a>
+<span class="sourceLineNo">297</span>    }<a name="line.297"></a>
+<span class="sourceLineNo">298</span>}<a name="line.298"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

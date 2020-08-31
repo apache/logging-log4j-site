@@ -1,0 +1,559 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License. You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the license for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the license.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span>package org.apache.logging.log4j.core;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.beans.PropertyChangeEvent;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.beans.PropertyChangeListener;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.io.File;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.lang.ref.Reference;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.lang.ref.SoftReference;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.net.URI;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.util.Collection;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.util.concurrent.ConcurrentHashMap;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.util.concurrent.ConcurrentMap;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.concurrent.CopyOnWriteArrayList;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.concurrent.locks.Lock;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import java.util.concurrent.locks.ReentrantLock;<a name="line.30"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.apache.logging.log4j.LogManager;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.logging.log4j.Marker;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.apache.logging.log4j.MarkerManager;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.apache.logging.log4j.core.config.Configuration;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.apache.logging.log4j.core.config.ConfigurationFactory;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.apache.logging.log4j.core.config.ConfigurationListener;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.apache.logging.log4j.core.config.ConfigurationSource;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.apache.logging.log4j.core.config.DefaultConfiguration;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.apache.logging.log4j.core.config.NullConfiguration;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.apache.logging.log4j.core.config.Reconfigurable;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.apache.logging.log4j.core.jmx.Server;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.apache.logging.log4j.core.util.Assert;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.apache.logging.log4j.core.util.NetUtils;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import org.apache.logging.log4j.message.MessageFactory;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import org.apache.logging.log4j.spi.AbstractLogger;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>/**<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * The LoggerContext is the anchor for the logging system. It maintains a list<a name="line.50"></a>
+<span class="sourceLineNo">051</span> * of all the loggers requested by applications and a reference to the<a name="line.51"></a>
+<span class="sourceLineNo">052</span> * Configuration. The Configuration will contain the configured loggers,<a name="line.52"></a>
+<span class="sourceLineNo">053</span> * appenders, filters, etc and will be atomically updated whenever a reconfigure<a name="line.53"></a>
+<span class="sourceLineNo">054</span> * occurs.<a name="line.54"></a>
+<span class="sourceLineNo">055</span> */<a name="line.55"></a>
+<span class="sourceLineNo">056</span>public class LoggerContext extends AbstractLifeCycle implements org.apache.logging.log4j.spi.LoggerContext, ConfigurationListener {<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>    private static final boolean SHUTDOWN_HOOK_ENABLED =<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        PropertiesUtil.getProperties().getBooleanProperty("log4j.shutdownHookEnabled", true);<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>    public static final String PROPERTY_CONFIG = "config";<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    private static final Marker SHUTDOWN_HOOK = MarkerManager.getMarker("SHUTDOWN HOOK");<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    private static final Configuration NULL_CONFIGURATION = new NullConfiguration();<a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>    private final ConcurrentMap&lt;String, Logger&gt; loggers = new ConcurrentHashMap&lt;String, Logger&gt;();<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    private final CopyOnWriteArrayList&lt;PropertyChangeListener&gt; propertyChangeListeners = new CopyOnWriteArrayList&lt;PropertyChangeListener&gt;();<a name="line.66"></a>
+<span class="sourceLineNo">067</span><a name="line.67"></a>
+<span class="sourceLineNo">068</span>    /**<a name="line.68"></a>
+<span class="sourceLineNo">069</span>     * The Configuration is volatile to guarantee that initialization of the<a name="line.69"></a>
+<span class="sourceLineNo">070</span>     * Configuration has completed before the reference is updated.<a name="line.70"></a>
+<span class="sourceLineNo">071</span>     */<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    private volatile Configuration config = new DefaultConfiguration();<a name="line.72"></a>
+<span class="sourceLineNo">073</span>    private Object externalContext;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>    private final String name;<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    private URI configLocation;<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>    /**<a name="line.77"></a>
+<span class="sourceLineNo">078</span>     * Once a shutdown hook thread executes, we can't remove it from the runtime (throws an exception). Therefore,<a name="line.78"></a>
+<span class="sourceLineNo">079</span>     * it's really pointless to keep a strongly accessible reference to said thread. Thus, please use a<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     * SoftReference here to prevent possible cyclic memory references.<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     */<a name="line.81"></a>
+<span class="sourceLineNo">082</span>    private Reference&lt;Thread&gt; shutdownThread;<a name="line.82"></a>
+<span class="sourceLineNo">083</span><a name="line.83"></a>
+<span class="sourceLineNo">084</span>    private final Lock configLock = new ReentrantLock();<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>    /**<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     * Constructor taking only a name.<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * @param name The context name.<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     */<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    public LoggerContext(final String name) {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        this(name, null, (URI) null);<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    }<a name="line.92"></a>
+<span class="sourceLineNo">093</span><a name="line.93"></a>
+<span class="sourceLineNo">094</span>    /**<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     * Constructor taking a name and a reference to an external context.<a name="line.95"></a>
+<span class="sourceLineNo">096</span>     * @param name The context name.<a name="line.96"></a>
+<span class="sourceLineNo">097</span>     * @param externalContext The external context.<a name="line.97"></a>
+<span class="sourceLineNo">098</span>     */<a name="line.98"></a>
+<span class="sourceLineNo">099</span>    public LoggerContext(final String name, final Object externalContext) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        this(name, externalContext, (URI) null);<a name="line.100"></a>
+<span class="sourceLineNo">101</span>    }<a name="line.101"></a>
+<span class="sourceLineNo">102</span><a name="line.102"></a>
+<span class="sourceLineNo">103</span>    /**<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     * Constructor taking a name, external context and a configuration URI.<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     * @param name The context name.<a name="line.105"></a>
+<span class="sourceLineNo">106</span>     * @param externalContext The external context.<a name="line.106"></a>
+<span class="sourceLineNo">107</span>     * @param configLocn The location of the configuration as a URI.<a name="line.107"></a>
+<span class="sourceLineNo">108</span>     */<a name="line.108"></a>
+<span class="sourceLineNo">109</span>    public LoggerContext(final String name, final Object externalContext, final URI configLocn) {<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        this.name = name;<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        this.externalContext = externalContext;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        this.configLocation = configLocn;<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    }<a name="line.113"></a>
+<span class="sourceLineNo">114</span><a name="line.114"></a>
+<span class="sourceLineNo">115</span>    /**<a name="line.115"></a>
+<span class="sourceLineNo">116</span>     * Constructor taking a name external context and a configuration location<a name="line.116"></a>
+<span class="sourceLineNo">117</span>     * String. The location must be resolvable to a File.<a name="line.117"></a>
+<span class="sourceLineNo">118</span>     *<a name="line.118"></a>
+<span class="sourceLineNo">119</span>     * @param name The configuration location.<a name="line.119"></a>
+<span class="sourceLineNo">120</span>     * @param externalContext The external context.<a name="line.120"></a>
+<span class="sourceLineNo">121</span>     * @param configLocn The configuration location.<a name="line.121"></a>
+<span class="sourceLineNo">122</span>     */<a name="line.122"></a>
+<span class="sourceLineNo">123</span>    public LoggerContext(final String name, final Object externalContext, final String configLocn) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        this.name = name;<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        this.externalContext = externalContext;<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        if (configLocn != null) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>            URI uri;<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            try {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                uri = new File(configLocn).toURI();<a name="line.129"></a>
+<span class="sourceLineNo">130</span>            } catch (final Exception ex) {<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                uri = null;<a name="line.131"></a>
+<span class="sourceLineNo">132</span>            }<a name="line.132"></a>
+<span class="sourceLineNo">133</span>            configLocation = uri;<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        } else {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>            configLocation = null;<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        }<a name="line.136"></a>
+<span class="sourceLineNo">137</span>    }<a name="line.137"></a>
+<span class="sourceLineNo">138</span><a name="line.138"></a>
+<span class="sourceLineNo">139</span>    @Override<a name="line.139"></a>
+<span class="sourceLineNo">140</span>    public void start() {<a name="line.140"></a>
+<span class="sourceLineNo">141</span>        LOGGER.debug("Starting LoggerContext[name={}, {}]...", getName(), this);<a name="line.141"></a>
+<span class="sourceLineNo">142</span>        if (configLock.tryLock()) {<a name="line.142"></a>
+<span class="sourceLineNo">143</span>            try {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                if (this.isInitialized() || this.isStopped()) {<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                    this.setStarting();<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                    reconfigure();<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                    setUpShutdownHook();<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                    this.setStarted();<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                }<a name="line.149"></a>
+<span class="sourceLineNo">150</span>            } finally {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                configLock.unlock();<a name="line.151"></a>
+<span class="sourceLineNo">152</span>            }<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        }<a name="line.153"></a>
+<span class="sourceLineNo">154</span>        LOGGER.debug("LoggerContext[name={}, {}] started OK.", getName(), this);<a name="line.154"></a>
+<span class="sourceLineNo">155</span>    }<a name="line.155"></a>
+<span class="sourceLineNo">156</span><a name="line.156"></a>
+<span class="sourceLineNo">157</span>    /**<a name="line.157"></a>
+<span class="sourceLineNo">158</span>     * Start with a specific configuration.<a name="line.158"></a>
+<span class="sourceLineNo">159</span>     * @param config The new Configuration.<a name="line.159"></a>
+<span class="sourceLineNo">160</span>     */<a name="line.160"></a>
+<span class="sourceLineNo">161</span>    public void start(final Configuration config) {<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        LOGGER.debug("Starting LoggerContext[name={}, {}] with configuration {}...", getName(), this, config);<a name="line.162"></a>
+<span class="sourceLineNo">163</span>        if (configLock.tryLock()) {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>            try {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                if (this.isInitialized() || this.isStopped()) {<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                    setUpShutdownHook();<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                    this.setStarted();<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>            } finally {<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                configLock.unlock();<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            }<a name="line.171"></a>
+<span class="sourceLineNo">172</span>        }<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        setConfiguration(config);<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        LOGGER.debug("LoggerContext[name={}, {}] started OK with configuration {}.", getName(), this, config);<a name="line.174"></a>
+<span class="sourceLineNo">175</span>    }<a name="line.175"></a>
+<span class="sourceLineNo">176</span><a name="line.176"></a>
+<span class="sourceLineNo">177</span>    private void setUpShutdownHook() {<a name="line.177"></a>
+<span class="sourceLineNo">178</span>        if (config.isShutdownHookEnabled() &amp;&amp; SHUTDOWN_HOOK_ENABLED) {<a name="line.178"></a>
+<span class="sourceLineNo">179</span>            LOGGER.debug(SHUTDOWN_HOOK, "Shutdown hook enabled. Registering a new one.");<a name="line.179"></a>
+<span class="sourceLineNo">180</span>            shutdownThread = new SoftReference&lt;Thread&gt;(<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                    new Thread(new ShutdownThread(this), "log4j-shutdown")<a name="line.181"></a>
+<span class="sourceLineNo">182</span>            );<a name="line.182"></a>
+<span class="sourceLineNo">183</span>            addShutdownHook();<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        }<a name="line.184"></a>
+<span class="sourceLineNo">185</span>    }<a name="line.185"></a>
+<span class="sourceLineNo">186</span><a name="line.186"></a>
+<span class="sourceLineNo">187</span>    private void addShutdownHook() {<a name="line.187"></a>
+<span class="sourceLineNo">188</span>        final Thread hook = getShutdownThread();<a name="line.188"></a>
+<span class="sourceLineNo">189</span>        if (hook != null) {<a name="line.189"></a>
+<span class="sourceLineNo">190</span>            try {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                Runtime.getRuntime().addShutdownHook(hook);<a name="line.191"></a>
+<span class="sourceLineNo">192</span>            } catch (final IllegalStateException ise) {<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                LOGGER.warn(SHUTDOWN_HOOK, "Unable to register shutdown hook due to JVM state");<a name="line.193"></a>
+<span class="sourceLineNo">194</span>            } catch (final SecurityException se) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                LOGGER.warn(SHUTDOWN_HOOK, "Unable to register shutdown hook due to security restrictions");<a name="line.195"></a>
+<span class="sourceLineNo">196</span>            }<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        }<a name="line.197"></a>
+<span class="sourceLineNo">198</span>    }<a name="line.198"></a>
+<span class="sourceLineNo">199</span><a name="line.199"></a>
+<span class="sourceLineNo">200</span>    private Thread getShutdownThread() {<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        return shutdownThread == null ? null : shutdownThread.get();<a name="line.201"></a>
+<span class="sourceLineNo">202</span>    }<a name="line.202"></a>
+<span class="sourceLineNo">203</span><a name="line.203"></a>
+<span class="sourceLineNo">204</span>    @Override<a name="line.204"></a>
+<span class="sourceLineNo">205</span>    public void stop() {<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        LOGGER.debug("Stopping LoggerContext[name={}, {}]...", getName(), this);<a name="line.206"></a>
+<span class="sourceLineNo">207</span>        configLock.lock();<a name="line.207"></a>
+<span class="sourceLineNo">208</span>        try {<a name="line.208"></a>
+<span class="sourceLineNo">209</span>            if (this.isStopped()) {<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                return;<a name="line.210"></a>
+<span class="sourceLineNo">211</span>            }<a name="line.211"></a>
+<span class="sourceLineNo">212</span>            this.setStopping();<a name="line.212"></a>
+<span class="sourceLineNo">213</span>            tearDownShutdownHook();<a name="line.213"></a>
+<span class="sourceLineNo">214</span>            final Configuration prev = config;<a name="line.214"></a>
+<span class="sourceLineNo">215</span>            config = NULL_CONFIGURATION;<a name="line.215"></a>
+<span class="sourceLineNo">216</span>            updateLoggers();<a name="line.216"></a>
+<span class="sourceLineNo">217</span>            prev.stop();<a name="line.217"></a>
+<span class="sourceLineNo">218</span>            externalContext = null;<a name="line.218"></a>
+<span class="sourceLineNo">219</span>            LogManager.getFactory().removeContext(this);<a name="line.219"></a>
+<span class="sourceLineNo">220</span>            this.setStopped();<a name="line.220"></a>
+<span class="sourceLineNo">221</span>        } finally {<a name="line.221"></a>
+<span class="sourceLineNo">222</span>            configLock.unlock();<a name="line.222"></a>
+<span class="sourceLineNo">223</span><a name="line.223"></a>
+<span class="sourceLineNo">224</span>            // in finally: unregister MBeans even if an exception occurred while stopping<a name="line.224"></a>
+<span class="sourceLineNo">225</span>            Server.unregisterLoggerContext(getName()); // LOG4J2-406, LOG4J2-500<a name="line.225"></a>
+<span class="sourceLineNo">226</span>        }<a name="line.226"></a>
+<span class="sourceLineNo">227</span>        LOGGER.debug("Stopped LoggerContext[name={}, {}]...", getName(), this);<a name="line.227"></a>
+<span class="sourceLineNo">228</span>    }<a name="line.228"></a>
+<span class="sourceLineNo">229</span><a name="line.229"></a>
+<span class="sourceLineNo">230</span>    private void tearDownShutdownHook() {<a name="line.230"></a>
+<span class="sourceLineNo">231</span>        if (shutdownThread != null) {<a name="line.231"></a>
+<span class="sourceLineNo">232</span>            LOGGER.debug(SHUTDOWN_HOOK, "Enqueue shutdown hook for garbage collection.");<a name="line.232"></a>
+<span class="sourceLineNo">233</span>            shutdownThread.enqueue();<a name="line.233"></a>
+<span class="sourceLineNo">234</span>        }<a name="line.234"></a>
+<span class="sourceLineNo">235</span>    }<a name="line.235"></a>
+<span class="sourceLineNo">236</span><a name="line.236"></a>
+<span class="sourceLineNo">237</span>    /**<a name="line.237"></a>
+<span class="sourceLineNo">238</span>     * Gets the name.<a name="line.238"></a>
+<span class="sourceLineNo">239</span>     *<a name="line.239"></a>
+<span class="sourceLineNo">240</span>     * @return the name.<a name="line.240"></a>
+<span class="sourceLineNo">241</span>     */<a name="line.241"></a>
+<span class="sourceLineNo">242</span>    public String getName() {<a name="line.242"></a>
+<span class="sourceLineNo">243</span>        return name;<a name="line.243"></a>
+<span class="sourceLineNo">244</span>    }<a name="line.244"></a>
+<span class="sourceLineNo">245</span><a name="line.245"></a>
+<span class="sourceLineNo">246</span>    /**<a name="line.246"></a>
+<span class="sourceLineNo">247</span>     * Set the external context.<a name="line.247"></a>
+<span class="sourceLineNo">248</span>     * @param context The external context.<a name="line.248"></a>
+<span class="sourceLineNo">249</span>     */<a name="line.249"></a>
+<span class="sourceLineNo">250</span>    public void setExternalContext(final Object context) {<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        this.externalContext = context;<a name="line.251"></a>
+<span class="sourceLineNo">252</span>    }<a name="line.252"></a>
+<span class="sourceLineNo">253</span><a name="line.253"></a>
+<span class="sourceLineNo">254</span>    /**<a name="line.254"></a>
+<span class="sourceLineNo">255</span>     * Returns the external context.<a name="line.255"></a>
+<span class="sourceLineNo">256</span>     * @return The external context.<a name="line.256"></a>
+<span class="sourceLineNo">257</span>     */<a name="line.257"></a>
+<span class="sourceLineNo">258</span>    @Override<a name="line.258"></a>
+<span class="sourceLineNo">259</span>    public Object getExternalContext() {<a name="line.259"></a>
+<span class="sourceLineNo">260</span>        return this.externalContext;<a name="line.260"></a>
+<span class="sourceLineNo">261</span>    }<a name="line.261"></a>
+<span class="sourceLineNo">262</span><a name="line.262"></a>
+<span class="sourceLineNo">263</span>    /**<a name="line.263"></a>
+<span class="sourceLineNo">264</span>     * Obtain a Logger from the Context.<a name="line.264"></a>
+<span class="sourceLineNo">265</span>     * @param name The name of the Logger to return.<a name="line.265"></a>
+<span class="sourceLineNo">266</span>     * @return The Logger.<a name="line.266"></a>
+<span class="sourceLineNo">267</span>     */<a name="line.267"></a>
+<span class="sourceLineNo">268</span>    @Override<a name="line.268"></a>
+<span class="sourceLineNo">269</span>    public Logger getLogger(final String name) {<a name="line.269"></a>
+<span class="sourceLineNo">270</span>        return getLogger(name, null);<a name="line.270"></a>
+<span class="sourceLineNo">271</span>    }<a name="line.271"></a>
+<span class="sourceLineNo">272</span><a name="line.272"></a>
+<span class="sourceLineNo">273</span>    /**<a name="line.273"></a>
+<span class="sourceLineNo">274</span>     * Gets a collection of the current loggers.<a name="line.274"></a>
+<span class="sourceLineNo">275</span>     * &lt;p&gt;<a name="line.275"></a>
+<span class="sourceLineNo">276</span>     * Whether this collection is a copy of the underlying collection or not is undefined. Therefore, modify this collection at your own<a name="line.276"></a>
+<span class="sourceLineNo">277</span>     * risk.<a name="line.277"></a>
+<span class="sourceLineNo">278</span>     * &lt;/p&gt;<a name="line.278"></a>
+<span class="sourceLineNo">279</span>     *<a name="line.279"></a>
+<span class="sourceLineNo">280</span>     * @return a collection of the current loggers.<a name="line.280"></a>
+<span class="sourceLineNo">281</span>     */<a name="line.281"></a>
+<span class="sourceLineNo">282</span>    public Collection&lt;Logger&gt; getLoggers() {<a name="line.282"></a>
+<span class="sourceLineNo">283</span>        return loggers.values();<a name="line.283"></a>
+<span class="sourceLineNo">284</span>    }<a name="line.284"></a>
+<span class="sourceLineNo">285</span><a name="line.285"></a>
+<span class="sourceLineNo">286</span>    /**<a name="line.286"></a>
+<span class="sourceLineNo">287</span>     * Obtain a Logger from the Context.<a name="line.287"></a>
+<span class="sourceLineNo">288</span>     * @param name The name of the Logger to return.<a name="line.288"></a>
+<span class="sourceLineNo">289</span>     * @param messageFactory The message factory is used only when creating a<a name="line.289"></a>
+<span class="sourceLineNo">290</span>     *            logger, subsequent use does not change the logger but will log<a name="line.290"></a>
+<span class="sourceLineNo">291</span>     *            a warning if mismatched.<a name="line.291"></a>
+<span class="sourceLineNo">292</span>     * @return The Logger.<a name="line.292"></a>
+<span class="sourceLineNo">293</span>     */<a name="line.293"></a>
+<span class="sourceLineNo">294</span>    @Override<a name="line.294"></a>
+<span class="sourceLineNo">295</span>    public Logger getLogger(final String name, final MessageFactory messageFactory) {<a name="line.295"></a>
+<span class="sourceLineNo">296</span>        Logger logger = loggers.get(name);<a name="line.296"></a>
+<span class="sourceLineNo">297</span>        if (logger != null) {<a name="line.297"></a>
+<span class="sourceLineNo">298</span>            AbstractLogger.checkMessageFactory(logger, messageFactory);<a name="line.298"></a>
+<span class="sourceLineNo">299</span>            return logger;<a name="line.299"></a>
+<span class="sourceLineNo">300</span>        }<a name="line.300"></a>
+<span class="sourceLineNo">301</span><a name="line.301"></a>
+<span class="sourceLineNo">302</span>        logger = newInstance(this, name, messageFactory);<a name="line.302"></a>
+<span class="sourceLineNo">303</span>        final Logger prev = loggers.putIfAbsent(name, logger);<a name="line.303"></a>
+<span class="sourceLineNo">304</span>        return prev == null ? logger : prev;<a name="line.304"></a>
+<span class="sourceLineNo">305</span>    }<a name="line.305"></a>
+<span class="sourceLineNo">306</span><a name="line.306"></a>
+<span class="sourceLineNo">307</span>    /**<a name="line.307"></a>
+<span class="sourceLineNo">308</span>     * Determine if the specified Logger exists.<a name="line.308"></a>
+<span class="sourceLineNo">309</span>     * @param name The Logger name to search for.<a name="line.309"></a>
+<span class="sourceLineNo">310</span>     * @return True if the Logger exists, false otherwise.<a name="line.310"></a>
+<span class="sourceLineNo">311</span>     */<a name="line.311"></a>
+<span class="sourceLineNo">312</span>    @Override<a name="line.312"></a>
+<span class="sourceLineNo">313</span>    public boolean hasLogger(final String name) {<a name="line.313"></a>
+<span class="sourceLineNo">314</span>        return loggers.containsKey(name);<a name="line.314"></a>
+<span class="sourceLineNo">315</span>    }<a name="line.315"></a>
+<span class="sourceLineNo">316</span><a name="line.316"></a>
+<span class="sourceLineNo">317</span>    /**<a name="line.317"></a>
+<span class="sourceLineNo">318</span>     * Returns the current Configuration. The Configuration will be replaced<a name="line.318"></a>
+<span class="sourceLineNo">319</span>     * when a reconfigure occurs.<a name="line.319"></a>
+<span class="sourceLineNo">320</span>     *<a name="line.320"></a>
+<span class="sourceLineNo">321</span>     * @return The Configuration.<a name="line.321"></a>
+<span class="sourceLineNo">322</span>     */<a name="line.322"></a>
+<span class="sourceLineNo">323</span>    public Configuration getConfiguration() {<a name="line.323"></a>
+<span class="sourceLineNo">324</span>        return config;<a name="line.324"></a>
+<span class="sourceLineNo">325</span>    }<a name="line.325"></a>
+<span class="sourceLineNo">326</span><a name="line.326"></a>
+<span class="sourceLineNo">327</span>    /**<a name="line.327"></a>
+<span class="sourceLineNo">328</span>     * Add a Filter to the Configuration. Filters that are added through the API will be lost<a name="line.328"></a>
+<span class="sourceLineNo">329</span>     * when a reconfigure occurs.<a name="line.329"></a>
+<span class="sourceLineNo">330</span>     * @param filter The Filter to add.<a name="line.330"></a>
+<span class="sourceLineNo">331</span>     */<a name="line.331"></a>
+<span class="sourceLineNo">332</span>    public void addFilter(final Filter filter) {<a name="line.332"></a>
+<span class="sourceLineNo">333</span>        config.addFilter(filter);<a name="line.333"></a>
+<span class="sourceLineNo">334</span>    }<a name="line.334"></a>
+<span class="sourceLineNo">335</span><a name="line.335"></a>
+<span class="sourceLineNo">336</span>    /**<a name="line.336"></a>
+<span class="sourceLineNo">337</span>     * Removes a Filter from the current Configuration.<a name="line.337"></a>
+<span class="sourceLineNo">338</span>     * @param filter The Filter to remove.<a name="line.338"></a>
+<span class="sourceLineNo">339</span>     */<a name="line.339"></a>
+<span class="sourceLineNo">340</span>    public void removeFilter(final Filter filter) {<a name="line.340"></a>
+<span class="sourceLineNo">341</span>        config.removeFilter(filter);<a name="line.341"></a>
+<span class="sourceLineNo">342</span>    }<a name="line.342"></a>
+<span class="sourceLineNo">343</span><a name="line.343"></a>
+<span class="sourceLineNo">344</span>    /**<a name="line.344"></a>
+<span class="sourceLineNo">345</span>     * Set the Configuration to be used.<a name="line.345"></a>
+<span class="sourceLineNo">346</span>     * @param config The new Configuration.<a name="line.346"></a>
+<span class="sourceLineNo">347</span>     * @return The previous Configuration.<a name="line.347"></a>
+<span class="sourceLineNo">348</span>     */<a name="line.348"></a>
+<span class="sourceLineNo">349</span>    private synchronized Configuration setConfiguration(final Configuration config) {<a name="line.349"></a>
+<span class="sourceLineNo">350</span>        if (config == null) {<a name="line.350"></a>
+<span class="sourceLineNo">351</span>            throw new NullPointerException("No Configuration was provided");<a name="line.351"></a>
+<span class="sourceLineNo">352</span>        }<a name="line.352"></a>
+<span class="sourceLineNo">353</span>        final Configuration prev = this.config;<a name="line.353"></a>
+<span class="sourceLineNo">354</span>        config.addListener(this);<a name="line.354"></a>
+<span class="sourceLineNo">355</span>        final ConcurrentMap&lt;String, String&gt; map = config.getComponent(Configuration.CONTEXT_PROPERTIES);<a name="line.355"></a>
+<span class="sourceLineNo">356</span>        <a name="line.356"></a>
+<span class="sourceLineNo">357</span>        try { // LOG4J2-719 network access may throw android.os.NetworkOnMainThreadException<a name="line.357"></a>
+<span class="sourceLineNo">358</span>            map.putIfAbsent("hostName", NetUtils.getLocalHostname());<a name="line.358"></a>
+<span class="sourceLineNo">359</span>        } catch (final Exception ex) {<a name="line.359"></a>
+<span class="sourceLineNo">360</span>            LOGGER.debug("Ignoring {}, setting hostName to 'unknown'", ex.toString());<a name="line.360"></a>
+<span class="sourceLineNo">361</span>            map.putIfAbsent("hostName", "unknown");<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        }<a name="line.362"></a>
+<span class="sourceLineNo">363</span>        map.putIfAbsent("contextName", name);<a name="line.363"></a>
+<span class="sourceLineNo">364</span>        config.start();<a name="line.364"></a>
+<span class="sourceLineNo">365</span>        this.config = config;<a name="line.365"></a>
+<span class="sourceLineNo">366</span>        updateLoggers();<a name="line.366"></a>
+<span class="sourceLineNo">367</span>        if (prev != null) {<a name="line.367"></a>
+<span class="sourceLineNo">368</span>            prev.removeListener(this);<a name="line.368"></a>
+<span class="sourceLineNo">369</span>            prev.stop();<a name="line.369"></a>
+<span class="sourceLineNo">370</span>        }<a name="line.370"></a>
+<span class="sourceLineNo">371</span><a name="line.371"></a>
+<span class="sourceLineNo">372</span>        firePropertyChangeEvent(new PropertyChangeEvent(this, PROPERTY_CONFIG, prev, config));<a name="line.372"></a>
+<span class="sourceLineNo">373</span><a name="line.373"></a>
+<span class="sourceLineNo">374</span>        try {<a name="line.374"></a>
+<span class="sourceLineNo">375</span>            Server.reregisterMBeansAfterReconfigure();<a name="line.375"></a>
+<span class="sourceLineNo">376</span>        } catch (final Throwable t) { // LOG4J2-716: Android has no java.lang.management<a name="line.376"></a>
+<span class="sourceLineNo">377</span>            LOGGER.error("Could not reconfigure JMX", t);<a name="line.377"></a>
+<span class="sourceLineNo">378</span>        }<a name="line.378"></a>
+<span class="sourceLineNo">379</span>        return prev;<a name="line.379"></a>
+<span class="sourceLineNo">380</span>    }<a name="line.380"></a>
+<span class="sourceLineNo">381</span><a name="line.381"></a>
+<span class="sourceLineNo">382</span>    private void firePropertyChangeEvent(final PropertyChangeEvent event) {<a name="line.382"></a>
+<span class="sourceLineNo">383</span>        for (final PropertyChangeListener listener : propertyChangeListeners) {<a name="line.383"></a>
+<span class="sourceLineNo">384</span>            listener.propertyChange(event);<a name="line.384"></a>
+<span class="sourceLineNo">385</span>        }<a name="line.385"></a>
+<span class="sourceLineNo">386</span>    }<a name="line.386"></a>
+<span class="sourceLineNo">387</span><a name="line.387"></a>
+<span class="sourceLineNo">388</span>    public void addPropertyChangeListener(final PropertyChangeListener listener) {<a name="line.388"></a>
+<span class="sourceLineNo">389</span>        propertyChangeListeners.add(Assert.requireNonNull(listener, "listener"));<a name="line.389"></a>
+<span class="sourceLineNo">390</span>    }<a name="line.390"></a>
+<span class="sourceLineNo">391</span><a name="line.391"></a>
+<span class="sourceLineNo">392</span>    public void removePropertyChangeListener(final PropertyChangeListener listener) {<a name="line.392"></a>
+<span class="sourceLineNo">393</span>        propertyChangeListeners.remove(listener);<a name="line.393"></a>
+<span class="sourceLineNo">394</span>    }<a name="line.394"></a>
+<span class="sourceLineNo">395</span><a name="line.395"></a>
+<span class="sourceLineNo">396</span>    /**<a name="line.396"></a>
+<span class="sourceLineNo">397</span>     * Returns the initial configuration location or {@code null}. The returned value may not be the location of the<a name="line.397"></a>
+<span class="sourceLineNo">398</span>     * current configuration. Use <a name="line.398"></a>
+<span class="sourceLineNo">399</span>     * {@link #getConfiguration()}.{@link Configuration#getConfigurationSource() getConfigurationSource()}.{@link <a name="line.399"></a>
+<span class="sourceLineNo">400</span>     * ConfigurationSource#getLocation() getLocation()} to get the actual source of the current configuration.<a name="line.400"></a>
+<span class="sourceLineNo">401</span>     * @return the initial configuration location or {@code null}<a name="line.401"></a>
+<span class="sourceLineNo">402</span>     */<a name="line.402"></a>
+<span class="sourceLineNo">403</span>    public synchronized URI getConfigLocation() {<a name="line.403"></a>
+<span class="sourceLineNo">404</span>        return configLocation;<a name="line.404"></a>
+<span class="sourceLineNo">405</span>    }<a name="line.405"></a>
+<span class="sourceLineNo">406</span><a name="line.406"></a>
+<span class="sourceLineNo">407</span>    /**<a name="line.407"></a>
+<span class="sourceLineNo">408</span>     * Sets the configLocation to the specified value and reconfigures this context.<a name="line.408"></a>
+<span class="sourceLineNo">409</span>     * @param configLocation the location of the new configuration<a name="line.409"></a>
+<span class="sourceLineNo">410</span>     */<a name="line.410"></a>
+<span class="sourceLineNo">411</span>    public synchronized void setConfigLocation(final URI configLocation) {<a name="line.411"></a>
+<span class="sourceLineNo">412</span>        this.configLocation = configLocation;<a name="line.412"></a>
+<span class="sourceLineNo">413</span>        reconfigure();<a name="line.413"></a>
+<span class="sourceLineNo">414</span>    }<a name="line.414"></a>
+<span class="sourceLineNo">415</span><a name="line.415"></a>
+<span class="sourceLineNo">416</span>    /**<a name="line.416"></a>
+<span class="sourceLineNo">417</span>     * Reconfigure the context.<a name="line.417"></a>
+<span class="sourceLineNo">418</span>     */<a name="line.418"></a>
+<span class="sourceLineNo">419</span>    public synchronized void reconfigure() {<a name="line.419"></a>
+<span class="sourceLineNo">420</span>        LOGGER.debug("Reconfiguration started for context[name={}] at {} ({})", name, configLocation, this);<a name="line.420"></a>
+<span class="sourceLineNo">421</span>        final Configuration instance = ConfigurationFactory.getInstance().getConfiguration(name, configLocation);<a name="line.421"></a>
+<span class="sourceLineNo">422</span>        setConfiguration(instance);<a name="line.422"></a>
+<span class="sourceLineNo">423</span>        /*<a name="line.423"></a>
+<span class="sourceLineNo">424</span>         * instance.start(); Configuration old = setConfiguration(instance);<a name="line.424"></a>
+<span class="sourceLineNo">425</span>         * updateLoggers(); if (old != null) { old.stop(); }<a name="line.425"></a>
+<span class="sourceLineNo">426</span>         */<a name="line.426"></a>
+<span class="sourceLineNo">427</span><a name="line.427"></a>
+<span class="sourceLineNo">428</span>        LOGGER.debug("Reconfiguration complete for context[name={}] at {} ({})", name, configLocation, this);<a name="line.428"></a>
+<span class="sourceLineNo">429</span>    }<a name="line.429"></a>
+<span class="sourceLineNo">430</span><a name="line.430"></a>
+<span class="sourceLineNo">431</span>    /**<a name="line.431"></a>
+<span class="sourceLineNo">432</span>     * Cause all Loggers to be updated against the current Configuration.<a name="line.432"></a>
+<span class="sourceLineNo">433</span>     */<a name="line.433"></a>
+<span class="sourceLineNo">434</span>    public void updateLoggers() {<a name="line.434"></a>
+<span class="sourceLineNo">435</span>        updateLoggers(this.config);<a name="line.435"></a>
+<span class="sourceLineNo">436</span>    }<a name="line.436"></a>
+<span class="sourceLineNo">437</span><a name="line.437"></a>
+<span class="sourceLineNo">438</span>    /**<a name="line.438"></a>
+<span class="sourceLineNo">439</span>     * Cause all Logger to be updated against the specified Configuration.<a name="line.439"></a>
+<span class="sourceLineNo">440</span>     * @param config The Configuration.<a name="line.440"></a>
+<span class="sourceLineNo">441</span>     */<a name="line.441"></a>
+<span class="sourceLineNo">442</span>    public void updateLoggers(final Configuration config) {<a name="line.442"></a>
+<span class="sourceLineNo">443</span>        for (final Logger logger : loggers.values()) {<a name="line.443"></a>
+<span class="sourceLineNo">444</span>            logger.updateConfiguration(config);<a name="line.444"></a>
+<span class="sourceLineNo">445</span>        }<a name="line.445"></a>
+<span class="sourceLineNo">446</span>    }<a name="line.446"></a>
+<span class="sourceLineNo">447</span><a name="line.447"></a>
+<span class="sourceLineNo">448</span>    /**<a name="line.448"></a>
+<span class="sourceLineNo">449</span>     * Cause a reconfiguration to take place when the underlying configuration<a name="line.449"></a>
+<span class="sourceLineNo">450</span>     * file changes.<a name="line.450"></a>
+<span class="sourceLineNo">451</span>     *<a name="line.451"></a>
+<span class="sourceLineNo">452</span>     * @param reconfigurable The Configuration that can be reconfigured.<a name="line.452"></a>
+<span class="sourceLineNo">453</span>     */<a name="line.453"></a>
+<span class="sourceLineNo">454</span>    @Override<a name="line.454"></a>
+<span class="sourceLineNo">455</span>    public synchronized void onChange(final Reconfigurable reconfigurable) {<a name="line.455"></a>
+<span class="sourceLineNo">456</span>        LOGGER.debug("Reconfiguration started for context {} ({})", name, this);<a name="line.456"></a>
+<span class="sourceLineNo">457</span>        final Configuration config = reconfigurable.reconfigure();<a name="line.457"></a>
+<span class="sourceLineNo">458</span>        if (config != null) {<a name="line.458"></a>
+<span class="sourceLineNo">459</span>            setConfiguration(config);<a name="line.459"></a>
+<span class="sourceLineNo">460</span>            LOGGER.debug("Reconfiguration completed for {} ({})", name, this);<a name="line.460"></a>
+<span class="sourceLineNo">461</span>        } else {<a name="line.461"></a>
+<span class="sourceLineNo">462</span>            LOGGER.debug("Reconfiguration failed for {} ({})", name, this);<a name="line.462"></a>
+<span class="sourceLineNo">463</span>        }<a name="line.463"></a>
+<span class="sourceLineNo">464</span>    }<a name="line.464"></a>
+<span class="sourceLineNo">465</span><a name="line.465"></a>
+<span class="sourceLineNo">466</span>    // LOG4J2-151: changed visibility from private to protected<a name="line.466"></a>
+<span class="sourceLineNo">467</span>    protected Logger newInstance(final LoggerContext ctx, final String name, final MessageFactory messageFactory) {<a name="line.467"></a>
+<span class="sourceLineNo">468</span>        return new Logger(ctx, name, messageFactory);<a name="line.468"></a>
+<span class="sourceLineNo">469</span>    }<a name="line.469"></a>
+<span class="sourceLineNo">470</span><a name="line.470"></a>
+<span class="sourceLineNo">471</span>    private static class ShutdownThread implements Runnable {<a name="line.471"></a>
+<span class="sourceLineNo">472</span><a name="line.472"></a>
+<span class="sourceLineNo">473</span>        private final LoggerContext context;<a name="line.473"></a>
+<span class="sourceLineNo">474</span><a name="line.474"></a>
+<span class="sourceLineNo">475</span>        public ShutdownThread(final LoggerContext context) {<a name="line.475"></a>
+<span class="sourceLineNo">476</span>            this.context = context;<a name="line.476"></a>
+<span class="sourceLineNo">477</span>        }<a name="line.477"></a>
+<span class="sourceLineNo">478</span><a name="line.478"></a>
+<span class="sourceLineNo">479</span>        @Override<a name="line.479"></a>
+<span class="sourceLineNo">480</span>        public void run() {<a name="line.480"></a>
+<span class="sourceLineNo">481</span>            LOGGER.debug("ShutdownThread stopping LoggerContext[name={}, {}]...", context.getName(), context);<a name="line.481"></a>
+<span class="sourceLineNo">482</span>            context.stop();<a name="line.482"></a>
+<span class="sourceLineNo">483</span>            LOGGER.debug("ShutdownThread stopped LoggerContext[name={}, {}].", context.getName(), context);<a name="line.483"></a>
+<span class="sourceLineNo">484</span>        }<a name="line.484"></a>
+<span class="sourceLineNo">485</span>    }<a name="line.485"></a>
+<span class="sourceLineNo">486</span><a name="line.486"></a>
+<span class="sourceLineNo">487</span>}<a name="line.487"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
