@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log4j 2 benchmark results</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #results th, #results td {
+            border: 1px solid #cfcfcf;
+        }
+        #results th {
+            text-align: center;
+        }
+        #results td.benchmark, #results td.os {
+            text-align: left;
+        }
+        #results td {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<p>
+    <a href="https://github.com/apache/logging-log4j2">Log4j 2</a> is a feature-rich, customizable, and efficient logging API and framework for Java.
+</p>
+<p>
+    This page contains links to the CI-generated benchmark results of the framework.
+</p>
+
+<script>
+
+    $(document).ready(function () {
+
+        // It is 2021, I still need to implement a loadJson() utility method in JavaScript.
+        function loadJson(url, success) {
+            $.ajax({
+                url: url,
+                type: "GET",
+                dataType: "json",
+                error: function () {
+                    console.log("failed loading JSON from URL `" + url + "`")
+                },
+                success: function (data) {
+                    success(data);
+                }
+            });
+        }
+
+        function collectUrlsByConcurrencyByJdkByOsByBenchmark(callback) {
+            loadJson("index.json", function(filepaths) {
+
+                // Collect all the result URLs and group them by concurrency, JDK, OS, and benchmark.
+                const urlsByConcurrencyByJdkByOsByBenchmark = {};
+                for (const filepath of filepaths) {
+                    filepath.replace(
+                        /^.*\/([^\/]+)-O(.+)-J([0-9]+)-C([0-9]+).json$/,
+                        function (ignored, benchmark, os, jdk, concurrency) {
+
+                            // Get benchmark-specific result URLs.
+                            let urlsByConcurrencyByJdkByOs;
+                            if (benchmark in urlsByConcurrencyByJdkByOsByBenchmark) {
+                                urlsByConcurrencyByJdkByOs = urlsByConcurrencyByJdkByOsByBenchmark[benchmark];
+                            } else {
+                                urlsByConcurrencyByJdkByOs = urlsByConcurrencyByJdkByOsByBenchmark[benchmark] = {};
+                            }
+
+                            // Get OS-specific result URLs.
+                            let urlsByConcurrencyByJdk;
+                            if (os in urlsByConcurrencyByJdkByOs) {
+                                urlsByConcurrencyByJdk = urlsByConcurrencyByJdkByOs[os];
+                            } else {
+                                urlsByConcurrencyByJdk = urlsByConcurrencyByJdkByOs[os] = {};
+                            }
+
+                            // Get JDK-specific result URLs.
+                            let urlsByConcurrency;
+                            if (jdk in urlsByConcurrencyByJdk) {
+                                urlsByConcurrency = urlsByConcurrencyByJdk[jdk];
+                            } else {
+                                urlsByConcurrency = urlsByConcurrencyByJdk[jdk] = {};
+                            }
+
+                            // Get concurrency-specific result URLs.
+                            let urls;
+                            if (concurrency in urlsByConcurrency) {
+                                urls = urlsByConcurrency[concurrency];
+                            } else {
+                                urls = urlsByConcurrency[concurrency] = [];
+                            }
+
+                            // Push the result URL.
+                            const url = "https://raw.githubusercontent.com/apache/logging-log4j2/gh-pages/benchmark/results/" + filepath;
+                            urls.push(url);
+
+                        });
+                }
+
+                // Pass the collected result URLs.
+                callback(urlsByConcurrencyByJdkByOsByBenchmark);
+
+            });
+        }
+
+        function sortedKeys(object) {
+            const keys = Object.keys(object);
+            keys.sort();
+            return keys;
+        }
+
+        function numericallySortedStringKeys(object) {
+            const keys = Object.keys(object);
+            keys.sort(function (s1, s2) {
+                const i1 = parseInt(s1);
+                const i2 = parseInt(s2);
+                return i1 === i2
+                    ? 0
+                    : (i1 < i2 ? -1 : 1);
+            });
+            return keys;
+        }
+
+        function displayResults(urlsByConcurrencyByJdkByOsByBenchmark) {
+
+            // Get the results element.
+            const resultsElement = document.getElementById("results-tbody");
+
+            // Iterate benchmarks.
+            const benchmarks = sortedKeys(urlsByConcurrencyByJdkByOsByBenchmark);
+            for (const benchmark of benchmarks) {
+
+                // Iterate OSes.
+                const urlsByConcurrencyByJdkByOs = urlsByConcurrencyByJdkByOsByBenchmark[benchmark];
+                const oses = sortedKeys(urlsByConcurrencyByJdkByOs);
+                for (const os of oses) {
+
+                    // Iterate JDKs.
+                    const urlsByConcurrencyByJdk = urlsByConcurrencyByJdkByOs[os];
+                    const jdks = numericallySortedStringKeys(urlsByConcurrencyByJdk);
+                    for (const jdk of jdks) {
+
+                        // Iterate concurrencies.
+                        const urlsByConcurrency = urlsByConcurrencyByJdk[jdk];
+                        const concurrencies = numericallySortedStringKeys(urlsByConcurrency);
+                        for (const concurrency of concurrencies) {
+
+                            // Create the row.
+                            const rowElement = document.createElement("tr");
+                            resultsElement.appendChild(rowElement);
+
+                            // Create the benchmark cell.
+                            const benchmarkElement = document.createElement("td");
+                            benchmarkElement.textContent = benchmark;
+                            benchmarkElement.className = "benchmark";
+                            rowElement.appendChild(benchmarkElement);
+
+                            // Create the OS cell.
+                            const osElement = document.createElement("td");
+                            osElement.textContent = os;
+                            osElement.className = "os";
+                            rowElement.appendChild(osElement);
+
+                            // Create the JDK cell.
+                            const jdkElement = document.createElement("td");
+                            jdkElement.textContent = jdk;
+                            rowElement.appendChild(jdkElement);
+
+                            // Create the concurrency cell.
+                            const concurrencyElement = document.createElement("td");
+                            concurrencyElement.textContent = concurrency;
+                            rowElement.appendChild(concurrencyElement);
+
+                            // Create the sample count cell.
+                            const sampleCountElement = document.createElement("td");
+                            rowElement.appendChild(sampleCountElement);
+                            const urls = urlsByConcurrency[concurrency];
+                            urls.sort();
+                            const linkElement = document.createElement("a");
+                            linkElement.textContent = urls.length;
+                            linkElement.href = "https://jmh.morethan.io?sources=" + urls.join(",");
+                            sampleCountElement.appendChild(linkElement);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        // Fetch and display the results.
+        collectUrlsByConcurrencyByJdkByOsByBenchmark(displayResults);
+
+    });
+</script>
+
+<table id="results">
+    <thead>
+    <tr>
+        <th>Benchmark</th>
+        <th>OS</th>
+        <th>JDK</th>
+        <th>Concurrency</th>
+        <th>#Samples</th>
+    </tr>
+    </thead>
+    <tbody id="results-tbody"></tbody>
+</table>
+
+</body>
+</html>
