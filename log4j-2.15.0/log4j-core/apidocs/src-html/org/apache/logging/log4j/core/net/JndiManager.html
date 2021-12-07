@@ -1,0 +1,373 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License. You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the license for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the license.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>package org.apache.logging.log4j.core.net;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.net.URI;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.net.URISyntaxException;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.util.ArrayList;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.util.Arrays;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.util.HashMap;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.util.List;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.util.Locale;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.util.Map;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.Properties;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.concurrent.TimeUnit;<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>import javax.naming.Context;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import javax.naming.NamingEnumeration;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import javax.naming.NamingException;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import javax.naming.directory.Attribute;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import javax.naming.directory.Attributes;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import javax.naming.directory.DirContext;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import javax.naming.directory.InitialDirContext;<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.apache.logging.log4j.core.appender.AbstractManager;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.apache.logging.log4j.core.appender.ManagerFactory;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.apache.logging.log4j.core.util.JndiCloser;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.apache.logging.log4j.core.util.NetUtils;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>/**<a name="line.45"></a>
+<span class="sourceLineNo">046</span> * Manages a JNDI {@link javax.naming.directory.DirContext}.<a name="line.46"></a>
+<span class="sourceLineNo">047</span> *<a name="line.47"></a>
+<span class="sourceLineNo">048</span> * @since 2.1<a name="line.48"></a>
+<span class="sourceLineNo">049</span> */<a name="line.49"></a>
+<span class="sourceLineNo">050</span>public class JndiManager extends AbstractManager {<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>    public static final String ALLOWED_HOSTS = "allowedLdapHosts";<a name="line.52"></a>
+<span class="sourceLineNo">053</span>    public static final String ALLOWED_CLASSES = "allowedLdapClasses";<a name="line.53"></a>
+<span class="sourceLineNo">054</span>    public static final String ALLOWED_PROTOCOLS = "allowedJndiProtocols";<a name="line.54"></a>
+<span class="sourceLineNo">055</span><a name="line.55"></a>
+<span class="sourceLineNo">056</span>    private static final JndiManagerFactory FACTORY = new JndiManagerFactory();<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    private static final String PREFIX = "log4j2.";<a name="line.57"></a>
+<span class="sourceLineNo">058</span>    private static final String LDAP = "ldap";<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    private static final String LDAPS = "ldaps";<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    private static final String JAVA = "java";<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    private static final List&lt;String&gt; permanentAllowedHosts = NetUtils.getLocalIps();<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    private static final List&lt;String&gt; permanentAllowedClasses = Arrays.asList(Boolean.class.getName(),<a name="line.62"></a>
+<span class="sourceLineNo">063</span>            Byte.class.getName(), Character.class.getName(), Double.class.getName(), Float.class.getName(),<a name="line.63"></a>
+<span class="sourceLineNo">064</span>            Integer.class.getName(), Long.class.getName(), Short.class.getName(), String.class.getName());<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    private static final List&lt;String&gt; permanentAllowedProtocols = Arrays.asList(JAVA, LDAP, LDAPS);<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    private static final String SERIALIZED_DATA = "javaSerializedData";<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    private static final String CLASS_NAME = "javaClassName";<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    private static final String REFERENCE_ADDRESS = "javaReferenceAddress";<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    private static final String OBJECT_FACTORY = "javaFactory";<a name="line.69"></a>
+<span class="sourceLineNo">070</span>    private final List&lt;String&gt; allowedHosts;<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    private final List&lt;String&gt; allowedClasses;<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    private final List&lt;String&gt; allowedProtocols;<a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>    private final DirContext context;<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>    private JndiManager(final String name, final DirContext context, final List&lt;String&gt; allowedHosts,<a name="line.76"></a>
+<span class="sourceLineNo">077</span>            final List&lt;String&gt; allowedClasses, final List&lt;String&gt; allowedProtocols) {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        super(null, name);<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        this.context = context;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        this.allowedHosts = allowedHosts;<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        this.allowedClasses = allowedClasses;<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        this.allowedProtocols = allowedProtocols;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>    }<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>    /**<a name="line.85"></a>
+<span class="sourceLineNo">086</span>     * Gets the default JndiManager using the default {@link javax.naming.InitialContext}.<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     *<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * @return the default JndiManager<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     */<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    public static JndiManager getDefaultManager() {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        return getManager(JndiManager.class.getName(), FACTORY, null);<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    }<a name="line.92"></a>
+<span class="sourceLineNo">093</span><a name="line.93"></a>
+<span class="sourceLineNo">094</span>    /**<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     * Gets a named JndiManager using the default {@link javax.naming.InitialContext}.<a name="line.95"></a>
+<span class="sourceLineNo">096</span>     *<a name="line.96"></a>
+<span class="sourceLineNo">097</span>     * @param name the name of the JndiManager instance to create or use if available<a name="line.97"></a>
+<span class="sourceLineNo">098</span>     * @return a default JndiManager<a name="line.98"></a>
+<span class="sourceLineNo">099</span>     */<a name="line.99"></a>
+<span class="sourceLineNo">100</span>    public static JndiManager getDefaultManager(final String name) {<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        return getManager(name, FACTORY, null);<a name="line.101"></a>
+<span class="sourceLineNo">102</span>    }<a name="line.102"></a>
+<span class="sourceLineNo">103</span><a name="line.103"></a>
+<span class="sourceLineNo">104</span>    /**<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     * Gets a JndiManager with the provided configuration information.<a name="line.105"></a>
+<span class="sourceLineNo">106</span>     *<a name="line.106"></a>
+<span class="sourceLineNo">107</span>     * @param initialContextFactoryName Fully qualified class name of an implementation of<a name="line.107"></a>
+<span class="sourceLineNo">108</span>     *                                  {@link javax.naming.spi.InitialContextFactory}.<a name="line.108"></a>
+<span class="sourceLineNo">109</span>     * @param providerURL               The provider URL to use for the JNDI connection (specific to the above factory).<a name="line.109"></a>
+<span class="sourceLineNo">110</span>     * @param urlPkgPrefixes            A colon-separated list of package prefixes for the class name of the factory<a name="line.110"></a>
+<span class="sourceLineNo">111</span>     *                                  class that will create a URL context factory<a name="line.111"></a>
+<span class="sourceLineNo">112</span>     * @param securityPrincipal         The name of the identity of the Principal.<a name="line.112"></a>
+<span class="sourceLineNo">113</span>     * @param securityCredentials       The security credentials of the Principal.<a name="line.113"></a>
+<span class="sourceLineNo">114</span>     * @param additionalProperties      Any additional JNDI environment properties to set or {@code null} for none.<a name="line.114"></a>
+<span class="sourceLineNo">115</span>     * @return the JndiManager for the provided parameters.<a name="line.115"></a>
+<span class="sourceLineNo">116</span>     */<a name="line.116"></a>
+<span class="sourceLineNo">117</span>    public static JndiManager getJndiManager(final String initialContextFactoryName,<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            final String providerURL,<a name="line.118"></a>
+<span class="sourceLineNo">119</span>            final String urlPkgPrefixes,<a name="line.119"></a>
+<span class="sourceLineNo">120</span>            final String securityPrincipal,<a name="line.120"></a>
+<span class="sourceLineNo">121</span>            final String securityCredentials,<a name="line.121"></a>
+<span class="sourceLineNo">122</span>            final Properties additionalProperties) {<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        final Properties properties = createProperties(initialContextFactoryName, providerURL, urlPkgPrefixes,<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                securityPrincipal, securityCredentials, additionalProperties);<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        return getManager(createManagerName(), FACTORY, properties);<a name="line.125"></a>
+<span class="sourceLineNo">126</span>    }<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>    /**<a name="line.128"></a>
+<span class="sourceLineNo">129</span>     * Gets a JndiManager with the provided configuration information.<a name="line.129"></a>
+<span class="sourceLineNo">130</span>     *<a name="line.130"></a>
+<span class="sourceLineNo">131</span>     * @param properties JNDI properties, usually created by calling {@link #createProperties(String, String, String, String, String, Properties)}.<a name="line.131"></a>
+<span class="sourceLineNo">132</span>     * @return the JndiManager for the provided parameters.<a name="line.132"></a>
+<span class="sourceLineNo">133</span>     * @see #createProperties(String, String, String, String, String, Properties)<a name="line.133"></a>
+<span class="sourceLineNo">134</span>     * @since 2.9<a name="line.134"></a>
+<span class="sourceLineNo">135</span>     */<a name="line.135"></a>
+<span class="sourceLineNo">136</span>    public static JndiManager getJndiManager(final Properties properties) {<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        return getManager(createManagerName(), FACTORY, properties);<a name="line.137"></a>
+<span class="sourceLineNo">138</span>    }<a name="line.138"></a>
+<span class="sourceLineNo">139</span><a name="line.139"></a>
+<span class="sourceLineNo">140</span>    private static String createManagerName() {<a name="line.140"></a>
+<span class="sourceLineNo">141</span>        return JndiManager.class.getName() + '@' + JndiManager.class.hashCode();<a name="line.141"></a>
+<span class="sourceLineNo">142</span>    }<a name="line.142"></a>
+<span class="sourceLineNo">143</span><a name="line.143"></a>
+<span class="sourceLineNo">144</span>    /**<a name="line.144"></a>
+<span class="sourceLineNo">145</span>     * Creates JNDI Properties with the provided configuration information.<a name="line.145"></a>
+<span class="sourceLineNo">146</span>     *<a name="line.146"></a>
+<span class="sourceLineNo">147</span>     * @param initialContextFactoryName<a name="line.147"></a>
+<span class="sourceLineNo">148</span>     *            Fully qualified class name of an implementation of {@link javax.naming.spi.InitialContextFactory}.<a name="line.148"></a>
+<span class="sourceLineNo">149</span>     * @param providerURL<a name="line.149"></a>
+<span class="sourceLineNo">150</span>     *            The provider URL to use for the JNDI connection (specific to the above factory).<a name="line.150"></a>
+<span class="sourceLineNo">151</span>     * @param urlPkgPrefixes<a name="line.151"></a>
+<span class="sourceLineNo">152</span>     *            A colon-separated list of package prefixes for the class name of the factory class that will create a<a name="line.152"></a>
+<span class="sourceLineNo">153</span>     *            URL context factory<a name="line.153"></a>
+<span class="sourceLineNo">154</span>     * @param securityPrincipal<a name="line.154"></a>
+<span class="sourceLineNo">155</span>     *            The name of the identity of the Principal.<a name="line.155"></a>
+<span class="sourceLineNo">156</span>     * @param securityCredentials<a name="line.156"></a>
+<span class="sourceLineNo">157</span>     *            The security credentials of the Principal.<a name="line.157"></a>
+<span class="sourceLineNo">158</span>     * @param additionalProperties<a name="line.158"></a>
+<span class="sourceLineNo">159</span>     *            Any additional JNDI environment properties to set or {@code null} for none.<a name="line.159"></a>
+<span class="sourceLineNo">160</span>     * @return the Properties for the provided parameters.<a name="line.160"></a>
+<span class="sourceLineNo">161</span>     * @since 2.9<a name="line.161"></a>
+<span class="sourceLineNo">162</span>     */<a name="line.162"></a>
+<span class="sourceLineNo">163</span>    public static Properties createProperties(final String initialContextFactoryName, final String providerURL,<a name="line.163"></a>
+<span class="sourceLineNo">164</span>            final String urlPkgPrefixes, final String securityPrincipal, final String securityCredentials,<a name="line.164"></a>
+<span class="sourceLineNo">165</span>            final Properties additionalProperties) {<a name="line.165"></a>
+<span class="sourceLineNo">166</span>        if (initialContextFactoryName == null) {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>            return null;<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>        final Properties properties = new Properties();<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, initialContextFactoryName);<a name="line.170"></a>
+<span class="sourceLineNo">171</span>        if (providerURL != null) {<a name="line.171"></a>
+<span class="sourceLineNo">172</span>            properties.setProperty(Context.PROVIDER_URL, providerURL);<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        } else {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>            LOGGER.warn("The JNDI InitialContextFactory class name [{}] was provided, but there was no associated "<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                    + "provider URL. This is likely to cause problems.", initialContextFactoryName);<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        }<a name="line.176"></a>
+<span class="sourceLineNo">177</span>        if (urlPkgPrefixes != null) {<a name="line.177"></a>
+<span class="sourceLineNo">178</span>            properties.setProperty(Context.URL_PKG_PREFIXES, urlPkgPrefixes);<a name="line.178"></a>
+<span class="sourceLineNo">179</span>        }<a name="line.179"></a>
+<span class="sourceLineNo">180</span>        if (securityPrincipal != null) {<a name="line.180"></a>
+<span class="sourceLineNo">181</span>            properties.setProperty(Context.SECURITY_PRINCIPAL, securityPrincipal);<a name="line.181"></a>
+<span class="sourceLineNo">182</span>            if (securityCredentials != null) {<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                properties.setProperty(Context.SECURITY_CREDENTIALS, securityCredentials);<a name="line.183"></a>
+<span class="sourceLineNo">184</span>            } else {<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                LOGGER.warn("A security principal [{}] was provided, but with no corresponding security credentials.",<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                        securityPrincipal);<a name="line.186"></a>
+<span class="sourceLineNo">187</span>            }<a name="line.187"></a>
+<span class="sourceLineNo">188</span>        }<a name="line.188"></a>
+<span class="sourceLineNo">189</span>        if (additionalProperties != null) {<a name="line.189"></a>
+<span class="sourceLineNo">190</span>            properties.putAll(additionalProperties);<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        }<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        return properties;<a name="line.192"></a>
+<span class="sourceLineNo">193</span>    }<a name="line.193"></a>
+<span class="sourceLineNo">194</span><a name="line.194"></a>
+<span class="sourceLineNo">195</span>    @Override<a name="line.195"></a>
+<span class="sourceLineNo">196</span>    protected boolean releaseSub(final long timeout, final TimeUnit timeUnit) {<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        return JndiCloser.closeSilently(this.context);<a name="line.197"></a>
+<span class="sourceLineNo">198</span>    }<a name="line.198"></a>
+<span class="sourceLineNo">199</span><a name="line.199"></a>
+<span class="sourceLineNo">200</span>    /**<a name="line.200"></a>
+<span class="sourceLineNo">201</span>     * Looks up a named object through this JNDI context.<a name="line.201"></a>
+<span class="sourceLineNo">202</span>     *<a name="line.202"></a>
+<span class="sourceLineNo">203</span>     * @param name name of the object to look up.<a name="line.203"></a>
+<span class="sourceLineNo">204</span>     * @param &lt;T&gt;  the type of the object.<a name="line.204"></a>
+<span class="sourceLineNo">205</span>     * @return the named object if it could be located.<a name="line.205"></a>
+<span class="sourceLineNo">206</span>     * @throws  NamingException if a naming exception is encountered<a name="line.206"></a>
+<span class="sourceLineNo">207</span>     */<a name="line.207"></a>
+<span class="sourceLineNo">208</span>    @SuppressWarnings("unchecked")<a name="line.208"></a>
+<span class="sourceLineNo">209</span>    public synchronized &lt;T&gt; T lookup(final String name) throws NamingException {<a name="line.209"></a>
+<span class="sourceLineNo">210</span>        try {<a name="line.210"></a>
+<span class="sourceLineNo">211</span>            URI uri = new URI(name);<a name="line.211"></a>
+<span class="sourceLineNo">212</span>            if (uri.getScheme() != null) {<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                if (!allowedProtocols.contains(uri.getScheme().toLowerCase(Locale.ROOT))) {<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                    LOGGER.warn("Log4j JNDI does not allow protocol {}", uri.getScheme());<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                    return null;<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                }<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                if (LDAP.equalsIgnoreCase(uri.getScheme()) || LDAPS.equalsIgnoreCase(uri.getScheme())) {<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                    if (!allowedHosts.contains(uri.getHost())) {<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                        LOGGER.warn("Attempt to access ldap server not in allowed list");<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                        return null;<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                    }<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                    Attributes attributes = this.context.getAttributes(name);<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                    if (attributes != null) {<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                        // In testing the "key" for attributes seems to be lowercase while the attribute id is<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                        // camelcase, but that may just be true for the test LDAP used here. This copies the Attributes<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                        // to a Map ignoring the "key" and using the Attribute's id as the key in the Map so it matches<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                        // the Java schema.<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                        Map&lt;String, Attribute&gt; attributeMap = new HashMap&lt;&gt;();<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                        NamingEnumeration&lt;? extends Attribute&gt; enumeration = attributes.getAll();<a name="line.229"></a>
+<span class="sourceLineNo">230</span>                        while (enumeration.hasMore()) {<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                            Attribute attribute = enumeration.next();<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                            attributeMap.put(attribute.getID(), attribute);<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                        }<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                        Attribute classNameAttr = attributeMap.get(CLASS_NAME);<a name="line.234"></a>
+<span class="sourceLineNo">235</span>                        if (attributeMap.get(SERIALIZED_DATA) != null) {<a name="line.235"></a>
+<span class="sourceLineNo">236</span>                            if (classNameAttr != null) {<a name="line.236"></a>
+<span class="sourceLineNo">237</span>                                String className = classNameAttr.get().toString();<a name="line.237"></a>
+<span class="sourceLineNo">238</span>                                if (!allowedClasses.contains(className)) {<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                                    LOGGER.warn("Deserialization of {} is not allowed", className);<a name="line.239"></a>
+<span class="sourceLineNo">240</span>                                    return null;<a name="line.240"></a>
+<span class="sourceLineNo">241</span>                                }<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                            } else {<a name="line.242"></a>
+<span class="sourceLineNo">243</span>                                LOGGER.warn("No class name provided for {}", name);<a name="line.243"></a>
+<span class="sourceLineNo">244</span>                                return null;<a name="line.244"></a>
+<span class="sourceLineNo">245</span>                            }<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                        } else if (attributeMap.get(REFERENCE_ADDRESS) != null<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                                || attributeMap.get(OBJECT_FACTORY) != null) {<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                            LOGGER.warn("Referenceable class is not allowed for {}", name);<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                            return null;<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                        }<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                    }<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                }<a name="line.252"></a>
+<span class="sourceLineNo">253</span>            }<a name="line.253"></a>
+<span class="sourceLineNo">254</span>        } catch (URISyntaxException ex) {<a name="line.254"></a>
+<span class="sourceLineNo">255</span>            // This is OK.<a name="line.255"></a>
+<span class="sourceLineNo">256</span>        }<a name="line.256"></a>
+<span class="sourceLineNo">257</span>        return (T) this.context.lookup(name);<a name="line.257"></a>
+<span class="sourceLineNo">258</span>    }<a name="line.258"></a>
+<span class="sourceLineNo">259</span><a name="line.259"></a>
+<span class="sourceLineNo">260</span>    private static class JndiManagerFactory implements ManagerFactory&lt;JndiManager, Properties&gt; {<a name="line.260"></a>
+<span class="sourceLineNo">261</span><a name="line.261"></a>
+<span class="sourceLineNo">262</span>        @Override<a name="line.262"></a>
+<span class="sourceLineNo">263</span>        public JndiManager createManager(final String name, final Properties data) {<a name="line.263"></a>
+<span class="sourceLineNo">264</span>            String hosts = data != null ? data.getProperty(ALLOWED_HOSTS) : null;<a name="line.264"></a>
+<span class="sourceLineNo">265</span>            String classes = data != null ? data.getProperty(ALLOWED_CLASSES) : null;<a name="line.265"></a>
+<span class="sourceLineNo">266</span>            String protocols = data != null ? data.getProperty(ALLOWED_PROTOCOLS) : null;<a name="line.266"></a>
+<span class="sourceLineNo">267</span>            List&lt;String&gt; allowedHosts = new ArrayList&lt;&gt;();<a name="line.267"></a>
+<span class="sourceLineNo">268</span>            List&lt;String&gt; allowedClasses = new ArrayList&lt;&gt;();<a name="line.268"></a>
+<span class="sourceLineNo">269</span>            List&lt;String&gt; allowedProtocols = new ArrayList&lt;&gt;();<a name="line.269"></a>
+<span class="sourceLineNo">270</span>            addAll(hosts, allowedHosts, permanentAllowedHosts, ALLOWED_HOSTS, data);<a name="line.270"></a>
+<span class="sourceLineNo">271</span>            addAll(classes, allowedClasses, permanentAllowedClasses, ALLOWED_CLASSES, data);<a name="line.271"></a>
+<span class="sourceLineNo">272</span>            addAll(protocols, allowedProtocols, permanentAllowedProtocols, ALLOWED_PROTOCOLS, data);<a name="line.272"></a>
+<span class="sourceLineNo">273</span>            try {<a name="line.273"></a>
+<span class="sourceLineNo">274</span>                return new JndiManager(name, new InitialDirContext(data), allowedHosts, allowedClasses,<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                        allowedProtocols);<a name="line.275"></a>
+<span class="sourceLineNo">276</span>            } catch (final NamingException e) {<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                LOGGER.error("Error creating JNDI InitialContext.", e);<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                return null;<a name="line.278"></a>
+<span class="sourceLineNo">279</span>            }<a name="line.279"></a>
+<span class="sourceLineNo">280</span>        }<a name="line.280"></a>
+<span class="sourceLineNo">281</span><a name="line.281"></a>
+<span class="sourceLineNo">282</span>        private void addAll(String toSplit, List&lt;String&gt; list, List&lt;String&gt; permanentList, String propertyName,<a name="line.282"></a>
+<span class="sourceLineNo">283</span>                Properties data) {<a name="line.283"></a>
+<span class="sourceLineNo">284</span>            if (toSplit != null) {<a name="line.284"></a>
+<span class="sourceLineNo">285</span>                list.addAll(Arrays.asList(toSplit.split("\\s*,\\s*")));<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                data.remove(propertyName);<a name="line.286"></a>
+<span class="sourceLineNo">287</span>            }<a name="line.287"></a>
+<span class="sourceLineNo">288</span>            toSplit = PropertiesUtil.getProperties().getStringProperty(PREFIX + propertyName);<a name="line.288"></a>
+<span class="sourceLineNo">289</span>            if (toSplit != null) {<a name="line.289"></a>
+<span class="sourceLineNo">290</span>                list.addAll(Arrays.asList(toSplit.split("\\s*,\\s*")));<a name="line.290"></a>
+<span class="sourceLineNo">291</span>            }<a name="line.291"></a>
+<span class="sourceLineNo">292</span>            list.addAll(permanentList);<a name="line.292"></a>
+<span class="sourceLineNo">293</span>        }<a name="line.293"></a>
+<span class="sourceLineNo">294</span>    }<a name="line.294"></a>
+<span class="sourceLineNo">295</span><a name="line.295"></a>
+<span class="sourceLineNo">296</span>    @Override<a name="line.296"></a>
+<span class="sourceLineNo">297</span>    public String toString() {<a name="line.297"></a>
+<span class="sourceLineNo">298</span>        return "JndiManager [context=" + context + ", count=" + count + "]";<a name="line.298"></a>
+<span class="sourceLineNo">299</span>    }<a name="line.299"></a>
+<span class="sourceLineNo">300</span><a name="line.300"></a>
+<span class="sourceLineNo">301</span>}<a name="line.301"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
