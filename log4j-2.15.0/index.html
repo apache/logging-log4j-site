@@ -202,14 +202,8 @@
 
 <p>One vector that allowed exposure to this vulnerability was Log4j’s allowance of Lookups to appear in log messages. As of Log4j 2.15.0 this feature is now disabled by default. While an option has been provided to enable Lookups in this fashion, users are strongly discouraged from enabling it.</p>
 
-<p>Users who cannot upgrade to 2.15.0 can mitigate the exposure by:
-<ul>
-<li>>Users of Log4j 2.10 or greater may add -Dlog4j.formatMsgNoLookups=true as a command line option or add log4j.formatMsgNoLookups=true to a log4j2.component.properties file on the classpath to prevent lookups in log event messages.</li>
-<li>>Users since Log4j 2.7 may specify %m{nolookups} in the PatternLayout configuration to prevent lookups in log event messages.</li>
-<li>>Remove the JndiLookup and JndiManager classes from the log4j-core jar. Removal of the JndiManager will cause the JndiContextSelector and JMSAppender to no longer function.</li>
-</ul>
+<p>For those who cannot upgrade to 2.15.0, in releases &gt;=2.10, this vulnerability can be mitigated by setting either the system property <code>log4j2.formatMsgNoLookups</code> or the environment variable <code>LOG4J_FORMAT_MSG_NO_LOOKUPS</code> to <code>true</code>. For releases from 2.0-beta9 to 2.10.0, the mitigation is to remove the <code>JndiLookup</code> class from the classpath: <code>zip -q -d log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class</code>.</p>
 
-</p>
 <h3>Other News</h3>
 <p>Log4j 2.15.0 is now available for production. The API for Log4j 2 is not compatible with Log4j 1.x, however an adapter is available to allow applications to continue to use the Log4j 1.x API. Adapters are also available for Apache Commons Logging, SLF4J, and java.util.logging.</p>
 <p>Log4j 2.15.0 is the latest release of Log4j. As of Log4j 2.13.0 Log4j 2 requires Java 8 or greater at runtime. This release contains new features and fixes which can be found in the latest <a href="changes-report.html#a2.15.0">changes report</a>.</p>
