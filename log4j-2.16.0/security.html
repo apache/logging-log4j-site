@@ -184,7 +184,7 @@
 <p>Note that only the log4j-core JAR file is impacted by this vulnerability. Applications using only the log4j-api JAR file without the log4j-core JAR file are not impacted by this vulnerability.</p></section><section>
 <h4><a name="History"></a>History</h4>
 <p><b>Older (discredited) mitigation measures</b></p>
-<p>We strongly recommend upgrading Log4j to a safe version, or removing the JndiLookup class from the log4j-core class.</p>
+<p>We strongly recommend upgrading Log4j to a safe version, or removing the JndiLookup class from the log4j-core jar.</p>
 <p>This page previously had other mitigation measures, but we discovered that these measures only limit exposure while leaving some attack vectors open.</p>
 <p>These insufficient mitigation measures are: setting system property log4j2.formatMsgNoLookups or environment variable LOG4J_FORMAT_MSG_NO_LOOKUPS to true for releases &gt;= 2.10, or modifying the logging configuration to disable message lookups with %m{nolookups}, %msg{nolookups} or %message{nolookups} for releases &gt;= 2.7 and &lt;= 2.14.1.</p>
 <p>The reason these measures are insufficient is that there are still code paths in Log4j where message lookups could occur: known examples are applications that use Logger.printf(&quot;%s&quot;, userInput), or applications that use a custom message factory, where the resulting messages do not implement StringBuilderFormattable. There may be other attack vectors. The safest thing to do is to upgrade Log4j to a safe version, or removing the JndiLookup class from the log4j-core class.</p>
