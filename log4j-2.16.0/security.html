@@ -163,17 +163,40 @@
 <p>Please note that binary patches are never provided. If you need to apply a source code patch, use the building instructions for the Apache Log4j version that you are using. For Log4j 2 this is BUILDING.md. This file can be found in the root subdirectory of a source distributive.</p>
 <p>If you need help on building or configuring Log4j or other help on following the instructions to mitigate the known vulnerabilities listed here, please send your questions to the public Log4j Users mailing list</p>
 <p>If you have encountered an unlisted security vulnerability or other unexpected behaviour that has security impact, or if the descriptions here are incomplete, please report them privately to the <a class="externalLink" href="mailto:private@logging.apache.org">Log4j Security Team</a>. Thank you.</p><section><section>
-<h3><a name="2.16.0"></a>Improvements in 2.16.0</h3>
-<p>Log4j 2.16.0 further addresses <a class="externalLink" href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228">CVE-2021-44228</a> by disabling JNDI support by default and completely removing the ability to perform lookups in log messages. Users are recommended to upgrade to 2.16.0.</p>
-<h3><a name="Fixed_in_Log4j_2.15.0"></a>Fixed in Log4j 2.15.0</h3>
-<p><a class="externalLink" href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228">CVE-2021-4422</a>:  Apache Log4j2 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints.</p>
+<p><a name="CVE-2021-44228"></a> <a name="cve-2021-44228"></a></p><section><section>
+<h3><a name="Fixed_in_Log4j_2.15.0_and_2.16.0"></a>Fixed in Log4j 2.15.0 and 2.16.0</h3><section>
+<h4><a name="CVE-2021-44228"></a>CVE-2021-44228</h4>
+<p><a class="externalLink" href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228">CVE-2021-44228</a>:  Apache Log4j2 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints.</p>
 <p>Severity: Critical</p>
 <p>Base CVSS Score: 10.0 CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</p>
-<p>Versions Affected: all versions from 2.0-beta9 to 2.14.1</p>
-<p>Descripton: Apache Log4j2 &lt;=2.14.1 JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled. From log4j 2.15.0, this behavior has been disabled by default.</p>
-<p>Mitigation: In releases &gt;=2.10, this behavior can be mitigated by setting either the system property log4j2.formatMsgNoLookups or the environment variable LOG4J_FORMAT_MSG_NO_LOOKUPS to true. For releases from 2.7 through 2.14.1 all PatternLayout patterns can be modified to specify the message converter as %m{nolookups} instead of just %m. For releases from 2.0-beta9 to 2.7, the only mitigation is to remove the JndiLookup class from the classpath: zip -q -d log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class.</p>
-<p>Credit: This issue was discovered by Chen Zhaojun of Alibaba Cloud Security Team.</p>
-<p>References: <a class="externalLink" href="https://issues.apache.org/jira/browse/LOG4J2-3201">https://issues.apache.org/jira/browse/LOG4J2-3201</a> and <a class="externalLink" href="https://issues.apache.org/jira/browse/LOG4J2-3198">https://issues.apache.org/jira/browse/LOG4J2-3198</a>.</p></section><section>
+<p>Versions Affected: all versions from 2.0-beta9 to 2.14.1</p></section><section>
+<h4><a name="Description"></a>Description</h4>
+<p>Apache Log4j2 &lt;=2.14.1 JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled.</p></section><section>
+<h4><a name="Mitigation"></a>Mitigation</h4>
+<p><b>Log4j 1.x mitigation</b>: Log4j 1.x does not have Lookups so the risk is lower. Applications using Log4j 1.x are only vulnerable to this attack when they use JNDI in their configuration. A separate CVE (CVE-2021-4104) has been filed for this vulnerability. To mitigate: audit your logging configuration to ensure it has no JMSAppender configured. Log4j 1.x configurations without JMSAppender are not impacted by this vulnerability.</p>
+<p><b>Log4j 2.x mitigation</b>: Implement one of the mitigation techniques below.</p>
+<ul>
+
+    <li>Upgrade to release 2.15.0 or later (2.16.0 is recommended) - requires Java 8 or later.</li>
+    <li>Users requiring Java 7, upgrade to release 2.12.2.</li>
+    <li>Otherwise, remove the JndiLookup class from the classpath: zip -q -d log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class</li>
+</ul>
+<p>Note that only the log4j-core JAR file is impacted by this vulnerability. Applications using only the log4j-api JAR file without the log4j-core JAR file are not impacted by this vulnerability.</p></section><section>
+<h4><a name="History"></a>History</h4>
+<p><b>Older (discredited) mitigation measures</b></p>
+<p>We strongly recommend upgrading Log4j to a safe version, or removing the JndiLookup class from the log4j-core class.</p>
+<p>This page previously had other mitigation measures, but we discovered that these measures only limit exposure while leaving some attack vectors open.</p>
+<p>These insufficient mitigation measures are: setting system property log4j2.formatMsgNoLookups or environment variable LOG4J_FORMAT_MSG_NO_LOOKUPS to true for releases &gt;= 2.10, or modifying the logging configuration to disable message lookups with %m{nolookups}, %msg{nolookups} or %message{nolookups} for releases &gt;= 2.7 and &lt;= 2.14.1.</p>
+<p>The reason these measures are insufficient is that there are still code paths in Log4j where message lookups could occur: known examples are applications that use Logger.printf(&quot;%s&quot;, userInput), or applications that use a custom message factory, where the resulting messages do not implement StringBuilderFormattable. There may be other attack vectors. The safest thing to do is to upgrade Log4j to a safe version, or removing the JndiLookup class from the log4j-core class.</p>
+<p><b>Release Details</b></p>
+<p>As of Log4j 2.15.0 the message lookups feature was disabled by default. Lookups in configuration still work. While Log4j 2.15.0 has an option to enable Lookups in this fashion, users are strongly discouraged from enabling it.</p>
+<p>From version 2.16.0, the message lookups feature has been completely removed. Lookups in configuration still work. Furthermore, Log4j now disables access to JNDI by default. JNDI lookups in configuration now need to be enabled explicitly. Also, Log4j now limits the protocols by default to only java, ldap, and ldaps and limits the ldap protocols to only accessing Java primitive objects. Hosts other than the local host need to be explicitly allowed.</p>
+<p>A version 2.12.2 has been released for users who cannot upgrade to 2.16.0 because they require Java 7. This release is based on Log4j 2.12.1, with the same security changes as 2.16.0: it removes the message lookups feature completely, disables JNDI by default, and only allows access to Java primitive objects. It is actually even stricter than 2.16.0, in that it allows only the java protocol (ldap and ldaps protocols will not work).</p></section><section>
+<h4><a name="Credit"></a>Credit</h4>
+<p>This issue was discovered by Chen Zhaojun of Alibaba Cloud Security Team.</p></section><section>
+<h4><a name="References"></a>References</h4>
+<p><a class="externalLink" href="https://issues.apache.org/jira/browse/LOG4J2-3201">https://issues.apache.org/jira/browse/LOG4J2-3201</a> and <a class="externalLink" href="https://issues.apache.org/jira/browse/LOG4J2-3198">https://issues.apache.org/jira/browse/LOG4J2-3198</a>.</p></section></section><section>
+
 <h3><a name="Fixed_in_Log4j_2.13.2"></a>Fixed in Log4j 2.13.2</h3>
 <p><a class="externalLink" href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-9488">CVE-2020-9488</a>:  Improper validation of certificate with host mismatch in Apache Log4j SMTP appender.</p>
 <p>Severity: Low</p>
