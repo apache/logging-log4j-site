@@ -160,30 +160,31 @@
 <p>Apache Log4j 2 is an upgrade to Log4j that provides significant improvements over its predecessor, Log4j 1.x, and provides many of the improvements available in Logback while fixing some inherent problems in Logback&#x2019;s architecture.</p><section>
 
 
-<p><a name="CVE-2021-45046"></a></p><section>
-<h2><a name="Important:_Security_Vulnerability_CVE-2021-45046"></a>Important: Security Vulnerability CVE-2021-45046</h2>
-<p>The Log4j team has been made aware of a security vulnerability, CVE-2021-45046, that has been addressed in Log4j 2.12.2 for Java 7 and 2.16.0 for Java 8 and up.</p>
-<p>Summary: Apache Log4j2 Thread Context Lookup Pattern vulnerable to remote code execution in certain non-default configurations.</p><section><section>
-<h4><a name="Details"></a>Details</h4>
-<p>It was found that the fix to address CVE-2021-44228 in Apache Log4j 2.15.0 was incomplete in certain non-default configurations. When the logging configuration uses a non-default Pattern Layout with a Context Lookup (for example, $${ctx:loginId}), attackers with control over Thread Context Map (MDC) input data can craft malicious input data using a JNDI Lookup pattern, resulting in an information leak and remote code execution in some environments and local code execution in all environments; remote code execution has been demonstrated on macOS but no other tested environments.</p>
-<p>Note that previous mitigations involving configuration such as setting the system property log4j2.formatMsgNoLookups to true do NOT mitigate this specific vulnerability.</p></section><section>
-<h4><a name="Mitigation"></a>Mitigation</h4>
-<p>In version 2.12.2 (for Java 7), Log4j disables access to JNDI by default. Usage of JNDI in configuration now needs to be enabled explicitly. Calls to the JndiLookup will now return a constant string. Also, Log4j now limits the protocols by default to only java. The message lookups feature has been completely removed. Lookups in configuration still work.</p>
-<p>From version 2.16.0 (for Java 8), Log4j disables access to JNDI by default. JNDI lookups in configuration now need to be enabled explicitly. Also, Log4j now limits the protocols by default to only java, ldap, and ldaps and limits the ldap protocols to only accessing Java primitive objects. Hosts other than the local host need to be explicitly allowed. The message lookups feature has been completely removed.</p></section><section>
-<h4><a name="Reference"></a>Reference</h4>
-<p>Please refer to the <a href="security.html#CVE-2021-45046">Security page</a> for details and mitigation measures for older versions of Log4j.</p>
-<p><a name="CVE-2021-44228"></a></p></section></section></section><section>
-<h2><a name="Important:_Security_Vulnerability_CVE-2021-44228"></a>Important: Security Vulnerability CVE-2021-44228</h2>
-<p>The Log4j team has been made aware of a security vulnerability, CVE-2021-44228, that has been addressed in Log4j 2.12.2 and Log4j 2.16.0.</p><section><section>
-<h4><a name="Summary"></a>Summary</h4>
-<p>Log4j&#x2019;s JNDI support has not restricted what names could be resolved. Some protocols are unsafe or can allow remote code execution.</p></section><section>
-<h4><a name="Details"></a>Details</h4>
-<p>One vector that allowed exposure to this vulnerability was Log4j&#x2019;s allowance of Lookups to appear in log messages. This meant that when user input is logged, and that user input contained a JNDI Lookup pointing to a malicious server, then Log4j would resolve that JNDI Lookup, connect to that server, and potentially download serialized Java code from that remote server. This in turn could execute any code during deserialization. This is known as a RCE (Remote Code Execution) attack.</p></section><section>
-<h4><a name="Mitigation"></a>Mitigation</h4>
-<p>In version 2.12.2 (for Java 7), Log4j disables access to JNDI by default. Usage of JNDI in configuration now needs to be enabled explicitly. Calls to the JndiLookup will now return a constant string. Also, Log4j now limits the protocols by default to only java. The message lookups feature has been completely removed. Lookups in configuration still work.</p>
-<p>From version 2.16.0 (for Java 8), the message lookups feature has been completely removed. Lookups in configuration still work. Furthermore, Log4j now disables access to JNDI by default. JNDI lookups in configuration now need to be enabled explicitly. Also, Log4j now limits the protocols by default to only java, ldap, and ldaps and limits the ldap protocols to only accessing Java primitive objects. Hosts other than the local host need to be explicitly allowed.</p></section><section>
-<h4><a name="Reference"></a>Reference</h4>
-<p>Please refer to the <a href="security.html#CVE-2021-44228">Security page</a> for mitigation measures for older versions of Log4j.</p></section></section></section><section>
+            <p><a name="CVE-2021-45046"></a></p><section>
+            <h2><a name="Important:_Security_Vulnerability_CVE-2021-45046"></a>Important: Security Vulnerability CVE-2021-45046</h2>
+            <p>The Log4j team has been made aware of a security vulnerability, CVE-2021-45046, that has been addressed in Log4j 2.12.2 for Java 7 and 2.16.0 for Java 8 and up.</p>
+            <p>Summary: Apache Log4j2 Thread Context Lookup Pattern vulnerable to remote code execution in certain non-default configurations.</p><section><section>
+            <h4><a name="Details"></a>Details</h4>
+            <p>It was found that the fix to address CVE-2021-44228 in Apache Log4j 2.15.0 was incomplete in certain non-default configurations. When the logging configuration uses a non-default Pattern Layout with a Context Lookup (for example, $${ctx:loginId}), attackers with control over Thread Context Map (MDC) input data can craft malicious input data using a JNDI Lookup pattern, resulting in an information leak and remote code execution in some environments and local code execution in all environments; remote code execution has been demonstrated on macOS but no other tested environments.</p>
+            <p>Note that previous mitigations involving configuration such as setting the system property log4j2.formatMsgNoLookups to true do NOT mitigate this specific vulnerability.</p></section><section>
+            <h4><a name="Mitigation"></a>Mitigation</h4>
+            <p>In version 2.12.2 (for Java 7), Log4j disables access to JNDI by default. Usage of JNDI in configuration now needs to be enabled explicitly. Calls to the JndiLookup will now return a constant string. Also, Log4j now limits the protocols by default to only java. The message lookups feature has been completely removed. Lookups in configuration still work.</p>
+            <p>From version 2.16.0 (for Java 8), the message lookups feature has been completely removed. Lookups in configuration still work. Furthermore, Log4j now disables access to JNDI by default. Users are advised not to enable JNDI in Log4j 2.16.0. If the JMS Appender is required, use Log4j 2.12.2.</p></section><section>
+            <h4><a name="Reference"></a>Reference</h4>
+            <p>Please refer to the <a href="security.html#CVE-2021-45046">Security page</a> for details and mitigation measures for older versions of Log4j.</p>
+            <p><a name="CVE-2021-44228"></a></p></section></section></section><section>
+            <h2><a name="Important:_Security_Vulnerability_CVE-2021-44228"></a>Important: Security Vulnerability CVE-2021-44228</h2>
+            <p>The Log4j team has been made aware of a security vulnerability, CVE-2021-44228, that has been addressed in Log4j 2.12.2 and Log4j 2.16.0.</p><section><section>
+            <h4><a name="Summary"></a>Summary</h4>
+            <p>Log4j&#x2019;s JNDI support has not restricted what names could be resolved. Some protocols are unsafe or can allow remote code execution.</p></section><section>
+            <h4><a name="Details"></a>Details</h4>
+            <p>One vector that allowed exposure to this vulnerability was Log4j&#x2019;s allowance of Lookups to appear in log messages. This meant that when user input is logged, and that user input contained a JNDI Lookup pointing to a malicious server, then Log4j would resolve that JNDI Lookup, connect to that server, and potentially download serialized Java code from that remote server. This in turn could execute any code during deserialization. This is known as a RCE (Remote Code Execution) attack.</p></section><section>
+            <h4><a name="Mitigation"></a>Mitigation</h4>
+            <p>In version 2.12.2 (for Java 7), Log4j disables access to JNDI by default. Usage of JNDI in configuration now needs to be enabled explicitly. Calls to the JndiLookup will now return a constant string. Also, Log4j now limits the protocols by default to only java. The message lookups feature has been completely removed. Lookups in configuration still work.</p>
+            <p>From version 2.16.0 (for Java 8), the message lookups feature has been completely removed. Lookups in configuration still work. Furthermore, Log4j now disables access to JNDI by default. Users are advised not to enable JNDI in Log4j 2.16.0. If the JMS Appender is required, use Log4j 2.12.2.</p>
+            <p>From version 2.16.0 (for Java 8), the message lookups feature has been completely removed. Lookups in configuration still work. Furthermore, Log4j now disables access to JNDI by default. JNDI lookups in configuration now need to be enabled explicitly. Also, Log4j now limits the protocols by default to only java, ldap, and ldaps and limits the ldap protocols to only accessing Java primitive objects. Hosts other than the local host need to be explicitly allowed.</p></section><section>
+            <h4><a name="Reference"></a>Reference</h4>
+            <p>Please refer to the <a href="security.html#CVE-2021-44228">Security page</a> for mitigation measures for older versions of Log4j.</p></section></section></section><section>
 
 
 <h2><a name="Features"></a>Features</h2><section>
