@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"org.apache.logging.log4j.spring.cloud.config.client","l":"Log4j2EventListener"},{"p":"org.apache.logging.log4j.spring.cloud.config.client","l":"WatchEventManager"}]
