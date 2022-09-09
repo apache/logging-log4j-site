@@ -1,0 +1,352 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the License for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the License.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>package org.apache.log4j.jmx;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.beans.BeanInfo;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.beans.IntrospectionException;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.beans.Introspector;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.beans.PropertyDescriptor;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.io.InterruptedIOException;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.lang.reflect.Constructor;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.lang.reflect.InvocationTargetException;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.lang.reflect.Method;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.Hashtable;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.Vector;<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>import javax.management.Attribute;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import javax.management.AttributeNotFoundException;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import javax.management.InvalidAttributeValueException;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import javax.management.JMException;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import javax.management.MBeanAttributeInfo;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import javax.management.MBeanConstructorInfo;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import javax.management.MBeanException;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import javax.management.MBeanInfo;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import javax.management.MBeanNotificationInfo;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import javax.management.MBeanOperationInfo;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import javax.management.MBeanParameterInfo;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import javax.management.MBeanServer;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import javax.management.MalformedObjectNameException;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import javax.management.ObjectName;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import javax.management.ReflectionException;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import javax.management.RuntimeOperationsException;<a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span>import org.apache.log4j.Appender;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>import org.apache.log4j.Layout;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>import org.apache.log4j.Level;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>import org.apache.log4j.Logger;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>import org.apache.log4j.Priority;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>import org.apache.log4j.helpers.OptionConverter;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>import org.apache.log4j.spi.OptionHandler;<a name="line.54"></a>
+<span class="sourceLineNo">055</span><a name="line.55"></a>
+<span class="sourceLineNo">056</span>public class AppenderDynamicMBean extends AbstractDynamicMBean {<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>    // This category instance is for logging.<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    private static Logger cat = Logger.getLogger(AppenderDynamicMBean.class);<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    private final MBeanConstructorInfo[] dConstructors = new MBeanConstructorInfo[1];<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    private final Vector dAttributes = new Vector();<a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>    private final String dClassName = this.getClass().getName();<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    private final Hashtable dynamicProps = new Hashtable(5);<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    private final MBeanOperationInfo[] dOperations = new MBeanOperationInfo[2];<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>    private final String dDescription = "This MBean acts as a management facade for log4j appenders.";<a name="line.67"></a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span>    // We wrap this appender instance.<a name="line.69"></a>
+<span class="sourceLineNo">070</span>    private final Appender appender;<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>    public AppenderDynamicMBean(final Appender appender) throws IntrospectionException {<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        this.appender = appender;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        buildDynamicMBeanInfo();<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    }<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>    private void buildDynamicMBeanInfo() throws IntrospectionException {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        final Constructor[] constructors = this.getClass().getConstructors();<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        dConstructors[0] = new MBeanConstructorInfo("AppenderDynamicMBean(): Constructs a AppenderDynamicMBean instance", constructors[0]);<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>        final BeanInfo bi = Introspector.getBeanInfo(appender.getClass());<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        final PropertyDescriptor[] pd = bi.getPropertyDescriptors();<a name="line.82"></a>
+<span class="sourceLineNo">083</span><a name="line.83"></a>
+<span class="sourceLineNo">084</span>        final int size = pd.length;<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>        for (int i = 0; i &lt; size; i++) {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>            final String name = pd[i].getName();<a name="line.87"></a>
+<span class="sourceLineNo">088</span>            final Method readMethod = pd[i].getReadMethod();<a name="line.88"></a>
+<span class="sourceLineNo">089</span>            final Method writeMethod = pd[i].getWriteMethod();<a name="line.89"></a>
+<span class="sourceLineNo">090</span>            if (readMethod != null) {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                final Class returnClass = readMethod.getReturnType();<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                if (isSupportedType(returnClass)) {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                    String returnClassName;<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                    if (returnClass.isAssignableFrom(Priority.class)) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                        returnClassName = "java.lang.String";<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                    } else {<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                        returnClassName = returnClass.getName();<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                    }<a name="line.98"></a>
+<span class="sourceLineNo">099</span><a name="line.99"></a>
+<span class="sourceLineNo">100</span>                    dAttributes.add(new MBeanAttributeInfo(name, returnClassName, "Dynamic", true, writeMethod != null, false));<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                    dynamicProps.put(name, new MethodUnion(readMethod, writeMethod));<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                }<a name="line.102"></a>
+<span class="sourceLineNo">103</span>            }<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        }<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>        MBeanParameterInfo[] params = new MBeanParameterInfo[0];<a name="line.106"></a>
+<span class="sourceLineNo">107</span><a name="line.107"></a>
+<span class="sourceLineNo">108</span>        dOperations[0] = new MBeanOperationInfo("activateOptions", "activateOptions(): add an appender", params, "void", MBeanOperationInfo.ACTION);<a name="line.108"></a>
+<span class="sourceLineNo">109</span><a name="line.109"></a>
+<span class="sourceLineNo">110</span>        params = new MBeanParameterInfo[1];<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        params[0] = new MBeanParameterInfo("layout class", "java.lang.String", "layout class");<a name="line.111"></a>
+<span class="sourceLineNo">112</span><a name="line.112"></a>
+<span class="sourceLineNo">113</span>        dOperations[1] = new MBeanOperationInfo("setLayout", "setLayout(): add a layout", params, "void", MBeanOperationInfo.ACTION);<a name="line.113"></a>
+<span class="sourceLineNo">114</span>    }<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>    @Override<a name="line.116"></a>
+<span class="sourceLineNo">117</span>    public Object getAttribute(final String attributeName) throws AttributeNotFoundException, MBeanException, ReflectionException {<a name="line.117"></a>
+<span class="sourceLineNo">118</span><a name="line.118"></a>
+<span class="sourceLineNo">119</span>        // Check attributeName is not null to avoid NullPointerException later on<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        if (attributeName == null) {<a name="line.120"></a>
+<span class="sourceLineNo">121</span>            throw new RuntimeOperationsException(new IllegalArgumentException("Attribute name cannot be null"),<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                "Cannot invoke a getter of " + dClassName + " with null attribute name");<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        }<a name="line.123"></a>
+<span class="sourceLineNo">124</span><a name="line.124"></a>
+<span class="sourceLineNo">125</span>        cat.debug("getAttribute called with [" + attributeName + "].");<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        if (attributeName.startsWith("appender=" + appender.getName() + ",layout")) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>            try {<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                return new ObjectName("log4j:" + attributeName);<a name="line.128"></a>
+<span class="sourceLineNo">129</span>            } catch (final MalformedObjectNameException e) {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                cat.error("attributeName", e);<a name="line.130"></a>
+<span class="sourceLineNo">131</span>            } catch (final RuntimeException e) {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                cat.error("attributeName", e);<a name="line.132"></a>
+<span class="sourceLineNo">133</span>            }<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        }<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>        final MethodUnion mu = (MethodUnion) dynamicProps.get(attributeName);<a name="line.136"></a>
+<span class="sourceLineNo">137</span><a name="line.137"></a>
+<span class="sourceLineNo">138</span>        // cat.debug("----name="+attributeName+", b="+b);<a name="line.138"></a>
+<span class="sourceLineNo">139</span><a name="line.139"></a>
+<span class="sourceLineNo">140</span>        if (mu != null &amp;&amp; mu.readMethod != null) {<a name="line.140"></a>
+<span class="sourceLineNo">141</span>            try {<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                return mu.readMethod.invoke(appender, null);<a name="line.142"></a>
+<span class="sourceLineNo">143</span>            } catch (final IllegalAccessException e) {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                return null;<a name="line.144"></a>
+<span class="sourceLineNo">145</span>            } catch (final InvocationTargetException e) {<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                if (e.getTargetException() instanceof InterruptedException || e.getTargetException() instanceof InterruptedIOException) {<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                    Thread.currentThread().interrupt();<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                }<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                return null;<a name="line.149"></a>
+<span class="sourceLineNo">150</span>            } catch (final RuntimeException e) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                return null;<a name="line.151"></a>
+<span class="sourceLineNo">152</span>            }<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        }<a name="line.153"></a>
+<span class="sourceLineNo">154</span><a name="line.154"></a>
+<span class="sourceLineNo">155</span>        // If attributeName has not been recognized throw an AttributeNotFoundException<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        throw (new AttributeNotFoundException("Cannot find " + attributeName + " attribute in " + dClassName));<a name="line.156"></a>
+<span class="sourceLineNo">157</span><a name="line.157"></a>
+<span class="sourceLineNo">158</span>    }<a name="line.158"></a>
+<span class="sourceLineNo">159</span><a name="line.159"></a>
+<span class="sourceLineNo">160</span>    @Override<a name="line.160"></a>
+<span class="sourceLineNo">161</span>    protected Logger getLogger() {<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        return cat;<a name="line.162"></a>
+<span class="sourceLineNo">163</span>    }<a name="line.163"></a>
+<span class="sourceLineNo">164</span><a name="line.164"></a>
+<span class="sourceLineNo">165</span>    @Override<a name="line.165"></a>
+<span class="sourceLineNo">166</span>    public MBeanInfo getMBeanInfo() {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        cat.debug("getMBeanInfo called.");<a name="line.167"></a>
+<span class="sourceLineNo">168</span><a name="line.168"></a>
+<span class="sourceLineNo">169</span>        final MBeanAttributeInfo[] attribs = new MBeanAttributeInfo[dAttributes.size()];<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        dAttributes.toArray(attribs);<a name="line.170"></a>
+<span class="sourceLineNo">171</span><a name="line.171"></a>
+<span class="sourceLineNo">172</span>        return new MBeanInfo(dClassName, dDescription, attribs, dConstructors, dOperations, new MBeanNotificationInfo[0]);<a name="line.172"></a>
+<span class="sourceLineNo">173</span>    }<a name="line.173"></a>
+<span class="sourceLineNo">174</span><a name="line.174"></a>
+<span class="sourceLineNo">175</span>    @Override<a name="line.175"></a>
+<span class="sourceLineNo">176</span>    public Object invoke(final String operationName, final Object params[], final String signature[]) throws MBeanException, ReflectionException {<a name="line.176"></a>
+<span class="sourceLineNo">177</span><a name="line.177"></a>
+<span class="sourceLineNo">178</span>        if (operationName.equals("activateOptions") &amp;&amp; appender instanceof OptionHandler) {<a name="line.178"></a>
+<span class="sourceLineNo">179</span>            final OptionHandler oh = (OptionHandler) appender;<a name="line.179"></a>
+<span class="sourceLineNo">180</span>            oh.activateOptions();<a name="line.180"></a>
+<span class="sourceLineNo">181</span>            return "Options activated.";<a name="line.181"></a>
+<span class="sourceLineNo">182</span>        } else if (operationName.equals("setLayout")) {<a name="line.182"></a>
+<span class="sourceLineNo">183</span>            final Layout layout = (Layout) OptionConverter.instantiateByClassName((String) params[0], Layout.class, null);<a name="line.183"></a>
+<span class="sourceLineNo">184</span>            appender.setLayout(layout);<a name="line.184"></a>
+<span class="sourceLineNo">185</span>            registerLayoutMBean(layout);<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        }<a name="line.186"></a>
+<span class="sourceLineNo">187</span>        return null;<a name="line.187"></a>
+<span class="sourceLineNo">188</span>    }<a name="line.188"></a>
+<span class="sourceLineNo">189</span><a name="line.189"></a>
+<span class="sourceLineNo">190</span>    private boolean isSupportedType(final Class clazz) {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        if (clazz.isPrimitive() || (clazz == String.class) || clazz.isAssignableFrom(Priority.class)) {<a name="line.191"></a>
+<span class="sourceLineNo">192</span>            return true;<a name="line.192"></a>
+<span class="sourceLineNo">193</span>        }<a name="line.193"></a>
+<span class="sourceLineNo">194</span><a name="line.194"></a>
+<span class="sourceLineNo">195</span>        return false;<a name="line.195"></a>
+<span class="sourceLineNo">196</span><a name="line.196"></a>
+<span class="sourceLineNo">197</span>    }<a name="line.197"></a>
+<span class="sourceLineNo">198</span><a name="line.198"></a>
+<span class="sourceLineNo">199</span>    @Override<a name="line.199"></a>
+<span class="sourceLineNo">200</span>    public ObjectName preRegister(final MBeanServer server, final ObjectName name) {<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        cat.debug("preRegister called. Server=" + server + ", name=" + name);<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        this.server = server;<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        registerLayoutMBean(appender.getLayout());<a name="line.203"></a>
+<span class="sourceLineNo">204</span><a name="line.204"></a>
+<span class="sourceLineNo">205</span>        return name;<a name="line.205"></a>
+<span class="sourceLineNo">206</span>    }<a name="line.206"></a>
+<span class="sourceLineNo">207</span><a name="line.207"></a>
+<span class="sourceLineNo">208</span>    void registerLayoutMBean(final Layout layout) {<a name="line.208"></a>
+<span class="sourceLineNo">209</span>        if (layout == null) {<a name="line.209"></a>
+<span class="sourceLineNo">210</span>            return;<a name="line.210"></a>
+<span class="sourceLineNo">211</span>        }<a name="line.211"></a>
+<span class="sourceLineNo">212</span><a name="line.212"></a>
+<span class="sourceLineNo">213</span>        final String name = getAppenderName(appender) + ",layout=" + layout.getClass().getName();<a name="line.213"></a>
+<span class="sourceLineNo">214</span>        cat.debug("Adding LayoutMBean:" + name);<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        ObjectName objectName = null;<a name="line.215"></a>
+<span class="sourceLineNo">216</span>        try {<a name="line.216"></a>
+<span class="sourceLineNo">217</span>            final LayoutDynamicMBean appenderMBean = new LayoutDynamicMBean(layout);<a name="line.217"></a>
+<span class="sourceLineNo">218</span>            objectName = new ObjectName("log4j:appender=" + name);<a name="line.218"></a>
+<span class="sourceLineNo">219</span>            if (!server.isRegistered(objectName)) {<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                registerMBean(appenderMBean, objectName);<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                dAttributes.add(new MBeanAttributeInfo("appender=" + name, "javax.management.ObjectName", "The " + name + " layout.", true, true, false));<a name="line.221"></a>
+<span class="sourceLineNo">222</span>            }<a name="line.222"></a>
+<span class="sourceLineNo">223</span><a name="line.223"></a>
+<span class="sourceLineNo">224</span>        } catch (final JMException e) {<a name="line.224"></a>
+<span class="sourceLineNo">225</span>            cat.error("Could not add DynamicLayoutMBean for [" + name + "].", e);<a name="line.225"></a>
+<span class="sourceLineNo">226</span>        } catch (final java.beans.IntrospectionException e) {<a name="line.226"></a>
+<span class="sourceLineNo">227</span>            cat.error("Could not add DynamicLayoutMBean for [" + name + "].", e);<a name="line.227"></a>
+<span class="sourceLineNo">228</span>        } catch (final RuntimeException e) {<a name="line.228"></a>
+<span class="sourceLineNo">229</span>            cat.error("Could not add DynamicLayoutMBean for [" + name + "].", e);<a name="line.229"></a>
+<span class="sourceLineNo">230</span>        }<a name="line.230"></a>
+<span class="sourceLineNo">231</span>    }<a name="line.231"></a>
+<span class="sourceLineNo">232</span><a name="line.232"></a>
+<span class="sourceLineNo">233</span>    @Override<a name="line.233"></a>
+<span class="sourceLineNo">234</span>    public void setAttribute(final Attribute attribute) throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {<a name="line.234"></a>
+<span class="sourceLineNo">235</span><a name="line.235"></a>
+<span class="sourceLineNo">236</span>        // Check attribute is not null to avoid NullPointerException later on<a name="line.236"></a>
+<span class="sourceLineNo">237</span>        if (attribute == null) {<a name="line.237"></a>
+<span class="sourceLineNo">238</span>            throw new RuntimeOperationsException(new IllegalArgumentException("Attribute cannot be null"),<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                "Cannot invoke a setter of " + dClassName + " with null attribute");<a name="line.239"></a>
+<span class="sourceLineNo">240</span>        }<a name="line.240"></a>
+<span class="sourceLineNo">241</span>        final String name = attribute.getName();<a name="line.241"></a>
+<span class="sourceLineNo">242</span>        Object value = attribute.getValue();<a name="line.242"></a>
+<span class="sourceLineNo">243</span><a name="line.243"></a>
+<span class="sourceLineNo">244</span>        if (name == null) {<a name="line.244"></a>
+<span class="sourceLineNo">245</span>            throw new RuntimeOperationsException(new IllegalArgumentException("Attribute name cannot be null"),<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                "Cannot invoke the setter of " + dClassName + " with null attribute name");<a name="line.246"></a>
+<span class="sourceLineNo">247</span>        }<a name="line.247"></a>
+<span class="sourceLineNo">248</span><a name="line.248"></a>
+<span class="sourceLineNo">249</span>        final MethodUnion mu = (MethodUnion) dynamicProps.get(name);<a name="line.249"></a>
+<span class="sourceLineNo">250</span><a name="line.250"></a>
+<span class="sourceLineNo">251</span>        if (mu != null &amp;&amp; mu.writeMethod != null) {<a name="line.251"></a>
+<span class="sourceLineNo">252</span>            final Object[] o = new Object[1];<a name="line.252"></a>
+<span class="sourceLineNo">253</span><a name="line.253"></a>
+<span class="sourceLineNo">254</span>            final Class[] params = mu.writeMethod.getParameterTypes();<a name="line.254"></a>
+<span class="sourceLineNo">255</span>            if (params[0] == org.apache.log4j.Priority.class) {<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                value = OptionConverter.toLevel((String) value, (Level) getAttribute(name));<a name="line.256"></a>
+<span class="sourceLineNo">257</span>            }<a name="line.257"></a>
+<span class="sourceLineNo">258</span>            o[0] = value;<a name="line.258"></a>
+<span class="sourceLineNo">259</span><a name="line.259"></a>
+<span class="sourceLineNo">260</span>            try {<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                mu.writeMethod.invoke(appender, o);<a name="line.261"></a>
+<span class="sourceLineNo">262</span><a name="line.262"></a>
+<span class="sourceLineNo">263</span>            } catch (final InvocationTargetException e) {<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                if (e.getTargetException() instanceof InterruptedException || e.getTargetException() instanceof InterruptedIOException) {<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                    Thread.currentThread().interrupt();<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                }<a name="line.266"></a>
+<span class="sourceLineNo">267</span>                cat.error("FIXME", e);<a name="line.267"></a>
+<span class="sourceLineNo">268</span>            } catch (final IllegalAccessException e) {<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                cat.error("FIXME", e);<a name="line.269"></a>
+<span class="sourceLineNo">270</span>            } catch (final RuntimeException e) {<a name="line.270"></a>
+<span class="sourceLineNo">271</span>                cat.error("FIXME", e);<a name="line.271"></a>
+<span class="sourceLineNo">272</span>            }<a name="line.272"></a>
+<span class="sourceLineNo">273</span>        } else if (name.endsWith(".layout")) {<a name="line.273"></a>
+<span class="sourceLineNo">274</span><a name="line.274"></a>
+<span class="sourceLineNo">275</span>        } else {<a name="line.275"></a>
+<span class="sourceLineNo">276</span>            throw (new AttributeNotFoundException("Attribute " + name + " not found in " + this.getClass().getName()));<a name="line.276"></a>
+<span class="sourceLineNo">277</span>        }<a name="line.277"></a>
+<span class="sourceLineNo">278</span>    }<a name="line.278"></a>
+<span class="sourceLineNo">279</span><a name="line.279"></a>
+<span class="sourceLineNo">280</span>}<a name="line.280"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

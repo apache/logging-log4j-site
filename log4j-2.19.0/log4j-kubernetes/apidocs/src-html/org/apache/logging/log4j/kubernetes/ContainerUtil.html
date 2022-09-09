@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a name="line.1">/*</a>
+<span class="sourceLineNo">002</span><a name="line.2"> * Licensed to the Apache Software Foundation (ASF) under one or more</a>
+<span class="sourceLineNo">003</span><a name="line.3"> * contributor license agreements. See the NOTICE file distributed with</a>
+<span class="sourceLineNo">004</span><a name="line.4"> * this work for additional information regarding copyright ownership.</a>
+<span class="sourceLineNo">005</span><a name="line.5"> * The ASF licenses this file to You under the Apache license, Version 2.0</a>
+<span class="sourceLineNo">006</span><a name="line.6"> * (the "License"); you may not use this file except in compliance with</a>
+<span class="sourceLineNo">007</span><a name="line.7"> * the License. You may obtain a copy of the License at</a>
+<span class="sourceLineNo">008</span><a name="line.8"> *</a>
+<span class="sourceLineNo">009</span><a name="line.9"> *      http://www.apache.org/licenses/LICENSE-2.0</a>
+<span class="sourceLineNo">010</span><a name="line.10"> *</a>
+<span class="sourceLineNo">011</span><a name="line.11"> * Unless required by applicable law or agreed to in writing, software</a>
+<span class="sourceLineNo">012</span><a name="line.12"> * distributed under the License is distributed on an "AS IS" BASIS,</a>
+<span class="sourceLineNo">013</span><a name="line.13"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</a>
+<span class="sourceLineNo">014</span><a name="line.14"> * See the license for the specific language governing permissions and</a>
+<span class="sourceLineNo">015</span><a name="line.15"> * limitations under the license.</a>
+<span class="sourceLineNo">016</span><a name="line.16"> */</a>
+<span class="sourceLineNo">017</span><a name="line.17">package org.apache.logging.log4j.kubernetes;</a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19">import java.io.File;</a>
+<span class="sourceLineNo">020</span><a name="line.20">import java.io.IOException;</a>
+<span class="sourceLineNo">021</span><a name="line.21">import java.nio.file.Files;</a>
+<span class="sourceLineNo">022</span><a name="line.22">import java.nio.file.Path;</a>
+<span class="sourceLineNo">023</span><a name="line.23">import java.util.Objects;</a>
+<span class="sourceLineNo">024</span><a name="line.24"></a>
+<span class="sourceLineNo">025</span><a name="line.25">import org.apache.logging.log4j.Logger;</a>
+<span class="sourceLineNo">026</span><a name="line.26">import org.apache.logging.log4j.status.StatusLogger;</a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span><a name="line.28">/**</a>
+<span class="sourceLineNo">029</span><a name="line.29"> * Locate the current docker container.</a>
+<span class="sourceLineNo">030</span><a name="line.30"> */</a>
+<span class="sourceLineNo">031</span><a name="line.31">public class ContainerUtil {</a>
+<span class="sourceLineNo">032</span><a name="line.32">    private static final Logger LOGGER = StatusLogger.getLogger();</a>
+<span class="sourceLineNo">033</span><a name="line.33">    private static final int MAXLENGTH = 65;</a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span><a name="line.35">/**</a>
+<span class="sourceLineNo">036</span><a name="line.36"> * Returns the container id when running in a Docker container.</a>
+<span class="sourceLineNo">037</span><a name="line.37"> *</a>
+<span class="sourceLineNo">038</span><a name="line.38"> * This inspects /proc/self/cgroup looking for a Kubernetes Control Group. Once it finds one it attempts</a>
+<span class="sourceLineNo">039</span><a name="line.39"> * to isolate just the docker container id. There doesn't appear to be a standard way to do this, but</a>
+<span class="sourceLineNo">040</span><a name="line.40"> * it seems to be the only way to determine what the current container is in a multi-container pod. It would have</a>
+<span class="sourceLineNo">041</span><a name="line.41"> * been much nicer if Kubernetes would just put the container id in a standard environment variable.</a>
+<span class="sourceLineNo">042</span><a name="line.42"> *</a>
+<span class="sourceLineNo">043</span><a name="line.43"> * @see &lt;a href="http://stackoverflow.com/a/25729598/12916"&gt;Stackoverflow&lt;/a&gt; for a discussion on retrieving the containerId.</a>
+<span class="sourceLineNo">044</span><a name="line.44"> * @see &lt;a href="https://github.com/jenkinsci/docker-workflow-plugin/blob/master/src/main/java/org/jenkinsci/plugins/docker/workflow/client/ControlGroup.java&gt;ControlGroup&lt;/a&gt;</a>
+<span class="sourceLineNo">045</span><a name="line.45"> * for the original version of this. Not much is actually left but it provided good inspiration.</a>
+<span class="sourceLineNo">046</span><a name="line.46"> */</a>
+<span class="sourceLineNo">047</span><a name="line.47">    public static String getContainerId() {</a>
+<span class="sourceLineNo">048</span><a name="line.48">        try {</a>
+<span class="sourceLineNo">049</span><a name="line.49">            File file = new File("/proc/self/cgroup");</a>
+<span class="sourceLineNo">050</span><a name="line.50">            if (file.exists()) {</a>
+<span class="sourceLineNo">051</span><a name="line.51">                Path path = file.toPath();</a>
+<span class="sourceLineNo">052</span><a name="line.52">                String id = Files.lines(path).map(ContainerUtil::getContainerId).filter(Objects::nonNull)</a>
+<span class="sourceLineNo">053</span><a name="line.53">                        .findFirst().orElse(null);</a>
+<span class="sourceLineNo">054</span><a name="line.54">                LOGGER.debug("Found container id {}", id);</a>
+<span class="sourceLineNo">055</span><a name="line.55">                return id;</a>
+<span class="sourceLineNo">056</span><a name="line.56">            }</a>
+<span class="sourceLineNo">057</span><a name="line.57">            LOGGER.warn("Unable to access container information");</a>
+<span class="sourceLineNo">058</span><a name="line.58">        } catch (IOException ioe) {</a>
+<span class="sourceLineNo">059</span><a name="line.59">            LOGGER.warn("Error obtaining container id: {}", ioe.getMessage());</a>
+<span class="sourceLineNo">060</span><a name="line.60">        }</a>
+<span class="sourceLineNo">061</span><a name="line.61">        return null;</a>
+<span class="sourceLineNo">062</span><a name="line.62">    }</a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64">    private static String getContainerId(String line) {</a>
+<span class="sourceLineNo">065</span><a name="line.65">        // Every control group in Kubernetes will use</a>
+<span class="sourceLineNo">066</span><a name="line.66">        if (line.contains("/kubepods")) {</a>
+<span class="sourceLineNo">067</span><a name="line.67">            // Strip off everything up to the last slash.</a>
+<span class="sourceLineNo">068</span><a name="line.68">            int i = line.lastIndexOf('/');</a>
+<span class="sourceLineNo">069</span><a name="line.69">            if (i &lt; 0) {</a>
+<span class="sourceLineNo">070</span><a name="line.70">                return null;</a>
+<span class="sourceLineNo">071</span><a name="line.71">            }</a>
+<span class="sourceLineNo">072</span><a name="line.72">            // If the remainder has a period then take everything up to it.</a>
+<span class="sourceLineNo">073</span><a name="line.73">            line = line.substring(i + 1);</a>
+<span class="sourceLineNo">074</span><a name="line.74">            i = line.lastIndexOf('.');</a>
+<span class="sourceLineNo">075</span><a name="line.75">            if (i &gt; 0) {</a>
+<span class="sourceLineNo">076</span><a name="line.76">                line = line.substring(0, i);</a>
+<span class="sourceLineNo">077</span><a name="line.77">            }</a>
+<span class="sourceLineNo">078</span><a name="line.78">            // Everything ending with a '/' has already been stripped but the remainder might start with "docker-"</a>
+<span class="sourceLineNo">079</span><a name="line.79">            if (line.contains("docker-")) {</a>
+<span class="sourceLineNo">080</span><a name="line.80">                // 8:cpuset:/kubepods.slice/kubepods-pod9c26dfb6_b9c9_11e7_bfb9_02c6c1fc4861.slice/docker-3dd988081e7149463c043b5d9c57d7309e079c5e9290f91feba1cc45a04d6a5b.scope</a>
+<span class="sourceLineNo">081</span><a name="line.81">                i = line.lastIndexOf("docker-");</a>
+<span class="sourceLineNo">082</span><a name="line.82">                line = line.substring(i + 7);</a>
+<span class="sourceLineNo">083</span><a name="line.83">            }</a>
+<span class="sourceLineNo">084</span><a name="line.84">            return line.length() &lt;= MAXLENGTH ? line : line.substring(0, MAXLENGTH);</a>
+<span class="sourceLineNo">085</span><a name="line.85">        }</a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87">        return null;</a>
+<span class="sourceLineNo">088</span><a name="line.88">    }</a>
+<span class="sourceLineNo">089</span><a name="line.89">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
