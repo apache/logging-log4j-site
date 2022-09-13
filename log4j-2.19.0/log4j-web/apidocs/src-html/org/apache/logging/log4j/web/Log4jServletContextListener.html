@@ -43,13 +43,13 @@
 <span class="sourceLineNo">035</span> */<a name="line.35"></a>
 <span class="sourceLineNo">036</span>public class Log4jServletContextListener implements ServletContextListener {<a name="line.36"></a>
 <span class="sourceLineNo">037</span><a name="line.37"></a>
-<span class="sourceLineNo">038</span>        private static final int DEFAULT_STOP_TIMEOUT = 30;<a name="line.38"></a>
+<span class="sourceLineNo">038</span>    private static final int DEFAULT_STOP_TIMEOUT = 30;<a name="line.38"></a>
 <span class="sourceLineNo">039</span>    private static final TimeUnit DEFAULT_STOP_TIMEOUT_TIMEUNIT = TimeUnit.SECONDS;<a name="line.39"></a>
 <span class="sourceLineNo">040</span><a name="line.40"></a>
-<span class="sourceLineNo">041</span>        private static final String KEY_STOP_TIMEOUT = "log4j.stop.timeout";<a name="line.41"></a>
-<span class="sourceLineNo">042</span>        private static final String KEY_STOP_TIMEOUT_TIMEUNIT = "log4j.stop.timeout.timeunit";<a name="line.42"></a>
+<span class="sourceLineNo">041</span>    private static final String KEY_STOP_TIMEOUT = "log4j.stop.timeout";<a name="line.41"></a>
+<span class="sourceLineNo">042</span>    private static final String KEY_STOP_TIMEOUT_TIMEUNIT = "log4j.stop.timeout.timeunit";<a name="line.42"></a>
 <span class="sourceLineNo">043</span><a name="line.43"></a>
-<span class="sourceLineNo">044</span>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.44"></a>
+<span class="sourceLineNo">044</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.44"></a>
 <span class="sourceLineNo">045</span><a name="line.45"></a>
 <span class="sourceLineNo">046</span>    private ServletContext servletContext;<a name="line.46"></a>
 <span class="sourceLineNo">047</span>    private Log4jWebLifeCycle initializer;<a name="line.47"></a>
@@ -61,10 +61,10 @@
 <span class="sourceLineNo">053</span>        <a name="line.53"></a>
 <span class="sourceLineNo">054</span>        if ("true".equalsIgnoreCase(servletContext.getInitParameter(<a name="line.54"></a>
 <span class="sourceLineNo">055</span>                Log4jWebSupport.IS_LOG4J_AUTO_SHUTDOWN_DISABLED))) {<a name="line.55"></a>
-<span class="sourceLineNo">056</span>                throw new IllegalStateException("Do not use " + getClass().getSimpleName() + " when "<a name="line.56"></a>
-<span class="sourceLineNo">057</span>                                + Log4jWebSupport.IS_LOG4J_AUTO_SHUTDOWN_DISABLED + " is true. Please use "<a name="line.57"></a>
-<span class="sourceLineNo">058</span>                                + Log4jShutdownOnContextDestroyedListener.class.getSimpleName() + " instead of "<a name="line.58"></a>
-<span class="sourceLineNo">059</span>                                + getClass().getSimpleName() + ".");<a name="line.59"></a>
+<span class="sourceLineNo">056</span>            throw new IllegalStateException("Do not use " + getClass().getSimpleName() + " when "<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                    + Log4jWebSupport.IS_LOG4J_AUTO_SHUTDOWN_DISABLED + " is true. Please use "<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                    + Log4jShutdownOnContextDestroyedListener.class.getSimpleName() + " instead of "<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                    + getClass().getSimpleName() + ".");<a name="line.59"></a>
 <span class="sourceLineNo">060</span>        }<a name="line.60"></a>
 <span class="sourceLineNo">061</span><a name="line.61"></a>
 <span class="sourceLineNo">062</span>        this.initializer = WebLoggerContextUtils.getWebLifeCycle(this.servletContext);<a name="line.62"></a>
@@ -77,27 +77,27 @@
 <span class="sourceLineNo">069</span>    }<a name="line.69"></a>
 <span class="sourceLineNo">070</span><a name="line.70"></a>
 <span class="sourceLineNo">071</span>    @Override<a name="line.71"></a>
-<span class="sourceLineNo">072</span>        public void contextDestroyed(final ServletContextEvent event) {<a name="line.72"></a>
-<span class="sourceLineNo">073</span>                if (this.servletContext == null || this.initializer == null) {<a name="line.73"></a>
-<span class="sourceLineNo">074</span>                        LOGGER.warn("Context destroyed before it was initialized.");<a name="line.74"></a>
-<span class="sourceLineNo">075</span>                        return;<a name="line.75"></a>
-<span class="sourceLineNo">076</span>                }<a name="line.76"></a>
-<span class="sourceLineNo">077</span>                LOGGER.debug("Log4jServletContextListener ensuring that Log4j shuts down properly.");<a name="line.77"></a>
+<span class="sourceLineNo">072</span>    public void contextDestroyed(final ServletContextEvent event) {<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        if (this.servletContext == null || this.initializer == null) {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>            LOGGER.warn("Context destroyed before it was initialized.");<a name="line.74"></a>
+<span class="sourceLineNo">075</span>            return;<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        }<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        LOGGER.debug("Log4jServletContextListener ensuring that Log4j shuts down properly.");<a name="line.77"></a>
 <span class="sourceLineNo">078</span><a name="line.78"></a>
-<span class="sourceLineNo">079</span>                this.initializer.clearLoggerContext(); // the application is finished<a name="line.79"></a>
-<span class="sourceLineNo">080</span>                // shutting down now<a name="line.80"></a>
-<span class="sourceLineNo">081</span>                if (initializer instanceof LifeCycle2) {<a name="line.81"></a>
-<span class="sourceLineNo">082</span>                        final String stopTimeoutStr = servletContext.getInitParameter(KEY_STOP_TIMEOUT);<a name="line.82"></a>
-<span class="sourceLineNo">083</span>                        final long stopTimeout = Strings.isEmpty(stopTimeoutStr) ? DEFAULT_STOP_TIMEOUT<a name="line.83"></a>
-<span class="sourceLineNo">084</span>                                        : Long.parseLong(stopTimeoutStr);<a name="line.84"></a>
-<span class="sourceLineNo">085</span>                        final String timeoutTimeUnitStr = servletContext.getInitParameter(KEY_STOP_TIMEOUT_TIMEUNIT);<a name="line.85"></a>
-<span class="sourceLineNo">086</span>                        final TimeUnit timeoutTimeUnit = Strings.isEmpty(timeoutTimeUnitStr) ? DEFAULT_STOP_TIMEOUT_TIMEUNIT<a name="line.86"></a>
-<span class="sourceLineNo">087</span>                                        : TimeUnit.valueOf(timeoutTimeUnitStr.toUpperCase(Locale.ROOT));<a name="line.87"></a>
-<span class="sourceLineNo">088</span>                        ((LifeCycle2) this.initializer).stop(stopTimeout, timeoutTimeUnit);<a name="line.88"></a>
-<span class="sourceLineNo">089</span>                } else {<a name="line.89"></a>
-<span class="sourceLineNo">090</span>                        this.initializer.stop();<a name="line.90"></a>
-<span class="sourceLineNo">091</span>                }<a name="line.91"></a>
-<span class="sourceLineNo">092</span>        }<a name="line.92"></a>
+<span class="sourceLineNo">079</span>        this.initializer.clearLoggerContext(); // the application is finished<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        // shutting down now<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        if (initializer instanceof LifeCycle2) {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            final String stopTimeoutStr = servletContext.getInitParameter(KEY_STOP_TIMEOUT);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            final long stopTimeout = Strings.isEmpty(stopTimeoutStr) ? DEFAULT_STOP_TIMEOUT<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                    : Long.parseLong(stopTimeoutStr);<a name="line.84"></a>
+<span class="sourceLineNo">085</span>            final String timeoutTimeUnitStr = servletContext.getInitParameter(KEY_STOP_TIMEOUT_TIMEUNIT);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>            final TimeUnit timeoutTimeUnit = Strings.isEmpty(timeoutTimeUnitStr) ? DEFAULT_STOP_TIMEOUT_TIMEUNIT<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                    : TimeUnit.valueOf(timeoutTimeUnitStr.toUpperCase(Locale.ROOT));<a name="line.87"></a>
+<span class="sourceLineNo">088</span>            ((LifeCycle2) this.initializer).stop(stopTimeout, timeoutTimeUnit);<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        } else {<a name="line.89"></a>
+<span class="sourceLineNo">090</span>            this.initializer.stop();<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        }<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    }<a name="line.92"></a>
 <span class="sourceLineNo">093</span>}<a name="line.93"></a>
 
 
