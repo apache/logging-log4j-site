@@ -68,7 +68,7 @@
 <span class="sourceLineNo">060</span>     * @param fileName The name of the file to manage.<a name="line.60"></a>
 <span class="sourceLineNo">061</span>     * @param append true if the file should be appended to, false if it should<a name="line.61"></a>
 <span class="sourceLineNo">062</span>     *            be overwritten.<a name="line.62"></a>
-<span class="sourceLineNo">063</span>     * @param isFlush true if the contents should be flushed to disk on every<a name="line.63"></a>
+<span class="sourceLineNo">063</span>     * @param immediateFlush true if the contents should be flushed to disk on every<a name="line.63"></a>
 <span class="sourceLineNo">064</span>     *            write<a name="line.64"></a>
 <span class="sourceLineNo">065</span>     * @param bufferSize The buffer size.<a name="line.65"></a>
 <span class="sourceLineNo">066</span>     * @param advertiseURI the URI to use when advertising the file<a name="line.66"></a>
@@ -76,12 +76,12 @@
 <span class="sourceLineNo">068</span>     * @param configuration The configuration.<a name="line.68"></a>
 <span class="sourceLineNo">069</span>     * @return A RandomAccessFileManager for the File.<a name="line.69"></a>
 <span class="sourceLineNo">070</span>     */<a name="line.70"></a>
-<span class="sourceLineNo">071</span>    public static RandomAccessFileManager getFileManager(final String fileName, final boolean append,<a name="line.71"></a>
-<span class="sourceLineNo">072</span>            final boolean isFlush, final int bufferSize, final String advertiseURI,<a name="line.72"></a>
-<span class="sourceLineNo">073</span>            final Layout&lt;? extends Serializable&gt; layout, final Configuration configuration) {<a name="line.73"></a>
-<span class="sourceLineNo">074</span>        return narrow(RandomAccessFileManager.class, getManager(fileName, new FactoryData(append,<a name="line.74"></a>
-<span class="sourceLineNo">075</span>                isFlush, bufferSize, advertiseURI, layout, configuration), FACTORY));<a name="line.75"></a>
-<span class="sourceLineNo">076</span>    }<a name="line.76"></a>
+<span class="sourceLineNo">071</span>        public static RandomAccessFileManager getFileManager(final String fileName, final boolean append,<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                        final boolean immediateFlush, final int bufferSize, final String advertiseURI,<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                        final Layout&lt;? extends Serializable&gt; layout, final Configuration configuration) {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                return narrow(RandomAccessFileManager.class, getManager(fileName,<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                                new FactoryData(append, immediateFlush, bufferSize, advertiseURI, layout, configuration), FACTORY));<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        }<a name="line.76"></a>
 <span class="sourceLineNo">077</span><a name="line.77"></a>
 <span class="sourceLineNo">078</span>    public Boolean isEndOfBatch() {<a name="line.78"></a>
 <span class="sourceLineNo">079</span>        return isEndOfBatch.get();<a name="line.79"></a>

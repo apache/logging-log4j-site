@@ -116,7 +116,7 @@
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> onEvent(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLoggerConfigDisruptor.html">Log4jEventWrapper</a> event, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> sequence, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> endOfBatch)
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>                 <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>             event.event.setEndOfBatch(endOfBatch);
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>             event.loggerConfig.asyncCallAppenders(event.event);
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>             event.loggerConfig.logToAsyncLoggerConfigsOnCurrentThread(event.event);
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>             event.clear();
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> 
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>             notifyIntermediateProgress(sequence);
@@ -222,7 +222,7 @@
 <a class="jxr_linenumber" name="L214" href="#L214">214</a>         ringBufferSize = DisruptorUtil.calculateRingBufferSize(<span class="jxr_string">"AsyncLoggerConfig.RingBufferSize"</span>);
 <a class="jxr_linenumber" name="L215" href="#L215">215</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/JCToolsBlockingQueueFactory.html">WaitStrategy</a> waitStrategy = DisruptorUtil.createWaitStrategy(<span class="jxr_string">"AsyncLoggerConfig.WaitStrategy"</span>);
 <a class="jxr_linenumber" name="L216" href="#L216">216</a> 
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>         <strong class="jxr_keyword">final</strong> ThreadFactory threadFactory = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/Log4jThreadFactory.html">Log4jThreadFactory</a>(<span class="jxr_string">"AsyncLoggerConfig-"</span>, <strong class="jxr_keyword">true</strong>, Thread.NORM_PRIORITY) {
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>         <strong class="jxr_keyword">final</strong> ThreadFactory threadFactory = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/Log4jThreadFactory.html">Log4jThreadFactory</a>(<span class="jxr_string">"AsyncLoggerConfig"</span>, <strong class="jxr_keyword">true</strong>, Thread.NORM_PRIORITY) {
 <a class="jxr_linenumber" name="L218" href="#L218">218</a>             @Override
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>             <strong class="jxr_keyword">public</strong> Thread newThread(<strong class="jxr_keyword">final</strong> Runnable r) {
 <a class="jxr_linenumber" name="L220" href="#L220">220</a>                 <strong class="jxr_keyword">final</strong> Thread result = <strong class="jxr_keyword">super</strong>.newThread(r);

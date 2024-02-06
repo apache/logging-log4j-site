@@ -2189,623 +2189,624 @@
 <span class="sourceLineNo">2181</span>            throw (LoggingException) exception;<a name="line.2181"></a>
 <span class="sourceLineNo">2182</span>        }<a name="line.2182"></a>
 <span class="sourceLineNo">2183</span>        final String format = msg.getFormat();<a name="line.2183"></a>
-<span class="sourceLineNo">2184</span>        final StringBuilder sb = new StringBuilder(format.length() + 100);<a name="line.2184"></a>
-<span class="sourceLineNo">2185</span>        sb.append(fqcn);<a name="line.2185"></a>
-<span class="sourceLineNo">2186</span>        sb.append(" caught ");<a name="line.2186"></a>
-<span class="sourceLineNo">2187</span>        sb.append(exception.getClass().getName());<a name="line.2187"></a>
-<span class="sourceLineNo">2188</span>        sb.append(" logging ");<a name="line.2188"></a>
-<span class="sourceLineNo">2189</span>        sb.append(msg.getClass().getSimpleName());<a name="line.2189"></a>
-<span class="sourceLineNo">2190</span>        sb.append(": ");<a name="line.2190"></a>
-<span class="sourceLineNo">2191</span>        sb.append(format);<a name="line.2191"></a>
-<span class="sourceLineNo">2192</span>        StatusLogger.getLogger().warn(sb.toString(), exception);<a name="line.2192"></a>
-<span class="sourceLineNo">2193</span>    }<a name="line.2193"></a>
-<span class="sourceLineNo">2194</span><a name="line.2194"></a>
-<span class="sourceLineNo">2195</span>    @Override<a name="line.2195"></a>
-<span class="sourceLineNo">2196</span>    public &lt;T extends Throwable&gt; T throwing(final T t) {<a name="line.2196"></a>
-<span class="sourceLineNo">2197</span>        return throwing(FQCN, Level.ERROR, t);<a name="line.2197"></a>
-<span class="sourceLineNo">2198</span>    }<a name="line.2198"></a>
-<span class="sourceLineNo">2199</span><a name="line.2199"></a>
-<span class="sourceLineNo">2200</span>    @Override<a name="line.2200"></a>
-<span class="sourceLineNo">2201</span>    public &lt;T extends Throwable&gt; T throwing(final Level level, final T t) {<a name="line.2201"></a>
-<span class="sourceLineNo">2202</span>        return throwing(FQCN, level, t);<a name="line.2202"></a>
-<span class="sourceLineNo">2203</span>    }<a name="line.2203"></a>
-<span class="sourceLineNo">2204</span><a name="line.2204"></a>
-<span class="sourceLineNo">2205</span>    /**<a name="line.2205"></a>
-<span class="sourceLineNo">2206</span>     * Logs a Throwable to be thrown.<a name="line.2206"></a>
-<span class="sourceLineNo">2207</span>     *<a name="line.2207"></a>
-<span class="sourceLineNo">2208</span>     * @param &lt;T&gt; the type of the Throwable.<a name="line.2208"></a>
-<span class="sourceLineNo">2209</span>     * @param fqcn the fully qualified class name of this Logger implementation.<a name="line.2209"></a>
-<span class="sourceLineNo">2210</span>     * @param level The logging Level.<a name="line.2210"></a>
-<span class="sourceLineNo">2211</span>     * @param t The Throwable.<a name="line.2211"></a>
-<span class="sourceLineNo">2212</span>     * @return the Throwable.<a name="line.2212"></a>
-<span class="sourceLineNo">2213</span>     */<a name="line.2213"></a>
-<span class="sourceLineNo">2214</span>    protected &lt;T extends Throwable&gt; T throwing(final String fqcn, final Level level, final T t) {<a name="line.2214"></a>
-<span class="sourceLineNo">2215</span>        if (isEnabled(level, THROWING_MARKER, (Object) null, null)) {<a name="line.2215"></a>
-<span class="sourceLineNo">2216</span>            logMessageSafely(fqcn, level, THROWING_MARKER, throwingMsg(t), t);<a name="line.2216"></a>
-<span class="sourceLineNo">2217</span>        }<a name="line.2217"></a>
-<span class="sourceLineNo">2218</span>        return t;<a name="line.2218"></a>
-<span class="sourceLineNo">2219</span>    }<a name="line.2219"></a>
-<span class="sourceLineNo">2220</span><a name="line.2220"></a>
-<span class="sourceLineNo">2221</span>    protected Message throwingMsg(final Throwable t) {<a name="line.2221"></a>
-<span class="sourceLineNo">2222</span>        return messageFactory.newMessage(THROWING);<a name="line.2222"></a>
-<span class="sourceLineNo">2223</span>    }<a name="line.2223"></a>
-<span class="sourceLineNo">2224</span><a name="line.2224"></a>
-<span class="sourceLineNo">2225</span>    @Override<a name="line.2225"></a>
-<span class="sourceLineNo">2226</span>    public void trace(final Marker marker, final Message msg) {<a name="line.2226"></a>
-<span class="sourceLineNo">2227</span>        logIfEnabled(FQCN, Level.TRACE, marker, msg, msg != null ? msg.getThrowable() : null);<a name="line.2227"></a>
-<span class="sourceLineNo">2228</span>    }<a name="line.2228"></a>
-<span class="sourceLineNo">2229</span><a name="line.2229"></a>
-<span class="sourceLineNo">2230</span>    @Override<a name="line.2230"></a>
-<span class="sourceLineNo">2231</span>    public void trace(final Marker marker, final Message msg, final Throwable t) {<a name="line.2231"></a>
-<span class="sourceLineNo">2232</span>        logIfEnabled(FQCN, Level.TRACE, marker, msg, t);<a name="line.2232"></a>
-<span class="sourceLineNo">2233</span>    }<a name="line.2233"></a>
-<span class="sourceLineNo">2234</span><a name="line.2234"></a>
-<span class="sourceLineNo">2235</span>    @Override<a name="line.2235"></a>
-<span class="sourceLineNo">2236</span>    public void trace(final Marker marker, final CharSequence message) {<a name="line.2236"></a>
-<span class="sourceLineNo">2237</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, null);<a name="line.2237"></a>
-<span class="sourceLineNo">2238</span>    }<a name="line.2238"></a>
-<span class="sourceLineNo">2239</span><a name="line.2239"></a>
-<span class="sourceLineNo">2240</span>    @Override<a name="line.2240"></a>
-<span class="sourceLineNo">2241</span>    public void trace(final Marker marker, final CharSequence message, final Throwable t) {<a name="line.2241"></a>
-<span class="sourceLineNo">2242</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, t);<a name="line.2242"></a>
-<span class="sourceLineNo">2243</span>    }<a name="line.2243"></a>
-<span class="sourceLineNo">2244</span><a name="line.2244"></a>
-<span class="sourceLineNo">2245</span>    @Override<a name="line.2245"></a>
-<span class="sourceLineNo">2246</span>    public void trace(final Marker marker, final Object message) {<a name="line.2246"></a>
-<span class="sourceLineNo">2247</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, null);<a name="line.2247"></a>
-<span class="sourceLineNo">2248</span>    }<a name="line.2248"></a>
-<span class="sourceLineNo">2249</span><a name="line.2249"></a>
-<span class="sourceLineNo">2250</span>    @Override<a name="line.2250"></a>
-<span class="sourceLineNo">2251</span>    public void trace(final Marker marker, final Object message, final Throwable t) {<a name="line.2251"></a>
-<span class="sourceLineNo">2252</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, t);<a name="line.2252"></a>
-<span class="sourceLineNo">2253</span>    }<a name="line.2253"></a>
-<span class="sourceLineNo">2254</span><a name="line.2254"></a>
-<span class="sourceLineNo">2255</span>    @Override<a name="line.2255"></a>
-<span class="sourceLineNo">2256</span>    public void trace(final Marker marker, final String message) {<a name="line.2256"></a>
-<span class="sourceLineNo">2257</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, (Throwable) null);<a name="line.2257"></a>
-<span class="sourceLineNo">2258</span>    }<a name="line.2258"></a>
-<span class="sourceLineNo">2259</span><a name="line.2259"></a>
-<span class="sourceLineNo">2260</span>    @Override<a name="line.2260"></a>
-<span class="sourceLineNo">2261</span>    public void trace(final Marker marker, final String message, final Object... params) {<a name="line.2261"></a>
-<span class="sourceLineNo">2262</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, params);<a name="line.2262"></a>
-<span class="sourceLineNo">2263</span>    }<a name="line.2263"></a>
-<span class="sourceLineNo">2264</span><a name="line.2264"></a>
-<span class="sourceLineNo">2265</span>    @Override<a name="line.2265"></a>
-<span class="sourceLineNo">2266</span>    public void trace(final Marker marker, final String message, final Throwable t) {<a name="line.2266"></a>
-<span class="sourceLineNo">2267</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, t);<a name="line.2267"></a>
-<span class="sourceLineNo">2268</span>    }<a name="line.2268"></a>
-<span class="sourceLineNo">2269</span><a name="line.2269"></a>
-<span class="sourceLineNo">2270</span>    @Override<a name="line.2270"></a>
-<span class="sourceLineNo">2271</span>    public void trace(final Message msg) {<a name="line.2271"></a>
-<span class="sourceLineNo">2272</span>        logIfEnabled(FQCN, Level.TRACE, null, msg, msg != null ? msg.getThrowable() : null);<a name="line.2272"></a>
-<span class="sourceLineNo">2273</span>    }<a name="line.2273"></a>
-<span class="sourceLineNo">2274</span><a name="line.2274"></a>
-<span class="sourceLineNo">2275</span>    @Override<a name="line.2275"></a>
-<span class="sourceLineNo">2276</span>    public void trace(final Message msg, final Throwable t) {<a name="line.2276"></a>
-<span class="sourceLineNo">2277</span>        logIfEnabled(FQCN, Level.TRACE, null, msg, t);<a name="line.2277"></a>
-<span class="sourceLineNo">2278</span>    }<a name="line.2278"></a>
-<span class="sourceLineNo">2279</span><a name="line.2279"></a>
-<span class="sourceLineNo">2280</span>    @Override<a name="line.2280"></a>
-<span class="sourceLineNo">2281</span>    public void trace(final CharSequence message) {<a name="line.2281"></a>
-<span class="sourceLineNo">2282</span>        logIfEnabled(FQCN, Level.TRACE, null, message, null);<a name="line.2282"></a>
-<span class="sourceLineNo">2283</span>    }<a name="line.2283"></a>
-<span class="sourceLineNo">2284</span><a name="line.2284"></a>
-<span class="sourceLineNo">2285</span>    @Override<a name="line.2285"></a>
-<span class="sourceLineNo">2286</span>    public void trace(final CharSequence message, final Throwable t) {<a name="line.2286"></a>
-<span class="sourceLineNo">2287</span>        logIfEnabled(FQCN, Level.TRACE, null, message, t);<a name="line.2287"></a>
-<span class="sourceLineNo">2288</span>    }<a name="line.2288"></a>
-<span class="sourceLineNo">2289</span><a name="line.2289"></a>
-<span class="sourceLineNo">2290</span>    @Override<a name="line.2290"></a>
-<span class="sourceLineNo">2291</span>    public void trace(final Object message) {<a name="line.2291"></a>
-<span class="sourceLineNo">2292</span>        logIfEnabled(FQCN, Level.TRACE, null, message, null);<a name="line.2292"></a>
-<span class="sourceLineNo">2293</span>    }<a name="line.2293"></a>
-<span class="sourceLineNo">2294</span><a name="line.2294"></a>
-<span class="sourceLineNo">2295</span>    @Override<a name="line.2295"></a>
-<span class="sourceLineNo">2296</span>    public void trace(final Object message, final Throwable t) {<a name="line.2296"></a>
-<span class="sourceLineNo">2297</span>        logIfEnabled(FQCN, Level.TRACE, null, message, t);<a name="line.2297"></a>
-<span class="sourceLineNo">2298</span>    }<a name="line.2298"></a>
-<span class="sourceLineNo">2299</span><a name="line.2299"></a>
-<span class="sourceLineNo">2300</span>    @Override<a name="line.2300"></a>
-<span class="sourceLineNo">2301</span>    public void trace(final String message) {<a name="line.2301"></a>
-<span class="sourceLineNo">2302</span>        logIfEnabled(FQCN, Level.TRACE, null, message, (Throwable) null);<a name="line.2302"></a>
-<span class="sourceLineNo">2303</span>    }<a name="line.2303"></a>
-<span class="sourceLineNo">2304</span><a name="line.2304"></a>
-<span class="sourceLineNo">2305</span>    @Override<a name="line.2305"></a>
-<span class="sourceLineNo">2306</span>    public void trace(final String message, final Object... params) {<a name="line.2306"></a>
-<span class="sourceLineNo">2307</span>        logIfEnabled(FQCN, Level.TRACE, null, message, params);<a name="line.2307"></a>
-<span class="sourceLineNo">2308</span>    }<a name="line.2308"></a>
-<span class="sourceLineNo">2309</span><a name="line.2309"></a>
-<span class="sourceLineNo">2310</span>    @Override<a name="line.2310"></a>
-<span class="sourceLineNo">2311</span>    public void trace(final String message, final Throwable t) {<a name="line.2311"></a>
-<span class="sourceLineNo">2312</span>        logIfEnabled(FQCN, Level.TRACE, null, message, t);<a name="line.2312"></a>
-<span class="sourceLineNo">2313</span>    }<a name="line.2313"></a>
-<span class="sourceLineNo">2314</span><a name="line.2314"></a>
-<span class="sourceLineNo">2315</span>    @Override<a name="line.2315"></a>
-<span class="sourceLineNo">2316</span>    public void trace(final Supplier&lt;?&gt; msgSupplier) {<a name="line.2316"></a>
-<span class="sourceLineNo">2317</span>        logIfEnabled(FQCN, Level.TRACE, null, msgSupplier, (Throwable) null);<a name="line.2317"></a>
-<span class="sourceLineNo">2318</span>    }<a name="line.2318"></a>
-<span class="sourceLineNo">2319</span><a name="line.2319"></a>
-<span class="sourceLineNo">2320</span>    @Override<a name="line.2320"></a>
-<span class="sourceLineNo">2321</span>    public void trace(final Supplier&lt;?&gt; msgSupplier, final Throwable t) {<a name="line.2321"></a>
-<span class="sourceLineNo">2322</span>        logIfEnabled(FQCN, Level.TRACE, null, msgSupplier, t);<a name="line.2322"></a>
-<span class="sourceLineNo">2323</span>    }<a name="line.2323"></a>
-<span class="sourceLineNo">2324</span><a name="line.2324"></a>
-<span class="sourceLineNo">2325</span>    @Override<a name="line.2325"></a>
-<span class="sourceLineNo">2326</span>    public void trace(final Marker marker, final Supplier&lt;?&gt; msgSupplier) {<a name="line.2326"></a>
-<span class="sourceLineNo">2327</span>        logIfEnabled(FQCN, Level.TRACE, marker, msgSupplier, (Throwable) null);<a name="line.2327"></a>
-<span class="sourceLineNo">2328</span>    }<a name="line.2328"></a>
-<span class="sourceLineNo">2329</span><a name="line.2329"></a>
-<span class="sourceLineNo">2330</span>    @Override<a name="line.2330"></a>
-<span class="sourceLineNo">2331</span>    public void trace(final Marker marker, final String message, final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2331"></a>
-<span class="sourceLineNo">2332</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, paramSuppliers);<a name="line.2332"></a>
-<span class="sourceLineNo">2333</span>    }<a name="line.2333"></a>
-<span class="sourceLineNo">2334</span><a name="line.2334"></a>
-<span class="sourceLineNo">2335</span>    @Override<a name="line.2335"></a>
-<span class="sourceLineNo">2336</span>    public void trace(final Marker marker, final Supplier&lt;?&gt; msgSupplier, final Throwable t) {<a name="line.2336"></a>
-<span class="sourceLineNo">2337</span>        logIfEnabled(FQCN, Level.TRACE, marker, msgSupplier, t);<a name="line.2337"></a>
-<span class="sourceLineNo">2338</span>    }<a name="line.2338"></a>
-<span class="sourceLineNo">2339</span><a name="line.2339"></a>
-<span class="sourceLineNo">2340</span>    @Override<a name="line.2340"></a>
-<span class="sourceLineNo">2341</span>    public void trace(final String message, final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2341"></a>
-<span class="sourceLineNo">2342</span>        logIfEnabled(FQCN, Level.TRACE, null, message, paramSuppliers);<a name="line.2342"></a>
-<span class="sourceLineNo">2343</span>    }<a name="line.2343"></a>
-<span class="sourceLineNo">2344</span><a name="line.2344"></a>
-<span class="sourceLineNo">2345</span>    @Override<a name="line.2345"></a>
-<span class="sourceLineNo">2346</span>    public void trace(final Marker marker, final MessageSupplier msgSupplier) {<a name="line.2346"></a>
-<span class="sourceLineNo">2347</span>        logIfEnabled(FQCN, Level.TRACE, marker, msgSupplier, (Throwable) null);<a name="line.2347"></a>
-<span class="sourceLineNo">2348</span>    }<a name="line.2348"></a>
-<span class="sourceLineNo">2349</span><a name="line.2349"></a>
-<span class="sourceLineNo">2350</span>    @Override<a name="line.2350"></a>
-<span class="sourceLineNo">2351</span>    public void trace(final Marker marker, final MessageSupplier msgSupplier, final Throwable t) {<a name="line.2351"></a>
-<span class="sourceLineNo">2352</span>        logIfEnabled(FQCN, Level.TRACE, marker, msgSupplier, t);<a name="line.2352"></a>
-<span class="sourceLineNo">2353</span>    }<a name="line.2353"></a>
-<span class="sourceLineNo">2354</span><a name="line.2354"></a>
-<span class="sourceLineNo">2355</span>    @Override<a name="line.2355"></a>
-<span class="sourceLineNo">2356</span>    public void trace(final MessageSupplier msgSupplier) {<a name="line.2356"></a>
-<span class="sourceLineNo">2357</span>        logIfEnabled(FQCN, Level.TRACE, null, msgSupplier, (Throwable) null);<a name="line.2357"></a>
-<span class="sourceLineNo">2358</span>    }<a name="line.2358"></a>
-<span class="sourceLineNo">2359</span><a name="line.2359"></a>
-<span class="sourceLineNo">2360</span>    @Override<a name="line.2360"></a>
-<span class="sourceLineNo">2361</span>    public void trace(final MessageSupplier msgSupplier, final Throwable t) {<a name="line.2361"></a>
-<span class="sourceLineNo">2362</span>        logIfEnabled(FQCN, Level.TRACE, null, msgSupplier, t);<a name="line.2362"></a>
-<span class="sourceLineNo">2363</span>    }<a name="line.2363"></a>
-<span class="sourceLineNo">2364</span><a name="line.2364"></a>
-<span class="sourceLineNo">2365</span>    @Override<a name="line.2365"></a>
-<span class="sourceLineNo">2366</span>    public void trace(final Marker marker, final String message, final Object p0) {<a name="line.2366"></a>
-<span class="sourceLineNo">2367</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0);<a name="line.2367"></a>
-<span class="sourceLineNo">2368</span>    }<a name="line.2368"></a>
-<span class="sourceLineNo">2369</span><a name="line.2369"></a>
-<span class="sourceLineNo">2370</span>    @Override<a name="line.2370"></a>
-<span class="sourceLineNo">2371</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1) {<a name="line.2371"></a>
-<span class="sourceLineNo">2372</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1);<a name="line.2372"></a>
-<span class="sourceLineNo">2373</span>    }<a name="line.2373"></a>
-<span class="sourceLineNo">2374</span><a name="line.2374"></a>
-<span class="sourceLineNo">2375</span>    @Override<a name="line.2375"></a>
-<span class="sourceLineNo">2376</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2) {<a name="line.2376"></a>
-<span class="sourceLineNo">2377</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2);<a name="line.2377"></a>
-<span class="sourceLineNo">2378</span>    }<a name="line.2378"></a>
-<span class="sourceLineNo">2379</span><a name="line.2379"></a>
-<span class="sourceLineNo">2380</span>    @Override<a name="line.2380"></a>
-<span class="sourceLineNo">2381</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2381"></a>
-<span class="sourceLineNo">2382</span>            final Object p3) {<a name="line.2382"></a>
-<span class="sourceLineNo">2383</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3);<a name="line.2383"></a>
-<span class="sourceLineNo">2384</span>    }<a name="line.2384"></a>
-<span class="sourceLineNo">2385</span><a name="line.2385"></a>
-<span class="sourceLineNo">2386</span>    @Override<a name="line.2386"></a>
-<span class="sourceLineNo">2387</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2387"></a>
-<span class="sourceLineNo">2388</span>            final Object p3, final Object p4) {<a name="line.2388"></a>
-<span class="sourceLineNo">2389</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4);<a name="line.2389"></a>
-<span class="sourceLineNo">2390</span>    }<a name="line.2390"></a>
-<span class="sourceLineNo">2391</span><a name="line.2391"></a>
-<span class="sourceLineNo">2392</span>    @Override<a name="line.2392"></a>
-<span class="sourceLineNo">2393</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2393"></a>
-<span class="sourceLineNo">2394</span>            final Object p3, final Object p4, final Object p5) {<a name="line.2394"></a>
-<span class="sourceLineNo">2395</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4, p5);<a name="line.2395"></a>
-<span class="sourceLineNo">2396</span>    }<a name="line.2396"></a>
-<span class="sourceLineNo">2397</span><a name="line.2397"></a>
-<span class="sourceLineNo">2398</span>    @Override<a name="line.2398"></a>
-<span class="sourceLineNo">2399</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2399"></a>
-<span class="sourceLineNo">2400</span>            final Object p3, final Object p4, final Object p5, final Object p6) {<a name="line.2400"></a>
-<span class="sourceLineNo">2401</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4, p5, p6);<a name="line.2401"></a>
-<span class="sourceLineNo">2402</span>    }<a name="line.2402"></a>
-<span class="sourceLineNo">2403</span><a name="line.2403"></a>
-<span class="sourceLineNo">2404</span>    @Override<a name="line.2404"></a>
-<span class="sourceLineNo">2405</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2405"></a>
-<span class="sourceLineNo">2406</span>            final Object p3, final Object p4, final Object p5, final Object p6, final Object p7) {<a name="line.2406"></a>
-<span class="sourceLineNo">2407</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4, p5, p6, p7);<a name="line.2407"></a>
-<span class="sourceLineNo">2408</span>    }<a name="line.2408"></a>
-<span class="sourceLineNo">2409</span><a name="line.2409"></a>
-<span class="sourceLineNo">2410</span>    @Override<a name="line.2410"></a>
-<span class="sourceLineNo">2411</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2411"></a>
-<span class="sourceLineNo">2412</span>            final Object p3, final Object p4, final Object p5,<a name="line.2412"></a>
-<span class="sourceLineNo">2413</span>            final Object p6, final Object p7, final Object p8) {<a name="line.2413"></a>
-<span class="sourceLineNo">2414</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4, p5, p6, p7, p8);<a name="line.2414"></a>
-<span class="sourceLineNo">2415</span>    }<a name="line.2415"></a>
-<span class="sourceLineNo">2416</span><a name="line.2416"></a>
-<span class="sourceLineNo">2417</span>    @Override<a name="line.2417"></a>
-<span class="sourceLineNo">2418</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2418"></a>
-<span class="sourceLineNo">2419</span>            final Object p3, final Object p4, final Object p5,<a name="line.2419"></a>
-<span class="sourceLineNo">2420</span>            final Object p6, final Object p7, final Object p8, final Object p9) {<a name="line.2420"></a>
-<span class="sourceLineNo">2421</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);<a name="line.2421"></a>
-<span class="sourceLineNo">2422</span>    }<a name="line.2422"></a>
-<span class="sourceLineNo">2423</span><a name="line.2423"></a>
-<span class="sourceLineNo">2424</span>    @Override<a name="line.2424"></a>
-<span class="sourceLineNo">2425</span>    public void trace(final String message, final Object p0) {<a name="line.2425"></a>
-<span class="sourceLineNo">2426</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0);<a name="line.2426"></a>
-<span class="sourceLineNo">2427</span>    }<a name="line.2427"></a>
-<span class="sourceLineNo">2428</span><a name="line.2428"></a>
-<span class="sourceLineNo">2429</span>    @Override<a name="line.2429"></a>
-<span class="sourceLineNo">2430</span>    public void trace(final String message, final Object p0, final Object p1) {<a name="line.2430"></a>
-<span class="sourceLineNo">2431</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1);<a name="line.2431"></a>
-<span class="sourceLineNo">2432</span>    }<a name="line.2432"></a>
-<span class="sourceLineNo">2433</span><a name="line.2433"></a>
-<span class="sourceLineNo">2434</span>    @Override<a name="line.2434"></a>
-<span class="sourceLineNo">2435</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2) {<a name="line.2435"></a>
-<span class="sourceLineNo">2436</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2);<a name="line.2436"></a>
-<span class="sourceLineNo">2437</span>    }<a name="line.2437"></a>
-<span class="sourceLineNo">2438</span><a name="line.2438"></a>
-<span class="sourceLineNo">2439</span>    @Override<a name="line.2439"></a>
-<span class="sourceLineNo">2440</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3) {<a name="line.2440"></a>
-<span class="sourceLineNo">2441</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3);<a name="line.2441"></a>
-<span class="sourceLineNo">2442</span>    }<a name="line.2442"></a>
-<span class="sourceLineNo">2443</span><a name="line.2443"></a>
-<span class="sourceLineNo">2444</span>    @Override<a name="line.2444"></a>
-<span class="sourceLineNo">2445</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2445"></a>
-<span class="sourceLineNo">2446</span>            final Object p4) {<a name="line.2446"></a>
-<span class="sourceLineNo">2447</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4);<a name="line.2447"></a>
-<span class="sourceLineNo">2448</span>    }<a name="line.2448"></a>
-<span class="sourceLineNo">2449</span><a name="line.2449"></a>
-<span class="sourceLineNo">2450</span>    @Override<a name="line.2450"></a>
-<span class="sourceLineNo">2451</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2451"></a>
-<span class="sourceLineNo">2452</span>            final Object p4, final Object p5) {<a name="line.2452"></a>
-<span class="sourceLineNo">2453</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4, p5);<a name="line.2453"></a>
-<span class="sourceLineNo">2454</span>    }<a name="line.2454"></a>
-<span class="sourceLineNo">2455</span><a name="line.2455"></a>
-<span class="sourceLineNo">2456</span>    @Override<a name="line.2456"></a>
-<span class="sourceLineNo">2457</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2457"></a>
-<span class="sourceLineNo">2458</span>            final Object p4, final Object p5, final Object p6) {<a name="line.2458"></a>
-<span class="sourceLineNo">2459</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4, p5, p6);<a name="line.2459"></a>
-<span class="sourceLineNo">2460</span>    }<a name="line.2460"></a>
-<span class="sourceLineNo">2461</span><a name="line.2461"></a>
-<span class="sourceLineNo">2462</span>    @Override<a name="line.2462"></a>
-<span class="sourceLineNo">2463</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2463"></a>
-<span class="sourceLineNo">2464</span>            final Object p4, final Object p5, final Object p6, final Object p7) {<a name="line.2464"></a>
-<span class="sourceLineNo">2465</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4, p5, p6, p7);<a name="line.2465"></a>
-<span class="sourceLineNo">2466</span>    }<a name="line.2466"></a>
-<span class="sourceLineNo">2467</span><a name="line.2467"></a>
-<span class="sourceLineNo">2468</span>    @Override<a name="line.2468"></a>
-<span class="sourceLineNo">2469</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2469"></a>
-<span class="sourceLineNo">2470</span>            final Object p4, final Object p5, final Object p6, final Object p7, final Object p8) {<a name="line.2470"></a>
-<span class="sourceLineNo">2471</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4, p5, p6, p7, p8);<a name="line.2471"></a>
-<span class="sourceLineNo">2472</span>    }<a name="line.2472"></a>
-<span class="sourceLineNo">2473</span><a name="line.2473"></a>
-<span class="sourceLineNo">2474</span>    @Override<a name="line.2474"></a>
-<span class="sourceLineNo">2475</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2475"></a>
-<span class="sourceLineNo">2476</span>            final Object p4, final Object p5, final Object p6, final Object p7, final Object p8, final Object p9) {<a name="line.2476"></a>
-<span class="sourceLineNo">2477</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);<a name="line.2477"></a>
-<span class="sourceLineNo">2478</span>    }<a name="line.2478"></a>
-<span class="sourceLineNo">2479</span><a name="line.2479"></a>
-<span class="sourceLineNo">2480</span>    @Override<a name="line.2480"></a>
-<span class="sourceLineNo">2481</span>    public EntryMessage traceEntry() {<a name="line.2481"></a>
-<span class="sourceLineNo">2482</span>        return enter(FQCN, null, (Object[]) null);<a name="line.2482"></a>
-<span class="sourceLineNo">2483</span>    }<a name="line.2483"></a>
-<span class="sourceLineNo">2484</span><a name="line.2484"></a>
-<span class="sourceLineNo">2485</span>    @Override<a name="line.2485"></a>
-<span class="sourceLineNo">2486</span>    public EntryMessage traceEntry(final String format, final Object... params) {<a name="line.2486"></a>
-<span class="sourceLineNo">2487</span>        return enter(FQCN, format, params);<a name="line.2487"></a>
-<span class="sourceLineNo">2488</span>    }<a name="line.2488"></a>
-<span class="sourceLineNo">2489</span><a name="line.2489"></a>
-<span class="sourceLineNo">2490</span>    @Override<a name="line.2490"></a>
-<span class="sourceLineNo">2491</span>    public EntryMessage traceEntry(final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2491"></a>
-<span class="sourceLineNo">2492</span>        return enter(FQCN, null, paramSuppliers);<a name="line.2492"></a>
-<span class="sourceLineNo">2493</span>    }<a name="line.2493"></a>
-<span class="sourceLineNo">2494</span><a name="line.2494"></a>
-<span class="sourceLineNo">2495</span>    @Override<a name="line.2495"></a>
-<span class="sourceLineNo">2496</span>    public EntryMessage traceEntry(final String format, final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2496"></a>
-<span class="sourceLineNo">2497</span>        return enter(FQCN, format, paramSuppliers);<a name="line.2497"></a>
-<span class="sourceLineNo">2498</span>    }<a name="line.2498"></a>
-<span class="sourceLineNo">2499</span><a name="line.2499"></a>
-<span class="sourceLineNo">2500</span>    @Override<a name="line.2500"></a>
-<span class="sourceLineNo">2501</span>    public EntryMessage traceEntry(final Message message) {<a name="line.2501"></a>
-<span class="sourceLineNo">2502</span>        return enter(FQCN, message);<a name="line.2502"></a>
-<span class="sourceLineNo">2503</span>    }<a name="line.2503"></a>
-<span class="sourceLineNo">2504</span><a name="line.2504"></a>
-<span class="sourceLineNo">2505</span>    @Override<a name="line.2505"></a>
-<span class="sourceLineNo">2506</span>    public void traceExit() {<a name="line.2506"></a>
-<span class="sourceLineNo">2507</span>        exit(FQCN, null, null);<a name="line.2507"></a>
-<span class="sourceLineNo">2508</span>    }<a name="line.2508"></a>
-<span class="sourceLineNo">2509</span><a name="line.2509"></a>
-<span class="sourceLineNo">2510</span>    @Override<a name="line.2510"></a>
-<span class="sourceLineNo">2511</span>    public &lt;R&gt; R traceExit(final R result) {<a name="line.2511"></a>
-<span class="sourceLineNo">2512</span>        return exit(FQCN, null, result);<a name="line.2512"></a>
-<span class="sourceLineNo">2513</span>    }<a name="line.2513"></a>
-<span class="sourceLineNo">2514</span><a name="line.2514"></a>
-<span class="sourceLineNo">2515</span>    @Override<a name="line.2515"></a>
-<span class="sourceLineNo">2516</span>    public &lt;R&gt; R traceExit(final String format, final R result) {<a name="line.2516"></a>
-<span class="sourceLineNo">2517</span>        return exit(FQCN, format, result);<a name="line.2517"></a>
-<span class="sourceLineNo">2518</span>    }<a name="line.2518"></a>
-<span class="sourceLineNo">2519</span><a name="line.2519"></a>
-<span class="sourceLineNo">2520</span>    @Override<a name="line.2520"></a>
-<span class="sourceLineNo">2521</span>    public void traceExit(final EntryMessage message) {<a name="line.2521"></a>
-<span class="sourceLineNo">2522</span>        // If the message is null, traceEnter returned null because flow logging was disabled, we can optimize out calling isEnabled().<a name="line.2522"></a>
-<span class="sourceLineNo">2523</span>        if (message != null &amp;&amp; isEnabled(Level.TRACE, EXIT_MARKER, message, null)) {<a name="line.2523"></a>
-<span class="sourceLineNo">2524</span>            logMessageSafely(FQCN, Level.TRACE, EXIT_MARKER, flowMessageFactory.newExitMessage(message), null);<a name="line.2524"></a>
-<span class="sourceLineNo">2525</span>        }<a name="line.2525"></a>
-<span class="sourceLineNo">2526</span>    }<a name="line.2526"></a>
-<span class="sourceLineNo">2527</span><a name="line.2527"></a>
-<span class="sourceLineNo">2528</span>    @Override<a name="line.2528"></a>
-<span class="sourceLineNo">2529</span>    public &lt;R&gt; R traceExit(final EntryMessage message, final R result) {<a name="line.2529"></a>
-<span class="sourceLineNo">2530</span>        // If the message is null, traceEnter returned null because flow logging was disabled, we can optimize out calling isEnabled().<a name="line.2530"></a>
-<span class="sourceLineNo">2531</span>        if (message != null &amp;&amp; isEnabled(Level.TRACE, EXIT_MARKER, message, null)) {<a name="line.2531"></a>
-<span class="sourceLineNo">2532</span>            logMessageSafely(FQCN, Level.TRACE, EXIT_MARKER, flowMessageFactory.newExitMessage(result, message), null);<a name="line.2532"></a>
-<span class="sourceLineNo">2533</span>        }<a name="line.2533"></a>
-<span class="sourceLineNo">2534</span>        return result;<a name="line.2534"></a>
-<span class="sourceLineNo">2535</span>    }<a name="line.2535"></a>
-<span class="sourceLineNo">2536</span><a name="line.2536"></a>
-<span class="sourceLineNo">2537</span>    @Override<a name="line.2537"></a>
-<span class="sourceLineNo">2538</span>    public &lt;R&gt; R traceExit(final Message message, final R result) {<a name="line.2538"></a>
-<span class="sourceLineNo">2539</span>        // If the message is null, traceEnter returned null because flow logging was disabled, we can optimize out calling isEnabled().<a name="line.2539"></a>
-<span class="sourceLineNo">2540</span>        if (message != null &amp;&amp; isEnabled(Level.TRACE, EXIT_MARKER, message, null)) {<a name="line.2540"></a>
-<span class="sourceLineNo">2541</span>            logMessageSafely(FQCN, Level.TRACE, EXIT_MARKER, flowMessageFactory.newExitMessage(result, message), null);<a name="line.2541"></a>
-<span class="sourceLineNo">2542</span>        }<a name="line.2542"></a>
-<span class="sourceLineNo">2543</span>        return result;<a name="line.2543"></a>
-<span class="sourceLineNo">2544</span>    }<a name="line.2544"></a>
-<span class="sourceLineNo">2545</span><a name="line.2545"></a>
-<span class="sourceLineNo">2546</span>    @Override<a name="line.2546"></a>
-<span class="sourceLineNo">2547</span>    public void warn(final Marker marker, final Message msg) {<a name="line.2547"></a>
-<span class="sourceLineNo">2548</span>        logIfEnabled(FQCN, Level.WARN, marker, msg, msg != null ? msg.getThrowable() : null);<a name="line.2548"></a>
-<span class="sourceLineNo">2549</span>    }<a name="line.2549"></a>
-<span class="sourceLineNo">2550</span><a name="line.2550"></a>
-<span class="sourceLineNo">2551</span>    @Override<a name="line.2551"></a>
-<span class="sourceLineNo">2552</span>    public void warn(final Marker marker, final Message msg, final Throwable t) {<a name="line.2552"></a>
-<span class="sourceLineNo">2553</span>        logIfEnabled(FQCN, Level.WARN, marker, msg, t);<a name="line.2553"></a>
-<span class="sourceLineNo">2554</span>    }<a name="line.2554"></a>
-<span class="sourceLineNo">2555</span><a name="line.2555"></a>
-<span class="sourceLineNo">2556</span>    @Override<a name="line.2556"></a>
-<span class="sourceLineNo">2557</span>    public void warn(final Marker marker, final CharSequence message) {<a name="line.2557"></a>
-<span class="sourceLineNo">2558</span>        logIfEnabled(FQCN, Level.WARN, marker, message, null);<a name="line.2558"></a>
-<span class="sourceLineNo">2559</span>    }<a name="line.2559"></a>
-<span class="sourceLineNo">2560</span><a name="line.2560"></a>
-<span class="sourceLineNo">2561</span>    @Override<a name="line.2561"></a>
-<span class="sourceLineNo">2562</span>    public void warn(final Marker marker, final CharSequence message, final Throwable t) {<a name="line.2562"></a>
-<span class="sourceLineNo">2563</span>        logIfEnabled(FQCN, Level.WARN, marker, message, t);<a name="line.2563"></a>
-<span class="sourceLineNo">2564</span>    }<a name="line.2564"></a>
-<span class="sourceLineNo">2565</span><a name="line.2565"></a>
-<span class="sourceLineNo">2566</span>    @Override<a name="line.2566"></a>
-<span class="sourceLineNo">2567</span>    public void warn(final Marker marker, final Object message) {<a name="line.2567"></a>
-<span class="sourceLineNo">2568</span>        logIfEnabled(FQCN, Level.WARN, marker, message, null);<a name="line.2568"></a>
-<span class="sourceLineNo">2569</span>    }<a name="line.2569"></a>
-<span class="sourceLineNo">2570</span><a name="line.2570"></a>
-<span class="sourceLineNo">2571</span>    @Override<a name="line.2571"></a>
-<span class="sourceLineNo">2572</span>    public void warn(final Marker marker, final Object message, final Throwable t) {<a name="line.2572"></a>
-<span class="sourceLineNo">2573</span>        logIfEnabled(FQCN, Level.WARN, marker, message, t);<a name="line.2573"></a>
-<span class="sourceLineNo">2574</span>    }<a name="line.2574"></a>
-<span class="sourceLineNo">2575</span><a name="line.2575"></a>
-<span class="sourceLineNo">2576</span>    @Override<a name="line.2576"></a>
-<span class="sourceLineNo">2577</span>    public void warn(final Marker marker, final String message) {<a name="line.2577"></a>
-<span class="sourceLineNo">2578</span>        logIfEnabled(FQCN, Level.WARN, marker, message, (Throwable) null);<a name="line.2578"></a>
-<span class="sourceLineNo">2579</span>    }<a name="line.2579"></a>
-<span class="sourceLineNo">2580</span><a name="line.2580"></a>
-<span class="sourceLineNo">2581</span>    @Override<a name="line.2581"></a>
-<span class="sourceLineNo">2582</span>    public void warn(final Marker marker, final String message, final Object... params) {<a name="line.2582"></a>
-<span class="sourceLineNo">2583</span>        logIfEnabled(FQCN, Level.WARN, marker, message, params);<a name="line.2583"></a>
-<span class="sourceLineNo">2584</span>    }<a name="line.2584"></a>
-<span class="sourceLineNo">2585</span><a name="line.2585"></a>
-<span class="sourceLineNo">2586</span>    @Override<a name="line.2586"></a>
-<span class="sourceLineNo">2587</span>    public void warn(final Marker marker, final String message, final Throwable t) {<a name="line.2587"></a>
-<span class="sourceLineNo">2588</span>        logIfEnabled(FQCN, Level.WARN, marker, message, t);<a name="line.2588"></a>
-<span class="sourceLineNo">2589</span>    }<a name="line.2589"></a>
-<span class="sourceLineNo">2590</span><a name="line.2590"></a>
-<span class="sourceLineNo">2591</span>    @Override<a name="line.2591"></a>
-<span class="sourceLineNo">2592</span>    public void warn(final Message msg) {<a name="line.2592"></a>
-<span class="sourceLineNo">2593</span>        logIfEnabled(FQCN, Level.WARN, null, msg, msg != null ? msg.getThrowable() : null);<a name="line.2593"></a>
-<span class="sourceLineNo">2594</span>    }<a name="line.2594"></a>
-<span class="sourceLineNo">2595</span><a name="line.2595"></a>
-<span class="sourceLineNo">2596</span>    @Override<a name="line.2596"></a>
-<span class="sourceLineNo">2597</span>    public void warn(final Message msg, final Throwable t) {<a name="line.2597"></a>
-<span class="sourceLineNo">2598</span>        logIfEnabled(FQCN, Level.WARN, null, msg, t);<a name="line.2598"></a>
-<span class="sourceLineNo">2599</span>    }<a name="line.2599"></a>
-<span class="sourceLineNo">2600</span><a name="line.2600"></a>
-<span class="sourceLineNo">2601</span>    @Override<a name="line.2601"></a>
-<span class="sourceLineNo">2602</span>    public void warn(final CharSequence message) {<a name="line.2602"></a>
-<span class="sourceLineNo">2603</span>        logIfEnabled(FQCN, Level.WARN, null, message, null);<a name="line.2603"></a>
-<span class="sourceLineNo">2604</span>    }<a name="line.2604"></a>
-<span class="sourceLineNo">2605</span><a name="line.2605"></a>
-<span class="sourceLineNo">2606</span>    @Override<a name="line.2606"></a>
-<span class="sourceLineNo">2607</span>    public void warn(final CharSequence message, final Throwable t) {<a name="line.2607"></a>
-<span class="sourceLineNo">2608</span>        logIfEnabled(FQCN, Level.WARN, null, message, t);<a name="line.2608"></a>
-<span class="sourceLineNo">2609</span>    }<a name="line.2609"></a>
-<span class="sourceLineNo">2610</span><a name="line.2610"></a>
-<span class="sourceLineNo">2611</span>    @Override<a name="line.2611"></a>
-<span class="sourceLineNo">2612</span>    public void warn(final Object message) {<a name="line.2612"></a>
-<span class="sourceLineNo">2613</span>        logIfEnabled(FQCN, Level.WARN, null, message, null);<a name="line.2613"></a>
-<span class="sourceLineNo">2614</span>    }<a name="line.2614"></a>
-<span class="sourceLineNo">2615</span><a name="line.2615"></a>
-<span class="sourceLineNo">2616</span>    @Override<a name="line.2616"></a>
-<span class="sourceLineNo">2617</span>    public void warn(final Object message, final Throwable t) {<a name="line.2617"></a>
-<span class="sourceLineNo">2618</span>        logIfEnabled(FQCN, Level.WARN, null, message, t);<a name="line.2618"></a>
-<span class="sourceLineNo">2619</span>    }<a name="line.2619"></a>
-<span class="sourceLineNo">2620</span><a name="line.2620"></a>
-<span class="sourceLineNo">2621</span>    @Override<a name="line.2621"></a>
-<span class="sourceLineNo">2622</span>    public void warn(final String message) {<a name="line.2622"></a>
-<span class="sourceLineNo">2623</span>        logIfEnabled(FQCN, Level.WARN, null, message, (Throwable) null);<a name="line.2623"></a>
-<span class="sourceLineNo">2624</span>    }<a name="line.2624"></a>
-<span class="sourceLineNo">2625</span><a name="line.2625"></a>
-<span class="sourceLineNo">2626</span>    @Override<a name="line.2626"></a>
-<span class="sourceLineNo">2627</span>    public void warn(final String message, final Object... params) {<a name="line.2627"></a>
-<span class="sourceLineNo">2628</span>        logIfEnabled(FQCN, Level.WARN, null, message, params);<a name="line.2628"></a>
-<span class="sourceLineNo">2629</span>    }<a name="line.2629"></a>
-<span class="sourceLineNo">2630</span><a name="line.2630"></a>
-<span class="sourceLineNo">2631</span>    @Override<a name="line.2631"></a>
-<span class="sourceLineNo">2632</span>    public void warn(final String message, final Throwable t) {<a name="line.2632"></a>
-<span class="sourceLineNo">2633</span>        logIfEnabled(FQCN, Level.WARN, null, message, t);<a name="line.2633"></a>
-<span class="sourceLineNo">2634</span>    }<a name="line.2634"></a>
-<span class="sourceLineNo">2635</span><a name="line.2635"></a>
-<span class="sourceLineNo">2636</span>    @Override<a name="line.2636"></a>
-<span class="sourceLineNo">2637</span>    public void warn(final Supplier&lt;?&gt; msgSupplier) {<a name="line.2637"></a>
-<span class="sourceLineNo">2638</span>        logIfEnabled(FQCN, Level.WARN, null, msgSupplier, (Throwable) null);<a name="line.2638"></a>
-<span class="sourceLineNo">2639</span>    }<a name="line.2639"></a>
-<span class="sourceLineNo">2640</span><a name="line.2640"></a>
-<span class="sourceLineNo">2641</span>    @Override<a name="line.2641"></a>
-<span class="sourceLineNo">2642</span>    public void warn(final Supplier&lt;?&gt; msgSupplier, final Throwable t) {<a name="line.2642"></a>
-<span class="sourceLineNo">2643</span>        logIfEnabled(FQCN, Level.WARN, null, msgSupplier, t);<a name="line.2643"></a>
-<span class="sourceLineNo">2644</span>    }<a name="line.2644"></a>
-<span class="sourceLineNo">2645</span><a name="line.2645"></a>
-<span class="sourceLineNo">2646</span>    @Override<a name="line.2646"></a>
-<span class="sourceLineNo">2647</span>    public void warn(final Marker marker, final Supplier&lt;?&gt; msgSupplier) {<a name="line.2647"></a>
-<span class="sourceLineNo">2648</span>        logIfEnabled(FQCN, Level.WARN, marker, msgSupplier, (Throwable) null);<a name="line.2648"></a>
-<span class="sourceLineNo">2649</span>    }<a name="line.2649"></a>
-<span class="sourceLineNo">2650</span><a name="line.2650"></a>
-<span class="sourceLineNo">2651</span>    @Override<a name="line.2651"></a>
-<span class="sourceLineNo">2652</span>    public void warn(final Marker marker, final String message, final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2652"></a>
-<span class="sourceLineNo">2653</span>        logIfEnabled(FQCN, Level.WARN, marker, message, paramSuppliers);<a name="line.2653"></a>
-<span class="sourceLineNo">2654</span>    }<a name="line.2654"></a>
-<span class="sourceLineNo">2655</span><a name="line.2655"></a>
-<span class="sourceLineNo">2656</span>    @Override<a name="line.2656"></a>
-<span class="sourceLineNo">2657</span>    public void warn(final Marker marker, final Supplier&lt;?&gt; msgSupplier, final Throwable t) {<a name="line.2657"></a>
-<span class="sourceLineNo">2658</span>        logIfEnabled(FQCN, Level.WARN, marker, msgSupplier, t);<a name="line.2658"></a>
-<span class="sourceLineNo">2659</span>    }<a name="line.2659"></a>
-<span class="sourceLineNo">2660</span><a name="line.2660"></a>
-<span class="sourceLineNo">2661</span>    @Override<a name="line.2661"></a>
-<span class="sourceLineNo">2662</span>    public void warn(final String message, final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2662"></a>
-<span class="sourceLineNo">2663</span>        logIfEnabled(FQCN, Level.WARN, null, message, paramSuppliers);<a name="line.2663"></a>
-<span class="sourceLineNo">2664</span>    }<a name="line.2664"></a>
-<span class="sourceLineNo">2665</span><a name="line.2665"></a>
-<span class="sourceLineNo">2666</span>    @Override<a name="line.2666"></a>
-<span class="sourceLineNo">2667</span>    public void warn(final Marker marker, final MessageSupplier msgSupplier) {<a name="line.2667"></a>
-<span class="sourceLineNo">2668</span>        logIfEnabled(FQCN, Level.WARN, marker, msgSupplier, (Throwable) null);<a name="line.2668"></a>
-<span class="sourceLineNo">2669</span>    }<a name="line.2669"></a>
-<span class="sourceLineNo">2670</span><a name="line.2670"></a>
-<span class="sourceLineNo">2671</span>    @Override<a name="line.2671"></a>
-<span class="sourceLineNo">2672</span>    public void warn(final Marker marker, final MessageSupplier msgSupplier, final Throwable t) {<a name="line.2672"></a>
-<span class="sourceLineNo">2673</span>        logIfEnabled(FQCN, Level.WARN, marker, msgSupplier, t);<a name="line.2673"></a>
-<span class="sourceLineNo">2674</span>    }<a name="line.2674"></a>
-<span class="sourceLineNo">2675</span><a name="line.2675"></a>
-<span class="sourceLineNo">2676</span>    @Override<a name="line.2676"></a>
-<span class="sourceLineNo">2677</span>    public void warn(final MessageSupplier msgSupplier) {<a name="line.2677"></a>
-<span class="sourceLineNo">2678</span>        logIfEnabled(FQCN, Level.WARN, null, msgSupplier, (Throwable) null);<a name="line.2678"></a>
-<span class="sourceLineNo">2679</span>    }<a name="line.2679"></a>
-<span class="sourceLineNo">2680</span><a name="line.2680"></a>
-<span class="sourceLineNo">2681</span>    @Override<a name="line.2681"></a>
-<span class="sourceLineNo">2682</span>    public void warn(final MessageSupplier msgSupplier, final Throwable t) {<a name="line.2682"></a>
-<span class="sourceLineNo">2683</span>        logIfEnabled(FQCN, Level.WARN, null, msgSupplier, t);<a name="line.2683"></a>
-<span class="sourceLineNo">2684</span>    }<a name="line.2684"></a>
-<span class="sourceLineNo">2685</span><a name="line.2685"></a>
-<span class="sourceLineNo">2686</span>    @Override<a name="line.2686"></a>
-<span class="sourceLineNo">2687</span>    public void warn(final Marker marker, final String message, final Object p0) {<a name="line.2687"></a>
-<span class="sourceLineNo">2688</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0);<a name="line.2688"></a>
-<span class="sourceLineNo">2689</span>    }<a name="line.2689"></a>
-<span class="sourceLineNo">2690</span><a name="line.2690"></a>
-<span class="sourceLineNo">2691</span>    @Override<a name="line.2691"></a>
-<span class="sourceLineNo">2692</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1) {<a name="line.2692"></a>
-<span class="sourceLineNo">2693</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1);<a name="line.2693"></a>
-<span class="sourceLineNo">2694</span>    }<a name="line.2694"></a>
-<span class="sourceLineNo">2695</span><a name="line.2695"></a>
-<span class="sourceLineNo">2696</span>    @Override<a name="line.2696"></a>
-<span class="sourceLineNo">2697</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2) {<a name="line.2697"></a>
-<span class="sourceLineNo">2698</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2);<a name="line.2698"></a>
-<span class="sourceLineNo">2699</span>    }<a name="line.2699"></a>
-<span class="sourceLineNo">2700</span><a name="line.2700"></a>
-<span class="sourceLineNo">2701</span>    @Override<a name="line.2701"></a>
-<span class="sourceLineNo">2702</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2702"></a>
-<span class="sourceLineNo">2703</span>            final Object p3) {<a name="line.2703"></a>
-<span class="sourceLineNo">2704</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3);<a name="line.2704"></a>
-<span class="sourceLineNo">2705</span>    }<a name="line.2705"></a>
-<span class="sourceLineNo">2706</span><a name="line.2706"></a>
-<span class="sourceLineNo">2707</span>    @Override<a name="line.2707"></a>
-<span class="sourceLineNo">2708</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2708"></a>
-<span class="sourceLineNo">2709</span>            final Object p3, final Object p4) {<a name="line.2709"></a>
-<span class="sourceLineNo">2710</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4);<a name="line.2710"></a>
-<span class="sourceLineNo">2711</span>    }<a name="line.2711"></a>
-<span class="sourceLineNo">2712</span><a name="line.2712"></a>
-<span class="sourceLineNo">2713</span>    @Override<a name="line.2713"></a>
-<span class="sourceLineNo">2714</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2714"></a>
-<span class="sourceLineNo">2715</span>            final Object p3, final Object p4, final Object p5) {<a name="line.2715"></a>
-<span class="sourceLineNo">2716</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4, p5);<a name="line.2716"></a>
-<span class="sourceLineNo">2717</span>    }<a name="line.2717"></a>
-<span class="sourceLineNo">2718</span><a name="line.2718"></a>
-<span class="sourceLineNo">2719</span>    @Override<a name="line.2719"></a>
-<span class="sourceLineNo">2720</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2720"></a>
-<span class="sourceLineNo">2721</span>            final Object p3, final Object p4, final Object p5, final Object p6) {<a name="line.2721"></a>
-<span class="sourceLineNo">2722</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4, p5, p6);<a name="line.2722"></a>
-<span class="sourceLineNo">2723</span>    }<a name="line.2723"></a>
-<span class="sourceLineNo">2724</span><a name="line.2724"></a>
-<span class="sourceLineNo">2725</span>    @Override<a name="line.2725"></a>
-<span class="sourceLineNo">2726</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2726"></a>
-<span class="sourceLineNo">2727</span>            final Object p3, final Object p4, final Object p5, final Object p6, final Object p7) {<a name="line.2727"></a>
-<span class="sourceLineNo">2728</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4, p5, p6, p7);<a name="line.2728"></a>
-<span class="sourceLineNo">2729</span>    }<a name="line.2729"></a>
-<span class="sourceLineNo">2730</span><a name="line.2730"></a>
-<span class="sourceLineNo">2731</span>    @Override<a name="line.2731"></a>
-<span class="sourceLineNo">2732</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2732"></a>
-<span class="sourceLineNo">2733</span>            final Object p3, final Object p4, final Object p5, final Object p6, final Object p7, final Object p8) {<a name="line.2733"></a>
-<span class="sourceLineNo">2734</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4, p5, p6, p7, p8);<a name="line.2734"></a>
-<span class="sourceLineNo">2735</span>    }<a name="line.2735"></a>
-<span class="sourceLineNo">2736</span><a name="line.2736"></a>
-<span class="sourceLineNo">2737</span>    @Override<a name="line.2737"></a>
-<span class="sourceLineNo">2738</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2738"></a>
-<span class="sourceLineNo">2739</span>            final Object p3, final Object p4, final Object p5,<a name="line.2739"></a>
-<span class="sourceLineNo">2740</span>            final Object p6, final Object p7, final Object p8, final Object p9) {<a name="line.2740"></a>
-<span class="sourceLineNo">2741</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);<a name="line.2741"></a>
-<span class="sourceLineNo">2742</span>    }<a name="line.2742"></a>
-<span class="sourceLineNo">2743</span><a name="line.2743"></a>
-<span class="sourceLineNo">2744</span>    @Override<a name="line.2744"></a>
-<span class="sourceLineNo">2745</span>    public void warn(final String message, final Object p0) {<a name="line.2745"></a>
-<span class="sourceLineNo">2746</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0);<a name="line.2746"></a>
-<span class="sourceLineNo">2747</span>    }<a name="line.2747"></a>
-<span class="sourceLineNo">2748</span><a name="line.2748"></a>
-<span class="sourceLineNo">2749</span>    @Override<a name="line.2749"></a>
-<span class="sourceLineNo">2750</span>    public void warn(final String message, final Object p0, final Object p1) {<a name="line.2750"></a>
-<span class="sourceLineNo">2751</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1);<a name="line.2751"></a>
-<span class="sourceLineNo">2752</span>    }<a name="line.2752"></a>
-<span class="sourceLineNo">2753</span><a name="line.2753"></a>
-<span class="sourceLineNo">2754</span>    @Override<a name="line.2754"></a>
-<span class="sourceLineNo">2755</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2) {<a name="line.2755"></a>
-<span class="sourceLineNo">2756</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2);<a name="line.2756"></a>
-<span class="sourceLineNo">2757</span>    }<a name="line.2757"></a>
-<span class="sourceLineNo">2758</span><a name="line.2758"></a>
-<span class="sourceLineNo">2759</span>    @Override<a name="line.2759"></a>
-<span class="sourceLineNo">2760</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3) {<a name="line.2760"></a>
-<span class="sourceLineNo">2761</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3);<a name="line.2761"></a>
-<span class="sourceLineNo">2762</span>    }<a name="line.2762"></a>
-<span class="sourceLineNo">2763</span><a name="line.2763"></a>
-<span class="sourceLineNo">2764</span>    @Override<a name="line.2764"></a>
-<span class="sourceLineNo">2765</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2765"></a>
-<span class="sourceLineNo">2766</span>            final Object p4) {<a name="line.2766"></a>
-<span class="sourceLineNo">2767</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4);<a name="line.2767"></a>
-<span class="sourceLineNo">2768</span>    }<a name="line.2768"></a>
-<span class="sourceLineNo">2769</span><a name="line.2769"></a>
-<span class="sourceLineNo">2770</span>    @Override<a name="line.2770"></a>
-<span class="sourceLineNo">2771</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2771"></a>
-<span class="sourceLineNo">2772</span>            final Object p4, final Object p5) {<a name="line.2772"></a>
-<span class="sourceLineNo">2773</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4, p5);<a name="line.2773"></a>
-<span class="sourceLineNo">2774</span>    }<a name="line.2774"></a>
-<span class="sourceLineNo">2775</span><a name="line.2775"></a>
-<span class="sourceLineNo">2776</span>    @Override<a name="line.2776"></a>
-<span class="sourceLineNo">2777</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2777"></a>
-<span class="sourceLineNo">2778</span>            final Object p4, final Object p5, final Object p6) {<a name="line.2778"></a>
-<span class="sourceLineNo">2779</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4, p5, p6);<a name="line.2779"></a>
-<span class="sourceLineNo">2780</span>    }<a name="line.2780"></a>
-<span class="sourceLineNo">2781</span><a name="line.2781"></a>
-<span class="sourceLineNo">2782</span>    @Override<a name="line.2782"></a>
-<span class="sourceLineNo">2783</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2783"></a>
-<span class="sourceLineNo">2784</span>            final Object p4, final Object p5, final Object p6, final Object p7) {<a name="line.2784"></a>
-<span class="sourceLineNo">2785</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4, p5, p6, p7);<a name="line.2785"></a>
-<span class="sourceLineNo">2786</span>    }<a name="line.2786"></a>
-<span class="sourceLineNo">2787</span><a name="line.2787"></a>
-<span class="sourceLineNo">2788</span>    @Override<a name="line.2788"></a>
-<span class="sourceLineNo">2789</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2789"></a>
-<span class="sourceLineNo">2790</span>            final Object p4, final Object p5, final Object p6, final Object p7, final Object p8) {<a name="line.2790"></a>
-<span class="sourceLineNo">2791</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4, p5, p6, p7, p8);<a name="line.2791"></a>
-<span class="sourceLineNo">2792</span>    }<a name="line.2792"></a>
-<span class="sourceLineNo">2793</span><a name="line.2793"></a>
-<span class="sourceLineNo">2794</span>    @Override<a name="line.2794"></a>
-<span class="sourceLineNo">2795</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2795"></a>
-<span class="sourceLineNo">2796</span>            final Object p4, final Object p5, final Object p6,<a name="line.2796"></a>
-<span class="sourceLineNo">2797</span>            final Object p7, final Object p8, final Object p9) {<a name="line.2797"></a>
-<span class="sourceLineNo">2798</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);<a name="line.2798"></a>
-<span class="sourceLineNo">2799</span>    }<a name="line.2799"></a>
-<span class="sourceLineNo">2800</span>}<a name="line.2800"></a>
+<span class="sourceLineNo">2184</span>        final int formatLength = format == null ? 4 : format.length();<a name="line.2184"></a>
+<span class="sourceLineNo">2185</span>        final StringBuilder sb = new StringBuilder(formatLength + 100);<a name="line.2185"></a>
+<span class="sourceLineNo">2186</span>        sb.append(fqcn);<a name="line.2186"></a>
+<span class="sourceLineNo">2187</span>        sb.append(" caught ");<a name="line.2187"></a>
+<span class="sourceLineNo">2188</span>        sb.append(exception.getClass().getName());<a name="line.2188"></a>
+<span class="sourceLineNo">2189</span>        sb.append(" logging ");<a name="line.2189"></a>
+<span class="sourceLineNo">2190</span>        sb.append(msg.getClass().getSimpleName());<a name="line.2190"></a>
+<span class="sourceLineNo">2191</span>        sb.append(": ");<a name="line.2191"></a>
+<span class="sourceLineNo">2192</span>        sb.append(format);<a name="line.2192"></a>
+<span class="sourceLineNo">2193</span>        StatusLogger.getLogger().warn(sb.toString(), exception);<a name="line.2193"></a>
+<span class="sourceLineNo">2194</span>    }<a name="line.2194"></a>
+<span class="sourceLineNo">2195</span><a name="line.2195"></a>
+<span class="sourceLineNo">2196</span>    @Override<a name="line.2196"></a>
+<span class="sourceLineNo">2197</span>    public &lt;T extends Throwable&gt; T throwing(final T t) {<a name="line.2197"></a>
+<span class="sourceLineNo">2198</span>        return throwing(FQCN, Level.ERROR, t);<a name="line.2198"></a>
+<span class="sourceLineNo">2199</span>    }<a name="line.2199"></a>
+<span class="sourceLineNo">2200</span><a name="line.2200"></a>
+<span class="sourceLineNo">2201</span>    @Override<a name="line.2201"></a>
+<span class="sourceLineNo">2202</span>    public &lt;T extends Throwable&gt; T throwing(final Level level, final T t) {<a name="line.2202"></a>
+<span class="sourceLineNo">2203</span>        return throwing(FQCN, level, t);<a name="line.2203"></a>
+<span class="sourceLineNo">2204</span>    }<a name="line.2204"></a>
+<span class="sourceLineNo">2205</span><a name="line.2205"></a>
+<span class="sourceLineNo">2206</span>    /**<a name="line.2206"></a>
+<span class="sourceLineNo">2207</span>     * Logs a Throwable to be thrown.<a name="line.2207"></a>
+<span class="sourceLineNo">2208</span>     *<a name="line.2208"></a>
+<span class="sourceLineNo">2209</span>     * @param &lt;T&gt; the type of the Throwable.<a name="line.2209"></a>
+<span class="sourceLineNo">2210</span>     * @param fqcn the fully qualified class name of this Logger implementation.<a name="line.2210"></a>
+<span class="sourceLineNo">2211</span>     * @param level The logging Level.<a name="line.2211"></a>
+<span class="sourceLineNo">2212</span>     * @param t The Throwable.<a name="line.2212"></a>
+<span class="sourceLineNo">2213</span>     * @return the Throwable.<a name="line.2213"></a>
+<span class="sourceLineNo">2214</span>     */<a name="line.2214"></a>
+<span class="sourceLineNo">2215</span>    protected &lt;T extends Throwable&gt; T throwing(final String fqcn, final Level level, final T t) {<a name="line.2215"></a>
+<span class="sourceLineNo">2216</span>        if (isEnabled(level, THROWING_MARKER, (Object) null, null)) {<a name="line.2216"></a>
+<span class="sourceLineNo">2217</span>            logMessageSafely(fqcn, level, THROWING_MARKER, throwingMsg(t), t);<a name="line.2217"></a>
+<span class="sourceLineNo">2218</span>        }<a name="line.2218"></a>
+<span class="sourceLineNo">2219</span>        return t;<a name="line.2219"></a>
+<span class="sourceLineNo">2220</span>    }<a name="line.2220"></a>
+<span class="sourceLineNo">2221</span><a name="line.2221"></a>
+<span class="sourceLineNo">2222</span>    protected Message throwingMsg(final Throwable t) {<a name="line.2222"></a>
+<span class="sourceLineNo">2223</span>        return messageFactory.newMessage(THROWING);<a name="line.2223"></a>
+<span class="sourceLineNo">2224</span>    }<a name="line.2224"></a>
+<span class="sourceLineNo">2225</span><a name="line.2225"></a>
+<span class="sourceLineNo">2226</span>    @Override<a name="line.2226"></a>
+<span class="sourceLineNo">2227</span>    public void trace(final Marker marker, final Message msg) {<a name="line.2227"></a>
+<span class="sourceLineNo">2228</span>        logIfEnabled(FQCN, Level.TRACE, marker, msg, msg != null ? msg.getThrowable() : null);<a name="line.2228"></a>
+<span class="sourceLineNo">2229</span>    }<a name="line.2229"></a>
+<span class="sourceLineNo">2230</span><a name="line.2230"></a>
+<span class="sourceLineNo">2231</span>    @Override<a name="line.2231"></a>
+<span class="sourceLineNo">2232</span>    public void trace(final Marker marker, final Message msg, final Throwable t) {<a name="line.2232"></a>
+<span class="sourceLineNo">2233</span>        logIfEnabled(FQCN, Level.TRACE, marker, msg, t);<a name="line.2233"></a>
+<span class="sourceLineNo">2234</span>    }<a name="line.2234"></a>
+<span class="sourceLineNo">2235</span><a name="line.2235"></a>
+<span class="sourceLineNo">2236</span>    @Override<a name="line.2236"></a>
+<span class="sourceLineNo">2237</span>    public void trace(final Marker marker, final CharSequence message) {<a name="line.2237"></a>
+<span class="sourceLineNo">2238</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, null);<a name="line.2238"></a>
+<span class="sourceLineNo">2239</span>    }<a name="line.2239"></a>
+<span class="sourceLineNo">2240</span><a name="line.2240"></a>
+<span class="sourceLineNo">2241</span>    @Override<a name="line.2241"></a>
+<span class="sourceLineNo">2242</span>    public void trace(final Marker marker, final CharSequence message, final Throwable t) {<a name="line.2242"></a>
+<span class="sourceLineNo">2243</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, t);<a name="line.2243"></a>
+<span class="sourceLineNo">2244</span>    }<a name="line.2244"></a>
+<span class="sourceLineNo">2245</span><a name="line.2245"></a>
+<span class="sourceLineNo">2246</span>    @Override<a name="line.2246"></a>
+<span class="sourceLineNo">2247</span>    public void trace(final Marker marker, final Object message) {<a name="line.2247"></a>
+<span class="sourceLineNo">2248</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, null);<a name="line.2248"></a>
+<span class="sourceLineNo">2249</span>    }<a name="line.2249"></a>
+<span class="sourceLineNo">2250</span><a name="line.2250"></a>
+<span class="sourceLineNo">2251</span>    @Override<a name="line.2251"></a>
+<span class="sourceLineNo">2252</span>    public void trace(final Marker marker, final Object message, final Throwable t) {<a name="line.2252"></a>
+<span class="sourceLineNo">2253</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, t);<a name="line.2253"></a>
+<span class="sourceLineNo">2254</span>    }<a name="line.2254"></a>
+<span class="sourceLineNo">2255</span><a name="line.2255"></a>
+<span class="sourceLineNo">2256</span>    @Override<a name="line.2256"></a>
+<span class="sourceLineNo">2257</span>    public void trace(final Marker marker, final String message) {<a name="line.2257"></a>
+<span class="sourceLineNo">2258</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, (Throwable) null);<a name="line.2258"></a>
+<span class="sourceLineNo">2259</span>    }<a name="line.2259"></a>
+<span class="sourceLineNo">2260</span><a name="line.2260"></a>
+<span class="sourceLineNo">2261</span>    @Override<a name="line.2261"></a>
+<span class="sourceLineNo">2262</span>    public void trace(final Marker marker, final String message, final Object... params) {<a name="line.2262"></a>
+<span class="sourceLineNo">2263</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, params);<a name="line.2263"></a>
+<span class="sourceLineNo">2264</span>    }<a name="line.2264"></a>
+<span class="sourceLineNo">2265</span><a name="line.2265"></a>
+<span class="sourceLineNo">2266</span>    @Override<a name="line.2266"></a>
+<span class="sourceLineNo">2267</span>    public void trace(final Marker marker, final String message, final Throwable t) {<a name="line.2267"></a>
+<span class="sourceLineNo">2268</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, t);<a name="line.2268"></a>
+<span class="sourceLineNo">2269</span>    }<a name="line.2269"></a>
+<span class="sourceLineNo">2270</span><a name="line.2270"></a>
+<span class="sourceLineNo">2271</span>    @Override<a name="line.2271"></a>
+<span class="sourceLineNo">2272</span>    public void trace(final Message msg) {<a name="line.2272"></a>
+<span class="sourceLineNo">2273</span>        logIfEnabled(FQCN, Level.TRACE, null, msg, msg != null ? msg.getThrowable() : null);<a name="line.2273"></a>
+<span class="sourceLineNo">2274</span>    }<a name="line.2274"></a>
+<span class="sourceLineNo">2275</span><a name="line.2275"></a>
+<span class="sourceLineNo">2276</span>    @Override<a name="line.2276"></a>
+<span class="sourceLineNo">2277</span>    public void trace(final Message msg, final Throwable t) {<a name="line.2277"></a>
+<span class="sourceLineNo">2278</span>        logIfEnabled(FQCN, Level.TRACE, null, msg, t);<a name="line.2278"></a>
+<span class="sourceLineNo">2279</span>    }<a name="line.2279"></a>
+<span class="sourceLineNo">2280</span><a name="line.2280"></a>
+<span class="sourceLineNo">2281</span>    @Override<a name="line.2281"></a>
+<span class="sourceLineNo">2282</span>    public void trace(final CharSequence message) {<a name="line.2282"></a>
+<span class="sourceLineNo">2283</span>        logIfEnabled(FQCN, Level.TRACE, null, message, null);<a name="line.2283"></a>
+<span class="sourceLineNo">2284</span>    }<a name="line.2284"></a>
+<span class="sourceLineNo">2285</span><a name="line.2285"></a>
+<span class="sourceLineNo">2286</span>    @Override<a name="line.2286"></a>
+<span class="sourceLineNo">2287</span>    public void trace(final CharSequence message, final Throwable t) {<a name="line.2287"></a>
+<span class="sourceLineNo">2288</span>        logIfEnabled(FQCN, Level.TRACE, null, message, t);<a name="line.2288"></a>
+<span class="sourceLineNo">2289</span>    }<a name="line.2289"></a>
+<span class="sourceLineNo">2290</span><a name="line.2290"></a>
+<span class="sourceLineNo">2291</span>    @Override<a name="line.2291"></a>
+<span class="sourceLineNo">2292</span>    public void trace(final Object message) {<a name="line.2292"></a>
+<span class="sourceLineNo">2293</span>        logIfEnabled(FQCN, Level.TRACE, null, message, null);<a name="line.2293"></a>
+<span class="sourceLineNo">2294</span>    }<a name="line.2294"></a>
+<span class="sourceLineNo">2295</span><a name="line.2295"></a>
+<span class="sourceLineNo">2296</span>    @Override<a name="line.2296"></a>
+<span class="sourceLineNo">2297</span>    public void trace(final Object message, final Throwable t) {<a name="line.2297"></a>
+<span class="sourceLineNo">2298</span>        logIfEnabled(FQCN, Level.TRACE, null, message, t);<a name="line.2298"></a>
+<span class="sourceLineNo">2299</span>    }<a name="line.2299"></a>
+<span class="sourceLineNo">2300</span><a name="line.2300"></a>
+<span class="sourceLineNo">2301</span>    @Override<a name="line.2301"></a>
+<span class="sourceLineNo">2302</span>    public void trace(final String message) {<a name="line.2302"></a>
+<span class="sourceLineNo">2303</span>        logIfEnabled(FQCN, Level.TRACE, null, message, (Throwable) null);<a name="line.2303"></a>
+<span class="sourceLineNo">2304</span>    }<a name="line.2304"></a>
+<span class="sourceLineNo">2305</span><a name="line.2305"></a>
+<span class="sourceLineNo">2306</span>    @Override<a name="line.2306"></a>
+<span class="sourceLineNo">2307</span>    public void trace(final String message, final Object... params) {<a name="line.2307"></a>
+<span class="sourceLineNo">2308</span>        logIfEnabled(FQCN, Level.TRACE, null, message, params);<a name="line.2308"></a>
+<span class="sourceLineNo">2309</span>    }<a name="line.2309"></a>
+<span class="sourceLineNo">2310</span><a name="line.2310"></a>
+<span class="sourceLineNo">2311</span>    @Override<a name="line.2311"></a>
+<span class="sourceLineNo">2312</span>    public void trace(final String message, final Throwable t) {<a name="line.2312"></a>
+<span class="sourceLineNo">2313</span>        logIfEnabled(FQCN, Level.TRACE, null, message, t);<a name="line.2313"></a>
+<span class="sourceLineNo">2314</span>    }<a name="line.2314"></a>
+<span class="sourceLineNo">2315</span><a name="line.2315"></a>
+<span class="sourceLineNo">2316</span>    @Override<a name="line.2316"></a>
+<span class="sourceLineNo">2317</span>    public void trace(final Supplier&lt;?&gt; msgSupplier) {<a name="line.2317"></a>
+<span class="sourceLineNo">2318</span>        logIfEnabled(FQCN, Level.TRACE, null, msgSupplier, (Throwable) null);<a name="line.2318"></a>
+<span class="sourceLineNo">2319</span>    }<a name="line.2319"></a>
+<span class="sourceLineNo">2320</span><a name="line.2320"></a>
+<span class="sourceLineNo">2321</span>    @Override<a name="line.2321"></a>
+<span class="sourceLineNo">2322</span>    public void trace(final Supplier&lt;?&gt; msgSupplier, final Throwable t) {<a name="line.2322"></a>
+<span class="sourceLineNo">2323</span>        logIfEnabled(FQCN, Level.TRACE, null, msgSupplier, t);<a name="line.2323"></a>
+<span class="sourceLineNo">2324</span>    }<a name="line.2324"></a>
+<span class="sourceLineNo">2325</span><a name="line.2325"></a>
+<span class="sourceLineNo">2326</span>    @Override<a name="line.2326"></a>
+<span class="sourceLineNo">2327</span>    public void trace(final Marker marker, final Supplier&lt;?&gt; msgSupplier) {<a name="line.2327"></a>
+<span class="sourceLineNo">2328</span>        logIfEnabled(FQCN, Level.TRACE, marker, msgSupplier, (Throwable) null);<a name="line.2328"></a>
+<span class="sourceLineNo">2329</span>    }<a name="line.2329"></a>
+<span class="sourceLineNo">2330</span><a name="line.2330"></a>
+<span class="sourceLineNo">2331</span>    @Override<a name="line.2331"></a>
+<span class="sourceLineNo">2332</span>    public void trace(final Marker marker, final String message, final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2332"></a>
+<span class="sourceLineNo">2333</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, paramSuppliers);<a name="line.2333"></a>
+<span class="sourceLineNo">2334</span>    }<a name="line.2334"></a>
+<span class="sourceLineNo">2335</span><a name="line.2335"></a>
+<span class="sourceLineNo">2336</span>    @Override<a name="line.2336"></a>
+<span class="sourceLineNo">2337</span>    public void trace(final Marker marker, final Supplier&lt;?&gt; msgSupplier, final Throwable t) {<a name="line.2337"></a>
+<span class="sourceLineNo">2338</span>        logIfEnabled(FQCN, Level.TRACE, marker, msgSupplier, t);<a name="line.2338"></a>
+<span class="sourceLineNo">2339</span>    }<a name="line.2339"></a>
+<span class="sourceLineNo">2340</span><a name="line.2340"></a>
+<span class="sourceLineNo">2341</span>    @Override<a name="line.2341"></a>
+<span class="sourceLineNo">2342</span>    public void trace(final String message, final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2342"></a>
+<span class="sourceLineNo">2343</span>        logIfEnabled(FQCN, Level.TRACE, null, message, paramSuppliers);<a name="line.2343"></a>
+<span class="sourceLineNo">2344</span>    }<a name="line.2344"></a>
+<span class="sourceLineNo">2345</span><a name="line.2345"></a>
+<span class="sourceLineNo">2346</span>    @Override<a name="line.2346"></a>
+<span class="sourceLineNo">2347</span>    public void trace(final Marker marker, final MessageSupplier msgSupplier) {<a name="line.2347"></a>
+<span class="sourceLineNo">2348</span>        logIfEnabled(FQCN, Level.TRACE, marker, msgSupplier, (Throwable) null);<a name="line.2348"></a>
+<span class="sourceLineNo">2349</span>    }<a name="line.2349"></a>
+<span class="sourceLineNo">2350</span><a name="line.2350"></a>
+<span class="sourceLineNo">2351</span>    @Override<a name="line.2351"></a>
+<span class="sourceLineNo">2352</span>    public void trace(final Marker marker, final MessageSupplier msgSupplier, final Throwable t) {<a name="line.2352"></a>
+<span class="sourceLineNo">2353</span>        logIfEnabled(FQCN, Level.TRACE, marker, msgSupplier, t);<a name="line.2353"></a>
+<span class="sourceLineNo">2354</span>    }<a name="line.2354"></a>
+<span class="sourceLineNo">2355</span><a name="line.2355"></a>
+<span class="sourceLineNo">2356</span>    @Override<a name="line.2356"></a>
+<span class="sourceLineNo">2357</span>    public void trace(final MessageSupplier msgSupplier) {<a name="line.2357"></a>
+<span class="sourceLineNo">2358</span>        logIfEnabled(FQCN, Level.TRACE, null, msgSupplier, (Throwable) null);<a name="line.2358"></a>
+<span class="sourceLineNo">2359</span>    }<a name="line.2359"></a>
+<span class="sourceLineNo">2360</span><a name="line.2360"></a>
+<span class="sourceLineNo">2361</span>    @Override<a name="line.2361"></a>
+<span class="sourceLineNo">2362</span>    public void trace(final MessageSupplier msgSupplier, final Throwable t) {<a name="line.2362"></a>
+<span class="sourceLineNo">2363</span>        logIfEnabled(FQCN, Level.TRACE, null, msgSupplier, t);<a name="line.2363"></a>
+<span class="sourceLineNo">2364</span>    }<a name="line.2364"></a>
+<span class="sourceLineNo">2365</span><a name="line.2365"></a>
+<span class="sourceLineNo">2366</span>    @Override<a name="line.2366"></a>
+<span class="sourceLineNo">2367</span>    public void trace(final Marker marker, final String message, final Object p0) {<a name="line.2367"></a>
+<span class="sourceLineNo">2368</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0);<a name="line.2368"></a>
+<span class="sourceLineNo">2369</span>    }<a name="line.2369"></a>
+<span class="sourceLineNo">2370</span><a name="line.2370"></a>
+<span class="sourceLineNo">2371</span>    @Override<a name="line.2371"></a>
+<span class="sourceLineNo">2372</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1) {<a name="line.2372"></a>
+<span class="sourceLineNo">2373</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1);<a name="line.2373"></a>
+<span class="sourceLineNo">2374</span>    }<a name="line.2374"></a>
+<span class="sourceLineNo">2375</span><a name="line.2375"></a>
+<span class="sourceLineNo">2376</span>    @Override<a name="line.2376"></a>
+<span class="sourceLineNo">2377</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2) {<a name="line.2377"></a>
+<span class="sourceLineNo">2378</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2);<a name="line.2378"></a>
+<span class="sourceLineNo">2379</span>    }<a name="line.2379"></a>
+<span class="sourceLineNo">2380</span><a name="line.2380"></a>
+<span class="sourceLineNo">2381</span>    @Override<a name="line.2381"></a>
+<span class="sourceLineNo">2382</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2382"></a>
+<span class="sourceLineNo">2383</span>            final Object p3) {<a name="line.2383"></a>
+<span class="sourceLineNo">2384</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3);<a name="line.2384"></a>
+<span class="sourceLineNo">2385</span>    }<a name="line.2385"></a>
+<span class="sourceLineNo">2386</span><a name="line.2386"></a>
+<span class="sourceLineNo">2387</span>    @Override<a name="line.2387"></a>
+<span class="sourceLineNo">2388</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2388"></a>
+<span class="sourceLineNo">2389</span>            final Object p3, final Object p4) {<a name="line.2389"></a>
+<span class="sourceLineNo">2390</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4);<a name="line.2390"></a>
+<span class="sourceLineNo">2391</span>    }<a name="line.2391"></a>
+<span class="sourceLineNo">2392</span><a name="line.2392"></a>
+<span class="sourceLineNo">2393</span>    @Override<a name="line.2393"></a>
+<span class="sourceLineNo">2394</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2394"></a>
+<span class="sourceLineNo">2395</span>            final Object p3, final Object p4, final Object p5) {<a name="line.2395"></a>
+<span class="sourceLineNo">2396</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4, p5);<a name="line.2396"></a>
+<span class="sourceLineNo">2397</span>    }<a name="line.2397"></a>
+<span class="sourceLineNo">2398</span><a name="line.2398"></a>
+<span class="sourceLineNo">2399</span>    @Override<a name="line.2399"></a>
+<span class="sourceLineNo">2400</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2400"></a>
+<span class="sourceLineNo">2401</span>            final Object p3, final Object p4, final Object p5, final Object p6) {<a name="line.2401"></a>
+<span class="sourceLineNo">2402</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4, p5, p6);<a name="line.2402"></a>
+<span class="sourceLineNo">2403</span>    }<a name="line.2403"></a>
+<span class="sourceLineNo">2404</span><a name="line.2404"></a>
+<span class="sourceLineNo">2405</span>    @Override<a name="line.2405"></a>
+<span class="sourceLineNo">2406</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2406"></a>
+<span class="sourceLineNo">2407</span>            final Object p3, final Object p4, final Object p5, final Object p6, final Object p7) {<a name="line.2407"></a>
+<span class="sourceLineNo">2408</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4, p5, p6, p7);<a name="line.2408"></a>
+<span class="sourceLineNo">2409</span>    }<a name="line.2409"></a>
+<span class="sourceLineNo">2410</span><a name="line.2410"></a>
+<span class="sourceLineNo">2411</span>    @Override<a name="line.2411"></a>
+<span class="sourceLineNo">2412</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2412"></a>
+<span class="sourceLineNo">2413</span>            final Object p3, final Object p4, final Object p5,<a name="line.2413"></a>
+<span class="sourceLineNo">2414</span>            final Object p6, final Object p7, final Object p8) {<a name="line.2414"></a>
+<span class="sourceLineNo">2415</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4, p5, p6, p7, p8);<a name="line.2415"></a>
+<span class="sourceLineNo">2416</span>    }<a name="line.2416"></a>
+<span class="sourceLineNo">2417</span><a name="line.2417"></a>
+<span class="sourceLineNo">2418</span>    @Override<a name="line.2418"></a>
+<span class="sourceLineNo">2419</span>    public void trace(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2419"></a>
+<span class="sourceLineNo">2420</span>            final Object p3, final Object p4, final Object p5,<a name="line.2420"></a>
+<span class="sourceLineNo">2421</span>            final Object p6, final Object p7, final Object p8, final Object p9) {<a name="line.2421"></a>
+<span class="sourceLineNo">2422</span>        logIfEnabled(FQCN, Level.TRACE, marker, message, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);<a name="line.2422"></a>
+<span class="sourceLineNo">2423</span>    }<a name="line.2423"></a>
+<span class="sourceLineNo">2424</span><a name="line.2424"></a>
+<span class="sourceLineNo">2425</span>    @Override<a name="line.2425"></a>
+<span class="sourceLineNo">2426</span>    public void trace(final String message, final Object p0) {<a name="line.2426"></a>
+<span class="sourceLineNo">2427</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0);<a name="line.2427"></a>
+<span class="sourceLineNo">2428</span>    }<a name="line.2428"></a>
+<span class="sourceLineNo">2429</span><a name="line.2429"></a>
+<span class="sourceLineNo">2430</span>    @Override<a name="line.2430"></a>
+<span class="sourceLineNo">2431</span>    public void trace(final String message, final Object p0, final Object p1) {<a name="line.2431"></a>
+<span class="sourceLineNo">2432</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1);<a name="line.2432"></a>
+<span class="sourceLineNo">2433</span>    }<a name="line.2433"></a>
+<span class="sourceLineNo">2434</span><a name="line.2434"></a>
+<span class="sourceLineNo">2435</span>    @Override<a name="line.2435"></a>
+<span class="sourceLineNo">2436</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2) {<a name="line.2436"></a>
+<span class="sourceLineNo">2437</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2);<a name="line.2437"></a>
+<span class="sourceLineNo">2438</span>    }<a name="line.2438"></a>
+<span class="sourceLineNo">2439</span><a name="line.2439"></a>
+<span class="sourceLineNo">2440</span>    @Override<a name="line.2440"></a>
+<span class="sourceLineNo">2441</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3) {<a name="line.2441"></a>
+<span class="sourceLineNo">2442</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3);<a name="line.2442"></a>
+<span class="sourceLineNo">2443</span>    }<a name="line.2443"></a>
+<span class="sourceLineNo">2444</span><a name="line.2444"></a>
+<span class="sourceLineNo">2445</span>    @Override<a name="line.2445"></a>
+<span class="sourceLineNo">2446</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2446"></a>
+<span class="sourceLineNo">2447</span>            final Object p4) {<a name="line.2447"></a>
+<span class="sourceLineNo">2448</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4);<a name="line.2448"></a>
+<span class="sourceLineNo">2449</span>    }<a name="line.2449"></a>
+<span class="sourceLineNo">2450</span><a name="line.2450"></a>
+<span class="sourceLineNo">2451</span>    @Override<a name="line.2451"></a>
+<span class="sourceLineNo">2452</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2452"></a>
+<span class="sourceLineNo">2453</span>            final Object p4, final Object p5) {<a name="line.2453"></a>
+<span class="sourceLineNo">2454</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4, p5);<a name="line.2454"></a>
+<span class="sourceLineNo">2455</span>    }<a name="line.2455"></a>
+<span class="sourceLineNo">2456</span><a name="line.2456"></a>
+<span class="sourceLineNo">2457</span>    @Override<a name="line.2457"></a>
+<span class="sourceLineNo">2458</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2458"></a>
+<span class="sourceLineNo">2459</span>            final Object p4, final Object p5, final Object p6) {<a name="line.2459"></a>
+<span class="sourceLineNo">2460</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4, p5, p6);<a name="line.2460"></a>
+<span class="sourceLineNo">2461</span>    }<a name="line.2461"></a>
+<span class="sourceLineNo">2462</span><a name="line.2462"></a>
+<span class="sourceLineNo">2463</span>    @Override<a name="line.2463"></a>
+<span class="sourceLineNo">2464</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2464"></a>
+<span class="sourceLineNo">2465</span>            final Object p4, final Object p5, final Object p6, final Object p7) {<a name="line.2465"></a>
+<span class="sourceLineNo">2466</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4, p5, p6, p7);<a name="line.2466"></a>
+<span class="sourceLineNo">2467</span>    }<a name="line.2467"></a>
+<span class="sourceLineNo">2468</span><a name="line.2468"></a>
+<span class="sourceLineNo">2469</span>    @Override<a name="line.2469"></a>
+<span class="sourceLineNo">2470</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2470"></a>
+<span class="sourceLineNo">2471</span>            final Object p4, final Object p5, final Object p6, final Object p7, final Object p8) {<a name="line.2471"></a>
+<span class="sourceLineNo">2472</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4, p5, p6, p7, p8);<a name="line.2472"></a>
+<span class="sourceLineNo">2473</span>    }<a name="line.2473"></a>
+<span class="sourceLineNo">2474</span><a name="line.2474"></a>
+<span class="sourceLineNo">2475</span>    @Override<a name="line.2475"></a>
+<span class="sourceLineNo">2476</span>    public void trace(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2476"></a>
+<span class="sourceLineNo">2477</span>            final Object p4, final Object p5, final Object p6, final Object p7, final Object p8, final Object p9) {<a name="line.2477"></a>
+<span class="sourceLineNo">2478</span>        logIfEnabled(FQCN, Level.TRACE, null, message, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);<a name="line.2478"></a>
+<span class="sourceLineNo">2479</span>    }<a name="line.2479"></a>
+<span class="sourceLineNo">2480</span><a name="line.2480"></a>
+<span class="sourceLineNo">2481</span>    @Override<a name="line.2481"></a>
+<span class="sourceLineNo">2482</span>    public EntryMessage traceEntry() {<a name="line.2482"></a>
+<span class="sourceLineNo">2483</span>        return enter(FQCN, null, (Object[]) null);<a name="line.2483"></a>
+<span class="sourceLineNo">2484</span>    }<a name="line.2484"></a>
+<span class="sourceLineNo">2485</span><a name="line.2485"></a>
+<span class="sourceLineNo">2486</span>    @Override<a name="line.2486"></a>
+<span class="sourceLineNo">2487</span>    public EntryMessage traceEntry(final String format, final Object... params) {<a name="line.2487"></a>
+<span class="sourceLineNo">2488</span>        return enter(FQCN, format, params);<a name="line.2488"></a>
+<span class="sourceLineNo">2489</span>    }<a name="line.2489"></a>
+<span class="sourceLineNo">2490</span><a name="line.2490"></a>
+<span class="sourceLineNo">2491</span>    @Override<a name="line.2491"></a>
+<span class="sourceLineNo">2492</span>    public EntryMessage traceEntry(final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2492"></a>
+<span class="sourceLineNo">2493</span>        return enter(FQCN, null, paramSuppliers);<a name="line.2493"></a>
+<span class="sourceLineNo">2494</span>    }<a name="line.2494"></a>
+<span class="sourceLineNo">2495</span><a name="line.2495"></a>
+<span class="sourceLineNo">2496</span>    @Override<a name="line.2496"></a>
+<span class="sourceLineNo">2497</span>    public EntryMessage traceEntry(final String format, final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2497"></a>
+<span class="sourceLineNo">2498</span>        return enter(FQCN, format, paramSuppliers);<a name="line.2498"></a>
+<span class="sourceLineNo">2499</span>    }<a name="line.2499"></a>
+<span class="sourceLineNo">2500</span><a name="line.2500"></a>
+<span class="sourceLineNo">2501</span>    @Override<a name="line.2501"></a>
+<span class="sourceLineNo">2502</span>    public EntryMessage traceEntry(final Message message) {<a name="line.2502"></a>
+<span class="sourceLineNo">2503</span>        return enter(FQCN, message);<a name="line.2503"></a>
+<span class="sourceLineNo">2504</span>    }<a name="line.2504"></a>
+<span class="sourceLineNo">2505</span><a name="line.2505"></a>
+<span class="sourceLineNo">2506</span>    @Override<a name="line.2506"></a>
+<span class="sourceLineNo">2507</span>    public void traceExit() {<a name="line.2507"></a>
+<span class="sourceLineNo">2508</span>        exit(FQCN, null, null);<a name="line.2508"></a>
+<span class="sourceLineNo">2509</span>    }<a name="line.2509"></a>
+<span class="sourceLineNo">2510</span><a name="line.2510"></a>
+<span class="sourceLineNo">2511</span>    @Override<a name="line.2511"></a>
+<span class="sourceLineNo">2512</span>    public &lt;R&gt; R traceExit(final R result) {<a name="line.2512"></a>
+<span class="sourceLineNo">2513</span>        return exit(FQCN, null, result);<a name="line.2513"></a>
+<span class="sourceLineNo">2514</span>    }<a name="line.2514"></a>
+<span class="sourceLineNo">2515</span><a name="line.2515"></a>
+<span class="sourceLineNo">2516</span>    @Override<a name="line.2516"></a>
+<span class="sourceLineNo">2517</span>    public &lt;R&gt; R traceExit(final String format, final R result) {<a name="line.2517"></a>
+<span class="sourceLineNo">2518</span>        return exit(FQCN, format, result);<a name="line.2518"></a>
+<span class="sourceLineNo">2519</span>    }<a name="line.2519"></a>
+<span class="sourceLineNo">2520</span><a name="line.2520"></a>
+<span class="sourceLineNo">2521</span>    @Override<a name="line.2521"></a>
+<span class="sourceLineNo">2522</span>    public void traceExit(final EntryMessage message) {<a name="line.2522"></a>
+<span class="sourceLineNo">2523</span>        // If the message is null, traceEnter returned null because flow logging was disabled, we can optimize out calling isEnabled().<a name="line.2523"></a>
+<span class="sourceLineNo">2524</span>        if (message != null &amp;&amp; isEnabled(Level.TRACE, EXIT_MARKER, message, null)) {<a name="line.2524"></a>
+<span class="sourceLineNo">2525</span>            logMessageSafely(FQCN, Level.TRACE, EXIT_MARKER, flowMessageFactory.newExitMessage(message), null);<a name="line.2525"></a>
+<span class="sourceLineNo">2526</span>        }<a name="line.2526"></a>
+<span class="sourceLineNo">2527</span>    }<a name="line.2527"></a>
+<span class="sourceLineNo">2528</span><a name="line.2528"></a>
+<span class="sourceLineNo">2529</span>    @Override<a name="line.2529"></a>
+<span class="sourceLineNo">2530</span>    public &lt;R&gt; R traceExit(final EntryMessage message, final R result) {<a name="line.2530"></a>
+<span class="sourceLineNo">2531</span>        // If the message is null, traceEnter returned null because flow logging was disabled, we can optimize out calling isEnabled().<a name="line.2531"></a>
+<span class="sourceLineNo">2532</span>        if (message != null &amp;&amp; isEnabled(Level.TRACE, EXIT_MARKER, message, null)) {<a name="line.2532"></a>
+<span class="sourceLineNo">2533</span>            logMessageSafely(FQCN, Level.TRACE, EXIT_MARKER, flowMessageFactory.newExitMessage(result, message), null);<a name="line.2533"></a>
+<span class="sourceLineNo">2534</span>        }<a name="line.2534"></a>
+<span class="sourceLineNo">2535</span>        return result;<a name="line.2535"></a>
+<span class="sourceLineNo">2536</span>    }<a name="line.2536"></a>
+<span class="sourceLineNo">2537</span><a name="line.2537"></a>
+<span class="sourceLineNo">2538</span>    @Override<a name="line.2538"></a>
+<span class="sourceLineNo">2539</span>    public &lt;R&gt; R traceExit(final Message message, final R result) {<a name="line.2539"></a>
+<span class="sourceLineNo">2540</span>        // If the message is null, traceEnter returned null because flow logging was disabled, we can optimize out calling isEnabled().<a name="line.2540"></a>
+<span class="sourceLineNo">2541</span>        if (message != null &amp;&amp; isEnabled(Level.TRACE, EXIT_MARKER, message, null)) {<a name="line.2541"></a>
+<span class="sourceLineNo">2542</span>            logMessageSafely(FQCN, Level.TRACE, EXIT_MARKER, flowMessageFactory.newExitMessage(result, message), null);<a name="line.2542"></a>
+<span class="sourceLineNo">2543</span>        }<a name="line.2543"></a>
+<span class="sourceLineNo">2544</span>        return result;<a name="line.2544"></a>
+<span class="sourceLineNo">2545</span>    }<a name="line.2545"></a>
+<span class="sourceLineNo">2546</span><a name="line.2546"></a>
+<span class="sourceLineNo">2547</span>    @Override<a name="line.2547"></a>
+<span class="sourceLineNo">2548</span>    public void warn(final Marker marker, final Message msg) {<a name="line.2548"></a>
+<span class="sourceLineNo">2549</span>        logIfEnabled(FQCN, Level.WARN, marker, msg, msg != null ? msg.getThrowable() : null);<a name="line.2549"></a>
+<span class="sourceLineNo">2550</span>    }<a name="line.2550"></a>
+<span class="sourceLineNo">2551</span><a name="line.2551"></a>
+<span class="sourceLineNo">2552</span>    @Override<a name="line.2552"></a>
+<span class="sourceLineNo">2553</span>    public void warn(final Marker marker, final Message msg, final Throwable t) {<a name="line.2553"></a>
+<span class="sourceLineNo">2554</span>        logIfEnabled(FQCN, Level.WARN, marker, msg, t);<a name="line.2554"></a>
+<span class="sourceLineNo">2555</span>    }<a name="line.2555"></a>
+<span class="sourceLineNo">2556</span><a name="line.2556"></a>
+<span class="sourceLineNo">2557</span>    @Override<a name="line.2557"></a>
+<span class="sourceLineNo">2558</span>    public void warn(final Marker marker, final CharSequence message) {<a name="line.2558"></a>
+<span class="sourceLineNo">2559</span>        logIfEnabled(FQCN, Level.WARN, marker, message, null);<a name="line.2559"></a>
+<span class="sourceLineNo">2560</span>    }<a name="line.2560"></a>
+<span class="sourceLineNo">2561</span><a name="line.2561"></a>
+<span class="sourceLineNo">2562</span>    @Override<a name="line.2562"></a>
+<span class="sourceLineNo">2563</span>    public void warn(final Marker marker, final CharSequence message, final Throwable t) {<a name="line.2563"></a>
+<span class="sourceLineNo">2564</span>        logIfEnabled(FQCN, Level.WARN, marker, message, t);<a name="line.2564"></a>
+<span class="sourceLineNo">2565</span>    }<a name="line.2565"></a>
+<span class="sourceLineNo">2566</span><a name="line.2566"></a>
+<span class="sourceLineNo">2567</span>    @Override<a name="line.2567"></a>
+<span class="sourceLineNo">2568</span>    public void warn(final Marker marker, final Object message) {<a name="line.2568"></a>
+<span class="sourceLineNo">2569</span>        logIfEnabled(FQCN, Level.WARN, marker, message, null);<a name="line.2569"></a>
+<span class="sourceLineNo">2570</span>    }<a name="line.2570"></a>
+<span class="sourceLineNo">2571</span><a name="line.2571"></a>
+<span class="sourceLineNo">2572</span>    @Override<a name="line.2572"></a>
+<span class="sourceLineNo">2573</span>    public void warn(final Marker marker, final Object message, final Throwable t) {<a name="line.2573"></a>
+<span class="sourceLineNo">2574</span>        logIfEnabled(FQCN, Level.WARN, marker, message, t);<a name="line.2574"></a>
+<span class="sourceLineNo">2575</span>    }<a name="line.2575"></a>
+<span class="sourceLineNo">2576</span><a name="line.2576"></a>
+<span class="sourceLineNo">2577</span>    @Override<a name="line.2577"></a>
+<span class="sourceLineNo">2578</span>    public void warn(final Marker marker, final String message) {<a name="line.2578"></a>
+<span class="sourceLineNo">2579</span>        logIfEnabled(FQCN, Level.WARN, marker, message, (Throwable) null);<a name="line.2579"></a>
+<span class="sourceLineNo">2580</span>    }<a name="line.2580"></a>
+<span class="sourceLineNo">2581</span><a name="line.2581"></a>
+<span class="sourceLineNo">2582</span>    @Override<a name="line.2582"></a>
+<span class="sourceLineNo">2583</span>    public void warn(final Marker marker, final String message, final Object... params) {<a name="line.2583"></a>
+<span class="sourceLineNo">2584</span>        logIfEnabled(FQCN, Level.WARN, marker, message, params);<a name="line.2584"></a>
+<span class="sourceLineNo">2585</span>    }<a name="line.2585"></a>
+<span class="sourceLineNo">2586</span><a name="line.2586"></a>
+<span class="sourceLineNo">2587</span>    @Override<a name="line.2587"></a>
+<span class="sourceLineNo">2588</span>    public void warn(final Marker marker, final String message, final Throwable t) {<a name="line.2588"></a>
+<span class="sourceLineNo">2589</span>        logIfEnabled(FQCN, Level.WARN, marker, message, t);<a name="line.2589"></a>
+<span class="sourceLineNo">2590</span>    }<a name="line.2590"></a>
+<span class="sourceLineNo">2591</span><a name="line.2591"></a>
+<span class="sourceLineNo">2592</span>    @Override<a name="line.2592"></a>
+<span class="sourceLineNo">2593</span>    public void warn(final Message msg) {<a name="line.2593"></a>
+<span class="sourceLineNo">2594</span>        logIfEnabled(FQCN, Level.WARN, null, msg, msg != null ? msg.getThrowable() : null);<a name="line.2594"></a>
+<span class="sourceLineNo">2595</span>    }<a name="line.2595"></a>
+<span class="sourceLineNo">2596</span><a name="line.2596"></a>
+<span class="sourceLineNo">2597</span>    @Override<a name="line.2597"></a>
+<span class="sourceLineNo">2598</span>    public void warn(final Message msg, final Throwable t) {<a name="line.2598"></a>
+<span class="sourceLineNo">2599</span>        logIfEnabled(FQCN, Level.WARN, null, msg, t);<a name="line.2599"></a>
+<span class="sourceLineNo">2600</span>    }<a name="line.2600"></a>
+<span class="sourceLineNo">2601</span><a name="line.2601"></a>
+<span class="sourceLineNo">2602</span>    @Override<a name="line.2602"></a>
+<span class="sourceLineNo">2603</span>    public void warn(final CharSequence message) {<a name="line.2603"></a>
+<span class="sourceLineNo">2604</span>        logIfEnabled(FQCN, Level.WARN, null, message, null);<a name="line.2604"></a>
+<span class="sourceLineNo">2605</span>    }<a name="line.2605"></a>
+<span class="sourceLineNo">2606</span><a name="line.2606"></a>
+<span class="sourceLineNo">2607</span>    @Override<a name="line.2607"></a>
+<span class="sourceLineNo">2608</span>    public void warn(final CharSequence message, final Throwable t) {<a name="line.2608"></a>
+<span class="sourceLineNo">2609</span>        logIfEnabled(FQCN, Level.WARN, null, message, t);<a name="line.2609"></a>
+<span class="sourceLineNo">2610</span>    }<a name="line.2610"></a>
+<span class="sourceLineNo">2611</span><a name="line.2611"></a>
+<span class="sourceLineNo">2612</span>    @Override<a name="line.2612"></a>
+<span class="sourceLineNo">2613</span>    public void warn(final Object message) {<a name="line.2613"></a>
+<span class="sourceLineNo">2614</span>        logIfEnabled(FQCN, Level.WARN, null, message, null);<a name="line.2614"></a>
+<span class="sourceLineNo">2615</span>    }<a name="line.2615"></a>
+<span class="sourceLineNo">2616</span><a name="line.2616"></a>
+<span class="sourceLineNo">2617</span>    @Override<a name="line.2617"></a>
+<span class="sourceLineNo">2618</span>    public void warn(final Object message, final Throwable t) {<a name="line.2618"></a>
+<span class="sourceLineNo">2619</span>        logIfEnabled(FQCN, Level.WARN, null, message, t);<a name="line.2619"></a>
+<span class="sourceLineNo">2620</span>    }<a name="line.2620"></a>
+<span class="sourceLineNo">2621</span><a name="line.2621"></a>
+<span class="sourceLineNo">2622</span>    @Override<a name="line.2622"></a>
+<span class="sourceLineNo">2623</span>    public void warn(final String message) {<a name="line.2623"></a>
+<span class="sourceLineNo">2624</span>        logIfEnabled(FQCN, Level.WARN, null, message, (Throwable) null);<a name="line.2624"></a>
+<span class="sourceLineNo">2625</span>    }<a name="line.2625"></a>
+<span class="sourceLineNo">2626</span><a name="line.2626"></a>
+<span class="sourceLineNo">2627</span>    @Override<a name="line.2627"></a>
+<span class="sourceLineNo">2628</span>    public void warn(final String message, final Object... params) {<a name="line.2628"></a>
+<span class="sourceLineNo">2629</span>        logIfEnabled(FQCN, Level.WARN, null, message, params);<a name="line.2629"></a>
+<span class="sourceLineNo">2630</span>    }<a name="line.2630"></a>
+<span class="sourceLineNo">2631</span><a name="line.2631"></a>
+<span class="sourceLineNo">2632</span>    @Override<a name="line.2632"></a>
+<span class="sourceLineNo">2633</span>    public void warn(final String message, final Throwable t) {<a name="line.2633"></a>
+<span class="sourceLineNo">2634</span>        logIfEnabled(FQCN, Level.WARN, null, message, t);<a name="line.2634"></a>
+<span class="sourceLineNo">2635</span>    }<a name="line.2635"></a>
+<span class="sourceLineNo">2636</span><a name="line.2636"></a>
+<span class="sourceLineNo">2637</span>    @Override<a name="line.2637"></a>
+<span class="sourceLineNo">2638</span>    public void warn(final Supplier&lt;?&gt; msgSupplier) {<a name="line.2638"></a>
+<span class="sourceLineNo">2639</span>        logIfEnabled(FQCN, Level.WARN, null, msgSupplier, (Throwable) null);<a name="line.2639"></a>
+<span class="sourceLineNo">2640</span>    }<a name="line.2640"></a>
+<span class="sourceLineNo">2641</span><a name="line.2641"></a>
+<span class="sourceLineNo">2642</span>    @Override<a name="line.2642"></a>
+<span class="sourceLineNo">2643</span>    public void warn(final Supplier&lt;?&gt; msgSupplier, final Throwable t) {<a name="line.2643"></a>
+<span class="sourceLineNo">2644</span>        logIfEnabled(FQCN, Level.WARN, null, msgSupplier, t);<a name="line.2644"></a>
+<span class="sourceLineNo">2645</span>    }<a name="line.2645"></a>
+<span class="sourceLineNo">2646</span><a name="line.2646"></a>
+<span class="sourceLineNo">2647</span>    @Override<a name="line.2647"></a>
+<span class="sourceLineNo">2648</span>    public void warn(final Marker marker, final Supplier&lt;?&gt; msgSupplier) {<a name="line.2648"></a>
+<span class="sourceLineNo">2649</span>        logIfEnabled(FQCN, Level.WARN, marker, msgSupplier, (Throwable) null);<a name="line.2649"></a>
+<span class="sourceLineNo">2650</span>    }<a name="line.2650"></a>
+<span class="sourceLineNo">2651</span><a name="line.2651"></a>
+<span class="sourceLineNo">2652</span>    @Override<a name="line.2652"></a>
+<span class="sourceLineNo">2653</span>    public void warn(final Marker marker, final String message, final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2653"></a>
+<span class="sourceLineNo">2654</span>        logIfEnabled(FQCN, Level.WARN, marker, message, paramSuppliers);<a name="line.2654"></a>
+<span class="sourceLineNo">2655</span>    }<a name="line.2655"></a>
+<span class="sourceLineNo">2656</span><a name="line.2656"></a>
+<span class="sourceLineNo">2657</span>    @Override<a name="line.2657"></a>
+<span class="sourceLineNo">2658</span>    public void warn(final Marker marker, final Supplier&lt;?&gt; msgSupplier, final Throwable t) {<a name="line.2658"></a>
+<span class="sourceLineNo">2659</span>        logIfEnabled(FQCN, Level.WARN, marker, msgSupplier, t);<a name="line.2659"></a>
+<span class="sourceLineNo">2660</span>    }<a name="line.2660"></a>
+<span class="sourceLineNo">2661</span><a name="line.2661"></a>
+<span class="sourceLineNo">2662</span>    @Override<a name="line.2662"></a>
+<span class="sourceLineNo">2663</span>    public void warn(final String message, final Supplier&lt;?&gt;... paramSuppliers) {<a name="line.2663"></a>
+<span class="sourceLineNo">2664</span>        logIfEnabled(FQCN, Level.WARN, null, message, paramSuppliers);<a name="line.2664"></a>
+<span class="sourceLineNo">2665</span>    }<a name="line.2665"></a>
+<span class="sourceLineNo">2666</span><a name="line.2666"></a>
+<span class="sourceLineNo">2667</span>    @Override<a name="line.2667"></a>
+<span class="sourceLineNo">2668</span>    public void warn(final Marker marker, final MessageSupplier msgSupplier) {<a name="line.2668"></a>
+<span class="sourceLineNo">2669</span>        logIfEnabled(FQCN, Level.WARN, marker, msgSupplier, (Throwable) null);<a name="line.2669"></a>
+<span class="sourceLineNo">2670</span>    }<a name="line.2670"></a>
+<span class="sourceLineNo">2671</span><a name="line.2671"></a>
+<span class="sourceLineNo">2672</span>    @Override<a name="line.2672"></a>
+<span class="sourceLineNo">2673</span>    public void warn(final Marker marker, final MessageSupplier msgSupplier, final Throwable t) {<a name="line.2673"></a>
+<span class="sourceLineNo">2674</span>        logIfEnabled(FQCN, Level.WARN, marker, msgSupplier, t);<a name="line.2674"></a>
+<span class="sourceLineNo">2675</span>    }<a name="line.2675"></a>
+<span class="sourceLineNo">2676</span><a name="line.2676"></a>
+<span class="sourceLineNo">2677</span>    @Override<a name="line.2677"></a>
+<span class="sourceLineNo">2678</span>    public void warn(final MessageSupplier msgSupplier) {<a name="line.2678"></a>
+<span class="sourceLineNo">2679</span>        logIfEnabled(FQCN, Level.WARN, null, msgSupplier, (Throwable) null);<a name="line.2679"></a>
+<span class="sourceLineNo">2680</span>    }<a name="line.2680"></a>
+<span class="sourceLineNo">2681</span><a name="line.2681"></a>
+<span class="sourceLineNo">2682</span>    @Override<a name="line.2682"></a>
+<span class="sourceLineNo">2683</span>    public void warn(final MessageSupplier msgSupplier, final Throwable t) {<a name="line.2683"></a>
+<span class="sourceLineNo">2684</span>        logIfEnabled(FQCN, Level.WARN, null, msgSupplier, t);<a name="line.2684"></a>
+<span class="sourceLineNo">2685</span>    }<a name="line.2685"></a>
+<span class="sourceLineNo">2686</span><a name="line.2686"></a>
+<span class="sourceLineNo">2687</span>    @Override<a name="line.2687"></a>
+<span class="sourceLineNo">2688</span>    public void warn(final Marker marker, final String message, final Object p0) {<a name="line.2688"></a>
+<span class="sourceLineNo">2689</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0);<a name="line.2689"></a>
+<span class="sourceLineNo">2690</span>    }<a name="line.2690"></a>
+<span class="sourceLineNo">2691</span><a name="line.2691"></a>
+<span class="sourceLineNo">2692</span>    @Override<a name="line.2692"></a>
+<span class="sourceLineNo">2693</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1) {<a name="line.2693"></a>
+<span class="sourceLineNo">2694</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1);<a name="line.2694"></a>
+<span class="sourceLineNo">2695</span>    }<a name="line.2695"></a>
+<span class="sourceLineNo">2696</span><a name="line.2696"></a>
+<span class="sourceLineNo">2697</span>    @Override<a name="line.2697"></a>
+<span class="sourceLineNo">2698</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2) {<a name="line.2698"></a>
+<span class="sourceLineNo">2699</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2);<a name="line.2699"></a>
+<span class="sourceLineNo">2700</span>    }<a name="line.2700"></a>
+<span class="sourceLineNo">2701</span><a name="line.2701"></a>
+<span class="sourceLineNo">2702</span>    @Override<a name="line.2702"></a>
+<span class="sourceLineNo">2703</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2703"></a>
+<span class="sourceLineNo">2704</span>            final Object p3) {<a name="line.2704"></a>
+<span class="sourceLineNo">2705</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3);<a name="line.2705"></a>
+<span class="sourceLineNo">2706</span>    }<a name="line.2706"></a>
+<span class="sourceLineNo">2707</span><a name="line.2707"></a>
+<span class="sourceLineNo">2708</span>    @Override<a name="line.2708"></a>
+<span class="sourceLineNo">2709</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2709"></a>
+<span class="sourceLineNo">2710</span>            final Object p3, final Object p4) {<a name="line.2710"></a>
+<span class="sourceLineNo">2711</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4);<a name="line.2711"></a>
+<span class="sourceLineNo">2712</span>    }<a name="line.2712"></a>
+<span class="sourceLineNo">2713</span><a name="line.2713"></a>
+<span class="sourceLineNo">2714</span>    @Override<a name="line.2714"></a>
+<span class="sourceLineNo">2715</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2715"></a>
+<span class="sourceLineNo">2716</span>            final Object p3, final Object p4, final Object p5) {<a name="line.2716"></a>
+<span class="sourceLineNo">2717</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4, p5);<a name="line.2717"></a>
+<span class="sourceLineNo">2718</span>    }<a name="line.2718"></a>
+<span class="sourceLineNo">2719</span><a name="line.2719"></a>
+<span class="sourceLineNo">2720</span>    @Override<a name="line.2720"></a>
+<span class="sourceLineNo">2721</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2721"></a>
+<span class="sourceLineNo">2722</span>            final Object p3, final Object p4, final Object p5, final Object p6) {<a name="line.2722"></a>
+<span class="sourceLineNo">2723</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4, p5, p6);<a name="line.2723"></a>
+<span class="sourceLineNo">2724</span>    }<a name="line.2724"></a>
+<span class="sourceLineNo">2725</span><a name="line.2725"></a>
+<span class="sourceLineNo">2726</span>    @Override<a name="line.2726"></a>
+<span class="sourceLineNo">2727</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2727"></a>
+<span class="sourceLineNo">2728</span>            final Object p3, final Object p4, final Object p5, final Object p6, final Object p7) {<a name="line.2728"></a>
+<span class="sourceLineNo">2729</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4, p5, p6, p7);<a name="line.2729"></a>
+<span class="sourceLineNo">2730</span>    }<a name="line.2730"></a>
+<span class="sourceLineNo">2731</span><a name="line.2731"></a>
+<span class="sourceLineNo">2732</span>    @Override<a name="line.2732"></a>
+<span class="sourceLineNo">2733</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2733"></a>
+<span class="sourceLineNo">2734</span>            final Object p3, final Object p4, final Object p5, final Object p6, final Object p7, final Object p8) {<a name="line.2734"></a>
+<span class="sourceLineNo">2735</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4, p5, p6, p7, p8);<a name="line.2735"></a>
+<span class="sourceLineNo">2736</span>    }<a name="line.2736"></a>
+<span class="sourceLineNo">2737</span><a name="line.2737"></a>
+<span class="sourceLineNo">2738</span>    @Override<a name="line.2738"></a>
+<span class="sourceLineNo">2739</span>    public void warn(final Marker marker, final String message, final Object p0, final Object p1, final Object p2,<a name="line.2739"></a>
+<span class="sourceLineNo">2740</span>            final Object p3, final Object p4, final Object p5,<a name="line.2740"></a>
+<span class="sourceLineNo">2741</span>            final Object p6, final Object p7, final Object p8, final Object p9) {<a name="line.2741"></a>
+<span class="sourceLineNo">2742</span>        logIfEnabled(FQCN, Level.WARN, marker, message, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);<a name="line.2742"></a>
+<span class="sourceLineNo">2743</span>    }<a name="line.2743"></a>
+<span class="sourceLineNo">2744</span><a name="line.2744"></a>
+<span class="sourceLineNo">2745</span>    @Override<a name="line.2745"></a>
+<span class="sourceLineNo">2746</span>    public void warn(final String message, final Object p0) {<a name="line.2746"></a>
+<span class="sourceLineNo">2747</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0);<a name="line.2747"></a>
+<span class="sourceLineNo">2748</span>    }<a name="line.2748"></a>
+<span class="sourceLineNo">2749</span><a name="line.2749"></a>
+<span class="sourceLineNo">2750</span>    @Override<a name="line.2750"></a>
+<span class="sourceLineNo">2751</span>    public void warn(final String message, final Object p0, final Object p1) {<a name="line.2751"></a>
+<span class="sourceLineNo">2752</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1);<a name="line.2752"></a>
+<span class="sourceLineNo">2753</span>    }<a name="line.2753"></a>
+<span class="sourceLineNo">2754</span><a name="line.2754"></a>
+<span class="sourceLineNo">2755</span>    @Override<a name="line.2755"></a>
+<span class="sourceLineNo">2756</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2) {<a name="line.2756"></a>
+<span class="sourceLineNo">2757</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2);<a name="line.2757"></a>
+<span class="sourceLineNo">2758</span>    }<a name="line.2758"></a>
+<span class="sourceLineNo">2759</span><a name="line.2759"></a>
+<span class="sourceLineNo">2760</span>    @Override<a name="line.2760"></a>
+<span class="sourceLineNo">2761</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3) {<a name="line.2761"></a>
+<span class="sourceLineNo">2762</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3);<a name="line.2762"></a>
+<span class="sourceLineNo">2763</span>    }<a name="line.2763"></a>
+<span class="sourceLineNo">2764</span><a name="line.2764"></a>
+<span class="sourceLineNo">2765</span>    @Override<a name="line.2765"></a>
+<span class="sourceLineNo">2766</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2766"></a>
+<span class="sourceLineNo">2767</span>            final Object p4) {<a name="line.2767"></a>
+<span class="sourceLineNo">2768</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4);<a name="line.2768"></a>
+<span class="sourceLineNo">2769</span>    }<a name="line.2769"></a>
+<span class="sourceLineNo">2770</span><a name="line.2770"></a>
+<span class="sourceLineNo">2771</span>    @Override<a name="line.2771"></a>
+<span class="sourceLineNo">2772</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2772"></a>
+<span class="sourceLineNo">2773</span>            final Object p4, final Object p5) {<a name="line.2773"></a>
+<span class="sourceLineNo">2774</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4, p5);<a name="line.2774"></a>
+<span class="sourceLineNo">2775</span>    }<a name="line.2775"></a>
+<span class="sourceLineNo">2776</span><a name="line.2776"></a>
+<span class="sourceLineNo">2777</span>    @Override<a name="line.2777"></a>
+<span class="sourceLineNo">2778</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2778"></a>
+<span class="sourceLineNo">2779</span>            final Object p4, final Object p5, final Object p6) {<a name="line.2779"></a>
+<span class="sourceLineNo">2780</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4, p5, p6);<a name="line.2780"></a>
+<span class="sourceLineNo">2781</span>    }<a name="line.2781"></a>
+<span class="sourceLineNo">2782</span><a name="line.2782"></a>
+<span class="sourceLineNo">2783</span>    @Override<a name="line.2783"></a>
+<span class="sourceLineNo">2784</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2784"></a>
+<span class="sourceLineNo">2785</span>            final Object p4, final Object p5, final Object p6, final Object p7) {<a name="line.2785"></a>
+<span class="sourceLineNo">2786</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4, p5, p6, p7);<a name="line.2786"></a>
+<span class="sourceLineNo">2787</span>    }<a name="line.2787"></a>
+<span class="sourceLineNo">2788</span><a name="line.2788"></a>
+<span class="sourceLineNo">2789</span>    @Override<a name="line.2789"></a>
+<span class="sourceLineNo">2790</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2790"></a>
+<span class="sourceLineNo">2791</span>            final Object p4, final Object p5, final Object p6, final Object p7, final Object p8) {<a name="line.2791"></a>
+<span class="sourceLineNo">2792</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4, p5, p6, p7, p8);<a name="line.2792"></a>
+<span class="sourceLineNo">2793</span>    }<a name="line.2793"></a>
+<span class="sourceLineNo">2794</span><a name="line.2794"></a>
+<span class="sourceLineNo">2795</span>    @Override<a name="line.2795"></a>
+<span class="sourceLineNo">2796</span>    public void warn(final String message, final Object p0, final Object p1, final Object p2, final Object p3,<a name="line.2796"></a>
+<span class="sourceLineNo">2797</span>            final Object p4, final Object p5, final Object p6,<a name="line.2797"></a>
+<span class="sourceLineNo">2798</span>            final Object p7, final Object p8, final Object p9) {<a name="line.2798"></a>
+<span class="sourceLineNo">2799</span>        logIfEnabled(FQCN, Level.WARN, null, message, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);<a name="line.2799"></a>
+<span class="sourceLineNo">2800</span>    }<a name="line.2800"></a>
+<span class="sourceLineNo">2801</span>}<a name="line.2801"></a>
 
 
 
