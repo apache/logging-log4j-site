@@ -2112,7 +2112,7 @@
 <span class="sourceLineNo">2104</span>        try {<a name="line.2104"></a>
 <span class="sourceLineNo">2105</span>            incrementRecursionDepth();<a name="line.2105"></a>
 <span class="sourceLineNo">2106</span>            log(level, marker, fqcn, location, message, throwable);<a name="line.2106"></a>
-<span class="sourceLineNo">2107</span>        } catch (Exception ex) {<a name="line.2107"></a>
+<span class="sourceLineNo">2107</span>        } catch (Throwable ex) {<a name="line.2107"></a>
 <span class="sourceLineNo">2108</span>            handleLogMessageException(ex, fqcn, message);<a name="line.2108"></a>
 <span class="sourceLineNo">2109</span>        } finally {<a name="line.2109"></a>
 <span class="sourceLineNo">2110</span>            decrementRecursionDepth();<a name="line.2110"></a>
@@ -2211,9 +2211,9 @@
 <span class="sourceLineNo">2203</span>                               final Throwable throwable) {<a name="line.2203"></a>
 <span class="sourceLineNo">2204</span>        try {<a name="line.2204"></a>
 <span class="sourceLineNo">2205</span>            log(level, marker, fqcn, location, message, throwable);<a name="line.2205"></a>
-<span class="sourceLineNo">2206</span>        } catch (final Exception e) {<a name="line.2206"></a>
+<span class="sourceLineNo">2206</span>        } catch (final Throwable t) {<a name="line.2206"></a>
 <span class="sourceLineNo">2207</span>            // LOG4J2-1990 Log4j2 suppresses all exceptions that occur once application called the logger<a name="line.2207"></a>
-<span class="sourceLineNo">2208</span>            handleLogMessageException(e, fqcn, message);<a name="line.2208"></a>
+<span class="sourceLineNo">2208</span>            handleLogMessageException(t, fqcn, message);<a name="line.2208"></a>
 <span class="sourceLineNo">2209</span>        }<a name="line.2209"></a>
 <span class="sourceLineNo">2210</span>    }<a name="line.2210"></a>
 <span class="sourceLineNo">2211</span><a name="line.2211"></a>
@@ -2226,16 +2226,16 @@
 <span class="sourceLineNo">2218</span><a name="line.2218"></a>
 <span class="sourceLineNo">2219</span>    // LOG4J2-1990 Log4j2 suppresses all exceptions that occur once application called the logger<a name="line.2219"></a>
 <span class="sourceLineNo">2220</span>    // TODO Configuration setting to propagate exceptions back to the caller *if requested*<a name="line.2220"></a>
-<span class="sourceLineNo">2221</span>    private void handleLogMessageException(final Exception exception, final String fqcn, final Message message) {<a name="line.2221"></a>
-<span class="sourceLineNo">2222</span>        if (exception instanceof LoggingException) {<a name="line.2222"></a>
-<span class="sourceLineNo">2223</span>            throw (LoggingException) exception;<a name="line.2223"></a>
+<span class="sourceLineNo">2221</span>    private void handleLogMessageException(final Throwable throwable, final String fqcn, final Message message) {<a name="line.2221"></a>
+<span class="sourceLineNo">2222</span>        if (throwable instanceof LoggingException) {<a name="line.2222"></a>
+<span class="sourceLineNo">2223</span>            throw (LoggingException) throwable;<a name="line.2223"></a>
 <span class="sourceLineNo">2224</span>        }<a name="line.2224"></a>
 <span class="sourceLineNo">2225</span>        StatusLogger.getLogger().warn("{} caught {} logging {}: {}",<a name="line.2225"></a>
 <span class="sourceLineNo">2226</span>                fqcn,<a name="line.2226"></a>
-<span class="sourceLineNo">2227</span>                exception.getClass().getName(),<a name="line.2227"></a>
+<span class="sourceLineNo">2227</span>                throwable.getClass().getName(),<a name="line.2227"></a>
 <span class="sourceLineNo">2228</span>                message.getClass().getSimpleName(),<a name="line.2228"></a>
 <span class="sourceLineNo">2229</span>                message.getFormat(),<a name="line.2229"></a>
-<span class="sourceLineNo">2230</span>                exception);<a name="line.2230"></a>
+<span class="sourceLineNo">2230</span>                throwable);<a name="line.2230"></a>
 <span class="sourceLineNo">2231</span>    }<a name="line.2231"></a>
 <span class="sourceLineNo">2232</span><a name="line.2232"></a>
 <span class="sourceLineNo">2233</span>    @Override<a name="line.2233"></a>

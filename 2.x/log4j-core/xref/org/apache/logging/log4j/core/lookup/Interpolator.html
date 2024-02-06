@@ -86,7 +86,7 @@
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, PluginType&lt;?&gt;&gt; entry : plugins.entrySet()) {
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>              <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>                  <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> StrLookup&gt; clazz = entry.getValue().getPluginClass().asSubclass(StrLookup.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>                  <strong class="jxr_keyword">if</strong> (!clazz.getName().equals(JndiLookup.<strong class="jxr_keyword">class</strong>.getName()) || JndiManager.isJndiEnabled()) {
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>                  <strong class="jxr_keyword">if</strong> (!clazz.getName().equals(<span class="jxr_string">"org.apache.logging.log4j.core.lookup.JndiLookup"</span>) || JndiManager.isJndiLookupEnabled()) {
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>                      strLookupMap.put(entry.getKey().toLowerCase(), ReflectionUtil.instantiate(clazz));
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>                  }
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>              } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Throwable t) {
@@ -117,7 +117,7 @@
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>         strLookupMap.put(<span class="jxr_string">"lower"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/LowerLookup.html">LowerLookup</a>());
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>         strLookupMap.put(<span class="jxr_string">"upper"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/UpperLookup.html">UpperLookup</a>());
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         <em class="jxr_comment">// JNDI</em>
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">if</strong> (JndiManager.isJndiEnabled()) {
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">if</strong> (JndiManager.isJndiLookupEnabled()) {
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>             <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>                 <em class="jxr_comment">// [LOG4J2-703] We might be on Android</em>
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>                 strLookupMap.put(LOOKUP_KEY_JNDI,

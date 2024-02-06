@@ -24,34 +24,34 @@
 <span class="sourceLineNo">016</span> */<a name="line.16"></a>
 <span class="sourceLineNo">017</span>package org.apache.log4j.builders.appender;<a name="line.17"></a>
 <span class="sourceLineNo">018</span><a name="line.18"></a>
-<span class="sourceLineNo">019</span>import org.apache.log4j.Appender;<a name="line.19"></a>
-<span class="sourceLineNo">020</span>import org.apache.log4j.bridge.AppenderWrapper;<a name="line.20"></a>
-<span class="sourceLineNo">021</span>import org.apache.log4j.builders.AbstractBuilder;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import org.apache.log4j.builders.BooleanHolder;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import org.apache.log4j.builders.Holder;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import org.apache.log4j.config.Log4j1Configuration;<a name="line.24"></a>
-<span class="sourceLineNo">025</span>import org.apache.log4j.config.PropertiesConfiguration;<a name="line.25"></a>
-<span class="sourceLineNo">026</span>import org.apache.log4j.helpers.OptionConverter;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import org.apache.log4j.xml.XmlConfiguration;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import org.apache.logging.log4j.Logger;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import org.apache.logging.log4j.core.appender.AsyncAppender;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>import org.apache.logging.log4j.core.config.AppenderRef;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.31"></a>
-<span class="sourceLineNo">032</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>import org.apache.logging.log4j.util.Strings;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>import org.w3c.dom.Element;<a name="line.34"></a>
-<span class="sourceLineNo">035</span><a name="line.35"></a>
-<span class="sourceLineNo">036</span>import java.util.ArrayList;<a name="line.36"></a>
-<span class="sourceLineNo">037</span>import java.util.List;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import java.util.Properties;<a name="line.38"></a>
-<span class="sourceLineNo">039</span><a name="line.39"></a>
-<span class="sourceLineNo">040</span>import static org.apache.log4j.builders.BuilderManager.CATEGORY;<a name="line.40"></a>
-<span class="sourceLineNo">041</span>import static org.apache.log4j.xml.XmlConfiguration.NAME_ATTR;<a name="line.41"></a>
-<span class="sourceLineNo">042</span>import static org.apache.log4j.xml.XmlConfiguration.PARAM_TAG;<a name="line.42"></a>
-<span class="sourceLineNo">043</span>import static org.apache.log4j.xml.XmlConfiguration.VALUE_ATTR;<a name="line.43"></a>
-<span class="sourceLineNo">044</span>import static org.apache.log4j.xml.XmlConfiguration.forEachElement;<a name="line.44"></a>
-<span class="sourceLineNo">045</span>import static org.apache.log4j.config.Log4j1Configuration.APPENDER_REF_TAG;<a name="line.45"></a>
-<span class="sourceLineNo">046</span>import static org.apache.log4j.config.Log4j1Configuration.THRESHOLD_PARAM;<a name="line.46"></a>
+<span class="sourceLineNo">019</span>import static org.apache.log4j.builders.BuilderManager.CATEGORY;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import static org.apache.log4j.config.Log4j1Configuration.APPENDER_REF_TAG;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import static org.apache.log4j.config.Log4j1Configuration.THRESHOLD_PARAM;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import static org.apache.log4j.xml.XmlConfiguration.NAME_ATTR;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import static org.apache.log4j.xml.XmlConfiguration.PARAM_TAG;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import static org.apache.log4j.xml.XmlConfiguration.VALUE_ATTR;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import static org.apache.log4j.xml.XmlConfiguration.forEachElement;<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.util.ArrayList;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.List;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.Properties;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import java.util.concurrent.atomic.AtomicBoolean;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import java.util.concurrent.atomic.AtomicReference;<a name="line.31"></a>
+<span class="sourceLineNo">032</span><a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.log4j.Appender;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.apache.log4j.bridge.AppenderWrapper;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.apache.log4j.builders.AbstractBuilder;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.apache.log4j.config.Log4j1Configuration;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.apache.log4j.config.PropertiesConfiguration;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.apache.log4j.helpers.OptionConverter;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.apache.log4j.xml.XmlConfiguration;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.apache.logging.log4j.Logger;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.apache.logging.log4j.core.appender.AsyncAppender;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.apache.logging.log4j.core.config.AppenderRef;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import org.apache.logging.log4j.util.Strings;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import org.w3c.dom.Element;<a name="line.46"></a>
 <span class="sourceLineNo">047</span><a name="line.47"></a>
 <span class="sourceLineNo">048</span><a name="line.48"></a>
 <span class="sourceLineNo">049</span>/**<a name="line.49"></a>
@@ -74,11 +74,11 @@
 <span class="sourceLineNo">066</span>    @Override<a name="line.66"></a>
 <span class="sourceLineNo">067</span>    public Appender parseAppender(final Element appenderElement, final XmlConfiguration config) {<a name="line.67"></a>
 <span class="sourceLineNo">068</span>        String name = appenderElement.getAttribute(NAME_ATTR);<a name="line.68"></a>
-<span class="sourceLineNo">069</span>        Holder&lt;List&lt;String&gt;&gt; appenderRefs = new Holder&lt;&gt;(new ArrayList&lt;&gt;());<a name="line.69"></a>
-<span class="sourceLineNo">070</span>        Holder&lt;Boolean&gt; blocking = new BooleanHolder();<a name="line.70"></a>
-<span class="sourceLineNo">071</span>        Holder&lt;Boolean&gt; includeLocation = new BooleanHolder();<a name="line.71"></a>
-<span class="sourceLineNo">072</span>        Holder&lt;String&gt; level = new Holder&lt;&gt;("trace");<a name="line.72"></a>
-<span class="sourceLineNo">073</span>        Holder&lt;Integer&gt; bufferSize = new Holder&lt;&gt;(1024);<a name="line.73"></a>
+<span class="sourceLineNo">069</span>        AtomicReference&lt;List&lt;String&gt;&gt; appenderRefs = new AtomicReference&lt;&gt;(new ArrayList&lt;&gt;());<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        AtomicBoolean blocking = new AtomicBoolean();<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        AtomicBoolean includeLocation = new AtomicBoolean();<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        AtomicReference&lt;String&gt; level = new AtomicReference&lt;&gt;("trace");<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        AtomicReference&lt;Integer&gt; bufferSize = new AtomicReference&lt;&gt;(1024);<a name="line.73"></a>
 <span class="sourceLineNo">074</span>        forEachElement(appenderElement.getChildNodes(), currentElement -&gt; {<a name="line.74"></a>
 <span class="sourceLineNo">075</span>            switch (currentElement.getTagName()) {<a name="line.75"></a>
 <span class="sourceLineNo">076</span>                case APPENDER_REF_TAG:<a name="line.76"></a>

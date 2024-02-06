@@ -49,39 +49,49 @@
 <span class="sourceLineNo">041</span>    static final String CONTAINER_JNDI_RESOURCE_PATH_PREFIX = "java:comp/env/";<a name="line.41"></a>
 <span class="sourceLineNo">042</span><a name="line.42"></a>
 <span class="sourceLineNo">043</span>    /**<a name="line.43"></a>
-<span class="sourceLineNo">044</span>     * Looks up the value of the JNDI resource.<a name="line.44"></a>
-<span class="sourceLineNo">045</span>     * @param event The current LogEvent (is ignored by this StrLookup).<a name="line.45"></a>
-<span class="sourceLineNo">046</span>     * @param key  the JNDI resource name to be looked up, may be null<a name="line.46"></a>
-<span class="sourceLineNo">047</span>     * @return The String value of the JNDI resource.<a name="line.47"></a>
-<span class="sourceLineNo">048</span>     */<a name="line.48"></a>
-<span class="sourceLineNo">049</span>    @Override<a name="line.49"></a>
-<span class="sourceLineNo">050</span>    public String lookup(final LogEvent event, final String key) {<a name="line.50"></a>
-<span class="sourceLineNo">051</span>        if (key == null) {<a name="line.51"></a>
-<span class="sourceLineNo">052</span>            return null;<a name="line.52"></a>
-<span class="sourceLineNo">053</span>        }<a name="line.53"></a>
-<span class="sourceLineNo">054</span>        final String jndiName = convertJndiName(key);<a name="line.54"></a>
-<span class="sourceLineNo">055</span>        try (final JndiManager jndiManager = JndiManager.getDefaultManager()) {<a name="line.55"></a>
-<span class="sourceLineNo">056</span>            return Objects.toString(jndiManager.lookup(jndiName), null);<a name="line.56"></a>
-<span class="sourceLineNo">057</span>        } catch (final NamingException e) {<a name="line.57"></a>
-<span class="sourceLineNo">058</span>            LOGGER.warn(LOOKUP, "Error looking up JNDI resource [{}].", jndiName, e);<a name="line.58"></a>
-<span class="sourceLineNo">059</span>            return null;<a name="line.59"></a>
-<span class="sourceLineNo">060</span>        }<a name="line.60"></a>
-<span class="sourceLineNo">061</span>    }<a name="line.61"></a>
-<span class="sourceLineNo">062</span><a name="line.62"></a>
-<span class="sourceLineNo">063</span>    /**<a name="line.63"></a>
-<span class="sourceLineNo">064</span>     * Convert the given JNDI name to the actual JNDI name to use.<a name="line.64"></a>
-<span class="sourceLineNo">065</span>     * Default implementation applies the "java:comp/env/" prefix<a name="line.65"></a>
-<span class="sourceLineNo">066</span>     * unless other scheme like "java:" is given.<a name="line.66"></a>
-<span class="sourceLineNo">067</span>     * @param jndiName The name of the resource.<a name="line.67"></a>
-<span class="sourceLineNo">068</span>     * @return The fully qualified name to look up.<a name="line.68"></a>
-<span class="sourceLineNo">069</span>     */<a name="line.69"></a>
-<span class="sourceLineNo">070</span>    private String convertJndiName(final String jndiName) {<a name="line.70"></a>
-<span class="sourceLineNo">071</span>        if (!jndiName.startsWith(CONTAINER_JNDI_RESOURCE_PATH_PREFIX) &amp;&amp; jndiName.indexOf(':') == -1) {<a name="line.71"></a>
-<span class="sourceLineNo">072</span>            return CONTAINER_JNDI_RESOURCE_PATH_PREFIX + jndiName;<a name="line.72"></a>
-<span class="sourceLineNo">073</span>        }<a name="line.73"></a>
-<span class="sourceLineNo">074</span>        return jndiName;<a name="line.74"></a>
-<span class="sourceLineNo">075</span>    }<a name="line.75"></a>
-<span class="sourceLineNo">076</span>}<a name="line.76"></a>
+<span class="sourceLineNo">044</span>     * Constructs a new instance or throw IllegalStateException if this feature is disabled.<a name="line.44"></a>
+<span class="sourceLineNo">045</span>     */<a name="line.45"></a>
+<span class="sourceLineNo">046</span>    public JndiLookup() {<a name="line.46"></a>
+<span class="sourceLineNo">047</span>        if (!JndiManager.isJndiLookupEnabled()) {<a name="line.47"></a>
+<span class="sourceLineNo">048</span>            throw new IllegalStateException("JNDI must be enabled by setting log4j2.enableJndiLookup=true");<a name="line.48"></a>
+<span class="sourceLineNo">049</span>        }<a name="line.49"></a>
+<span class="sourceLineNo">050</span>    }<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>    /**<a name="line.52"></a>
+<span class="sourceLineNo">053</span>     * Looks up the value of the JNDI resource.<a name="line.53"></a>
+<span class="sourceLineNo">054</span>     * <a name="line.54"></a>
+<span class="sourceLineNo">055</span>     * @param event The current LogEvent (is ignored by this StrLookup).<a name="line.55"></a>
+<span class="sourceLineNo">056</span>     * @param key the JNDI resource name to be looked up, may be null<a name="line.56"></a>
+<span class="sourceLineNo">057</span>     * @return The String value of the JNDI resource.<a name="line.57"></a>
+<span class="sourceLineNo">058</span>     */<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    @Override<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    public String lookup(final LogEvent event, final String key) {<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        if (key == null) {<a name="line.61"></a>
+<span class="sourceLineNo">062</span>            return null;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        }<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        final String jndiName = convertJndiName(key);<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        try (final JndiManager jndiManager = JndiManager.getDefaultManager()) {<a name="line.65"></a>
+<span class="sourceLineNo">066</span>            return Objects.toString(jndiManager.lookup(jndiName), null);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>        } catch (final NamingException e) {<a name="line.67"></a>
+<span class="sourceLineNo">068</span>            LOGGER.warn(LOOKUP, "Error looking up JNDI resource [{}].", jndiName, e);<a name="line.68"></a>
+<span class="sourceLineNo">069</span>            return null;<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        }<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    }<a name="line.71"></a>
+<span class="sourceLineNo">072</span><a name="line.72"></a>
+<span class="sourceLineNo">073</span>    /**<a name="line.73"></a>
+<span class="sourceLineNo">074</span>     * Convert the given JNDI name to the actual JNDI name to use. Default implementation applies the "java:comp/env/"<a name="line.74"></a>
+<span class="sourceLineNo">075</span>     * prefix unless other scheme like "java:" is given.<a name="line.75"></a>
+<span class="sourceLineNo">076</span>     * <a name="line.76"></a>
+<span class="sourceLineNo">077</span>     * @param jndiName The name of the resource.<a name="line.77"></a>
+<span class="sourceLineNo">078</span>     * @return The fully qualified name to look up.<a name="line.78"></a>
+<span class="sourceLineNo">079</span>     */<a name="line.79"></a>
+<span class="sourceLineNo">080</span>    private String convertJndiName(final String jndiName) {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        if (!jndiName.startsWith(CONTAINER_JNDI_RESOURCE_PATH_PREFIX) &amp;&amp; jndiName.indexOf(':') == -1) {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            return CONTAINER_JNDI_RESOURCE_PATH_PREFIX + jndiName;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        }<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        return jndiName;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    }<a name="line.85"></a>
+<span class="sourceLineNo">086</span>}<a name="line.86"></a>
 
 
 
