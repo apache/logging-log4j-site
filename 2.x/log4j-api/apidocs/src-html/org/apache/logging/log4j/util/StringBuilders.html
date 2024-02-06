@@ -26,80 +26,132 @@
 <span class="sourceLineNo">018</span><a name="line.18"></a>
 <span class="sourceLineNo">019</span>import java.util.Map.Entry;<a name="line.19"></a>
 <span class="sourceLineNo">020</span><a name="line.20"></a>
-<span class="sourceLineNo">021</span>/**<a name="line.21"></a>
-<span class="sourceLineNo">022</span> * &lt;em&gt;Consider this class private.&lt;/em&gt;<a name="line.22"></a>
-<span class="sourceLineNo">023</span> */<a name="line.23"></a>
-<span class="sourceLineNo">024</span>public final class StringBuilders {<a name="line.24"></a>
-<span class="sourceLineNo">025</span>    private StringBuilders() {<a name="line.25"></a>
-<span class="sourceLineNo">026</span>    }<a name="line.26"></a>
-<span class="sourceLineNo">027</span><a name="line.27"></a>
-<span class="sourceLineNo">028</span>    /**<a name="line.28"></a>
-<span class="sourceLineNo">029</span>     * Appends in the following format: double quoted value.<a name="line.29"></a>
-<span class="sourceLineNo">030</span>     *<a name="line.30"></a>
-<span class="sourceLineNo">031</span>     * @param sb a string builder<a name="line.31"></a>
-<span class="sourceLineNo">032</span>     * @param value a value<a name="line.32"></a>
-<span class="sourceLineNo">033</span>     * @return {@code "value"}<a name="line.33"></a>
-<span class="sourceLineNo">034</span>     */<a name="line.34"></a>
-<span class="sourceLineNo">035</span>    public static StringBuilder appendDqValue(final StringBuilder sb, final Object value) {<a name="line.35"></a>
-<span class="sourceLineNo">036</span>        return sb.append(Chars.DQUOTE).append(value).append(Chars.DQUOTE);<a name="line.36"></a>
-<span class="sourceLineNo">037</span>    }<a name="line.37"></a>
-<span class="sourceLineNo">038</span><a name="line.38"></a>
-<span class="sourceLineNo">039</span>    /**<a name="line.39"></a>
-<span class="sourceLineNo">040</span>     * Appends in the following format: key=double quoted value.<a name="line.40"></a>
-<span class="sourceLineNo">041</span>     *<a name="line.41"></a>
-<span class="sourceLineNo">042</span>     * @param sb a string builder<a name="line.42"></a>
-<span class="sourceLineNo">043</span>     * @param entry a map entry<a name="line.43"></a>
-<span class="sourceLineNo">044</span>     * @return {@code key="value"}<a name="line.44"></a>
-<span class="sourceLineNo">045</span>     */<a name="line.45"></a>
-<span class="sourceLineNo">046</span>    public static StringBuilder appendKeyDqValue(final StringBuilder sb, final Entry&lt;String, String&gt; entry) {<a name="line.46"></a>
-<span class="sourceLineNo">047</span>        return appendKeyDqValue(sb, entry.getKey(), entry.getValue());<a name="line.47"></a>
-<span class="sourceLineNo">048</span>    }<a name="line.48"></a>
-<span class="sourceLineNo">049</span><a name="line.49"></a>
-<span class="sourceLineNo">050</span>    /**<a name="line.50"></a>
-<span class="sourceLineNo">051</span>     * Appends in the following format: key=double quoted value.<a name="line.51"></a>
-<span class="sourceLineNo">052</span>     *<a name="line.52"></a>
-<span class="sourceLineNo">053</span>     * @param sb a string builder<a name="line.53"></a>
-<span class="sourceLineNo">054</span>     * @param key a key<a name="line.54"></a>
-<span class="sourceLineNo">055</span>     * @param value a value<a name="line.55"></a>
-<span class="sourceLineNo">056</span>     * @return the specified StringBuilder<a name="line.56"></a>
-<span class="sourceLineNo">057</span>     */<a name="line.57"></a>
-<span class="sourceLineNo">058</span>    public static StringBuilder appendKeyDqValue(final StringBuilder sb, final String key, final Object value) {<a name="line.58"></a>
-<span class="sourceLineNo">059</span>        return sb.append(key).append(Chars.EQ).append(Chars.DQUOTE).append(value).append(Chars.DQUOTE);<a name="line.59"></a>
-<span class="sourceLineNo">060</span>    }<a name="line.60"></a>
-<span class="sourceLineNo">061</span><a name="line.61"></a>
-<span class="sourceLineNo">062</span>    /**<a name="line.62"></a>
-<span class="sourceLineNo">063</span>     * Appends a text representation of the specified object to the specified StringBuilder,<a name="line.63"></a>
-<span class="sourceLineNo">064</span>     * if possible without allocating temporary objects.<a name="line.64"></a>
-<span class="sourceLineNo">065</span>     *<a name="line.65"></a>
-<span class="sourceLineNo">066</span>     * @param stringBuilder the StringBuilder to append the value to<a name="line.66"></a>
-<span class="sourceLineNo">067</span>     * @param obj the object whose text representation to append to the StringBuilder<a name="line.67"></a>
-<span class="sourceLineNo">068</span>     */<a name="line.68"></a>
-<span class="sourceLineNo">069</span>    public static void appendValue(final StringBuilder stringBuilder, final Object obj) {<a name="line.69"></a>
-<span class="sourceLineNo">070</span>        if (obj == null || obj instanceof String) {<a name="line.70"></a>
-<span class="sourceLineNo">071</span>            stringBuilder.append((String) obj);<a name="line.71"></a>
-<span class="sourceLineNo">072</span>        } else if (obj instanceof StringBuilderFormattable) {<a name="line.72"></a>
-<span class="sourceLineNo">073</span>            ((StringBuilderFormattable) obj).formatTo(stringBuilder);<a name="line.73"></a>
-<span class="sourceLineNo">074</span>        } else if (obj instanceof CharSequence) {<a name="line.74"></a>
-<span class="sourceLineNo">075</span>            stringBuilder.append((CharSequence) obj);<a name="line.75"></a>
-<span class="sourceLineNo">076</span>        } else if (obj instanceof Integer) { // LOG4J2-1437 unbox auto-boxed primitives to avoid calling toString()<a name="line.76"></a>
-<span class="sourceLineNo">077</span>            stringBuilder.append(((Integer) obj).intValue());<a name="line.77"></a>
-<span class="sourceLineNo">078</span>        } else if (obj instanceof Long) {<a name="line.78"></a>
-<span class="sourceLineNo">079</span>            stringBuilder.append(((Long) obj).longValue());<a name="line.79"></a>
-<span class="sourceLineNo">080</span>        } else if (obj instanceof Double) {<a name="line.80"></a>
-<span class="sourceLineNo">081</span>            stringBuilder.append(((Double) obj).doubleValue());<a name="line.81"></a>
-<span class="sourceLineNo">082</span>        } else if (obj instanceof Boolean) {<a name="line.82"></a>
-<span class="sourceLineNo">083</span>            stringBuilder.append(((Boolean) obj).booleanValue());<a name="line.83"></a>
-<span class="sourceLineNo">084</span>        } else if (obj instanceof Character) {<a name="line.84"></a>
-<span class="sourceLineNo">085</span>            stringBuilder.append(((Character) obj).charValue());<a name="line.85"></a>
-<span class="sourceLineNo">086</span>        } else if (obj instanceof Short) {<a name="line.86"></a>
-<span class="sourceLineNo">087</span>            stringBuilder.append(((Short) obj).shortValue());<a name="line.87"></a>
-<span class="sourceLineNo">088</span>        } else if (obj instanceof Float) {<a name="line.88"></a>
-<span class="sourceLineNo">089</span>            stringBuilder.append(((Float) obj).floatValue());<a name="line.89"></a>
-<span class="sourceLineNo">090</span>        } else {<a name="line.90"></a>
-<span class="sourceLineNo">091</span>            stringBuilder.append(obj);<a name="line.91"></a>
-<span class="sourceLineNo">092</span>        }<a name="line.92"></a>
-<span class="sourceLineNo">093</span>    }<a name="line.93"></a>
-<span class="sourceLineNo">094</span>}<a name="line.94"></a>
+<span class="sourceLineNo">021</span>import static java.lang.Character.toLowerCase;<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>/**<a name="line.23"></a>
+<span class="sourceLineNo">024</span> * &lt;em&gt;Consider this class private.&lt;/em&gt;<a name="line.24"></a>
+<span class="sourceLineNo">025</span> */<a name="line.25"></a>
+<span class="sourceLineNo">026</span>public final class StringBuilders {<a name="line.26"></a>
+<span class="sourceLineNo">027</span>    private StringBuilders() {<a name="line.27"></a>
+<span class="sourceLineNo">028</span>    }<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>    /**<a name="line.30"></a>
+<span class="sourceLineNo">031</span>     * Appends in the following format: double quoted value.<a name="line.31"></a>
+<span class="sourceLineNo">032</span>     *<a name="line.32"></a>
+<span class="sourceLineNo">033</span>     * @param sb a string builder<a name="line.33"></a>
+<span class="sourceLineNo">034</span>     * @param value a value<a name="line.34"></a>
+<span class="sourceLineNo">035</span>     * @return {@code "value"}<a name="line.35"></a>
+<span class="sourceLineNo">036</span>     */<a name="line.36"></a>
+<span class="sourceLineNo">037</span>    public static StringBuilder appendDqValue(final StringBuilder sb, final Object value) {<a name="line.37"></a>
+<span class="sourceLineNo">038</span>        return sb.append(Chars.DQUOTE).append(value).append(Chars.DQUOTE);<a name="line.38"></a>
+<span class="sourceLineNo">039</span>    }<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>    /**<a name="line.41"></a>
+<span class="sourceLineNo">042</span>     * Appends in the following format: key=double quoted value.<a name="line.42"></a>
+<span class="sourceLineNo">043</span>     *<a name="line.43"></a>
+<span class="sourceLineNo">044</span>     * @param sb a string builder<a name="line.44"></a>
+<span class="sourceLineNo">045</span>     * @param entry a map entry<a name="line.45"></a>
+<span class="sourceLineNo">046</span>     * @return {@code key="value"}<a name="line.46"></a>
+<span class="sourceLineNo">047</span>     */<a name="line.47"></a>
+<span class="sourceLineNo">048</span>    public static StringBuilder appendKeyDqValue(final StringBuilder sb, final Entry&lt;String, String&gt; entry) {<a name="line.48"></a>
+<span class="sourceLineNo">049</span>        return appendKeyDqValue(sb, entry.getKey(), entry.getValue());<a name="line.49"></a>
+<span class="sourceLineNo">050</span>    }<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>    /**<a name="line.52"></a>
+<span class="sourceLineNo">053</span>     * Appends in the following format: key=double quoted value.<a name="line.53"></a>
+<span class="sourceLineNo">054</span>     *<a name="line.54"></a>
+<span class="sourceLineNo">055</span>     * @param sb a string builder<a name="line.55"></a>
+<span class="sourceLineNo">056</span>     * @param key a key<a name="line.56"></a>
+<span class="sourceLineNo">057</span>     * @param value a value<a name="line.57"></a>
+<span class="sourceLineNo">058</span>     * @return the specified StringBuilder<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     */<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    public static StringBuilder appendKeyDqValue(final StringBuilder sb, final String key, final Object value) {<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        return sb.append(key).append(Chars.EQ).append(Chars.DQUOTE).append(value).append(Chars.DQUOTE);<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    }<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span>    /**<a name="line.64"></a>
+<span class="sourceLineNo">065</span>     * Appends a text representation of the specified object to the specified StringBuilder,<a name="line.65"></a>
+<span class="sourceLineNo">066</span>     * if possible without allocating temporary objects.<a name="line.66"></a>
+<span class="sourceLineNo">067</span>     *<a name="line.67"></a>
+<span class="sourceLineNo">068</span>     * @param stringBuilder the StringBuilder to append the value to<a name="line.68"></a>
+<span class="sourceLineNo">069</span>     * @param obj the object whose text representation to append to the StringBuilder<a name="line.69"></a>
+<span class="sourceLineNo">070</span>     */<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    public static void appendValue(final StringBuilder stringBuilder, final Object obj) {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        if (obj == null || obj instanceof String) {<a name="line.72"></a>
+<span class="sourceLineNo">073</span>            stringBuilder.append((String) obj);<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        } else if (obj instanceof StringBuilderFormattable) {<a name="line.74"></a>
+<span class="sourceLineNo">075</span>            ((StringBuilderFormattable) obj).formatTo(stringBuilder);<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        } else if (obj instanceof CharSequence) {<a name="line.76"></a>
+<span class="sourceLineNo">077</span>            stringBuilder.append((CharSequence) obj);<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        } else if (obj instanceof Integer) { // LOG4J2-1437 unbox auto-boxed primitives to avoid calling toString()<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            stringBuilder.append(((Integer) obj).intValue());<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        } else if (obj instanceof Long) {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>            stringBuilder.append(((Long) obj).longValue());<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        } else if (obj instanceof Double) {<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            stringBuilder.append(((Double) obj).doubleValue());<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        } else if (obj instanceof Boolean) {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>            stringBuilder.append(((Boolean) obj).booleanValue());<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        } else if (obj instanceof Character) {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>            stringBuilder.append(((Character) obj).charValue());<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        } else if (obj instanceof Short) {<a name="line.88"></a>
+<span class="sourceLineNo">089</span>            stringBuilder.append(((Short) obj).shortValue());<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        } else if (obj instanceof Float) {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>            stringBuilder.append(((Float) obj).floatValue());<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        } else {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>            stringBuilder.append(obj);<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        }<a name="line.94"></a>
+<span class="sourceLineNo">095</span>    }<a name="line.95"></a>
+<span class="sourceLineNo">096</span><a name="line.96"></a>
+<span class="sourceLineNo">097</span>    /**<a name="line.97"></a>
+<span class="sourceLineNo">098</span>     * Returns true if the specified section of the left CharSequence equals the specified section of the right<a name="line.98"></a>
+<span class="sourceLineNo">099</span>     * CharSequence.<a name="line.99"></a>
+<span class="sourceLineNo">100</span>     *<a name="line.100"></a>
+<span class="sourceLineNo">101</span>     * @param left the left CharSequence<a name="line.101"></a>
+<span class="sourceLineNo">102</span>     * @param leftOffset start index in the left CharSequence<a name="line.102"></a>
+<span class="sourceLineNo">103</span>     * @param leftLength length of the section in the left CharSequence<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     * @param right the right CharSequence to compare a section of<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     * @param rightOffset start index in the right CharSequence<a name="line.105"></a>
+<span class="sourceLineNo">106</span>     * @param rightLength length of the section in the right CharSequence<a name="line.106"></a>
+<span class="sourceLineNo">107</span>     * @return true if equal, false otherwise<a name="line.107"></a>
+<span class="sourceLineNo">108</span>     */<a name="line.108"></a>
+<span class="sourceLineNo">109</span>    public static boolean equals(final CharSequence left, final int leftOffset, final int leftLength,<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                                    final CharSequence right, final int rightOffset, final int rightLength) {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        if (leftLength == rightLength) {<a name="line.111"></a>
+<span class="sourceLineNo">112</span>            for (int i = 0; i &lt; rightLength; i++) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                if (left.charAt(i + leftOffset) != right.charAt(i + rightOffset)) {<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                    return false;<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                }<a name="line.115"></a>
+<span class="sourceLineNo">116</span>            }<a name="line.116"></a>
+<span class="sourceLineNo">117</span>            return true;<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        }<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        return false;<a name="line.119"></a>
+<span class="sourceLineNo">120</span>    }<a name="line.120"></a>
+<span class="sourceLineNo">121</span><a name="line.121"></a>
+<span class="sourceLineNo">122</span>    /**<a name="line.122"></a>
+<span class="sourceLineNo">123</span>     * Returns true if the specified section of the left CharSequence equals, ignoring case, the specified section of<a name="line.123"></a>
+<span class="sourceLineNo">124</span>     * the right CharSequence.<a name="line.124"></a>
+<span class="sourceLineNo">125</span>     *<a name="line.125"></a>
+<span class="sourceLineNo">126</span>     * @param left the left CharSequence<a name="line.126"></a>
+<span class="sourceLineNo">127</span>     * @param leftOffset start index in the left CharSequence<a name="line.127"></a>
+<span class="sourceLineNo">128</span>     * @param leftLength length of the section in the left CharSequence<a name="line.128"></a>
+<span class="sourceLineNo">129</span>     * @param right the right CharSequence to compare a section of<a name="line.129"></a>
+<span class="sourceLineNo">130</span>     * @param rightOffset start index in the right CharSequence<a name="line.130"></a>
+<span class="sourceLineNo">131</span>     * @param rightLength length of the section in the right CharSequence<a name="line.131"></a>
+<span class="sourceLineNo">132</span>     * @return true if equal ignoring case, false otherwise<a name="line.132"></a>
+<span class="sourceLineNo">133</span>     */<a name="line.133"></a>
+<span class="sourceLineNo">134</span>    public static boolean equalsIgnoreCase(final CharSequence left, final int leftOffset, final int leftLength,<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                                              final CharSequence right, final int rightOffset, final int rightLength) {<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        if (leftLength == rightLength) {<a name="line.136"></a>
+<span class="sourceLineNo">137</span>            for (int i = 0; i &lt; rightLength; i++) {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                if (toLowerCase(left.charAt(i + leftOffset)) != toLowerCase(right.charAt(i + rightOffset))) {<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                    return false;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                }<a name="line.140"></a>
+<span class="sourceLineNo">141</span>            }<a name="line.141"></a>
+<span class="sourceLineNo">142</span>            return true;<a name="line.142"></a>
+<span class="sourceLineNo">143</span>        }<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        return false;<a name="line.144"></a>
+<span class="sourceLineNo">145</span>    }<a name="line.145"></a>
+<span class="sourceLineNo">146</span>}<a name="line.146"></a>
 
 
 

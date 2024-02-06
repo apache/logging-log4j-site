@@ -72,7 +72,7 @@
 <span class="sourceLineNo">064</span>    private static final MemoryMappedFileManagerFactory FACTORY = new MemoryMappedFileManagerFactory();<a name="line.64"></a>
 <span class="sourceLineNo">065</span>    private static final double NANOS_PER_MILLISEC = 1000.0 * 1000.0;<a name="line.65"></a>
 <span class="sourceLineNo">066</span><a name="line.66"></a>
-<span class="sourceLineNo">067</span>    private final boolean isForce;<a name="line.67"></a>
+<span class="sourceLineNo">067</span>    private final boolean immediateFlush;<a name="line.67"></a>
 <span class="sourceLineNo">068</span>    private final int regionLength;<a name="line.68"></a>
 <span class="sourceLineNo">069</span>    private final String advertiseURI;<a name="line.69"></a>
 <span class="sourceLineNo">070</span>    private final RandomAccessFile randomAccessFile;<a name="line.70"></a>
@@ -81,10 +81,10 @@
 <span class="sourceLineNo">073</span>    private long mappingOffset;<a name="line.73"></a>
 <span class="sourceLineNo">074</span><a name="line.74"></a>
 <span class="sourceLineNo">075</span>    protected MemoryMappedFileManager(final RandomAccessFile file, final String fileName, final OutputStream os,<a name="line.75"></a>
-<span class="sourceLineNo">076</span>            final boolean force, final long position, final int regionLength, final String advertiseURI,<a name="line.76"></a>
+<span class="sourceLineNo">076</span>            final boolean immediateFlush, final long position, final int regionLength, final String advertiseURI,<a name="line.76"></a>
 <span class="sourceLineNo">077</span>            final Layout&lt;? extends Serializable&gt; layout, final boolean writeHeader) throws IOException {<a name="line.77"></a>
 <span class="sourceLineNo">078</span>        super(os, fileName, layout, writeHeader, ByteBuffer.wrap(new byte[0]));<a name="line.78"></a>
-<span class="sourceLineNo">079</span>        this.isForce = force;<a name="line.79"></a>
+<span class="sourceLineNo">079</span>        this.immediateFlush = immediateFlush;<a name="line.79"></a>
 <span class="sourceLineNo">080</span>        this.randomAccessFile = Objects.requireNonNull(file, "RandomAccessFile");<a name="line.80"></a>
 <span class="sourceLineNo">081</span>        this.regionLength = regionLength;<a name="line.81"></a>
 <span class="sourceLineNo">082</span>        this.advertiseURI = advertiseURI;<a name="line.82"></a>
@@ -99,16 +99,16 @@
 <span class="sourceLineNo">091</span>     *<a name="line.91"></a>
 <span class="sourceLineNo">092</span>     * @param fileName The name of the file to manage.<a name="line.92"></a>
 <span class="sourceLineNo">093</span>     * @param append true if the file should be appended to, false if it should be overwritten.<a name="line.93"></a>
-<span class="sourceLineNo">094</span>     * @param isForce true if the contents should be flushed to disk on every write<a name="line.94"></a>
+<span class="sourceLineNo">094</span>     * @param immediateFlush true if the contents should be flushed to disk on every write<a name="line.94"></a>
 <span class="sourceLineNo">095</span>     * @param regionLength The mapped region length.<a name="line.95"></a>
 <span class="sourceLineNo">096</span>     * @param advertiseURI the URI to use when advertising the file<a name="line.96"></a>
 <span class="sourceLineNo">097</span>     * @param layout The layout.<a name="line.97"></a>
 <span class="sourceLineNo">098</span>     * @return A MemoryMappedFileManager for the File.<a name="line.98"></a>
 <span class="sourceLineNo">099</span>     */<a name="line.99"></a>
 <span class="sourceLineNo">100</span>    public static MemoryMappedFileManager getFileManager(final String fileName, final boolean append,<a name="line.100"></a>
-<span class="sourceLineNo">101</span>            final boolean isForce, final int regionLength, final String advertiseURI,<a name="line.101"></a>
+<span class="sourceLineNo">101</span>            final boolean immediateFlush, final int regionLength, final String advertiseURI,<a name="line.101"></a>
 <span class="sourceLineNo">102</span>            final Layout&lt;? extends Serializable&gt; layout) {<a name="line.102"></a>
-<span class="sourceLineNo">103</span>        return (MemoryMappedFileManager) getManager(fileName, new FactoryData(append, isForce, regionLength,<a name="line.103"></a>
+<span class="sourceLineNo">103</span>        return (MemoryMappedFileManager) getManager(fileName, new FactoryData(append, immediateFlush, regionLength,<a name="line.103"></a>
 <span class="sourceLineNo">104</span>                advertiseURI, layout), FACTORY);<a name="line.104"></a>
 <span class="sourceLineNo">105</span>    }<a name="line.105"></a>
 <span class="sourceLineNo">106</span><a name="line.106"></a>
@@ -260,7 +260,7 @@
 <span class="sourceLineNo">252</span>     * @return whether each write should be force-sync'ed<a name="line.252"></a>
 <span class="sourceLineNo">253</span>     */<a name="line.253"></a>
 <span class="sourceLineNo">254</span>    public boolean isImmediateFlush() {<a name="line.254"></a>
-<span class="sourceLineNo">255</span>        return isForce;<a name="line.255"></a>
+<span class="sourceLineNo">255</span>        return immediateFlush;<a name="line.255"></a>
 <span class="sourceLineNo">256</span>    }<a name="line.256"></a>
 <span class="sourceLineNo">257</span><a name="line.257"></a>
 <span class="sourceLineNo">258</span>    /**<a name="line.258"></a>
@@ -299,7 +299,7 @@
 <span class="sourceLineNo">291</span>     */<a name="line.291"></a>
 <span class="sourceLineNo">292</span>    private static class FactoryData {<a name="line.292"></a>
 <span class="sourceLineNo">293</span>        private final boolean append;<a name="line.293"></a>
-<span class="sourceLineNo">294</span>        private final boolean force;<a name="line.294"></a>
+<span class="sourceLineNo">294</span>        private final boolean immediateFlush;<a name="line.294"></a>
 <span class="sourceLineNo">295</span>        private final int regionLength;<a name="line.295"></a>
 <span class="sourceLineNo">296</span>        private final String advertiseURI;<a name="line.296"></a>
 <span class="sourceLineNo">297</span>        private final Layout&lt;? extends Serializable&gt; layout;<a name="line.297"></a>
@@ -308,15 +308,15 @@
 <span class="sourceLineNo">300</span>         * Constructor.<a name="line.300"></a>
 <span class="sourceLineNo">301</span>         *<a name="line.301"></a>
 <span class="sourceLineNo">302</span>         * @param append Append to existing file or truncate.<a name="line.302"></a>
-<span class="sourceLineNo">303</span>         * @param force forces the memory content to be written to the storage device on every event<a name="line.303"></a>
+<span class="sourceLineNo">303</span>         * @param immediateFlush forces the memory content to be written to the storage device on every event<a name="line.303"></a>
 <span class="sourceLineNo">304</span>         * @param regionLength length of the mapped region<a name="line.304"></a>
 <span class="sourceLineNo">305</span>         * @param advertiseURI the URI to use when advertising the file<a name="line.305"></a>
 <span class="sourceLineNo">306</span>         * @param layout The layout.<a name="line.306"></a>
 <span class="sourceLineNo">307</span>         */<a name="line.307"></a>
-<span class="sourceLineNo">308</span>        public FactoryData(final boolean append, final boolean force, final int regionLength,<a name="line.308"></a>
+<span class="sourceLineNo">308</span>        public FactoryData(final boolean append, final boolean immediateFlush, final int regionLength,<a name="line.308"></a>
 <span class="sourceLineNo">309</span>                final String advertiseURI, final Layout&lt;? extends Serializable&gt; layout) {<a name="line.309"></a>
 <span class="sourceLineNo">310</span>            this.append = append;<a name="line.310"></a>
-<span class="sourceLineNo">311</span>            this.force = force;<a name="line.311"></a>
+<span class="sourceLineNo">311</span>            this.immediateFlush = immediateFlush;<a name="line.311"></a>
 <span class="sourceLineNo">312</span>            this.regionLength = regionLength;<a name="line.312"></a>
 <span class="sourceLineNo">313</span>            this.advertiseURI = advertiseURI;<a name="line.313"></a>
 <span class="sourceLineNo">314</span>            this.layout = layout;<a name="line.314"></a>
@@ -355,7 +355,7 @@
 <span class="sourceLineNo">347</span>                raf = new RandomAccessFile(name, "rw");<a name="line.347"></a>
 <span class="sourceLineNo">348</span>                final long position = (data.append) ? raf.length() : 0;<a name="line.348"></a>
 <span class="sourceLineNo">349</span>                raf.setLength(position + data.regionLength);<a name="line.349"></a>
-<span class="sourceLineNo">350</span>                return new MemoryMappedFileManager(raf, name, os, data.force, position, data.regionLength,<a name="line.350"></a>
+<span class="sourceLineNo">350</span>                return new MemoryMappedFileManager(raf, name, os, data.immediateFlush, position, data.regionLength,<a name="line.350"></a>
 <span class="sourceLineNo">351</span>                        data.advertiseURI, data.layout, writeHeader);<a name="line.351"></a>
 <span class="sourceLineNo">352</span>            } catch (final Exception ex) {<a name="line.352"></a>
 <span class="sourceLineNo">353</span>                LOGGER.error("MemoryMappedFileManager (" + name + ") " + ex, ex);<a name="line.353"></a>

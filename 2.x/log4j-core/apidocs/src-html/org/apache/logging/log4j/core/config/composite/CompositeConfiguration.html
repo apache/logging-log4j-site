@@ -95,100 +95,102 @@
 <span class="sourceLineNo">087</span>                statusConfig.withDestination(value);<a name="line.87"></a>
 <span class="sourceLineNo">088</span>            } else if ("shutdownHook".equalsIgnoreCase(key)) {<a name="line.88"></a>
 <span class="sourceLineNo">089</span>                isShutdownHookEnabled = !"disable".equalsIgnoreCase(value);<a name="line.89"></a>
-<span class="sourceLineNo">090</span>            } else if ("verbose".equalsIgnoreCase(key)) {<a name="line.90"></a>
-<span class="sourceLineNo">091</span>                statusConfig.withVerbosity(value);<a name="line.91"></a>
-<span class="sourceLineNo">092</span>            } else if ("packages".equalsIgnoreCase(key)) {<a name="line.92"></a>
-<span class="sourceLineNo">093</span>                pluginPackages.addAll(Arrays.asList(value.split(Patterns.COMMA_SEPARATOR)));<a name="line.93"></a>
-<span class="sourceLineNo">094</span>            } else if ("name".equalsIgnoreCase(key)) {<a name="line.94"></a>
-<span class="sourceLineNo">095</span>                setName(value);<a name="line.95"></a>
-<span class="sourceLineNo">096</span>            }<a name="line.96"></a>
-<span class="sourceLineNo">097</span>        }<a name="line.97"></a>
-<span class="sourceLineNo">098</span>        statusConfig.initialize();<a name="line.98"></a>
-<span class="sourceLineNo">099</span>    }<a name="line.99"></a>
-<span class="sourceLineNo">100</span><a name="line.100"></a>
-<span class="sourceLineNo">101</span>    @Override<a name="line.101"></a>
-<span class="sourceLineNo">102</span>    public void setup() {<a name="line.102"></a>
-<span class="sourceLineNo">103</span>        final AbstractConfiguration targetConfiguration = configurations.get(0);<a name="line.103"></a>
-<span class="sourceLineNo">104</span>        staffChildConfiguration(targetConfiguration);<a name="line.104"></a>
-<span class="sourceLineNo">105</span>        final WatchManager watchManager = getWatchManager();<a name="line.105"></a>
-<span class="sourceLineNo">106</span>        final WatchManager targetWatchManager = targetConfiguration.getWatchManager();<a name="line.106"></a>
-<span class="sourceLineNo">107</span>        final FileWatcher fileWatcher = new ConfiguratonFileWatcher(this, listeners);<a name="line.107"></a>
-<span class="sourceLineNo">108</span>        if (targetWatchManager.getIntervalSeconds() &gt; 0) {<a name="line.108"></a>
-<span class="sourceLineNo">109</span>            watchManager.setIntervalSeconds(targetWatchManager.getIntervalSeconds());<a name="line.109"></a>
-<span class="sourceLineNo">110</span>            final Map&lt;File, FileWatcher&gt; watchers = targetWatchManager.getWatchers();<a name="line.110"></a>
-<span class="sourceLineNo">111</span>            for (final Map.Entry&lt;File, FileWatcher&gt; entry : watchers.entrySet()) {<a name="line.111"></a>
-<span class="sourceLineNo">112</span>                if (entry.getValue() instanceof ConfiguratonFileWatcher) {<a name="line.112"></a>
-<span class="sourceLineNo">113</span>                    watchManager.watchFile(entry.getKey(), fileWatcher);<a name="line.113"></a>
-<span class="sourceLineNo">114</span>                }<a name="line.114"></a>
-<span class="sourceLineNo">115</span>            }<a name="line.115"></a>
-<span class="sourceLineNo">116</span>        }<a name="line.116"></a>
-<span class="sourceLineNo">117</span>        for (final AbstractConfiguration sourceConfiguration : configurations.subList(1, configurations.size())) {<a name="line.117"></a>
-<span class="sourceLineNo">118</span>            staffChildConfiguration(sourceConfiguration);<a name="line.118"></a>
-<span class="sourceLineNo">119</span>            final Node sourceRoot = sourceConfiguration.getRootNode();<a name="line.119"></a>
-<span class="sourceLineNo">120</span>            mergeStrategy.mergConfigurations(rootNode, sourceRoot, getPluginManager());<a name="line.120"></a>
-<span class="sourceLineNo">121</span>            if (LOGGER.isEnabled(Level.ALL)) {<a name="line.121"></a>
-<span class="sourceLineNo">122</span>                final StringBuilder sb = new StringBuilder();<a name="line.122"></a>
-<span class="sourceLineNo">123</span>                printNodes("", rootNode, sb);<a name="line.123"></a>
-<span class="sourceLineNo">124</span>                System.out.println(sb.toString());<a name="line.124"></a>
-<span class="sourceLineNo">125</span>            }<a name="line.125"></a>
-<span class="sourceLineNo">126</span>            final int monitorInterval = sourceConfiguration.getWatchManager().getIntervalSeconds();<a name="line.126"></a>
-<span class="sourceLineNo">127</span>            if (monitorInterval &gt; 0) {<a name="line.127"></a>
-<span class="sourceLineNo">128</span>                final int currentInterval = watchManager.getIntervalSeconds();<a name="line.128"></a>
-<span class="sourceLineNo">129</span>                if (currentInterval &lt;= 0 || monitorInterval &lt; currentInterval) {<a name="line.129"></a>
-<span class="sourceLineNo">130</span>                    watchManager.setIntervalSeconds(monitorInterval);<a name="line.130"></a>
-<span class="sourceLineNo">131</span>                }<a name="line.131"></a>
-<span class="sourceLineNo">132</span>                final WatchManager sourceWatchManager = sourceConfiguration.getWatchManager();<a name="line.132"></a>
-<span class="sourceLineNo">133</span>                final Map&lt;File, FileWatcher&gt; watchers = sourceWatchManager.getWatchers();<a name="line.133"></a>
-<span class="sourceLineNo">134</span>                for (final Map.Entry&lt;File, FileWatcher&gt; entry : watchers.entrySet()) {<a name="line.134"></a>
-<span class="sourceLineNo">135</span>                    if (entry.getValue() instanceof ConfiguratonFileWatcher) {<a name="line.135"></a>
-<span class="sourceLineNo">136</span>                        watchManager.watchFile(entry.getKey(), fileWatcher);<a name="line.136"></a>
-<span class="sourceLineNo">137</span>                    }<a name="line.137"></a>
-<span class="sourceLineNo">138</span>                }<a name="line.138"></a>
-<span class="sourceLineNo">139</span>            }<a name="line.139"></a>
-<span class="sourceLineNo">140</span>        }<a name="line.140"></a>
-<span class="sourceLineNo">141</span>    }<a name="line.141"></a>
-<span class="sourceLineNo">142</span><a name="line.142"></a>
-<span class="sourceLineNo">143</span>    @Override<a name="line.143"></a>
-<span class="sourceLineNo">144</span>    public Configuration reconfigure() {<a name="line.144"></a>
-<span class="sourceLineNo">145</span>        LOGGER.debug("Reconfiguring composite configuration");<a name="line.145"></a>
-<span class="sourceLineNo">146</span>        final List&lt;AbstractConfiguration&gt; configs = new ArrayList&lt;&gt;();<a name="line.146"></a>
-<span class="sourceLineNo">147</span>        final ConfigurationFactory factory = ConfigurationFactory.getInstance();<a name="line.147"></a>
-<span class="sourceLineNo">148</span>        for (final AbstractConfiguration config : configurations) {<a name="line.148"></a>
-<span class="sourceLineNo">149</span>            final ConfigurationSource source = config.getConfigurationSource();<a name="line.149"></a>
-<span class="sourceLineNo">150</span>            final URI sourceURI = source.getURI();<a name="line.150"></a>
-<span class="sourceLineNo">151</span>            Configuration currentConfig;<a name="line.151"></a>
-<span class="sourceLineNo">152</span>            if (sourceURI != null) {<a name="line.152"></a>
-<span class="sourceLineNo">153</span>                LOGGER.warn("Unable to determine URI for configuration {}, changes to it will be ignored",<a name="line.153"></a>
-<span class="sourceLineNo">154</span>                        config.getName());<a name="line.154"></a>
-<span class="sourceLineNo">155</span>                currentConfig = factory.getConfiguration(getLoggerContext(), config.getName(), sourceURI);<a name="line.155"></a>
-<span class="sourceLineNo">156</span>                if (currentConfig == null) {<a name="line.156"></a>
-<span class="sourceLineNo">157</span>                    LOGGER.warn("Unable to reload configuration {}, changes to it will be ignored", config.getName());<a name="line.157"></a>
-<span class="sourceLineNo">158</span>                    currentConfig = config;<a name="line.158"></a>
-<span class="sourceLineNo">159</span>                }<a name="line.159"></a>
-<span class="sourceLineNo">160</span>            } else {<a name="line.160"></a>
-<span class="sourceLineNo">161</span>                currentConfig = config;<a name="line.161"></a>
-<span class="sourceLineNo">162</span>            }<a name="line.162"></a>
-<span class="sourceLineNo">163</span>            configs.add((AbstractConfiguration) currentConfig);<a name="line.163"></a>
-<span class="sourceLineNo">164</span><a name="line.164"></a>
-<span class="sourceLineNo">165</span>        }<a name="line.165"></a>
+<span class="sourceLineNo">090</span>            } else if ("shutdownTimeout".equalsIgnoreCase(key)) {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                shutdownTimeoutMillis = Long.parseLong(value);<a name="line.91"></a>
+<span class="sourceLineNo">092</span>            } else if ("verbose".equalsIgnoreCase(key)) {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                statusConfig.withVerbosity(value);<a name="line.93"></a>
+<span class="sourceLineNo">094</span>            } else if ("packages".equalsIgnoreCase(key)) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                pluginPackages.addAll(Arrays.asList(value.split(Patterns.COMMA_SEPARATOR)));<a name="line.95"></a>
+<span class="sourceLineNo">096</span>            } else if ("name".equalsIgnoreCase(key)) {<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                setName(value);<a name="line.97"></a>
+<span class="sourceLineNo">098</span>            }<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        }<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        statusConfig.initialize();<a name="line.100"></a>
+<span class="sourceLineNo">101</span>    }<a name="line.101"></a>
+<span class="sourceLineNo">102</span><a name="line.102"></a>
+<span class="sourceLineNo">103</span>    @Override<a name="line.103"></a>
+<span class="sourceLineNo">104</span>    public void setup() {<a name="line.104"></a>
+<span class="sourceLineNo">105</span>        final AbstractConfiguration targetConfiguration = configurations.get(0);<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        staffChildConfiguration(targetConfiguration);<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        final WatchManager watchManager = getWatchManager();<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        final WatchManager targetWatchManager = targetConfiguration.getWatchManager();<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        final FileWatcher fileWatcher = new ConfiguratonFileWatcher(this, listeners);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        if (targetWatchManager.getIntervalSeconds() &gt; 0) {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>            watchManager.setIntervalSeconds(targetWatchManager.getIntervalSeconds());<a name="line.111"></a>
+<span class="sourceLineNo">112</span>            final Map&lt;File, FileWatcher&gt; watchers = targetWatchManager.getWatchers();<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            for (final Map.Entry&lt;File, FileWatcher&gt; entry : watchers.entrySet()) {<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                if (entry.getValue() instanceof ConfiguratonFileWatcher) {<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                    watchManager.watchFile(entry.getKey(), fileWatcher);<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                }<a name="line.116"></a>
+<span class="sourceLineNo">117</span>            }<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        }<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        for (final AbstractConfiguration sourceConfiguration : configurations.subList(1, configurations.size())) {<a name="line.119"></a>
+<span class="sourceLineNo">120</span>            staffChildConfiguration(sourceConfiguration);<a name="line.120"></a>
+<span class="sourceLineNo">121</span>            final Node sourceRoot = sourceConfiguration.getRootNode();<a name="line.121"></a>
+<span class="sourceLineNo">122</span>            mergeStrategy.mergConfigurations(rootNode, sourceRoot, getPluginManager());<a name="line.122"></a>
+<span class="sourceLineNo">123</span>            if (LOGGER.isEnabled(Level.ALL)) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                final StringBuilder sb = new StringBuilder();<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                printNodes("", rootNode, sb);<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                System.out.println(sb.toString());<a name="line.126"></a>
+<span class="sourceLineNo">127</span>            }<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            final int monitorInterval = sourceConfiguration.getWatchManager().getIntervalSeconds();<a name="line.128"></a>
+<span class="sourceLineNo">129</span>            if (monitorInterval &gt; 0) {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                final int currentInterval = watchManager.getIntervalSeconds();<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                if (currentInterval &lt;= 0 || monitorInterval &lt; currentInterval) {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                    watchManager.setIntervalSeconds(monitorInterval);<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                }<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                final WatchManager sourceWatchManager = sourceConfiguration.getWatchManager();<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                final Map&lt;File, FileWatcher&gt; watchers = sourceWatchManager.getWatchers();<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                for (final Map.Entry&lt;File, FileWatcher&gt; entry : watchers.entrySet()) {<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                    if (entry.getValue() instanceof ConfiguratonFileWatcher) {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                        watchManager.watchFile(entry.getKey(), fileWatcher);<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                    }<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                }<a name="line.140"></a>
+<span class="sourceLineNo">141</span>            }<a name="line.141"></a>
+<span class="sourceLineNo">142</span>        }<a name="line.142"></a>
+<span class="sourceLineNo">143</span>    }<a name="line.143"></a>
+<span class="sourceLineNo">144</span><a name="line.144"></a>
+<span class="sourceLineNo">145</span>    @Override<a name="line.145"></a>
+<span class="sourceLineNo">146</span>    public Configuration reconfigure() {<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        LOGGER.debug("Reconfiguring composite configuration");<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        final List&lt;AbstractConfiguration&gt; configs = new ArrayList&lt;&gt;();<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        final ConfigurationFactory factory = ConfigurationFactory.getInstance();<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        for (final AbstractConfiguration config : configurations) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>            final ConfigurationSource source = config.getConfigurationSource();<a name="line.151"></a>
+<span class="sourceLineNo">152</span>            final URI sourceURI = source.getURI();<a name="line.152"></a>
+<span class="sourceLineNo">153</span>            Configuration currentConfig;<a name="line.153"></a>
+<span class="sourceLineNo">154</span>            if (sourceURI != null) {<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                LOGGER.warn("Unable to determine URI for configuration {}, changes to it will be ignored",<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                        config.getName());<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                currentConfig = factory.getConfiguration(getLoggerContext(), config.getName(), sourceURI);<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                if (currentConfig == null) {<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                    LOGGER.warn("Unable to reload configuration {}, changes to it will be ignored", config.getName());<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                    currentConfig = config;<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                }<a name="line.161"></a>
+<span class="sourceLineNo">162</span>            } else {<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                currentConfig = config;<a name="line.163"></a>
+<span class="sourceLineNo">164</span>            }<a name="line.164"></a>
+<span class="sourceLineNo">165</span>            configs.add((AbstractConfiguration) currentConfig);<a name="line.165"></a>
 <span class="sourceLineNo">166</span><a name="line.166"></a>
-<span class="sourceLineNo">167</span>        return new CompositeConfiguration(configs);<a name="line.167"></a>
-<span class="sourceLineNo">168</span>    }<a name="line.168"></a>
-<span class="sourceLineNo">169</span><a name="line.169"></a>
-<span class="sourceLineNo">170</span>    private void staffChildConfiguration(final AbstractConfiguration childConfiguration) {<a name="line.170"></a>
-<span class="sourceLineNo">171</span>        childConfiguration.setPluginManager(pluginManager);<a name="line.171"></a>
-<span class="sourceLineNo">172</span>        childConfiguration.setScriptManager(scriptManager);<a name="line.172"></a>
-<span class="sourceLineNo">173</span>        childConfiguration.setup();<a name="line.173"></a>
-<span class="sourceLineNo">174</span>    }<a name="line.174"></a>
-<span class="sourceLineNo">175</span><a name="line.175"></a>
-<span class="sourceLineNo">176</span>    private void printNodes(final String indent, final Node node, final StringBuilder sb) {<a name="line.176"></a>
-<span class="sourceLineNo">177</span>        sb.append(indent).append(node.getName()).append(" type: ").append(node.getType()).append("\n");<a name="line.177"></a>
-<span class="sourceLineNo">178</span>        sb.append(indent).append(node.getAttributes().toString()).append("\n");<a name="line.178"></a>
-<span class="sourceLineNo">179</span>        for (final Node child : node.getChildren()) {<a name="line.179"></a>
-<span class="sourceLineNo">180</span>            printNodes(indent + "  ", child, sb);<a name="line.180"></a>
-<span class="sourceLineNo">181</span>        }<a name="line.181"></a>
-<span class="sourceLineNo">182</span>    }<a name="line.182"></a>
-<span class="sourceLineNo">183</span>}<a name="line.183"></a>
+<span class="sourceLineNo">167</span>        }<a name="line.167"></a>
+<span class="sourceLineNo">168</span><a name="line.168"></a>
+<span class="sourceLineNo">169</span>        return new CompositeConfiguration(configs);<a name="line.169"></a>
+<span class="sourceLineNo">170</span>    }<a name="line.170"></a>
+<span class="sourceLineNo">171</span><a name="line.171"></a>
+<span class="sourceLineNo">172</span>    private void staffChildConfiguration(final AbstractConfiguration childConfiguration) {<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        childConfiguration.setPluginManager(pluginManager);<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        childConfiguration.setScriptManager(scriptManager);<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        childConfiguration.setup();<a name="line.175"></a>
+<span class="sourceLineNo">176</span>    }<a name="line.176"></a>
+<span class="sourceLineNo">177</span><a name="line.177"></a>
+<span class="sourceLineNo">178</span>    private void printNodes(final String indent, final Node node, final StringBuilder sb) {<a name="line.178"></a>
+<span class="sourceLineNo">179</span>        sb.append(indent).append(node.getName()).append(" type: ").append(node.getType()).append("\n");<a name="line.179"></a>
+<span class="sourceLineNo">180</span>        sb.append(indent).append(node.getAttributes().toString()).append("\n");<a name="line.180"></a>
+<span class="sourceLineNo">181</span>        for (final Node child : node.getChildren()) {<a name="line.181"></a>
+<span class="sourceLineNo">182</span>            printNodes(indent + "  ", child, sb);<a name="line.182"></a>
+<span class="sourceLineNo">183</span>        }<a name="line.183"></a>
+<span class="sourceLineNo">184</span>    }<a name="line.184"></a>
+<span class="sourceLineNo">185</span>}<a name="line.185"></a>
 
 
 

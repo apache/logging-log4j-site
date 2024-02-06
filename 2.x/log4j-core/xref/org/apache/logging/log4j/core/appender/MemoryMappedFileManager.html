@@ -72,7 +72,7 @@
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/MemoryMappedFileManager.html">MemoryMappedFileManagerFactory</a> FACTORY = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/MemoryMappedFileManager.html">MemoryMappedFileManagerFactory</a>();
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">double</strong> NANOS_PER_MILLISEC = 1000.0 * 1000.0;
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isForce;
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush;
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> regionLength;
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String advertiseURI;
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> RandomAccessFile randomAccessFile;
@@ -81,10 +81,10 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">long</strong> mappingOffset;
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/MemoryMappedFileManager.html">MemoryMappedFileManager</a>(<strong class="jxr_keyword">final</strong> RandomAccessFile file, <strong class="jxr_keyword">final</strong> String fileName, <strong class="jxr_keyword">final</strong> OutputStream os,
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> force, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> position, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> regionLength, <strong class="jxr_keyword">final</strong> String advertiseURI,
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> position, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> regionLength, <strong class="jxr_keyword">final</strong> String advertiseURI,
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>              <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> writeHeader) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">super</strong>(os, fileName, layout, writeHeader, ByteBuffer.wrap(<strong class="jxr_keyword">new</strong> byte[0]));
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">this</strong>.isForce = force;
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">this</strong>.immediateFlush = immediateFlush;
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">this</strong>.randomAccessFile = Objects.requireNonNull(file, <span class="jxr_string">"RandomAccessFile"</span>);
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">this</strong>.regionLength = regionLength;
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">this</strong>.advertiseURI = advertiseURI;
@@ -99,16 +99,16 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">     * @param fileName The name of the file to manage.</em>
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">     * @param append true if the file should be appended to, false if it should be overwritten.</em>
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">     * @param isForce true if the contents should be flushed to disk on every write</em>
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">     * @param immediateFlush true if the contents should be flushed to disk on every write</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">     * @param regionLength The mapped region length.</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">     * @param advertiseURI the URI to use when advertising the file</em>
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">     * @param layout The layout.</em>
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">     * @return A MemoryMappedFileManager for the File.</em>
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/MemoryMappedFileManager.html">MemoryMappedFileManager</a> getFileManager(<strong class="jxr_keyword">final</strong> String fileName, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> append,
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isForce, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> regionLength, <strong class="jxr_keyword">final</strong> String advertiseURI,
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> regionLength, <strong class="jxr_keyword">final</strong> String advertiseURI,
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>             <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout) {
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">return</strong> (MemoryMappedFileManager) getManager(fileName, <strong class="jxr_keyword">new</strong> FactoryData(append, isForce, regionLength,
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">return</strong> (MemoryMappedFileManager) getManager(fileName, <strong class="jxr_keyword">new</strong> FactoryData(append, immediateFlush, regionLength,
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>                 advertiseURI, layout), FACTORY);
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>     }
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> 
@@ -260,7 +260,7 @@
 <a class="jxr_linenumber" name="L252" href="#L252">252</a> <em class="jxr_javadoccomment">     * @return whether each write should be force-sync'ed</em>
 <a class="jxr_linenumber" name="L253" href="#L253">253</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L254" href="#L254">254</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isImmediateFlush() {
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>         <strong class="jxr_keyword">return</strong> isForce;
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>         <strong class="jxr_keyword">return</strong> immediateFlush;
 <a class="jxr_linenumber" name="L256" href="#L256">256</a>     }
 <a class="jxr_linenumber" name="L257" href="#L257">257</a> 
 <a class="jxr_linenumber" name="L258" href="#L258">258</a>     <em class="jxr_javadoccomment">/**</em>
@@ -299,7 +299,7 @@
 <a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L292" href="#L292">292</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a> {
 <a class="jxr_linenumber" name="L293" href="#L293">293</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> append;
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> force;
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush;
 <a class="jxr_linenumber" name="L295" href="#L295">295</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> regionLength;
 <a class="jxr_linenumber" name="L296" href="#L296">296</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String advertiseURI;
 <a class="jxr_linenumber" name="L297" href="#L297">297</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout;
@@ -308,15 +308,15 @@
 <a class="jxr_linenumber" name="L300" href="#L300">300</a> <em class="jxr_javadoccomment">         * Constructor.</em>
 <a class="jxr_linenumber" name="L301" href="#L301">301</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="L302" href="#L302">302</a> <em class="jxr_javadoccomment">         * @param append Append to existing file or truncate.</em>
-<a class="jxr_linenumber" name="L303" href="#L303">303</a> <em class="jxr_javadoccomment">         * @param force forces the memory content to be written to the storage device on every event</em>
+<a class="jxr_linenumber" name="L303" href="#L303">303</a> <em class="jxr_javadoccomment">         * @param immediateFlush forces the memory content to be written to the storage device on every event</em>
 <a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">         * @param regionLength length of the mapped region</em>
 <a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">         * @param advertiseURI the URI to use when advertising the file</em>
 <a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">         * @param layout The layout.</em>
 <a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> append, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> force, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> regionLength,
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> append, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> regionLength,
 <a class="jxr_linenumber" name="L309" href="#L309">309</a>                 <strong class="jxr_keyword">final</strong> String advertiseURI, <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout) {
 <a class="jxr_linenumber" name="L310" href="#L310">310</a>             <strong class="jxr_keyword">this</strong>.append = append;
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>             <strong class="jxr_keyword">this</strong>.force = force;
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>             <strong class="jxr_keyword">this</strong>.immediateFlush = immediateFlush;
 <a class="jxr_linenumber" name="L312" href="#L312">312</a>             <strong class="jxr_keyword">this</strong>.regionLength = regionLength;
 <a class="jxr_linenumber" name="L313" href="#L313">313</a>             <strong class="jxr_keyword">this</strong>.advertiseURI = advertiseURI;
 <a class="jxr_linenumber" name="L314" href="#L314">314</a>             <strong class="jxr_keyword">this</strong>.layout = layout;
@@ -355,7 +355,7 @@
 <a class="jxr_linenumber" name="L347" href="#L347">347</a>                 raf = <strong class="jxr_keyword">new</strong> RandomAccessFile(name, <span class="jxr_string">"rw"</span>);
 <a class="jxr_linenumber" name="L348" href="#L348">348</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> position = (data.append) ? raf.length() : 0;
 <a class="jxr_linenumber" name="L349" href="#L349">349</a>                 raf.setLength(position + data.regionLength);
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/MemoryMappedFileManager.html">MemoryMappedFileManager</a>(raf, name, os, data.force, position, data.regionLength,
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/MemoryMappedFileManager.html">MemoryMappedFileManager</a>(raf, name, os, data.immediateFlush, position, data.regionLength,
 <a class="jxr_linenumber" name="L351" href="#L351">351</a>                         data.advertiseURI, data.layout, writeHeader);
 <a class="jxr_linenumber" name="L352" href="#L352">352</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="L353" href="#L353">353</a>                 LOGGER.error(<span class="jxr_string">"MemoryMappedFileManager ("</span> + name + <span class="jxr_string">") "</span> + ex, ex);
@@ -367,6 +367,6 @@
 <a class="jxr_linenumber" name="L359" href="#L359">359</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

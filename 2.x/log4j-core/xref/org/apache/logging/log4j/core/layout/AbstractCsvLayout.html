@@ -75,22 +75,23 @@
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/AbstractCsvLayout.html">AbstractCsvLayout</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, <strong class="jxr_keyword">final</strong> Charset charset, <strong class="jxr_keyword">final</strong> CSVFormat csvFormat,
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>              <strong class="jxr_keyword">final</strong> String header, <strong class="jxr_keyword">final</strong> String footer) {
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">super</strong>(config, charset, PatternLayout.createSerializer(config, <strong class="jxr_keyword">null</strong>, header, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, false, false),
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>                  PatternLayout.createSerializer(config, <strong class="jxr_keyword">null</strong>, footer, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, false, false));
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">this</strong>.format = csvFormat;
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>      }
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>  
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      @Override
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">public</strong> String getContentType() {
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">return</strong> CONTENT_TYPE + <span class="jxr_string">"; charset="</span> + <strong class="jxr_keyword">this</strong>.getCharset();
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>  
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">public</strong> CSVFormat getFormat() {
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">return</strong> format;
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>      }
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>  }
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">super</strong>(config, charset, 
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>                  PatternLayout.newSerializerBuilder().setConfiguration(config).setPattern(header).build(),
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>                  PatternLayout.newSerializerBuilder().setConfiguration(config).setPattern(footer).build());
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">this</strong>.format = csvFormat;
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      @Override
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> String getContentType() {
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">return</strong> CONTENT_TYPE + <span class="jxr_string">"; charset="</span> + <strong class="jxr_keyword">this</strong>.getCharset();
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      }
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">public</strong> CSVFormat getFormat() {
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">return</strong> format;
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>      }
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

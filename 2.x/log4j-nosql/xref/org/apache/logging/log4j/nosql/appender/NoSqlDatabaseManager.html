@@ -24,15 +24,15 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.nosql.appender;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.Marker;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.ThreadContext;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.LogEvent;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.AppenderLoggingException;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.ManagerFactory;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.db.AbstractDatabaseManager;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Closer;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.Marker;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.ThreadContext;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.LogEvent;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.AppenderLoggingException;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.ManagerFactory;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.db.AbstractDatabaseManager;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Closer;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.BiConsumer;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.ReadOnlyStringMap;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> * An {@link AbstractDatabaseManager} implementation for all NoSQL databases.</em>
@@ -127,108 +127,111 @@
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>             entity.set(<span class="jxr_string">"thrown"</span>, originalExceptionEntity);
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>         }
 <a class="jxr_linenumber" name="L121" href="#L121">121</a> 
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; contextMap = event.getContextMap();
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>         <strong class="jxr_keyword">final</strong> ReadOnlyStringMap contextMap = event.getContextData();
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>         <strong class="jxr_keyword">if</strong> (contextMap == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>             entity.set(<span class="jxr_string">"contextMap"</span>, (Object) <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>             <strong class="jxr_keyword">final</strong> NoSqlObject&lt;W&gt; contextMapEntity = <strong class="jxr_keyword">this</strong>.connection.createObject();
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, String&gt; entry : contextMap.entrySet()) {
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>                 contextMapEntity.set(entry.getKey(), entry.getValue());
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>             }
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>             entity.set(<span class="jxr_string">"contextMap"</span>, contextMapEntity);
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         }
-<a class="jxr_linenumber" name="L132" href="#L132">132</a> 
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>         <strong class="jxr_keyword">final</strong> ThreadContext.ContextStack contextStack = event.getContextStack();
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">if</strong> (contextStack == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>             entity.set(<span class="jxr_string">"contextStack"</span>, (Object) <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>             entity.set(<span class="jxr_string">"contextStack"</span>, contextStack.asList().toArray());
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>         }
-<a class="jxr_linenumber" name="L139" href="#L139">139</a> 
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">this</strong>.connection.insertObject(entity);
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>     }
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>             contextMap.forEach(<strong class="jxr_keyword">new</strong> BiConsumer&lt;String, String&gt;() {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>                 @Override
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>                 <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> accept(<strong class="jxr_keyword">final</strong> String key, <strong class="jxr_keyword">final</strong> String val) {
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>                     contextMapEntity.set(key, val);
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>                 }
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>             });
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>             entity.set(<span class="jxr_string">"contextMap"</span>, contextMapEntity);
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         }
+<a class="jxr_linenumber" name="L135" href="#L135">135</a> 
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>         <strong class="jxr_keyword">final</strong> ThreadContext.ContextStack contextStack = event.getContextStack();
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>         <strong class="jxr_keyword">if</strong> (contextStack == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>             entity.set(<span class="jxr_string">"contextStack"</span>, (Object) <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>             entity.set(<span class="jxr_string">"contextStack"</span>, contextStack.asList().toArray());
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>         }
 <a class="jxr_linenumber" name="L142" href="#L142">142</a> 
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>     <strong class="jxr_keyword">private</strong> NoSqlObject&lt;W&gt; buildMarkerEntity(<strong class="jxr_keyword">final</strong> Marker marker) {
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>         <strong class="jxr_keyword">final</strong> NoSqlObject&lt;W&gt; entity = <strong class="jxr_keyword">this</strong>.connection.createObject();
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>         entity.set(<span class="jxr_string">"name"</span>, marker.getName());
-<a class="jxr_linenumber" name="L146" href="#L146">146</a> 
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">final</strong> Marker[] parents = marker.getParents();
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>         <strong class="jxr_keyword">if</strong> (parents != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>             @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>             <strong class="jxr_keyword">final</strong> NoSqlObject&lt;W&gt;[] parentEntities = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlObject.html">NoSqlObject</a>[parents.length];
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; parents.length; i++) {
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>                 parentEntities[i] = buildMarkerEntity(parents[i]);
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>             }
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>             entity.set(<span class="jxr_string">"parents"</span>, parentEntities);
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>         }
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">return</strong> entity;
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>     }
-<a class="jxr_linenumber" name="L158" href="#L158">158</a> 
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>     @Override
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> commitAndClose() {
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>         <em class="jxr_comment">// all NoSQL drivers auto-commit (since NoSQL doesn't generally use the concept of transactions).</em>
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>         <em class="jxr_comment">// also, all our NoSQL drivers use internal connection pooling and provide clients, not connections.</em>
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>         <em class="jxr_comment">// thus, we should not be closing the client until shutdown as NoSQL is very different from SQL.</em>
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>         <em class="jxr_comment">// see LOG4J2-591 and LOG4J2-676</em>
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>     	<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>     }
-<a class="jxr_linenumber" name="L167" href="#L167">167</a> 
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>     <strong class="jxr_keyword">private</strong> NoSqlObject&lt;W&gt;[] convertStackTrace(<strong class="jxr_keyword">final</strong> StackTraceElement[] stackTrace) {
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">final</strong> NoSqlObject&lt;W&gt;[] stackTraceEntities = <strong class="jxr_keyword">this</strong>.connection.createList(stackTrace.length);
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; stackTrace.length; i++) {
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>             stackTraceEntities[i] = <strong class="jxr_keyword">this</strong>.convertStackTraceElement(stackTrace[i]);
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>         }
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <strong class="jxr_keyword">return</strong> stackTraceEntities;
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>     }
-<a class="jxr_linenumber" name="L175" href="#L175">175</a> 
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>     <strong class="jxr_keyword">private</strong> NoSqlObject&lt;W&gt; convertStackTraceElement(<strong class="jxr_keyword">final</strong> StackTraceElement element) {
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">final</strong> NoSqlObject&lt;W&gt; elementEntity = <strong class="jxr_keyword">this</strong>.connection.createObject();
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         elementEntity.set(<span class="jxr_string">"className"</span>, element.getClassName());
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>         elementEntity.set(<span class="jxr_string">"methodName"</span>, element.getMethodName());
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>         elementEntity.set(<span class="jxr_string">"fileName"</span>, element.getFileName());
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>         elementEntity.set(<span class="jxr_string">"lineNumber"</span>, element.getLineNumber());
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>         <strong class="jxr_keyword">return</strong> elementEntity;
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>     }
-<a class="jxr_linenumber" name="L184" href="#L184">184</a> 
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L186" href="#L186">186</a> <em class="jxr_javadoccomment">     * Creates a NoSQL manager for use within the {@link NoSqlAppender}, or returns a suitable one if it already exists.</em>
-<a class="jxr_linenumber" name="L187" href="#L187">187</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L188" href="#L188">188</a> <em class="jxr_javadoccomment">     * @param name The name of the manager, which should include connection details and hashed passwords where possible.</em>
-<a class="jxr_linenumber" name="L189" href="#L189">189</a> <em class="jxr_javadoccomment">     * @param bufferSize The size of the log event buffer.</em>
-<a class="jxr_linenumber" name="L190" href="#L190">190</a> <em class="jxr_javadoccomment">     * @param provider A provider instance which will be used to obtain connections to the chosen NoSQL database.</em>
-<a class="jxr_linenumber" name="L191" href="#L191">191</a> <em class="jxr_javadoccomment">     * @return a new or existing NoSQL manager as applicable.</em>
-<a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> NoSqlDatabaseManager&lt;?&gt; getNoSqlDatabaseManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize,
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>                                                                   <strong class="jxr_keyword">final</strong> NoSqlProvider&lt;?&gt; provider) {
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>         <strong class="jxr_keyword">return</strong> AbstractDatabaseManager.getManager(name, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">FactoryData</a>(bufferSize, provider), FACTORY);
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>     }
-<a class="jxr_linenumber" name="L197" href="#L197">197</a> 
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L199" href="#L199">199</a> <em class="jxr_javadoccomment">     * Encapsulates data that {@link NoSQLDatabaseManagerFactory} uses to create managers.</em>
-<a class="jxr_linenumber" name="L200" href="#L200">200</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">FactoryData</a> <strong class="jxr_keyword">extends</strong> AbstractDatabaseManager.AbstractFactoryData {
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> NoSqlProvider&lt;?&gt; provider;
-<a class="jxr_linenumber" name="L203" href="#L203">203</a> 
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>         <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize, <strong class="jxr_keyword">final</strong> NoSqlProvider&lt;?&gt; provider) {
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>             <strong class="jxr_keyword">super</strong>(bufferSize);
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>             <strong class="jxr_keyword">this</strong>.provider = provider;
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>         }
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>     }
-<a class="jxr_linenumber" name="L209" href="#L209">209</a> 
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L211" href="#L211">211</a> <em class="jxr_javadoccomment">     * Creates managers.</em>
-<a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">NoSQLDatabaseManagerFactory</a> <strong class="jxr_keyword">implements</strong>
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>             ManagerFactory&lt;NoSqlDatabaseManager&lt;?&gt;, FactoryData&gt; {
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>         @Override
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>         @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>         <strong class="jxr_keyword">public</strong> NoSqlDatabaseManager&lt;?&gt; createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">FactoryData</a> data) {
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">NoSqlDatabaseManager</a>(name, data.getBufferSize(), data.provider);
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>         }
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>     }
-<a class="jxr_linenumber" name="L221" href="#L221">221</a> }
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">this</strong>.connection.insertObject(entity);
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>     }
+<a class="jxr_linenumber" name="L145" href="#L145">145</a> 
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>     <strong class="jxr_keyword">private</strong> NoSqlObject&lt;W&gt; buildMarkerEntity(<strong class="jxr_keyword">final</strong> Marker marker) {
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">final</strong> NoSqlObject&lt;W&gt; entity = <strong class="jxr_keyword">this</strong>.connection.createObject();
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>         entity.set(<span class="jxr_string">"name"</span>, marker.getName());
+<a class="jxr_linenumber" name="L149" href="#L149">149</a> 
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">final</strong> Marker[] parents = marker.getParents();
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">if</strong> (parents != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>             @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <strong class="jxr_keyword">final</strong> NoSqlObject&lt;W&gt;[] parentEntities = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlObject.html">NoSqlObject</a>[parents.length];
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; parents.length; i++) {
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>                 parentEntities[i] = buildMarkerEntity(parents[i]);
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>             }
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>             entity.set(<span class="jxr_string">"parents"</span>, parentEntities);
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         }
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>         <strong class="jxr_keyword">return</strong> entity;
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>     }
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> 
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>     @Override
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> commitAndClose() {
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>         <em class="jxr_comment">// all NoSQL drivers auto-commit (since NoSQL doesn't generally use the concept of transactions).</em>
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         <em class="jxr_comment">// also, all our NoSQL drivers use internal connection pooling and provide clients, not connections.</em>
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>         <em class="jxr_comment">// thus, we should not be closing the client until shutdown as NoSQL is very different from SQL.</em>
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         <em class="jxr_comment">// see LOG4J2-591 and LOG4J2-676</em>
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>     	<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>     }
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> 
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>     <strong class="jxr_keyword">private</strong> NoSqlObject&lt;W&gt;[] convertStackTrace(<strong class="jxr_keyword">final</strong> StackTraceElement[] stackTrace) {
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>         <strong class="jxr_keyword">final</strong> NoSqlObject&lt;W&gt;[] stackTraceEntities = <strong class="jxr_keyword">this</strong>.connection.createList(stackTrace.length);
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; stackTrace.length; i++) {
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>             stackTraceEntities[i] = <strong class="jxr_keyword">this</strong>.convertStackTraceElement(stackTrace[i]);
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         }
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>         <strong class="jxr_keyword">return</strong> stackTraceEntities;
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>     }
+<a class="jxr_linenumber" name="L178" href="#L178">178</a> 
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>     <strong class="jxr_keyword">private</strong> NoSqlObject&lt;W&gt; convertStackTraceElement(<strong class="jxr_keyword">final</strong> StackTraceElement element) {
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         <strong class="jxr_keyword">final</strong> NoSqlObject&lt;W&gt; elementEntity = <strong class="jxr_keyword">this</strong>.connection.createObject();
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>         elementEntity.set(<span class="jxr_string">"className"</span>, element.getClassName());
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         elementEntity.set(<span class="jxr_string">"methodName"</span>, element.getMethodName());
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>         elementEntity.set(<span class="jxr_string">"fileName"</span>, element.getFileName());
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>         elementEntity.set(<span class="jxr_string">"lineNumber"</span>, element.getLineNumber());
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">return</strong> elementEntity;
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
+<a class="jxr_linenumber" name="L187" href="#L187">187</a> 
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> <em class="jxr_javadoccomment">     * Creates a NoSQL manager for use within the {@link NoSqlAppender}, or returns a suitable one if it already exists.</em>
+<a class="jxr_linenumber" name="L190" href="#L190">190</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a> <em class="jxr_javadoccomment">     * @param name The name of the manager, which should include connection details and hashed passwords where possible.</em>
+<a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">     * @param bufferSize The size of the log event buffer.</em>
+<a class="jxr_linenumber" name="L193" href="#L193">193</a> <em class="jxr_javadoccomment">     * @param provider A provider instance which will be used to obtain connections to the chosen NoSQL database.</em>
+<a class="jxr_linenumber" name="L194" href="#L194">194</a> <em class="jxr_javadoccomment">     * @return a new or existing NoSQL manager as applicable.</em>
+<a class="jxr_linenumber" name="L195" href="#L195">195</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> NoSqlDatabaseManager&lt;?&gt; getNoSqlDatabaseManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize,
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>                                                                   <strong class="jxr_keyword">final</strong> NoSqlProvider&lt;?&gt; provider) {
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>         <strong class="jxr_keyword">return</strong> AbstractDatabaseManager.getManager(name, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">FactoryData</a>(bufferSize, provider), FACTORY);
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>     }
+<a class="jxr_linenumber" name="L200" href="#L200">200</a> 
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L202" href="#L202">202</a> <em class="jxr_javadoccomment">     * Encapsulates data that {@link NoSQLDatabaseManagerFactory} uses to create managers.</em>
+<a class="jxr_linenumber" name="L203" href="#L203">203</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">FactoryData</a> <strong class="jxr_keyword">extends</strong> AbstractDatabaseManager.AbstractFactoryData {
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> NoSqlProvider&lt;?&gt; provider;
+<a class="jxr_linenumber" name="L206" href="#L206">206</a> 
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>         <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize, <strong class="jxr_keyword">final</strong> NoSqlProvider&lt;?&gt; provider) {
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>             <strong class="jxr_keyword">super</strong>(bufferSize);
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>             <strong class="jxr_keyword">this</strong>.provider = provider;
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         }
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>     }
+<a class="jxr_linenumber" name="L212" href="#L212">212</a> 
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L214" href="#L214">214</a> <em class="jxr_javadoccomment">     * Creates managers.</em>
+<a class="jxr_linenumber" name="L215" href="#L215">215</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">NoSQLDatabaseManagerFactory</a> <strong class="jxr_keyword">implements</strong>
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>             ManagerFactory&lt;NoSqlDatabaseManager&lt;?&gt;, FactoryData&gt; {
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>         @Override
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>         @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>         <strong class="jxr_keyword">public</strong> NoSqlDatabaseManager&lt;?&gt; createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">FactoryData</a> data) {
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/nosql/appender/NoSqlDatabaseManager.html">NoSqlDatabaseManager</a>(name, data.getBufferSize(), data.provider);
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>         }
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>     }
+<a class="jxr_linenumber" name="L224" href="#L224">224</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

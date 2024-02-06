@@ -50,8 +50,8 @@
 <span class="sourceLineNo">042</span>    private static final int SHIFT_2 = 16;<a name="line.42"></a>
 <span class="sourceLineNo">043</span>    private static final int SHIFT_3 = 24;<a name="line.43"></a>
 <span class="sourceLineNo">044</span><a name="line.44"></a>
-<span class="sourceLineNo">045</span>    private DatagramSocket ds;<a name="line.45"></a>
-<span class="sourceLineNo">046</span>    private final InetAddress address;<a name="line.46"></a>
+<span class="sourceLineNo">045</span>    private DatagramSocket datagramSocket;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>    private final InetAddress inetAddress;<a name="line.46"></a>
 <span class="sourceLineNo">047</span>    private final int port;<a name="line.47"></a>
 <span class="sourceLineNo">048</span><a name="line.48"></a>
 <span class="sourceLineNo">049</span>    private byte[] data;<a name="line.49"></a>
@@ -69,7 +69,7 @@
 <span class="sourceLineNo">061</span>        this.header = header;<a name="line.61"></a>
 <span class="sourceLineNo">062</span>        this.footer = footer;<a name="line.62"></a>
 <span class="sourceLineNo">063</span>        try {<a name="line.63"></a>
-<span class="sourceLineNo">064</span>            address = InetAddress.getByName(host);<a name="line.64"></a>
+<span class="sourceLineNo">064</span>            inetAddress = InetAddress.getByName(host);<a name="line.64"></a>
 <span class="sourceLineNo">065</span>        } catch (final UnknownHostException ex) {<a name="line.65"></a>
 <span class="sourceLineNo">066</span>            final String msg = "Could not find host " + host;<a name="line.66"></a>
 <span class="sourceLineNo">067</span>            LOGGER.error(msg, ex);<a name="line.67"></a>
@@ -77,7 +77,7 @@
 <span class="sourceLineNo">069</span>        }<a name="line.69"></a>
 <span class="sourceLineNo">070</span><a name="line.70"></a>
 <span class="sourceLineNo">071</span>        try {<a name="line.71"></a>
-<span class="sourceLineNo">072</span>            ds = new DatagramSocket();<a name="line.72"></a>
+<span class="sourceLineNo">072</span>            datagramSocket = new DatagramSocket();<a name="line.72"></a>
 <span class="sourceLineNo">073</span>        } catch (final SocketException ex) {<a name="line.73"></a>
 <span class="sourceLineNo">074</span>            final String msg = "Could not instantiate DatagramSocket to " + host;<a name="line.74"></a>
 <span class="sourceLineNo">075</span>            LOGGER.error(msg, ex);<a name="line.75"></a>
@@ -103,12 +103,12 @@
 <span class="sourceLineNo">095</span>    @Override<a name="line.95"></a>
 <span class="sourceLineNo">096</span>    public synchronized void flush() throws IOException {<a name="line.96"></a>
 <span class="sourceLineNo">097</span>        try {<a name="line.97"></a>
-<span class="sourceLineNo">098</span>            if (this.data != null &amp;&amp; this.ds != null &amp;&amp; this.address != null) {<a name="line.98"></a>
+<span class="sourceLineNo">098</span>            if (this.data != null &amp;&amp; this.datagramSocket != null &amp;&amp; this.inetAddress != null) {<a name="line.98"></a>
 <span class="sourceLineNo">099</span>                if (footer != null) {<a name="line.99"></a>
 <span class="sourceLineNo">100</span>                    copy(footer, 0, footer.length);<a name="line.100"></a>
 <span class="sourceLineNo">101</span>                }<a name="line.101"></a>
-<span class="sourceLineNo">102</span>                final DatagramPacket packet = new DatagramPacket(data, data.length, address, port);<a name="line.102"></a>
-<span class="sourceLineNo">103</span>                ds.send(packet);<a name="line.103"></a>
+<span class="sourceLineNo">102</span>                final DatagramPacket packet = new DatagramPacket(data, data.length, inetAddress, port);<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                datagramSocket.send(packet);<a name="line.103"></a>
 <span class="sourceLineNo">104</span>            }<a name="line.104"></a>
 <span class="sourceLineNo">105</span>        } finally {<a name="line.105"></a>
 <span class="sourceLineNo">106</span>            data = null;<a name="line.106"></a>
@@ -120,12 +120,12 @@
 <span class="sourceLineNo">112</span><a name="line.112"></a>
 <span class="sourceLineNo">113</span>    @Override<a name="line.113"></a>
 <span class="sourceLineNo">114</span>    public synchronized void close() throws IOException {<a name="line.114"></a>
-<span class="sourceLineNo">115</span>        if (ds != null) {<a name="line.115"></a>
+<span class="sourceLineNo">115</span>        if (datagramSocket != null) {<a name="line.115"></a>
 <span class="sourceLineNo">116</span>            if (data != null) {<a name="line.116"></a>
 <span class="sourceLineNo">117</span>                flush();<a name="line.117"></a>
 <span class="sourceLineNo">118</span>            }<a name="line.118"></a>
-<span class="sourceLineNo">119</span>            ds.close();<a name="line.119"></a>
-<span class="sourceLineNo">120</span>            ds = null;<a name="line.120"></a>
+<span class="sourceLineNo">119</span>            datagramSocket.close();<a name="line.119"></a>
+<span class="sourceLineNo">120</span>            datagramSocket = null;<a name="line.120"></a>
 <span class="sourceLineNo">121</span>        }<a name="line.121"></a>
 <span class="sourceLineNo">122</span>    }<a name="line.122"></a>
 <span class="sourceLineNo">123</span><a name="line.123"></a>

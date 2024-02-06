@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFAULT_CONTENT_TYPE = <span class="jxr_string">"text/html"</span>;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> jvmStartTime = ManagementFactory.getRuntimeMXBean().getStartTime();
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      <em class="jxr_comment">// Print no location info by default</em>
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> locationInfo;
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String title;
@@ -140,7 +140,7 @@
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>     }
 <a class="jxr_linenumber" name="L133" href="#L133">133</a> 
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">     * Format as a String.</em>
+<a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">     * Formats as a String.</em>
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">     * @param event The Logging Event.</em>
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">     * @return A String containing the LogEvent as HTML.</em>
@@ -204,11 +204,11 @@
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>             sbuf.append(<span class="jxr_string">"&lt;/td&gt;&lt;/tr&gt;"</span>).append(Strings.LINE_SEPARATOR);
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>         }
 <a class="jxr_linenumber" name="L198" href="#L198">198</a> 
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">if</strong> (event.getContextMap() != <strong class="jxr_keyword">null</strong> &amp;&amp; !event.getContextMap().isEmpty()) {
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">if</strong> (event.getContextData() != <strong class="jxr_keyword">null</strong> &amp;&amp; !event.getContextData().isEmpty()) {
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>             sbuf.append(<span class="jxr_string">"&lt;tr&gt;&lt;td bgcolor=\&quot;#EEEEEE\&quot; style=\&quot;font-size : "</span>).append(fontSize);
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>             sbuf.append(<span class="jxr_string">";\&quot; colspan=\&quot;6\&quot; "</span>);
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>             sbuf.append(<span class="jxr_string">"title=\&quot;Mapped Diagnostic Context\&quot;&gt;"</span>);
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>             sbuf.append(<span class="jxr_string">"MDC: "</span>).append(Transform.escapeHtmlTags(event.getContextMap().toString()));
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>             sbuf.append(<span class="jxr_string">"MDC: "</span>).append(Transform.escapeHtmlTags(event.getContextData().toMap().toString()));
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>             sbuf.append(<span class="jxr_string">"&lt;/td&gt;&lt;/tr&gt;"</span>).append(Strings.LINE_SEPARATOR);
 <a class="jxr_linenumber" name="L205" href="#L205">205</a>         }
 <a class="jxr_linenumber" name="L206" href="#L206">206</a> 
@@ -266,168 +266,179 @@
 <a class="jxr_linenumber" name="L258" href="#L258">258</a>         }
 <a class="jxr_linenumber" name="L259" href="#L259">259</a>     }
 <a class="jxr_linenumber" name="L260" href="#L260">260</a> 
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L262" href="#L262">262</a> <em class="jxr_javadoccomment">     * Returns appropriate HTML headers.</em>
-<a class="jxr_linenumber" name="L263" href="#L263">263</a> <em class="jxr_javadoccomment">     * @return The header as a byte array.</em>
-<a class="jxr_linenumber" name="L264" href="#L264">264</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>     @Override
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>     <strong class="jxr_keyword">public</strong> byte[] getHeader() {
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>         <strong class="jxr_keyword">final</strong> StringBuilder sbuf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>         sbuf.append(<span class="jxr_string">"&lt;!DOCTYPE HTML PUBLIC \&quot;-//W3C//DTD HTML 4.01 Transitional//EN\&quot; "</span>);
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>         sbuf.append(<span class="jxr_string">"\&quot;http://www.w3.org/TR/html4/loose.dtd\&quot;&gt;"</span>);
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>         sbuf.append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>         sbuf.append(<span class="jxr_string">"&lt;html&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>         sbuf.append(<span class="jxr_string">"&lt;head&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>         sbuf.append(<span class="jxr_string">"&lt;meta charset=\&quot;"</span>).append(getCharset()).append(<span class="jxr_string">"\&quot;/&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>         sbuf.append(<span class="jxr_string">"&lt;title&gt;"</span>).append(title).append(<span class="jxr_string">"&lt;/title&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>         sbuf.append(<span class="jxr_string">"&lt;style type=\&quot;text/css\&quot;&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>         sbuf.append(<span class="jxr_string">"&lt;!--"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>         sbuf.append(<span class="jxr_string">"body, table {font-family:"</span>).append(font).append(<span class="jxr_string">"; font-size: "</span>);
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>         sbuf.append(headerSize).append(<span class="jxr_string">";}"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>         sbuf.append(<span class="jxr_string">"th {background: #336699; color: #FFFFFF; text-align: left;}"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L280" href="#L280">280</a>         sbuf.append(<span class="jxr_string">"--&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>         sbuf.append(<span class="jxr_string">"&lt;/style&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>         sbuf.append(<span class="jxr_string">"&lt;/head&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>         sbuf.append(<span class="jxr_string">"&lt;body bgcolor=\&quot;#FFFFFF\&quot; topmargin=\&quot;6\&quot; leftmargin=\&quot;6\&quot;&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>         sbuf.append(<span class="jxr_string">"&lt;hr size=\&quot;1\&quot; noshade=\&quot;noshade\&quot;&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>         sbuf.append(<span class="jxr_string">"Log session start time "</span> + <strong class="jxr_keyword">new</strong> java.util.Date() + <span class="jxr_string">"&lt;br&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>         sbuf.append(<span class="jxr_string">"&lt;br&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>         sbuf.append(
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>             <span class="jxr_string">"&lt;table cellspacing=\&quot;0\&quot; cellpadding=\&quot;4\&quot; border=\&quot;1\&quot; bordercolor=\&quot;#224466\&quot; width=\&quot;100%\&quot;&gt;"</span>);
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>         sbuf.append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>         sbuf.append(<span class="jxr_string">"&lt;tr&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>         sbuf.append(<span class="jxr_string">"&lt;th&gt;Time&lt;/th&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>         sbuf.append(<span class="jxr_string">"&lt;th&gt;Thread&lt;/th&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>         sbuf.append(<span class="jxr_string">"&lt;th&gt;Level&lt;/th&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>         sbuf.append(<span class="jxr_string">"&lt;th&gt;Logger&lt;/th&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>         <strong class="jxr_keyword">if</strong> (locationInfo) {
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>             sbuf.append(<span class="jxr_string">"&lt;th&gt;File:Line&lt;/th&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>         }
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>         sbuf.append(<span class="jxr_string">"&lt;th&gt;Message&lt;/th&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>         sbuf.append(<span class="jxr_string">"&lt;/tr&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>         <strong class="jxr_keyword">return</strong> sbuf.toString().getBytes(getCharset());
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>     }
-<a class="jxr_linenumber" name="L302" href="#L302">302</a> 
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">     * Returns the appropriate HTML footers.</em>
-<a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">     * @return the footer as a byte array.</em>
-<a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>     @Override
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>     <strong class="jxr_keyword">public</strong> byte[] getFooter() {
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>         <strong class="jxr_keyword">final</strong> StringBuilder sbuf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>         sbuf.append(<span class="jxr_string">"&lt;/table&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>         sbuf.append(<span class="jxr_string">"&lt;br&gt;"</span>).append(Strings.LINE_SEPARATOR);
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>         sbuf.append(<span class="jxr_string">"&lt;/body&gt;&lt;/html&gt;"</span>);
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>         <strong class="jxr_keyword">return</strong> getBytes(sbuf.toString());
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>     }
-<a class="jxr_linenumber" name="L315" href="#L315">315</a> 
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L317" href="#L317">317</a> <em class="jxr_javadoccomment">     * Create an HTML Layout.</em>
-<a class="jxr_linenumber" name="L318" href="#L318">318</a> <em class="jxr_javadoccomment">     * @param locationInfo If "true", location information will be included. The default is false.</em>
-<a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">     * @param title The title to include in the file header. If none is specified the default title will be used.</em>
-<a class="jxr_linenumber" name="L320" href="#L320">320</a> <em class="jxr_javadoccomment">     * @param contentType The content type. Defaults to "text/html".</em>
-<a class="jxr_linenumber" name="L321" href="#L321">321</a> <em class="jxr_javadoccomment">     * @param charset The character set to use. If not specified, the default will be used.</em>
-<a class="jxr_linenumber" name="L322" href="#L322">322</a> <em class="jxr_javadoccomment">     * @param fontSize The font size of the text.</em>
-<a class="jxr_linenumber" name="L323" href="#L323">323</a> <em class="jxr_javadoccomment">     * @param font The font to use for the text.</em>
-<a class="jxr_linenumber" name="L324" href="#L324">324</a> <em class="jxr_javadoccomment">     * @return An HTML Layout.</em>
-<a class="jxr_linenumber" name="L325" href="#L325">325</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>     @PluginFactory
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">HtmlLayout</a> createLayout(
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>             @PluginAttribute(value = <span class="jxr_string">"locationInfo"</span>, defaultBoolean = false) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> locationInfo,
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>             @PluginAttribute(value = <span class="jxr_string">"title"</span>, defaultString = DEFAULT_TITLE) <strong class="jxr_keyword">final</strong> String title,
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>             @PluginAttribute(<span class="jxr_string">"contentType"</span>) String contentType,
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>             @PluginAttribute(value = <span class="jxr_string">"charset"</span>, defaultString = <span class="jxr_string">"UTF-8"</span>) <strong class="jxr_keyword">final</strong> Charset charset,
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>             @PluginAttribute(<span class="jxr_string">"fontSize"</span>) String fontSize,
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>             @PluginAttribute(value = <span class="jxr_string">"fontName"</span>, defaultString = DEFAULT_FONT_FAMILY) <strong class="jxr_keyword">final</strong> String font) {
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">FontSize</a> fs = FontSize.getFontSize(fontSize);
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>         fontSize = fs.getFontSize();
-<a class="jxr_linenumber" name="L336" href="#L336">336</a>         <strong class="jxr_keyword">final</strong> String headerSize = fs.larger().getFontSize();
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>         <strong class="jxr_keyword">if</strong> (contentType == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>             contentType = DEFAULT_CONTENT_TYPE + <span class="jxr_string">"; charset="</span> + charset;
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>         }
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">HtmlLayout</a>(locationInfo, title, contentType, charset, font, fontSize, headerSize);
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>     }
-<a class="jxr_linenumber" name="L342" href="#L342">342</a> 
-<a class="jxr_linenumber" name="L343" href="#L343">343</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L344" href="#L344">344</a> <em class="jxr_javadoccomment">     * Creates an HTML Layout using the default settings.</em>
-<a class="jxr_linenumber" name="L345" href="#L345">345</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L346" href="#L346">346</a> <em class="jxr_javadoccomment">     * @return an HTML Layout.</em>
-<a class="jxr_linenumber" name="L347" href="#L347">347</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L348" href="#L348">348</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">HtmlLayout</a> createDefaultLayout() {
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>         <strong class="jxr_keyword">return</strong> newBuilder().build();
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>     }
-<a class="jxr_linenumber" name="L351" href="#L351">351</a> 
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>     @PluginBuilderFactory
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> newBuilder() {
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a>();
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>     }
-<a class="jxr_linenumber" name="L356" href="#L356">356</a> 
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> <strong class="jxr_keyword">implements</strong> org.apache.logging.log4j.core.util.Builder&lt;HtmlLayout&gt; {
-<a class="jxr_linenumber" name="L358" href="#L358">358</a> 
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>         @PluginBuilderAttribute
-<a class="jxr_linenumber" name="L360" href="#L360">360</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> locationInfo = false;
-<a class="jxr_linenumber" name="L361" href="#L361">361</a> 
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>         @PluginBuilderAttribute
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>         <strong class="jxr_keyword">private</strong> String title = DEFAULT_TITLE;
-<a class="jxr_linenumber" name="L364" href="#L364">364</a> 
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>         @PluginBuilderAttribute
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>         <strong class="jxr_keyword">private</strong> String contentType = <strong class="jxr_keyword">null</strong>; <em class="jxr_comment">// defer default value in order to use specified charset</em>
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>     <strong class="jxr_keyword">private</strong> StringBuilder appendLs(<strong class="jxr_keyword">final</strong> StringBuilder sbuilder, <strong class="jxr_keyword">final</strong> String s) {
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>         sbuilder.append(s).append(Strings.LINE_SEPARATOR);
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>         <strong class="jxr_keyword">return</strong> sbuilder;
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>     }
+<a class="jxr_linenumber" name="L265" href="#L265">265</a> 
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>     <strong class="jxr_keyword">private</strong> StringBuilder append(<strong class="jxr_keyword">final</strong> StringBuilder sbuilder, <strong class="jxr_keyword">final</strong> String s) {
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>         sbuilder.append(s);
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>         <strong class="jxr_keyword">return</strong> sbuilder;
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>     }
+<a class="jxr_linenumber" name="L270" href="#L270">270</a> 
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L272" href="#L272">272</a> <em class="jxr_javadoccomment">     * Returns appropriate HTML headers.</em>
+<a class="jxr_linenumber" name="L273" href="#L273">273</a> <em class="jxr_javadoccomment">     * @return The header as a byte array.</em>
+<a class="jxr_linenumber" name="L274" href="#L274">274</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>     @Override
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>     <strong class="jxr_keyword">public</strong> byte[] getHeader() {
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>         <strong class="jxr_keyword">final</strong> StringBuilder sbuf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>         append(sbuf, <span class="jxr_string">"&lt;!DOCTYPE HTML PUBLIC \&quot;-//W3C//DTD HTML 4.01 Transitional//EN\&quot; "</span>);
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>         appendLs(sbuf, <span class="jxr_string">"\&quot;http://www.w3.org/TR/html4/loose.dtd\&quot;&gt;"</span>);
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>         appendLs(sbuf, <span class="jxr_string">"&lt;html&gt;"</span>);
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>         appendLs(sbuf, <span class="jxr_string">"&lt;head&gt;"</span>);
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>         append(sbuf, <span class="jxr_string">"&lt;meta charset=\&quot;"</span>);
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>         append(sbuf, getCharset().toString());
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>         appendLs(sbuf, <span class="jxr_string">"\&quot;/&gt;"</span>);
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>         append(sbuf, <span class="jxr_string">"&lt;title&gt;"</span>).append(title);
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>         appendLs(sbuf, <span class="jxr_string">"&lt;/title&gt;"</span>);
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>         appendLs(sbuf, <span class="jxr_string">"&lt;style type=\&quot;text/css\&quot;&gt;"</span>);
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>         appendLs(sbuf, <span class="jxr_string">"&lt;!--"</span>);
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>         append(sbuf, <span class="jxr_string">"body, table {font-family:"</span>).append(font).append(<span class="jxr_string">"; font-size: "</span>);
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>         appendLs(sbuf, headerSize).append(<span class="jxr_string">";}"</span>);
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>         appendLs(sbuf, <span class="jxr_string">"th {background: #336699; color: #FFFFFF; text-align: left;}"</span>);
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>         appendLs(sbuf, <span class="jxr_string">"--&gt;"</span>);
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>         appendLs(sbuf, <span class="jxr_string">"&lt;/style&gt;"</span>);
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>         appendLs(sbuf, <span class="jxr_string">"&lt;/head&gt;"</span>);
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>         appendLs(sbuf, <span class="jxr_string">"&lt;body bgcolor=\&quot;#FFFFFF\&quot; topmargin=\&quot;6\&quot; leftmargin=\&quot;6\&quot;&gt;"</span>);
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>         appendLs(sbuf, <span class="jxr_string">"&lt;hr size=\&quot;1\&quot; noshade=\&quot;noshade\&quot;&gt;"</span>);
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>         appendLs(sbuf, <span class="jxr_string">"Log session start time "</span> + <strong class="jxr_keyword">new</strong> java.util.Date() + <span class="jxr_string">"&lt;br&gt;"</span>);
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>         appendLs(sbuf, <span class="jxr_string">"&lt;br&gt;"</span>);
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>         appendLs(sbuf,
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>                 <span class="jxr_string">"&lt;table cellspacing=\&quot;0\&quot; cellpadding=\&quot;4\&quot; border=\&quot;1\&quot; bordercolor=\&quot;#224466\&quot; width=\&quot;100%\&quot;&gt;"</span>);
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>         appendLs(sbuf, <span class="jxr_string">"&lt;tr&gt;"</span>);
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>         appendLs(sbuf, <span class="jxr_string">"&lt;th&gt;Time&lt;/th&gt;"</span>);
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>         appendLs(sbuf, <span class="jxr_string">"&lt;th&gt;Thread&lt;/th&gt;"</span>);
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>         appendLs(sbuf, <span class="jxr_string">"&lt;th&gt;Level&lt;/th&gt;"</span>);
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>         appendLs(sbuf, <span class="jxr_string">"&lt;th&gt;Logger&lt;/th&gt;"</span>);
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>         <strong class="jxr_keyword">if</strong> (locationInfo) {
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>             appendLs(sbuf, <span class="jxr_string">"&lt;th&gt;File:Line&lt;/th&gt;"</span>);
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>         }
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>         appendLs(sbuf, <span class="jxr_string">"&lt;th&gt;Message&lt;/th&gt;"</span>);
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>         appendLs(sbuf, <span class="jxr_string">"&lt;/tr&gt;"</span>);
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>         <strong class="jxr_keyword">return</strong> sbuf.toString().getBytes(getCharset());
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>     }
+<a class="jxr_linenumber" name="L313" href="#L313">313</a> 
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L315" href="#L315">315</a> <em class="jxr_javadoccomment">     * Returns the appropriate HTML footers.</em>
+<a class="jxr_linenumber" name="L316" href="#L316">316</a> <em class="jxr_javadoccomment">     * @return the footer as a byte array.</em>
+<a class="jxr_linenumber" name="L317" href="#L317">317</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>     @Override
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>     <strong class="jxr_keyword">public</strong> byte[] getFooter() {
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>         <strong class="jxr_keyword">final</strong> StringBuilder sbuf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>         appendLs(sbuf, <span class="jxr_string">"&lt;/table&gt;"</span>);
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>         appendLs(sbuf, <span class="jxr_string">"&lt;br&gt;"</span>);
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>         appendLs(sbuf, <span class="jxr_string">"&lt;/body&gt;&lt;/html&gt;"</span>);
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <strong class="jxr_keyword">return</strong> getBytes(sbuf.toString());
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>     }
+<a class="jxr_linenumber" name="L326" href="#L326">326</a> 
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L328" href="#L328">328</a> <em class="jxr_javadoccomment">     * Creates an HTML Layout.</em>
+<a class="jxr_linenumber" name="L329" href="#L329">329</a> <em class="jxr_javadoccomment">     * @param locationInfo If "true", location information will be included. The default is false.</em>
+<a class="jxr_linenumber" name="L330" href="#L330">330</a> <em class="jxr_javadoccomment">     * @param title The title to include in the file header. If none is specified the default title will be used.</em>
+<a class="jxr_linenumber" name="L331" href="#L331">331</a> <em class="jxr_javadoccomment">     * @param contentType The content type. Defaults to "text/html".</em>
+<a class="jxr_linenumber" name="L332" href="#L332">332</a> <em class="jxr_javadoccomment">     * @param charset The character set to use. If not specified, the default will be used.</em>
+<a class="jxr_linenumber" name="L333" href="#L333">333</a> <em class="jxr_javadoccomment">     * @param fontSize The font size of the text.</em>
+<a class="jxr_linenumber" name="L334" href="#L334">334</a> <em class="jxr_javadoccomment">     * @param font The font to use for the text.</em>
+<a class="jxr_linenumber" name="L335" href="#L335">335</a> <em class="jxr_javadoccomment">     * @return An HTML Layout.</em>
+<a class="jxr_linenumber" name="L336" href="#L336">336</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>     @PluginFactory
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">HtmlLayout</a> createLayout(
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>             @PluginAttribute(value = <span class="jxr_string">"locationInfo"</span>) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> locationInfo,
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>             @PluginAttribute(value = <span class="jxr_string">"title"</span>, defaultString = DEFAULT_TITLE) <strong class="jxr_keyword">final</strong> String title,
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>             @PluginAttribute(<span class="jxr_string">"contentType"</span>) String contentType,
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>             @PluginAttribute(value = <span class="jxr_string">"charset"</span>, defaultString = <span class="jxr_string">"UTF-8"</span>) <strong class="jxr_keyword">final</strong> Charset charset,
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>             @PluginAttribute(<span class="jxr_string">"fontSize"</span>) String fontSize,
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>             @PluginAttribute(value = <span class="jxr_string">"fontName"</span>, defaultString = DEFAULT_FONT_FAMILY) <strong class="jxr_keyword">final</strong> String font) {
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">FontSize</a> fs = FontSize.getFontSize(fontSize);
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>         fontSize = fs.getFontSize();
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>         <strong class="jxr_keyword">final</strong> String headerSize = fs.larger().getFontSize();
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>         <strong class="jxr_keyword">if</strong> (contentType == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>             contentType = DEFAULT_CONTENT_TYPE + <span class="jxr_string">"; charset="</span> + charset;
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>         }
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">HtmlLayout</a>(locationInfo, title, contentType, charset, font, fontSize, headerSize);
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>     }
+<a class="jxr_linenumber" name="L353" href="#L353">353</a> 
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L355" href="#L355">355</a> <em class="jxr_javadoccomment">     * Creates an HTML Layout using the default settings.</em>
+<a class="jxr_linenumber" name="L356" href="#L356">356</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L357" href="#L357">357</a> <em class="jxr_javadoccomment">     * @return an HTML Layout.</em>
+<a class="jxr_linenumber" name="L358" href="#L358">358</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">HtmlLayout</a> createDefaultLayout() {
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>         <strong class="jxr_keyword">return</strong> newBuilder().build();
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>     }
+<a class="jxr_linenumber" name="L362" href="#L362">362</a> 
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>     @PluginBuilderFactory
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> newBuilder() {
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a>();
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>     }
 <a class="jxr_linenumber" name="L367" href="#L367">367</a> 
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>         @PluginBuilderAttribute
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>         <strong class="jxr_keyword">private</strong> Charset charset = StandardCharsets.UTF_8;
-<a class="jxr_linenumber" name="L370" href="#L370">370</a> 
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>         @PluginBuilderAttribute
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">FontSize</a> fontSize = FontSize.SMALL;
-<a class="jxr_linenumber" name="L373" href="#L373">373</a> 
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>         @PluginBuilderAttribute
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>         <strong class="jxr_keyword">private</strong> String fontName = DEFAULT_FONT_FAMILY;
-<a class="jxr_linenumber" name="L376" href="#L376">376</a> 
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a>() {
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>         }
-<a class="jxr_linenumber" name="L379" href="#L379">379</a> 
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withLocationInfo(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> locationInfo) {
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>             <strong class="jxr_keyword">this</strong>.locationInfo = locationInfo;
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>         }
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> <strong class="jxr_keyword">implements</strong> org.apache.logging.log4j.core.util.Builder&lt;HtmlLayout&gt; {
+<a class="jxr_linenumber" name="L369" href="#L369">369</a> 
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>         @PluginBuilderAttribute
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> locationInfo = false;
+<a class="jxr_linenumber" name="L372" href="#L372">372</a> 
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>         @PluginBuilderAttribute
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>         <strong class="jxr_keyword">private</strong> String title = DEFAULT_TITLE;
+<a class="jxr_linenumber" name="L375" href="#L375">375</a> 
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>         @PluginBuilderAttribute
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>         <strong class="jxr_keyword">private</strong> String contentType = <strong class="jxr_keyword">null</strong>; <em class="jxr_comment">// defer default value in order to use specified charset</em>
+<a class="jxr_linenumber" name="L378" href="#L378">378</a> 
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>         @PluginBuilderAttribute
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>         <strong class="jxr_keyword">private</strong> Charset charset = StandardCharsets.UTF_8;
+<a class="jxr_linenumber" name="L381" href="#L381">381</a> 
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>         @PluginBuilderAttribute
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">FontSize</a> fontSize = FontSize.SMALL;
 <a class="jxr_linenumber" name="L384" href="#L384">384</a> 
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withTitle(<strong class="jxr_keyword">final</strong> String title) {
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>             <strong class="jxr_keyword">this</strong>.title = title;
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>         }
-<a class="jxr_linenumber" name="L389" href="#L389">389</a> 
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withContentType(<strong class="jxr_keyword">final</strong> String contentType) {
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>             <strong class="jxr_keyword">this</strong>.contentType = contentType;
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>         }
-<a class="jxr_linenumber" name="L394" href="#L394">394</a> 
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withCharset(<strong class="jxr_keyword">final</strong> Charset charset) {
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>             <strong class="jxr_keyword">this</strong>.charset = charset;
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>         }
-<a class="jxr_linenumber" name="L399" href="#L399">399</a> 
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withFontSize(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">FontSize</a> fontSize) {
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>             <strong class="jxr_keyword">this</strong>.fontSize = fontSize;
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>         }
-<a class="jxr_linenumber" name="L404" href="#L404">404</a> 
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withFontName(<strong class="jxr_keyword">final</strong> String fontName) {
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>             <strong class="jxr_keyword">this</strong>.fontName = fontName;
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>         }
-<a class="jxr_linenumber" name="L409" href="#L409">409</a> 
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>         @Override
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">HtmlLayout</a> build() {
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>             <em class="jxr_comment">// TODO: extract charset from content-type</em>
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>             <strong class="jxr_keyword">if</strong> (contentType == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>                 contentType = DEFAULT_CONTENT_TYPE + <span class="jxr_string">"; charset="</span> + charset;
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>             }
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">HtmlLayout</a>(locationInfo, title, contentType, charset, fontName, fontSize.getFontSize(),
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>                 fontSize.larger().getFontSize());
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>         }
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>     }
-<a class="jxr_linenumber" name="L420" href="#L420">420</a> }
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>         @PluginBuilderAttribute
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>         <strong class="jxr_keyword">private</strong> String fontName = DEFAULT_FONT_FAMILY;
+<a class="jxr_linenumber" name="L387" href="#L387">387</a> 
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a>() {
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>         }
+<a class="jxr_linenumber" name="L390" href="#L390">390</a> 
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withLocationInfo(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> locationInfo) {
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>             <strong class="jxr_keyword">this</strong>.locationInfo = locationInfo;
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>         }
+<a class="jxr_linenumber" name="L395" href="#L395">395</a> 
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withTitle(<strong class="jxr_keyword">final</strong> String title) {
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>             <strong class="jxr_keyword">this</strong>.title = title;
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>         }
+<a class="jxr_linenumber" name="L400" href="#L400">400</a> 
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withContentType(<strong class="jxr_keyword">final</strong> String contentType) {
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>             <strong class="jxr_keyword">this</strong>.contentType = contentType;
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>         }
+<a class="jxr_linenumber" name="L405" href="#L405">405</a> 
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withCharset(<strong class="jxr_keyword">final</strong> Charset charset) {
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>             <strong class="jxr_keyword">this</strong>.charset = charset;
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>         }
+<a class="jxr_linenumber" name="L410" href="#L410">410</a> 
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withFontSize(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">FontSize</a> fontSize) {
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>             <strong class="jxr_keyword">this</strong>.fontSize = fontSize;
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>         }
+<a class="jxr_linenumber" name="L415" href="#L415">415</a> 
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">Builder</a> withFontName(<strong class="jxr_keyword">final</strong> String fontName) {
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>             <strong class="jxr_keyword">this</strong>.fontName = fontName;
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L419" href="#L419">419</a>         }
+<a class="jxr_linenumber" name="L420" href="#L420">420</a> 
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>         @Override
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">HtmlLayout</a> build() {
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>             <em class="jxr_comment">// TODO: extract charset from content-type</em>
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>             <strong class="jxr_keyword">if</strong> (contentType == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>                 contentType = DEFAULT_CONTENT_TYPE + <span class="jxr_string">"; charset="</span> + charset;
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>             }
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/HtmlLayout.html">HtmlLayout</a>(locationInfo, title, contentType, charset, fontName, fontSize.getFontSize(),
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>                 fontSize.larger().getFontSize());
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>         }
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>     }
+<a class="jxr_linenumber" name="L431" href="#L431">431</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

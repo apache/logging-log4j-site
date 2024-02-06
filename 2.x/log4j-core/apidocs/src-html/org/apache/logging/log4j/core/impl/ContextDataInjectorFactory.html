@@ -24,16 +24,16 @@
 <span class="sourceLineNo">016</span> */<a name="line.16"></a>
 <span class="sourceLineNo">017</span>package org.apache.logging.log4j.core.impl;<a name="line.17"></a>
 <span class="sourceLineNo">018</span><a name="line.18"></a>
-<span class="sourceLineNo">019</span>import org.apache.logging.log4j.ThreadContextAccess;<a name="line.19"></a>
+<span class="sourceLineNo">019</span>import org.apache.logging.log4j.ThreadContext;<a name="line.19"></a>
 <span class="sourceLineNo">020</span>import org.apache.logging.log4j.core.ContextDataInjector;<a name="line.20"></a>
 <span class="sourceLineNo">021</span>import org.apache.logging.log4j.core.LogEvent;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import org.apache.logging.log4j.util.ReadOnlyStringMap;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import org.apache.logging.log4j.spi.CopyOnWrite;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import org.apache.logging.log4j.spi.ThreadContextMap;<a name="line.24"></a>
-<span class="sourceLineNo">025</span>import org.apache.logging.log4j.spi.ThreadContextMap2;<a name="line.25"></a>
-<span class="sourceLineNo">026</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import org.apache.logging.log4j.util.LoaderUtil;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.28"></a>
+<span class="sourceLineNo">022</span>import org.apache.logging.log4j.spi.CopyOnWrite;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import org.apache.logging.log4j.spi.DefaultThreadContextMap;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.apache.logging.log4j.spi.ReadOnlyThreadContextMap;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.apache.logging.log4j.util.LoaderUtil;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.logging.log4j.util.ReadOnlyStringMap;<a name="line.28"></a>
 <span class="sourceLineNo">029</span><a name="line.29"></a>
 <span class="sourceLineNo">030</span>/**<a name="line.30"></a>
 <span class="sourceLineNo">031</span> * Factory for ContextDataInjectors. Returns a new {@code ContextDataInjector} instance based on the value of system<a name="line.31"></a>
@@ -88,16 +88,18 @@
 <span class="sourceLineNo">080</span>    }<a name="line.80"></a>
 <span class="sourceLineNo">081</span><a name="line.81"></a>
 <span class="sourceLineNo">082</span>    private static ContextDataInjector createDefaultInjector() {<a name="line.82"></a>
-<span class="sourceLineNo">083</span>        final ThreadContextMap threadContextMap = ThreadContextAccess.getThreadContextMap();<a name="line.83"></a>
-<span class="sourceLineNo">084</span>        if (threadContextMap instanceof CopyOnWrite &amp;&amp; threadContextMap instanceof ThreadContextMap2) {<a name="line.84"></a>
-<span class="sourceLineNo">085</span>            return new ThreadContextDataInjector.ForCopyOnWriteThreadContextMap();<a name="line.85"></a>
-<span class="sourceLineNo">086</span>        }<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        if (threadContextMap instanceof ThreadContextMap2) {<a name="line.87"></a>
-<span class="sourceLineNo">088</span>            return new ThreadContextDataInjector.ForGarbageFreeThreadContextMap();<a name="line.88"></a>
-<span class="sourceLineNo">089</span>        }<a name="line.89"></a>
-<span class="sourceLineNo">090</span>        return new ThreadContextDataInjector.ForDefaultThreadContextMap();<a name="line.90"></a>
-<span class="sourceLineNo">091</span>    }<a name="line.91"></a>
-<span class="sourceLineNo">092</span>}<a name="line.92"></a>
+<span class="sourceLineNo">083</span>        final ReadOnlyThreadContextMap threadContextMap = ThreadContext.getThreadContextMap();<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>        // note: map may be null (if legacy custom ThreadContextMap was installed by user)<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        if (threadContextMap instanceof DefaultThreadContextMap || threadContextMap == null) {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>            return new ThreadContextDataInjector.ForDefaultThreadContextMap(); // for non StringMap-based context maps<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        }<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        if (threadContextMap instanceof CopyOnWrite) {<a name="line.89"></a>
+<span class="sourceLineNo">090</span>            return new ThreadContextDataInjector.ForCopyOnWriteThreadContextMap();<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        }<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        return new ThreadContextDataInjector.ForGarbageFreeThreadContextMap();<a name="line.92"></a>
+<span class="sourceLineNo">093</span>    }<a name="line.93"></a>
+<span class="sourceLineNo">094</span>}<a name="line.94"></a>
 
 
 

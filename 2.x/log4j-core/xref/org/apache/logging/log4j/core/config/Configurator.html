@@ -354,35 +354,38 @@
 <a class="jxr_linenumber" name="L346" href="#L346">346</a>     }
 <a class="jxr_linenumber" name="L347" href="#L347">347</a> 
 <a class="jxr_linenumber" name="L348" href="#L348">348</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L349" href="#L349">349</a> <em class="jxr_javadoccomment">     * Blocks until all Log4j tasks have completed execution after a shutdown request, or the timeout occurs, or the</em>
-<a class="jxr_linenumber" name="L350" href="#L350">350</a> <em class="jxr_javadoccomment">     * current thread is interrupted, whichever happens first.</em>
-<a class="jxr_linenumber" name="L351" href="#L351">351</a> <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
-<a class="jxr_linenumber" name="L352" href="#L352">352</a> <em class="jxr_javadoccomment">     * Log4j can start threads to perform certain actions like file rollovers, calling this method with a timeout will</em>
-<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">     * block until the rollover thread is done.</em>
-<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">     * &lt;/p&gt;</em>
-<a class="jxr_linenumber" name="L355" href="#L355">355</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="L356" href="#L356">356</a> <em class="jxr_javadoccomment">     * @param ctx</em>
-<a class="jxr_linenumber" name="L357" href="#L357">357</a> <em class="jxr_javadoccomment">     *            the logger context to shut down, may be null.</em>
-<a class="jxr_linenumber" name="L358" href="#L358">358</a> <em class="jxr_javadoccomment">     * @param timeout</em>
-<a class="jxr_linenumber" name="L359" href="#L359">359</a> <em class="jxr_javadoccomment">     *            the maximum time to wait</em>
-<a class="jxr_linenumber" name="L360" href="#L360">360</a> <em class="jxr_javadoccomment">     * @param timeUnit</em>
-<a class="jxr_linenumber" name="L361" href="#L361">361</a> <em class="jxr_javadoccomment">     *            the time unit of the timeout argument</em>
-<a class="jxr_linenumber" name="L362" href="#L362">362</a> <em class="jxr_javadoccomment">     * @return {@code true} if the logger context terminated and {@code false} if the timeout elapsed before</em>
-<a class="jxr_linenumber" name="L363" href="#L363">363</a> <em class="jxr_javadoccomment">     *         termination.</em>
-<a class="jxr_linenumber" name="L364" href="#L364">364</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> shutdown(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeout, <strong class="jxr_keyword">final</strong> TimeUnit timeUnit) {
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>         <strong class="jxr_keyword">if</strong> (ctx != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>             <strong class="jxr_keyword">return</strong> ctx.stop(timeout, timeUnit);
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>         }
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>     }
-<a class="jxr_linenumber" name="L371" href="#L371">371</a> 
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configurator.html">Configurator</a>() {
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>         <em class="jxr_comment">// empty</em>
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>     }
-<a class="jxr_linenumber" name="L375" href="#L375">375</a> }
+<a class="jxr_linenumber" name="L349" href="#L349">349</a> <em class="jxr_javadoccomment">     * Shuts down the given logger context.</em>
+<a class="jxr_linenumber" name="L350" href="#L350">350</a> <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L351" href="#L351">351</a> <em class="jxr_javadoccomment">     * Log4j can start threads to perform certain actions like file rollovers; calling this method with a positive</em>
+<a class="jxr_linenumber" name="L352" href="#L352">352</a> <em class="jxr_javadoccomment">     * timeout will block until the rollover thread is done.</em>
+<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">     * &lt;/p&gt;</em>
+<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L355" href="#L355">355</a> <em class="jxr_javadoccomment">     * @param ctx</em>
+<a class="jxr_linenumber" name="L356" href="#L356">356</a> <em class="jxr_javadoccomment">     *            the logger context to shut down, may be null.</em>
+<a class="jxr_linenumber" name="L357" href="#L357">357</a> <em class="jxr_javadoccomment">     * @param timeout</em>
+<a class="jxr_linenumber" name="L358" href="#L358">358</a> <em class="jxr_javadoccomment">     *            the maximum time to wait</em>
+<a class="jxr_linenumber" name="L359" href="#L359">359</a> <em class="jxr_javadoccomment">     * @param timeUnit</em>
+<a class="jxr_linenumber" name="L360" href="#L360">360</a> <em class="jxr_javadoccomment">     *            the time unit of the timeout argument</em>
+<a class="jxr_linenumber" name="L361" href="#L361">361</a> <em class="jxr_javadoccomment">     * @return {@code true} if the logger context terminated and {@code false} if the timeout elapsed before</em>
+<a class="jxr_linenumber" name="L362" href="#L362">362</a> <em class="jxr_javadoccomment">     *         termination.</em>
+<a class="jxr_linenumber" name="L363" href="#L363">363</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L364" href="#L364">364</a> <em class="jxr_javadoccomment">     * @see LoggerContext#stop(long, TimeUnit)</em>
+<a class="jxr_linenumber" name="L365" href="#L365">365</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L366" href="#L366">366</a> <em class="jxr_javadoccomment">     * @since 2.7</em>
+<a class="jxr_linenumber" name="L367" href="#L367">367</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> shutdown(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeout, <strong class="jxr_keyword">final</strong> TimeUnit timeUnit) {
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>         <strong class="jxr_keyword">if</strong> (ctx != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>             <strong class="jxr_keyword">return</strong> ctx.stop(timeout, timeUnit);
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>         }
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>     }
+<a class="jxr_linenumber" name="L374" href="#L374">374</a> 
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configurator.html">Configurator</a>() {
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>         <em class="jxr_comment">// empty</em>
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>     }
+<a class="jxr_linenumber" name="L378" href="#L378">378</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

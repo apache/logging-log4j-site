@@ -236,82 +236,95 @@
 <a class="jxr_linenumber" name="L228" href="#L228">228</a>     }
 <a class="jxr_linenumber" name="L229" href="#L229">229</a> 
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L231" href="#L231">231</a> <em class="jxr_javadoccomment">     * Load a Class in the {@code java.*} namespace by name. Useful for peculiar scenarios typically involving</em>
-<a class="jxr_linenumber" name="L232" href="#L232">232</a> <em class="jxr_javadoccomment">     * Google App Engine.</em>
-<a class="jxr_linenumber" name="L233" href="#L233">233</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L234" href="#L234">234</a> <em class="jxr_javadoccomment">     * @param className The class name.</em>
-<a class="jxr_linenumber" name="L235" href="#L235">235</a> <em class="jxr_javadoccomment">     * @return The Class.</em>
-<a class="jxr_linenumber" name="L236" href="#L236">236</a> <em class="jxr_javadoccomment">     * @throws ClassNotFoundException if the Class could not be found.</em>
+<a class="jxr_linenumber" name="L231" href="#L231">231</a> <em class="jxr_javadoccomment">     * Loads a named Class using a given ClassLoader.</em>
+<a class="jxr_linenumber" name="L232" href="#L232">232</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L233" href="#L233">233</a> <em class="jxr_javadoccomment">     * @param className The class name.</em>
+<a class="jxr_linenumber" name="L234" href="#L234">234</a> <em class="jxr_javadoccomment">     * @param loader The class loader.</em>
+<a class="jxr_linenumber" name="L235" href="#L235">235</a> <em class="jxr_javadoccomment">     * @return The class, or null if loader is null.</em>
+<a class="jxr_linenumber" name="L236" href="#L236">236</a> <em class="jxr_javadoccomment">     * @throws ClassNotFoundException if the class could not be found.</em>
 <a class="jxr_linenumber" name="L237" href="#L237">237</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Class&lt;?&gt; loadSystemClass(<strong class="jxr_keyword">final</strong> String className) <strong class="jxr_keyword">throws</strong> ClassNotFoundException {
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>             <strong class="jxr_keyword">return</strong> Class.forName(className, <strong class="jxr_keyword">true</strong>, ClassLoader.getSystemClassLoader());
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Throwable t) {
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>             LOGGER.trace(<span class="jxr_string">"Couldn't use SystemClassLoader. Trying Class.forName({})."</span>, className, t);
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>             <strong class="jxr_keyword">return</strong> Class.forName(className);
-<a class="jxr_linenumber" name="L244" href="#L244">244</a>         }
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>     }
-<a class="jxr_linenumber" name="L246" href="#L246">246</a> 
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_javadoccomment">     * Loads and instantiates a Class using the default constructor.</em>
-<a class="jxr_linenumber" name="L249" href="#L249">249</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L250" href="#L250">250</a> <em class="jxr_javadoccomment">     * @param className The class name.</em>
-<a class="jxr_linenumber" name="L251" href="#L251">251</a> <em class="jxr_javadoccomment">     * @return new instance of the class.</em>
-<a class="jxr_linenumber" name="L252" href="#L252">252</a> <em class="jxr_javadoccomment">     * @throws ClassNotFoundException if the class isn't available to the usual ClassLoaders</em>
-<a class="jxr_linenumber" name="L253" href="#L253">253</a> <em class="jxr_javadoccomment">     * @throws IllegalAccessException if the class can't be instantiated through a public constructor</em>
-<a class="jxr_linenumber" name="L254" href="#L254">254</a> <em class="jxr_javadoccomment">     * @throws InstantiationException if there was an exception whilst instantiating the class</em>
-<a class="jxr_linenumber" name="L255" href="#L255">255</a> <em class="jxr_javadoccomment">     * @throws NoSuchMethodException if there isn't a no-args constructor on the class</em>
-<a class="jxr_linenumber" name="L256" href="#L256">256</a> <em class="jxr_javadoccomment">     * @throws InvocationTargetException if there was an exception whilst constructing the class</em>
-<a class="jxr_linenumber" name="L257" href="#L257">257</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Object newInstanceOf(<strong class="jxr_keyword">final</strong> String className)
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>             <strong class="jxr_keyword">throws</strong> ClassNotFoundException,
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>                    IllegalAccessException,
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>                    InstantiationException,
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>                    NoSuchMethodException,
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>                    InvocationTargetException {
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>         <strong class="jxr_keyword">return</strong> LoaderUtil.newInstanceOf(className);
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>     }
-<a class="jxr_linenumber" name="L266" href="#L266">266</a> 
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L268" href="#L268">268</a> <em class="jxr_javadoccomment">     * Loads, instantiates, and casts a Class using the default constructor.</em>
-<a class="jxr_linenumber" name="L269" href="#L269">269</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L270" href="#L270">270</a> <em class="jxr_javadoccomment">     * @param className The class name.</em>
-<a class="jxr_linenumber" name="L271" href="#L271">271</a> <em class="jxr_javadoccomment">     * @param clazz The class to cast it to.</em>
-<a class="jxr_linenumber" name="L272" href="#L272">272</a> <em class="jxr_javadoccomment">     * @param &lt;T&gt; The type to cast it to.</em>
-<a class="jxr_linenumber" name="L273" href="#L273">273</a> <em class="jxr_javadoccomment">     * @return new instance of the class cast to {@code T}</em>
-<a class="jxr_linenumber" name="L274" href="#L274">274</a> <em class="jxr_javadoccomment">     * @throws ClassNotFoundException if the class isn't available to the usual ClassLoaders</em>
-<a class="jxr_linenumber" name="L275" href="#L275">275</a> <em class="jxr_javadoccomment">     * @throws IllegalAccessException if the class can't be instantiated through a public constructor</em>
-<a class="jxr_linenumber" name="L276" href="#L276">276</a> <em class="jxr_javadoccomment">     * @throws InstantiationException if there was an exception whilst instantiating the class</em>
-<a class="jxr_linenumber" name="L277" href="#L277">277</a> <em class="jxr_javadoccomment">     * @throws NoSuchMethodException if there isn't a no-args constructor on the class</em>
-<a class="jxr_linenumber" name="L278" href="#L278">278</a> <em class="jxr_javadoccomment">     * @throws InvocationTargetException if there was an exception whilst constructing the class</em>
-<a class="jxr_linenumber" name="L279" href="#L279">279</a> <em class="jxr_javadoccomment">     * @throws ClassCastException if the constructed object isn't type compatible with {@code T}</em>
-<a class="jxr_linenumber" name="L280" href="#L280">280</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;T&gt; T newCheckedInstanceOf(<strong class="jxr_keyword">final</strong> String className, <strong class="jxr_keyword">final</strong> Class&lt;T&gt; clazz)
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>             <strong class="jxr_keyword">throws</strong> ClassNotFoundException,
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>                    NoSuchMethodException,
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>                    IllegalAccessException,
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>                    InvocationTargetException,
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>                    InstantiationException {
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>         <strong class="jxr_keyword">return</strong> LoaderUtil.newCheckedInstanceOf(className, clazz);
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>     }
-<a class="jxr_linenumber" name="L289" href="#L289">289</a> 
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">     * Determines if a named Class can be loaded or not.</em>
-<a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L293" href="#L293">293</a> <em class="jxr_javadoccomment">     * @param className The class name.</em>
-<a class="jxr_linenumber" name="L294" href="#L294">294</a> <em class="jxr_javadoccomment">     * @return {@code true} if the class could be found or {@code false} otherwise.</em>
-<a class="jxr_linenumber" name="L295" href="#L295">295</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> isClassAvailable(<strong class="jxr_keyword">final</strong> String className) {
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>         <strong class="jxr_keyword">return</strong> LoaderUtil.isClassAvailable(className);
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>     }
-<a class="jxr_linenumber" name="L299" href="#L299">299</a> 
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> isJansiAvailable() {
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>         <strong class="jxr_keyword">return</strong> isClassAvailable(<span class="jxr_string">"org.fusesource.jansi.AnsiRenderer"</span>);
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>     }
-<a class="jxr_linenumber" name="L303" href="#L303">303</a> 
-<a class="jxr_linenumber" name="L304" href="#L304">304</a> }
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Class&lt;?&gt; loadClass(<strong class="jxr_keyword">final</strong> String className, <strong class="jxr_keyword">final</strong> ClassLoader loader)
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>             <strong class="jxr_keyword">throws</strong> ClassNotFoundException {
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>         <strong class="jxr_keyword">return</strong> loader != <strong class="jxr_keyword">null</strong> ? loader.loadClass(className) : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>     }    
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>     
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L244" href="#L244">244</a> <em class="jxr_javadoccomment">     * Load a Class in the {@code java.*} namespace by name. Useful for peculiar scenarios typically involving</em>
+<a class="jxr_linenumber" name="L245" href="#L245">245</a> <em class="jxr_javadoccomment">     * Google App Engine.</em>
+<a class="jxr_linenumber" name="L246" href="#L246">246</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L247" href="#L247">247</a> <em class="jxr_javadoccomment">     * @param className The class name.</em>
+<a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_javadoccomment">     * @return The Class.</em>
+<a class="jxr_linenumber" name="L249" href="#L249">249</a> <em class="jxr_javadoccomment">     * @throws ClassNotFoundException if the Class could not be found.</em>
+<a class="jxr_linenumber" name="L250" href="#L250">250</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Class&lt;?&gt; loadSystemClass(<strong class="jxr_keyword">final</strong> String className) <strong class="jxr_keyword">throws</strong> ClassNotFoundException {
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>             <strong class="jxr_keyword">return</strong> Class.forName(className, <strong class="jxr_keyword">true</strong>, ClassLoader.getSystemClassLoader());
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Throwable t) {
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>             LOGGER.trace(<span class="jxr_string">"Couldn't use SystemClassLoader. Trying Class.forName({})."</span>, className, t);
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>             <strong class="jxr_keyword">return</strong> Class.forName(className);
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>         }
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>     }
+<a class="jxr_linenumber" name="L259" href="#L259">259</a> 
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L261" href="#L261">261</a> <em class="jxr_javadoccomment">     * Loads and instantiates a Class using the default constructor.</em>
+<a class="jxr_linenumber" name="L262" href="#L262">262</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L263" href="#L263">263</a> <em class="jxr_javadoccomment">     * @param className The class name.</em>
+<a class="jxr_linenumber" name="L264" href="#L264">264</a> <em class="jxr_javadoccomment">     * @return new instance of the class.</em>
+<a class="jxr_linenumber" name="L265" href="#L265">265</a> <em class="jxr_javadoccomment">     * @throws ClassNotFoundException if the class isn't available to the usual ClassLoaders</em>
+<a class="jxr_linenumber" name="L266" href="#L266">266</a> <em class="jxr_javadoccomment">     * @throws IllegalAccessException if the class can't be instantiated through a public constructor</em>
+<a class="jxr_linenumber" name="L267" href="#L267">267</a> <em class="jxr_javadoccomment">     * @throws InstantiationException if there was an exception whilst instantiating the class</em>
+<a class="jxr_linenumber" name="L268" href="#L268">268</a> <em class="jxr_javadoccomment">     * @throws NoSuchMethodException if there isn't a no-args constructor on the class</em>
+<a class="jxr_linenumber" name="L269" href="#L269">269</a> <em class="jxr_javadoccomment">     * @throws InvocationTargetException if there was an exception whilst constructing the class</em>
+<a class="jxr_linenumber" name="L270" href="#L270">270</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Object newInstanceOf(<strong class="jxr_keyword">final</strong> String className)
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>             <strong class="jxr_keyword">throws</strong> ClassNotFoundException,
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>                    IllegalAccessException,
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>                    InstantiationException,
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>                    NoSuchMethodException,
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>                    InvocationTargetException {
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>         <strong class="jxr_keyword">return</strong> LoaderUtil.newInstanceOf(className);
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>     }
+<a class="jxr_linenumber" name="L279" href="#L279">279</a> 
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L281" href="#L281">281</a> <em class="jxr_javadoccomment">     * Loads, instantiates, and casts a Class using the default constructor.</em>
+<a class="jxr_linenumber" name="L282" href="#L282">282</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L283" href="#L283">283</a> <em class="jxr_javadoccomment">     * @param className The class name.</em>
+<a class="jxr_linenumber" name="L284" href="#L284">284</a> <em class="jxr_javadoccomment">     * @param clazz The class to cast it to.</em>
+<a class="jxr_linenumber" name="L285" href="#L285">285</a> <em class="jxr_javadoccomment">     * @param &lt;T&gt; The type to cast it to.</em>
+<a class="jxr_linenumber" name="L286" href="#L286">286</a> <em class="jxr_javadoccomment">     * @return new instance of the class cast to {@code T}</em>
+<a class="jxr_linenumber" name="L287" href="#L287">287</a> <em class="jxr_javadoccomment">     * @throws ClassNotFoundException if the class isn't available to the usual ClassLoaders</em>
+<a class="jxr_linenumber" name="L288" href="#L288">288</a> <em class="jxr_javadoccomment">     * @throws IllegalAccessException if the class can't be instantiated through a public constructor</em>
+<a class="jxr_linenumber" name="L289" href="#L289">289</a> <em class="jxr_javadoccomment">     * @throws InstantiationException if there was an exception whilst instantiating the class</em>
+<a class="jxr_linenumber" name="L290" href="#L290">290</a> <em class="jxr_javadoccomment">     * @throws NoSuchMethodException if there isn't a no-args constructor on the class</em>
+<a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">     * @throws InvocationTargetException if there was an exception whilst constructing the class</em>
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">     * @throws ClassCastException if the constructed object isn't type compatible with {@code T}</em>
+<a class="jxr_linenumber" name="L293" href="#L293">293</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;T&gt; T newCheckedInstanceOf(<strong class="jxr_keyword">final</strong> String className, <strong class="jxr_keyword">final</strong> Class&lt;T&gt; clazz)
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>             <strong class="jxr_keyword">throws</strong> ClassNotFoundException,
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>                    NoSuchMethodException,
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>                    IllegalAccessException,
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>                    InvocationTargetException,
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>                    InstantiationException {
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>         <strong class="jxr_keyword">return</strong> LoaderUtil.newCheckedInstanceOf(className, clazz);
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>     }
+<a class="jxr_linenumber" name="L302" href="#L302">302</a> 
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">     * Determines if a named Class can be loaded or not.</em>
+<a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">     * @param className The class name.</em>
+<a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">     * @return {@code true} if the class could be found or {@code false} otherwise.</em>
+<a class="jxr_linenumber" name="L308" href="#L308">308</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> isClassAvailable(<strong class="jxr_keyword">final</strong> String className) {
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>         <strong class="jxr_keyword">return</strong> LoaderUtil.isClassAvailable(className);
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>     }
+<a class="jxr_linenumber" name="L312" href="#L312">312</a> 
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> isJansiAvailable() {
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>         <strong class="jxr_keyword">return</strong> isClassAvailable(<span class="jxr_string">"org.fusesource.jansi.AnsiRenderer"</span>);
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>     }
+<a class="jxr_linenumber" name="L316" href="#L316">316</a> 
+<a class="jxr_linenumber" name="L317" href="#L317">317</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

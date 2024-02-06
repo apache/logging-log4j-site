@@ -41,9 +41,9 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> * A Comma-Separated Value (CSV) layout to log events.</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment"> * Depends on Apache Commons CSV 1.2.</em>
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * @since 2.4</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  @Plugin(name = <span class="jxr_string">"CsvLogEventLayout"</span>, category = Node.CATEGORY, elementType = Layout.ELEMENT_TYPE, printObject = <strong class="jxr_keyword">true</strong>)
@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>              @PluginAttribute(<span class="jxr_string">"nullString"</span>) <strong class="jxr_keyword">final</strong> String nullString,
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>              @PluginAttribute(<span class="jxr_string">"recordSeparator"</span>) <strong class="jxr_keyword">final</strong> String recordSeparator,
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>              @PluginAttribute(value = <span class="jxr_string">"charset"</span>, defaultString = DEFAULT_CHARSET) <strong class="jxr_keyword">final</strong> Charset charset,
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>              @PluginAttribute(<span class="jxr_string">"header"</span>) <strong class="jxr_keyword">final</strong> String header, 
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>              @PluginAttribute(<span class="jxr_string">"header"</span>) <strong class="jxr_keyword">final</strong> String header,
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>              @PluginAttribute(<span class="jxr_string">"footer"</span>) <strong class="jxr_keyword">final</strong> String footer)
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>              <em class="jxr_comment">// @formatter:on</em>
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      {
@@ -77,7 +77,7 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">final</strong> CSVFormat csvFormat = createFormat(format, delimiter, escape, quote, quoteMode, nullString, recordSeparator);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/CsvLogEventLayout.html">CsvLogEventLayout</a>(config, charset, csvFormat, header, footer);
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      }
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>     
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/CsvLogEventLayout.html">CsvLogEventLayout</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, <strong class="jxr_keyword">final</strong> Charset charset, <strong class="jxr_keyword">final</strong> CSVFormat csvFormat, <strong class="jxr_keyword">final</strong> String header, <strong class="jxr_keyword">final</strong> String footer) {
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">super</strong>(config, charset, csvFormat, header, footer);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>              format.print(event.getMarker(), buffer, false);
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>              format.print(event.getThrownProxy(), buffer, false);
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>              format.print(event.getSource(), buffer, false);
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>              format.print(event.getContextMap(), buffer, false);
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>              format.print(event.getContextData(), buffer, false);
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>              format.print(event.getContextStack(), buffer, false);
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>              format.println(buffer);
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">return</strong> buffer.toString();
@@ -112,6 +112,6 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

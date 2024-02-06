@@ -721,8 +721,8 @@
 <span class="sourceLineNo">713</span>            final String footerPattern, final Charset charset, final boolean includeStacktrace) {<a name="line.713"></a>
 <span class="sourceLineNo">714</span>        super(config, new JacksonFactory.YAML(includeStacktrace).newWriter(locationInfo, properties, compact), charset, compact,<a name="line.714"></a>
 <span class="sourceLineNo">715</span>                complete, eventEol,<a name="line.715"></a>
-<span class="sourceLineNo">716</span>                PatternLayout.createSerializer(config, null, headerPattern, DEFAULT_HEADER, null, false, false),<a name="line.716"></a>
-<span class="sourceLineNo">717</span>                PatternLayout.createSerializer(config, null, footerPattern, DEFAULT_FOOTER, null, false, false));<a name="line.717"></a>
+<span class="sourceLineNo">716</span>                PatternLayout.newSerializerBuilder().setConfiguration(config).setPattern(headerPattern).setDefaultPattern(DEFAULT_HEADER).build(),<a name="line.716"></a>
+<span class="sourceLineNo">717</span>                PatternLayout.newSerializerBuilder().setConfiguration(config).setPattern(footerPattern).setDefaultPattern(DEFAULT_FOOTER).build());<a name="line.717"></a>
 <span class="sourceLineNo">718</span>    }<a name="line.718"></a>
 <span class="sourceLineNo">719</span><a name="line.719"></a>
 <span class="sourceLineNo">720</span>    /**<a name="line.720"></a>
@@ -802,8 +802,8 @@
 <span class="sourceLineNo">794</span>    public static AbstractJacksonLayout createLayout(<a name="line.794"></a>
 <span class="sourceLineNo">795</span>            // @formatter:off<a name="line.795"></a>
 <span class="sourceLineNo">796</span>            @PluginConfiguration final Configuration config,<a name="line.796"></a>
-<span class="sourceLineNo">797</span>            @PluginAttribute(value = "locationInfo", defaultBoolean = false) final boolean locationInfo,<a name="line.797"></a>
-<span class="sourceLineNo">798</span>            @PluginAttribute(value = "properties", defaultBoolean = false) final boolean properties,<a name="line.798"></a>
+<span class="sourceLineNo">797</span>            @PluginAttribute(value = "locationInfo") final boolean locationInfo,<a name="line.797"></a>
+<span class="sourceLineNo">798</span>            @PluginAttribute(value = "properties") final boolean properties,<a name="line.798"></a>
 <span class="sourceLineNo">799</span>            @PluginAttribute(value = "header", defaultString = DEFAULT_HEADER) final String headerPattern,<a name="line.799"></a>
 <span class="sourceLineNo">800</span>            @PluginAttribute(value = "footer", defaultString = DEFAULT_FOOTER) final String footerPattern,<a name="line.800"></a>
 <span class="sourceLineNo">801</span>            @PluginAttribute(value = "charset", defaultString = "UTF-8") final Charset charset,<a name="line.801"></a>
