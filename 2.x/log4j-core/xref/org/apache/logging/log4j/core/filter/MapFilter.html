@@ -242,47 +242,48 @@
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>         <strong class="jxr_keyword">return</strong> map;
 <a class="jxr_linenumber" name="L235" href="#L235">235</a>     }
 <a class="jxr_linenumber" name="L236" href="#L236">236</a> 
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>     @PluginFactory
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/MapFilter.html">MapFilter</a> createFilter(
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>             @PluginElement(<span class="jxr_string">"Pairs"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">KeyValuePair</a>[] pairs,
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>             @PluginAttribute(<span class="jxr_string">"operator"</span>) <strong class="jxr_keyword">final</strong> String oper,
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>             @PluginAttribute(<span class="jxr_string">"onMatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> match,
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>             @PluginAttribute(<span class="jxr_string">"onMismatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> mismatch) {
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>         <strong class="jxr_keyword">if</strong> (pairs == <strong class="jxr_keyword">null</strong> || pairs.length == 0) {
-<a class="jxr_linenumber" name="L244" href="#L244">244</a>             LOGGER.error(<span class="jxr_string">"keys and values must be specified for the MapFilter"</span>);
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>         }
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;String&gt;&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> KeyValuePair pair : pairs) {
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>             <strong class="jxr_keyword">final</strong> String key = pair.getKey();
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>             <strong class="jxr_keyword">if</strong> (key == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>                 LOGGER.error(<span class="jxr_string">"A null key is not valid in MapFilter"</span>);
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>             }
-<a class="jxr_linenumber" name="L254" href="#L254">254</a>             <strong class="jxr_keyword">final</strong> String value = pair.getValue();
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>             <strong class="jxr_keyword">if</strong> (value == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>                 LOGGER.error(<span class="jxr_string">"A null value for key "</span> + key + <span class="jxr_string">" is not allowed in MapFilter"</span>);
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>             }
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>             List&lt;String&gt; list = map.get(pair.getKey());
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>             <strong class="jxr_keyword">if</strong> (list != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>                 list.add(value);
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>                 list = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>                 list.add(value);
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>                 map.put(pair.getKey(), list);
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>             }
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>         }
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>         <strong class="jxr_keyword">if</strong> (map.isEmpty()) {
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>             LOGGER.error(<span class="jxr_string">"MapFilter is not configured with any valid key value pairs"</span>);
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>         }
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAnd = oper == <strong class="jxr_keyword">null</strong> || !oper.equalsIgnoreCase(<span class="jxr_string">"or"</span>);
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/MapFilter.html">MapFilter</a>(map, isAnd, match, mismatch);
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>     }
-<a class="jxr_linenumber" name="L275" href="#L275">275</a> }
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>     <em class="jxr_comment">// TODO Consider refactoring to use AbstractFilter.AbstractFilterBuilder</em>
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>     @PluginFactory
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/MapFilter.html">MapFilter</a> createFilter(
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>             @PluginElement(<span class="jxr_string">"Pairs"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">KeyValuePair</a>[] pairs,
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>             @PluginAttribute(<span class="jxr_string">"operator"</span>) <strong class="jxr_keyword">final</strong> String oper,
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>             @PluginAttribute(<span class="jxr_string">"onMatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> match,
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>             @PluginAttribute(<span class="jxr_string">"onMismatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> mismatch) {
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>         <strong class="jxr_keyword">if</strong> (pairs == <strong class="jxr_keyword">null</strong> || pairs.length == 0) {
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>             LOGGER.error(<span class="jxr_string">"keys and values must be specified for the MapFilter"</span>);
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>         }
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;String&gt;&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> KeyValuePair pair : pairs) {
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>             <strong class="jxr_keyword">final</strong> String key = pair.getKey();
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>             <strong class="jxr_keyword">if</strong> (key == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>                 LOGGER.error(<span class="jxr_string">"A null key is not valid in MapFilter"</span>);
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>             }
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>             <strong class="jxr_keyword">final</strong> String value = pair.getValue();
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>             <strong class="jxr_keyword">if</strong> (value == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>                 LOGGER.error(<span class="jxr_string">"A null value for key "</span> + key + <span class="jxr_string">" is not allowed in MapFilter"</span>);
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>             }
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>             List&lt;String&gt; list = map.get(pair.getKey());
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>             <strong class="jxr_keyword">if</strong> (list != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>                 list.add(value);
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>                 list = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>                 list.add(value);
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>                 map.put(pair.getKey(), list);
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>             }
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>         }
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>         <strong class="jxr_keyword">if</strong> (map.isEmpty()) {
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>             LOGGER.error(<span class="jxr_string">"MapFilter is not configured with any valid key value pairs"</span>);
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>         }
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAnd = oper == <strong class="jxr_keyword">null</strong> || !oper.equalsIgnoreCase(<span class="jxr_string">"or"</span>);
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/MapFilter.html">MapFilter</a>(map, isAnd, match, mismatch);
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>     }
+<a class="jxr_linenumber" name="L276" href="#L276">276</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

@@ -46,7 +46,7 @@
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.status.StatusLogger;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> * Returns the onMatch result if the script returns True and returns the onMisMatch value otherwise.</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> * Returns the onMatch result if the script returns True and returns the onMismatch value otherwise.</em>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  @Plugin(name = <span class="jxr_string">"ScriptFilter"</span>, category = Node.CATEGORY, elementType = Filter.ELEMENT_TYPE, printObject = <strong class="jxr_keyword">true</strong>)
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/ScriptFilter.html">ScriptFilter</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/AbstractFilter.html">AbstractFilter</a> {
@@ -138,30 +138,31 @@
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> <em class="jxr_javadoccomment">     * @param configuration the configuration </em>
 <a class="jxr_linenumber" name="L131" href="#L131">131</a> <em class="jxr_javadoccomment">     * @return A ScriptFilter.</em>
 <a class="jxr_linenumber" name="L132" href="#L132">132</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>     @PluginFactory
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/ScriptFilter.html">ScriptFilter</a> createFilter(
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>             @PluginElement(<span class="jxr_string">"Script"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/script/AbstractScript.html">AbstractScript</a> script,
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>             @PluginAttribute(<span class="jxr_string">"onMatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> match,
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>             @PluginAttribute(<span class="jxr_string">"onMismatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> mismatch,
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration) {
-<a class="jxr_linenumber" name="L139" href="#L139">139</a> 
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">if</strong> (script == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>             LOGGER.error(<span class="jxr_string">"A Script, ScriptFile or ScriptRef element must be provided for this ScriptFilter"</span>);
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>         }
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>         <strong class="jxr_keyword">if</strong> (script instanceof ScriptRef) {
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>             <strong class="jxr_keyword">if</strong> (configuration.getScriptManager().getScript(script.getName()) == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>                 logger.error(<span class="jxr_string">"No script with name {} has been declared."</span>, script.getName());
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>             }
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         }
-<a class="jxr_linenumber" name="L150" href="#L150">150</a> 
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/ScriptFilter.html">ScriptFilter</a>(script, configuration, match, mismatch);
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>     }
-<a class="jxr_linenumber" name="L153" href="#L153">153</a> 
-<a class="jxr_linenumber" name="L154" href="#L154">154</a> }
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>     <em class="jxr_comment">// TODO Consider refactoring to use AbstractFilter.AbstractFilterBuilder</em>
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>     @PluginFactory
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/ScriptFilter.html">ScriptFilter</a> createFilter(
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>             @PluginElement(<span class="jxr_string">"Script"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/script/AbstractScript.html">AbstractScript</a> script,
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>             @PluginAttribute(<span class="jxr_string">"onMatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> match,
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>             @PluginAttribute(<span class="jxr_string">"onMismatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> mismatch,
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration) {
+<a class="jxr_linenumber" name="L140" href="#L140">140</a> 
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">if</strong> (script == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>             LOGGER.error(<span class="jxr_string">"A Script, ScriptFile or ScriptRef element must be provided for this ScriptFilter"</span>);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>         }
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>         <strong class="jxr_keyword">if</strong> (script instanceof ScriptRef) {
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>             <strong class="jxr_keyword">if</strong> (configuration.getScriptManager().getScript(script.getName()) == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>                 logger.error(<span class="jxr_string">"No script with name {} has been declared."</span>, script.getName());
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>             }
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         }
+<a class="jxr_linenumber" name="L151" href="#L151">151</a> 
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/ScriptFilter.html">ScriptFilter</a>(script, configuration, match, mismatch);
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>     }
+<a class="jxr_linenumber" name="L154" href="#L154">154</a> 
+<a class="jxr_linenumber" name="L155" href="#L155">155</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

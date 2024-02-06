@@ -397,109 +397,111 @@
 <a class="jxr_linenumber" name="L389" href="#L389">389</a>             <strong class="jxr_keyword">if</strong> (config != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L390" href="#L390">390</a>                 <strong class="jxr_keyword">return</strong> config;
 <a class="jxr_linenumber" name="L391" href="#L391">391</a>             }
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>             LOGGER.error(<span class="jxr_string">"No log4j2 configuration file found. "</span> +
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>                     <span class="jxr_string">"Using default configuration: logging only errors to the console. "</span> +
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>                     <span class="jxr_string">"Set system property 'log4j2.debug' "</span> +
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>                     <span class="jxr_string">"to show Log4j2 internal initialization logging."</span>);
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/DefaultConfiguration.html">DefaultConfiguration</a>();
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>         }
-<a class="jxr_linenumber" name="L398" href="#L398">398</a> 
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> getConfiguration(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> loggerContext, <strong class="jxr_keyword">final</strong> String configLocationStr) {
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>             <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a> source = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>                 source = ConfigurationSource.fromUri(NetUtils.toURI(configLocationStr));
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>                 <em class="jxr_comment">// Ignore the error and try as a String.</em>
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>                 LOGGER.catching(Level.DEBUG, ex);
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>             }
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>             <strong class="jxr_keyword">if</strong> (source == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>                 <strong class="jxr_keyword">final</strong> ClassLoader loader = LoaderUtil.getThreadContextClassLoader();
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>                 source = getInputFromString(configLocationStr, loader);
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>             }
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>             <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> ConfigurationFactory factory : getFactories()) {
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>                     <strong class="jxr_keyword">final</strong> String[] types = factory.getSupportedTypes();
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>                     <strong class="jxr_keyword">if</strong> (types != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>                         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String type : types) {
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>                             <strong class="jxr_keyword">if</strong> (type.equals(ALL_TYPES) || configLocationStr.endsWith(type)) {
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>                                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = factory.getConfiguration(loggerContext, source);
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>                                 <strong class="jxr_keyword">if</strong> (config != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>                                     <strong class="jxr_keyword">return</strong> config;
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>                                 }
-<a class="jxr_linenumber" name="L421" href="#L421">421</a>                             }
-<a class="jxr_linenumber" name="L422" href="#L422">422</a>                         }
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>                     }
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>                 }
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>             }
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>         }
-<a class="jxr_linenumber" name="L428" href="#L428">428</a> 
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> getConfiguration(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> loggerContext, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isTest, <strong class="jxr_keyword">final</strong> String name) {
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> named = Strings.isNotEmpty(name);
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>             <strong class="jxr_keyword">final</strong> ClassLoader loader = LoaderUtil.getThreadContextClassLoader();
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> ConfigurationFactory factory : getFactories()) {
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>                 String configName;
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>                 <strong class="jxr_keyword">final</strong> String prefix = isTest ? TEST_PREFIX : DEFAULT_PREFIX;
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>                 <strong class="jxr_keyword">final</strong> String [] types = factory.getSupportedTypes();
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>                 <strong class="jxr_keyword">if</strong> (types == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>                     <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>                 }
-<a class="jxr_linenumber" name="L439" href="#L439">439</a> 
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String suffix : types) {
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>                     <strong class="jxr_keyword">if</strong> (suffix.equals(ALL_TYPES)) {
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>                         <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>                     }
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>                     configName = named ? prefix + name + suffix : prefix + suffix;
-<a class="jxr_linenumber" name="L445" href="#L445">445</a> 
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a> source = ConfigurationSource.fromResource(configName, loader);
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>                     <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>                         <strong class="jxr_keyword">if</strong> (!factory.isActive()) {
-<a class="jxr_linenumber" name="L449" href="#L449">449</a>                             LOGGER.warn(<span class="jxr_string">"Found configuration file {} for inactive ConfigurationFactory {}"</span>, configName, factory.getClass().getName());
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>                         }
-<a class="jxr_linenumber" name="L451" href="#L451">451</a>                         <strong class="jxr_keyword">return</strong> factory.getConfiguration(loggerContext, source);
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>                     }
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>                 }
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>             }
-<a class="jxr_linenumber" name="L455" href="#L455">455</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L456" href="#L456">456</a>         }
-<a class="jxr_linenumber" name="L457" href="#L457">457</a> 
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>         @Override
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>         <strong class="jxr_keyword">public</strong> String[] getSupportedTypes() {
-<a class="jxr_linenumber" name="L460" href="#L460">460</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L461" href="#L461">461</a>         }
-<a class="jxr_linenumber" name="L462" href="#L462">462</a> 
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>         @Override
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> getConfiguration(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> loggerContext, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a> source) {
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>             <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L466" href="#L466">466</a>                 <strong class="jxr_keyword">final</strong> String config = source.getLocation();
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> ConfigurationFactory factory : getFactories()) {
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>                     <strong class="jxr_keyword">final</strong> String[] types = factory.getSupportedTypes();
-<a class="jxr_linenumber" name="L469" href="#L469">469</a>                     <strong class="jxr_keyword">if</strong> (types != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>                         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String type : types) {
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>                             <strong class="jxr_keyword">if</strong> (type.equals(ALL_TYPES) || config != <strong class="jxr_keyword">null</strong> &amp;&amp; config.endsWith(type)) {
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>                                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> c = factory.getConfiguration(loggerContext, source);
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>                                 <strong class="jxr_keyword">if</strong> (c != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>                                     LOGGER.debug(<span class="jxr_string">"Loaded configuration from {}"</span>, source);
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>                                     <strong class="jxr_keyword">return</strong> c;
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>                                 }
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>                                 LOGGER.error(<span class="jxr_string">"Cannot determine the ConfigurationFactory to use for {}"</span>, config);
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>                                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>                             }
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>                         }
-<a class="jxr_linenumber" name="L481" href="#L481">481</a>                     }
-<a class="jxr_linenumber" name="L482" href="#L482">482</a>                 }
-<a class="jxr_linenumber" name="L483" href="#L483">483</a>             }
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>             LOGGER.error(<span class="jxr_string">"Cannot process configuration, input source is null"</span>);
-<a class="jxr_linenumber" name="L485" href="#L485">485</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>         }
-<a class="jxr_linenumber" name="L487" href="#L487">487</a>     }
-<a class="jxr_linenumber" name="L488" href="#L488">488</a> 
-<a class="jxr_linenumber" name="L489" href="#L489">489</a>     <strong class="jxr_keyword">static</strong> List&lt;ConfigurationFactory&gt; getFactories() {
-<a class="jxr_linenumber" name="L490" href="#L490">490</a>         <strong class="jxr_keyword">return</strong> factories;
-<a class="jxr_linenumber" name="L491" href="#L491">491</a>     }
-<a class="jxr_linenumber" name="L492" href="#L492">492</a> }
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>             LOGGER.error(<span class="jxr_string">"No Log4j 2 configuration file found. "</span> +
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>                     <span class="jxr_string">"Using default configuration (logging only errors to the console), "</span> +
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>                     <span class="jxr_string">"or user programmatically provided configurations. "</span> +
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>                     <span class="jxr_string">"Set system property 'log4j2.debug' "</span> +
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>                     <span class="jxr_string">"to show Log4j 2 internal initialization logging. "</span> +
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>                     <span class="jxr_string">"See https://logging.apache.org/log4j/2.x/manual/configuration.html for instructions on how to configure Log4j 2"</span>);
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/DefaultConfiguration.html">DefaultConfiguration</a>();
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>         }
+<a class="jxr_linenumber" name="L400" href="#L400">400</a> 
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> getConfiguration(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> loggerContext, <strong class="jxr_keyword">final</strong> String configLocationStr) {
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>             <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a> source = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>                 source = ConfigurationSource.fromUri(NetUtils.toURI(configLocationStr));
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>                 <em class="jxr_comment">// Ignore the error and try as a String.</em>
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>                 LOGGER.catching(Level.DEBUG, ex);
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>             }
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>             <strong class="jxr_keyword">if</strong> (source == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>                 <strong class="jxr_keyword">final</strong> ClassLoader loader = LoaderUtil.getThreadContextClassLoader();
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>                 source = getInputFromString(configLocationStr, loader);
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>             }
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>             <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> ConfigurationFactory factory : getFactories()) {
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>                     <strong class="jxr_keyword">final</strong> String[] types = factory.getSupportedTypes();
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>                     <strong class="jxr_keyword">if</strong> (types != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>                         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String type : types) {
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>                             <strong class="jxr_keyword">if</strong> (type.equals(ALL_TYPES) || configLocationStr.endsWith(type)) {
+<a class="jxr_linenumber" name="L419" href="#L419">419</a>                                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = factory.getConfiguration(loggerContext, source);
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>                                 <strong class="jxr_keyword">if</strong> (config != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>                                     <strong class="jxr_keyword">return</strong> config;
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>                                 }
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>                             }
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>                         }
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>                     }
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>                 }
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>             }
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>         }
+<a class="jxr_linenumber" name="L430" href="#L430">430</a> 
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> getConfiguration(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> loggerContext, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isTest, <strong class="jxr_keyword">final</strong> String name) {
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> named = Strings.isNotEmpty(name);
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>             <strong class="jxr_keyword">final</strong> ClassLoader loader = LoaderUtil.getThreadContextClassLoader();
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> ConfigurationFactory factory : getFactories()) {
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>                 String configName;
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>                 <strong class="jxr_keyword">final</strong> String prefix = isTest ? TEST_PREFIX : DEFAULT_PREFIX;
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>                 <strong class="jxr_keyword">final</strong> String [] types = factory.getSupportedTypes();
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>                 <strong class="jxr_keyword">if</strong> (types == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>                     <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L440" href="#L440">440</a>                 }
+<a class="jxr_linenumber" name="L441" href="#L441">441</a> 
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String suffix : types) {
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>                     <strong class="jxr_keyword">if</strong> (suffix.equals(ALL_TYPES)) {
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>                         <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>                     }
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>                     configName = named ? prefix + name + suffix : prefix + suffix;
+<a class="jxr_linenumber" name="L447" href="#L447">447</a> 
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a> source = ConfigurationSource.fromResource(configName, loader);
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>                     <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>                         <strong class="jxr_keyword">if</strong> (!factory.isActive()) {
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>                             LOGGER.warn(<span class="jxr_string">"Found configuration file {} for inactive ConfigurationFactory {}"</span>, configName, factory.getClass().getName());
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>                         }
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>                         <strong class="jxr_keyword">return</strong> factory.getConfiguration(loggerContext, source);
+<a class="jxr_linenumber" name="L454" href="#L454">454</a>                     }
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>                 }
+<a class="jxr_linenumber" name="L456" href="#L456">456</a>             }
+<a class="jxr_linenumber" name="L457" href="#L457">457</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>         }
+<a class="jxr_linenumber" name="L459" href="#L459">459</a> 
+<a class="jxr_linenumber" name="L460" href="#L460">460</a>         @Override
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>         <strong class="jxr_keyword">public</strong> String[] getSupportedTypes() {
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>         }
+<a class="jxr_linenumber" name="L464" href="#L464">464</a> 
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>         @Override
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> getConfiguration(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> loggerContext, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a> source) {
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>             <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>                 <strong class="jxr_keyword">final</strong> String config = source.getLocation();
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> ConfigurationFactory factory : getFactories()) {
+<a class="jxr_linenumber" name="L470" href="#L470">470</a>                     <strong class="jxr_keyword">final</strong> String[] types = factory.getSupportedTypes();
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>                     <strong class="jxr_keyword">if</strong> (types != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>                         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String type : types) {
+<a class="jxr_linenumber" name="L473" href="#L473">473</a>                             <strong class="jxr_keyword">if</strong> (type.equals(ALL_TYPES) || config != <strong class="jxr_keyword">null</strong> &amp;&amp; config.endsWith(type)) {
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>                                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> c = factory.getConfiguration(loggerContext, source);
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>                                 <strong class="jxr_keyword">if</strong> (c != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>                                     LOGGER.debug(<span class="jxr_string">"Loaded configuration from {}"</span>, source);
+<a class="jxr_linenumber" name="L477" href="#L477">477</a>                                     <strong class="jxr_keyword">return</strong> c;
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>                                 }
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>                                 LOGGER.error(<span class="jxr_string">"Cannot determine the ConfigurationFactory to use for {}"</span>, config);
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>                                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L481" href="#L481">481</a>                             }
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>                         }
+<a class="jxr_linenumber" name="L483" href="#L483">483</a>                     }
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>                 }
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>             }
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>             LOGGER.error(<span class="jxr_string">"Cannot process configuration, input source is null"</span>);
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>         }
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>     }
+<a class="jxr_linenumber" name="L490" href="#L490">490</a> 
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>     <strong class="jxr_keyword">static</strong> List&lt;ConfigurationFactory&gt; getFactories() {
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>         <strong class="jxr_keyword">return</strong> factories;
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>     }
+<a class="jxr_linenumber" name="L494" href="#L494">494</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

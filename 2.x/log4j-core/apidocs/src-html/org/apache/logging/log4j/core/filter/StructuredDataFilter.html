@@ -155,52 +155,53 @@
 <span class="sourceLineNo">147</span>    }<a name="line.147"></a>
 <span class="sourceLineNo">148</span><a name="line.148"></a>
 <span class="sourceLineNo">149</span>    /**<a name="line.149"></a>
-<span class="sourceLineNo">150</span>     * Create the StructuredDataFilter.<a name="line.150"></a>
+<span class="sourceLineNo">150</span>     * Creates the StructuredDataFilter.<a name="line.150"></a>
 <span class="sourceLineNo">151</span>     * @param pairs Key and value pairs.<a name="line.151"></a>
 <span class="sourceLineNo">152</span>     * @param oper The operator to perform. If not "or" the operation will be an "and".<a name="line.152"></a>
 <span class="sourceLineNo">153</span>     * @param match The action to perform on a match.<a name="line.153"></a>
 <span class="sourceLineNo">154</span>     * @param mismatch The action to perform on a mismatch.<a name="line.154"></a>
 <span class="sourceLineNo">155</span>     * @return The StructuredDataFilter.<a name="line.155"></a>
 <span class="sourceLineNo">156</span>     */<a name="line.156"></a>
-<span class="sourceLineNo">157</span>    @PluginFactory<a name="line.157"></a>
-<span class="sourceLineNo">158</span>    public static StructuredDataFilter createFilter(<a name="line.158"></a>
-<span class="sourceLineNo">159</span>            @PluginElement("Pairs") final KeyValuePair[] pairs,<a name="line.159"></a>
-<span class="sourceLineNo">160</span>            @PluginAttribute("operator") final String oper,<a name="line.160"></a>
-<span class="sourceLineNo">161</span>            @PluginAttribute("onMatch") final Result match,<a name="line.161"></a>
-<span class="sourceLineNo">162</span>            @PluginAttribute("onMismatch") final Result mismatch) {<a name="line.162"></a>
-<span class="sourceLineNo">163</span>        if (pairs == null || pairs.length == 0) {<a name="line.163"></a>
-<span class="sourceLineNo">164</span>            LOGGER.error("keys and values must be specified for the StructuredDataFilter");<a name="line.164"></a>
-<span class="sourceLineNo">165</span>            return null;<a name="line.165"></a>
-<span class="sourceLineNo">166</span>        }<a name="line.166"></a>
-<span class="sourceLineNo">167</span>        final Map&lt;String, List&lt;String&gt;&gt; map = new HashMap&lt;&gt;();<a name="line.167"></a>
-<span class="sourceLineNo">168</span>        for (final KeyValuePair pair : pairs) {<a name="line.168"></a>
-<span class="sourceLineNo">169</span>            final String key = pair.getKey();<a name="line.169"></a>
-<span class="sourceLineNo">170</span>            if (key == null) {<a name="line.170"></a>
-<span class="sourceLineNo">171</span>                LOGGER.error("A null key is not valid in MapFilter");<a name="line.171"></a>
-<span class="sourceLineNo">172</span>                continue;<a name="line.172"></a>
-<span class="sourceLineNo">173</span>            }<a name="line.173"></a>
-<span class="sourceLineNo">174</span>            final String value = pair.getValue();<a name="line.174"></a>
-<span class="sourceLineNo">175</span>            if (value == null) {<a name="line.175"></a>
-<span class="sourceLineNo">176</span>                LOGGER.error("A null value for key " + key + " is not allowed in MapFilter");<a name="line.176"></a>
-<span class="sourceLineNo">177</span>                continue;<a name="line.177"></a>
-<span class="sourceLineNo">178</span>            }<a name="line.178"></a>
-<span class="sourceLineNo">179</span>            List&lt;String&gt; list = map.get(pair.getKey());<a name="line.179"></a>
-<span class="sourceLineNo">180</span>            if (list != null) {<a name="line.180"></a>
-<span class="sourceLineNo">181</span>                list.add(value);<a name="line.181"></a>
-<span class="sourceLineNo">182</span>            } else {<a name="line.182"></a>
-<span class="sourceLineNo">183</span>                list = new ArrayList&lt;&gt;();<a name="line.183"></a>
-<span class="sourceLineNo">184</span>                list.add(value);<a name="line.184"></a>
-<span class="sourceLineNo">185</span>                map.put(pair.getKey(), list);<a name="line.185"></a>
-<span class="sourceLineNo">186</span>            }<a name="line.186"></a>
-<span class="sourceLineNo">187</span>        }<a name="line.187"></a>
-<span class="sourceLineNo">188</span>        if (map.isEmpty()) {<a name="line.188"></a>
-<span class="sourceLineNo">189</span>            LOGGER.error("StructuredDataFilter is not configured with any valid key value pairs");<a name="line.189"></a>
-<span class="sourceLineNo">190</span>            return null;<a name="line.190"></a>
-<span class="sourceLineNo">191</span>        }<a name="line.191"></a>
-<span class="sourceLineNo">192</span>        final boolean isAnd = oper == null || !oper.equalsIgnoreCase("or");<a name="line.192"></a>
-<span class="sourceLineNo">193</span>        return new StructuredDataFilter(map, isAnd, match, mismatch);<a name="line.193"></a>
-<span class="sourceLineNo">194</span>    }<a name="line.194"></a>
-<span class="sourceLineNo">195</span>}<a name="line.195"></a>
+<span class="sourceLineNo">157</span>    // TODO Consider refactoring to use AbstractFilter.AbstractFilterBuilder<a name="line.157"></a>
+<span class="sourceLineNo">158</span>    @PluginFactory<a name="line.158"></a>
+<span class="sourceLineNo">159</span>    public static StructuredDataFilter createFilter(<a name="line.159"></a>
+<span class="sourceLineNo">160</span>            @PluginElement("Pairs") final KeyValuePair[] pairs,<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            @PluginAttribute("operator") final String oper,<a name="line.161"></a>
+<span class="sourceLineNo">162</span>            @PluginAttribute("onMatch") final Result match,<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            @PluginAttribute("onMismatch") final Result mismatch) {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        if (pairs == null || pairs.length == 0) {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>            LOGGER.error("keys and values must be specified for the StructuredDataFilter");<a name="line.165"></a>
+<span class="sourceLineNo">166</span>            return null;<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        }<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        final Map&lt;String, List&lt;String&gt;&gt; map = new HashMap&lt;&gt;();<a name="line.168"></a>
+<span class="sourceLineNo">169</span>        for (final KeyValuePair pair : pairs) {<a name="line.169"></a>
+<span class="sourceLineNo">170</span>            final String key = pair.getKey();<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            if (key == null) {<a name="line.171"></a>
+<span class="sourceLineNo">172</span>                LOGGER.error("A null key is not valid in MapFilter");<a name="line.172"></a>
+<span class="sourceLineNo">173</span>                continue;<a name="line.173"></a>
+<span class="sourceLineNo">174</span>            }<a name="line.174"></a>
+<span class="sourceLineNo">175</span>            final String value = pair.getValue();<a name="line.175"></a>
+<span class="sourceLineNo">176</span>            if (value == null) {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                LOGGER.error("A null value for key " + key + " is not allowed in MapFilter");<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                continue;<a name="line.178"></a>
+<span class="sourceLineNo">179</span>            }<a name="line.179"></a>
+<span class="sourceLineNo">180</span>            List&lt;String&gt; list = map.get(pair.getKey());<a name="line.180"></a>
+<span class="sourceLineNo">181</span>            if (list != null) {<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                list.add(value);<a name="line.182"></a>
+<span class="sourceLineNo">183</span>            } else {<a name="line.183"></a>
+<span class="sourceLineNo">184</span>                list = new ArrayList&lt;&gt;();<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                list.add(value);<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                map.put(pair.getKey(), list);<a name="line.186"></a>
+<span class="sourceLineNo">187</span>            }<a name="line.187"></a>
+<span class="sourceLineNo">188</span>        }<a name="line.188"></a>
+<span class="sourceLineNo">189</span>        if (map.isEmpty()) {<a name="line.189"></a>
+<span class="sourceLineNo">190</span>            LOGGER.error("StructuredDataFilter is not configured with any valid key value pairs");<a name="line.190"></a>
+<span class="sourceLineNo">191</span>            return null;<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        }<a name="line.192"></a>
+<span class="sourceLineNo">193</span>        final boolean isAnd = oper == null || !oper.equalsIgnoreCase("or");<a name="line.193"></a>
+<span class="sourceLineNo">194</span>        return new StructuredDataFilter(map, isAnd, match, mismatch);<a name="line.194"></a>
+<span class="sourceLineNo">195</span>    }<a name="line.195"></a>
+<span class="sourceLineNo">196</span>}<a name="line.196"></a>
 
 
 

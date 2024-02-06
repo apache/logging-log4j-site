@@ -242,45 +242,46 @@
 <span class="sourceLineNo">234</span>        return map;<a name="line.234"></a>
 <span class="sourceLineNo">235</span>    }<a name="line.235"></a>
 <span class="sourceLineNo">236</span><a name="line.236"></a>
-<span class="sourceLineNo">237</span>    @PluginFactory<a name="line.237"></a>
-<span class="sourceLineNo">238</span>    public static MapFilter createFilter(<a name="line.238"></a>
-<span class="sourceLineNo">239</span>            @PluginElement("Pairs") final KeyValuePair[] pairs,<a name="line.239"></a>
-<span class="sourceLineNo">240</span>            @PluginAttribute("operator") final String oper,<a name="line.240"></a>
-<span class="sourceLineNo">241</span>            @PluginAttribute("onMatch") final Result match,<a name="line.241"></a>
-<span class="sourceLineNo">242</span>            @PluginAttribute("onMismatch") final Result mismatch) {<a name="line.242"></a>
-<span class="sourceLineNo">243</span>        if (pairs == null || pairs.length == 0) {<a name="line.243"></a>
-<span class="sourceLineNo">244</span>            LOGGER.error("keys and values must be specified for the MapFilter");<a name="line.244"></a>
-<span class="sourceLineNo">245</span>            return null;<a name="line.245"></a>
-<span class="sourceLineNo">246</span>        }<a name="line.246"></a>
-<span class="sourceLineNo">247</span>        final Map&lt;String, List&lt;String&gt;&gt; map = new HashMap&lt;&gt;();<a name="line.247"></a>
-<span class="sourceLineNo">248</span>        for (final KeyValuePair pair : pairs) {<a name="line.248"></a>
-<span class="sourceLineNo">249</span>            final String key = pair.getKey();<a name="line.249"></a>
-<span class="sourceLineNo">250</span>            if (key == null) {<a name="line.250"></a>
-<span class="sourceLineNo">251</span>                LOGGER.error("A null key is not valid in MapFilter");<a name="line.251"></a>
-<span class="sourceLineNo">252</span>                continue;<a name="line.252"></a>
-<span class="sourceLineNo">253</span>            }<a name="line.253"></a>
-<span class="sourceLineNo">254</span>            final String value = pair.getValue();<a name="line.254"></a>
-<span class="sourceLineNo">255</span>            if (value == null) {<a name="line.255"></a>
-<span class="sourceLineNo">256</span>                LOGGER.error("A null value for key " + key + " is not allowed in MapFilter");<a name="line.256"></a>
-<span class="sourceLineNo">257</span>                continue;<a name="line.257"></a>
-<span class="sourceLineNo">258</span>            }<a name="line.258"></a>
-<span class="sourceLineNo">259</span>            List&lt;String&gt; list = map.get(pair.getKey());<a name="line.259"></a>
-<span class="sourceLineNo">260</span>            if (list != null) {<a name="line.260"></a>
-<span class="sourceLineNo">261</span>                list.add(value);<a name="line.261"></a>
-<span class="sourceLineNo">262</span>            } else {<a name="line.262"></a>
-<span class="sourceLineNo">263</span>                list = new ArrayList&lt;&gt;();<a name="line.263"></a>
-<span class="sourceLineNo">264</span>                list.add(value);<a name="line.264"></a>
-<span class="sourceLineNo">265</span>                map.put(pair.getKey(), list);<a name="line.265"></a>
-<span class="sourceLineNo">266</span>            }<a name="line.266"></a>
-<span class="sourceLineNo">267</span>        }<a name="line.267"></a>
-<span class="sourceLineNo">268</span>        if (map.isEmpty()) {<a name="line.268"></a>
-<span class="sourceLineNo">269</span>            LOGGER.error("MapFilter is not configured with any valid key value pairs");<a name="line.269"></a>
-<span class="sourceLineNo">270</span>            return null;<a name="line.270"></a>
-<span class="sourceLineNo">271</span>        }<a name="line.271"></a>
-<span class="sourceLineNo">272</span>        final boolean isAnd = oper == null || !oper.equalsIgnoreCase("or");<a name="line.272"></a>
-<span class="sourceLineNo">273</span>        return new MapFilter(map, isAnd, match, mismatch);<a name="line.273"></a>
-<span class="sourceLineNo">274</span>    }<a name="line.274"></a>
-<span class="sourceLineNo">275</span>}<a name="line.275"></a>
+<span class="sourceLineNo">237</span>    // TODO Consider refactoring to use AbstractFilter.AbstractFilterBuilder<a name="line.237"></a>
+<span class="sourceLineNo">238</span>    @PluginFactory<a name="line.238"></a>
+<span class="sourceLineNo">239</span>    public static MapFilter createFilter(<a name="line.239"></a>
+<span class="sourceLineNo">240</span>            @PluginElement("Pairs") final KeyValuePair[] pairs,<a name="line.240"></a>
+<span class="sourceLineNo">241</span>            @PluginAttribute("operator") final String oper,<a name="line.241"></a>
+<span class="sourceLineNo">242</span>            @PluginAttribute("onMatch") final Result match,<a name="line.242"></a>
+<span class="sourceLineNo">243</span>            @PluginAttribute("onMismatch") final Result mismatch) {<a name="line.243"></a>
+<span class="sourceLineNo">244</span>        if (pairs == null || pairs.length == 0) {<a name="line.244"></a>
+<span class="sourceLineNo">245</span>            LOGGER.error("keys and values must be specified for the MapFilter");<a name="line.245"></a>
+<span class="sourceLineNo">246</span>            return null;<a name="line.246"></a>
+<span class="sourceLineNo">247</span>        }<a name="line.247"></a>
+<span class="sourceLineNo">248</span>        final Map&lt;String, List&lt;String&gt;&gt; map = new HashMap&lt;&gt;();<a name="line.248"></a>
+<span class="sourceLineNo">249</span>        for (final KeyValuePair pair : pairs) {<a name="line.249"></a>
+<span class="sourceLineNo">250</span>            final String key = pair.getKey();<a name="line.250"></a>
+<span class="sourceLineNo">251</span>            if (key == null) {<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                LOGGER.error("A null key is not valid in MapFilter");<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                continue;<a name="line.253"></a>
+<span class="sourceLineNo">254</span>            }<a name="line.254"></a>
+<span class="sourceLineNo">255</span>            final String value = pair.getValue();<a name="line.255"></a>
+<span class="sourceLineNo">256</span>            if (value == null) {<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                LOGGER.error("A null value for key " + key + " is not allowed in MapFilter");<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                continue;<a name="line.258"></a>
+<span class="sourceLineNo">259</span>            }<a name="line.259"></a>
+<span class="sourceLineNo">260</span>            List&lt;String&gt; list = map.get(pair.getKey());<a name="line.260"></a>
+<span class="sourceLineNo">261</span>            if (list != null) {<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                list.add(value);<a name="line.262"></a>
+<span class="sourceLineNo">263</span>            } else {<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                list = new ArrayList&lt;&gt;();<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                list.add(value);<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                map.put(pair.getKey(), list);<a name="line.266"></a>
+<span class="sourceLineNo">267</span>            }<a name="line.267"></a>
+<span class="sourceLineNo">268</span>        }<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        if (map.isEmpty()) {<a name="line.269"></a>
+<span class="sourceLineNo">270</span>            LOGGER.error("MapFilter is not configured with any valid key value pairs");<a name="line.270"></a>
+<span class="sourceLineNo">271</span>            return null;<a name="line.271"></a>
+<span class="sourceLineNo">272</span>        }<a name="line.272"></a>
+<span class="sourceLineNo">273</span>        final boolean isAnd = oper == null || !oper.equalsIgnoreCase("or");<a name="line.273"></a>
+<span class="sourceLineNo">274</span>        return new MapFilter(map, isAnd, match, mismatch);<a name="line.274"></a>
+<span class="sourceLineNo">275</span>    }<a name="line.275"></a>
+<span class="sourceLineNo">276</span>}<a name="line.276"></a>
 
 
 

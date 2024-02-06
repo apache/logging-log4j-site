@@ -226,7 +226,7 @@
 <span class="sourceLineNo">218</span>    }<a name="line.218"></a>
 <span class="sourceLineNo">219</span><a name="line.219"></a>
 <span class="sourceLineNo">220</span>    /**<a name="line.220"></a>
-<span class="sourceLineNo">221</span>     * Create a TimeFilter.<a name="line.221"></a>
+<span class="sourceLineNo">221</span>     * Creates a TimeFilter.<a name="line.221"></a>
 <span class="sourceLineNo">222</span>     * @param start The start time.<a name="line.222"></a>
 <span class="sourceLineNo">223</span>     * @param end The end time.<a name="line.223"></a>
 <span class="sourceLineNo">224</span>     * @param tz timezone.<a name="line.224"></a>
@@ -234,36 +234,37 @@
 <span class="sourceLineNo">226</span>     * @param mismatch Action to perform if the action does not match.<a name="line.226"></a>
 <span class="sourceLineNo">227</span>     * @return A TimeFilter.<a name="line.227"></a>
 <span class="sourceLineNo">228</span>     */<a name="line.228"></a>
-<span class="sourceLineNo">229</span>    @PluginFactory<a name="line.229"></a>
-<span class="sourceLineNo">230</span>    public static TimeFilter createFilter(<a name="line.230"></a>
-<span class="sourceLineNo">231</span>            @PluginAttribute("start") final String start,<a name="line.231"></a>
-<span class="sourceLineNo">232</span>            @PluginAttribute("end") final String end,<a name="line.232"></a>
-<span class="sourceLineNo">233</span>            @PluginAttribute("timezone") final String tz,<a name="line.233"></a>
-<span class="sourceLineNo">234</span>            @PluginAttribute("onMatch") final Result match,<a name="line.234"></a>
-<span class="sourceLineNo">235</span>            @PluginAttribute("onMismatch") final Result mismatch) {<a name="line.235"></a>
-<span class="sourceLineNo">236</span>        final long s = parseTimestamp(start, 0);<a name="line.236"></a>
-<span class="sourceLineNo">237</span>        final long e = parseTimestamp(end, Long.MAX_VALUE);<a name="line.237"></a>
-<span class="sourceLineNo">238</span>        final TimeZone timezone = tz == null ? TimeZone.getDefault() : TimeZone.getTimeZone(tz);<a name="line.238"></a>
-<span class="sourceLineNo">239</span>        final Result onMatch = match == null ? Result.NEUTRAL : match;<a name="line.239"></a>
-<span class="sourceLineNo">240</span>        final Result onMismatch = mismatch == null ? Result.DENY : mismatch;<a name="line.240"></a>
-<span class="sourceLineNo">241</span>        return new TimeFilter(s, e, timezone, onMatch, onMismatch);<a name="line.241"></a>
-<span class="sourceLineNo">242</span>    }<a name="line.242"></a>
-<span class="sourceLineNo">243</span><a name="line.243"></a>
-<span class="sourceLineNo">244</span>    private static long parseTimestamp(final String timestamp, final long defaultValue) {<a name="line.244"></a>
-<span class="sourceLineNo">245</span>        if (timestamp == null) {<a name="line.245"></a>
-<span class="sourceLineNo">246</span>            return defaultValue;<a name="line.246"></a>
-<span class="sourceLineNo">247</span>        }<a name="line.247"></a>
-<span class="sourceLineNo">248</span>        final SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss");<a name="line.248"></a>
-<span class="sourceLineNo">249</span>        stf.setTimeZone(TimeZone.getTimeZone("UTC"));<a name="line.249"></a>
-<span class="sourceLineNo">250</span>        try {<a name="line.250"></a>
-<span class="sourceLineNo">251</span>            return stf.parse(timestamp).getTime();<a name="line.251"></a>
-<span class="sourceLineNo">252</span>        } catch (final ParseException e) {<a name="line.252"></a>
-<span class="sourceLineNo">253</span>            LOGGER.warn("Error parsing TimeFilter timestamp value {}", timestamp, e);<a name="line.253"></a>
-<span class="sourceLineNo">254</span>            return defaultValue;<a name="line.254"></a>
-<span class="sourceLineNo">255</span>        }<a name="line.255"></a>
-<span class="sourceLineNo">256</span>    }<a name="line.256"></a>
-<span class="sourceLineNo">257</span><a name="line.257"></a>
-<span class="sourceLineNo">258</span>}<a name="line.258"></a>
+<span class="sourceLineNo">229</span>    // TODO Consider refactoring to use AbstractFilter.AbstractFilterBuilder<a name="line.229"></a>
+<span class="sourceLineNo">230</span>    @PluginFactory<a name="line.230"></a>
+<span class="sourceLineNo">231</span>    public static TimeFilter createFilter(<a name="line.231"></a>
+<span class="sourceLineNo">232</span>            @PluginAttribute("start") final String start,<a name="line.232"></a>
+<span class="sourceLineNo">233</span>            @PluginAttribute("end") final String end,<a name="line.233"></a>
+<span class="sourceLineNo">234</span>            @PluginAttribute("timezone") final String tz,<a name="line.234"></a>
+<span class="sourceLineNo">235</span>            @PluginAttribute("onMatch") final Result match,<a name="line.235"></a>
+<span class="sourceLineNo">236</span>            @PluginAttribute("onMismatch") final Result mismatch) {<a name="line.236"></a>
+<span class="sourceLineNo">237</span>        final long s = parseTimestamp(start, 0);<a name="line.237"></a>
+<span class="sourceLineNo">238</span>        final long e = parseTimestamp(end, Long.MAX_VALUE);<a name="line.238"></a>
+<span class="sourceLineNo">239</span>        final TimeZone timezone = tz == null ? TimeZone.getDefault() : TimeZone.getTimeZone(tz);<a name="line.239"></a>
+<span class="sourceLineNo">240</span>        final Result onMatch = match == null ? Result.NEUTRAL : match;<a name="line.240"></a>
+<span class="sourceLineNo">241</span>        final Result onMismatch = mismatch == null ? Result.DENY : mismatch;<a name="line.241"></a>
+<span class="sourceLineNo">242</span>        return new TimeFilter(s, e, timezone, onMatch, onMismatch);<a name="line.242"></a>
+<span class="sourceLineNo">243</span>    }<a name="line.243"></a>
+<span class="sourceLineNo">244</span><a name="line.244"></a>
+<span class="sourceLineNo">245</span>    private static long parseTimestamp(final String timestamp, final long defaultValue) {<a name="line.245"></a>
+<span class="sourceLineNo">246</span>        if (timestamp == null) {<a name="line.246"></a>
+<span class="sourceLineNo">247</span>            return defaultValue;<a name="line.247"></a>
+<span class="sourceLineNo">248</span>        }<a name="line.248"></a>
+<span class="sourceLineNo">249</span>        final SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss");<a name="line.249"></a>
+<span class="sourceLineNo">250</span>        stf.setTimeZone(TimeZone.getTimeZone("UTC"));<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        try {<a name="line.251"></a>
+<span class="sourceLineNo">252</span>            return stf.parse(timestamp).getTime();<a name="line.252"></a>
+<span class="sourceLineNo">253</span>        } catch (final ParseException e) {<a name="line.253"></a>
+<span class="sourceLineNo">254</span>            LOGGER.warn("Error parsing TimeFilter timestamp value {}", timestamp, e);<a name="line.254"></a>
+<span class="sourceLineNo">255</span>            return defaultValue;<a name="line.255"></a>
+<span class="sourceLineNo">256</span>        }<a name="line.256"></a>
+<span class="sourceLineNo">257</span>    }<a name="line.257"></a>
+<span class="sourceLineNo">258</span><a name="line.258"></a>
+<span class="sourceLineNo">259</span>}<a name="line.259"></a>
 
 
 
