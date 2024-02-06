@@ -395,301 +395,322 @@
 <span class="sourceLineNo">387</span>     * @since 2.6<a name="line.387"></a>
 <span class="sourceLineNo">388</span>     */<a name="line.388"></a>
 <span class="sourceLineNo">389</span>    public static void shutdown(final boolean currentContext) {<a name="line.389"></a>
-<span class="sourceLineNo">390</span>        shutdown(getContext(currentContext));<a name="line.390"></a>
+<span class="sourceLineNo">390</span>        factory.shutdown(FQCN, null, currentContext, false);<a name="line.390"></a>
 <span class="sourceLineNo">391</span>    }<a name="line.391"></a>
 <span class="sourceLineNo">392</span><a name="line.392"></a>
 <span class="sourceLineNo">393</span>    /**<a name="line.393"></a>
 <span class="sourceLineNo">394</span>     * Shutdown the logging system if the logging system supports it.<a name="line.394"></a>
-<span class="sourceLineNo">395</span>     *<a name="line.395"></a>
-<span class="sourceLineNo">396</span>     * This call is synchronous and will block until shut down is complete.<a name="line.396"></a>
-<span class="sourceLineNo">397</span>     * This may include flushing pending log events over network connections.<a name="line.397"></a>
-<span class="sourceLineNo">398</span>     *<a name="line.398"></a>
-<span class="sourceLineNo">399</span>     * @param context the LoggerContext.<a name="line.399"></a>
-<span class="sourceLineNo">400</span>     * @since 2.6<a name="line.400"></a>
-<span class="sourceLineNo">401</span>     */<a name="line.401"></a>
-<span class="sourceLineNo">402</span>    public static void shutdown(final LoggerContext context) {<a name="line.402"></a>
-<span class="sourceLineNo">403</span>        if (context != null &amp;&amp; context instanceof Terminable) {<a name="line.403"></a>
-<span class="sourceLineNo">404</span>            ((Terminable) context).terminate();<a name="line.404"></a>
-<span class="sourceLineNo">405</span>        }<a name="line.405"></a>
-<span class="sourceLineNo">406</span>    }<a name="line.406"></a>
-<span class="sourceLineNo">407</span><a name="line.407"></a>
-<span class="sourceLineNo">408</span>    private static String toLoggerName(final Class&lt;?&gt; cls) {<a name="line.408"></a>
-<span class="sourceLineNo">409</span>        final String canonicalName = cls.getCanonicalName();<a name="line.409"></a>
-<span class="sourceLineNo">410</span>        return canonicalName != null ? canonicalName : cls.getName();<a name="line.410"></a>
+<span class="sourceLineNo">395</span>     * This is equivalent to calling {@code LogManager.shutdown(LogManager.getContext(currentContext))}.<a name="line.395"></a>
+<span class="sourceLineNo">396</span>     *<a name="line.396"></a>
+<span class="sourceLineNo">397</span>     * This call is synchronous and will block until shut down is complete.<a name="line.397"></a>
+<span class="sourceLineNo">398</span>     * This may include flushing pending log events over network connections.<a name="line.398"></a>
+<span class="sourceLineNo">399</span>     *<a name="line.399"></a>
+<span class="sourceLineNo">400</span>     * @param currentContext if true a default LoggerContext (may not be the LoggerContext used to create a Logger<a name="line.400"></a>
+<span class="sourceLineNo">401</span>     *            for the calling class) will be used.<a name="line.401"></a>
+<span class="sourceLineNo">402</span>     *            If false the LoggerContext appropriate for the caller of this method is used. For<a name="line.402"></a>
+<span class="sourceLineNo">403</span>     *            example, in a web application if the caller is a class in WEB-INF/lib then one LoggerContext may be<a name="line.403"></a>
+<span class="sourceLineNo">404</span>     *            used and if the caller is a class in the container's classpath then a different LoggerContext may<a name="line.404"></a>
+<span class="sourceLineNo">405</span>     *            be used.<a name="line.405"></a>
+<span class="sourceLineNo">406</span>     * @param allContexts if true all LoggerContexts that can be located will be shutdown.<a name="line.406"></a>
+<span class="sourceLineNo">407</span>     * @since 2.13.0<a name="line.407"></a>
+<span class="sourceLineNo">408</span>     */<a name="line.408"></a>
+<span class="sourceLineNo">409</span>    public static void shutdown(final boolean currentContext, final boolean allContexts) {<a name="line.409"></a>
+<span class="sourceLineNo">410</span>        factory.shutdown(FQCN, null, currentContext, allContexts);<a name="line.410"></a>
 <span class="sourceLineNo">411</span>    }<a name="line.411"></a>
 <span class="sourceLineNo">412</span><a name="line.412"></a>
-<span class="sourceLineNo">413</span>    /**<a name="line.413"></a>
-<span class="sourceLineNo">414</span>     * Returns the current LoggerContextFactory.<a name="line.414"></a>
-<span class="sourceLineNo">415</span>     *<a name="line.415"></a>
-<span class="sourceLineNo">416</span>     * @return The LoggerContextFactory.<a name="line.416"></a>
-<span class="sourceLineNo">417</span>     */<a name="line.417"></a>
-<span class="sourceLineNo">418</span>    public static LoggerContextFactory getFactory() {<a name="line.418"></a>
-<span class="sourceLineNo">419</span>        return factory;<a name="line.419"></a>
-<span class="sourceLineNo">420</span>    }<a name="line.420"></a>
-<span class="sourceLineNo">421</span><a name="line.421"></a>
-<span class="sourceLineNo">422</span>    /**<a name="line.422"></a>
-<span class="sourceLineNo">423</span>     * Sets the current LoggerContextFactory to use. Normally, the appropriate LoggerContextFactory is created at<a name="line.423"></a>
-<span class="sourceLineNo">424</span>     * startup, but in certain environments, a LoggerContextFactory implementation may not be available at this point.<a name="line.424"></a>
-<span class="sourceLineNo">425</span>     * Thus, an alternative LoggerContextFactory can be set at runtime.<a name="line.425"></a>
-<span class="sourceLineNo">426</span>     *<a name="line.426"></a>
-<span class="sourceLineNo">427</span>     * &lt;p&gt;<a name="line.427"></a>
-<span class="sourceLineNo">428</span>     * Note that any Logger or LoggerContext objects already created will still be valid, but they will no longer be<a name="line.428"></a>
-<span class="sourceLineNo">429</span>     * accessible through LogManager. Thus, &lt;strong&gt;it is a bad idea to use this method without a good reason&lt;/strong&gt;!<a name="line.429"></a>
-<span class="sourceLineNo">430</span>     * Generally, this method should be used only during startup before any code starts caching Logger objects.<a name="line.430"></a>
-<span class="sourceLineNo">431</span>     * &lt;/p&gt;<a name="line.431"></a>
-<span class="sourceLineNo">432</span>     *<a name="line.432"></a>
-<span class="sourceLineNo">433</span>     * @param factory the LoggerContextFactory to use.<a name="line.433"></a>
-<span class="sourceLineNo">434</span>     */<a name="line.434"></a>
-<span class="sourceLineNo">435</span>    // FIXME: should we allow only one update of the factory?<a name="line.435"></a>
-<span class="sourceLineNo">436</span>    public static void setFactory(final LoggerContextFactory factory) {<a name="line.436"></a>
-<span class="sourceLineNo">437</span>        LogManager.factory = factory;<a name="line.437"></a>
-<span class="sourceLineNo">438</span>    }<a name="line.438"></a>
-<span class="sourceLineNo">439</span><a name="line.439"></a>
-<span class="sourceLineNo">440</span>    /**<a name="line.440"></a>
-<span class="sourceLineNo">441</span>     * Returns a formatter Logger using the fully qualified name of the calling Class as the Logger name.<a name="line.441"></a>
-<span class="sourceLineNo">442</span>     * &lt;p&gt;<a name="line.442"></a>
-<span class="sourceLineNo">443</span>     * This logger lets you use a {@link java.util.Formatter} string in the message to format parameters.<a name="line.443"></a>
-<span class="sourceLineNo">444</span>     * &lt;/p&gt;<a name="line.444"></a>
-<span class="sourceLineNo">445</span>     *<a name="line.445"></a>
-<span class="sourceLineNo">446</span>     * @return The Logger for the calling class.<a name="line.446"></a>
-<span class="sourceLineNo">447</span>     * @throws UnsupportedOperationException if the calling class cannot be determined.<a name="line.447"></a>
-<span class="sourceLineNo">448</span>     * @since 2.4<a name="line.448"></a>
-<span class="sourceLineNo">449</span>     */<a name="line.449"></a>
-<span class="sourceLineNo">450</span>    public static Logger getFormatterLogger() {<a name="line.450"></a>
-<span class="sourceLineNo">451</span>        return getFormatterLogger(StackLocatorUtil.getCallerClass(2));<a name="line.451"></a>
-<span class="sourceLineNo">452</span>    }<a name="line.452"></a>
-<span class="sourceLineNo">453</span><a name="line.453"></a>
-<span class="sourceLineNo">454</span>    /**<a name="line.454"></a>
-<span class="sourceLineNo">455</span>     * Returns a formatter Logger using the fully qualified name of the Class as the Logger name.<a name="line.455"></a>
-<span class="sourceLineNo">456</span>     * &lt;p&gt;<a name="line.456"></a>
-<span class="sourceLineNo">457</span>     * This logger let you use a {@link java.util.Formatter} string in the message to format parameters.<a name="line.457"></a>
-<span class="sourceLineNo">458</span>     * &lt;/p&gt;<a name="line.458"></a>
-<span class="sourceLineNo">459</span>     * &lt;p&gt;<a name="line.459"></a>
-<span class="sourceLineNo">460</span>     * Short-hand for {@code getLogger(clazz, StringFormatterMessageFactory.INSTANCE)}<a name="line.460"></a>
-<span class="sourceLineNo">461</span>     * &lt;/p&gt;<a name="line.461"></a>
-<span class="sourceLineNo">462</span>     *<a name="line.462"></a>
-<span class="sourceLineNo">463</span>     * @param clazz The Class whose name should be used as the Logger name.<a name="line.463"></a>
-<span class="sourceLineNo">464</span>     * @return The Logger, created with a {@link StringFormatterMessageFactory}<a name="line.464"></a>
-<span class="sourceLineNo">465</span>     * @throws UnsupportedOperationException if {@code clazz} is {@code null} and the calling class cannot be<a name="line.465"></a>
-<span class="sourceLineNo">466</span>     *             determined.<a name="line.466"></a>
-<span class="sourceLineNo">467</span>     * @see Logger#fatal(Marker, String, Object...)<a name="line.467"></a>
-<span class="sourceLineNo">468</span>     * @see Logger#fatal(String, Object...)<a name="line.468"></a>
-<span class="sourceLineNo">469</span>     * @see Logger#error(Marker, String, Object...)<a name="line.469"></a>
-<span class="sourceLineNo">470</span>     * @see Logger#error(String, Object...)<a name="line.470"></a>
-<span class="sourceLineNo">471</span>     * @see Logger#warn(Marker, String, Object...)<a name="line.471"></a>
-<span class="sourceLineNo">472</span>     * @see Logger#warn(String, Object...)<a name="line.472"></a>
-<span class="sourceLineNo">473</span>     * @see Logger#info(Marker, String, Object...)<a name="line.473"></a>
-<span class="sourceLineNo">474</span>     * @see Logger#info(String, Object...)<a name="line.474"></a>
-<span class="sourceLineNo">475</span>     * @see Logger#debug(Marker, String, Object...)<a name="line.475"></a>
-<span class="sourceLineNo">476</span>     * @see Logger#debug(String, Object...)<a name="line.476"></a>
-<span class="sourceLineNo">477</span>     * @see Logger#trace(Marker, String, Object...)<a name="line.477"></a>
-<span class="sourceLineNo">478</span>     * @see Logger#trace(String, Object...)<a name="line.478"></a>
-<span class="sourceLineNo">479</span>     * @see StringFormatterMessageFactory<a name="line.479"></a>
-<span class="sourceLineNo">480</span>     */<a name="line.480"></a>
-<span class="sourceLineNo">481</span>    public static Logger getFormatterLogger(final Class&lt;?&gt; clazz) {<a name="line.481"></a>
-<span class="sourceLineNo">482</span>        return getLogger(clazz != null ? clazz : StackLocatorUtil.getCallerClass(2),<a name="line.482"></a>
-<span class="sourceLineNo">483</span>                StringFormatterMessageFactory.INSTANCE);<a name="line.483"></a>
-<span class="sourceLineNo">484</span>    }<a name="line.484"></a>
-<span class="sourceLineNo">485</span><a name="line.485"></a>
-<span class="sourceLineNo">486</span>    /**<a name="line.486"></a>
-<span class="sourceLineNo">487</span>     * Returns a formatter Logger using the fully qualified name of the value's Class as the Logger name.<a name="line.487"></a>
-<span class="sourceLineNo">488</span>     * &lt;p&gt;<a name="line.488"></a>
-<span class="sourceLineNo">489</span>     * This logger let you use a {@link java.util.Formatter} string in the message to format parameters.<a name="line.489"></a>
-<span class="sourceLineNo">490</span>     * &lt;/p&gt;<a name="line.490"></a>
-<span class="sourceLineNo">491</span>     * &lt;p&gt;<a name="line.491"></a>
-<span class="sourceLineNo">492</span>     * Short-hand for {@code getLogger(value, StringFormatterMessageFactory.INSTANCE)}<a name="line.492"></a>
-<span class="sourceLineNo">493</span>     * &lt;/p&gt;<a name="line.493"></a>
-<span class="sourceLineNo">494</span>     *<a name="line.494"></a>
-<span class="sourceLineNo">495</span>     * @param value The value's whose class name should be used as the Logger name.<a name="line.495"></a>
-<span class="sourceLineNo">496</span>     * @return The Logger, created with a {@link StringFormatterMessageFactory}<a name="line.496"></a>
-<span class="sourceLineNo">497</span>     * @throws UnsupportedOperationException if {@code value} is {@code null} and the calling class cannot be<a name="line.497"></a>
-<span class="sourceLineNo">498</span>     *             determined.<a name="line.498"></a>
-<span class="sourceLineNo">499</span>     * @see Logger#fatal(Marker, String, Object...)<a name="line.499"></a>
-<span class="sourceLineNo">500</span>     * @see Logger#fatal(String, Object...)<a name="line.500"></a>
-<span class="sourceLineNo">501</span>     * @see Logger#error(Marker, String, Object...)<a name="line.501"></a>
-<span class="sourceLineNo">502</span>     * @see Logger#error(String, Object...)<a name="line.502"></a>
-<span class="sourceLineNo">503</span>     * @see Logger#warn(Marker, String, Object...)<a name="line.503"></a>
-<span class="sourceLineNo">504</span>     * @see Logger#warn(String, Object...)<a name="line.504"></a>
-<span class="sourceLineNo">505</span>     * @see Logger#info(Marker, String, Object...)<a name="line.505"></a>
-<span class="sourceLineNo">506</span>     * @see Logger#info(String, Object...)<a name="line.506"></a>
-<span class="sourceLineNo">507</span>     * @see Logger#debug(Marker, String, Object...)<a name="line.507"></a>
-<span class="sourceLineNo">508</span>     * @see Logger#debug(String, Object...)<a name="line.508"></a>
-<span class="sourceLineNo">509</span>     * @see Logger#trace(Marker, String, Object...)<a name="line.509"></a>
-<span class="sourceLineNo">510</span>     * @see Logger#trace(String, Object...)<a name="line.510"></a>
-<span class="sourceLineNo">511</span>     * @see StringFormatterMessageFactory<a name="line.511"></a>
-<span class="sourceLineNo">512</span>     */<a name="line.512"></a>
-<span class="sourceLineNo">513</span>    public static Logger getFormatterLogger(final Object value) {<a name="line.513"></a>
-<span class="sourceLineNo">514</span>        return getLogger(value != null ? value.getClass() : StackLocatorUtil.getCallerClass(2),<a name="line.514"></a>
-<span class="sourceLineNo">515</span>                StringFormatterMessageFactory.INSTANCE);<a name="line.515"></a>
-<span class="sourceLineNo">516</span>    }<a name="line.516"></a>
-<span class="sourceLineNo">517</span><a name="line.517"></a>
-<span class="sourceLineNo">518</span>    /**<a name="line.518"></a>
-<span class="sourceLineNo">519</span>     * Returns a formatter Logger with the specified name.<a name="line.519"></a>
-<span class="sourceLineNo">520</span>     * &lt;p&gt;<a name="line.520"></a>
-<span class="sourceLineNo">521</span>     * This logger let you use a {@link java.util.Formatter} string in the message to format parameters.<a name="line.521"></a>
-<span class="sourceLineNo">522</span>     * &lt;/p&gt;<a name="line.522"></a>
-<span class="sourceLineNo">523</span>     * &lt;p&gt;<a name="line.523"></a>
-<span class="sourceLineNo">524</span>     * Short-hand for {@code getLogger(name, StringFormatterMessageFactory.INSTANCE)}<a name="line.524"></a>
-<span class="sourceLineNo">525</span>     * &lt;/p&gt;<a name="line.525"></a>
-<span class="sourceLineNo">526</span>     *<a name="line.526"></a>
-<span class="sourceLineNo">527</span>     * @param name The logger name. If null it will default to the name of the calling class.<a name="line.527"></a>
-<span class="sourceLineNo">528</span>     * @return The Logger, created with a {@link StringFormatterMessageFactory}<a name="line.528"></a>
-<span class="sourceLineNo">529</span>     * @throws UnsupportedOperationException if {@code name} is {@code null} and the calling class cannot be determined.<a name="line.529"></a>
-<span class="sourceLineNo">530</span>     * @see Logger#fatal(Marker, String, Object...)<a name="line.530"></a>
-<span class="sourceLineNo">531</span>     * @see Logger#fatal(String, Object...)<a name="line.531"></a>
-<span class="sourceLineNo">532</span>     * @see Logger#error(Marker, String, Object...)<a name="line.532"></a>
-<span class="sourceLineNo">533</span>     * @see Logger#error(String, Object...)<a name="line.533"></a>
-<span class="sourceLineNo">534</span>     * @see Logger#warn(Marker, String, Object...)<a name="line.534"></a>
-<span class="sourceLineNo">535</span>     * @see Logger#warn(String, Object...)<a name="line.535"></a>
-<span class="sourceLineNo">536</span>     * @see Logger#info(Marker, String, Object...)<a name="line.536"></a>
-<span class="sourceLineNo">537</span>     * @see Logger#info(String, Object...)<a name="line.537"></a>
-<span class="sourceLineNo">538</span>     * @see Logger#debug(Marker, String, Object...)<a name="line.538"></a>
-<span class="sourceLineNo">539</span>     * @see Logger#debug(String, Object...)<a name="line.539"></a>
-<span class="sourceLineNo">540</span>     * @see Logger#trace(Marker, String, Object...)<a name="line.540"></a>
-<span class="sourceLineNo">541</span>     * @see Logger#trace(String, Object...)<a name="line.541"></a>
-<span class="sourceLineNo">542</span>     * @see StringFormatterMessageFactory<a name="line.542"></a>
-<span class="sourceLineNo">543</span>     */<a name="line.543"></a>
-<span class="sourceLineNo">544</span>    public static Logger getFormatterLogger(final String name) {<a name="line.544"></a>
-<span class="sourceLineNo">545</span>        return name == null ? getFormatterLogger(StackLocatorUtil.getCallerClass(2)) : getLogger(name,<a name="line.545"></a>
-<span class="sourceLineNo">546</span>                StringFormatterMessageFactory.INSTANCE);<a name="line.546"></a>
-<span class="sourceLineNo">547</span>    }<a name="line.547"></a>
-<span class="sourceLineNo">548</span><a name="line.548"></a>
-<span class="sourceLineNo">549</span>    private static Class&lt;?&gt; callerClass(final Class&lt;?&gt; clazz) {<a name="line.549"></a>
-<span class="sourceLineNo">550</span>        if (clazz != null) {<a name="line.550"></a>
-<span class="sourceLineNo">551</span>            return clazz;<a name="line.551"></a>
-<span class="sourceLineNo">552</span>        }<a name="line.552"></a>
-<span class="sourceLineNo">553</span>        final Class&lt;?&gt; candidate = StackLocatorUtil.getCallerClass(3);<a name="line.553"></a>
-<span class="sourceLineNo">554</span>        if (candidate == null) {<a name="line.554"></a>
-<span class="sourceLineNo">555</span>            throw new UnsupportedOperationException("No class provided, and an appropriate one cannot be found.");<a name="line.555"></a>
-<span class="sourceLineNo">556</span>        }<a name="line.556"></a>
-<span class="sourceLineNo">557</span>        return candidate;<a name="line.557"></a>
-<span class="sourceLineNo">558</span>    }<a name="line.558"></a>
-<span class="sourceLineNo">559</span><a name="line.559"></a>
-<span class="sourceLineNo">560</span>    /**<a name="line.560"></a>
-<span class="sourceLineNo">561</span>     * Returns a Logger with the name of the calling class.<a name="line.561"></a>
-<span class="sourceLineNo">562</span>     *<a name="line.562"></a>
-<span class="sourceLineNo">563</span>     * @return The Logger for the calling class.<a name="line.563"></a>
-<span class="sourceLineNo">564</span>     * @throws UnsupportedOperationException if the calling class cannot be determined.<a name="line.564"></a>
-<span class="sourceLineNo">565</span>     */<a name="line.565"></a>
-<span class="sourceLineNo">566</span>    public static Logger getLogger() {<a name="line.566"></a>
-<span class="sourceLineNo">567</span>        return getLogger(StackLocatorUtil.getCallerClass(2));<a name="line.567"></a>
+<span class="sourceLineNo">413</span><a name="line.413"></a>
+<span class="sourceLineNo">414</span>    /**<a name="line.414"></a>
+<span class="sourceLineNo">415</span>     * Shutdown the logging system if the logging system supports it.<a name="line.415"></a>
+<span class="sourceLineNo">416</span>     *<a name="line.416"></a>
+<span class="sourceLineNo">417</span>     * This call is synchronous and will block until shut down is complete.<a name="line.417"></a>
+<span class="sourceLineNo">418</span>     * This may include flushing pending log events over network connections.<a name="line.418"></a>
+<span class="sourceLineNo">419</span>     *<a name="line.419"></a>
+<span class="sourceLineNo">420</span>     * @param context the LoggerContext.<a name="line.420"></a>
+<span class="sourceLineNo">421</span>     * @since 2.6<a name="line.421"></a>
+<span class="sourceLineNo">422</span>     */<a name="line.422"></a>
+<span class="sourceLineNo">423</span>    public static void shutdown(final LoggerContext context) {<a name="line.423"></a>
+<span class="sourceLineNo">424</span>        if (context != null &amp;&amp; context instanceof Terminable) {<a name="line.424"></a>
+<span class="sourceLineNo">425</span>            ((Terminable) context).terminate();<a name="line.425"></a>
+<span class="sourceLineNo">426</span>        }<a name="line.426"></a>
+<span class="sourceLineNo">427</span>    }<a name="line.427"></a>
+<span class="sourceLineNo">428</span><a name="line.428"></a>
+<span class="sourceLineNo">429</span>    private static String toLoggerName(final Class&lt;?&gt; cls) {<a name="line.429"></a>
+<span class="sourceLineNo">430</span>        final String canonicalName = cls.getCanonicalName();<a name="line.430"></a>
+<span class="sourceLineNo">431</span>        return canonicalName != null ? canonicalName : cls.getName();<a name="line.431"></a>
+<span class="sourceLineNo">432</span>    }<a name="line.432"></a>
+<span class="sourceLineNo">433</span><a name="line.433"></a>
+<span class="sourceLineNo">434</span>    /**<a name="line.434"></a>
+<span class="sourceLineNo">435</span>     * Returns the current LoggerContextFactory.<a name="line.435"></a>
+<span class="sourceLineNo">436</span>     *<a name="line.436"></a>
+<span class="sourceLineNo">437</span>     * @return The LoggerContextFactory.<a name="line.437"></a>
+<span class="sourceLineNo">438</span>     */<a name="line.438"></a>
+<span class="sourceLineNo">439</span>    public static LoggerContextFactory getFactory() {<a name="line.439"></a>
+<span class="sourceLineNo">440</span>        return factory;<a name="line.440"></a>
+<span class="sourceLineNo">441</span>    }<a name="line.441"></a>
+<span class="sourceLineNo">442</span><a name="line.442"></a>
+<span class="sourceLineNo">443</span>    /**<a name="line.443"></a>
+<span class="sourceLineNo">444</span>     * Sets the current LoggerContextFactory to use. Normally, the appropriate LoggerContextFactory is created at<a name="line.444"></a>
+<span class="sourceLineNo">445</span>     * startup, but in certain environments, a LoggerContextFactory implementation may not be available at this point.<a name="line.445"></a>
+<span class="sourceLineNo">446</span>     * Thus, an alternative LoggerContextFactory can be set at runtime.<a name="line.446"></a>
+<span class="sourceLineNo">447</span>     *<a name="line.447"></a>
+<span class="sourceLineNo">448</span>     * &lt;p&gt;<a name="line.448"></a>
+<span class="sourceLineNo">449</span>     * Note that any Logger or LoggerContext objects already created will still be valid, but they will no longer be<a name="line.449"></a>
+<span class="sourceLineNo">450</span>     * accessible through LogManager. Thus, &lt;strong&gt;it is a bad idea to use this method without a good reason&lt;/strong&gt;!<a name="line.450"></a>
+<span class="sourceLineNo">451</span>     * Generally, this method should be used only during startup before any code starts caching Logger objects.<a name="line.451"></a>
+<span class="sourceLineNo">452</span>     * &lt;/p&gt;<a name="line.452"></a>
+<span class="sourceLineNo">453</span>     *<a name="line.453"></a>
+<span class="sourceLineNo">454</span>     * @param factory the LoggerContextFactory to use.<a name="line.454"></a>
+<span class="sourceLineNo">455</span>     */<a name="line.455"></a>
+<span class="sourceLineNo">456</span>    // FIXME: should we allow only one update of the factory?<a name="line.456"></a>
+<span class="sourceLineNo">457</span>    public static void setFactory(final LoggerContextFactory factory) {<a name="line.457"></a>
+<span class="sourceLineNo">458</span>        LogManager.factory = factory;<a name="line.458"></a>
+<span class="sourceLineNo">459</span>    }<a name="line.459"></a>
+<span class="sourceLineNo">460</span><a name="line.460"></a>
+<span class="sourceLineNo">461</span>    /**<a name="line.461"></a>
+<span class="sourceLineNo">462</span>     * Returns a formatter Logger using the fully qualified name of the calling Class as the Logger name.<a name="line.462"></a>
+<span class="sourceLineNo">463</span>     * &lt;p&gt;<a name="line.463"></a>
+<span class="sourceLineNo">464</span>     * This logger lets you use a {@link java.util.Formatter} string in the message to format parameters.<a name="line.464"></a>
+<span class="sourceLineNo">465</span>     * &lt;/p&gt;<a name="line.465"></a>
+<span class="sourceLineNo">466</span>     *<a name="line.466"></a>
+<span class="sourceLineNo">467</span>     * @return The Logger for the calling class.<a name="line.467"></a>
+<span class="sourceLineNo">468</span>     * @throws UnsupportedOperationException if the calling class cannot be determined.<a name="line.468"></a>
+<span class="sourceLineNo">469</span>     * @since 2.4<a name="line.469"></a>
+<span class="sourceLineNo">470</span>     */<a name="line.470"></a>
+<span class="sourceLineNo">471</span>    public static Logger getFormatterLogger() {<a name="line.471"></a>
+<span class="sourceLineNo">472</span>        return getFormatterLogger(StackLocatorUtil.getCallerClass(2));<a name="line.472"></a>
+<span class="sourceLineNo">473</span>    }<a name="line.473"></a>
+<span class="sourceLineNo">474</span><a name="line.474"></a>
+<span class="sourceLineNo">475</span>    /**<a name="line.475"></a>
+<span class="sourceLineNo">476</span>     * Returns a formatter Logger using the fully qualified name of the Class as the Logger name.<a name="line.476"></a>
+<span class="sourceLineNo">477</span>     * &lt;p&gt;<a name="line.477"></a>
+<span class="sourceLineNo">478</span>     * This logger let you use a {@link java.util.Formatter} string in the message to format parameters.<a name="line.478"></a>
+<span class="sourceLineNo">479</span>     * &lt;/p&gt;<a name="line.479"></a>
+<span class="sourceLineNo">480</span>     * &lt;p&gt;<a name="line.480"></a>
+<span class="sourceLineNo">481</span>     * Short-hand for {@code getLogger(clazz, StringFormatterMessageFactory.INSTANCE)}<a name="line.481"></a>
+<span class="sourceLineNo">482</span>     * &lt;/p&gt;<a name="line.482"></a>
+<span class="sourceLineNo">483</span>     *<a name="line.483"></a>
+<span class="sourceLineNo">484</span>     * @param clazz The Class whose name should be used as the Logger name.<a name="line.484"></a>
+<span class="sourceLineNo">485</span>     * @return The Logger, created with a {@link StringFormatterMessageFactory}<a name="line.485"></a>
+<span class="sourceLineNo">486</span>     * @throws UnsupportedOperationException if {@code clazz} is {@code null} and the calling class cannot be<a name="line.486"></a>
+<span class="sourceLineNo">487</span>     *             determined.<a name="line.487"></a>
+<span class="sourceLineNo">488</span>     * @see Logger#fatal(Marker, String, Object...)<a name="line.488"></a>
+<span class="sourceLineNo">489</span>     * @see Logger#fatal(String, Object...)<a name="line.489"></a>
+<span class="sourceLineNo">490</span>     * @see Logger#error(Marker, String, Object...)<a name="line.490"></a>
+<span class="sourceLineNo">491</span>     * @see Logger#error(String, Object...)<a name="line.491"></a>
+<span class="sourceLineNo">492</span>     * @see Logger#warn(Marker, String, Object...)<a name="line.492"></a>
+<span class="sourceLineNo">493</span>     * @see Logger#warn(String, Object...)<a name="line.493"></a>
+<span class="sourceLineNo">494</span>     * @see Logger#info(Marker, String, Object...)<a name="line.494"></a>
+<span class="sourceLineNo">495</span>     * @see Logger#info(String, Object...)<a name="line.495"></a>
+<span class="sourceLineNo">496</span>     * @see Logger#debug(Marker, String, Object...)<a name="line.496"></a>
+<span class="sourceLineNo">497</span>     * @see Logger#debug(String, Object...)<a name="line.497"></a>
+<span class="sourceLineNo">498</span>     * @see Logger#trace(Marker, String, Object...)<a name="line.498"></a>
+<span class="sourceLineNo">499</span>     * @see Logger#trace(String, Object...)<a name="line.499"></a>
+<span class="sourceLineNo">500</span>     * @see StringFormatterMessageFactory<a name="line.500"></a>
+<span class="sourceLineNo">501</span>     */<a name="line.501"></a>
+<span class="sourceLineNo">502</span>    public static Logger getFormatterLogger(final Class&lt;?&gt; clazz) {<a name="line.502"></a>
+<span class="sourceLineNo">503</span>        return getLogger(clazz != null ? clazz : StackLocatorUtil.getCallerClass(2),<a name="line.503"></a>
+<span class="sourceLineNo">504</span>                StringFormatterMessageFactory.INSTANCE);<a name="line.504"></a>
+<span class="sourceLineNo">505</span>    }<a name="line.505"></a>
+<span class="sourceLineNo">506</span><a name="line.506"></a>
+<span class="sourceLineNo">507</span>    /**<a name="line.507"></a>
+<span class="sourceLineNo">508</span>     * Returns a formatter Logger using the fully qualified name of the value's Class as the Logger name.<a name="line.508"></a>
+<span class="sourceLineNo">509</span>     * &lt;p&gt;<a name="line.509"></a>
+<span class="sourceLineNo">510</span>     * This logger let you use a {@link java.util.Formatter} string in the message to format parameters.<a name="line.510"></a>
+<span class="sourceLineNo">511</span>     * &lt;/p&gt;<a name="line.511"></a>
+<span class="sourceLineNo">512</span>     * &lt;p&gt;<a name="line.512"></a>
+<span class="sourceLineNo">513</span>     * Short-hand for {@code getLogger(value, StringFormatterMessageFactory.INSTANCE)}<a name="line.513"></a>
+<span class="sourceLineNo">514</span>     * &lt;/p&gt;<a name="line.514"></a>
+<span class="sourceLineNo">515</span>     *<a name="line.515"></a>
+<span class="sourceLineNo">516</span>     * @param value The value's whose class name should be used as the Logger name.<a name="line.516"></a>
+<span class="sourceLineNo">517</span>     * @return The Logger, created with a {@link StringFormatterMessageFactory}<a name="line.517"></a>
+<span class="sourceLineNo">518</span>     * @throws UnsupportedOperationException if {@code value} is {@code null} and the calling class cannot be<a name="line.518"></a>
+<span class="sourceLineNo">519</span>     *             determined.<a name="line.519"></a>
+<span class="sourceLineNo">520</span>     * @see Logger#fatal(Marker, String, Object...)<a name="line.520"></a>
+<span class="sourceLineNo">521</span>     * @see Logger#fatal(String, Object...)<a name="line.521"></a>
+<span class="sourceLineNo">522</span>     * @see Logger#error(Marker, String, Object...)<a name="line.522"></a>
+<span class="sourceLineNo">523</span>     * @see Logger#error(String, Object...)<a name="line.523"></a>
+<span class="sourceLineNo">524</span>     * @see Logger#warn(Marker, String, Object...)<a name="line.524"></a>
+<span class="sourceLineNo">525</span>     * @see Logger#warn(String, Object...)<a name="line.525"></a>
+<span class="sourceLineNo">526</span>     * @see Logger#info(Marker, String, Object...)<a name="line.526"></a>
+<span class="sourceLineNo">527</span>     * @see Logger#info(String, Object...)<a name="line.527"></a>
+<span class="sourceLineNo">528</span>     * @see Logger#debug(Marker, String, Object...)<a name="line.528"></a>
+<span class="sourceLineNo">529</span>     * @see Logger#debug(String, Object...)<a name="line.529"></a>
+<span class="sourceLineNo">530</span>     * @see Logger#trace(Marker, String, Object...)<a name="line.530"></a>
+<span class="sourceLineNo">531</span>     * @see Logger#trace(String, Object...)<a name="line.531"></a>
+<span class="sourceLineNo">532</span>     * @see StringFormatterMessageFactory<a name="line.532"></a>
+<span class="sourceLineNo">533</span>     */<a name="line.533"></a>
+<span class="sourceLineNo">534</span>    public static Logger getFormatterLogger(final Object value) {<a name="line.534"></a>
+<span class="sourceLineNo">535</span>        return getLogger(value != null ? value.getClass() : StackLocatorUtil.getCallerClass(2),<a name="line.535"></a>
+<span class="sourceLineNo">536</span>                StringFormatterMessageFactory.INSTANCE);<a name="line.536"></a>
+<span class="sourceLineNo">537</span>    }<a name="line.537"></a>
+<span class="sourceLineNo">538</span><a name="line.538"></a>
+<span class="sourceLineNo">539</span>    /**<a name="line.539"></a>
+<span class="sourceLineNo">540</span>     * Returns a formatter Logger with the specified name.<a name="line.540"></a>
+<span class="sourceLineNo">541</span>     * &lt;p&gt;<a name="line.541"></a>
+<span class="sourceLineNo">542</span>     * This logger let you use a {@link java.util.Formatter} string in the message to format parameters.<a name="line.542"></a>
+<span class="sourceLineNo">543</span>     * &lt;/p&gt;<a name="line.543"></a>
+<span class="sourceLineNo">544</span>     * &lt;p&gt;<a name="line.544"></a>
+<span class="sourceLineNo">545</span>     * Short-hand for {@code getLogger(name, StringFormatterMessageFactory.INSTANCE)}<a name="line.545"></a>
+<span class="sourceLineNo">546</span>     * &lt;/p&gt;<a name="line.546"></a>
+<span class="sourceLineNo">547</span>     *<a name="line.547"></a>
+<span class="sourceLineNo">548</span>     * @param name The logger name. If null it will default to the name of the calling class.<a name="line.548"></a>
+<span class="sourceLineNo">549</span>     * @return The Logger, created with a {@link StringFormatterMessageFactory}<a name="line.549"></a>
+<span class="sourceLineNo">550</span>     * @throws UnsupportedOperationException if {@code name} is {@code null} and the calling class cannot be determined.<a name="line.550"></a>
+<span class="sourceLineNo">551</span>     * @see Logger#fatal(Marker, String, Object...)<a name="line.551"></a>
+<span class="sourceLineNo">552</span>     * @see Logger#fatal(String, Object...)<a name="line.552"></a>
+<span class="sourceLineNo">553</span>     * @see Logger#error(Marker, String, Object...)<a name="line.553"></a>
+<span class="sourceLineNo">554</span>     * @see Logger#error(String, Object...)<a name="line.554"></a>
+<span class="sourceLineNo">555</span>     * @see Logger#warn(Marker, String, Object...)<a name="line.555"></a>
+<span class="sourceLineNo">556</span>     * @see Logger#warn(String, Object...)<a name="line.556"></a>
+<span class="sourceLineNo">557</span>     * @see Logger#info(Marker, String, Object...)<a name="line.557"></a>
+<span class="sourceLineNo">558</span>     * @see Logger#info(String, Object...)<a name="line.558"></a>
+<span class="sourceLineNo">559</span>     * @see Logger#debug(Marker, String, Object...)<a name="line.559"></a>
+<span class="sourceLineNo">560</span>     * @see Logger#debug(String, Object...)<a name="line.560"></a>
+<span class="sourceLineNo">561</span>     * @see Logger#trace(Marker, String, Object...)<a name="line.561"></a>
+<span class="sourceLineNo">562</span>     * @see Logger#trace(String, Object...)<a name="line.562"></a>
+<span class="sourceLineNo">563</span>     * @see StringFormatterMessageFactory<a name="line.563"></a>
+<span class="sourceLineNo">564</span>     */<a name="line.564"></a>
+<span class="sourceLineNo">565</span>    public static Logger getFormatterLogger(final String name) {<a name="line.565"></a>
+<span class="sourceLineNo">566</span>        return name == null ? getFormatterLogger(StackLocatorUtil.getCallerClass(2)) : getLogger(name,<a name="line.566"></a>
+<span class="sourceLineNo">567</span>                StringFormatterMessageFactory.INSTANCE);<a name="line.567"></a>
 <span class="sourceLineNo">568</span>    }<a name="line.568"></a>
 <span class="sourceLineNo">569</span><a name="line.569"></a>
-<span class="sourceLineNo">570</span>    /**<a name="line.570"></a>
-<span class="sourceLineNo">571</span>     * Returns a Logger using the fully qualified name of the Class as the Logger name.<a name="line.571"></a>
-<span class="sourceLineNo">572</span>     *<a name="line.572"></a>
-<span class="sourceLineNo">573</span>     * @param clazz The Class whose name should be used as the Logger name. If null it will default to the calling<a name="line.573"></a>
-<span class="sourceLineNo">574</span>     *            class.<a name="line.574"></a>
-<span class="sourceLineNo">575</span>     * @return The Logger.<a name="line.575"></a>
-<span class="sourceLineNo">576</span>     * @throws UnsupportedOperationException if {@code clazz} is {@code null} and the calling class cannot be<a name="line.576"></a>
-<span class="sourceLineNo">577</span>     *             determined.<a name="line.577"></a>
-<span class="sourceLineNo">578</span>     */<a name="line.578"></a>
-<span class="sourceLineNo">579</span>    public static Logger getLogger(final Class&lt;?&gt; clazz) {<a name="line.579"></a>
-<span class="sourceLineNo">580</span>        final Class&lt;?&gt; cls = callerClass(clazz);<a name="line.580"></a>
-<span class="sourceLineNo">581</span>        return getContext(cls.getClassLoader(), false).getLogger(toLoggerName(cls));<a name="line.581"></a>
-<span class="sourceLineNo">582</span>    }<a name="line.582"></a>
-<span class="sourceLineNo">583</span><a name="line.583"></a>
-<span class="sourceLineNo">584</span>    /**<a name="line.584"></a>
-<span class="sourceLineNo">585</span>     * Returns a Logger using the fully qualified name of the Class as the Logger name.<a name="line.585"></a>
-<span class="sourceLineNo">586</span>     *<a name="line.586"></a>
-<span class="sourceLineNo">587</span>     * @param clazz The Class whose name should be used as the Logger name. If null it will default to the calling<a name="line.587"></a>
-<span class="sourceLineNo">588</span>     *            class.<a name="line.588"></a>
-<span class="sourceLineNo">589</span>     * @param messageFactory The message factory is used only when creating a logger, subsequent use does not change the<a name="line.589"></a>
-<span class="sourceLineNo">590</span>     *            logger but will log a warning if mismatched.<a name="line.590"></a>
-<span class="sourceLineNo">591</span>     * @return The Logger.<a name="line.591"></a>
-<span class="sourceLineNo">592</span>     * @throws UnsupportedOperationException if {@code clazz} is {@code null} and the calling class cannot be<a name="line.592"></a>
-<span class="sourceLineNo">593</span>     *             determined.<a name="line.593"></a>
-<span class="sourceLineNo">594</span>     */<a name="line.594"></a>
-<span class="sourceLineNo">595</span>    public static Logger getLogger(final Class&lt;?&gt; clazz, final MessageFactory messageFactory) {<a name="line.595"></a>
-<span class="sourceLineNo">596</span>        final Class&lt;?&gt; cls = callerClass(clazz);<a name="line.596"></a>
-<span class="sourceLineNo">597</span>        return getContext(cls.getClassLoader(), false).getLogger(toLoggerName(cls), messageFactory);<a name="line.597"></a>
-<span class="sourceLineNo">598</span>    }<a name="line.598"></a>
-<span class="sourceLineNo">599</span><a name="line.599"></a>
-<span class="sourceLineNo">600</span>    /**<a name="line.600"></a>
-<span class="sourceLineNo">601</span>     * Returns a Logger with the name of the calling class.<a name="line.601"></a>
-<span class="sourceLineNo">602</span>     *<a name="line.602"></a>
-<span class="sourceLineNo">603</span>     * @param messageFactory The message factory is used only when creating a logger, subsequent use does not change the<a name="line.603"></a>
-<span class="sourceLineNo">604</span>     *            logger but will log a warning if mismatched.<a name="line.604"></a>
-<span class="sourceLineNo">605</span>     * @return The Logger for the calling class.<a name="line.605"></a>
-<span class="sourceLineNo">606</span>     * @throws UnsupportedOperationException if the calling class cannot be determined.<a name="line.606"></a>
-<span class="sourceLineNo">607</span>     */<a name="line.607"></a>
-<span class="sourceLineNo">608</span>    public static Logger getLogger(final MessageFactory messageFactory) {<a name="line.608"></a>
-<span class="sourceLineNo">609</span>        return getLogger(StackLocatorUtil.getCallerClass(2), messageFactory);<a name="line.609"></a>
-<span class="sourceLineNo">610</span>    }<a name="line.610"></a>
-<span class="sourceLineNo">611</span><a name="line.611"></a>
-<span class="sourceLineNo">612</span>    /**<a name="line.612"></a>
-<span class="sourceLineNo">613</span>     * Returns a Logger using the fully qualified class name of the value as the Logger name.<a name="line.613"></a>
-<span class="sourceLineNo">614</span>     *<a name="line.614"></a>
-<span class="sourceLineNo">615</span>     * @param value The value whose class name should be used as the Logger name. If null the name of the calling class<a name="line.615"></a>
-<span class="sourceLineNo">616</span>     *            will be used as the logger name.<a name="line.616"></a>
-<span class="sourceLineNo">617</span>     * @return The Logger.<a name="line.617"></a>
-<span class="sourceLineNo">618</span>     * @throws UnsupportedOperationException if {@code value} is {@code null} and the calling class cannot be<a name="line.618"></a>
-<span class="sourceLineNo">619</span>     *             determined.<a name="line.619"></a>
-<span class="sourceLineNo">620</span>     */<a name="line.620"></a>
-<span class="sourceLineNo">621</span>    public static Logger getLogger(final Object value) {<a name="line.621"></a>
-<span class="sourceLineNo">622</span>        return getLogger(value != null ? value.getClass() : StackLocatorUtil.getCallerClass(2));<a name="line.622"></a>
-<span class="sourceLineNo">623</span>    }<a name="line.623"></a>
-<span class="sourceLineNo">624</span><a name="line.624"></a>
-<span class="sourceLineNo">625</span>    /**<a name="line.625"></a>
-<span class="sourceLineNo">626</span>     * Returns a Logger using the fully qualified class name of the value as the Logger name.<a name="line.626"></a>
-<span class="sourceLineNo">627</span>     *<a name="line.627"></a>
-<span class="sourceLineNo">628</span>     * @param value The value whose class name should be used as the Logger name. If null the name of the calling class<a name="line.628"></a>
-<span class="sourceLineNo">629</span>     *            will be used as the logger name.<a name="line.629"></a>
-<span class="sourceLineNo">630</span>     * @param messageFactory The message factory is used only when creating a logger, subsequent use does not change the<a name="line.630"></a>
-<span class="sourceLineNo">631</span>     *            logger but will log a warning if mismatched.<a name="line.631"></a>
-<span class="sourceLineNo">632</span>     * @return The Logger.<a name="line.632"></a>
-<span class="sourceLineNo">633</span>     * @throws UnsupportedOperationException if {@code value} is {@code null} and the calling class cannot be<a name="line.633"></a>
-<span class="sourceLineNo">634</span>     *             determined.<a name="line.634"></a>
-<span class="sourceLineNo">635</span>     */<a name="line.635"></a>
-<span class="sourceLineNo">636</span>    public static Logger getLogger(final Object value, final MessageFactory messageFactory) {<a name="line.636"></a>
-<span class="sourceLineNo">637</span>        return getLogger(value != null ? value.getClass() : StackLocatorUtil.getCallerClass(2), messageFactory);<a name="line.637"></a>
-<span class="sourceLineNo">638</span>    }<a name="line.638"></a>
-<span class="sourceLineNo">639</span><a name="line.639"></a>
-<span class="sourceLineNo">640</span>    /**<a name="line.640"></a>
-<span class="sourceLineNo">641</span>     * Returns a Logger with the specified name.<a name="line.641"></a>
-<span class="sourceLineNo">642</span>     *<a name="line.642"></a>
-<span class="sourceLineNo">643</span>     * @param name The logger name. If null the name of the calling class will be used.<a name="line.643"></a>
-<span class="sourceLineNo">644</span>     * @return The Logger.<a name="line.644"></a>
-<span class="sourceLineNo">645</span>     * @throws UnsupportedOperationException if {@code name} is {@code null} and the calling class cannot be determined.<a name="line.645"></a>
-<span class="sourceLineNo">646</span>     */<a name="line.646"></a>
-<span class="sourceLineNo">647</span>    public static Logger getLogger(final String name) {<a name="line.647"></a>
-<span class="sourceLineNo">648</span>        return name != null ? getContext(false).getLogger(name) : getLogger(StackLocatorUtil.getCallerClass(2));<a name="line.648"></a>
-<span class="sourceLineNo">649</span>    }<a name="line.649"></a>
-<span class="sourceLineNo">650</span><a name="line.650"></a>
-<span class="sourceLineNo">651</span>    /**<a name="line.651"></a>
-<span class="sourceLineNo">652</span>     * Returns a Logger with the specified name.<a name="line.652"></a>
-<span class="sourceLineNo">653</span>     *<a name="line.653"></a>
-<span class="sourceLineNo">654</span>     * @param name The logger name. If null the name of the calling class will be used.<a name="line.654"></a>
-<span class="sourceLineNo">655</span>     * @param messageFactory The message factory is used only when creating a logger, subsequent use does not change the<a name="line.655"></a>
-<span class="sourceLineNo">656</span>     *            logger but will log a warning if mismatched.<a name="line.656"></a>
-<span class="sourceLineNo">657</span>     * @return The Logger.<a name="line.657"></a>
-<span class="sourceLineNo">658</span>     * @throws UnsupportedOperationException if {@code name} is {@code null} and the calling class cannot be determined.<a name="line.658"></a>
-<span class="sourceLineNo">659</span>     */<a name="line.659"></a>
-<span class="sourceLineNo">660</span>    public static Logger getLogger(final String name, final MessageFactory messageFactory) {<a name="line.660"></a>
-<span class="sourceLineNo">661</span>        return name != null ? getContext(false).getLogger(name, messageFactory) : getLogger(<a name="line.661"></a>
-<span class="sourceLineNo">662</span>                StackLocatorUtil.getCallerClass(2), messageFactory);<a name="line.662"></a>
-<span class="sourceLineNo">663</span>    }<a name="line.663"></a>
-<span class="sourceLineNo">664</span><a name="line.664"></a>
-<span class="sourceLineNo">665</span>    /**<a name="line.665"></a>
-<span class="sourceLineNo">666</span>     * Returns a Logger with the specified name.<a name="line.666"></a>
-<span class="sourceLineNo">667</span>     *<a name="line.667"></a>
-<span class="sourceLineNo">668</span>     * @param fqcn The fully qualified class name of the class that this method is a member of.<a name="line.668"></a>
-<span class="sourceLineNo">669</span>     * @param name The logger name.<a name="line.669"></a>
-<span class="sourceLineNo">670</span>     * @return The Logger.<a name="line.670"></a>
-<span class="sourceLineNo">671</span>     */<a name="line.671"></a>
-<span class="sourceLineNo">672</span>    protected static Logger getLogger(final String fqcn, final String name) {<a name="line.672"></a>
-<span class="sourceLineNo">673</span>        return factory.getContext(fqcn, null, null, false).getLogger(name);<a name="line.673"></a>
-<span class="sourceLineNo">674</span>    }<a name="line.674"></a>
-<span class="sourceLineNo">675</span><a name="line.675"></a>
-<span class="sourceLineNo">676</span>    /**<a name="line.676"></a>
-<span class="sourceLineNo">677</span>     * Returns the root logger.<a name="line.677"></a>
-<span class="sourceLineNo">678</span>     *<a name="line.678"></a>
-<span class="sourceLineNo">679</span>     * @return the root logger, named {@link #ROOT_LOGGER_NAME}.<a name="line.679"></a>
+<span class="sourceLineNo">570</span>    private static Class&lt;?&gt; callerClass(final Class&lt;?&gt; clazz) {<a name="line.570"></a>
+<span class="sourceLineNo">571</span>        if (clazz != null) {<a name="line.571"></a>
+<span class="sourceLineNo">572</span>            return clazz;<a name="line.572"></a>
+<span class="sourceLineNo">573</span>        }<a name="line.573"></a>
+<span class="sourceLineNo">574</span>        final Class&lt;?&gt; candidate = StackLocatorUtil.getCallerClass(3);<a name="line.574"></a>
+<span class="sourceLineNo">575</span>        if (candidate == null) {<a name="line.575"></a>
+<span class="sourceLineNo">576</span>            throw new UnsupportedOperationException("No class provided, and an appropriate one cannot be found.");<a name="line.576"></a>
+<span class="sourceLineNo">577</span>        }<a name="line.577"></a>
+<span class="sourceLineNo">578</span>        return candidate;<a name="line.578"></a>
+<span class="sourceLineNo">579</span>    }<a name="line.579"></a>
+<span class="sourceLineNo">580</span><a name="line.580"></a>
+<span class="sourceLineNo">581</span>    /**<a name="line.581"></a>
+<span class="sourceLineNo">582</span>     * Returns a Logger with the name of the calling class.<a name="line.582"></a>
+<span class="sourceLineNo">583</span>     *<a name="line.583"></a>
+<span class="sourceLineNo">584</span>     * @return The Logger for the calling class.<a name="line.584"></a>
+<span class="sourceLineNo">585</span>     * @throws UnsupportedOperationException if the calling class cannot be determined.<a name="line.585"></a>
+<span class="sourceLineNo">586</span>     */<a name="line.586"></a>
+<span class="sourceLineNo">587</span>    public static Logger getLogger() {<a name="line.587"></a>
+<span class="sourceLineNo">588</span>        return getLogger(StackLocatorUtil.getCallerClass(2));<a name="line.588"></a>
+<span class="sourceLineNo">589</span>    }<a name="line.589"></a>
+<span class="sourceLineNo">590</span><a name="line.590"></a>
+<span class="sourceLineNo">591</span>    /**<a name="line.591"></a>
+<span class="sourceLineNo">592</span>     * Returns a Logger using the fully qualified name of the Class as the Logger name.<a name="line.592"></a>
+<span class="sourceLineNo">593</span>     *<a name="line.593"></a>
+<span class="sourceLineNo">594</span>     * @param clazz The Class whose name should be used as the Logger name. If null it will default to the calling<a name="line.594"></a>
+<span class="sourceLineNo">595</span>     *            class.<a name="line.595"></a>
+<span class="sourceLineNo">596</span>     * @return The Logger.<a name="line.596"></a>
+<span class="sourceLineNo">597</span>     * @throws UnsupportedOperationException if {@code clazz} is {@code null} and the calling class cannot be<a name="line.597"></a>
+<span class="sourceLineNo">598</span>     *             determined.<a name="line.598"></a>
+<span class="sourceLineNo">599</span>     */<a name="line.599"></a>
+<span class="sourceLineNo">600</span>    public static Logger getLogger(final Class&lt;?&gt; clazz) {<a name="line.600"></a>
+<span class="sourceLineNo">601</span>        final Class&lt;?&gt; cls = callerClass(clazz);<a name="line.601"></a>
+<span class="sourceLineNo">602</span>        return getContext(cls.getClassLoader(), false).getLogger(toLoggerName(cls));<a name="line.602"></a>
+<span class="sourceLineNo">603</span>    }<a name="line.603"></a>
+<span class="sourceLineNo">604</span><a name="line.604"></a>
+<span class="sourceLineNo">605</span>    /**<a name="line.605"></a>
+<span class="sourceLineNo">606</span>     * Returns a Logger using the fully qualified name of the Class as the Logger name.<a name="line.606"></a>
+<span class="sourceLineNo">607</span>     *<a name="line.607"></a>
+<span class="sourceLineNo">608</span>     * @param clazz The Class whose name should be used as the Logger name. If null it will default to the calling<a name="line.608"></a>
+<span class="sourceLineNo">609</span>     *            class.<a name="line.609"></a>
+<span class="sourceLineNo">610</span>     * @param messageFactory The message factory is used only when creating a logger, subsequent use does not change the<a name="line.610"></a>
+<span class="sourceLineNo">611</span>     *            logger but will log a warning if mismatched.<a name="line.611"></a>
+<span class="sourceLineNo">612</span>     * @return The Logger.<a name="line.612"></a>
+<span class="sourceLineNo">613</span>     * @throws UnsupportedOperationException if {@code clazz} is {@code null} and the calling class cannot be<a name="line.613"></a>
+<span class="sourceLineNo">614</span>     *             determined.<a name="line.614"></a>
+<span class="sourceLineNo">615</span>     */<a name="line.615"></a>
+<span class="sourceLineNo">616</span>    public static Logger getLogger(final Class&lt;?&gt; clazz, final MessageFactory messageFactory) {<a name="line.616"></a>
+<span class="sourceLineNo">617</span>        final Class&lt;?&gt; cls = callerClass(clazz);<a name="line.617"></a>
+<span class="sourceLineNo">618</span>        return getContext(cls.getClassLoader(), false).getLogger(toLoggerName(cls), messageFactory);<a name="line.618"></a>
+<span class="sourceLineNo">619</span>    }<a name="line.619"></a>
+<span class="sourceLineNo">620</span><a name="line.620"></a>
+<span class="sourceLineNo">621</span>    /**<a name="line.621"></a>
+<span class="sourceLineNo">622</span>     * Returns a Logger with the name of the calling class.<a name="line.622"></a>
+<span class="sourceLineNo">623</span>     *<a name="line.623"></a>
+<span class="sourceLineNo">624</span>     * @param messageFactory The message factory is used only when creating a logger, subsequent use does not change the<a name="line.624"></a>
+<span class="sourceLineNo">625</span>     *            logger but will log a warning if mismatched.<a name="line.625"></a>
+<span class="sourceLineNo">626</span>     * @return The Logger for the calling class.<a name="line.626"></a>
+<span class="sourceLineNo">627</span>     * @throws UnsupportedOperationException if the calling class cannot be determined.<a name="line.627"></a>
+<span class="sourceLineNo">628</span>     */<a name="line.628"></a>
+<span class="sourceLineNo">629</span>    public static Logger getLogger(final MessageFactory messageFactory) {<a name="line.629"></a>
+<span class="sourceLineNo">630</span>        return getLogger(StackLocatorUtil.getCallerClass(2), messageFactory);<a name="line.630"></a>
+<span class="sourceLineNo">631</span>    }<a name="line.631"></a>
+<span class="sourceLineNo">632</span><a name="line.632"></a>
+<span class="sourceLineNo">633</span>    /**<a name="line.633"></a>
+<span class="sourceLineNo">634</span>     * Returns a Logger using the fully qualified class name of the value as the Logger name.<a name="line.634"></a>
+<span class="sourceLineNo">635</span>     *<a name="line.635"></a>
+<span class="sourceLineNo">636</span>     * @param value The value whose class name should be used as the Logger name. If null the name of the calling class<a name="line.636"></a>
+<span class="sourceLineNo">637</span>     *            will be used as the logger name.<a name="line.637"></a>
+<span class="sourceLineNo">638</span>     * @return The Logger.<a name="line.638"></a>
+<span class="sourceLineNo">639</span>     * @throws UnsupportedOperationException if {@code value} is {@code null} and the calling class cannot be<a name="line.639"></a>
+<span class="sourceLineNo">640</span>     *             determined.<a name="line.640"></a>
+<span class="sourceLineNo">641</span>     */<a name="line.641"></a>
+<span class="sourceLineNo">642</span>    public static Logger getLogger(final Object value) {<a name="line.642"></a>
+<span class="sourceLineNo">643</span>        return getLogger(value != null ? value.getClass() : StackLocatorUtil.getCallerClass(2));<a name="line.643"></a>
+<span class="sourceLineNo">644</span>    }<a name="line.644"></a>
+<span class="sourceLineNo">645</span><a name="line.645"></a>
+<span class="sourceLineNo">646</span>    /**<a name="line.646"></a>
+<span class="sourceLineNo">647</span>     * Returns a Logger using the fully qualified class name of the value as the Logger name.<a name="line.647"></a>
+<span class="sourceLineNo">648</span>     *<a name="line.648"></a>
+<span class="sourceLineNo">649</span>     * @param value The value whose class name should be used as the Logger name. If null the name of the calling class<a name="line.649"></a>
+<span class="sourceLineNo">650</span>     *            will be used as the logger name.<a name="line.650"></a>
+<span class="sourceLineNo">651</span>     * @param messageFactory The message factory is used only when creating a logger, subsequent use does not change the<a name="line.651"></a>
+<span class="sourceLineNo">652</span>     *            logger but will log a warning if mismatched.<a name="line.652"></a>
+<span class="sourceLineNo">653</span>     * @return The Logger.<a name="line.653"></a>
+<span class="sourceLineNo">654</span>     * @throws UnsupportedOperationException if {@code value} is {@code null} and the calling class cannot be<a name="line.654"></a>
+<span class="sourceLineNo">655</span>     *             determined.<a name="line.655"></a>
+<span class="sourceLineNo">656</span>     */<a name="line.656"></a>
+<span class="sourceLineNo">657</span>    public static Logger getLogger(final Object value, final MessageFactory messageFactory) {<a name="line.657"></a>
+<span class="sourceLineNo">658</span>        return getLogger(value != null ? value.getClass() : StackLocatorUtil.getCallerClass(2), messageFactory);<a name="line.658"></a>
+<span class="sourceLineNo">659</span>    }<a name="line.659"></a>
+<span class="sourceLineNo">660</span><a name="line.660"></a>
+<span class="sourceLineNo">661</span>    /**<a name="line.661"></a>
+<span class="sourceLineNo">662</span>     * Returns a Logger with the specified name.<a name="line.662"></a>
+<span class="sourceLineNo">663</span>     *<a name="line.663"></a>
+<span class="sourceLineNo">664</span>     * @param name The logger name. If null the name of the calling class will be used.<a name="line.664"></a>
+<span class="sourceLineNo">665</span>     * @return The Logger.<a name="line.665"></a>
+<span class="sourceLineNo">666</span>     * @throws UnsupportedOperationException if {@code name} is {@code null} and the calling class cannot be determined.<a name="line.666"></a>
+<span class="sourceLineNo">667</span>     */<a name="line.667"></a>
+<span class="sourceLineNo">668</span>    public static Logger getLogger(final String name) {<a name="line.668"></a>
+<span class="sourceLineNo">669</span>        return name != null ? getContext(false).getLogger(name) : getLogger(StackLocatorUtil.getCallerClass(2));<a name="line.669"></a>
+<span class="sourceLineNo">670</span>    }<a name="line.670"></a>
+<span class="sourceLineNo">671</span><a name="line.671"></a>
+<span class="sourceLineNo">672</span>    /**<a name="line.672"></a>
+<span class="sourceLineNo">673</span>     * Returns a Logger with the specified name.<a name="line.673"></a>
+<span class="sourceLineNo">674</span>     *<a name="line.674"></a>
+<span class="sourceLineNo">675</span>     * @param name The logger name. If null the name of the calling class will be used.<a name="line.675"></a>
+<span class="sourceLineNo">676</span>     * @param messageFactory The message factory is used only when creating a logger, subsequent use does not change the<a name="line.676"></a>
+<span class="sourceLineNo">677</span>     *            logger but will log a warning if mismatched.<a name="line.677"></a>
+<span class="sourceLineNo">678</span>     * @return The Logger.<a name="line.678"></a>
+<span class="sourceLineNo">679</span>     * @throws UnsupportedOperationException if {@code name} is {@code null} and the calling class cannot be determined.<a name="line.679"></a>
 <span class="sourceLineNo">680</span>     */<a name="line.680"></a>
-<span class="sourceLineNo">681</span>    public static Logger getRootLogger() {<a name="line.681"></a>
-<span class="sourceLineNo">682</span>        return getLogger(ROOT_LOGGER_NAME);<a name="line.682"></a>
-<span class="sourceLineNo">683</span>    }<a name="line.683"></a>
-<span class="sourceLineNo">684</span>}<a name="line.684"></a>
+<span class="sourceLineNo">681</span>    public static Logger getLogger(final String name, final MessageFactory messageFactory) {<a name="line.681"></a>
+<span class="sourceLineNo">682</span>        return name != null ? getContext(false).getLogger(name, messageFactory) : getLogger(<a name="line.682"></a>
+<span class="sourceLineNo">683</span>                StackLocatorUtil.getCallerClass(2), messageFactory);<a name="line.683"></a>
+<span class="sourceLineNo">684</span>    }<a name="line.684"></a>
+<span class="sourceLineNo">685</span><a name="line.685"></a>
+<span class="sourceLineNo">686</span>    /**<a name="line.686"></a>
+<span class="sourceLineNo">687</span>     * Returns a Logger with the specified name.<a name="line.687"></a>
+<span class="sourceLineNo">688</span>     *<a name="line.688"></a>
+<span class="sourceLineNo">689</span>     * @param fqcn The fully qualified class name of the class that this method is a member of.<a name="line.689"></a>
+<span class="sourceLineNo">690</span>     * @param name The logger name.<a name="line.690"></a>
+<span class="sourceLineNo">691</span>     * @return The Logger.<a name="line.691"></a>
+<span class="sourceLineNo">692</span>     */<a name="line.692"></a>
+<span class="sourceLineNo">693</span>    protected static Logger getLogger(final String fqcn, final String name) {<a name="line.693"></a>
+<span class="sourceLineNo">694</span>        return factory.getContext(fqcn, null, null, false).getLogger(name);<a name="line.694"></a>
+<span class="sourceLineNo">695</span>    }<a name="line.695"></a>
+<span class="sourceLineNo">696</span><a name="line.696"></a>
+<span class="sourceLineNo">697</span>    /**<a name="line.697"></a>
+<span class="sourceLineNo">698</span>     * Returns the root logger.<a name="line.698"></a>
+<span class="sourceLineNo">699</span>     *<a name="line.699"></a>
+<span class="sourceLineNo">700</span>     * @return the root logger, named {@link #ROOT_LOGGER_NAME}.<a name="line.700"></a>
+<span class="sourceLineNo">701</span>     */<a name="line.701"></a>
+<span class="sourceLineNo">702</span>    public static Logger getRootLogger() {<a name="line.702"></a>
+<span class="sourceLineNo">703</span>        return getLogger(ROOT_LOGGER_NAME);<a name="line.703"></a>
+<span class="sourceLineNo">704</span>    }<a name="line.704"></a>
+<span class="sourceLineNo">705</span>}<a name="line.705"></a>
 
 
 

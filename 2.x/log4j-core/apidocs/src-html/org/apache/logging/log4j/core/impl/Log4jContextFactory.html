@@ -291,45 +291,66 @@
 <span class="sourceLineNo">283</span>        return ctx;<a name="line.283"></a>
 <span class="sourceLineNo">284</span>    }<a name="line.284"></a>
 <span class="sourceLineNo">285</span><a name="line.285"></a>
-<span class="sourceLineNo">286</span>    /**<a name="line.286"></a>
-<span class="sourceLineNo">287</span>     * Returns the ContextSelector.<a name="line.287"></a>
-<span class="sourceLineNo">288</span>     * @return The ContextSelector.<a name="line.288"></a>
-<span class="sourceLineNo">289</span>     */<a name="line.289"></a>
-<span class="sourceLineNo">290</span>    public ContextSelector getSelector() {<a name="line.290"></a>
-<span class="sourceLineNo">291</span>        return selector;<a name="line.291"></a>
-<span class="sourceLineNo">292</span>    }<a name="line.292"></a>
-<span class="sourceLineNo">293</span><a name="line.293"></a>
-<span class="sourceLineNo">294</span>        /**<a name="line.294"></a>
-<span class="sourceLineNo">295</span>         * Returns the ShutdownCallbackRegistry<a name="line.295"></a>
-<span class="sourceLineNo">296</span>         *<a name="line.296"></a>
-<span class="sourceLineNo">297</span>         * @return the ShutdownCallbackRegistry<a name="line.297"></a>
-<span class="sourceLineNo">298</span>         * @since 2.4<a name="line.298"></a>
-<span class="sourceLineNo">299</span>         */<a name="line.299"></a>
-<span class="sourceLineNo">300</span>        public ShutdownCallbackRegistry getShutdownCallbackRegistry() {<a name="line.300"></a>
-<span class="sourceLineNo">301</span>                return shutdownCallbackRegistry;<a name="line.301"></a>
-<span class="sourceLineNo">302</span>        }<a name="line.302"></a>
-<span class="sourceLineNo">303</span><a name="line.303"></a>
-<span class="sourceLineNo">304</span>    /**<a name="line.304"></a>
-<span class="sourceLineNo">305</span>     * Removes knowledge of a LoggerContext.<a name="line.305"></a>
-<span class="sourceLineNo">306</span>     *<a name="line.306"></a>
-<span class="sourceLineNo">307</span>     * @param context The context to remove.<a name="line.307"></a>
-<span class="sourceLineNo">308</span>     */<a name="line.308"></a>
-<span class="sourceLineNo">309</span>    @Override<a name="line.309"></a>
-<span class="sourceLineNo">310</span>    public void removeContext(final org.apache.logging.log4j.spi.LoggerContext context) {<a name="line.310"></a>
-<span class="sourceLineNo">311</span>        if (context instanceof LoggerContext) {<a name="line.311"></a>
-<span class="sourceLineNo">312</span>            selector.removeContext((LoggerContext) context);<a name="line.312"></a>
-<span class="sourceLineNo">313</span>        }<a name="line.313"></a>
-<span class="sourceLineNo">314</span>    }<a name="line.314"></a>
-<span class="sourceLineNo">315</span><a name="line.315"></a>
-<span class="sourceLineNo">316</span>    @Override<a name="line.316"></a>
-<span class="sourceLineNo">317</span>    public Cancellable addShutdownCallback(final Runnable callback) {<a name="line.317"></a>
-<span class="sourceLineNo">318</span>        return isShutdownHookEnabled() ? shutdownCallbackRegistry.addShutdownCallback(callback) : null;<a name="line.318"></a>
-<span class="sourceLineNo">319</span>    }<a name="line.319"></a>
-<span class="sourceLineNo">320</span><a name="line.320"></a>
-<span class="sourceLineNo">321</span>    public boolean isShutdownHookEnabled() {<a name="line.321"></a>
-<span class="sourceLineNo">322</span>        return SHUTDOWN_HOOK_ENABLED;<a name="line.322"></a>
-<span class="sourceLineNo">323</span>    }<a name="line.323"></a>
-<span class="sourceLineNo">324</span>}<a name="line.324"></a>
+<span class="sourceLineNo">286</span>    @Override<a name="line.286"></a>
+<span class="sourceLineNo">287</span>    public void shutdown(String fqcn, ClassLoader loader, boolean currentContext, boolean allContexts) {<a name="line.287"></a>
+<span class="sourceLineNo">288</span>        if (selector.hasContext(fqcn, loader, currentContext)) {<a name="line.288"></a>
+<span class="sourceLineNo">289</span>            selector.shutdown(fqcn, loader, currentContext, allContexts);<a name="line.289"></a>
+<span class="sourceLineNo">290</span>        }<a name="line.290"></a>
+<span class="sourceLineNo">291</span>    }<a name="line.291"></a>
+<span class="sourceLineNo">292</span><a name="line.292"></a>
+<span class="sourceLineNo">293</span>    /**<a name="line.293"></a>
+<span class="sourceLineNo">294</span>     * Checks to see if a LoggerContext is installed.<a name="line.294"></a>
+<span class="sourceLineNo">295</span>     * @param fqcn The fully qualified class name of the caller.<a name="line.295"></a>
+<span class="sourceLineNo">296</span>     * @param loader The ClassLoader to use or null.<a name="line.296"></a>
+<span class="sourceLineNo">297</span>     * @param currentContext If true returns the current Context, if false returns the Context appropriate<a name="line.297"></a>
+<span class="sourceLineNo">298</span>     * for the caller if a more appropriate Context can be determined.<a name="line.298"></a>
+<span class="sourceLineNo">299</span>     * @return true if a LoggerContext has been installed, false otherwise.<a name="line.299"></a>
+<span class="sourceLineNo">300</span>     * @since 3.0<a name="line.300"></a>
+<span class="sourceLineNo">301</span>     */<a name="line.301"></a>
+<span class="sourceLineNo">302</span>    @Override<a name="line.302"></a>
+<span class="sourceLineNo">303</span>    public boolean hasContext(String fqcn, ClassLoader loader, boolean currentContext) {<a name="line.303"></a>
+<span class="sourceLineNo">304</span>        return selector.hasContext(fqcn, loader, currentContext);<a name="line.304"></a>
+<span class="sourceLineNo">305</span>    }<a name="line.305"></a>
+<span class="sourceLineNo">306</span><a name="line.306"></a>
+<span class="sourceLineNo">307</span>    /**<a name="line.307"></a>
+<span class="sourceLineNo">308</span>     * Returns the ContextSelector.<a name="line.308"></a>
+<span class="sourceLineNo">309</span>     * @return The ContextSelector.<a name="line.309"></a>
+<span class="sourceLineNo">310</span>     */<a name="line.310"></a>
+<span class="sourceLineNo">311</span>    public ContextSelector getSelector() {<a name="line.311"></a>
+<span class="sourceLineNo">312</span>        return selector;<a name="line.312"></a>
+<span class="sourceLineNo">313</span>    }<a name="line.313"></a>
+<span class="sourceLineNo">314</span><a name="line.314"></a>
+<span class="sourceLineNo">315</span>        /**<a name="line.315"></a>
+<span class="sourceLineNo">316</span>         * Returns the ShutdownCallbackRegistry<a name="line.316"></a>
+<span class="sourceLineNo">317</span>         *<a name="line.317"></a>
+<span class="sourceLineNo">318</span>         * @return the ShutdownCallbackRegistry<a name="line.318"></a>
+<span class="sourceLineNo">319</span>         * @since 2.4<a name="line.319"></a>
+<span class="sourceLineNo">320</span>         */<a name="line.320"></a>
+<span class="sourceLineNo">321</span>        public ShutdownCallbackRegistry getShutdownCallbackRegistry() {<a name="line.321"></a>
+<span class="sourceLineNo">322</span>                return shutdownCallbackRegistry;<a name="line.322"></a>
+<span class="sourceLineNo">323</span>        }<a name="line.323"></a>
+<span class="sourceLineNo">324</span><a name="line.324"></a>
+<span class="sourceLineNo">325</span>    /**<a name="line.325"></a>
+<span class="sourceLineNo">326</span>     * Removes knowledge of a LoggerContext.<a name="line.326"></a>
+<span class="sourceLineNo">327</span>     *<a name="line.327"></a>
+<span class="sourceLineNo">328</span>     * @param context The context to remove.<a name="line.328"></a>
+<span class="sourceLineNo">329</span>     */<a name="line.329"></a>
+<span class="sourceLineNo">330</span>    @Override<a name="line.330"></a>
+<span class="sourceLineNo">331</span>    public void removeContext(final org.apache.logging.log4j.spi.LoggerContext context) {<a name="line.331"></a>
+<span class="sourceLineNo">332</span>        if (context instanceof LoggerContext) {<a name="line.332"></a>
+<span class="sourceLineNo">333</span>            selector.removeContext((LoggerContext) context);<a name="line.333"></a>
+<span class="sourceLineNo">334</span>        }<a name="line.334"></a>
+<span class="sourceLineNo">335</span>    }<a name="line.335"></a>
+<span class="sourceLineNo">336</span><a name="line.336"></a>
+<span class="sourceLineNo">337</span>    @Override<a name="line.337"></a>
+<span class="sourceLineNo">338</span>    public Cancellable addShutdownCallback(final Runnable callback) {<a name="line.338"></a>
+<span class="sourceLineNo">339</span>        return isShutdownHookEnabled() ? shutdownCallbackRegistry.addShutdownCallback(callback) : null;<a name="line.339"></a>
+<span class="sourceLineNo">340</span>    }<a name="line.340"></a>
+<span class="sourceLineNo">341</span><a name="line.341"></a>
+<span class="sourceLineNo">342</span>    public boolean isShutdownHookEnabled() {<a name="line.342"></a>
+<span class="sourceLineNo">343</span>        return SHUTDOWN_HOOK_ENABLED;<a name="line.343"></a>
+<span class="sourceLineNo">344</span>    }<a name="line.344"></a>
+<span class="sourceLineNo">345</span>}<a name="line.345"></a>
 
 
 

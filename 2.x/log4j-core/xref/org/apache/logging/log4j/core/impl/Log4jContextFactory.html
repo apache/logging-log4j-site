@@ -291,47 +291,68 @@
 <a class="jxr_linenumber" name="L283" href="#L283">283</a>         <strong class="jxr_keyword">return</strong> ctx;
 <a class="jxr_linenumber" name="L284" href="#L284">284</a>     }
 <a class="jxr_linenumber" name="L285" href="#L285">285</a> 
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L287" href="#L287">287</a> <em class="jxr_javadoccomment">     * Returns the ContextSelector.</em>
-<a class="jxr_linenumber" name="L288" href="#L288">288</a> <em class="jxr_javadoccomment">     * @return The ContextSelector.</em>
-<a class="jxr_linenumber" name="L289" href="#L289">289</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/selector/ContextSelector.html">ContextSelector</a> getSelector() {
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>         <strong class="jxr_keyword">return</strong> selector;
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>     }
-<a class="jxr_linenumber" name="L293" href="#L293">293</a> 
-<a class="jxr_linenumber" name="L294" href="#L294">294</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L295" href="#L295">295</a> <em class="jxr_javadoccomment">	 * Returns the ShutdownCallbackRegistry</em>
-<a class="jxr_linenumber" name="L296" href="#L296">296</a> <em class="jxr_javadoccomment">	 *</em>
-<a class="jxr_linenumber" name="L297" href="#L297">297</a> <em class="jxr_javadoccomment">	 * @return the ShutdownCallbackRegistry</em>
-<a class="jxr_linenumber" name="L298" href="#L298">298</a> <em class="jxr_javadoccomment">	 * @since 2.4</em>
-<a class="jxr_linenumber" name="L299" href="#L299">299</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="L300" href="#L300">300</a> 	<strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/ShutdownCallbackRegistry.html">ShutdownCallbackRegistry</a> getShutdownCallbackRegistry() {
-<a class="jxr_linenumber" name="L301" href="#L301">301</a> 		<strong class="jxr_keyword">return</strong> shutdownCallbackRegistry;
-<a class="jxr_linenumber" name="L302" href="#L302">302</a> 	}
-<a class="jxr_linenumber" name="L303" href="#L303">303</a> 
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">     * Removes knowledge of a LoggerContext.</em>
-<a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">     * @param context The context to remove.</em>
-<a class="jxr_linenumber" name="L308" href="#L308">308</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>     @Override
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> removeContext(<strong class="jxr_keyword">final</strong> org.apache.logging.log4j.spi.LoggerContext context) {
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>         <strong class="jxr_keyword">if</strong> (context instanceof LoggerContext) {
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>             selector.removeContext((LoggerContext) context);
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>         }
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>     }
-<a class="jxr_linenumber" name="L315" href="#L315">315</a> 
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>     @Override
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/Cancellable.html">Cancellable</a> addShutdownCallback(<strong class="jxr_keyword">final</strong> Runnable callback) {
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>         <strong class="jxr_keyword">return</strong> isShutdownHookEnabled() ? shutdownCallbackRegistry.addShutdownCallback(callback) : <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L319" href="#L319">319</a>     }
-<a class="jxr_linenumber" name="L320" href="#L320">320</a> 
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isShutdownHookEnabled() {
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <strong class="jxr_keyword">return</strong> SHUTDOWN_HOOK_ENABLED;
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>     }
-<a class="jxr_linenumber" name="L324" href="#L324">324</a> }
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>     @Override
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> shutdown(String fqcn, ClassLoader loader, <strong class="jxr_keyword">boolean</strong> currentContext, <strong class="jxr_keyword">boolean</strong> allContexts) {
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>         <strong class="jxr_keyword">if</strong> (selector.hasContext(fqcn, loader, currentContext)) {
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>             selector.shutdown(fqcn, loader, currentContext, allContexts);
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>         }
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>     }
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> 
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L294" href="#L294">294</a> <em class="jxr_javadoccomment">     * Checks to see if a LoggerContext is installed.</em>
+<a class="jxr_linenumber" name="L295" href="#L295">295</a> <em class="jxr_javadoccomment">     * @param fqcn The fully qualified class name of the caller.</em>
+<a class="jxr_linenumber" name="L296" href="#L296">296</a> <em class="jxr_javadoccomment">     * @param loader The ClassLoader to use or null.</em>
+<a class="jxr_linenumber" name="L297" href="#L297">297</a> <em class="jxr_javadoccomment">     * @param currentContext If true returns the current Context, if false returns the Context appropriate</em>
+<a class="jxr_linenumber" name="L298" href="#L298">298</a> <em class="jxr_javadoccomment">     * for the caller if a more appropriate Context can be determined.</em>
+<a class="jxr_linenumber" name="L299" href="#L299">299</a> <em class="jxr_javadoccomment">     * @return true if a LoggerContext has been installed, false otherwise.</em>
+<a class="jxr_linenumber" name="L300" href="#L300">300</a> <em class="jxr_javadoccomment">     * @since 3.0</em>
+<a class="jxr_linenumber" name="L301" href="#L301">301</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>     @Override
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> hasContext(String fqcn, ClassLoader loader, <strong class="jxr_keyword">boolean</strong> currentContext) {
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>         <strong class="jxr_keyword">return</strong> selector.hasContext(fqcn, loader, currentContext);
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>     }
+<a class="jxr_linenumber" name="L306" href="#L306">306</a> 
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L308" href="#L308">308</a> <em class="jxr_javadoccomment">     * Returns the ContextSelector.</em>
+<a class="jxr_linenumber" name="L309" href="#L309">309</a> <em class="jxr_javadoccomment">     * @return The ContextSelector.</em>
+<a class="jxr_linenumber" name="L310" href="#L310">310</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/selector/ContextSelector.html">ContextSelector</a> getSelector() {
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>         <strong class="jxr_keyword">return</strong> selector;
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>     }
+<a class="jxr_linenumber" name="L314" href="#L314">314</a> 
+<a class="jxr_linenumber" name="L315" href="#L315">315</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L316" href="#L316">316</a> <em class="jxr_javadoccomment">	 * Returns the ShutdownCallbackRegistry</em>
+<a class="jxr_linenumber" name="L317" href="#L317">317</a> <em class="jxr_javadoccomment">	 *</em>
+<a class="jxr_linenumber" name="L318" href="#L318">318</a> <em class="jxr_javadoccomment">	 * @return the ShutdownCallbackRegistry</em>
+<a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">	 * @since 2.4</em>
+<a class="jxr_linenumber" name="L320" href="#L320">320</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L321" href="#L321">321</a> 	<strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/ShutdownCallbackRegistry.html">ShutdownCallbackRegistry</a> getShutdownCallbackRegistry() {
+<a class="jxr_linenumber" name="L322" href="#L322">322</a> 		<strong class="jxr_keyword">return</strong> shutdownCallbackRegistry;
+<a class="jxr_linenumber" name="L323" href="#L323">323</a> 	}
+<a class="jxr_linenumber" name="L324" href="#L324">324</a> 
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L326" href="#L326">326</a> <em class="jxr_javadoccomment">     * Removes knowledge of a LoggerContext.</em>
+<a class="jxr_linenumber" name="L327" href="#L327">327</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L328" href="#L328">328</a> <em class="jxr_javadoccomment">     * @param context The context to remove.</em>
+<a class="jxr_linenumber" name="L329" href="#L329">329</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>     @Override
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> removeContext(<strong class="jxr_keyword">final</strong> org.apache.logging.log4j.spi.LoggerContext context) {
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>         <strong class="jxr_keyword">if</strong> (context instanceof LoggerContext) {
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>             selector.removeContext((LoggerContext) context);
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>         }
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>     }
+<a class="jxr_linenumber" name="L336" href="#L336">336</a> 
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>     @Override
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/Cancellable.html">Cancellable</a> addShutdownCallback(<strong class="jxr_keyword">final</strong> Runnable callback) {
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>         <strong class="jxr_keyword">return</strong> isShutdownHookEnabled() ? shutdownCallbackRegistry.addShutdownCallback(callback) : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>     }
+<a class="jxr_linenumber" name="L341" href="#L341">341</a> 
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isShutdownHookEnabled() {
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>         <strong class="jxr_keyword">return</strong> SHUTDOWN_HOOK_ENABLED;
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>     }
+<a class="jxr_linenumber" name="L345" href="#L345">345</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2021 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>
