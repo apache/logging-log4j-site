@@ -112,91 +112,90 @@
 <FONT color="green">109</FONT>            PatternParser parser = createPatternParser(config);<a name="line.109"></a>
 <FONT color="green">110</FONT>            formatters = parser.parse((pattern == null) ? DEFAULT_CONVERSION_PATTERN : pattern);<a name="line.110"></a>
 <FONT color="green">111</FONT>            handlesExceptions = parser.handlesExceptions();<a name="line.111"></a>
-<FONT color="green">112</FONT>    <a name="line.112"></a>
-<FONT color="green">113</FONT>        }<a name="line.113"></a>
-<FONT color="green">114</FONT>    <a name="line.114"></a>
-<FONT color="green">115</FONT>        /**<a name="line.115"></a>
-<FONT color="green">116</FONT>         * Set the &lt;b&gt;ConversionPattern&lt;/b&gt; option. This is the string which<a name="line.116"></a>
-<FONT color="green">117</FONT>         * controls formatting and consists of a mix of literal content and<a name="line.117"></a>
-<FONT color="green">118</FONT>         * conversion specifiers.<a name="line.118"></a>
-<FONT color="green">119</FONT>         *<a name="line.119"></a>
-<FONT color="green">120</FONT>         * @param conversionPattern conversion pattern.<a name="line.120"></a>
-<FONT color="green">121</FONT>         */<a name="line.121"></a>
-<FONT color="green">122</FONT>        public void setConversionPattern(final String conversionPattern) {<a name="line.122"></a>
-<FONT color="green">123</FONT>            String pattern = OptionConverter.convertSpecialChars(conversionPattern);<a name="line.123"></a>
-<FONT color="green">124</FONT>            if (pattern == null) {<a name="line.124"></a>
-<FONT color="green">125</FONT>                return;<a name="line.125"></a>
-<FONT color="green">126</FONT>            }<a name="line.126"></a>
-<FONT color="green">127</FONT>            PatternParser parser = createPatternParser(this.config);<a name="line.127"></a>
-<FONT color="green">128</FONT>            formatters = parser.parse(pattern);<a name="line.128"></a>
-<FONT color="green">129</FONT>            handlesExceptions = parser.handlesExceptions();<a name="line.129"></a>
-<FONT color="green">130</FONT>        }<a name="line.130"></a>
-<FONT color="green">131</FONT>    <a name="line.131"></a>
-<FONT color="green">132</FONT>        /**<a name="line.132"></a>
-<FONT color="green">133</FONT>         * Formats a logging event to a writer.<a name="line.133"></a>
-<FONT color="green">134</FONT>         *<a name="line.134"></a>
-<FONT color="green">135</FONT>         * @param event logging event to be formatted.<a name="line.135"></a>
-<FONT color="green">136</FONT>         * @return The event formatted as a String.<a name="line.136"></a>
-<FONT color="green">137</FONT>         */<a name="line.137"></a>
-<FONT color="green">138</FONT>        public String formatAs(final LogEvent event) {<a name="line.138"></a>
-<FONT color="green">139</FONT>            StringBuilder buf = new StringBuilder();<a name="line.139"></a>
-<FONT color="green">140</FONT>            for (PatternFormatter formatter : formatters) {<a name="line.140"></a>
-<FONT color="green">141</FONT>                formatter.format(event, buf);<a name="line.141"></a>
-<FONT color="green">142</FONT>            }<a name="line.142"></a>
-<FONT color="green">143</FONT>            String str = buf.toString();<a name="line.143"></a>
-<FONT color="green">144</FONT>            if (replace != null) {<a name="line.144"></a>
-<FONT color="green">145</FONT>                str = replace.format(str);<a name="line.145"></a>
-<FONT color="green">146</FONT>            }<a name="line.146"></a>
-<FONT color="green">147</FONT>            return config == null ? str : config.getSubst().replace(event, str);<a name="line.147"></a>
-<FONT color="green">148</FONT>        }<a name="line.148"></a>
-<FONT color="green">149</FONT>    <a name="line.149"></a>
-<FONT color="green">150</FONT>        /**<a name="line.150"></a>
-<FONT color="green">151</FONT>         * Create a PatternParser.<a name="line.151"></a>
-<FONT color="green">152</FONT>         * @param config The Configuration.<a name="line.152"></a>
-<FONT color="green">153</FONT>         * @return The PatternParser.<a name="line.153"></a>
-<FONT color="green">154</FONT>         */<a name="line.154"></a>
-<FONT color="green">155</FONT>        public static PatternParser createPatternParser(Configuration config) {<a name="line.155"></a>
-<FONT color="green">156</FONT>            if (config == null) {<a name="line.156"></a>
-<FONT color="green">157</FONT>                return new PatternParser(config, KEY, LogEventPatternConverter.class);<a name="line.157"></a>
-<FONT color="green">158</FONT>            }<a name="line.158"></a>
-<FONT color="green">159</FONT>            PatternParser parser = (PatternParser) config.getComponent(KEY);<a name="line.159"></a>
-<FONT color="green">160</FONT>            if (parser == null) {<a name="line.160"></a>
-<FONT color="green">161</FONT>                parser = new PatternParser(config, KEY, LogEventPatternConverter.class);<a name="line.161"></a>
-<FONT color="green">162</FONT>                config.addComponent(KEY, parser);<a name="line.162"></a>
-<FONT color="green">163</FONT>                parser = (PatternParser) config.getComponent(KEY);<a name="line.163"></a>
-<FONT color="green">164</FONT>            }<a name="line.164"></a>
-<FONT color="green">165</FONT>            return parser;<a name="line.165"></a>
-<FONT color="green">166</FONT>        }<a name="line.166"></a>
-<FONT color="green">167</FONT>    <a name="line.167"></a>
-<FONT color="green">168</FONT>        @Override<a name="line.168"></a>
-<FONT color="green">169</FONT>        public String toString() {<a name="line.169"></a>
-<FONT color="green">170</FONT>            return conversionPattern;<a name="line.170"></a>
-<FONT color="green">171</FONT>        }<a name="line.171"></a>
-<FONT color="green">172</FONT>    <a name="line.172"></a>
-<FONT color="green">173</FONT>        /**<a name="line.173"></a>
-<FONT color="green">174</FONT>         * Create a pattern layout.<a name="line.174"></a>
-<FONT color="green">175</FONT>         * @param pattern The pattern. If not specified, defaults to DEFAULT_CONVERSION_PATTERN.<a name="line.175"></a>
-<FONT color="green">176</FONT>         * @param config The Configuration. Some Converters require access to the Interpolator.<a name="line.176"></a>
-<FONT color="green">177</FONT>         * @param replace A Regex replacement String.<a name="line.177"></a>
-<FONT color="green">178</FONT>         * @param charset The character set.<a name="line.178"></a>
-<FONT color="green">179</FONT>         * @return The PatternLayout.<a name="line.179"></a>
-<FONT color="green">180</FONT>         */<a name="line.180"></a>
-<FONT color="green">181</FONT>        @PluginFactory<a name="line.181"></a>
-<FONT color="green">182</FONT>        public static PatternLayout createLayout(@PluginAttr("pattern") String pattern,<a name="line.182"></a>
-<FONT color="green">183</FONT>                                                 @PluginConfiguration Configuration config,<a name="line.183"></a>
-<FONT color="green">184</FONT>                                                 @PluginElement("replace") RegexReplacement replace,<a name="line.184"></a>
-<FONT color="green">185</FONT>                                                 @PluginAttr("charset") String charset) {<a name="line.185"></a>
-<FONT color="green">186</FONT>            Charset c = Charset.isSupported("UTF-8") ? Charset.forName("UTF-8") : Charset.defaultCharset();<a name="line.186"></a>
-<FONT color="green">187</FONT>            if (charset != null) {<a name="line.187"></a>
-<FONT color="green">188</FONT>                if (Charset.isSupported(charset)) {<a name="line.188"></a>
-<FONT color="green">189</FONT>                    c = Charset.forName(charset);<a name="line.189"></a>
-<FONT color="green">190</FONT>                } else {<a name="line.190"></a>
-<FONT color="green">191</FONT>                    LOGGER.error("Charset " + charset + " is not supported for layout, using " + c.displayName());<a name="line.191"></a>
-<FONT color="green">192</FONT>                }<a name="line.192"></a>
-<FONT color="green">193</FONT>            }<a name="line.193"></a>
-<FONT color="green">194</FONT>            return new PatternLayout(config, replace, pattern == null ? DEFAULT_CONVERSION_PATTERN : pattern, c);<a name="line.194"></a>
-<FONT color="green">195</FONT>        }<a name="line.195"></a>
-<FONT color="green">196</FONT>    }<a name="line.196"></a>
+<FONT color="green">112</FONT>        }<a name="line.112"></a>
+<FONT color="green">113</FONT>    <a name="line.113"></a>
+<FONT color="green">114</FONT>        /**<a name="line.114"></a>
+<FONT color="green">115</FONT>         * Set the &lt;b&gt;ConversionPattern&lt;/b&gt; option. This is the string which<a name="line.115"></a>
+<FONT color="green">116</FONT>         * controls formatting and consists of a mix of literal content and<a name="line.116"></a>
+<FONT color="green">117</FONT>         * conversion specifiers.<a name="line.117"></a>
+<FONT color="green">118</FONT>         *<a name="line.118"></a>
+<FONT color="green">119</FONT>         * @param conversionPattern conversion pattern.<a name="line.119"></a>
+<FONT color="green">120</FONT>         */<a name="line.120"></a>
+<FONT color="green">121</FONT>        public void setConversionPattern(final String conversionPattern) {<a name="line.121"></a>
+<FONT color="green">122</FONT>            String pattern = OptionConverter.convertSpecialChars(conversionPattern);<a name="line.122"></a>
+<FONT color="green">123</FONT>            if (pattern == null) {<a name="line.123"></a>
+<FONT color="green">124</FONT>                return;<a name="line.124"></a>
+<FONT color="green">125</FONT>            }<a name="line.125"></a>
+<FONT color="green">126</FONT>            PatternParser parser = createPatternParser(this.config);<a name="line.126"></a>
+<FONT color="green">127</FONT>            formatters = parser.parse(pattern);<a name="line.127"></a>
+<FONT color="green">128</FONT>            handlesExceptions = parser.handlesExceptions();<a name="line.128"></a>
+<FONT color="green">129</FONT>        }<a name="line.129"></a>
+<FONT color="green">130</FONT>    <a name="line.130"></a>
+<FONT color="green">131</FONT>        /**<a name="line.131"></a>
+<FONT color="green">132</FONT>         * Formats a logging event to a writer.<a name="line.132"></a>
+<FONT color="green">133</FONT>         *<a name="line.133"></a>
+<FONT color="green">134</FONT>         * @param event logging event to be formatted.<a name="line.134"></a>
+<FONT color="green">135</FONT>         * @return The event formatted as a String.<a name="line.135"></a>
+<FONT color="green">136</FONT>         */<a name="line.136"></a>
+<FONT color="green">137</FONT>        public String formatAs(final LogEvent event) {<a name="line.137"></a>
+<FONT color="green">138</FONT>            StringBuilder buf = new StringBuilder();<a name="line.138"></a>
+<FONT color="green">139</FONT>            for (PatternFormatter formatter : formatters) {<a name="line.139"></a>
+<FONT color="green">140</FONT>                formatter.format(event, buf);<a name="line.140"></a>
+<FONT color="green">141</FONT>            }<a name="line.141"></a>
+<FONT color="green">142</FONT>            String str = buf.toString();<a name="line.142"></a>
+<FONT color="green">143</FONT>            if (replace != null) {<a name="line.143"></a>
+<FONT color="green">144</FONT>                str = replace.format(str);<a name="line.144"></a>
+<FONT color="green">145</FONT>            }<a name="line.145"></a>
+<FONT color="green">146</FONT>            return str;<a name="line.146"></a>
+<FONT color="green">147</FONT>        }<a name="line.147"></a>
+<FONT color="green">148</FONT>    <a name="line.148"></a>
+<FONT color="green">149</FONT>        /**<a name="line.149"></a>
+<FONT color="green">150</FONT>         * Create a PatternParser.<a name="line.150"></a>
+<FONT color="green">151</FONT>         * @param config The Configuration.<a name="line.151"></a>
+<FONT color="green">152</FONT>         * @return The PatternParser.<a name="line.152"></a>
+<FONT color="green">153</FONT>         */<a name="line.153"></a>
+<FONT color="green">154</FONT>        public static PatternParser createPatternParser(Configuration config) {<a name="line.154"></a>
+<FONT color="green">155</FONT>            if (config == null) {<a name="line.155"></a>
+<FONT color="green">156</FONT>                return new PatternParser(config, KEY, LogEventPatternConverter.class);<a name="line.156"></a>
+<FONT color="green">157</FONT>            }<a name="line.157"></a>
+<FONT color="green">158</FONT>            PatternParser parser = (PatternParser) config.getComponent(KEY);<a name="line.158"></a>
+<FONT color="green">159</FONT>            if (parser == null) {<a name="line.159"></a>
+<FONT color="green">160</FONT>                parser = new PatternParser(config, KEY, LogEventPatternConverter.class);<a name="line.160"></a>
+<FONT color="green">161</FONT>                config.addComponent(KEY, parser);<a name="line.161"></a>
+<FONT color="green">162</FONT>                parser = (PatternParser) config.getComponent(KEY);<a name="line.162"></a>
+<FONT color="green">163</FONT>            }<a name="line.163"></a>
+<FONT color="green">164</FONT>            return parser;<a name="line.164"></a>
+<FONT color="green">165</FONT>        }<a name="line.165"></a>
+<FONT color="green">166</FONT>    <a name="line.166"></a>
+<FONT color="green">167</FONT>        @Override<a name="line.167"></a>
+<FONT color="green">168</FONT>        public String toString() {<a name="line.168"></a>
+<FONT color="green">169</FONT>            return conversionPattern;<a name="line.169"></a>
+<FONT color="green">170</FONT>        }<a name="line.170"></a>
+<FONT color="green">171</FONT>    <a name="line.171"></a>
+<FONT color="green">172</FONT>        /**<a name="line.172"></a>
+<FONT color="green">173</FONT>         * Create a pattern layout.<a name="line.173"></a>
+<FONT color="green">174</FONT>         * @param pattern The pattern. If not specified, defaults to DEFAULT_CONVERSION_PATTERN.<a name="line.174"></a>
+<FONT color="green">175</FONT>         * @param config The Configuration. Some Converters require access to the Interpolator.<a name="line.175"></a>
+<FONT color="green">176</FONT>         * @param replace A Regex replacement String.<a name="line.176"></a>
+<FONT color="green">177</FONT>         * @param charset The character set.<a name="line.177"></a>
+<FONT color="green">178</FONT>         * @return The PatternLayout.<a name="line.178"></a>
+<FONT color="green">179</FONT>         */<a name="line.179"></a>
+<FONT color="green">180</FONT>        @PluginFactory<a name="line.180"></a>
+<FONT color="green">181</FONT>        public static PatternLayout createLayout(@PluginAttr("pattern") String pattern,<a name="line.181"></a>
+<FONT color="green">182</FONT>                                                 @PluginConfiguration Configuration config,<a name="line.182"></a>
+<FONT color="green">183</FONT>                                                 @PluginElement("replace") RegexReplacement replace,<a name="line.183"></a>
+<FONT color="green">184</FONT>                                                 @PluginAttr("charset") String charset) {<a name="line.184"></a>
+<FONT color="green">185</FONT>            Charset c = Charset.isSupported("UTF-8") ? Charset.forName("UTF-8") : Charset.defaultCharset();<a name="line.185"></a>
+<FONT color="green">186</FONT>            if (charset != null) {<a name="line.186"></a>
+<FONT color="green">187</FONT>                if (Charset.isSupported(charset)) {<a name="line.187"></a>
+<FONT color="green">188</FONT>                    c = Charset.forName(charset);<a name="line.188"></a>
+<FONT color="green">189</FONT>                } else {<a name="line.189"></a>
+<FONT color="green">190</FONT>                    LOGGER.error("Charset " + charset + " is not supported for layout, using " + c.displayName());<a name="line.190"></a>
+<FONT color="green">191</FONT>                }<a name="line.191"></a>
+<FONT color="green">192</FONT>            }<a name="line.192"></a>
+<FONT color="green">193</FONT>            return new PatternLayout(config, replace, pattern == null ? DEFAULT_CONVERSION_PATTERN : pattern, c);<a name="line.193"></a>
+<FONT color="green">194</FONT>        }<a name="line.194"></a>
+<FONT color="green">195</FONT>    }<a name="line.195"></a>
 
 
 

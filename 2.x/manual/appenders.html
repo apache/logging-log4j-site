@@ -17,7 +17,7 @@
 
     
             <meta name="author" content="Ralph Goers" />
-                    <meta name="Date-Revision-yyyymmdd" content="20120921" />
+                    <meta name="Date-Revision-yyyymmdd" content="20121007" />
                 <meta http-equiv="Content-Language" content="en" />
                 </head>
         <body class="topBarDisabled">
@@ -43,8 +43,8 @@
         <ul class="breadcrumb">
                         
                         
-                            <li id="publishDate">Last Published: 2012-09-21</li>
-                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta1</li>
+                            <li id="publishDate">Last Published: 2012-10-07</li>
+                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta2</li>
                                     
                         
                         
@@ -1245,8 +1245,33 @@
             </div><div class="section"><h5>TimeBased Triggering Policy<a name="TimeBased_Triggering_Policy"></a></h5>
               <p>
                 Causes a rollover once the date/time pattern no longer applies to the active file. This policy
-                takes no parameters.
+                accepts an &quot;increment&quot; attribute which indicates how frequently the rollover should occur based on the
+                time pattern and a &quot;modulate&quot; boolean attribute.
               </p>
+                <table class="table table-striped" border="1" width="100%"><caption align="top">TimeBasedTriggeringPolicy Parameters</caption>
+                  <tr class="a">
+                    <th>Parameter Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                  <tr class="b">
+                    <td>interval</td>
+                    <td>integer</td>
+                    <td>How often a rollover should occur based on the most specific time unit in the date pattern.
+                      For example, with a date pattern with hours as the most specific item and and increment of 4 rollovers
+                      would occur every 4 hours.
+                      The default value is 1.</td>
+                  </tr>
+                  <tr class="a">
+                    <td>modulate</td>
+                    <td>boolean</td>
+                    <td>Indicates whether the interval should be adjusted to cause the next rollover to occur on
+                      the interval boundary. For example, if the item is hours, the current hour is 3 am and the
+                      interval is 4 then then the first rollover will occur at 4 am and then next ones will occur at
+                      8 am, noon, 4pm, etc.</td>
+                  </tr>
+                  
+                </table>
           <a name="RolloverStrategies"></a>
           </div></div><div class="section"><h4>Rollover Strategies<a name="Rollover_Strategies"></a></h4>
             <a name="DefaultRolloverStrategy"></a>
@@ -1336,6 +1361,34 @@
 &lt;/configuration&gt;
   </pre></div>
         
+          <p>
+            Below is a sample configuration that uses a RollingFileAppender with both the time and size based
+            triggering policies, will create up to 7 archives on the same day (1-7) that are stored in a directory
+            based on the current year and month, and will compress each
+            archive using gzip and will roll every 6 hours when the hour is divisible by 6:
+
+            </p><div class="source"><pre class="prettyprint">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;configuration status=&quot;warn&quot; name=&quot;MyApp&quot; packages=&quot;&quot;&gt;
+  &lt;appenders&gt;
+    &lt;RollingFile name=&quot;RollingFile&quot; fileName=&quot;logs/app.log&quot;
+                                    filePattern=&quot;logs/$${date:yyyy-MM}/app-%d{yyyy-MM-dd-HH}-%i.log.gz&quot;&gt;
+      &lt;PatternLayout&gt;
+        &lt;pattern&gt;%d %p %C{1.} [%t] %m%n&lt;/pattern&gt;
+      &lt;/PatternLayout&gt;
+      &lt;Policies&gt;
+        &lt;TimeBasedTriggeringPolicy interval=&quot;6&quot; modulate=&quot;true&quot;/&gt;
+        &lt;SizeBasedTriggeringPolicy size=&quot;250 MB&quot;/&gt;
+      &lt;/Policies&gt;
+    &lt;/RollingFile&gt;
+  &lt;/appenders&gt;
+  &lt;loggers&gt;
+    &lt;root level=&quot;error&quot;&gt;
+      &lt;appender-ref ref=&quot;RollingFile&quot;/&gt;
+    &lt;/root&gt;
+  &lt;/loggers&gt;
+&lt;/configuration&gt;
+  </pre></div>
+          
         </div></div></div>
         <a name="RoutingAppender"></a>
         <div class="section"><h3>RoutingAppender<a name="RoutingAppender"></a></h3>

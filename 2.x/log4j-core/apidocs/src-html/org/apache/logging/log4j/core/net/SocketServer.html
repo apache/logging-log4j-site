@@ -170,87 +170,88 @@
 <FONT color="green">167</FONT>                interrupt();<a name="line.167"></a>
 <FONT color="green">168</FONT>            }<a name="line.168"></a>
 <FONT color="green">169</FONT>    <a name="line.169"></a>
-<FONT color="green">170</FONT>            public void run() {<a name="line.170"></a>
-<FONT color="green">171</FONT>                boolean closed = false;<a name="line.171"></a>
-<FONT color="green">172</FONT>                try {<a name="line.172"></a>
-<FONT color="green">173</FONT>                    try {<a name="line.173"></a>
-<FONT color="green">174</FONT>                        while (!shutdown) {<a name="line.174"></a>
-<FONT color="green">175</FONT>                            LogEvent event = (LogEvent) ois.readObject();<a name="line.175"></a>
-<FONT color="green">176</FONT>                            if (event != null) {<a name="line.176"></a>
-<FONT color="green">177</FONT>                                log(event);<a name="line.177"></a>
-<FONT color="green">178</FONT>                            }<a name="line.178"></a>
-<FONT color="green">179</FONT>                        }<a name="line.179"></a>
-<FONT color="green">180</FONT>                    } catch (EOFException eof) {<a name="line.180"></a>
-<FONT color="green">181</FONT>                        closed = true;<a name="line.181"></a>
-<FONT color="green">182</FONT>                    } catch (OptionalDataException opt) {<a name="line.182"></a>
-<FONT color="green">183</FONT>                        logger.error("OptionalDataException eof=" + opt.eof + " length=" + opt.length, opt);<a name="line.183"></a>
-<FONT color="green">184</FONT>                    } catch (ClassNotFoundException cnfe) {<a name="line.184"></a>
-<FONT color="green">185</FONT>                        logger.error("Unable to locate LogEvent class", cnfe);<a name="line.185"></a>
-<FONT color="green">186</FONT>                    } catch (IOException ioe) {<a name="line.186"></a>
-<FONT color="green">187</FONT>                        logger.error("IOException encountered while reading from socket", ioe);<a name="line.187"></a>
-<FONT color="green">188</FONT>                    }<a name="line.188"></a>
-<FONT color="green">189</FONT>                    if (!closed) {<a name="line.189"></a>
-<FONT color="green">190</FONT>                        try {<a name="line.190"></a>
-<FONT color="green">191</FONT>                            ois.close();<a name="line.191"></a>
-<FONT color="green">192</FONT>                        } catch (Exception ex) {<a name="line.192"></a>
-<FONT color="green">193</FONT>                            // Ignore the exception;<a name="line.193"></a>
-<FONT color="green">194</FONT>                        }<a name="line.194"></a>
-<FONT color="green">195</FONT>                    }<a name="line.195"></a>
-<FONT color="green">196</FONT>                } finally {<a name="line.196"></a>
-<FONT color="green">197</FONT>                    handlers.remove(getId());<a name="line.197"></a>
-<FONT color="green">198</FONT>                }<a name="line.198"></a>
-<FONT color="green">199</FONT>            }<a name="line.199"></a>
-<FONT color="green">200</FONT>        }<a name="line.200"></a>
-<FONT color="green">201</FONT>    <a name="line.201"></a>
-<FONT color="green">202</FONT>        /**<a name="line.202"></a>
-<FONT color="green">203</FONT>         * Factory that creates a Configuration for the server.<a name="line.203"></a>
-<FONT color="green">204</FONT>         */<a name="line.204"></a>
-<FONT color="green">205</FONT>        private static class ServerConfigurationFactory extends XMLConfigurationFactory {<a name="line.205"></a>
-<FONT color="green">206</FONT>    <a name="line.206"></a>
-<FONT color="green">207</FONT>            private final String path;<a name="line.207"></a>
-<FONT color="green">208</FONT>    <a name="line.208"></a>
-<FONT color="green">209</FONT>            public ServerConfigurationFactory(String path) {<a name="line.209"></a>
-<FONT color="green">210</FONT>                this.path = path;<a name="line.210"></a>
-<FONT color="green">211</FONT>            }<a name="line.211"></a>
-<FONT color="green">212</FONT>    <a name="line.212"></a>
-<FONT color="green">213</FONT>            @Override<a name="line.213"></a>
-<FONT color="green">214</FONT>            public Configuration getConfiguration(String name, URI configLocation) {<a name="line.214"></a>
-<FONT color="green">215</FONT>                if (path != null &amp;&amp; path.length() &gt; 0) {<a name="line.215"></a>
-<FONT color="green">216</FONT>                    File file = null;<a name="line.216"></a>
-<FONT color="green">217</FONT>                    InputSource source = null;<a name="line.217"></a>
-<FONT color="green">218</FONT>                    try {<a name="line.218"></a>
-<FONT color="green">219</FONT>                        file = new File(path);<a name="line.219"></a>
-<FONT color="green">220</FONT>                        FileInputStream is = new FileInputStream(file);<a name="line.220"></a>
-<FONT color="green">221</FONT>                        source = new InputSource(is);<a name="line.221"></a>
-<FONT color="green">222</FONT>                        source.setSystemId(path);<a name="line.222"></a>
-<FONT color="green">223</FONT>                    } catch (FileNotFoundException ex) {<a name="line.223"></a>
-<FONT color="green">224</FONT>                        // Ignore this error<a name="line.224"></a>
-<FONT color="green">225</FONT>                    }<a name="line.225"></a>
-<FONT color="green">226</FONT>                    if (source == null) {<a name="line.226"></a>
-<FONT color="green">227</FONT>                        try {<a name="line.227"></a>
-<FONT color="green">228</FONT>                            URL url = new URL(path);<a name="line.228"></a>
-<FONT color="green">229</FONT>                            source = new InputSource(url.openStream());<a name="line.229"></a>
-<FONT color="green">230</FONT>                            source.setSystemId(path);<a name="line.230"></a>
-<FONT color="green">231</FONT>                        } catch (MalformedURLException mue) {<a name="line.231"></a>
-<FONT color="green">232</FONT>                            // Ignore this error<a name="line.232"></a>
-<FONT color="green">233</FONT>                        } catch (IOException ioe) {<a name="line.233"></a>
-<FONT color="green">234</FONT>                            // Ignore this error<a name="line.234"></a>
-<FONT color="green">235</FONT>                        }<a name="line.235"></a>
-<FONT color="green">236</FONT>                    }<a name="line.236"></a>
-<FONT color="green">237</FONT>    <a name="line.237"></a>
-<FONT color="green">238</FONT>                    try {<a name="line.238"></a>
-<FONT color="green">239</FONT>                        if (source != null) {<a name="line.239"></a>
-<FONT color="green">240</FONT>                            return new XMLConfiguration(source, file);<a name="line.240"></a>
-<FONT color="green">241</FONT>                        }<a name="line.241"></a>
-<FONT color="green">242</FONT>                    } catch (Exception ex) {<a name="line.242"></a>
-<FONT color="green">243</FONT>                        // Ignore this error.<a name="line.243"></a>
-<FONT color="green">244</FONT>                    }<a name="line.244"></a>
-<FONT color="green">245</FONT>                    System.err.println("Unable to process configuration at " + path + ", using default.");<a name="line.245"></a>
-<FONT color="green">246</FONT>                }<a name="line.246"></a>
-<FONT color="green">247</FONT>                return super.getConfiguration(name, configLocation);<a name="line.247"></a>
-<FONT color="green">248</FONT>            }<a name="line.248"></a>
-<FONT color="green">249</FONT>        }<a name="line.249"></a>
-<FONT color="green">250</FONT>    }<a name="line.250"></a>
+<FONT color="green">170</FONT>            @Override<a name="line.170"></a>
+<FONT color="green">171</FONT>            public void run() {<a name="line.171"></a>
+<FONT color="green">172</FONT>                boolean closed = false;<a name="line.172"></a>
+<FONT color="green">173</FONT>                try {<a name="line.173"></a>
+<FONT color="green">174</FONT>                    try {<a name="line.174"></a>
+<FONT color="green">175</FONT>                        while (!shutdown) {<a name="line.175"></a>
+<FONT color="green">176</FONT>                            LogEvent event = (LogEvent) ois.readObject();<a name="line.176"></a>
+<FONT color="green">177</FONT>                            if (event != null) {<a name="line.177"></a>
+<FONT color="green">178</FONT>                                log(event);<a name="line.178"></a>
+<FONT color="green">179</FONT>                            }<a name="line.179"></a>
+<FONT color="green">180</FONT>                        }<a name="line.180"></a>
+<FONT color="green">181</FONT>                    } catch (EOFException eof) {<a name="line.181"></a>
+<FONT color="green">182</FONT>                        closed = true;<a name="line.182"></a>
+<FONT color="green">183</FONT>                    } catch (OptionalDataException opt) {<a name="line.183"></a>
+<FONT color="green">184</FONT>                        logger.error("OptionalDataException eof=" + opt.eof + " length=" + opt.length, opt);<a name="line.184"></a>
+<FONT color="green">185</FONT>                    } catch (ClassNotFoundException cnfe) {<a name="line.185"></a>
+<FONT color="green">186</FONT>                        logger.error("Unable to locate LogEvent class", cnfe);<a name="line.186"></a>
+<FONT color="green">187</FONT>                    } catch (IOException ioe) {<a name="line.187"></a>
+<FONT color="green">188</FONT>                        logger.error("IOException encountered while reading from socket", ioe);<a name="line.188"></a>
+<FONT color="green">189</FONT>                    }<a name="line.189"></a>
+<FONT color="green">190</FONT>                    if (!closed) {<a name="line.190"></a>
+<FONT color="green">191</FONT>                        try {<a name="line.191"></a>
+<FONT color="green">192</FONT>                            ois.close();<a name="line.192"></a>
+<FONT color="green">193</FONT>                        } catch (Exception ex) {<a name="line.193"></a>
+<FONT color="green">194</FONT>                            // Ignore the exception;<a name="line.194"></a>
+<FONT color="green">195</FONT>                        }<a name="line.195"></a>
+<FONT color="green">196</FONT>                    }<a name="line.196"></a>
+<FONT color="green">197</FONT>                } finally {<a name="line.197"></a>
+<FONT color="green">198</FONT>                    handlers.remove(getId());<a name="line.198"></a>
+<FONT color="green">199</FONT>                }<a name="line.199"></a>
+<FONT color="green">200</FONT>            }<a name="line.200"></a>
+<FONT color="green">201</FONT>        }<a name="line.201"></a>
+<FONT color="green">202</FONT>    <a name="line.202"></a>
+<FONT color="green">203</FONT>        /**<a name="line.203"></a>
+<FONT color="green">204</FONT>         * Factory that creates a Configuration for the server.<a name="line.204"></a>
+<FONT color="green">205</FONT>         */<a name="line.205"></a>
+<FONT color="green">206</FONT>        private static class ServerConfigurationFactory extends XMLConfigurationFactory {<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>            private final String path;<a name="line.208"></a>
+<FONT color="green">209</FONT>    <a name="line.209"></a>
+<FONT color="green">210</FONT>            public ServerConfigurationFactory(String path) {<a name="line.210"></a>
+<FONT color="green">211</FONT>                this.path = path;<a name="line.211"></a>
+<FONT color="green">212</FONT>            }<a name="line.212"></a>
+<FONT color="green">213</FONT>    <a name="line.213"></a>
+<FONT color="green">214</FONT>            @Override<a name="line.214"></a>
+<FONT color="green">215</FONT>            public Configuration getConfiguration(String name, URI configLocation) {<a name="line.215"></a>
+<FONT color="green">216</FONT>                if (path != null &amp;&amp; path.length() &gt; 0) {<a name="line.216"></a>
+<FONT color="green">217</FONT>                    File file = null;<a name="line.217"></a>
+<FONT color="green">218</FONT>                    InputSource source = null;<a name="line.218"></a>
+<FONT color="green">219</FONT>                    try {<a name="line.219"></a>
+<FONT color="green">220</FONT>                        file = new File(path);<a name="line.220"></a>
+<FONT color="green">221</FONT>                        FileInputStream is = new FileInputStream(file);<a name="line.221"></a>
+<FONT color="green">222</FONT>                        source = new InputSource(is);<a name="line.222"></a>
+<FONT color="green">223</FONT>                        source.setSystemId(path);<a name="line.223"></a>
+<FONT color="green">224</FONT>                    } catch (FileNotFoundException ex) {<a name="line.224"></a>
+<FONT color="green">225</FONT>                        // Ignore this error<a name="line.225"></a>
+<FONT color="green">226</FONT>                    }<a name="line.226"></a>
+<FONT color="green">227</FONT>                    if (source == null) {<a name="line.227"></a>
+<FONT color="green">228</FONT>                        try {<a name="line.228"></a>
+<FONT color="green">229</FONT>                            URL url = new URL(path);<a name="line.229"></a>
+<FONT color="green">230</FONT>                            source = new InputSource(url.openStream());<a name="line.230"></a>
+<FONT color="green">231</FONT>                            source.setSystemId(path);<a name="line.231"></a>
+<FONT color="green">232</FONT>                        } catch (MalformedURLException mue) {<a name="line.232"></a>
+<FONT color="green">233</FONT>                            // Ignore this error<a name="line.233"></a>
+<FONT color="green">234</FONT>                        } catch (IOException ioe) {<a name="line.234"></a>
+<FONT color="green">235</FONT>                            // Ignore this error<a name="line.235"></a>
+<FONT color="green">236</FONT>                        }<a name="line.236"></a>
+<FONT color="green">237</FONT>                    }<a name="line.237"></a>
+<FONT color="green">238</FONT>    <a name="line.238"></a>
+<FONT color="green">239</FONT>                    try {<a name="line.239"></a>
+<FONT color="green">240</FONT>                        if (source != null) {<a name="line.240"></a>
+<FONT color="green">241</FONT>                            return new XMLConfiguration(source, file);<a name="line.241"></a>
+<FONT color="green">242</FONT>                        }<a name="line.242"></a>
+<FONT color="green">243</FONT>                    } catch (Exception ex) {<a name="line.243"></a>
+<FONT color="green">244</FONT>                        // Ignore this error.<a name="line.244"></a>
+<FONT color="green">245</FONT>                    }<a name="line.245"></a>
+<FONT color="green">246</FONT>                    System.err.println("Unable to process configuration at " + path + ", using default.");<a name="line.246"></a>
+<FONT color="green">247</FONT>                }<a name="line.247"></a>
+<FONT color="green">248</FONT>                return super.getConfiguration(name, configLocation);<a name="line.248"></a>
+<FONT color="green">249</FONT>            }<a name="line.249"></a>
+<FONT color="green">250</FONT>        }<a name="line.250"></a>
+<FONT color="green">251</FONT>    }<a name="line.251"></a>
 
 
 

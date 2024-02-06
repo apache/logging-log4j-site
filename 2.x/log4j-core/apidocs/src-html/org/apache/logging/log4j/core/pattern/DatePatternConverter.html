@@ -128,55 +128,57 @@
 <FONT color="green">125</FONT>        /**<a name="line.125"></a>
 <FONT color="green">126</FONT>         * {@inheritDoc}<a name="line.126"></a>
 <FONT color="green">127</FONT>         */<a name="line.127"></a>
-<FONT color="green">128</FONT>        public void format(final LogEvent event, final StringBuilder output) {<a name="line.128"></a>
-<FONT color="green">129</FONT>            long timestamp = event.getMillis();<a name="line.129"></a>
-<FONT color="green">130</FONT>    <a name="line.130"></a>
-<FONT color="green">131</FONT>            synchronized (this) {<a name="line.131"></a>
-<FONT color="green">132</FONT>                if (timestamp != lastTimestamp) {<a name="line.132"></a>
-<FONT color="green">133</FONT>                    lastTimestamp = timestamp;<a name="line.133"></a>
-<FONT color="green">134</FONT>                    cachedDate = simpleFormat.format(timestamp);<a name="line.134"></a>
-<FONT color="green">135</FONT>                }<a name="line.135"></a>
-<FONT color="green">136</FONT>            }<a name="line.136"></a>
-<FONT color="green">137</FONT>            output.append(cachedDate);<a name="line.137"></a>
-<FONT color="green">138</FONT>        }<a name="line.138"></a>
-<FONT color="green">139</FONT>    <a name="line.139"></a>
-<FONT color="green">140</FONT>        public void format(Object[] objects, final StringBuilder toAppendTo) {<a name="line.140"></a>
-<FONT color="green">141</FONT>            for (Object obj : objects) {<a name="line.141"></a>
-<FONT color="green">142</FONT>                if (obj instanceof Date) {<a name="line.142"></a>
-<FONT color="green">143</FONT>                    format(obj, toAppendTo);<a name="line.143"></a>
-<FONT color="green">144</FONT>                    break;<a name="line.144"></a>
-<FONT color="green">145</FONT>                }<a name="line.145"></a>
-<FONT color="green">146</FONT>            }<a name="line.146"></a>
-<FONT color="green">147</FONT>        }<a name="line.147"></a>
-<FONT color="green">148</FONT>    <a name="line.148"></a>
-<FONT color="green">149</FONT>        /**<a name="line.149"></a>
-<FONT color="green">150</FONT>         * {@inheritDoc}<a name="line.150"></a>
-<FONT color="green">151</FONT>         */<a name="line.151"></a>
-<FONT color="green">152</FONT>        public void format(final Object obj, final StringBuilder output) {<a name="line.152"></a>
-<FONT color="green">153</FONT>            if (obj instanceof Date) {<a name="line.153"></a>
-<FONT color="green">154</FONT>                format((Date) obj, output);<a name="line.154"></a>
-<FONT color="green">155</FONT>            }<a name="line.155"></a>
-<FONT color="green">156</FONT>    <a name="line.156"></a>
-<FONT color="green">157</FONT>            super.format(obj, output);<a name="line.157"></a>
-<FONT color="green">158</FONT>        }<a name="line.158"></a>
-<FONT color="green">159</FONT>    <a name="line.159"></a>
-<FONT color="green">160</FONT>        /**<a name="line.160"></a>
-<FONT color="green">161</FONT>         * Append formatted date to string buffer.<a name="line.161"></a>
-<FONT color="green">162</FONT>         *<a name="line.162"></a>
-<FONT color="green">163</FONT>         * @param date       date<a name="line.163"></a>
-<FONT color="green">164</FONT>         * @param toAppendTo buffer to which formatted date is appended.<a name="line.164"></a>
-<FONT color="green">165</FONT>         */<a name="line.165"></a>
-<FONT color="green">166</FONT>        public void format(final Date date, final StringBuilder toAppendTo) {<a name="line.166"></a>
-<FONT color="green">167</FONT>            synchronized (this) {<a name="line.167"></a>
-<FONT color="green">168</FONT>                toAppendTo.append(simpleFormat.format(date.getTime()));<a name="line.168"></a>
-<FONT color="green">169</FONT>            }<a name="line.169"></a>
-<FONT color="green">170</FONT>        }<a name="line.170"></a>
-<FONT color="green">171</FONT>    <a name="line.171"></a>
-<FONT color="green">172</FONT>        public String getPattern() {<a name="line.172"></a>
-<FONT color="green">173</FONT>            return simpleFormat.toPattern();<a name="line.173"></a>
-<FONT color="green">174</FONT>        }<a name="line.174"></a>
-<FONT color="green">175</FONT>    <a name="line.175"></a>
-<FONT color="green">176</FONT>    }<a name="line.176"></a>
+<FONT color="green">128</FONT>        @Override<a name="line.128"></a>
+<FONT color="green">129</FONT>        public void format(final LogEvent event, final StringBuilder output) {<a name="line.129"></a>
+<FONT color="green">130</FONT>            long timestamp = event.getMillis();<a name="line.130"></a>
+<FONT color="green">131</FONT>    <a name="line.131"></a>
+<FONT color="green">132</FONT>            synchronized (this) {<a name="line.132"></a>
+<FONT color="green">133</FONT>                if (timestamp != lastTimestamp) {<a name="line.133"></a>
+<FONT color="green">134</FONT>                    lastTimestamp = timestamp;<a name="line.134"></a>
+<FONT color="green">135</FONT>                    cachedDate = simpleFormat.format(timestamp);<a name="line.135"></a>
+<FONT color="green">136</FONT>                }<a name="line.136"></a>
+<FONT color="green">137</FONT>            }<a name="line.137"></a>
+<FONT color="green">138</FONT>            output.append(cachedDate);<a name="line.138"></a>
+<FONT color="green">139</FONT>        }<a name="line.139"></a>
+<FONT color="green">140</FONT>    <a name="line.140"></a>
+<FONT color="green">141</FONT>        public void format(Object[] objects, final StringBuilder toAppendTo) {<a name="line.141"></a>
+<FONT color="green">142</FONT>            for (Object obj : objects) {<a name="line.142"></a>
+<FONT color="green">143</FONT>                if (obj instanceof Date) {<a name="line.143"></a>
+<FONT color="green">144</FONT>                    format(obj, toAppendTo);<a name="line.144"></a>
+<FONT color="green">145</FONT>                    break;<a name="line.145"></a>
+<FONT color="green">146</FONT>                }<a name="line.146"></a>
+<FONT color="green">147</FONT>            }<a name="line.147"></a>
+<FONT color="green">148</FONT>        }<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>        /**<a name="line.150"></a>
+<FONT color="green">151</FONT>         * {@inheritDoc}<a name="line.151"></a>
+<FONT color="green">152</FONT>         */<a name="line.152"></a>
+<FONT color="green">153</FONT>        @Override<a name="line.153"></a>
+<FONT color="green">154</FONT>        public void format(final Object obj, final StringBuilder output) {<a name="line.154"></a>
+<FONT color="green">155</FONT>            if (obj instanceof Date) {<a name="line.155"></a>
+<FONT color="green">156</FONT>                format((Date) obj, output);<a name="line.156"></a>
+<FONT color="green">157</FONT>            }<a name="line.157"></a>
+<FONT color="green">158</FONT>    <a name="line.158"></a>
+<FONT color="green">159</FONT>            super.format(obj, output);<a name="line.159"></a>
+<FONT color="green">160</FONT>        }<a name="line.160"></a>
+<FONT color="green">161</FONT>    <a name="line.161"></a>
+<FONT color="green">162</FONT>        /**<a name="line.162"></a>
+<FONT color="green">163</FONT>         * Append formatted date to string buffer.<a name="line.163"></a>
+<FONT color="green">164</FONT>         *<a name="line.164"></a>
+<FONT color="green">165</FONT>         * @param date       date<a name="line.165"></a>
+<FONT color="green">166</FONT>         * @param toAppendTo buffer to which formatted date is appended.<a name="line.166"></a>
+<FONT color="green">167</FONT>         */<a name="line.167"></a>
+<FONT color="green">168</FONT>        public void format(final Date date, final StringBuilder toAppendTo) {<a name="line.168"></a>
+<FONT color="green">169</FONT>            synchronized (this) {<a name="line.169"></a>
+<FONT color="green">170</FONT>                toAppendTo.append(simpleFormat.format(date.getTime()));<a name="line.170"></a>
+<FONT color="green">171</FONT>            }<a name="line.171"></a>
+<FONT color="green">172</FONT>        }<a name="line.172"></a>
+<FONT color="green">173</FONT>    <a name="line.173"></a>
+<FONT color="green">174</FONT>        public String getPattern() {<a name="line.174"></a>
+<FONT color="green">175</FONT>            return simpleFormat.toPattern();<a name="line.175"></a>
+<FONT color="green">176</FONT>        }<a name="line.176"></a>
+<FONT color="green">177</FONT>    <a name="line.177"></a>
+<FONT color="green">178</FONT>    }<a name="line.178"></a>
 
 
 

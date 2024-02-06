@@ -311,43 +311,64 @@
 <a class="jxr_linenumber" name="301" href="#301">301</a>         }
 <a class="jxr_linenumber" name="302" href="#302">302</a>     }
 <a class="jxr_linenumber" name="303" href="#303">303</a> 
-<a class="jxr_linenumber" name="304" href="#304">304</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> maybeLog(String fqcn, org.apache.logging.log4j.Level level,
-<a class="jxr_linenumber" name="305" href="#305">305</a>             Object message, Throwable throwable) {
-<a class="jxr_linenumber" name="306" href="#306">306</a>         <strong class="jxr_keyword">if</strong> (logger.isEnabled(level, <strong class="jxr_keyword">null</strong>, message, throwable)) {
-<a class="jxr_linenumber" name="307" href="#307">307</a>             logger.log(<strong class="jxr_keyword">null</strong>, FQCN, level, <strong class="jxr_keyword">new</strong> ObjectMessage(message), throwable);
+<a class="jxr_linenumber" name="304" href="#304">304</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> log(<a href="../../../org/apache/log4j/Priority.html">Priority</a> priority, Object message, Throwable t) {
+<a class="jxr_linenumber" name="305" href="#305">305</a>         <strong class="jxr_keyword">if</strong> (isEnabledFor(priority)) {
+<a class="jxr_linenumber" name="306" href="#306">306</a>             Message msg = <strong class="jxr_keyword">new</strong> ObjectMessage(message);
+<a class="jxr_linenumber" name="307" href="#307">307</a>             forcedLog(FQCN, priority, msg, t);
 <a class="jxr_linenumber" name="308" href="#308">308</a>         }
 <a class="jxr_linenumber" name="309" href="#309">309</a>     }
 <a class="jxr_linenumber" name="310" href="#310">310</a> 
-<a class="jxr_linenumber" name="311" href="#311">311</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="312" href="#312">312</a> <em class="jxr_javadoccomment">     * Private logger factory.</em>
-<a class="jxr_linenumber" name="313" href="#313">313</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="314" href="#314">314</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/apache/log4j/Category.html">PrivateFactory</a> <strong class="jxr_keyword">implements</strong> org.apache.log4j.LoggerFactory {
-<a class="jxr_linenumber" name="315" href="#315">315</a> 
-<a class="jxr_linenumber" name="316" href="#316">316</a>         <strong class="jxr_keyword">public</strong> <a href="../../../org/apache/log4j/Logger.html">Logger</a> makeNewLoggerInstance(LoggerContext context, String name) {
-<a class="jxr_linenumber" name="317" href="#317">317</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/apache/log4j/Logger.html">Logger</a>(context, name);
-<a class="jxr_linenumber" name="318" href="#318">318</a>         }
-<a class="jxr_linenumber" name="319" href="#319">319</a>     }
-<a class="jxr_linenumber" name="320" href="#320">320</a> 
-<a class="jxr_linenumber" name="321" href="#321">321</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="322" href="#322">322</a> <em class="jxr_javadoccomment">     * Private LogManager.</em>
-<a class="jxr_linenumber" name="323" href="#323">323</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="324" href="#324">324</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/apache/log4j/LogManager.html">PrivateManager</a> <strong class="jxr_keyword">extends</strong> org.apache.logging.log4j.LogManager {
-<a class="jxr_linenumber" name="325" href="#325">325</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String FQCN = Category.<strong class="jxr_keyword">class</strong>.getName();
-<a class="jxr_linenumber" name="326" href="#326">326</a> 
-<a class="jxr_linenumber" name="327" href="#327">327</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> org.apache.logging.log4j.spi.LoggerContext getContext() {
-<a class="jxr_linenumber" name="328" href="#328">328</a>             <strong class="jxr_keyword">return</strong> getContext(FQCN, false);
+<a class="jxr_linenumber" name="311" href="#311">311</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> log(<a href="../../../org/apache/log4j/Priority.html">Priority</a> priority, Object message) {
+<a class="jxr_linenumber" name="312" href="#312">312</a>         <strong class="jxr_keyword">if</strong> (isEnabledFor(priority)) {
+<a class="jxr_linenumber" name="313" href="#313">313</a>             Message msg = <strong class="jxr_keyword">new</strong> ObjectMessage(message);
+<a class="jxr_linenumber" name="314" href="#314">314</a>             forcedLog(FQCN, priority, msg, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="315" href="#315">315</a>         }
+<a class="jxr_linenumber" name="316" href="#316">316</a>     }
+<a class="jxr_linenumber" name="317" href="#317">317</a> 
+<a class="jxr_linenumber" name="318" href="#318">318</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> log(String fqcn, <a href="../../../org/apache/log4j/Priority.html">Priority</a> priority, Object message, Throwable t) {
+<a class="jxr_linenumber" name="319" href="#319">319</a>         <strong class="jxr_keyword">if</strong> (isEnabledFor(priority)) {
+<a class="jxr_linenumber" name="320" href="#320">320</a>             Message msg = <strong class="jxr_keyword">new</strong> ObjectMessage(message);
+<a class="jxr_linenumber" name="321" href="#321">321</a>             forcedLog(fqcn, priority, msg, t);
+<a class="jxr_linenumber" name="322" href="#322">322</a>         }
+<a class="jxr_linenumber" name="323" href="#323">323</a>     }
+<a class="jxr_linenumber" name="324" href="#324">324</a> 
+<a class="jxr_linenumber" name="325" href="#325">325</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> maybeLog(String fqcn, org.apache.logging.log4j.Level level,
+<a class="jxr_linenumber" name="326" href="#326">326</a>             Object message, Throwable throwable) {
+<a class="jxr_linenumber" name="327" href="#327">327</a>         <strong class="jxr_keyword">if</strong> (logger.isEnabled(level, <strong class="jxr_keyword">null</strong>, message, throwable)) {
+<a class="jxr_linenumber" name="328" href="#328">328</a>             logger.log(<strong class="jxr_keyword">null</strong>, FQCN, level, <strong class="jxr_keyword">new</strong> ObjectMessage(message), throwable);
 <a class="jxr_linenumber" name="329" href="#329">329</a>         }
-<a class="jxr_linenumber" name="330" href="#330">330</a> 
-<a class="jxr_linenumber" name="331" href="#331">331</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> org.apache.logging.log4j.Logger getLogger(String name) {
-<a class="jxr_linenumber" name="332" href="#332">332</a>             <strong class="jxr_keyword">return</strong> getLogger(FQCN, name);
-<a class="jxr_linenumber" name="333" href="#333">333</a>         }
-<a class="jxr_linenumber" name="334" href="#334">334</a>     }
-<a class="jxr_linenumber" name="335" href="#335">335</a> 
-<a class="jxr_linenumber" name="336" href="#336">336</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> isEnabledFor(org.apache.logging.log4j.Level level) {
-<a class="jxr_linenumber" name="337" href="#337">337</a>         <strong class="jxr_keyword">return</strong> logger.isEnabled(level, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="338" href="#338">338</a>     }
-<a class="jxr_linenumber" name="339" href="#339">339</a> 
-<a class="jxr_linenumber" name="340" href="#340">340</a> }
+<a class="jxr_linenumber" name="330" href="#330">330</a>     }
+<a class="jxr_linenumber" name="331" href="#331">331</a> 
+<a class="jxr_linenumber" name="332" href="#332">332</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="333" href="#333">333</a> <em class="jxr_javadoccomment">     * Private logger factory.</em>
+<a class="jxr_linenumber" name="334" href="#334">334</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="335" href="#335">335</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/apache/log4j/Category.html">PrivateFactory</a> <strong class="jxr_keyword">implements</strong> org.apache.log4j.LoggerFactory {
+<a class="jxr_linenumber" name="336" href="#336">336</a> 
+<a class="jxr_linenumber" name="337" href="#337">337</a>         <strong class="jxr_keyword">public</strong> <a href="../../../org/apache/log4j/Logger.html">Logger</a> makeNewLoggerInstance(LoggerContext context, String name) {
+<a class="jxr_linenumber" name="338" href="#338">338</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/apache/log4j/Logger.html">Logger</a>(context, name);
+<a class="jxr_linenumber" name="339" href="#339">339</a>         }
+<a class="jxr_linenumber" name="340" href="#340">340</a>     }
+<a class="jxr_linenumber" name="341" href="#341">341</a> 
+<a class="jxr_linenumber" name="342" href="#342">342</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="343" href="#343">343</a> <em class="jxr_javadoccomment">     * Private LogManager.</em>
+<a class="jxr_linenumber" name="344" href="#344">344</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="345" href="#345">345</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/apache/log4j/LogManager.html">PrivateManager</a> <strong class="jxr_keyword">extends</strong> org.apache.logging.log4j.LogManager {
+<a class="jxr_linenumber" name="346" href="#346">346</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String FQCN = Category.<strong class="jxr_keyword">class</strong>.getName();
+<a class="jxr_linenumber" name="347" href="#347">347</a> 
+<a class="jxr_linenumber" name="348" href="#348">348</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> org.apache.logging.log4j.spi.LoggerContext getContext() {
+<a class="jxr_linenumber" name="349" href="#349">349</a>             <strong class="jxr_keyword">return</strong> getContext(FQCN, false);
+<a class="jxr_linenumber" name="350" href="#350">350</a>         }
+<a class="jxr_linenumber" name="351" href="#351">351</a> 
+<a class="jxr_linenumber" name="352" href="#352">352</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> org.apache.logging.log4j.Logger getLogger(String name) {
+<a class="jxr_linenumber" name="353" href="#353">353</a>             <strong class="jxr_keyword">return</strong> getLogger(FQCN, name);
+<a class="jxr_linenumber" name="354" href="#354">354</a>         }
+<a class="jxr_linenumber" name="355" href="#355">355</a>     }
+<a class="jxr_linenumber" name="356" href="#356">356</a> 
+<a class="jxr_linenumber" name="357" href="#357">357</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> isEnabledFor(org.apache.logging.log4j.Level level) {
+<a class="jxr_linenumber" name="358" href="#358">358</a>         <strong class="jxr_keyword">return</strong> logger.isEnabled(level, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="359" href="#359">359</a>     }
+<a class="jxr_linenumber" name="360" href="#360">360</a> 
+<a class="jxr_linenumber" name="361" href="#361">361</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

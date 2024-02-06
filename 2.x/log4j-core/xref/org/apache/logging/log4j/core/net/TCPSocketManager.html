@@ -142,70 +142,71 @@
 <a class="jxr_linenumber" name="132" href="#132">132</a>             shutdown = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="133" href="#133">133</a>         }
 <a class="jxr_linenumber" name="134" href="#134">134</a> 
-<a class="jxr_linenumber" name="135" href="#135">135</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run() {
-<a class="jxr_linenumber" name="136" href="#136">136</a>             <strong class="jxr_keyword">while</strong> (!shutdown) {
-<a class="jxr_linenumber" name="137" href="#137">137</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="138" href="#138">138</a>                     sleep(reconnectionDelay);
-<a class="jxr_linenumber" name="139" href="#139">139</a>                     Socket sock = <strong class="jxr_keyword">new</strong> Socket(address, port);
-<a class="jxr_linenumber" name="140" href="#140">140</a>                     OutputStream newOS = sock.getOutputStream();
-<a class="jxr_linenumber" name="141" href="#141">141</a>                     <strong class="jxr_keyword">synchronized</strong> (owner) {
-<a class="jxr_linenumber" name="142" href="#142">142</a>                         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="143" href="#143">143</a>                             getOutputStream().close();
-<a class="jxr_linenumber" name="144" href="#144">144</a>                         } <strong class="jxr_keyword">catch</strong> (IOException ioe) {
-<a class="jxr_linenumber" name="145" href="#145">145</a>                             <em class="jxr_comment">// Ignore this.</em>
-<a class="jxr_linenumber" name="146" href="#146">146</a>                         }
-<a class="jxr_linenumber" name="147" href="#147">147</a> 
-<a class="jxr_linenumber" name="148" href="#148">148</a>                         setOutputStream(newOS);
-<a class="jxr_linenumber" name="149" href="#149">149</a>                         socket = sock;
-<a class="jxr_linenumber" name="150" href="#150">150</a>                         connector = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="151" href="#151">151</a>                     }
-<a class="jxr_linenumber" name="152" href="#152">152</a>                     LOGGER.debug(<span class="jxr_string">"Connection to "</span> + host + <span class="jxr_string">":"</span> + port + <span class="jxr_string">" reestablished."</span>);
-<a class="jxr_linenumber" name="153" href="#153">153</a>                 } <strong class="jxr_keyword">catch</strong> (InterruptedException ie) {
-<a class="jxr_linenumber" name="154" href="#154">154</a>                     LOGGER.debug(<span class="jxr_string">"Reconnection interrupted."</span>);
-<a class="jxr_linenumber" name="155" href="#155">155</a>                 } <strong class="jxr_keyword">catch</strong> (ConnectException ex) {
-<a class="jxr_linenumber" name="156" href="#156">156</a>                     LOGGER.debug(host + <span class="jxr_string">":"</span> + port + <span class="jxr_string">" refused connection"</span>);
-<a class="jxr_linenumber" name="157" href="#157">157</a>                 } <strong class="jxr_keyword">catch</strong> (IOException ioe) {
-<a class="jxr_linenumber" name="158" href="#158">158</a>                     LOGGER.debug(<span class="jxr_string">"Unable to reconnect to "</span> + host + <span class="jxr_string">":"</span> + port);
-<a class="jxr_linenumber" name="159" href="#159">159</a>                 }
-<a class="jxr_linenumber" name="160" href="#160">160</a>             }
-<a class="jxr_linenumber" name="161" href="#161">161</a>         }
-<a class="jxr_linenumber" name="162" href="#162">162</a>     }
-<a class="jxr_linenumber" name="163" href="#163">163</a> 
-<a class="jxr_linenumber" name="164" href="#164">164</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     * Data for the factory.</em>
-<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="167" href="#167">167</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/FileManager.html">FactoryData</a> {
-<a class="jxr_linenumber" name="168" href="#168">168</a>         <strong class="jxr_keyword">private</strong> String host;
-<a class="jxr_linenumber" name="169" href="#169">169</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> port;
-<a class="jxr_linenumber" name="170" href="#170">170</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> delay;
-<a class="jxr_linenumber" name="171" href="#171">171</a> 
-<a class="jxr_linenumber" name="172" href="#172">172</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/FileManager.html">FactoryData</a>(String host, <strong class="jxr_keyword">int</strong> port, <strong class="jxr_keyword">int</strong> delay) {
-<a class="jxr_linenumber" name="173" href="#173">173</a>             <strong class="jxr_keyword">this</strong>.host = host;
-<a class="jxr_linenumber" name="174" href="#174">174</a>             <strong class="jxr_keyword">this</strong>.port = port;
-<a class="jxr_linenumber" name="175" href="#175">175</a>             <strong class="jxr_keyword">this</strong>.delay = delay;
-<a class="jxr_linenumber" name="176" href="#176">176</a>         }
-<a class="jxr_linenumber" name="177" href="#177">177</a>     }
-<a class="jxr_linenumber" name="178" href="#178">178</a> 
-<a class="jxr_linenumber" name="179" href="#179">179</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="180" href="#180">180</a> <em class="jxr_javadoccomment">     * Factory to create a TCPSocketManager.</em>
-<a class="jxr_linenumber" name="181" href="#181">181</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="182" href="#182">182</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/TCPSocketManager.html">TCPSocketManagerFactory</a> <strong class="jxr_keyword">implements</strong> ManagerFactory&lt;TCPSocketManager, FactoryData&gt; {
-<a class="jxr_linenumber" name="183" href="#183">183</a> 
-<a class="jxr_linenumber" name="184" href="#184">184</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/TCPSocketManager.html">TCPSocketManager</a> createManager(String name, <a href="../../../../../../org/apache/logging/log4j/core/appender/FileManager.html">FactoryData</a> data) {
-<a class="jxr_linenumber" name="185" href="#185">185</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="186" href="#186">186</a>                 InetAddress address = InetAddress.getByName(data.host);
-<a class="jxr_linenumber" name="187" href="#187">187</a>                 Socket socket = <strong class="jxr_keyword">new</strong> Socket(data.host, data.port);
-<a class="jxr_linenumber" name="188" href="#188">188</a>                 OutputStream os = socket.getOutputStream();
-<a class="jxr_linenumber" name="189" href="#189">189</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/TCPSocketManager.html">TCPSocketManager</a>(name, os, socket, address, data.host, data.port, data.delay);
-<a class="jxr_linenumber" name="190" href="#190">190</a>             } <strong class="jxr_keyword">catch</strong> (UnknownHostException ex) {
-<a class="jxr_linenumber" name="191" href="#191">191</a>                 LOGGER.error(<span class="jxr_string">"Could not find address of "</span> + data.host, ex);
-<a class="jxr_linenumber" name="192" href="#192">192</a>             } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="193" href="#193">193</a>                 LOGGER.error(<span class="jxr_string">"TCPSocketManager ("</span> + name + <span class="jxr_string">") "</span> + ex);
-<a class="jxr_linenumber" name="194" href="#194">194</a>             }
-<a class="jxr_linenumber" name="195" href="#195">195</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="196" href="#196">196</a>         }
-<a class="jxr_linenumber" name="197" href="#197">197</a>     }
-<a class="jxr_linenumber" name="198" href="#198">198</a> }
+<a class="jxr_linenumber" name="135" href="#135">135</a>         @Override
+<a class="jxr_linenumber" name="136" href="#136">136</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run() {
+<a class="jxr_linenumber" name="137" href="#137">137</a>             <strong class="jxr_keyword">while</strong> (!shutdown) {
+<a class="jxr_linenumber" name="138" href="#138">138</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="139" href="#139">139</a>                     sleep(reconnectionDelay);
+<a class="jxr_linenumber" name="140" href="#140">140</a>                     Socket sock = <strong class="jxr_keyword">new</strong> Socket(address, port);
+<a class="jxr_linenumber" name="141" href="#141">141</a>                     OutputStream newOS = sock.getOutputStream();
+<a class="jxr_linenumber" name="142" href="#142">142</a>                     <strong class="jxr_keyword">synchronized</strong> (owner) {
+<a class="jxr_linenumber" name="143" href="#143">143</a>                         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="144" href="#144">144</a>                             getOutputStream().close();
+<a class="jxr_linenumber" name="145" href="#145">145</a>                         } <strong class="jxr_keyword">catch</strong> (IOException ioe) {
+<a class="jxr_linenumber" name="146" href="#146">146</a>                             <em class="jxr_comment">// Ignore this.</em>
+<a class="jxr_linenumber" name="147" href="#147">147</a>                         }
+<a class="jxr_linenumber" name="148" href="#148">148</a> 
+<a class="jxr_linenumber" name="149" href="#149">149</a>                         setOutputStream(newOS);
+<a class="jxr_linenumber" name="150" href="#150">150</a>                         socket = sock;
+<a class="jxr_linenumber" name="151" href="#151">151</a>                         connector = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="152" href="#152">152</a>                     }
+<a class="jxr_linenumber" name="153" href="#153">153</a>                     LOGGER.debug(<span class="jxr_string">"Connection to "</span> + host + <span class="jxr_string">":"</span> + port + <span class="jxr_string">" reestablished."</span>);
+<a class="jxr_linenumber" name="154" href="#154">154</a>                 } <strong class="jxr_keyword">catch</strong> (InterruptedException ie) {
+<a class="jxr_linenumber" name="155" href="#155">155</a>                     LOGGER.debug(<span class="jxr_string">"Reconnection interrupted."</span>);
+<a class="jxr_linenumber" name="156" href="#156">156</a>                 } <strong class="jxr_keyword">catch</strong> (ConnectException ex) {
+<a class="jxr_linenumber" name="157" href="#157">157</a>                     LOGGER.debug(host + <span class="jxr_string">":"</span> + port + <span class="jxr_string">" refused connection"</span>);
+<a class="jxr_linenumber" name="158" href="#158">158</a>                 } <strong class="jxr_keyword">catch</strong> (IOException ioe) {
+<a class="jxr_linenumber" name="159" href="#159">159</a>                     LOGGER.debug(<span class="jxr_string">"Unable to reconnect to "</span> + host + <span class="jxr_string">":"</span> + port);
+<a class="jxr_linenumber" name="160" href="#160">160</a>                 }
+<a class="jxr_linenumber" name="161" href="#161">161</a>             }
+<a class="jxr_linenumber" name="162" href="#162">162</a>         }
+<a class="jxr_linenumber" name="163" href="#163">163</a>     }
+<a class="jxr_linenumber" name="164" href="#164">164</a> 
+<a class="jxr_linenumber" name="165" href="#165">165</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     * Data for the factory.</em>
+<a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="168" href="#168">168</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/FileManager.html">FactoryData</a> {
+<a class="jxr_linenumber" name="169" href="#169">169</a>         <strong class="jxr_keyword">private</strong> String host;
+<a class="jxr_linenumber" name="170" href="#170">170</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> port;
+<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> delay;
+<a class="jxr_linenumber" name="172" href="#172">172</a> 
+<a class="jxr_linenumber" name="173" href="#173">173</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/FileManager.html">FactoryData</a>(String host, <strong class="jxr_keyword">int</strong> port, <strong class="jxr_keyword">int</strong> delay) {
+<a class="jxr_linenumber" name="174" href="#174">174</a>             <strong class="jxr_keyword">this</strong>.host = host;
+<a class="jxr_linenumber" name="175" href="#175">175</a>             <strong class="jxr_keyword">this</strong>.port = port;
+<a class="jxr_linenumber" name="176" href="#176">176</a>             <strong class="jxr_keyword">this</strong>.delay = delay;
+<a class="jxr_linenumber" name="177" href="#177">177</a>         }
+<a class="jxr_linenumber" name="178" href="#178">178</a>     }
+<a class="jxr_linenumber" name="179" href="#179">179</a> 
+<a class="jxr_linenumber" name="180" href="#180">180</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="181" href="#181">181</a> <em class="jxr_javadoccomment">     * Factory to create a TCPSocketManager.</em>
+<a class="jxr_linenumber" name="182" href="#182">182</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="183" href="#183">183</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/TCPSocketManager.html">TCPSocketManagerFactory</a> <strong class="jxr_keyword">implements</strong> ManagerFactory&lt;TCPSocketManager, FactoryData&gt; {
+<a class="jxr_linenumber" name="184" href="#184">184</a> 
+<a class="jxr_linenumber" name="185" href="#185">185</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/TCPSocketManager.html">TCPSocketManager</a> createManager(String name, <a href="../../../../../../org/apache/logging/log4j/core/appender/FileManager.html">FactoryData</a> data) {
+<a class="jxr_linenumber" name="186" href="#186">186</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="187" href="#187">187</a>                 InetAddress address = InetAddress.getByName(data.host);
+<a class="jxr_linenumber" name="188" href="#188">188</a>                 Socket socket = <strong class="jxr_keyword">new</strong> Socket(data.host, data.port);
+<a class="jxr_linenumber" name="189" href="#189">189</a>                 OutputStream os = socket.getOutputStream();
+<a class="jxr_linenumber" name="190" href="#190">190</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/TCPSocketManager.html">TCPSocketManager</a>(name, os, socket, address, data.host, data.port, data.delay);
+<a class="jxr_linenumber" name="191" href="#191">191</a>             } <strong class="jxr_keyword">catch</strong> (UnknownHostException ex) {
+<a class="jxr_linenumber" name="192" href="#192">192</a>                 LOGGER.error(<span class="jxr_string">"Could not find address of "</span> + data.host, ex);
+<a class="jxr_linenumber" name="193" href="#193">193</a>             } <strong class="jxr_keyword">catch</strong> (IOException ex) {
+<a class="jxr_linenumber" name="194" href="#194">194</a>                 LOGGER.error(<span class="jxr_string">"TCPSocketManager ("</span> + name + <span class="jxr_string">") "</span> + ex);
+<a class="jxr_linenumber" name="195" href="#195">195</a>             }
+<a class="jxr_linenumber" name="196" href="#196">196</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="197" href="#197">197</a>         }
+<a class="jxr_linenumber" name="198" href="#198">198</a>     }
+<a class="jxr_linenumber" name="199" href="#199">199</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

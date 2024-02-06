@@ -17,7 +17,7 @@
 
     
             <meta name="author" content="Ralph Goers" />
-                    <meta name="Date-Revision-yyyymmdd" content="20120921" />
+                    <meta name="Date-Revision-yyyymmdd" content="20121007" />
                 <meta http-equiv="Content-Language" content="en" />
                 </head>
         <body class="topBarDisabled">
@@ -43,8 +43,8 @@
         <ul class="breadcrumb">
                         
                         
-                            <li id="publishDate">Last Published: 2012-09-21</li>
-                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta1</li>
+                            <li id="publishDate">Last Published: 2012-10-07</li>
+                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta2</li>
                                     
                         
                         
@@ -431,9 +431,9 @@
             </tr>
             <tr class="a">
               <td align="center">
-                <b>ex</b>{depth}<br />
-                <b>exception</b>{depth}<br />
-                <b>throwable</b>{depth}
+                <b>ex</b>{[&quot;short&quot;|&quot;full&quot;|depth]}<br />
+                <b>exception</b>{[&quot;short&quot;|&quot;full&quot;|depth]}<br />
+                <b>throwable</b>{[&quot;short&quot;|&quot;full&quot;|depth]}
               </td>
               <td>
                 <p>Used to output the Throwable trace that has been bound to the LoggingEvent, by
@@ -457,6 +457,16 @@
             </tr>
             <tr class="a">
               <td align="center">
+                <b>highlight</b>{pattern}
+              </td>
+              <td>
+                Adds ANSI colors to the result of the enclosed pattern based on the current event's logging level.
+                The result will be in blinking bright red when the level is FATAL, bright red when the level is
+                ERROR, red when the level is WARN, blue when the level is INFO and normal for DEBUG and TRACE levels.
+              </td>
+            </tr>
+            <tr class="b">
+              <td align="center">
                 <b>K</b>{key}<br />
                 <b>map</b>{key}<br />
                 <b>MAP</b>{key}
@@ -472,7 +482,7 @@
                 </p>
               </td>
             </tr>
-            <tr class="b">
+            <tr class="a">
               <td align="center">
                 <b>l</b><br />
                 <b>location</b>
@@ -488,7 +498,7 @@
                 </p>
               </td>
             </tr>
-            <tr class="a">
+            <tr class="b">
               <td align="center">
                 <b>L</b><br />
                 <b>line</b>
@@ -497,7 +507,7 @@
                 was issued.
               </td>
             </tr>
-            <tr class="b">
+            <tr class="a">
               <td align="center">
                 <b>m</b><br />
                 <b>msg</b><br />
@@ -506,7 +516,7 @@
               <td>Used to output the application supplied message associated with the logging event.
               </td>
             </tr>
-            <tr class="a">
+            <tr class="b">
               <td align="center">
                 <b>M</b><br />
                 <b>method</b>
@@ -514,13 +524,13 @@
               <td>Used to output the method name where the logging request was issued.
               </td>
             </tr>
-            <tr class="b">
+            <tr class="a">
               <td align="center">
                 <b>marker</b>
               </td>
               <td>The name of the marker, if one is present.</td>
             </tr>
-            <tr class="a">
+            <tr class="b">
               <td align="center">
                 <b>n</b>
               </td>
@@ -535,14 +545,14 @@
                 </p>
               </td>
             </tr>
-            <tr class="b">
+            <tr class="a">
               <td align="center">
                 <b>p</b><br />
                 <b>level</b>
               </td>
               <td>Used to output the level of the logging event.</td>
             </tr>
-            <tr class="a">
+            <tr class="b">
               <td align="center">
                 <b>r</b><br />
                 <b>relative</b>
@@ -551,7 +561,7 @@
                 of the logging event.
               </td>
             </tr>
-            <tr class="b">
+            <tr class="a">
               <td align="center">
                 <b>replace</b>{pattern}{regex}{substitution}
               </td>
@@ -568,20 +578,28 @@
                 </p>
               </td>
             </tr>
-            <tr class="a">
+            <tr class="b">
               <td align="center">
-                <b>rEx</b>{depth}<br />
-                <b>rException</b>{depth}<br />
-                <b>rThrowable</b>{depth}
+                <b>rEx</b>[&quot;short&quot;|&quot;full&quot;|depth],[filters(packages)}<br />
+                <b>rException</b>[&quot;short&quot;|&quot;full&quot;|depth],[filters(packages)}<br />
+                <b>rThrowable</b>[&quot;short&quot;|&quot;full&quot;|depth],[filters(packages)}
               </td>
               <td>
                 <p>
                   The same as the %throwable conversion word but the stack trace is printed starting with the
                   first exception that was thrown followed by each subsequent wrapping exception.
                 </p>
+                <p>
+                  The throwable conversion word can be followed by an option in the form
+                  <b>%rEx{short}</b>
+                  which will only output the first line of the Throwable or <b>%rEx{n}</b> where
+                  the first n lines of the stacktrace will be printed. The conversion word can also be
+                  followed by &quot;filters(packages)&quot; where packages is a list of package names that should
+                  be suppressed from stack traces.
+                </p>
               </td>
             </tr>
-            <tr class="b">
+            <tr class="a">
               <td align="center">
                 <b>sn</b><br />
                 <b>sequenceNumber</b>
@@ -589,6 +607,119 @@
               <td>Includes a sequence number that will be incremented in every event. The counter is a
                 static variable so will only be unique within applications that share the same converter Class
                 object.</td>
+            </tr>
+            <tr class="b">
+              <td align="center">
+                <b>style</b>{pattern}{ANSI style}
+              </td>
+              <td>
+                <p>
+                  Uses ANSI escape sequences to style the result of the enclosed pattern. The style can consist of
+                  a comma separated list of style names from the following table.
+                  </p><table class="table table-striped" border="1" width="100%">
+                    <tr class="a">
+                      <th>Style Name</th>
+                      <th>Description</th>
+                    </tr>
+                    <tr class="b">
+                      <td>Normal</td>
+                      <td>Normal display</td>
+                    </tr>
+                    <tr class="a">
+                      <td>Bright</td>
+                      <td>Bold</td>
+                    </tr>
+                    <tr class="b">
+                      <td>Dim</td>
+                      <td>Dimmed or faint characters</td>
+                    </tr>
+                    <tr class="a">
+                      <td>Underline</td>
+                      <td>Underlined characters</td>
+                    </tr>
+                    <tr class="b">
+                      <td>Blink</td>
+                      <td>Blinking characters</td>
+                    </tr>
+                    <tr class="a">
+                      <td>Reverse</td>
+                      <td>Reverse video</td>
+                    </tr>
+                    <tr class="b">
+                      <td>Hidden</td>
+                      <td></td>
+                    </tr>
+                    <tr class="a">
+                      <td>Black or FG_Black</td>
+                      <td>Set foreground color to black</td>
+                    </tr>
+                    <tr class="b">
+                      <td>Red or FG_Red</td>
+                      <td>Set foreground color to red</td>
+                    </tr>
+                    <tr class="a">
+                      <td>Green or FG_Green</td>
+                      <td>Set foreground color to green</td>
+                    </tr>
+                    <tr class="b">
+                      <td>Yellow or FG_Yellow</td>
+                      <td>Set foreground color to yellow</td>
+                    </tr>
+                    <tr class="a">
+                      <td>Blue or FG_Blue</td>
+                      <td>Set foreground color to blue</td>
+                    </tr>
+                    <tr class="b">
+                      <td>Magenta or FG_Magenta</td>
+                      <td>Set foreground color to magenta</td>
+                    </tr>
+                    <tr class="a">
+                      <td>Cyan or FG_Cyan</td>
+                      <td>Set foreground color to cyan</td>
+                    </tr>
+                    <tr class="b">
+                      <td>White or FG_White</td>
+                      <td>Set foreground color to white</td>
+                    </tr>
+                    <tr class="a">
+                      <td>Default or FG_Default</td>
+                      <td>Set foreground color to default (white)</td>
+                    </tr>
+                    <tr class="b">
+                      <td>BG_Black</td>
+                      <td>Set background color to black</td>
+                    </tr>
+                    <tr class="a">
+                      <td>BG_Red</td>
+                      <td>Set background color to red</td>
+                    </tr>
+                    <tr class="b">
+                      <td>BG_Green</td>
+                      <td>Set background color to green</td>
+                    </tr>
+                    <tr class="a">
+                      <td>BG_Yellow</td>
+                      <td>Set background color to yellow</td>
+                    </tr>
+                    <tr class="b">
+                      <td>BG_Blue</td>
+                      <td>Set background color to blue</td>
+                    </tr>
+                    <tr class="a">
+                      <td>BG_Magenta</td>
+                      <td>Set background color to magenta</td>
+                    </tr>
+                    <tr class="b">
+                      <td>BG_Cyan</td>
+                      <td>Set background color to cyan</td>
+                    </tr>
+                    <tr class="a">
+                      <td>BG_White</td>
+                      <td>Set background color to white</td>
+                    </tr>
+                  </table>
+                
+              </td>
             </tr>
             <tr class="a">
               <td align="center">
@@ -648,9 +779,9 @@
             </tr>
             <tr class="a">
               <td align="center">
-                <b>xEx</b>{depth}<br />
-                <b>xException</b>{depth}<br />
-                <b>xThrowable</b>{depth}
+                <b>xEx</b>{[&quot;short&quot;|&quot;full&quot;|depth],[filters(packages)}<br />
+                <b>xException</b>[&quot;short&quot;|&quot;full&quot;|depth],[filters(packages)}<br />
+                <b>xThrowable</b>[&quot;short&quot;|&quot;full&quot;|depth],[filters(packages)}
               </td>
               <td>
                 <p>
@@ -661,6 +792,14 @@
                   that contains the class or the directory the class is located in and the &quot;Implementation-Version&quot;
                   as found in that jar's manifest will be added. If the information is uncertain, then the class
                   packaging data will be preceded by a tilde, i.e. the '~' character.
+                </p>
+                <p>
+                  The throwable conversion word can be followed by an option in the form
+                  <b>%xEx{short}</b>
+                  which will only output the first line of the Throwable or <b>%xEx{n}</b> where
+                  the first n lines of the stacktrace will be printed. The conversion word can also be
+                  followed by &quot;filters(packages)&quot; where packages is a list of package names that should
+                  be suppressed from stack traces.
                 </p>
               </td>
             </tr>
@@ -771,7 +910,48 @@
             </tr>
             
           </table>
-        </div></div>
+          </div><div class="section"><h4>ANSI Styling on Windows<a name="ANSI_Styling_on_Windows"></a></h4>
+          <p>
+            ANSI escape sequences are supported natively on many platforms but are not by default on Windows. To
+            enable ANSI support simply add the <a class="externalLink" href="http://jansi.fusesource.org/">Jansi</a> jar to your
+            application and Log4j will automatically make use of it when writing to the console.
+          </p>
+          </div><div class="section"><h4>Example Patterns<a name="Example_Patterns"></a></h4>
+          <div class="section"><h5>Filtered Throwables<a name="Filtered_Throwables"></a></h5>
+          <p>
+            This example shows how to filter out classes from unimportant packages in stack traces.
+          </p>
+          <div class="source"><pre class="prettyprint">
+  &lt;properties&gt;
+    &lt;property name=&quot;filters&quot;&gt;org.junit,org.apache.maven,sun.reflect,java.lang.reflect&lt;/property&gt;
+  &lt;/properties&gt;
+  .
+  .
+      &lt;PatternLayout pattern=&quot;%m%xEx{filters(${filters})}%n&quot;/&gt;
+  </pre></div>
+          <p>
+            The result printed to the console will appear similar to:
+          </p>
+          <div class="source"><pre class="prettyprint">
+  Exception java.lang.IllegalArgumentException: IllegalArgument
+  at org.apache.logging.log4j.core.pattern.ExtendedThrowableTest.testException(ExtendedThrowableTest.java:72) [test-classes/:?]
+  ... suppressed 26 lines
+  at $Proxy0.invoke(Unknown Source) [?:?]
+  ... suppressed 3 lines
+  Caused by: java.lang.NullPointerException: null pointer
+  at org.apache.logging.log4j.core.pattern.ExtendedThrowableTest.testException(ExtendedThrowableTest.java:71) ~[test-classes/:?]
+  ... 30 more
+
+          </pre></div>
+          </div><div class="section"><h5>Ansi Styled<a name="Ansi_Styled"></a></h5>
+          <p>The log level will be highlighted according to the event's log level. All the content that follows
+            the level will be bright green.</p>
+          <div class="source"><pre class="prettyprint">
+      &lt;PatternLayout&gt;
+        &lt;pattern&gt;%d %highlight{%p} %style{%C{1.} [%t] %m}{bold,green}%n&lt;/pattern&gt;
+      &lt;/PatternLayout&gt;
+  </pre></div>
+        </div></div></div>
         <a name="RFC5424Layout"></a>
         <div class="section"><h3>RFC5424Layout<a name="RFC5424Layout"></a></h3>
           <p>

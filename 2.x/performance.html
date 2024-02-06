@@ -17,7 +17,7 @@
 
     
             <meta name="author" content="Ralph Goers" />
-                    <meta name="Date-Revision-yyyymmdd" content="20120921" />
+                    <meta name="Date-Revision-yyyymmdd" content="20121007" />
                 <meta http-equiv="Content-Language" content="en" />
                 </head>
         <body class="topBarDisabled">
@@ -43,8 +43,8 @@
         <ul class="breadcrumb">
                         
                         
-                            <li id="publishDate">Last Published: 2012-09-21</li>
-                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta1</li>
+                            <li id="publishDate">Last Published: 2012-10-07</li>
+                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta2</li>
                                     
                         
                         
@@ -283,7 +283,7 @@
           <b>The performance of deciding whether to log or not to log when logging is turned on.</b>
           <br />
           <p>
-            Unlike Log4j and Logback, Log4j 2 Loggers don't &quot;walk a hierarchy&quot;. Loggers point directly to the
+            Unlike Log4j, Log4j 2 Loggers don't &quot;walk a hierarchy&quot;. Loggers point directly to the
             Logger configuration that best matches the Logger's name. This incurs extra overhead when the Logger
             is first created but reduces the overhead every time the Logger is used.
           </p>
@@ -298,14 +298,18 @@
             delivering log events will never be insignificant. For example, the results of writing to a simple log
             file using the same format using Log4j, Logback and Log4j 2 are:
             </p><div><pre>
-            Log4j: 4220
-            Logback: 9671
-            Log4j 2: 4615
+              Log4j: 1651
+              Logback: 1419
+              Log4j 2.0: 1542
             </pre></div>
           
           <p>
-            These results show that actually writing out the events can be at least 1000 times more expensive than
-            when they are disabled.
+            As with many of the other results on this page the differences between the frameworks above should be
+            considered insignificant. The values will change somewhat on each execution and changing the order the
+            frameworks are tested or adding calls to System.gc() between the tests can cause a variation in the
+            reported times. However, these results show that actually writing out the events can be at least 1000
+            times more expensive than when they are disabled, so it is always recommended to take advantage of
+            Log4j 2's fine-grained filtering capabilities.
           </p>
         </li>
         <li>
@@ -367,6 +371,17 @@
               <td>92</td>
             </tr>
           </table>
+        </li>
+        <li>
+          <b>Client vs Server</b>
+          <br />
+          <p>
+            Java supports a &quot;client&quot; and a &quot;server&quot; mode of operation. By default, applications that are
+            run in Java 5 on machines with 2 CPUs or more and 2GB of memory or more on operating systems
+            other than Windows or are run in a 64-bit JVM are automatically configured to run in &quot;server&quot; mode.
+            Testing has shown that Log4j 2 benefits greatly from running in server mode and user's are
+            strongly encouraged to configure their applications to run in server mode when using Log4j 2.
+          </p>
         </li>
 
       </ol>

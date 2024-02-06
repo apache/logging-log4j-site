@@ -77,80 +77,81 @@
 <FONT color="green">074</FONT>        /**<a name="line.74"></a>
 <FONT color="green">075</FONT>         * Default hook to write footer during close.<a name="line.75"></a>
 <FONT color="green">076</FONT>         */<a name="line.76"></a>
-<FONT color="green">077</FONT>        public void releaseSub() {<a name="line.77"></a>
-<FONT color="green">078</FONT>            if (footer != null) {<a name="line.78"></a>
-<FONT color="green">079</FONT>                write(footer);<a name="line.79"></a>
-<FONT color="green">080</FONT>            }<a name="line.80"></a>
-<FONT color="green">081</FONT>            close();<a name="line.81"></a>
-<FONT color="green">082</FONT>        }<a name="line.82"></a>
-<FONT color="green">083</FONT>    <a name="line.83"></a>
-<FONT color="green">084</FONT>        /**<a name="line.84"></a>
-<FONT color="green">085</FONT>         * Return the status of the stream.<a name="line.85"></a>
-<FONT color="green">086</FONT>         * @return true if the stream is open, false if it is not.<a name="line.86"></a>
-<FONT color="green">087</FONT>         */<a name="line.87"></a>
-<FONT color="green">088</FONT>        public boolean isOpen() {<a name="line.88"></a>
-<FONT color="green">089</FONT>            return getCount() &gt; 0;<a name="line.89"></a>
-<FONT color="green">090</FONT>        }<a name="line.90"></a>
-<FONT color="green">091</FONT>    <a name="line.91"></a>
-<FONT color="green">092</FONT>        protected OutputStream getOutputStream() {<a name="line.92"></a>
-<FONT color="green">093</FONT>            return os;<a name="line.93"></a>
-<FONT color="green">094</FONT>        }<a name="line.94"></a>
-<FONT color="green">095</FONT>    <a name="line.95"></a>
-<FONT color="green">096</FONT>        protected void setOutputStream(OutputStream os) {<a name="line.96"></a>
-<FONT color="green">097</FONT>            this.os = os;<a name="line.97"></a>
-<FONT color="green">098</FONT>        }<a name="line.98"></a>
-<FONT color="green">099</FONT>    <a name="line.99"></a>
-<FONT color="green">100</FONT>        /**<a name="line.100"></a>
-<FONT color="green">101</FONT>         * Some output streams synchronize writes while others do not. Synchronizing here insures that<a name="line.101"></a>
-<FONT color="green">102</FONT>         * log events won't be intertwined.<a name="line.102"></a>
-<FONT color="green">103</FONT>         * @param bytes The serialized Log event.<a name="line.103"></a>
-<FONT color="green">104</FONT>         * @param offset The offset into the byte array.<a name="line.104"></a>
-<FONT color="green">105</FONT>         * @param length The number of bytes to write.<a name="line.105"></a>
-<FONT color="green">106</FONT>         * @throws AppenderRuntimeException if an error occurs.<a name="line.106"></a>
-<FONT color="green">107</FONT>         */<a name="line.107"></a>
-<FONT color="green">108</FONT>        protected synchronized void write(byte[] bytes, int offset, int length)  {<a name="line.108"></a>
-<FONT color="green">109</FONT>            //System.out.println("write " + count);<a name="line.109"></a>
-<FONT color="green">110</FONT>            try {<a name="line.110"></a>
-<FONT color="green">111</FONT>                os.write(bytes, offset, length);<a name="line.111"></a>
-<FONT color="green">112</FONT>            } catch (IOException ex) {<a name="line.112"></a>
-<FONT color="green">113</FONT>                String msg = "Error writing to stream " + getName();<a name="line.113"></a>
-<FONT color="green">114</FONT>                throw new AppenderRuntimeException(msg, ex);<a name="line.114"></a>
-<FONT color="green">115</FONT>            }<a name="line.115"></a>
-<FONT color="green">116</FONT>        }<a name="line.116"></a>
-<FONT color="green">117</FONT>    <a name="line.117"></a>
-<FONT color="green">118</FONT>        /**<a name="line.118"></a>
-<FONT color="green">119</FONT>         * Some output streams synchronize writes while others do not. Synchronizing here insures that<a name="line.119"></a>
-<FONT color="green">120</FONT>         * log events won't be intertwined.<a name="line.120"></a>
-<FONT color="green">121</FONT>         * @param bytes The serialized Log event.<a name="line.121"></a>
-<FONT color="green">122</FONT>         * @throws AppenderRuntimeException if an error occurs.<a name="line.122"></a>
-<FONT color="green">123</FONT>         */<a name="line.123"></a>
-<FONT color="green">124</FONT>        protected void write(byte[] bytes)  {<a name="line.124"></a>
-<FONT color="green">125</FONT>            write(bytes, 0, bytes.length);<a name="line.125"></a>
-<FONT color="green">126</FONT>        }<a name="line.126"></a>
-<FONT color="green">127</FONT>    <a name="line.127"></a>
-<FONT color="green">128</FONT>        protected void close() {<a name="line.128"></a>
-<FONT color="green">129</FONT>            if (os == System.out || os == System.err) {<a name="line.129"></a>
-<FONT color="green">130</FONT>                return;<a name="line.130"></a>
-<FONT color="green">131</FONT>            }<a name="line.131"></a>
-<FONT color="green">132</FONT>            try {<a name="line.132"></a>
-<FONT color="green">133</FONT>                os.close();<a name="line.133"></a>
-<FONT color="green">134</FONT>            } catch (IOException ex) {<a name="line.134"></a>
-<FONT color="green">135</FONT>                LOGGER.error("Unable to close stream " + getName() + ". " + ex);<a name="line.135"></a>
-<FONT color="green">136</FONT>            }<a name="line.136"></a>
-<FONT color="green">137</FONT>        }<a name="line.137"></a>
-<FONT color="green">138</FONT>    <a name="line.138"></a>
-<FONT color="green">139</FONT>        /**<a name="line.139"></a>
-<FONT color="green">140</FONT>         * Flush any buffers.<a name="line.140"></a>
-<FONT color="green">141</FONT>         */<a name="line.141"></a>
-<FONT color="green">142</FONT>        public void flush() {<a name="line.142"></a>
-<FONT color="green">143</FONT>            try {<a name="line.143"></a>
-<FONT color="green">144</FONT>                os.flush();<a name="line.144"></a>
-<FONT color="green">145</FONT>            } catch (IOException ex) {<a name="line.145"></a>
-<FONT color="green">146</FONT>                String msg = "Error flushing stream " + getName();<a name="line.146"></a>
-<FONT color="green">147</FONT>                throw new AppenderRuntimeException(msg, ex);<a name="line.147"></a>
-<FONT color="green">148</FONT>            }<a name="line.148"></a>
-<FONT color="green">149</FONT>        }<a name="line.149"></a>
-<FONT color="green">150</FONT>    }<a name="line.150"></a>
+<FONT color="green">077</FONT>        @Override<a name="line.77"></a>
+<FONT color="green">078</FONT>        public void releaseSub() {<a name="line.78"></a>
+<FONT color="green">079</FONT>            if (footer != null) {<a name="line.79"></a>
+<FONT color="green">080</FONT>                write(footer);<a name="line.80"></a>
+<FONT color="green">081</FONT>            }<a name="line.81"></a>
+<FONT color="green">082</FONT>            close();<a name="line.82"></a>
+<FONT color="green">083</FONT>        }<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>        /**<a name="line.85"></a>
+<FONT color="green">086</FONT>         * Return the status of the stream.<a name="line.86"></a>
+<FONT color="green">087</FONT>         * @return true if the stream is open, false if it is not.<a name="line.87"></a>
+<FONT color="green">088</FONT>         */<a name="line.88"></a>
+<FONT color="green">089</FONT>        public boolean isOpen() {<a name="line.89"></a>
+<FONT color="green">090</FONT>            return getCount() &gt; 0;<a name="line.90"></a>
+<FONT color="green">091</FONT>        }<a name="line.91"></a>
+<FONT color="green">092</FONT>    <a name="line.92"></a>
+<FONT color="green">093</FONT>        protected OutputStream getOutputStream() {<a name="line.93"></a>
+<FONT color="green">094</FONT>            return os;<a name="line.94"></a>
+<FONT color="green">095</FONT>        }<a name="line.95"></a>
+<FONT color="green">096</FONT>    <a name="line.96"></a>
+<FONT color="green">097</FONT>        protected void setOutputStream(OutputStream os) {<a name="line.97"></a>
+<FONT color="green">098</FONT>            this.os = os;<a name="line.98"></a>
+<FONT color="green">099</FONT>        }<a name="line.99"></a>
+<FONT color="green">100</FONT>    <a name="line.100"></a>
+<FONT color="green">101</FONT>        /**<a name="line.101"></a>
+<FONT color="green">102</FONT>         * Some output streams synchronize writes while others do not. Synchronizing here insures that<a name="line.102"></a>
+<FONT color="green">103</FONT>         * log events won't be intertwined.<a name="line.103"></a>
+<FONT color="green">104</FONT>         * @param bytes The serialized Log event.<a name="line.104"></a>
+<FONT color="green">105</FONT>         * @param offset The offset into the byte array.<a name="line.105"></a>
+<FONT color="green">106</FONT>         * @param length The number of bytes to write.<a name="line.106"></a>
+<FONT color="green">107</FONT>         * @throws AppenderRuntimeException if an error occurs.<a name="line.107"></a>
+<FONT color="green">108</FONT>         */<a name="line.108"></a>
+<FONT color="green">109</FONT>        protected synchronized void write(byte[] bytes, int offset, int length)  {<a name="line.109"></a>
+<FONT color="green">110</FONT>            //System.out.println("write " + count);<a name="line.110"></a>
+<FONT color="green">111</FONT>            try {<a name="line.111"></a>
+<FONT color="green">112</FONT>                os.write(bytes, offset, length);<a name="line.112"></a>
+<FONT color="green">113</FONT>            } catch (IOException ex) {<a name="line.113"></a>
+<FONT color="green">114</FONT>                String msg = "Error writing to stream " + getName();<a name="line.114"></a>
+<FONT color="green">115</FONT>                throw new AppenderRuntimeException(msg, ex);<a name="line.115"></a>
+<FONT color="green">116</FONT>            }<a name="line.116"></a>
+<FONT color="green">117</FONT>        }<a name="line.117"></a>
+<FONT color="green">118</FONT>    <a name="line.118"></a>
+<FONT color="green">119</FONT>        /**<a name="line.119"></a>
+<FONT color="green">120</FONT>         * Some output streams synchronize writes while others do not. Synchronizing here insures that<a name="line.120"></a>
+<FONT color="green">121</FONT>         * log events won't be intertwined.<a name="line.121"></a>
+<FONT color="green">122</FONT>         * @param bytes The serialized Log event.<a name="line.122"></a>
+<FONT color="green">123</FONT>         * @throws AppenderRuntimeException if an error occurs.<a name="line.123"></a>
+<FONT color="green">124</FONT>         */<a name="line.124"></a>
+<FONT color="green">125</FONT>        protected void write(byte[] bytes)  {<a name="line.125"></a>
+<FONT color="green">126</FONT>            write(bytes, 0, bytes.length);<a name="line.126"></a>
+<FONT color="green">127</FONT>        }<a name="line.127"></a>
+<FONT color="green">128</FONT>    <a name="line.128"></a>
+<FONT color="green">129</FONT>        protected void close() {<a name="line.129"></a>
+<FONT color="green">130</FONT>            if (os == System.out || os == System.err) {<a name="line.130"></a>
+<FONT color="green">131</FONT>                return;<a name="line.131"></a>
+<FONT color="green">132</FONT>            }<a name="line.132"></a>
+<FONT color="green">133</FONT>            try {<a name="line.133"></a>
+<FONT color="green">134</FONT>                os.close();<a name="line.134"></a>
+<FONT color="green">135</FONT>            } catch (IOException ex) {<a name="line.135"></a>
+<FONT color="green">136</FONT>                LOGGER.error("Unable to close stream " + getName() + ". " + ex);<a name="line.136"></a>
+<FONT color="green">137</FONT>            }<a name="line.137"></a>
+<FONT color="green">138</FONT>        }<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>        /**<a name="line.140"></a>
+<FONT color="green">141</FONT>         * Flush any buffers.<a name="line.141"></a>
+<FONT color="green">142</FONT>         */<a name="line.142"></a>
+<FONT color="green">143</FONT>        public void flush() {<a name="line.143"></a>
+<FONT color="green">144</FONT>            try {<a name="line.144"></a>
+<FONT color="green">145</FONT>                os.flush();<a name="line.145"></a>
+<FONT color="green">146</FONT>            } catch (IOException ex) {<a name="line.146"></a>
+<FONT color="green">147</FONT>                String msg = "Error flushing stream " + getName();<a name="line.147"></a>
+<FONT color="green">148</FONT>                throw new AppenderRuntimeException(msg, ex);<a name="line.148"></a>
+<FONT color="green">149</FONT>            }<a name="line.149"></a>
+<FONT color="green">150</FONT>        }<a name="line.150"></a>
+<FONT color="green">151</FONT>    }<a name="line.151"></a>
 
 
 
