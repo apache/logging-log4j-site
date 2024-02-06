@@ -79,7 +79,7 @@
 <FONT color="green">076</FONT>        private void init() throws MalformedObjectNameException, IOException {<a name="line.76"></a>
 <FONT color="green">077</FONT>        }<a name="line.77"></a>
 <FONT color="green">078</FONT>    <a name="line.78"></a>
-<FONT color="green">079</FONT>        private Set&lt;ObjectName&gt; find(String pattern) throws JMException, IOException {<a name="line.79"></a>
+<FONT color="green">079</FONT>        private Set&lt;ObjectName&gt; find(final String pattern) throws JMException, IOException {<a name="line.79"></a>
 <FONT color="green">080</FONT>            final ObjectName search = new ObjectName(String.format(pattern, "*"));<a name="line.80"></a>
 <FONT color="green">081</FONT>            final Set&lt;ObjectName&gt; result = connection.queryNames(search, null);<a name="line.81"></a>
 <FONT color="green">082</FONT>            return result;<a name="line.82"></a>
@@ -94,7 +94,7 @@
 <FONT color="green">091</FONT>         * @throws JMException If a management error occurred<a name="line.91"></a>
 <FONT color="green">092</FONT>         */<a name="line.92"></a>
 <FONT color="green">093</FONT>        public List&lt;LoggerContextAdminMBean&gt; getLoggerContextAdmins() throws JMException, IOException {<a name="line.93"></a>
-<FONT color="green">094</FONT>            List&lt;LoggerContextAdminMBean&gt; result = new ArrayList&lt;LoggerContextAdminMBean&gt;();<a name="line.94"></a>
+<FONT color="green">094</FONT>            final List&lt;LoggerContextAdminMBean&gt; result = new ArrayList&lt;LoggerContextAdminMBean&gt;();<a name="line.94"></a>
 <FONT color="green">095</FONT>            final Set&lt;ObjectName&gt; contextNames = find(LoggerContextAdminMBean.PATTERN);<a name="line.95"></a>
 <FONT color="green">096</FONT>            for (final ObjectName contextName : contextNames) {<a name="line.96"></a>
 <FONT color="green">097</FONT>                result.add(getLoggerContextAdmin(contextName));<a name="line.97"></a>
@@ -102,7 +102,7 @@
 <FONT color="green">099</FONT>            return result;<a name="line.99"></a>
 <FONT color="green">100</FONT>        }<a name="line.100"></a>
 <FONT color="green">101</FONT>    <a name="line.101"></a>
-<FONT color="green">102</FONT>        public LoggerContextAdminMBean getLoggerContextAdmin(ObjectName name) {<a name="line.102"></a>
+<FONT color="green">102</FONT>        public LoggerContextAdminMBean getLoggerContextAdmin(final ObjectName name) {<a name="line.102"></a>
 <FONT color="green">103</FONT>            final LoggerContextAdminMBean ctx = JMX.newMBeanProxy(connection, //<a name="line.103"></a>
 <FONT color="green">104</FONT>                    name, //<a name="line.104"></a>
 <FONT color="green">105</FONT>                    LoggerContextAdminMBean.class, false);<a name="line.105"></a>
@@ -140,7 +140,7 @@
 <FONT color="green">137</FONT>         * @throws MalformedObjectNameException If an object name is malformed<a name="line.137"></a>
 <FONT color="green">138</FONT>         * @throws IOException If an I/O error occurred<a name="line.138"></a>
 <FONT color="green">139</FONT>         */<a name="line.139"></a>
-<FONT color="green">140</FONT>        public StatusLoggerAdminMBean getStatusLoggerAdmin(String contextName)<a name="line.140"></a>
+<FONT color="green">140</FONT>        public StatusLoggerAdminMBean getStatusLoggerAdmin(final String contextName)<a name="line.140"></a>
 <FONT color="green">141</FONT>                throws MalformedObjectNameException, IOException {<a name="line.141"></a>
 <FONT color="green">142</FONT>            final String pattern = StatusLoggerAdminMBean.PATTERN;<a name="line.142"></a>
 <FONT color="green">143</FONT>            final String mbean = String.format(pattern, Server.escape(contextName));<a name="line.143"></a>
@@ -166,7 +166,7 @@
 <FONT color="green">163</FONT>         * @return {@code true} if the specified {@code ObjectName} is for a<a name="line.163"></a>
 <FONT color="green">164</FONT>         *         {@code LoggerContextAdminMBean}, {@code false} otherwise<a name="line.164"></a>
 <FONT color="green">165</FONT>         */<a name="line.165"></a>
-<FONT color="green">166</FONT>        public boolean isLoggerContext(ObjectName mbeanName) {<a name="line.166"></a>
+<FONT color="green">166</FONT>        public boolean isLoggerContext(final ObjectName mbeanName) {<a name="line.166"></a>
 <FONT color="green">167</FONT>            return Server.DOMAIN.equals(mbeanName.getDomain()) //<a name="line.167"></a>
 <FONT color="green">168</FONT>                    &amp;&amp; mbeanName.getKeyPropertyList().containsKey("type") //<a name="line.168"></a>
 <FONT color="green">169</FONT>                    &amp;&amp; mbeanName.getKeyPropertyList().size() == 1;<a name="line.169"></a>
@@ -180,7 +180,7 @@
 <FONT color="green">177</FONT>         *            {@code LoggerContextAdminMBean}<a name="line.177"></a>
 <FONT color="green">178</FONT>         * @return {@code ObjectName} of the {@code StatusLoggerAdminMBean}<a name="line.178"></a>
 <FONT color="green">179</FONT>         */<a name="line.179"></a>
-<FONT color="green">180</FONT>        public ObjectName getStatusLoggerObjectName(ObjectName loggerContextObjName) {<a name="line.180"></a>
+<FONT color="green">180</FONT>        public ObjectName getStatusLoggerObjectName(final ObjectName loggerContextObjName) {<a name="line.180"></a>
 <FONT color="green">181</FONT>            if (!isLoggerContext(loggerContextObjName)) {<a name="line.181"></a>
 <FONT color="green">182</FONT>                throw new IllegalArgumentException("Not a LoggerContext: " + loggerContextObjName);<a name="line.182"></a>
 <FONT color="green">183</FONT>            }<a name="line.183"></a>
@@ -188,7 +188,7 @@
 <FONT color="green">185</FONT>            final String name = String.format(StatusLoggerAdminMBean.PATTERN, cxtName);<a name="line.185"></a>
 <FONT color="green">186</FONT>            try {<a name="line.186"></a>
 <FONT color="green">187</FONT>                return new ObjectName(name);<a name="line.187"></a>
-<FONT color="green">188</FONT>            } catch (MalformedObjectNameException ex) {<a name="line.188"></a>
+<FONT color="green">188</FONT>            } catch (final MalformedObjectNameException ex) {<a name="line.188"></a>
 <FONT color="green">189</FONT>                throw new IllegalStateException(name, ex);<a name="line.189"></a>
 <FONT color="green">190</FONT>            }<a name="line.190"></a>
 <FONT color="green">191</FONT>        }<a name="line.191"></a>

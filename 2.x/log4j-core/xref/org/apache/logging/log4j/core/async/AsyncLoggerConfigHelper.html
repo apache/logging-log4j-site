@@ -99,8 +99,8 @@
 <a class="jxr_linenumber" name="89" href="#89">89</a>              = <strong class="jxr_keyword">new</strong> EventTranslatorTwoArg&lt;Log4jEventWrapper, LogEvent, AsyncLoggerConfig&gt;() {
 <a class="jxr_linenumber" name="90" href="#90">90</a>  
 <a class="jxr_linenumber" name="91" href="#91">91</a>          @Override
-<a class="jxr_linenumber" name="92" href="#92">92</a>          <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> translateTo(<a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLoggerConfigHelper.html">Log4jEventWrapper</a> ringBufferElement, <strong class="jxr_keyword">long</strong> sequence, 
-<a class="jxr_linenumber" name="93" href="#93">93</a>                  <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> logEvent, <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLoggerConfig.html">AsyncLoggerConfig</a> loggerConfig) {
+<a class="jxr_linenumber" name="92" href="#92">92</a>          <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> translateTo(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLoggerConfigHelper.html">Log4jEventWrapper</a> ringBufferElement, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> sequence, 
+<a class="jxr_linenumber" name="93" href="#93">93</a>                  <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> logEvent, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLoggerConfig.html">AsyncLoggerConfig</a> loggerConfig) {
 <a class="jxr_linenumber" name="94" href="#94">94</a>              ringBufferElement.event = logEvent;
 <a class="jxr_linenumber" name="95" href="#95">95</a>              ringBufferElement.loggerConfig = loggerConfig;
 <a class="jxr_linenumber" name="96" href="#96">96</a>          }
@@ -293,7 +293,7 @@
 <a class="jxr_linenumber" name="283" href="#283">283</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="284" href="#284">284</a> <em class="jxr_javadoccomment">     * Returns {@code true} if the specified disruptor still has unprocessed events.</em>
 <a class="jxr_linenumber" name="285" href="#285">285</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="286" href="#286">286</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> hasBacklog(Disruptor&lt;?&gt; disruptor) {
+<a class="jxr_linenumber" name="286" href="#286">286</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> hasBacklog(<strong class="jxr_keyword">final</strong> Disruptor&lt;?&gt; disruptor) {
 <a class="jxr_linenumber" name="287" href="#287">287</a>         <strong class="jxr_keyword">final</strong> RingBuffer&lt;?&gt; ringBuffer = disruptor.getRingBuffer();
 <a class="jxr_linenumber" name="288" href="#288">288</a>         <strong class="jxr_keyword">return</strong> !ringBuffer.hasAvailableCapacity(ringBuffer.getBufferSize());
 <a class="jxr_linenumber" name="289" href="#289">289</a>     }
@@ -326,7 +326,7 @@
 <a class="jxr_linenumber" name="316" href="#316">316</a> <em class="jxr_javadoccomment">     *          calling thread needs to process the event itself</em>
 <a class="jxr_linenumber" name="317" href="#317">317</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="318" href="#318">318</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> callAppendersFromAnotherThread(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
-<a class="jxr_linenumber" name="319" href="#319">319</a>         Disruptor&lt;Log4jEventWrapper&gt; temp = disruptor;
+<a class="jxr_linenumber" name="319" href="#319">319</a>         <strong class="jxr_keyword">final</strong> Disruptor&lt;Log4jEventWrapper&gt; temp = disruptor;
 <a class="jxr_linenumber" name="320" href="#320">320</a>         <strong class="jxr_keyword">if</strong> (temp == <strong class="jxr_keyword">null</strong>) { <em class="jxr_comment">// LOG4J2-639</em>
 <a class="jxr_linenumber" name="321" href="#321">321</a>             LOGGER.fatal(<span class="jxr_string">"Ignoring log event after log4j was shut down"</span>);
 <a class="jxr_linenumber" name="322" href="#322">322</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
@@ -350,7 +350,7 @@
 <a class="jxr_linenumber" name="340" href="#340">340</a>             <em class="jxr_comment">// That could result in adding a log event to the disruptor after it was shut down,</em>
 <a class="jxr_linenumber" name="341" href="#341">341</a>             <em class="jxr_comment">// which could cause the publishEvent method to hang and never return.</em>
 <a class="jxr_linenumber" name="342" href="#342">342</a>             disruptor.getRingBuffer().publishEvent(translator, logEvent, asyncLoggerConfig);
-<a class="jxr_linenumber" name="343" href="#343">343</a>         } <strong class="jxr_keyword">catch</strong> (NullPointerException npe) {
+<a class="jxr_linenumber" name="343" href="#343">343</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NullPointerException npe) {
 <a class="jxr_linenumber" name="344" href="#344">344</a>             LOGGER.fatal(<span class="jxr_string">"Ignoring log event after log4j was shut down."</span>);
 <a class="jxr_linenumber" name="345" href="#345">345</a>         }
 <a class="jxr_linenumber" name="346" href="#346">346</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
@@ -363,7 +363,7 @@
 <a class="jxr_linenumber" name="353" href="#353">353</a> <em class="jxr_javadoccomment">     * @param contextName name of the {@code LoggerContext}</em>
 <a class="jxr_linenumber" name="354" href="#354">354</a> <em class="jxr_javadoccomment">     * @param loggerConfigName name of the logger config</em>
 <a class="jxr_linenumber" name="355" href="#355">355</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="356" href="#356">356</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/jmx/RingBufferAdmin.html">RingBufferAdmin</a> createRingBufferAdmin(String contextName, String loggerConfigName) {
+<a class="jxr_linenumber" name="356" href="#356">356</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/jmx/RingBufferAdmin.html">RingBufferAdmin</a> createRingBufferAdmin(<strong class="jxr_keyword">final</strong> String contextName, <strong class="jxr_keyword">final</strong> String loggerConfigName) {
 <a class="jxr_linenumber" name="357" href="#357">357</a>         <strong class="jxr_keyword">return</strong> RingBufferAdmin.forAsyncLoggerConfig(disruptor.getRingBuffer(), contextName, loggerConfigName);
 <a class="jxr_linenumber" name="358" href="#358">358</a>     }
 <a class="jxr_linenumber" name="359" href="#359">359</a> 

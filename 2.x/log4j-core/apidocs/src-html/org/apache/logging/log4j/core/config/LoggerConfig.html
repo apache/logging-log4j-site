@@ -269,7 +269,7 @@
 <FONT color="green">266</FONT>         * @return the logging Level.<a name="line.266"></a>
 <FONT color="green">267</FONT>         */<a name="line.267"></a>
 <FONT color="green">268</FONT>        public Level getLevel() {<a name="line.268"></a>
-<FONT color="green">269</FONT>            return level;<a name="line.269"></a>
+<FONT color="green">269</FONT>            return level == null ? parent.getLevel() : level;<a name="line.269"></a>
 <FONT color="green">270</FONT>        }<a name="line.270"></a>
 <FONT color="green">271</FONT>    <a name="line.271"></a>
 <FONT color="green">272</FONT>        /**<a name="line.272"></a>
@@ -373,143 +373,144 @@
 <FONT color="green">370</FONT>         * loggerConfig.<a name="line.370"></a>
 <FONT color="green">371</FONT>         */<a name="line.371"></a>
 <FONT color="green">372</FONT>        private void waitForCompletion() {<a name="line.372"></a>
-<FONT color="green">373</FONT>            if (shutdown.compareAndSet(false, true)) {<a name="line.373"></a>
-<FONT color="green">374</FONT>                int retries = 0;<a name="line.374"></a>
-<FONT color="green">375</FONT>                while (counter.get() &gt; 0) {<a name="line.375"></a>
-<FONT color="green">376</FONT>                    shutdownLock.lock();<a name="line.376"></a>
-<FONT color="green">377</FONT>                    try {<a name="line.377"></a>
-<FONT color="green">378</FONT>                        noLogEvents.await(retries + 1, TimeUnit.SECONDS);<a name="line.378"></a>
-<FONT color="green">379</FONT>                    } catch (final InterruptedException ie) {<a name="line.379"></a>
-<FONT color="green">380</FONT>                        if (++retries &gt; MAX_RETRIES) {<a name="line.380"></a>
-<FONT color="green">381</FONT>                            break;<a name="line.381"></a>
-<FONT color="green">382</FONT>                        }<a name="line.382"></a>
-<FONT color="green">383</FONT>                    } finally {<a name="line.383"></a>
-<FONT color="green">384</FONT>                        shutdownLock.unlock();<a name="line.384"></a>
+<FONT color="green">373</FONT>            shutdownLock.lock();<a name="line.373"></a>
+<FONT color="green">374</FONT>            try {<a name="line.374"></a>
+<FONT color="green">375</FONT>                if (shutdown.compareAndSet(false, true)) {<a name="line.375"></a>
+<FONT color="green">376</FONT>                    int retries = 0;<a name="line.376"></a>
+<FONT color="green">377</FONT>                    while (counter.get() &gt; 0) {<a name="line.377"></a>
+<FONT color="green">378</FONT>                        try {<a name="line.378"></a>
+<FONT color="green">379</FONT>                            noLogEvents.await(retries + 1, TimeUnit.SECONDS);<a name="line.379"></a>
+<FONT color="green">380</FONT>                        } catch (final InterruptedException ie) {<a name="line.380"></a>
+<FONT color="green">381</FONT>                            if (++retries &gt; MAX_RETRIES) {<a name="line.381"></a>
+<FONT color="green">382</FONT>                                break;<a name="line.382"></a>
+<FONT color="green">383</FONT>                            }<a name="line.383"></a>
+<FONT color="green">384</FONT>                        }<a name="line.384"></a>
 <FONT color="green">385</FONT>                    }<a name="line.385"></a>
 <FONT color="green">386</FONT>                }<a name="line.386"></a>
-<FONT color="green">387</FONT>            }<a name="line.387"></a>
-<FONT color="green">388</FONT>        }<a name="line.388"></a>
-<FONT color="green">389</FONT>    <a name="line.389"></a>
-<FONT color="green">390</FONT>        /**<a name="line.390"></a>
-<FONT color="green">391</FONT>         * Logs an event.<a name="line.391"></a>
-<FONT color="green">392</FONT>         *<a name="line.392"></a>
-<FONT color="green">393</FONT>         * @param event The log event.<a name="line.393"></a>
-<FONT color="green">394</FONT>         */<a name="line.394"></a>
-<FONT color="green">395</FONT>        public void log(final LogEvent event) {<a name="line.395"></a>
-<FONT color="green">396</FONT>    <a name="line.396"></a>
-<FONT color="green">397</FONT>            counter.incrementAndGet();<a name="line.397"></a>
-<FONT color="green">398</FONT>            try {<a name="line.398"></a>
-<FONT color="green">399</FONT>                if (isFiltered(event)) {<a name="line.399"></a>
-<FONT color="green">400</FONT>                    return;<a name="line.400"></a>
-<FONT color="green">401</FONT>                }<a name="line.401"></a>
-<FONT color="green">402</FONT>    <a name="line.402"></a>
-<FONT color="green">403</FONT>                event.setIncludeLocation(isIncludeLocation());<a name="line.403"></a>
+<FONT color="green">387</FONT>            } finally {<a name="line.387"></a>
+<FONT color="green">388</FONT>                shutdownLock.unlock();<a name="line.388"></a>
+<FONT color="green">389</FONT>            }<a name="line.389"></a>
+<FONT color="green">390</FONT>        }<a name="line.390"></a>
+<FONT color="green">391</FONT>    <a name="line.391"></a>
+<FONT color="green">392</FONT>        /**<a name="line.392"></a>
+<FONT color="green">393</FONT>         * Logs an event.<a name="line.393"></a>
+<FONT color="green">394</FONT>         *<a name="line.394"></a>
+<FONT color="green">395</FONT>         * @param event The log event.<a name="line.395"></a>
+<FONT color="green">396</FONT>         */<a name="line.396"></a>
+<FONT color="green">397</FONT>        public void log(final LogEvent event) {<a name="line.397"></a>
+<FONT color="green">398</FONT>    <a name="line.398"></a>
+<FONT color="green">399</FONT>            counter.incrementAndGet();<a name="line.399"></a>
+<FONT color="green">400</FONT>            try {<a name="line.400"></a>
+<FONT color="green">401</FONT>                if (isFiltered(event)) {<a name="line.401"></a>
+<FONT color="green">402</FONT>                    return;<a name="line.402"></a>
+<FONT color="green">403</FONT>                }<a name="line.403"></a>
 <FONT color="green">404</FONT>    <a name="line.404"></a>
-<FONT color="green">405</FONT>                callAppenders(event);<a name="line.405"></a>
+<FONT color="green">405</FONT>                event.setIncludeLocation(isIncludeLocation());<a name="line.405"></a>
 <FONT color="green">406</FONT>    <a name="line.406"></a>
-<FONT color="green">407</FONT>                if (additive &amp;&amp; parent != null) {<a name="line.407"></a>
-<FONT color="green">408</FONT>                    parent.log(event);<a name="line.408"></a>
-<FONT color="green">409</FONT>                }<a name="line.409"></a>
-<FONT color="green">410</FONT>            } finally {<a name="line.410"></a>
-<FONT color="green">411</FONT>                if (counter.decrementAndGet() == 0) {<a name="line.411"></a>
-<FONT color="green">412</FONT>                    shutdownLock.lock();<a name="line.412"></a>
-<FONT color="green">413</FONT>                    try {<a name="line.413"></a>
-<FONT color="green">414</FONT>                        if (shutdown.get()) {<a name="line.414"></a>
-<FONT color="green">415</FONT>                            noLogEvents.signalAll();<a name="line.415"></a>
-<FONT color="green">416</FONT>                        }<a name="line.416"></a>
-<FONT color="green">417</FONT>                    } finally {<a name="line.417"></a>
-<FONT color="green">418</FONT>                        shutdownLock.unlock();<a name="line.418"></a>
-<FONT color="green">419</FONT>                    }<a name="line.419"></a>
-<FONT color="green">420</FONT>                }<a name="line.420"></a>
-<FONT color="green">421</FONT>            }<a name="line.421"></a>
-<FONT color="green">422</FONT>        }<a name="line.422"></a>
-<FONT color="green">423</FONT>    <a name="line.423"></a>
-<FONT color="green">424</FONT>        protected void callAppenders(final LogEvent event) {<a name="line.424"></a>
-<FONT color="green">425</FONT>            for (final AppenderControl control : appenders.values()) {<a name="line.425"></a>
-<FONT color="green">426</FONT>                control.callAppender(event);<a name="line.426"></a>
-<FONT color="green">427</FONT>            }<a name="line.427"></a>
-<FONT color="green">428</FONT>        }<a name="line.428"></a>
-<FONT color="green">429</FONT>    <a name="line.429"></a>
-<FONT color="green">430</FONT>    <a name="line.430"></a>
-<FONT color="green">431</FONT>        @Override<a name="line.431"></a>
-<FONT color="green">432</FONT>        public String toString() {<a name="line.432"></a>
-<FONT color="green">433</FONT>            return Strings.isEmpty(name) ? "root" : name;<a name="line.433"></a>
-<FONT color="green">434</FONT>        }<a name="line.434"></a>
-<FONT color="green">435</FONT>    <a name="line.435"></a>
-<FONT color="green">436</FONT>        /**<a name="line.436"></a>
-<FONT color="green">437</FONT>         * Factory method to create a LoggerConfig.<a name="line.437"></a>
-<FONT color="green">438</FONT>         *<a name="line.438"></a>
-<FONT color="green">439</FONT>         * @param additivity True if additive, false otherwise.<a name="line.439"></a>
-<FONT color="green">440</FONT>         * @param level The Level to be associated with the Logger.<a name="line.440"></a>
-<FONT color="green">441</FONT>         * @param loggerName The name of the Logger.<a name="line.441"></a>
-<FONT color="green">442</FONT>         * @param includeLocation whether location should be passed downstream<a name="line.442"></a>
-<FONT color="green">443</FONT>         * @param refs An array of Appender names.<a name="line.443"></a>
-<FONT color="green">444</FONT>         * @param properties Properties to pass to the Logger.<a name="line.444"></a>
-<FONT color="green">445</FONT>         * @param config The Configuration.<a name="line.445"></a>
-<FONT color="green">446</FONT>         * @param filter A Filter.<a name="line.446"></a>
-<FONT color="green">447</FONT>         * @return A new LoggerConfig.<a name="line.447"></a>
-<FONT color="green">448</FONT>         */<a name="line.448"></a>
-<FONT color="green">449</FONT>        @PluginFactory<a name="line.449"></a>
-<FONT color="green">450</FONT>        public static LoggerConfig createLogger(<a name="line.450"></a>
-<FONT color="green">451</FONT>                @PluginAttribute("additivity") final String additivity,<a name="line.451"></a>
-<FONT color="green">452</FONT>                @PluginAttribute("level") final Level level,<a name="line.452"></a>
-<FONT color="green">453</FONT>                @PluginAttribute("name") final String loggerName,<a name="line.453"></a>
-<FONT color="green">454</FONT>                @PluginAttribute("includeLocation") final String includeLocation,<a name="line.454"></a>
-<FONT color="green">455</FONT>                @PluginElement("AppenderRef") final AppenderRef[] refs,<a name="line.455"></a>
-<FONT color="green">456</FONT>                @PluginElement("Properties") final Property[] properties,<a name="line.456"></a>
-<FONT color="green">457</FONT>                @PluginConfiguration final Configuration config,<a name="line.457"></a>
-<FONT color="green">458</FONT>                @PluginElement("Filters") final Filter filter) {<a name="line.458"></a>
-<FONT color="green">459</FONT>            if (loggerName == null) {<a name="line.459"></a>
-<FONT color="green">460</FONT>                LOGGER.error("Loggers cannot be configured without a name");<a name="line.460"></a>
-<FONT color="green">461</FONT>                return null;<a name="line.461"></a>
-<FONT color="green">462</FONT>            }<a name="line.462"></a>
-<FONT color="green">463</FONT>    <a name="line.463"></a>
-<FONT color="green">464</FONT>            final List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.464"></a>
-<FONT color="green">465</FONT>            final Level actualLevel = level == null ? Level.ERROR : level;<a name="line.465"></a>
-<FONT color="green">466</FONT>            final String name = loggerName.equals("root") ? Strings.EMPTY : loggerName;<a name="line.466"></a>
-<FONT color="green">467</FONT>            final boolean additive = Booleans.parseBoolean(additivity, true);<a name="line.467"></a>
-<FONT color="green">468</FONT>    <a name="line.468"></a>
-<FONT color="green">469</FONT>            return new LoggerConfig(name, appenderRefs, filter, actualLevel, additive,<a name="line.469"></a>
-<FONT color="green">470</FONT>                    properties, config, includeLocation(includeLocation));<a name="line.470"></a>
-<FONT color="green">471</FONT>        }<a name="line.471"></a>
-<FONT color="green">472</FONT>    <a name="line.472"></a>
-<FONT color="green">473</FONT>        // Note: for asynchronous loggers, includeLocation default is FALSE,<a name="line.473"></a>
-<FONT color="green">474</FONT>        // for synchronous loggers, includeLocation default is TRUE.<a name="line.474"></a>
-<FONT color="green">475</FONT>        protected static boolean includeLocation(final String includeLocationConfigValue) {<a name="line.475"></a>
-<FONT color="green">476</FONT>            if (includeLocationConfigValue == null) {<a name="line.476"></a>
-<FONT color="green">477</FONT>                final boolean sync = !AsyncLoggerContextSelector.class.getName()<a name="line.477"></a>
-<FONT color="green">478</FONT>                        .equals(System.getProperty(Constants.LOG4J_CONTEXT_SELECTOR));<a name="line.478"></a>
-<FONT color="green">479</FONT>                return sync;<a name="line.479"></a>
-<FONT color="green">480</FONT>            }<a name="line.480"></a>
-<FONT color="green">481</FONT>            return Boolean.parseBoolean(includeLocationConfigValue);<a name="line.481"></a>
-<FONT color="green">482</FONT>        }<a name="line.482"></a>
-<FONT color="green">483</FONT>    <a name="line.483"></a>
-<FONT color="green">484</FONT>        /**<a name="line.484"></a>
-<FONT color="green">485</FONT>         * The root Logger.<a name="line.485"></a>
-<FONT color="green">486</FONT>         */<a name="line.486"></a>
-<FONT color="green">487</FONT>        @Plugin(name = "root", category = "Core", printObject = true)<a name="line.487"></a>
-<FONT color="green">488</FONT>        public static class RootLogger extends LoggerConfig {<a name="line.488"></a>
-<FONT color="green">489</FONT>    <a name="line.489"></a>
-<FONT color="green">490</FONT>            @PluginFactory<a name="line.490"></a>
-<FONT color="green">491</FONT>            public static LoggerConfig createLogger(<a name="line.491"></a>
-<FONT color="green">492</FONT>                    @PluginAttribute("additivity") final String additivity,<a name="line.492"></a>
-<FONT color="green">493</FONT>                    @PluginAttribute("level") final Level level,<a name="line.493"></a>
-<FONT color="green">494</FONT>                    @PluginAttribute("includeLocation") final String includeLocation,<a name="line.494"></a>
-<FONT color="green">495</FONT>                    @PluginElement("AppenderRef") final AppenderRef[] refs,<a name="line.495"></a>
-<FONT color="green">496</FONT>                    @PluginElement("Properties") final Property[] properties,<a name="line.496"></a>
-<FONT color="green">497</FONT>                    @PluginConfiguration final Configuration config,<a name="line.497"></a>
-<FONT color="green">498</FONT>                    @PluginElement("Filters") final Filter filter) {<a name="line.498"></a>
-<FONT color="green">499</FONT>                final List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.499"></a>
-<FONT color="green">500</FONT>                final Level actualLevel = level == null ? Level.ERROR : level;<a name="line.500"></a>
-<FONT color="green">501</FONT>                final boolean additive = Booleans.parseBoolean(additivity, true);<a name="line.501"></a>
-<FONT color="green">502</FONT>    <a name="line.502"></a>
-<FONT color="green">503</FONT>                return new LoggerConfig(LogManager.ROOT_LOGGER_NAME, appenderRefs,<a name="line.503"></a>
-<FONT color="green">504</FONT>                        filter, actualLevel, additive, properties, config,<a name="line.504"></a>
-<FONT color="green">505</FONT>                        includeLocation(includeLocation));<a name="line.505"></a>
-<FONT color="green">506</FONT>            }<a name="line.506"></a>
-<FONT color="green">507</FONT>        }<a name="line.507"></a>
-<FONT color="green">508</FONT>    <a name="line.508"></a>
-<FONT color="green">509</FONT>    }<a name="line.509"></a>
+<FONT color="green">407</FONT>                callAppenders(event);<a name="line.407"></a>
+<FONT color="green">408</FONT>    <a name="line.408"></a>
+<FONT color="green">409</FONT>                if (additive &amp;&amp; parent != null) {<a name="line.409"></a>
+<FONT color="green">410</FONT>                    parent.log(event);<a name="line.410"></a>
+<FONT color="green">411</FONT>                }<a name="line.411"></a>
+<FONT color="green">412</FONT>            } finally {<a name="line.412"></a>
+<FONT color="green">413</FONT>                if (counter.decrementAndGet() == 0) {<a name="line.413"></a>
+<FONT color="green">414</FONT>                    shutdownLock.lock();<a name="line.414"></a>
+<FONT color="green">415</FONT>                    try {<a name="line.415"></a>
+<FONT color="green">416</FONT>                        if (shutdown.get()) {<a name="line.416"></a>
+<FONT color="green">417</FONT>                            noLogEvents.signalAll();<a name="line.417"></a>
+<FONT color="green">418</FONT>                        }<a name="line.418"></a>
+<FONT color="green">419</FONT>                    } finally {<a name="line.419"></a>
+<FONT color="green">420</FONT>                        shutdownLock.unlock();<a name="line.420"></a>
+<FONT color="green">421</FONT>                    }<a name="line.421"></a>
+<FONT color="green">422</FONT>                }<a name="line.422"></a>
+<FONT color="green">423</FONT>            }<a name="line.423"></a>
+<FONT color="green">424</FONT>        }<a name="line.424"></a>
+<FONT color="green">425</FONT>    <a name="line.425"></a>
+<FONT color="green">426</FONT>        protected void callAppenders(final LogEvent event) {<a name="line.426"></a>
+<FONT color="green">427</FONT>            for (final AppenderControl control : appenders.values()) {<a name="line.427"></a>
+<FONT color="green">428</FONT>                control.callAppender(event);<a name="line.428"></a>
+<FONT color="green">429</FONT>            }<a name="line.429"></a>
+<FONT color="green">430</FONT>        }<a name="line.430"></a>
+<FONT color="green">431</FONT>    <a name="line.431"></a>
+<FONT color="green">432</FONT>    <a name="line.432"></a>
+<FONT color="green">433</FONT>        @Override<a name="line.433"></a>
+<FONT color="green">434</FONT>        public String toString() {<a name="line.434"></a>
+<FONT color="green">435</FONT>            return Strings.isEmpty(name) ? "root" : name;<a name="line.435"></a>
+<FONT color="green">436</FONT>        }<a name="line.436"></a>
+<FONT color="green">437</FONT>    <a name="line.437"></a>
+<FONT color="green">438</FONT>        /**<a name="line.438"></a>
+<FONT color="green">439</FONT>         * Factory method to create a LoggerConfig.<a name="line.439"></a>
+<FONT color="green">440</FONT>         *<a name="line.440"></a>
+<FONT color="green">441</FONT>         * @param additivity True if additive, false otherwise.<a name="line.441"></a>
+<FONT color="green">442</FONT>         * @param level The Level to be associated with the Logger.<a name="line.442"></a>
+<FONT color="green">443</FONT>         * @param loggerName The name of the Logger.<a name="line.443"></a>
+<FONT color="green">444</FONT>         * @param includeLocation whether location should be passed downstream<a name="line.444"></a>
+<FONT color="green">445</FONT>         * @param refs An array of Appender names.<a name="line.445"></a>
+<FONT color="green">446</FONT>         * @param properties Properties to pass to the Logger.<a name="line.446"></a>
+<FONT color="green">447</FONT>         * @param config The Configuration.<a name="line.447"></a>
+<FONT color="green">448</FONT>         * @param filter A Filter.<a name="line.448"></a>
+<FONT color="green">449</FONT>         * @return A new LoggerConfig.<a name="line.449"></a>
+<FONT color="green">450</FONT>         */<a name="line.450"></a>
+<FONT color="green">451</FONT>        @PluginFactory<a name="line.451"></a>
+<FONT color="green">452</FONT>        public static LoggerConfig createLogger(<a name="line.452"></a>
+<FONT color="green">453</FONT>                @PluginAttribute("additivity") final String additivity,<a name="line.453"></a>
+<FONT color="green">454</FONT>                @PluginAttribute("level") final Level level,<a name="line.454"></a>
+<FONT color="green">455</FONT>                @PluginAttribute("name") final String loggerName,<a name="line.455"></a>
+<FONT color="green">456</FONT>                @PluginAttribute("includeLocation") final String includeLocation,<a name="line.456"></a>
+<FONT color="green">457</FONT>                @PluginElement("AppenderRef") final AppenderRef[] refs,<a name="line.457"></a>
+<FONT color="green">458</FONT>                @PluginElement("Properties") final Property[] properties,<a name="line.458"></a>
+<FONT color="green">459</FONT>                @PluginConfiguration final Configuration config,<a name="line.459"></a>
+<FONT color="green">460</FONT>                @PluginElement("Filter") final Filter filter) {<a name="line.460"></a>
+<FONT color="green">461</FONT>            if (loggerName == null) {<a name="line.461"></a>
+<FONT color="green">462</FONT>                LOGGER.error("Loggers cannot be configured without a name");<a name="line.462"></a>
+<FONT color="green">463</FONT>                return null;<a name="line.463"></a>
+<FONT color="green">464</FONT>            }<a name="line.464"></a>
+<FONT color="green">465</FONT>    <a name="line.465"></a>
+<FONT color="green">466</FONT>            final List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.466"></a>
+<FONT color="green">467</FONT>            final String name = loggerName.equals("root") ? Strings.EMPTY : loggerName;<a name="line.467"></a>
+<FONT color="green">468</FONT>            final boolean additive = Booleans.parseBoolean(additivity, true);<a name="line.468"></a>
+<FONT color="green">469</FONT>    <a name="line.469"></a>
+<FONT color="green">470</FONT>            return new LoggerConfig(name, appenderRefs, filter, level, additive,<a name="line.470"></a>
+<FONT color="green">471</FONT>                    properties, config, includeLocation(includeLocation));<a name="line.471"></a>
+<FONT color="green">472</FONT>        }<a name="line.472"></a>
+<FONT color="green">473</FONT>    <a name="line.473"></a>
+<FONT color="green">474</FONT>        // Note: for asynchronous loggers, includeLocation default is FALSE,<a name="line.474"></a>
+<FONT color="green">475</FONT>        // for synchronous loggers, includeLocation default is TRUE.<a name="line.475"></a>
+<FONT color="green">476</FONT>        protected static boolean includeLocation(final String includeLocationConfigValue) {<a name="line.476"></a>
+<FONT color="green">477</FONT>            if (includeLocationConfigValue == null) {<a name="line.477"></a>
+<FONT color="green">478</FONT>                final boolean sync = !AsyncLoggerContextSelector.class.getName()<a name="line.478"></a>
+<FONT color="green">479</FONT>                        .equals(System.getProperty(Constants.LOG4J_CONTEXT_SELECTOR));<a name="line.479"></a>
+<FONT color="green">480</FONT>                return sync;<a name="line.480"></a>
+<FONT color="green">481</FONT>            }<a name="line.481"></a>
+<FONT color="green">482</FONT>            return Boolean.parseBoolean(includeLocationConfigValue);<a name="line.482"></a>
+<FONT color="green">483</FONT>        }<a name="line.483"></a>
+<FONT color="green">484</FONT>    <a name="line.484"></a>
+<FONT color="green">485</FONT>        /**<a name="line.485"></a>
+<FONT color="green">486</FONT>         * The root Logger.<a name="line.486"></a>
+<FONT color="green">487</FONT>         */<a name="line.487"></a>
+<FONT color="green">488</FONT>        @Plugin(name = "root", category = "Core", printObject = true)<a name="line.488"></a>
+<FONT color="green">489</FONT>        public static class RootLogger extends LoggerConfig {<a name="line.489"></a>
+<FONT color="green">490</FONT>    <a name="line.490"></a>
+<FONT color="green">491</FONT>            @PluginFactory<a name="line.491"></a>
+<FONT color="green">492</FONT>            public static LoggerConfig createLogger(<a name="line.492"></a>
+<FONT color="green">493</FONT>                    @PluginAttribute("additivity") final String additivity,<a name="line.493"></a>
+<FONT color="green">494</FONT>                    @PluginAttribute("level") final Level level,<a name="line.494"></a>
+<FONT color="green">495</FONT>                    @PluginAttribute("includeLocation") final String includeLocation,<a name="line.495"></a>
+<FONT color="green">496</FONT>                    @PluginElement("AppenderRef") final AppenderRef[] refs,<a name="line.496"></a>
+<FONT color="green">497</FONT>                    @PluginElement("Properties") final Property[] properties,<a name="line.497"></a>
+<FONT color="green">498</FONT>                    @PluginConfiguration final Configuration config,<a name="line.498"></a>
+<FONT color="green">499</FONT>                    @PluginElement("Filter") final Filter filter) {<a name="line.499"></a>
+<FONT color="green">500</FONT>                final List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.500"></a>
+<FONT color="green">501</FONT>                final Level actualLevel = level == null ? Level.ERROR : level;<a name="line.501"></a>
+<FONT color="green">502</FONT>                final boolean additive = Booleans.parseBoolean(additivity, true);<a name="line.502"></a>
+<FONT color="green">503</FONT>    <a name="line.503"></a>
+<FONT color="green">504</FONT>                return new LoggerConfig(LogManager.ROOT_LOGGER_NAME, appenderRefs,<a name="line.504"></a>
+<FONT color="green">505</FONT>                        filter, actualLevel, additive, properties, config,<a name="line.505"></a>
+<FONT color="green">506</FONT>                        includeLocation(includeLocation));<a name="line.506"></a>
+<FONT color="green">507</FONT>            }<a name="line.507"></a>
+<FONT color="green">508</FONT>        }<a name="line.508"></a>
+<FONT color="green">509</FONT>    <a name="line.509"></a>
+<FONT color="green">510</FONT>    }<a name="line.510"></a>
 
 
 

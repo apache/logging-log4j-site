@@ -70,16 +70,16 @@
 <a class="jxr_linenumber" name="60" href="#60">60</a>          <em class="jxr_comment">// The reflection is necessary because without it, Google App Engine</em>
 <a class="jxr_linenumber" name="61" href="#61">61</a>          <em class="jxr_comment">// will refuse to initialize this class.</em>
 <a class="jxr_linenumber" name="62" href="#62">62</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="63" href="#63">63</a>              Class&lt;?&gt; factoryClass = Loader.loadSystemClass(<span class="jxr_string">"java.lang.management.ManagementFactory"</span>);
-<a class="jxr_linenumber" name="64" href="#64">64</a>              Method getRuntimeMXBean = factoryClass.getMethod(<span class="jxr_string">"getRuntimeMXBean"</span>);
-<a class="jxr_linenumber" name="65" href="#65">65</a>              Object runtimeMXBean = getRuntimeMXBean.invoke(<strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="63" href="#63">63</a>              <strong class="jxr_keyword">final</strong> Class&lt;?&gt; factoryClass = Loader.loadSystemClass(<span class="jxr_string">"java.lang.management.ManagementFactory"</span>);
+<a class="jxr_linenumber" name="64" href="#64">64</a>              <strong class="jxr_keyword">final</strong> Method getRuntimeMXBean = factoryClass.getMethod(<span class="jxr_string">"getRuntimeMXBean"</span>);
+<a class="jxr_linenumber" name="65" href="#65">65</a>              <strong class="jxr_keyword">final</strong> Object runtimeMXBean = getRuntimeMXBean.invoke(<strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="66" href="#66">66</a>              
-<a class="jxr_linenumber" name="67" href="#67">67</a>              Class&lt;?&gt; runtimeMXBeanClass = Loader.loadSystemClass(<span class="jxr_string">"java.lang.management.RuntimeMXBean"</span>);
-<a class="jxr_linenumber" name="68" href="#68">68</a>              Method getStartTime = runtimeMXBeanClass.getMethod(<span class="jxr_string">"getStartTime"</span>);
-<a class="jxr_linenumber" name="69" href="#69">69</a>              Long result = (Long) getStartTime.invoke(runtimeMXBean);
+<a class="jxr_linenumber" name="67" href="#67">67</a>              <strong class="jxr_keyword">final</strong> Class&lt;?&gt; runtimeMXBeanClass = Loader.loadSystemClass(<span class="jxr_string">"java.lang.management.RuntimeMXBean"</span>);
+<a class="jxr_linenumber" name="68" href="#68">68</a>              <strong class="jxr_keyword">final</strong> Method getStartTime = runtimeMXBeanClass.getMethod(<span class="jxr_string">"getStartTime"</span>);
+<a class="jxr_linenumber" name="69" href="#69">69</a>              <strong class="jxr_keyword">final</strong> Long result = (Long) getStartTime.invoke(runtimeMXBean);
 <a class="jxr_linenumber" name="70" href="#70">70</a>  
 <a class="jxr_linenumber" name="71" href="#71">71</a>              <strong class="jxr_keyword">return</strong> result.longValue();
-<a class="jxr_linenumber" name="72" href="#72">72</a>          } <strong class="jxr_keyword">catch</strong> (Throwable t) {
+<a class="jxr_linenumber" name="72" href="#72">72</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Throwable t) {
 <a class="jxr_linenumber" name="73" href="#73">73</a>              StatusLogger.getLogger().error(<span class="jxr_string">"Unable to call ManagementFactory.getRuntimeMXBean().getStartTime(), "</span> <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="74" href="#74">74</a>                      + <span class="jxr_string">"using system time for OnStartupTriggeringPolicy"</span>, t);
 <a class="jxr_linenumber" name="75" href="#75">75</a>              <em class="jxr_comment">// We have little option but to declare "now" as the beginning of time.</em>

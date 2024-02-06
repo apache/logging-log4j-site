@@ -241,7 +241,7 @@
 <a class="jxr_linenumber" name="231" href="#231">231</a>             threadlocalInfo.set(info);
 <a class="jxr_linenumber" name="232" href="#232">232</a>         }
 <a class="jxr_linenumber" name="233" href="#233">233</a>         
-<a class="jxr_linenumber" name="234" href="#234">234</a>         Disruptor&lt;RingBufferLogEvent&gt; temp = disruptor;
+<a class="jxr_linenumber" name="234" href="#234">234</a>         <strong class="jxr_keyword">final</strong> Disruptor&lt;RingBufferLogEvent&gt; temp = disruptor;
 <a class="jxr_linenumber" name="235" href="#235">235</a>         <strong class="jxr_keyword">if</strong> (temp == <strong class="jxr_keyword">null</strong>) { <em class="jxr_comment">// LOG4J2-639</em>
 <a class="jxr_linenumber" name="236" href="#236">236</a>             LOGGER.fatal(<span class="jxr_string">"Ignoring log event after log4j was shut down"</span>);
 <a class="jxr_linenumber" name="237" href="#237">237</a>             <strong class="jxr_keyword">return</strong>;
@@ -288,7 +288,7 @@
 <a class="jxr_linenumber" name="278" href="#278">278</a>             <em class="jxr_comment">// That could result in adding a log event to the disruptor after it was shut down,</em>
 <a class="jxr_linenumber" name="279" href="#279">279</a>             <em class="jxr_comment">// which could cause the publishEvent method to hang and never return.</em>
 <a class="jxr_linenumber" name="280" href="#280">280</a>             disruptor.publishEvent(info.translator);
-<a class="jxr_linenumber" name="281" href="#281">281</a>         } <strong class="jxr_keyword">catch</strong> (NullPointerException npe) {
+<a class="jxr_linenumber" name="281" href="#281">281</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NullPointerException npe) {
 <a class="jxr_linenumber" name="282" href="#282">282</a>             LOGGER.fatal(<span class="jxr_string">"Ignoring log event after log4j was shut down."</span>);
 <a class="jxr_linenumber" name="283" href="#283">283</a>         }
 <a class="jxr_linenumber" name="284" href="#284">284</a>     }
@@ -336,7 +336,7 @@
 <a class="jxr_linenumber" name="326" href="#326">326</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="327" href="#327">327</a> <em class="jxr_javadoccomment">     * Returns {@code true} if the specified disruptor still has unprocessed events.</em>
 <a class="jxr_linenumber" name="328" href="#328">328</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="329" href="#329">329</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> hasBacklog(Disruptor&lt;?&gt; disruptor) {
+<a class="jxr_linenumber" name="329" href="#329">329</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> hasBacklog(<strong class="jxr_keyword">final</strong> Disruptor&lt;?&gt; disruptor) {
 <a class="jxr_linenumber" name="330" href="#330">330</a>         <strong class="jxr_keyword">final</strong> RingBuffer&lt;?&gt; ringBuffer = disruptor.getRingBuffer();
 <a class="jxr_linenumber" name="331" href="#331">331</a>         <strong class="jxr_keyword">return</strong> !ringBuffer.hasAvailableCapacity(ringBuffer.getBufferSize());
 <a class="jxr_linenumber" name="332" href="#332">332</a>     }

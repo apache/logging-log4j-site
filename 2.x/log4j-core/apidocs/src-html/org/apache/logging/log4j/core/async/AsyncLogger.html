@@ -234,7 +234,7 @@
 <FONT color="green">231</FONT>                threadlocalInfo.set(info);<a name="line.231"></a>
 <FONT color="green">232</FONT>            }<a name="line.232"></a>
 <FONT color="green">233</FONT>            <a name="line.233"></a>
-<FONT color="green">234</FONT>            Disruptor&lt;RingBufferLogEvent&gt; temp = disruptor;<a name="line.234"></a>
+<FONT color="green">234</FONT>            final Disruptor&lt;RingBufferLogEvent&gt; temp = disruptor;<a name="line.234"></a>
 <FONT color="green">235</FONT>            if (temp == null) { // LOG4J2-639<a name="line.235"></a>
 <FONT color="green">236</FONT>                LOGGER.fatal("Ignoring log event after log4j was shut down");<a name="line.236"></a>
 <FONT color="green">237</FONT>                return;<a name="line.237"></a>
@@ -281,7 +281,7 @@
 <FONT color="green">278</FONT>                // That could result in adding a log event to the disruptor after it was shut down,<a name="line.278"></a>
 <FONT color="green">279</FONT>                // which could cause the publishEvent method to hang and never return.<a name="line.279"></a>
 <FONT color="green">280</FONT>                disruptor.publishEvent(info.translator);<a name="line.280"></a>
-<FONT color="green">281</FONT>            } catch (NullPointerException npe) {<a name="line.281"></a>
+<FONT color="green">281</FONT>            } catch (final NullPointerException npe) {<a name="line.281"></a>
 <FONT color="green">282</FONT>                LOGGER.fatal("Ignoring log event after log4j was shut down.");<a name="line.282"></a>
 <FONT color="green">283</FONT>            }<a name="line.283"></a>
 <FONT color="green">284</FONT>        }<a name="line.284"></a>
@@ -329,7 +329,7 @@
 <FONT color="green">326</FONT>        /**<a name="line.326"></a>
 <FONT color="green">327</FONT>         * Returns {@code true} if the specified disruptor still has unprocessed events.<a name="line.327"></a>
 <FONT color="green">328</FONT>         */<a name="line.328"></a>
-<FONT color="green">329</FONT>        private static boolean hasBacklog(Disruptor&lt;?&gt; disruptor) {<a name="line.329"></a>
+<FONT color="green">329</FONT>        private static boolean hasBacklog(final Disruptor&lt;?&gt; disruptor) {<a name="line.329"></a>
 <FONT color="green">330</FONT>            final RingBuffer&lt;?&gt; ringBuffer = disruptor.getRingBuffer();<a name="line.330"></a>
 <FONT color="green">331</FONT>            return !ringBuffer.hasAvailableCapacity(ringBuffer.getBufferSize());<a name="line.331"></a>
 <FONT color="green">332</FONT>        }<a name="line.332"></a>

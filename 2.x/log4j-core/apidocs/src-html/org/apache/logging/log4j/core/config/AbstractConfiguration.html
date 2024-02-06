@@ -142,9 +142,9 @@
 <FONT color="green">139</FONT>                    try {<a name="line.139"></a>
 <FONT color="green">140</FONT>                        // Cause the class to be initialized if it isn't already.<a name="line.140"></a>
 <FONT color="green">141</FONT>                        Loader.initializeClass(type.getPluginClass().getName(), type.getPluginClass().getClassLoader());<a name="line.141"></a>
-<FONT color="green">142</FONT>                    } catch (final Exception ex) {<a name="line.142"></a>
-<FONT color="green">143</FONT>                        LOGGER.error("Unable to initialize {} due to {}: {}", type.getPluginClass().getName(),<a name="line.143"></a>
-<FONT color="green">144</FONT>                                ex.getClass().getSimpleName(), ex.getMessage());<a name="line.144"></a>
+<FONT color="green">142</FONT>                    } catch (final Exception e) {<a name="line.142"></a>
+<FONT color="green">143</FONT>                        LOGGER.error("Unable to initialize {} due to {}", type.getPluginClass().getName(), e.getClass()<a name="line.143"></a>
+<FONT color="green">144</FONT>                                .getSimpleName(), e);<a name="line.144"></a>
 <FONT color="green">145</FONT>                    }<a name="line.145"></a>
 <FONT color="green">146</FONT>                }<a name="line.146"></a>
 <FONT color="green">147</FONT>            }<a name="line.147"></a>
@@ -177,7 +177,7 @@
 <FONT color="green">174</FONT>            // LOG4J2-392 first stop AsyncLogger Disruptor thread<a name="line.174"></a>
 <FONT color="green">175</FONT>            final LoggerContextFactory factory = LogManager.getFactory();<a name="line.175"></a>
 <FONT color="green">176</FONT>            if (factory instanceof Log4jContextFactory) {<a name="line.176"></a>
-<FONT color="green">177</FONT>                ContextSelector selector = ((Log4jContextFactory) factory).getSelector();<a name="line.177"></a>
+<FONT color="green">177</FONT>                final ContextSelector selector = ((Log4jContextFactory) factory).getSelector();<a name="line.177"></a>
 <FONT color="green">178</FONT>                if (selector instanceof AsyncLoggerContextSelector) { // all loggers are async<a name="line.178"></a>
 <FONT color="green">179</FONT>                    // TODO until LOG4J2-493 is fixed we can only stop AsyncLogger once!<a name="line.179"></a>
 <FONT color="green">180</FONT>                    // but LoggerContext.setConfiguration will call config.stop()<a name="line.180"></a>
@@ -279,11 +279,11 @@
 <FONT color="green">276</FONT>            }<a name="line.276"></a>
 <FONT color="green">277</FONT>        }<a name="line.277"></a>
 <FONT color="green">278</FONT>    <a name="line.278"></a>
-<FONT color="green">279</FONT>        protected void createAdvertiser(String advertiserString, ConfigurationSource configSource,<a name="line.279"></a>
-<FONT color="green">280</FONT>                                        byte[] buffer, String contentType) {<a name="line.280"></a>
+<FONT color="green">279</FONT>        protected void createAdvertiser(final String advertiserString, final ConfigurationSource configSource,<a name="line.279"></a>
+<FONT color="green">280</FONT>                                        final byte[] buffer, final String contentType) {<a name="line.280"></a>
 <FONT color="green">281</FONT>            if (advertiserString != null) {<a name="line.281"></a>
-<FONT color="green">282</FONT>                Node node = new Node(null, advertiserString, null);<a name="line.282"></a>
-<FONT color="green">283</FONT>                Map&lt;String, String&gt; attributes = node.getAttributes();<a name="line.283"></a>
+<FONT color="green">282</FONT>                final Node node = new Node(null, advertiserString, null);<a name="line.282"></a>
+<FONT color="green">283</FONT>                final Map&lt;String, String&gt; attributes = node.getAttributes();<a name="line.283"></a>
 <FONT color="green">284</FONT>                attributes.put("content", new String(buffer));<a name="line.284"></a>
 <FONT color="green">285</FONT>                attributes.put("contentType", contentType);<a name="line.285"></a>
 <FONT color="green">286</FONT>                attributes.put("name", "configuration");<a name="line.286"></a>
@@ -297,7 +297,7 @@
 <FONT color="green">294</FONT>        private void setupAdvertisement() {<a name="line.294"></a>
 <FONT color="green">295</FONT>            if (advertiserNode != null)<a name="line.295"></a>
 <FONT color="green">296</FONT>            {<a name="line.296"></a>
-<FONT color="green">297</FONT>                String name = advertiserNode.getName();<a name="line.297"></a>
+<FONT color="green">297</FONT>                final String name = advertiserNode.getName();<a name="line.297"></a>
 <FONT color="green">298</FONT>                @SuppressWarnings("unchecked")<a name="line.298"></a>
 <FONT color="green">299</FONT>                final PluginType&lt;Advertiser&gt; type = (PluginType&lt;Advertiser&gt;) pluginManager.getPluginType(name);<a name="line.299"></a>
 <FONT color="green">300</FONT>                if (type != null)<a name="line.300"></a>
@@ -329,7 +329,7 @@
 <FONT color="green">326</FONT>        @SuppressWarnings("unchecked")<a name="line.326"></a>
 <FONT color="green">327</FONT>        protected void doConfigure() {<a name="line.327"></a>
 <FONT color="green">328</FONT>            if (rootNode.hasChildren() &amp;&amp; rootNode.getChildren().get(0).getName().equalsIgnoreCase("Properties")) {<a name="line.328"></a>
-<FONT color="green">329</FONT>                Node first = rootNode.getChildren().get(0);<a name="line.329"></a>
+<FONT color="green">329</FONT>                final Node first = rootNode.getChildren().get(0);<a name="line.329"></a>
 <FONT color="green">330</FONT>                createConfiguration(first, null);<a name="line.330"></a>
 <FONT color="green">331</FONT>                if (first.getObject() != null) {<a name="line.331"></a>
 <FONT color="green">332</FONT>                    subst.setVariableResolver((StrLookup) first.getObject());<a name="line.332"></a>
@@ -731,16 +731,16 @@
 <FONT color="green">728</FONT>            if (Map.class.isAssignableFrom(clazz)) {<a name="line.728"></a>
 <FONT color="green">729</FONT>                try {<a name="line.729"></a>
 <FONT color="green">730</FONT>                    return createPluginMap(node, clazz);<a name="line.730"></a>
-<FONT color="green">731</FONT>                } catch (final Exception ex) {<a name="line.731"></a>
-<FONT color="green">732</FONT>                    LOGGER.warn("Unable to create Map for {} of class {}", type.getElementName(), clazz);<a name="line.732"></a>
+<FONT color="green">731</FONT>                } catch (final Exception e) {<a name="line.731"></a>
+<FONT color="green">732</FONT>                    LOGGER.warn("Unable to create Map for {} of class {}", type.getElementName(), clazz, e);<a name="line.732"></a>
 <FONT color="green">733</FONT>                }<a name="line.733"></a>
 <FONT color="green">734</FONT>            }<a name="line.734"></a>
 <FONT color="green">735</FONT>    <a name="line.735"></a>
 <FONT color="green">736</FONT>            if (Collection.class.isAssignableFrom(clazz)) {<a name="line.736"></a>
 <FONT color="green">737</FONT>                try {<a name="line.737"></a>
 <FONT color="green">738</FONT>                    return createPluginCollection(node, clazz);<a name="line.738"></a>
-<FONT color="green">739</FONT>                } catch (final Exception ex) {<a name="line.739"></a>
-<FONT color="green">740</FONT>                    LOGGER.warn("Unable to create List for {} of class {}", type.getElementName(), clazz);<a name="line.740"></a>
+<FONT color="green">739</FONT>                } catch (final Exception e) {<a name="line.739"></a>
+<FONT color="green">740</FONT>                    LOGGER.warn("Unable to create List for {} of class {}", type.getElementName(), clazz, e);<a name="line.740"></a>
 <FONT color="green">741</FONT>                }<a name="line.741"></a>
 <FONT color="green">742</FONT>            }<a name="line.742"></a>
 <FONT color="green">743</FONT>    <a name="line.743"></a>

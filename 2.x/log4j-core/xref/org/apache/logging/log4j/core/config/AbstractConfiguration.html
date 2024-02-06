@@ -149,9 +149,9 @@
 <a class="jxr_linenumber" name="139" href="#139">139</a>                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="140" href="#140">140</a>                     <em class="jxr_comment">// Cause the class to be initialized if it isn't already.</em>
 <a class="jxr_linenumber" name="141" href="#141">141</a>                     Loader.initializeClass(type.getPluginClass().getName(), type.getPluginClass().getClassLoader());
-<a class="jxr_linenumber" name="142" href="#142">142</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="143" href="#143">143</a>                     LOGGER.error(<span class="jxr_string">"Unable to initialize {} due to {}: {}"</span>, type.getPluginClass().getName(),
-<a class="jxr_linenumber" name="144" href="#144">144</a>                             ex.getClass().getSimpleName(), ex.getMessage());
+<a class="jxr_linenumber" name="142" href="#142">142</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="143" href="#143">143</a>                     LOGGER.error(<span class="jxr_string">"Unable to initialize {} due to {}"</span>, type.getPluginClass().getName(), e.getClass()
+<a class="jxr_linenumber" name="144" href="#144">144</a>                             .getSimpleName(), e);
 <a class="jxr_linenumber" name="145" href="#145">145</a>                 }
 <a class="jxr_linenumber" name="146" href="#146">146</a>             }
 <a class="jxr_linenumber" name="147" href="#147">147</a>         }
@@ -184,7 +184,7 @@
 <a class="jxr_linenumber" name="174" href="#174">174</a>         <em class="jxr_comment">// LOG4J2-392 first stop AsyncLogger Disruptor thread</em>
 <a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">final</strong> LoggerContextFactory factory = LogManager.getFactory();
 <a class="jxr_linenumber" name="176" href="#176">176</a>         <strong class="jxr_keyword">if</strong> (factory instanceof Log4jContextFactory) {
-<a class="jxr_linenumber" name="177" href="#177">177</a>             <a href="../../../../../../org/apache/logging/log4j/core/selector/ContextSelector.html">ContextSelector</a> selector = ((Log4jContextFactory) factory).getSelector();
+<a class="jxr_linenumber" name="177" href="#177">177</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/selector/ContextSelector.html">ContextSelector</a> selector = ((Log4jContextFactory) factory).getSelector();
 <a class="jxr_linenumber" name="178" href="#178">178</a>             <strong class="jxr_keyword">if</strong> (selector instanceof AsyncLoggerContextSelector) { <em class="jxr_comment">// all loggers are async</em>
 <a class="jxr_linenumber" name="179" href="#179">179</a>                 <em class="jxr_comment">// TODO until LOG4J2-493 is fixed we can only stop AsyncLogger once!</em>
 <a class="jxr_linenumber" name="180" href="#180">180</a>                 <em class="jxr_comment">// but LoggerContext.setConfiguration will call config.stop()</em>
@@ -286,11 +286,11 @@
 <a class="jxr_linenumber" name="276" href="#276">276</a>         }
 <a class="jxr_linenumber" name="277" href="#277">277</a>     }
 <a class="jxr_linenumber" name="278" href="#278">278</a> 
-<a class="jxr_linenumber" name="279" href="#279">279</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> createAdvertiser(String advertiserString, <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a> configSource,
-<a class="jxr_linenumber" name="280" href="#280">280</a>                                     byte[] buffer, String contentType) {
+<a class="jxr_linenumber" name="279" href="#279">279</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> createAdvertiser(<strong class="jxr_keyword">final</strong> String advertiserString, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a> configSource,
+<a class="jxr_linenumber" name="280" href="#280">280</a>                                     <strong class="jxr_keyword">final</strong> byte[] buffer, <strong class="jxr_keyword">final</strong> String contentType) {
 <a class="jxr_linenumber" name="281" href="#281">281</a>         <strong class="jxr_keyword">if</strong> (advertiserString != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="282" href="#282">282</a>             <a href="../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> node = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a>(<strong class="jxr_keyword">null</strong>, advertiserString, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="283" href="#283">283</a>             Map&lt;String, String&gt; attributes = node.getAttributes();
+<a class="jxr_linenumber" name="282" href="#282">282</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> node = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a>(<strong class="jxr_keyword">null</strong>, advertiserString, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="283" href="#283">283</a>             <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; attributes = node.getAttributes();
 <a class="jxr_linenumber" name="284" href="#284">284</a>             attributes.put(<span class="jxr_string">"content"</span>, <strong class="jxr_keyword">new</strong> String(buffer));
 <a class="jxr_linenumber" name="285" href="#285">285</a>             attributes.put(<span class="jxr_string">"contentType"</span>, contentType);
 <a class="jxr_linenumber" name="286" href="#286">286</a>             attributes.put(<span class="jxr_string">"name"</span>, <span class="jxr_string">"configuration"</span>);
@@ -304,7 +304,7 @@
 <a class="jxr_linenumber" name="294" href="#294">294</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> setupAdvertisement() {
 <a class="jxr_linenumber" name="295" href="#295">295</a>         <strong class="jxr_keyword">if</strong> (advertiserNode != <strong class="jxr_keyword">null</strong>)
 <a class="jxr_linenumber" name="296" href="#296">296</a>         {
-<a class="jxr_linenumber" name="297" href="#297">297</a>             String name = advertiserNode.getName();
+<a class="jxr_linenumber" name="297" href="#297">297</a>             <strong class="jxr_keyword">final</strong> String name = advertiserNode.getName();
 <a class="jxr_linenumber" name="298" href="#298">298</a>             @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
 <a class="jxr_linenumber" name="299" href="#299">299</a>             <strong class="jxr_keyword">final</strong> PluginType&lt;Advertiser&gt; type = (PluginType&lt;Advertiser&gt;) pluginManager.getPluginType(name);
 <a class="jxr_linenumber" name="300" href="#300">300</a>             <strong class="jxr_keyword">if</strong> (type != <strong class="jxr_keyword">null</strong>)
@@ -336,7 +336,7 @@
 <a class="jxr_linenumber" name="326" href="#326">326</a>     @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
 <a class="jxr_linenumber" name="327" href="#327">327</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> doConfigure() {
 <a class="jxr_linenumber" name="328" href="#328">328</a>         <strong class="jxr_keyword">if</strong> (rootNode.hasChildren() &amp;&amp; rootNode.getChildren().get(0).getName().equalsIgnoreCase(<span class="jxr_string">"Properties"</span>)) {
-<a class="jxr_linenumber" name="329" href="#329">329</a>             <a href="../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> first = rootNode.getChildren().get(0);
+<a class="jxr_linenumber" name="329" href="#329">329</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> first = rootNode.getChildren().get(0);
 <a class="jxr_linenumber" name="330" href="#330">330</a>             createConfiguration(first, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="331" href="#331">331</a>             <strong class="jxr_keyword">if</strong> (first.getObject() != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="332" href="#332">332</a>                 subst.setVariableResolver((StrLookup) first.getObject());
@@ -738,16 +738,16 @@
 <a class="jxr_linenumber" name="728" href="#728">728</a>         <strong class="jxr_keyword">if</strong> (Map.<strong class="jxr_keyword">class</strong>.isAssignableFrom(clazz)) {
 <a class="jxr_linenumber" name="729" href="#729">729</a>             <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="730" href="#730">730</a>                 <strong class="jxr_keyword">return</strong> createPluginMap(node, clazz);
-<a class="jxr_linenumber" name="731" href="#731">731</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="732" href="#732">732</a>                 LOGGER.warn(<span class="jxr_string">"Unable to create Map for {} of class {}"</span>, type.getElementName(), clazz);
+<a class="jxr_linenumber" name="731" href="#731">731</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="732" href="#732">732</a>                 LOGGER.warn(<span class="jxr_string">"Unable to create Map for {} of class {}"</span>, type.getElementName(), clazz, e);
 <a class="jxr_linenumber" name="733" href="#733">733</a>             }
 <a class="jxr_linenumber" name="734" href="#734">734</a>         }
 <a class="jxr_linenumber" name="735" href="#735">735</a> 
 <a class="jxr_linenumber" name="736" href="#736">736</a>         <strong class="jxr_keyword">if</strong> (Collection.<strong class="jxr_keyword">class</strong>.isAssignableFrom(clazz)) {
 <a class="jxr_linenumber" name="737" href="#737">737</a>             <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="738" href="#738">738</a>                 <strong class="jxr_keyword">return</strong> createPluginCollection(node, clazz);
-<a class="jxr_linenumber" name="739" href="#739">739</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="740" href="#740">740</a>                 LOGGER.warn(<span class="jxr_string">"Unable to create List for {} of class {}"</span>, type.getElementName(), clazz);
+<a class="jxr_linenumber" name="739" href="#739">739</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="740" href="#740">740</a>                 LOGGER.warn(<span class="jxr_string">"Unable to create List for {} of class {}"</span>, type.getElementName(), clazz, e);
 <a class="jxr_linenumber" name="741" href="#741">741</a>             }
 <a class="jxr_linenumber" name="742" href="#742">742</a>         }
 <a class="jxr_linenumber" name="743" href="#743">743</a> 

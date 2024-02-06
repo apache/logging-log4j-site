@@ -91,8 +91,8 @@
 <a class="jxr_linenumber" name="81" href="#81">81</a>          populateWidgets();
 <a class="jxr_linenumber" name="82" href="#82">82</a>  
 <a class="jxr_linenumber" name="83" href="#83">83</a>          <em class="jxr_comment">// register for Notifications if LoggerContext MBean was added/removed</em>
-<a class="jxr_linenumber" name="84" href="#84">84</a>          ObjectName addRemoveNotifs = MBeanServerDelegate.DELEGATE_NAME;
-<a class="jxr_linenumber" name="85" href="#85">85</a>          NotificationFilterSupport filter = <strong class="jxr_keyword">new</strong> NotificationFilterSupport();
+<a class="jxr_linenumber" name="84" href="#84">84</a>          <strong class="jxr_keyword">final</strong> ObjectName addRemoveNotifs = MBeanServerDelegate.DELEGATE_NAME;
+<a class="jxr_linenumber" name="85" href="#85">85</a>          <strong class="jxr_keyword">final</strong> NotificationFilterSupport filter = <strong class="jxr_keyword">new</strong> NotificationFilterSupport();
 <a class="jxr_linenumber" name="86" href="#86">86</a>          filter.enableType(Server.DOMAIN); <em class="jxr_comment">// only interested in Log4J2 MBeans</em>
 <a class="jxr_linenumber" name="87" href="#87">87</a>          client.getConnection().addNotificationListener(addRemoveNotifs, <strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="88" href="#88">88</a>      }
@@ -111,21 +111,21 @@
 <a class="jxr_linenumber" name="101" href="#101">101</a> 
 <a class="jxr_linenumber" name="102" href="#102">102</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addWidgetForLoggerContext(<strong class="jxr_keyword">final</strong> LoggerContextAdminMBean ctx) <strong class="jxr_keyword">throws</strong> MalformedObjectNameException,
 <a class="jxr_linenumber" name="103" href="#103">103</a>             IOException, InstanceNotFoundException {
-<a class="jxr_linenumber" name="104" href="#104">104</a>         JTabbedPane contextTabs = <strong class="jxr_keyword">new</strong> JTabbedPane();
+<a class="jxr_linenumber" name="104" href="#104">104</a>         <strong class="jxr_keyword">final</strong> JTabbedPane contextTabs = <strong class="jxr_keyword">new</strong> JTabbedPane();
 <a class="jxr_linenumber" name="105" href="#105">105</a>         contextObjNameToTabbedPaneMap.put(ctx.getObjectName(), contextTabs);
 <a class="jxr_linenumber" name="106" href="#106">106</a>         tabbedPaneContexts.addTab(<span class="jxr_string">"LoggerContext: "</span> + ctx.getName(), contextTabs);
 <a class="jxr_linenumber" name="107" href="#107">107</a> 
-<a class="jxr_linenumber" name="108" href="#108">108</a>         String contextName = ctx.getName();
-<a class="jxr_linenumber" name="109" href="#109">109</a>         StatusLoggerAdminMBean status = client.getStatusLoggerAdmin(contextName);
+<a class="jxr_linenumber" name="108" href="#108">108</a>         <strong class="jxr_keyword">final</strong> String contextName = ctx.getName();
+<a class="jxr_linenumber" name="109" href="#109">109</a>         <strong class="jxr_keyword">final</strong> StatusLoggerAdminMBean status = client.getStatusLoggerAdmin(contextName);
 <a class="jxr_linenumber" name="110" href="#110">110</a>         <strong class="jxr_keyword">if</strong> (status != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="111" href="#111">111</a>             JTextArea text = createTextArea();
+<a class="jxr_linenumber" name="111" href="#111">111</a>             <strong class="jxr_keyword">final</strong> JTextArea text = createTextArea();
 <a class="jxr_linenumber" name="112" href="#112">112</a>             <strong class="jxr_keyword">final</strong> String[] messages = status.getStatusDataHistory();
 <a class="jxr_linenumber" name="113" href="#113">113</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String message : messages) {
 <a class="jxr_linenumber" name="114" href="#114">114</a>                 text.append(message + '\n');
 <a class="jxr_linenumber" name="115" href="#115">115</a>             }
 <a class="jxr_linenumber" name="116" href="#116">116</a>             statusLogTextAreaMap.put(ctx.getObjectName(), text);
 <a class="jxr_linenumber" name="117" href="#117">117</a>             registerListeners(status);
-<a class="jxr_linenumber" name="118" href="#118">118</a>             JScrollPane scroll = scroll(text);
+<a class="jxr_linenumber" name="118" href="#118">118</a>             <strong class="jxr_keyword">final</strong> JScrollPane scroll = scroll(text);
 <a class="jxr_linenumber" name="119" href="#119">119</a>             contextTabs.addTab(<span class="jxr_string">"StatusLogger"</span>, scroll);
 <a class="jxr_linenumber" name="120" href="#120">120</a>         }
 <a class="jxr_linenumber" name="121" href="#121">121</a> 
@@ -133,8 +133,8 @@
 <a class="jxr_linenumber" name="123" href="#123">123</a>         contextTabs.addTab(<span class="jxr_string">"Configuration"</span>, editor);
 <a class="jxr_linenumber" name="124" href="#124">124</a>     }
 <a class="jxr_linenumber" name="125" href="#125">125</a> 
-<a class="jxr_linenumber" name="126" href="#126">126</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> removeWidgetForLoggerContext(ObjectName loggerContextObjName) <strong class="jxr_keyword">throws</strong> JMException, IOException {
-<a class="jxr_linenumber" name="127" href="#127">127</a>         Component tab = contextObjNameToTabbedPaneMap.get(loggerContextObjName);
+<a class="jxr_linenumber" name="126" href="#126">126</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> removeWidgetForLoggerContext(<strong class="jxr_keyword">final</strong> ObjectName loggerContextObjName) <strong class="jxr_keyword">throws</strong> JMException, IOException {
+<a class="jxr_linenumber" name="127" href="#127">127</a>         <strong class="jxr_keyword">final</strong> Component tab = contextObjNameToTabbedPaneMap.get(loggerContextObjName);
 <a class="jxr_linenumber" name="128" href="#128">128</a>         <strong class="jxr_keyword">if</strong> (tab != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="129" href="#129">129</a>             tabbedPaneContexts.remove(tab);
 <a class="jxr_linenumber" name="130" href="#130">130</a>         }
@@ -143,12 +143,12 @@
 <a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="134" href="#134">134</a>             <em class="jxr_comment">// System.out.println("Remove listener for " + objName);</em>
 <a class="jxr_linenumber" name="135" href="#135">135</a>             client.getConnection().removeNotificationListener(objName, <strong class="jxr_keyword">this</strong>);
-<a class="jxr_linenumber" name="136" href="#136">136</a>         } <strong class="jxr_keyword">catch</strong> (ListenerNotFoundException ignored) {
+<a class="jxr_linenumber" name="136" href="#136">136</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> ListenerNotFoundException ignored) {
 <a class="jxr_linenumber" name="137" href="#137">137</a>         }
 <a class="jxr_linenumber" name="138" href="#138">138</a>     }
 <a class="jxr_linenumber" name="139" href="#139">139</a> 
 <a class="jxr_linenumber" name="140" href="#140">140</a>     <strong class="jxr_keyword">private</strong> JTextArea createTextArea() {
-<a class="jxr_linenumber" name="141" href="#141">141</a>         JTextArea result = <strong class="jxr_keyword">new</strong> JTextArea();
+<a class="jxr_linenumber" name="141" href="#141">141</a>         <strong class="jxr_keyword">final</strong> JTextArea result = <strong class="jxr_keyword">new</strong> JTextArea();
 <a class="jxr_linenumber" name="142" href="#142">142</a>         result.setEditable(false);
 <a class="jxr_linenumber" name="143" href="#143">143</a>         result.setBackground(<strong class="jxr_keyword">this</strong>.getBackground());
 <a class="jxr_linenumber" name="144" href="#144">144</a>         result.setForeground(Color.black);
@@ -176,7 +176,7 @@
 <a class="jxr_linenumber" name="166" href="#166">166</a>         <strong class="jxr_keyword">return</strong> scrollStatusLog;
 <a class="jxr_linenumber" name="167" href="#167">167</a>     }
 <a class="jxr_linenumber" name="168" href="#168">168</a> 
-<a class="jxr_linenumber" name="169" href="#169">169</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> registerListeners(StatusLoggerAdminMBean status) <strong class="jxr_keyword">throws</strong> InstanceNotFoundException,
+<a class="jxr_linenumber" name="169" href="#169">169</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> registerListeners(<strong class="jxr_keyword">final</strong> StatusLoggerAdminMBean status) <strong class="jxr_keyword">throws</strong> InstanceNotFoundException,
 <a class="jxr_linenumber" name="170" href="#170">170</a>             MalformedObjectNameException, IOException {
 <a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">final</strong> NotificationFilterSupport filter = <strong class="jxr_keyword">new</strong> NotificationFilterSupport();
 <a class="jxr_linenumber" name="172" href="#172">172</a>         filter.enableType(StatusLoggerAdminMBean.NOTIF_TYPE_MESSAGE);
@@ -197,15 +197,15 @@
 <a class="jxr_linenumber" name="187" href="#187">187</a> 
 <a class="jxr_linenumber" name="188" href="#188">188</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleNotificationInAwtEventThread(<strong class="jxr_keyword">final</strong> Notification notif, <strong class="jxr_keyword">final</strong> Object paramObject) {
 <a class="jxr_linenumber" name="189" href="#189">189</a>         <strong class="jxr_keyword">if</strong> (StatusLoggerAdminMBean.NOTIF_TYPE_MESSAGE.equals(notif.getType())) {
-<a class="jxr_linenumber" name="190" href="#190">190</a>             JTextArea text = statusLogTextAreaMap.get(paramObject);
+<a class="jxr_linenumber" name="190" href="#190">190</a>             <strong class="jxr_keyword">final</strong> JTextArea text = statusLogTextAreaMap.get(paramObject);
 <a class="jxr_linenumber" name="191" href="#191">191</a>             <strong class="jxr_keyword">if</strong> (text != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="192" href="#192">192</a>                 text.append(notif.getMessage() + '\n');
 <a class="jxr_linenumber" name="193" href="#193">193</a>             }
 <a class="jxr_linenumber" name="194" href="#194">194</a>             <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="195" href="#195">195</a>         }
 <a class="jxr_linenumber" name="196" href="#196">196</a>         <strong class="jxr_keyword">if</strong> (notif instanceof MBeanServerNotification) {
-<a class="jxr_linenumber" name="197" href="#197">197</a>             MBeanServerNotification mbsn = (MBeanServerNotification) notif;
-<a class="jxr_linenumber" name="198" href="#198">198</a>             ObjectName mbeanName = mbsn.getMBeanName();
+<a class="jxr_linenumber" name="197" href="#197">197</a>             <strong class="jxr_keyword">final</strong> MBeanServerNotification mbsn = (MBeanServerNotification) notif;
+<a class="jxr_linenumber" name="198" href="#198">198</a>             <strong class="jxr_keyword">final</strong> ObjectName mbeanName = mbsn.getMBeanName();
 <a class="jxr_linenumber" name="199" href="#199">199</a>             <strong class="jxr_keyword">if</strong> (MBeanServerNotification.REGISTRATION_NOTIFICATION.equals(notif.getType())) {
 <a class="jxr_linenumber" name="200" href="#200">200</a>                 onMBeanRegistered(mbeanName);
 <a class="jxr_linenumber" name="201" href="#201">201</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (MBeanServerNotification.UNREGISTRATION_NOTIFICATION.equals(notif.getType())) {
@@ -219,12 +219,12 @@
 <a class="jxr_linenumber" name="209" href="#209">209</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="210" href="#210">210</a> <em class="jxr_javadoccomment">     * @param mbeanName ObjectName of the registered Log4J2 MBean</em>
 <a class="jxr_linenumber" name="211" href="#211">211</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="212" href="#212">212</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> onMBeanRegistered(ObjectName mbeanName) {
+<a class="jxr_linenumber" name="212" href="#212">212</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> onMBeanRegistered(<strong class="jxr_keyword">final</strong> ObjectName mbeanName) {
 <a class="jxr_linenumber" name="213" href="#213">213</a>         <strong class="jxr_keyword">if</strong> (client.isLoggerContext(mbeanName)) {
 <a class="jxr_linenumber" name="214" href="#214">214</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="215" href="#215">215</a>                 LoggerContextAdminMBean ctx = client.getLoggerContextAdmin(mbeanName);
+<a class="jxr_linenumber" name="215" href="#215">215</a>                 <strong class="jxr_keyword">final</strong> LoggerContextAdminMBean ctx = client.getLoggerContextAdmin(mbeanName);
 <a class="jxr_linenumber" name="216" href="#216">216</a>                 addWidgetForLoggerContext(ctx);
-<a class="jxr_linenumber" name="217" href="#217">217</a>             } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="217" href="#217">217</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="218" href="#218">218</a>                 handle(<span class="jxr_string">"Could not add tab for new MBean "</span> + mbeanName, ex);
 <a class="jxr_linenumber" name="219" href="#219">219</a>             }
 <a class="jxr_linenumber" name="220" href="#220">220</a>         }
@@ -235,21 +235,21 @@
 <a class="jxr_linenumber" name="225" href="#225">225</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="226" href="#226">226</a> <em class="jxr_javadoccomment">     * @param mbeanName ObjectName of the unregistered Log4J2 MBean</em>
 <a class="jxr_linenumber" name="227" href="#227">227</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="228" href="#228">228</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> onMBeanUnregistered(ObjectName mbeanName) {
+<a class="jxr_linenumber" name="228" href="#228">228</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> onMBeanUnregistered(<strong class="jxr_keyword">final</strong> ObjectName mbeanName) {
 <a class="jxr_linenumber" name="229" href="#229">229</a>         <strong class="jxr_keyword">if</strong> (client.isLoggerContext(mbeanName)) {
 <a class="jxr_linenumber" name="230" href="#230">230</a>             <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="231" href="#231">231</a>                 removeWidgetForLoggerContext(mbeanName);
-<a class="jxr_linenumber" name="232" href="#232">232</a>             } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="232" href="#232">232</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="233" href="#233">233</a>                 handle(<span class="jxr_string">"Could not remove tab for "</span> + mbeanName, ex);
 <a class="jxr_linenumber" name="234" href="#234">234</a>             }
 <a class="jxr_linenumber" name="235" href="#235">235</a>         }
 <a class="jxr_linenumber" name="236" href="#236">236</a>     }
 <a class="jxr_linenumber" name="237" href="#237">237</a> 
-<a class="jxr_linenumber" name="238" href="#238">238</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handle(String msg, Exception ex) {
+<a class="jxr_linenumber" name="238" href="#238">238</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handle(<strong class="jxr_keyword">final</strong> String msg, <strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="239" href="#239">239</a>         System.err.println(msg);
 <a class="jxr_linenumber" name="240" href="#240">240</a>         ex.printStackTrace();
 <a class="jxr_linenumber" name="241" href="#241">241</a> 
-<a class="jxr_linenumber" name="242" href="#242">242</a>         StringWriter sw = <strong class="jxr_keyword">new</strong> StringWriter(INITIAL_STRING_WRITER_SIZE);
+<a class="jxr_linenumber" name="242" href="#242">242</a>         <strong class="jxr_keyword">final</strong> StringWriter sw = <strong class="jxr_keyword">new</strong> StringWriter(INITIAL_STRING_WRITER_SIZE);
 <a class="jxr_linenumber" name="243" href="#243">243</a>         ex.printStackTrace(<strong class="jxr_keyword">new</strong> PrintWriter(sw));
 <a class="jxr_linenumber" name="244" href="#244">244</a>         JOptionPane.showMessageDialog(<strong class="jxr_keyword">this</strong>, sw.toString(), msg, JOptionPane.ERROR_MESSAGE);
 <a class="jxr_linenumber" name="245" href="#245">245</a>     }

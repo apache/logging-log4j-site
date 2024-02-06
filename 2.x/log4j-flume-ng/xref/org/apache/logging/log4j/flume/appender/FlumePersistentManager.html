@@ -233,7 +233,7 @@
 <a class="jxr_linenumber" name="223" href="#223">223</a>         worker.shutdown();
 <a class="jxr_linenumber" name="224" href="#224">224</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="225" href="#225">225</a>             worker.join(SHUTDOWN_WAIT * MILLIS_PER_SECOND);
-<a class="jxr_linenumber" name="226" href="#226">226</a>         } <strong class="jxr_keyword">catch</strong> (InterruptedException ie) {
+<a class="jxr_linenumber" name="226" href="#226">226</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InterruptedException ie) {
 <a class="jxr_linenumber" name="227" href="#227">227</a>             <em class="jxr_comment">// Ignore the exception and shutdown.</em>
 <a class="jxr_linenumber" name="228" href="#228">228</a>         }
 <a class="jxr_linenumber" name="229" href="#229">229</a>         threadPool.shutdown();
@@ -325,13 +325,13 @@
 <a class="jxr_linenumber" name="315" href="#315">315</a>                             txn = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="316" href="#316">316</a>                         }
 <a class="jxr_linenumber" name="317" href="#317">317</a>                     }
-<a class="jxr_linenumber" name="318" href="#318">318</a>                 } <strong class="jxr_keyword">catch</strong> (LockConflictException lce) {
+<a class="jxr_linenumber" name="318" href="#318">318</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> LockConflictException lce) {
 <a class="jxr_linenumber" name="319" href="#319">319</a>                     exception = lce;
 <a class="jxr_linenumber" name="320" href="#320">320</a>                     <strong class="jxr_keyword">if</strong> (txn != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="321" href="#321">321</a>                         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="322" href="#322">322</a>                             txn.abort();
 <a class="jxr_linenumber" name="323" href="#323">323</a>                             txn = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="324" href="#324">324</a>                         } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="324" href="#324">324</a>                         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="325" href="#325">325</a>                             LOGGER.trace(<span class="jxr_string">"Ignoring exception while aborting transaction during lock conflict."</span>);
 <a class="jxr_linenumber" name="326" href="#326">326</a>                         }
 <a class="jxr_linenumber" name="327" href="#327">327</a>                     }
@@ -339,7 +339,7 @@
 <a class="jxr_linenumber" name="329" href="#329">329</a>                 }
 <a class="jxr_linenumber" name="330" href="#330">330</a>                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="331" href="#331">331</a>                     Thread.sleep(LOCK_TIMEOUT_SLEEP_MILLIS);
-<a class="jxr_linenumber" name="332" href="#332">332</a>                 } <strong class="jxr_keyword">catch</strong> (InterruptedException ie) {
+<a class="jxr_linenumber" name="332" href="#332">332</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InterruptedException ie) {
 <a class="jxr_linenumber" name="333" href="#333">333</a>                     <em class="jxr_comment">// Ignore the error</em>
 <a class="jxr_linenumber" name="334" href="#334">334</a>                 }
 <a class="jxr_linenumber" name="335" href="#335">335</a>             }
@@ -528,14 +528,14 @@
 <a class="jxr_linenumber" name="518" href="#518">518</a>             LOGGER.trace(<span class="jxr_string">"WriterThread started - batch size = "</span> + batchSize + <span class="jxr_string">", delay = "</span> + manager.delay);
 <a class="jxr_linenumber" name="519" href="#519">519</a>             <strong class="jxr_keyword">long</strong> nextBatch = System.currentTimeMillis() + manager.delay;
 <a class="jxr_linenumber" name="520" href="#520">520</a>             <strong class="jxr_keyword">while</strong> (!shutdown) {
-<a class="jxr_linenumber" name="521" href="#521">521</a>                 <strong class="jxr_keyword">long</strong> now = System.currentTimeMillis();
-<a class="jxr_linenumber" name="522" href="#522">522</a>                 <strong class="jxr_keyword">long</strong> dbCount = database.count();
+<a class="jxr_linenumber" name="521" href="#521">521</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> now = System.currentTimeMillis();
+<a class="jxr_linenumber" name="522" href="#522">522</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> dbCount = database.count();
 <a class="jxr_linenumber" name="523" href="#523">523</a>                 dbCounter.set(dbCount);
 <a class="jxr_linenumber" name="524" href="#524">524</a>                 <strong class="jxr_keyword">if</strong> (dbCount &gt;= batchSize || dbCount &gt; 0 &amp;&amp; nextBatch &lt;= now) {
 <a class="jxr_linenumber" name="525" href="#525">525</a>                     nextBatch = now + manager.delay;
 <a class="jxr_linenumber" name="526" href="#526">526</a>                     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="527" href="#527">527</a>                         <strong class="jxr_keyword">boolean</strong> errors = false;
-<a class="jxr_linenumber" name="528" href="#528">528</a>                         DatabaseEntry key = <strong class="jxr_keyword">new</strong> DatabaseEntry();
+<a class="jxr_linenumber" name="528" href="#528">528</a>                         <strong class="jxr_keyword">final</strong> DatabaseEntry key = <strong class="jxr_keyword">new</strong> DatabaseEntry();
 <a class="jxr_linenumber" name="529" href="#529">529</a>                         <strong class="jxr_keyword">final</strong> DatabaseEntry data = <strong class="jxr_keyword">new</strong> DatabaseEntry();
 <a class="jxr_linenumber" name="530" href="#530">530</a> 
 <a class="jxr_linenumber" name="531" href="#531">531</a>                         gate.close();
@@ -601,13 +601,13 @@
 <a class="jxr_linenumber" name="591" href="#591">591</a>                                             txn = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="592" href="#592">592</a>                                         }
 <a class="jxr_linenumber" name="593" href="#593">593</a>                                     }
-<a class="jxr_linenumber" name="594" href="#594">594</a>                                 } <strong class="jxr_keyword">catch</strong> (LockConflictException lce) {
+<a class="jxr_linenumber" name="594" href="#594">594</a>                                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> LockConflictException lce) {
 <a class="jxr_linenumber" name="595" href="#595">595</a>                                     exception = lce;
 <a class="jxr_linenumber" name="596" href="#596">596</a>                                     <strong class="jxr_keyword">if</strong> (cursor != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="597" href="#597">597</a>                                         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="598" href="#598">598</a>                                             cursor.close();
 <a class="jxr_linenumber" name="599" href="#599">599</a>                                             cursor = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="600" href="#600">600</a>                                         } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="600" href="#600">600</a>                                         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="601" href="#601">601</a>                                             LOGGER.trace(<span class="jxr_string">"Ignored exception closing cursor during lock conflict."</span>);
 <a class="jxr_linenumber" name="602" href="#602">602</a>                                         }
 <a class="jxr_linenumber" name="603" href="#603">603</a>                                     }
@@ -615,14 +615,14 @@
 <a class="jxr_linenumber" name="605" href="#605">605</a>                                         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="606" href="#606">606</a>                                             txn.abort();
 <a class="jxr_linenumber" name="607" href="#607">607</a>                                             txn = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="608" href="#608">608</a>                                         } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="608" href="#608">608</a>                                         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="609" href="#609">609</a>                                             LOGGER.trace(<span class="jxr_string">"Ignored exception aborting tx during lock conflict."</span>);
 <a class="jxr_linenumber" name="610" href="#610">610</a>                                         }
 <a class="jxr_linenumber" name="611" href="#611">611</a>                                     }
 <a class="jxr_linenumber" name="612" href="#612">612</a>                                 }
 <a class="jxr_linenumber" name="613" href="#613">613</a>                                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="614" href="#614">614</a>                                     Thread.sleep(LOCK_TIMEOUT_SLEEP_MILLIS);
-<a class="jxr_linenumber" name="615" href="#615">615</a>                                 } <strong class="jxr_keyword">catch</strong> (InterruptedException ie) {
+<a class="jxr_linenumber" name="615" href="#615">615</a>                                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InterruptedException ie) {
 <a class="jxr_linenumber" name="616" href="#616">616</a>                                     <em class="jxr_comment">// Ignore the error</em>
 <a class="jxr_linenumber" name="617" href="#617">617</a>                                 }
 <a class="jxr_linenumber" name="618" href="#618">618</a>                             }
@@ -654,7 +654,7 @@
 <a class="jxr_linenumber" name="644" href="#644">644</a>             }
 <a class="jxr_linenumber" name="645" href="#645">645</a> 
 <a class="jxr_linenumber" name="646" href="#646">646</a>             <strong class="jxr_keyword">if</strong> (batchSize &gt; 1 &amp;&amp; database.count() &gt; 0) {
-<a class="jxr_linenumber" name="647" href="#647">647</a>                 DatabaseEntry key = <strong class="jxr_keyword">new</strong> DatabaseEntry();
+<a class="jxr_linenumber" name="647" href="#647">647</a>                 <strong class="jxr_keyword">final</strong> DatabaseEntry key = <strong class="jxr_keyword">new</strong> DatabaseEntry();
 <a class="jxr_linenumber" name="648" href="#648">648</a>                 <strong class="jxr_keyword">final</strong> DatabaseEntry data = <strong class="jxr_keyword">new</strong> DatabaseEntry();
 <a class="jxr_linenumber" name="649" href="#649">649</a>                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="650" href="#650">650</a>                     sendBatch(key, data);
@@ -665,7 +665,7 @@
 <a class="jxr_linenumber" name="655" href="#655">655</a>             LOGGER.trace(<span class="jxr_string">"WriterThread exiting"</span>);
 <a class="jxr_linenumber" name="656" href="#656">656</a>         }
 <a class="jxr_linenumber" name="657" href="#657">657</a> 
-<a class="jxr_linenumber" name="658" href="#658">658</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> sendBatch(DatabaseEntry key, DatabaseEntry data) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="658" href="#658">658</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> sendBatch(DatabaseEntry key, <strong class="jxr_keyword">final</strong> DatabaseEntry data) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="659" href="#659">659</a>             <strong class="jxr_keyword">boolean</strong> errors = false;
 <a class="jxr_linenumber" name="660" href="#660">660</a>             OperationStatus status;
 <a class="jxr_linenumber" name="661" href="#661">661</a>             Cursor cursor = database.openCursor(<strong class="jxr_keyword">null</strong>, CursorConfig.DEFAULT);
@@ -717,7 +717,7 @@
 <a class="jxr_linenumber" name="707" href="#707">707</a>                                     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="708" href="#708">708</a>                                         cursor.close();
 <a class="jxr_linenumber" name="709" href="#709">709</a>                                         cursor = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="710" href="#710">710</a>                                     } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="710" href="#710">710</a>                                     } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="711" href="#711">711</a>                                         LOGGER.trace(<span class="jxr_string">"Ignored exception closing cursor during lock conflict."</span>);
 <a class="jxr_linenumber" name="712" href="#712">712</a>                                     }
 <a class="jxr_linenumber" name="713" href="#713">713</a>                                 }
@@ -725,7 +725,7 @@
 <a class="jxr_linenumber" name="715" href="#715">715</a>                                     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="716" href="#716">716</a>                                         txn.abort();
 <a class="jxr_linenumber" name="717" href="#717">717</a>                                         txn = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="718" href="#718">718</a>                                     } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="718" href="#718">718</a>                                     } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="719" href="#719">719</a>                                         LOGGER.trace(<span class="jxr_string">"Ignored exception aborting transaction during lock conflict."</span>);
 <a class="jxr_linenumber" name="720" href="#720">720</a>                                     }
 <a class="jxr_linenumber" name="721" href="#721">721</a>                                 }
@@ -735,13 +735,13 @@
 <a class="jxr_linenumber" name="725" href="#725">725</a>                                     txn.abort();
 <a class="jxr_linenumber" name="726" href="#726">726</a>                                 }
 <a class="jxr_linenumber" name="727" href="#727">727</a>                             }
-<a class="jxr_linenumber" name="728" href="#728">728</a>                         } <strong class="jxr_keyword">catch</strong> (LockConflictException lce) {
+<a class="jxr_linenumber" name="728" href="#728">728</a>                         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> LockConflictException lce) {
 <a class="jxr_linenumber" name="729" href="#729">729</a>                             exception = lce;
 <a class="jxr_linenumber" name="730" href="#730">730</a>                             <strong class="jxr_keyword">if</strong> (cursor != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="731" href="#731">731</a>                                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="732" href="#732">732</a>                                     cursor.close();
 <a class="jxr_linenumber" name="733" href="#733">733</a>                                     cursor = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="734" href="#734">734</a>                                 } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="734" href="#734">734</a>                                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="735" href="#735">735</a>                                     LOGGER.trace(<span class="jxr_string">"Ignored exception closing cursor during lock conflict."</span>);
 <a class="jxr_linenumber" name="736" href="#736">736</a>                                 }
 <a class="jxr_linenumber" name="737" href="#737">737</a>                             }
@@ -749,7 +749,7 @@
 <a class="jxr_linenumber" name="739" href="#739">739</a>                                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="740" href="#740">740</a>                                     txn.abort();
 <a class="jxr_linenumber" name="741" href="#741">741</a>                                     txn = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="742" href="#742">742</a>                                 } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="742" href="#742">742</a>                                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="743" href="#743">743</a>                                     LOGGER.trace(<span class="jxr_string">"Ignored exception aborting transaction during lock conflict."</span>);
 <a class="jxr_linenumber" name="744" href="#744">744</a>                                 }
 <a class="jxr_linenumber" name="745" href="#745">745</a>                             }
@@ -765,7 +765,7 @@
 <a class="jxr_linenumber" name="755" href="#755">755</a>                         }
 <a class="jxr_linenumber" name="756" href="#756">756</a>                         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="757" href="#757">757</a>                             Thread.sleep(LOCK_TIMEOUT_SLEEP_MILLIS);
-<a class="jxr_linenumber" name="758" href="#758">758</a>                         } <strong class="jxr_keyword">catch</strong> (InterruptedException ie) {
+<a class="jxr_linenumber" name="758" href="#758">758</a>                         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InterruptedException ie) {
 <a class="jxr_linenumber" name="759" href="#759">759</a>                             <em class="jxr_comment">// Ignore the error</em>
 <a class="jxr_linenumber" name="760" href="#760">760</a>                         }
 <a class="jxr_linenumber" name="761" href="#761">761</a>                     }
@@ -865,7 +865,7 @@
 <a class="jxr_linenumber" name="855" href="#855">855</a>             isOpen = false;
 <a class="jxr_linenumber" name="856" href="#856">856</a>         }
 <a class="jxr_linenumber" name="857" href="#857">857</a> 
-<a class="jxr_linenumber" name="858" href="#858">858</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">void</strong> waitForOpen(<strong class="jxr_keyword">long</strong> timeout) <strong class="jxr_keyword">throws</strong> InterruptedException {
+<a class="jxr_linenumber" name="858" href="#858">858</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">void</strong> waitForOpen(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeout) <strong class="jxr_keyword">throws</strong> InterruptedException {
 <a class="jxr_linenumber" name="859" href="#859">859</a>             wait(timeout);
 <a class="jxr_linenumber" name="860" href="#860">860</a>         }
 <a class="jxr_linenumber" name="861" href="#861">861</a>     }

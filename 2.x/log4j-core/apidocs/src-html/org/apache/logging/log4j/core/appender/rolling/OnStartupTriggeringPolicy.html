@@ -63,16 +63,16 @@
 <FONT color="green">060</FONT>            // The reflection is necessary because without it, Google App Engine<a name="line.60"></a>
 <FONT color="green">061</FONT>            // will refuse to initialize this class.<a name="line.61"></a>
 <FONT color="green">062</FONT>            try {<a name="line.62"></a>
-<FONT color="green">063</FONT>                Class&lt;?&gt; factoryClass = Loader.loadSystemClass("java.lang.management.ManagementFactory");<a name="line.63"></a>
-<FONT color="green">064</FONT>                Method getRuntimeMXBean = factoryClass.getMethod("getRuntimeMXBean");<a name="line.64"></a>
-<FONT color="green">065</FONT>                Object runtimeMXBean = getRuntimeMXBean.invoke(null);<a name="line.65"></a>
+<FONT color="green">063</FONT>                final Class&lt;?&gt; factoryClass = Loader.loadSystemClass("java.lang.management.ManagementFactory");<a name="line.63"></a>
+<FONT color="green">064</FONT>                final Method getRuntimeMXBean = factoryClass.getMethod("getRuntimeMXBean");<a name="line.64"></a>
+<FONT color="green">065</FONT>                final Object runtimeMXBean = getRuntimeMXBean.invoke(null);<a name="line.65"></a>
 <FONT color="green">066</FONT>                <a name="line.66"></a>
-<FONT color="green">067</FONT>                Class&lt;?&gt; runtimeMXBeanClass = Loader.loadSystemClass("java.lang.management.RuntimeMXBean");<a name="line.67"></a>
-<FONT color="green">068</FONT>                Method getStartTime = runtimeMXBeanClass.getMethod("getStartTime");<a name="line.68"></a>
-<FONT color="green">069</FONT>                Long result = (Long) getStartTime.invoke(runtimeMXBean);<a name="line.69"></a>
+<FONT color="green">067</FONT>                final Class&lt;?&gt; runtimeMXBeanClass = Loader.loadSystemClass("java.lang.management.RuntimeMXBean");<a name="line.67"></a>
+<FONT color="green">068</FONT>                final Method getStartTime = runtimeMXBeanClass.getMethod("getStartTime");<a name="line.68"></a>
+<FONT color="green">069</FONT>                final Long result = (Long) getStartTime.invoke(runtimeMXBean);<a name="line.69"></a>
 <FONT color="green">070</FONT>    <a name="line.70"></a>
 <FONT color="green">071</FONT>                return result.longValue();<a name="line.71"></a>
-<FONT color="green">072</FONT>            } catch (Throwable t) {<a name="line.72"></a>
+<FONT color="green">072</FONT>            } catch (final Throwable t) {<a name="line.72"></a>
 <FONT color="green">073</FONT>                StatusLogger.getLogger().error("Unable to call ManagementFactory.getRuntimeMXBean().getStartTime(), " //<a name="line.73"></a>
 <FONT color="green">074</FONT>                        + "using system time for OnStartupTriggeringPolicy", t);<a name="line.74"></a>
 <FONT color="green">075</FONT>                // We have little option but to declare "now" as the beginning of time.<a name="line.75"></a>

@@ -226,7 +226,7 @@
 <FONT color="green">223</FONT>            worker.shutdown();<a name="line.223"></a>
 <FONT color="green">224</FONT>            try {<a name="line.224"></a>
 <FONT color="green">225</FONT>                worker.join(SHUTDOWN_WAIT * MILLIS_PER_SECOND);<a name="line.225"></a>
-<FONT color="green">226</FONT>            } catch (InterruptedException ie) {<a name="line.226"></a>
+<FONT color="green">226</FONT>            } catch (final InterruptedException ie) {<a name="line.226"></a>
 <FONT color="green">227</FONT>                // Ignore the exception and shutdown.<a name="line.227"></a>
 <FONT color="green">228</FONT>            }<a name="line.228"></a>
 <FONT color="green">229</FONT>            threadPool.shutdown();<a name="line.229"></a>
@@ -318,13 +318,13 @@
 <FONT color="green">315</FONT>                                txn = null;<a name="line.315"></a>
 <FONT color="green">316</FONT>                            }<a name="line.316"></a>
 <FONT color="green">317</FONT>                        }<a name="line.317"></a>
-<FONT color="green">318</FONT>                    } catch (LockConflictException lce) {<a name="line.318"></a>
+<FONT color="green">318</FONT>                    } catch (final LockConflictException lce) {<a name="line.318"></a>
 <FONT color="green">319</FONT>                        exception = lce;<a name="line.319"></a>
 <FONT color="green">320</FONT>                        if (txn != null) {<a name="line.320"></a>
 <FONT color="green">321</FONT>                            try {<a name="line.321"></a>
 <FONT color="green">322</FONT>                                txn.abort();<a name="line.322"></a>
 <FONT color="green">323</FONT>                                txn = null;<a name="line.323"></a>
-<FONT color="green">324</FONT>                            } catch (Exception ex) {<a name="line.324"></a>
+<FONT color="green">324</FONT>                            } catch (final Exception ex) {<a name="line.324"></a>
 <FONT color="green">325</FONT>                                LOGGER.trace("Ignoring exception while aborting transaction during lock conflict.");<a name="line.325"></a>
 <FONT color="green">326</FONT>                            }<a name="line.326"></a>
 <FONT color="green">327</FONT>                        }<a name="line.327"></a>
@@ -332,7 +332,7 @@
 <FONT color="green">329</FONT>                    }<a name="line.329"></a>
 <FONT color="green">330</FONT>                    try {<a name="line.330"></a>
 <FONT color="green">331</FONT>                        Thread.sleep(LOCK_TIMEOUT_SLEEP_MILLIS);<a name="line.331"></a>
-<FONT color="green">332</FONT>                    } catch (InterruptedException ie) {<a name="line.332"></a>
+<FONT color="green">332</FONT>                    } catch (final InterruptedException ie) {<a name="line.332"></a>
 <FONT color="green">333</FONT>                        // Ignore the error<a name="line.333"></a>
 <FONT color="green">334</FONT>                    }<a name="line.334"></a>
 <FONT color="green">335</FONT>                }<a name="line.335"></a>
@@ -521,14 +521,14 @@
 <FONT color="green">518</FONT>                LOGGER.trace("WriterThread started - batch size = " + batchSize + ", delay = " + manager.delay);<a name="line.518"></a>
 <FONT color="green">519</FONT>                long nextBatch = System.currentTimeMillis() + manager.delay;<a name="line.519"></a>
 <FONT color="green">520</FONT>                while (!shutdown) {<a name="line.520"></a>
-<FONT color="green">521</FONT>                    long now = System.currentTimeMillis();<a name="line.521"></a>
-<FONT color="green">522</FONT>                    long dbCount = database.count();<a name="line.522"></a>
+<FONT color="green">521</FONT>                    final long now = System.currentTimeMillis();<a name="line.521"></a>
+<FONT color="green">522</FONT>                    final long dbCount = database.count();<a name="line.522"></a>
 <FONT color="green">523</FONT>                    dbCounter.set(dbCount);<a name="line.523"></a>
 <FONT color="green">524</FONT>                    if (dbCount &gt;= batchSize || dbCount &gt; 0 &amp;&amp; nextBatch &lt;= now) {<a name="line.524"></a>
 <FONT color="green">525</FONT>                        nextBatch = now + manager.delay;<a name="line.525"></a>
 <FONT color="green">526</FONT>                        try {<a name="line.526"></a>
 <FONT color="green">527</FONT>                            boolean errors = false;<a name="line.527"></a>
-<FONT color="green">528</FONT>                            DatabaseEntry key = new DatabaseEntry();<a name="line.528"></a>
+<FONT color="green">528</FONT>                            final DatabaseEntry key = new DatabaseEntry();<a name="line.528"></a>
 <FONT color="green">529</FONT>                            final DatabaseEntry data = new DatabaseEntry();<a name="line.529"></a>
 <FONT color="green">530</FONT>    <a name="line.530"></a>
 <FONT color="green">531</FONT>                            gate.close();<a name="line.531"></a>
@@ -594,13 +594,13 @@
 <FONT color="green">591</FONT>                                                txn = null;<a name="line.591"></a>
 <FONT color="green">592</FONT>                                            }<a name="line.592"></a>
 <FONT color="green">593</FONT>                                        }<a name="line.593"></a>
-<FONT color="green">594</FONT>                                    } catch (LockConflictException lce) {<a name="line.594"></a>
+<FONT color="green">594</FONT>                                    } catch (final LockConflictException lce) {<a name="line.594"></a>
 <FONT color="green">595</FONT>                                        exception = lce;<a name="line.595"></a>
 <FONT color="green">596</FONT>                                        if (cursor != null) {<a name="line.596"></a>
 <FONT color="green">597</FONT>                                            try {<a name="line.597"></a>
 <FONT color="green">598</FONT>                                                cursor.close();<a name="line.598"></a>
 <FONT color="green">599</FONT>                                                cursor = null;<a name="line.599"></a>
-<FONT color="green">600</FONT>                                            } catch (Exception ex) {<a name="line.600"></a>
+<FONT color="green">600</FONT>                                            } catch (final Exception ex) {<a name="line.600"></a>
 <FONT color="green">601</FONT>                                                LOGGER.trace("Ignored exception closing cursor during lock conflict.");<a name="line.601"></a>
 <FONT color="green">602</FONT>                                            }<a name="line.602"></a>
 <FONT color="green">603</FONT>                                        }<a name="line.603"></a>
@@ -608,14 +608,14 @@
 <FONT color="green">605</FONT>                                            try {<a name="line.605"></a>
 <FONT color="green">606</FONT>                                                txn.abort();<a name="line.606"></a>
 <FONT color="green">607</FONT>                                                txn = null;<a name="line.607"></a>
-<FONT color="green">608</FONT>                                            } catch (Exception ex) {<a name="line.608"></a>
+<FONT color="green">608</FONT>                                            } catch (final Exception ex) {<a name="line.608"></a>
 <FONT color="green">609</FONT>                                                LOGGER.trace("Ignored exception aborting tx during lock conflict.");<a name="line.609"></a>
 <FONT color="green">610</FONT>                                            }<a name="line.610"></a>
 <FONT color="green">611</FONT>                                        }<a name="line.611"></a>
 <FONT color="green">612</FONT>                                    }<a name="line.612"></a>
 <FONT color="green">613</FONT>                                    try {<a name="line.613"></a>
 <FONT color="green">614</FONT>                                        Thread.sleep(LOCK_TIMEOUT_SLEEP_MILLIS);<a name="line.614"></a>
-<FONT color="green">615</FONT>                                    } catch (InterruptedException ie) {<a name="line.615"></a>
+<FONT color="green">615</FONT>                                    } catch (final InterruptedException ie) {<a name="line.615"></a>
 <FONT color="green">616</FONT>                                        // Ignore the error<a name="line.616"></a>
 <FONT color="green">617</FONT>                                    }<a name="line.617"></a>
 <FONT color="green">618</FONT>                                }<a name="line.618"></a>
@@ -647,7 +647,7 @@
 <FONT color="green">644</FONT>                }<a name="line.644"></a>
 <FONT color="green">645</FONT>    <a name="line.645"></a>
 <FONT color="green">646</FONT>                if (batchSize &gt; 1 &amp;&amp; database.count() &gt; 0) {<a name="line.646"></a>
-<FONT color="green">647</FONT>                    DatabaseEntry key = new DatabaseEntry();<a name="line.647"></a>
+<FONT color="green">647</FONT>                    final DatabaseEntry key = new DatabaseEntry();<a name="line.647"></a>
 <FONT color="green">648</FONT>                    final DatabaseEntry data = new DatabaseEntry();<a name="line.648"></a>
 <FONT color="green">649</FONT>                    try {<a name="line.649"></a>
 <FONT color="green">650</FONT>                        sendBatch(key, data);<a name="line.650"></a>
@@ -658,7 +658,7 @@
 <FONT color="green">655</FONT>                LOGGER.trace("WriterThread exiting");<a name="line.655"></a>
 <FONT color="green">656</FONT>            }<a name="line.656"></a>
 <FONT color="green">657</FONT>    <a name="line.657"></a>
-<FONT color="green">658</FONT>            private boolean sendBatch(DatabaseEntry key, DatabaseEntry data) throws Exception {<a name="line.658"></a>
+<FONT color="green">658</FONT>            private boolean sendBatch(DatabaseEntry key, final DatabaseEntry data) throws Exception {<a name="line.658"></a>
 <FONT color="green">659</FONT>                boolean errors = false;<a name="line.659"></a>
 <FONT color="green">660</FONT>                OperationStatus status;<a name="line.660"></a>
 <FONT color="green">661</FONT>                Cursor cursor = database.openCursor(null, CursorConfig.DEFAULT);<a name="line.661"></a>
@@ -710,7 +710,7 @@
 <FONT color="green">707</FONT>                                        try {<a name="line.707"></a>
 <FONT color="green">708</FONT>                                            cursor.close();<a name="line.708"></a>
 <FONT color="green">709</FONT>                                            cursor = null;<a name="line.709"></a>
-<FONT color="green">710</FONT>                                        } catch (Exception ex) {<a name="line.710"></a>
+<FONT color="green">710</FONT>                                        } catch (final Exception ex) {<a name="line.710"></a>
 <FONT color="green">711</FONT>                                            LOGGER.trace("Ignored exception closing cursor during lock conflict.");<a name="line.711"></a>
 <FONT color="green">712</FONT>                                        }<a name="line.712"></a>
 <FONT color="green">713</FONT>                                    }<a name="line.713"></a>
@@ -718,7 +718,7 @@
 <FONT color="green">715</FONT>                                        try {<a name="line.715"></a>
 <FONT color="green">716</FONT>                                            txn.abort();<a name="line.716"></a>
 <FONT color="green">717</FONT>                                            txn = null;<a name="line.717"></a>
-<FONT color="green">718</FONT>                                        } catch (Exception ex) {<a name="line.718"></a>
+<FONT color="green">718</FONT>                                        } catch (final Exception ex) {<a name="line.718"></a>
 <FONT color="green">719</FONT>                                            LOGGER.trace("Ignored exception aborting transaction during lock conflict.");<a name="line.719"></a>
 <FONT color="green">720</FONT>                                        }<a name="line.720"></a>
 <FONT color="green">721</FONT>                                    }<a name="line.721"></a>
@@ -728,13 +728,13 @@
 <FONT color="green">725</FONT>                                        txn.abort();<a name="line.725"></a>
 <FONT color="green">726</FONT>                                    }<a name="line.726"></a>
 <FONT color="green">727</FONT>                                }<a name="line.727"></a>
-<FONT color="green">728</FONT>                            } catch (LockConflictException lce) {<a name="line.728"></a>
+<FONT color="green">728</FONT>                            } catch (final LockConflictException lce) {<a name="line.728"></a>
 <FONT color="green">729</FONT>                                exception = lce;<a name="line.729"></a>
 <FONT color="green">730</FONT>                                if (cursor != null) {<a name="line.730"></a>
 <FONT color="green">731</FONT>                                    try {<a name="line.731"></a>
 <FONT color="green">732</FONT>                                        cursor.close();<a name="line.732"></a>
 <FONT color="green">733</FONT>                                        cursor = null;<a name="line.733"></a>
-<FONT color="green">734</FONT>                                    } catch (Exception ex) {<a name="line.734"></a>
+<FONT color="green">734</FONT>                                    } catch (final Exception ex) {<a name="line.734"></a>
 <FONT color="green">735</FONT>                                        LOGGER.trace("Ignored exception closing cursor during lock conflict.");<a name="line.735"></a>
 <FONT color="green">736</FONT>                                    }<a name="line.736"></a>
 <FONT color="green">737</FONT>                                }<a name="line.737"></a>
@@ -742,7 +742,7 @@
 <FONT color="green">739</FONT>                                    try {<a name="line.739"></a>
 <FONT color="green">740</FONT>                                        txn.abort();<a name="line.740"></a>
 <FONT color="green">741</FONT>                                        txn = null;<a name="line.741"></a>
-<FONT color="green">742</FONT>                                    } catch (Exception ex) {<a name="line.742"></a>
+<FONT color="green">742</FONT>                                    } catch (final Exception ex) {<a name="line.742"></a>
 <FONT color="green">743</FONT>                                        LOGGER.trace("Ignored exception aborting transaction during lock conflict.");<a name="line.743"></a>
 <FONT color="green">744</FONT>                                    }<a name="line.744"></a>
 <FONT color="green">745</FONT>                                }<a name="line.745"></a>
@@ -758,7 +758,7 @@
 <FONT color="green">755</FONT>                            }<a name="line.755"></a>
 <FONT color="green">756</FONT>                            try {<a name="line.756"></a>
 <FONT color="green">757</FONT>                                Thread.sleep(LOCK_TIMEOUT_SLEEP_MILLIS);<a name="line.757"></a>
-<FONT color="green">758</FONT>                            } catch (InterruptedException ie) {<a name="line.758"></a>
+<FONT color="green">758</FONT>                            } catch (final InterruptedException ie) {<a name="line.758"></a>
 <FONT color="green">759</FONT>                                // Ignore the error<a name="line.759"></a>
 <FONT color="green">760</FONT>                            }<a name="line.760"></a>
 <FONT color="green">761</FONT>                        }<a name="line.761"></a>
@@ -858,7 +858,7 @@
 <FONT color="green">855</FONT>                isOpen = false;<a name="line.855"></a>
 <FONT color="green">856</FONT>            }<a name="line.856"></a>
 <FONT color="green">857</FONT>    <a name="line.857"></a>
-<FONT color="green">858</FONT>            public synchronized void waitForOpen(long timeout) throws InterruptedException {<a name="line.858"></a>
+<FONT color="green">858</FONT>            public synchronized void waitForOpen(final long timeout) throws InterruptedException {<a name="line.858"></a>
 <FONT color="green">859</FONT>                wait(timeout);<a name="line.859"></a>
 <FONT color="green">860</FONT>            }<a name="line.860"></a>
 <FONT color="green">861</FONT>        }<a name="line.861"></a>

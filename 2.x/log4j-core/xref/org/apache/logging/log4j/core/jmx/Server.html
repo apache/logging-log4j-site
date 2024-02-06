@@ -129,7 +129,7 @@
 <a class="jxr_linenumber" name="119" href="#119">119</a>         reregisterMBeansAfterReconfigure(mbs);
 <a class="jxr_linenumber" name="120" href="#120">120</a>     }
 <a class="jxr_linenumber" name="121" href="#121">121</a> 
-<a class="jxr_linenumber" name="122" href="#122">122</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> reregisterMBeansAfterReconfigure(MBeanServer mbs) {
+<a class="jxr_linenumber" name="122" href="#122">122</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> reregisterMBeansAfterReconfigure(<strong class="jxr_keyword">final</strong> MBeanServer mbs) {
 <a class="jxr_linenumber" name="123" href="#123">123</a>         <strong class="jxr_keyword">if</strong> (Boolean.getBoolean(PROPERTY_DISABLE_JMX)) {
 <a class="jxr_linenumber" name="124" href="#124">124</a>             LOGGER.debug(<span class="jxr_string">"JMX disabled for log4j2. Not registering MBeans."</span>);
 <a class="jxr_linenumber" name="125" href="#125">125</a>             <strong class="jxr_keyword">return</strong>;
@@ -144,7 +144,7 @@
 <a class="jxr_linenumber" name="134" href="#134">134</a>                 <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="135" href="#135">135</a>             }
 <a class="jxr_linenumber" name="136" href="#136">136</a>             <strong class="jxr_keyword">final</strong> List&lt;LoggerContext&gt; contexts = selector.getLoggerContexts();
-<a class="jxr_linenumber" name="137" href="#137">137</a>             <strong class="jxr_keyword">for</strong> (LoggerContext ctx : contexts) {
+<a class="jxr_linenumber" name="137" href="#137">137</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> LoggerContext ctx : contexts) {
 <a class="jxr_linenumber" name="138" href="#138">138</a>                 <em class="jxr_comment">// first unregister the context and all nested loggers,</em>
 <a class="jxr_linenumber" name="139" href="#139">139</a>                 <em class="jxr_comment">// appenders, statusLogger, contextSelector, ringbuffers...</em>
 <a class="jxr_linenumber" name="140" href="#140">140</a>                 unregisterLoggerContext(ctx.getName(), mbs);
@@ -153,7 +153,7 @@
 <a class="jxr_linenumber" name="143" href="#143">143</a>                 register(mbs, mbean, mbean.getObjectName());
 <a class="jxr_linenumber" name="144" href="#144">144</a> 
 <a class="jxr_linenumber" name="145" href="#145">145</a>                 <strong class="jxr_keyword">if</strong> (ctx instanceof AsyncLoggerContext) {
-<a class="jxr_linenumber" name="146" href="#146">146</a>                     <a href="../../../../../../org/apache/logging/log4j/core/jmx/RingBufferAdmin.html">RingBufferAdmin</a> rbmbean = AsyncLogger.createRingBufferAdmin(ctx.getName());
+<a class="jxr_linenumber" name="146" href="#146">146</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/jmx/RingBufferAdmin.html">RingBufferAdmin</a> rbmbean = AsyncLogger.createRingBufferAdmin(ctx.getName());
 <a class="jxr_linenumber" name="147" href="#147">147</a>                     register(mbs, rbmbean, rbmbean.getObjectName());
 <a class="jxr_linenumber" name="148" href="#148">148</a>                 }
 <a class="jxr_linenumber" name="149" href="#149">149</a> 
@@ -186,7 +186,7 @@
 <a class="jxr_linenumber" name="176" href="#176">176</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="177" href="#177">177</a> <em class="jxr_javadoccomment">     * @param mbs the MBean server to unregister from.</em>
 <a class="jxr_linenumber" name="178" href="#178">178</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="179" href="#179">179</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> unregisterMBeans(MBeanServer mbs) {
+<a class="jxr_linenumber" name="179" href="#179">179</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> unregisterMBeans(<strong class="jxr_keyword">final</strong> MBeanServer mbs) {
 <a class="jxr_linenumber" name="180" href="#180">180</a>         unregisterStatusLogger(<span class="jxr_string">"*"</span>, mbs);
 <a class="jxr_linenumber" name="181" href="#181">181</a>         unregisterContextSelector(<span class="jxr_string">"*"</span>, mbs);
 <a class="jxr_linenumber" name="182" href="#182">182</a>         unregisterContexts(mbs);
@@ -207,7 +207,7 @@
 <a class="jxr_linenumber" name="197" href="#197">197</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/selector/ContextSelector.html">ContextSelector</a> getContextSelector() {
 <a class="jxr_linenumber" name="198" href="#198">198</a>         <strong class="jxr_keyword">final</strong> LoggerContextFactory factory = LogManager.getFactory();
 <a class="jxr_linenumber" name="199" href="#199">199</a>         <strong class="jxr_keyword">if</strong> (factory instanceof Log4jContextFactory) {
-<a class="jxr_linenumber" name="200" href="#200">200</a>             <a href="../../../../../../org/apache/logging/log4j/core/selector/ContextSelector.html">ContextSelector</a> selector = ((Log4jContextFactory) factory).getSelector();
+<a class="jxr_linenumber" name="200" href="#200">200</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/selector/ContextSelector.html">ContextSelector</a> selector = ((Log4jContextFactory) factory).getSelector();
 <a class="jxr_linenumber" name="201" href="#201">201</a>             <strong class="jxr_keyword">return</strong> selector;
 <a class="jxr_linenumber" name="202" href="#202">202</a>         }
 <a class="jxr_linenumber" name="203" href="#203">203</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
@@ -220,7 +220,7 @@
 <a class="jxr_linenumber" name="210" href="#210">210</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="211" href="#211">211</a> <em class="jxr_javadoccomment">     * @param loggerContextName name of the logger context to unregister</em>
 <a class="jxr_linenumber" name="212" href="#212">212</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="213" href="#213">213</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> unregisterLoggerContext(String loggerContextName) {
+<a class="jxr_linenumber" name="213" href="#213">213</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> unregisterLoggerContext(<strong class="jxr_keyword">final</strong> String loggerContextName) {
 <a class="jxr_linenumber" name="214" href="#214">214</a>         <strong class="jxr_keyword">final</strong> MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 <a class="jxr_linenumber" name="215" href="#215">215</a>         unregisterLoggerContext(loggerContextName, mbs);
 <a class="jxr_linenumber" name="216" href="#216">216</a>     }
@@ -233,7 +233,7 @@
 <a class="jxr_linenumber" name="223" href="#223">223</a> <em class="jxr_javadoccomment">     * @param contextName name of the logger context to unregister</em>
 <a class="jxr_linenumber" name="224" href="#224">224</a> <em class="jxr_javadoccomment">     * @param mbs the MBean Server to unregister the instrumented objects from</em>
 <a class="jxr_linenumber" name="225" href="#225">225</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="226" href="#226">226</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> unregisterLoggerContext(String contextName, MBeanServer mbs) {
+<a class="jxr_linenumber" name="226" href="#226">226</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> unregisterLoggerContext(<strong class="jxr_keyword">final</strong> String contextName, <strong class="jxr_keyword">final</strong> MBeanServer mbs) {
 <a class="jxr_linenumber" name="227" href="#227">227</a>         <strong class="jxr_keyword">final</strong> String pattern = LoggerContextAdminMBean.PATTERN;
 <a class="jxr_linenumber" name="228" href="#228">228</a>         <strong class="jxr_keyword">final</strong> String search = String.format(pattern, escape(contextName), <span class="jxr_string">"*"</span>);
 <a class="jxr_linenumber" name="229" href="#229">229</a>         unregisterAllMatching(search, mbs); <em class="jxr_comment">// unregister context mbean</em>
@@ -334,8 +334,8 @@
 <a class="jxr_linenumber" name="324" href="#324">324</a>             register(mbs, mbean, mbean.getObjectName());
 <a class="jxr_linenumber" name="325" href="#325">325</a> 
 <a class="jxr_linenumber" name="326" href="#326">326</a>             <strong class="jxr_keyword">if</strong> (cfg instanceof AsyncLoggerConfig) {
-<a class="jxr_linenumber" name="327" href="#327">327</a>                 <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLoggerConfig.html">AsyncLoggerConfig</a> async = (AsyncLoggerConfig) cfg;
-<a class="jxr_linenumber" name="328" href="#328">328</a>                 <a href="../../../../../../org/apache/logging/log4j/core/jmx/RingBufferAdmin.html">RingBufferAdmin</a> rbmbean = async.createRingBufferAdmin(ctx.getName());
+<a class="jxr_linenumber" name="327" href="#327">327</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLoggerConfig.html">AsyncLoggerConfig</a> async = (AsyncLoggerConfig) cfg;
+<a class="jxr_linenumber" name="328" href="#328">328</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/jmx/RingBufferAdmin.html">RingBufferAdmin</a> rbmbean = async.createRingBufferAdmin(ctx.getName());
 <a class="jxr_linenumber" name="329" href="#329">329</a>                 register(mbs, rbmbean, rbmbean.getObjectName());
 <a class="jxr_linenumber" name="330" href="#330">330</a>             }
 <a class="jxr_linenumber" name="331" href="#331">331</a>         }
@@ -349,7 +349,7 @@
 <a class="jxr_linenumber" name="339" href="#339">339</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Appender.html">Appender</a> appender = map.get(name);
 <a class="jxr_linenumber" name="340" href="#340">340</a> 
 <a class="jxr_linenumber" name="341" href="#341">341</a>             <strong class="jxr_keyword">if</strong> (appender instanceof AsyncAppender) {
-<a class="jxr_linenumber" name="342" href="#342">342</a>                 <a href="../../../../../../org/apache/logging/log4j/core/appender/AsyncAppender.html">AsyncAppender</a> async = ((AsyncAppender) appender);
+<a class="jxr_linenumber" name="342" href="#342">342</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AsyncAppender.html">AsyncAppender</a> async = ((AsyncAppender) appender);
 <a class="jxr_linenumber" name="343" href="#343">343</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/jmx/AsyncAppenderAdmin.html">AsyncAppenderAdmin</a> mbean = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/jmx/AsyncAppenderAdmin.html">AsyncAppenderAdmin</a>(ctx.getName(), async);
 <a class="jxr_linenumber" name="344" href="#344">344</a>                 register(mbs, mbean, mbean.getObjectName());
 <a class="jxr_linenumber" name="345" href="#345">345</a>             } <strong class="jxr_keyword">else</strong> {
@@ -359,7 +359,7 @@
 <a class="jxr_linenumber" name="349" href="#349">349</a>         }
 <a class="jxr_linenumber" name="350" href="#350">350</a>     }
 <a class="jxr_linenumber" name="351" href="#351">351</a> 
-<a class="jxr_linenumber" name="352" href="#352">352</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> register(MBeanServer mbs, Object mbean, ObjectName objectName)
+<a class="jxr_linenumber" name="352" href="#352">352</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> register(<strong class="jxr_keyword">final</strong> MBeanServer mbs, <strong class="jxr_keyword">final</strong> Object mbean, <strong class="jxr_keyword">final</strong> ObjectName objectName)
 <a class="jxr_linenumber" name="353" href="#353">353</a>             <strong class="jxr_keyword">throws</strong> InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
 <a class="jxr_linenumber" name="354" href="#354">354</a>         LOGGER.debug(<span class="jxr_string">"Registering MBean {}"</span>, objectName);
 <a class="jxr_linenumber" name="355" href="#355">355</a>         mbs.registerMBean(mbean, objectName);

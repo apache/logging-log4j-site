@@ -105,19 +105,19 @@
 <FONT color="green">102</FONT>                // Alternative: We could specify all features and values with system properties like:<a name="line.102"></a>
 <FONT color="green">103</FONT>                // -DLog4j.DocumentBuilderFactory.Feature="http://apache.org/xml/features/xinclude/fixup-base-uris true"<a name="line.103"></a>
 <FONT color="green">104</FONT>                factory.setFeature(XINCLUDE_FIXUP_BASE_URIS, true);<a name="line.104"></a>
-<FONT color="green">105</FONT>            } catch (ParserConfigurationException e) {<a name="line.105"></a>
+<FONT color="green">105</FONT>            } catch (final ParserConfigurationException e) {<a name="line.105"></a>
 <FONT color="green">106</FONT>                LOGGER.warn("The DocumentBuilderFactory [{}] does not support the feature [{}].", factory,<a name="line.106"></a>
 <FONT color="green">107</FONT>                        XINCLUDE_FIXUP_BASE_URIS, e);<a name="line.107"></a>
 <FONT color="green">108</FONT>            } catch (@SuppressWarnings("ErrorNotRethrown") final AbstractMethodError err) {<a name="line.108"></a>
-<FONT color="green">109</FONT>                LOGGER.warn("The DocumentBuilderFactory is out of date and does not support setFeature: {}", factory);<a name="line.109"></a>
+<FONT color="green">109</FONT>                LOGGER.warn("The DocumentBuilderFactory is out of date and does not support setFeature: {}", factory, err);<a name="line.109"></a>
 <FONT color="green">110</FONT>            }<a name="line.110"></a>
 <FONT color="green">111</FONT>            try {<a name="line.111"></a>
 <FONT color="green">112</FONT>                factory.setFeature(XINCLUDE_FIXUP_LANGUAGE, true);<a name="line.112"></a>
-<FONT color="green">113</FONT>            } catch (ParserConfigurationException e) {<a name="line.113"></a>
+<FONT color="green">113</FONT>            } catch (final ParserConfigurationException e) {<a name="line.113"></a>
 <FONT color="green">114</FONT>                LOGGER.warn("The DocumentBuilderFactory [{}] does not support the feature [{}].", factory,<a name="line.114"></a>
 <FONT color="green">115</FONT>                        XINCLUDE_FIXUP_LANGUAGE, e);<a name="line.115"></a>
 <FONT color="green">116</FONT>            } catch (@SuppressWarnings("ErrorNotRethrown") final AbstractMethodError err) {<a name="line.116"></a>
-<FONT color="green">117</FONT>                LOGGER.warn("The DocumentBuilderFactory is out of date and does not support setFeature: {}", factory);<a name="line.117"></a>
+<FONT color="green">117</FONT>                LOGGER.warn("The DocumentBuilderFactory is out of date and does not support setFeature: {}", factory, err);<a name="line.117"></a>
 <FONT color="green">118</FONT>            }<a name="line.118"></a>
 <FONT color="green">119</FONT>        }<a name="line.119"></a>
 <FONT color="green">120</FONT>    <a name="line.120"></a>
@@ -183,7 +183,7 @@
 <FONT color="green">180</FONT>                try {<a name="line.180"></a>
 <FONT color="green">181</FONT>                    is = Loader.getResourceAsStream(schema, XmlConfiguration.class.getClassLoader());<a name="line.181"></a>
 <FONT color="green">182</FONT>                } catch (final Exception ex) {<a name="line.182"></a>
-<FONT color="green">183</FONT>                    LOGGER.error("Unable to access schema {}", this.schema);<a name="line.183"></a>
+<FONT color="green">183</FONT>                    LOGGER.error("Unable to access schema {}", this.schema, ex);<a name="line.183"></a>
 <FONT color="green">184</FONT>                }<a name="line.184"></a>
 <FONT color="green">185</FONT>                if (is != null) {<a name="line.185"></a>
 <FONT color="green">186</FONT>                    final Source src = new StreamSource(is, LOG4J_XSD);<a name="line.186"></a>
@@ -195,7 +195,7 @@
 <FONT color="green">192</FONT>                        LOGGER.error("Error parsing Log4j schema", ex);<a name="line.192"></a>
 <FONT color="green">193</FONT>                    }<a name="line.193"></a>
 <FONT color="green">194</FONT>                    if (schema != null) {<a name="line.194"></a>
-<FONT color="green">195</FONT>                        Validator validator = schema.newValidator();<a name="line.195"></a>
+<FONT color="green">195</FONT>                        final Validator validator = schema.newValidator();<a name="line.195"></a>
 <FONT color="green">196</FONT>                        try {<a name="line.196"></a>
 <FONT color="green">197</FONT>                            validator.validate(new StreamSource(new ByteArrayInputStream(buffer)));<a name="line.197"></a>
 <FONT color="green">198</FONT>                        } catch (final IOException ioe) {<a name="line.198"></a>

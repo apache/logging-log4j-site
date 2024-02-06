@@ -175,7 +175,7 @@
 <FONT color="green">172</FONT>            while (urls.hasMoreElements()) {<a name="line.172"></a>
 <FONT color="green">173</FONT>                try {<a name="line.173"></a>
 <FONT color="green">174</FONT>                    final URL url = urls.nextElement();<a name="line.174"></a>
-<FONT color="green">175</FONT>                    String urlPath = extractPath(url);<a name="line.175"></a>
+<FONT color="green">175</FONT>                    final String urlPath = extractPath(url);<a name="line.175"></a>
 <FONT color="green">176</FONT>    <a name="line.176"></a>
 <FONT color="green">177</FONT>                    LOGGER.info("Scanning for classes in [" + urlPath + "] matching criteria: " + test);<a name="line.177"></a>
 <FONT color="green">178</FONT>                    // Check for a jar in a war in JBoss<a name="line.178"></a>
@@ -304,7 +304,7 @@
 <FONT color="green">301</FONT>                loadImplementationsInJar(test, parent, jarFile.getPath(), jarStream);<a name="line.301"></a>
 <FONT color="green">302</FONT>            } catch (final FileNotFoundException ex) {<a name="line.302"></a>
 <FONT color="green">303</FONT>                LOGGER.error("Could not search jar file '" + jarFile + "' for classes matching criteria: " + test<a name="line.303"></a>
-<FONT color="green">304</FONT>                        + " file not found");<a name="line.304"></a>
+<FONT color="green">304</FONT>                        + " file not found", ex);<a name="line.304"></a>
 <FONT color="green">305</FONT>            } catch (final IOException ioe) {<a name="line.305"></a>
 <FONT color="green">306</FONT>                LOGGER.error("Could not search jar file '" + jarFile + "' for classes matching criteria: " + test<a name="line.306"></a>
 <FONT color="green">307</FONT>                        + " due to an IOException", ioe);<a name="line.307"></a>
@@ -317,11 +317,11 @@
 <FONT color="green">314</FONT>         * @param jarStream<a name="line.314"></a>
 <FONT color="green">315</FONT>         * @param source<a name="line.315"></a>
 <FONT color="green">316</FONT>         */<a name="line.316"></a>
-<FONT color="green">317</FONT>        private void close(JarInputStream jarStream, final Object source) {<a name="line.317"></a>
+<FONT color="green">317</FONT>        private void close(final JarInputStream jarStream, final Object source) {<a name="line.317"></a>
 <FONT color="green">318</FONT>            if (jarStream != null) {<a name="line.318"></a>
 <FONT color="green">319</FONT>                try {<a name="line.319"></a>
 <FONT color="green">320</FONT>                    jarStream.close();<a name="line.320"></a>
-<FONT color="green">321</FONT>                } catch (IOException e) {<a name="line.321"></a>
+<FONT color="green">321</FONT>                } catch (final IOException e) {<a name="line.321"></a>
 <FONT color="green">322</FONT>                    LOGGER.error("Error closing JAR file stream for {}", source, e);<a name="line.322"></a>
 <FONT color="green">323</FONT>                }<a name="line.323"></a>
 <FONT color="green">324</FONT>            }<a name="line.324"></a>
@@ -385,37 +385,36 @@
 <FONT color="green">382</FONT>                    }<a name="line.382"></a>
 <FONT color="green">383</FONT>                }<a name="line.383"></a>
 <FONT color="green">384</FONT>            } catch (final Throwable t) {<a name="line.384"></a>
-<FONT color="green">385</FONT>                LOGGER.warn("Could not examine class '" + fqn + "' due to a " +<a name="line.385"></a>
-<FONT color="green">386</FONT>                    t.getClass().getName() + " with message: " + t.getMessage());<a name="line.386"></a>
-<FONT color="green">387</FONT>            }<a name="line.387"></a>
-<FONT color="green">388</FONT>        }<a name="line.388"></a>
-<FONT color="green">389</FONT>    <a name="line.389"></a>
-<FONT color="green">390</FONT>        /**<a name="line.390"></a>
-<FONT color="green">391</FONT>         * A simple interface that specifies how to test classes to determine if they<a name="line.391"></a>
-<FONT color="green">392</FONT>         * are to be included in the results produced by the ResolverUtil.<a name="line.392"></a>
-<FONT color="green">393</FONT>         */<a name="line.393"></a>
-<FONT color="green">394</FONT>        public interface Test {<a name="line.394"></a>
-<FONT color="green">395</FONT>            /**<a name="line.395"></a>
-<FONT color="green">396</FONT>             * Will be called repeatedly with candidate classes. Must return True if a class<a name="line.396"></a>
-<FONT color="green">397</FONT>             * is to be included in the results, false otherwise.<a name="line.397"></a>
-<FONT color="green">398</FONT>             * @param type The Class to match against.<a name="line.398"></a>
-<FONT color="green">399</FONT>             * @return true if the Class matches.<a name="line.399"></a>
-<FONT color="green">400</FONT>             */<a name="line.400"></a>
-<FONT color="green">401</FONT>            boolean matches(Class&lt;?&gt; type);<a name="line.401"></a>
-<FONT color="green">402</FONT>    <a name="line.402"></a>
-<FONT color="green">403</FONT>            /**<a name="line.403"></a>
-<FONT color="green">404</FONT>             * Test for a resource.<a name="line.404"></a>
-<FONT color="green">405</FONT>             * @param resource The URI to the resource.<a name="line.405"></a>
-<FONT color="green">406</FONT>             * @return true if the resource matches.<a name="line.406"></a>
-<FONT color="green">407</FONT>             */<a name="line.407"></a>
-<FONT color="green">408</FONT>            boolean matches(URI resource);<a name="line.408"></a>
-<FONT color="green">409</FONT>    <a name="line.409"></a>
-<FONT color="green">410</FONT>            boolean doesMatchClass();<a name="line.410"></a>
-<FONT color="green">411</FONT>    <a name="line.411"></a>
-<FONT color="green">412</FONT>            boolean doesMatchResource();<a name="line.412"></a>
-<FONT color="green">413</FONT>        }<a name="line.413"></a>
-<FONT color="green">414</FONT>    <a name="line.414"></a>
-<FONT color="green">415</FONT>    }<a name="line.415"></a>
+<FONT color="green">385</FONT>                LOGGER.warn("Could not examine class '" + fqn, t);<a name="line.385"></a>
+<FONT color="green">386</FONT>            }<a name="line.386"></a>
+<FONT color="green">387</FONT>        }<a name="line.387"></a>
+<FONT color="green">388</FONT>    <a name="line.388"></a>
+<FONT color="green">389</FONT>        /**<a name="line.389"></a>
+<FONT color="green">390</FONT>         * A simple interface that specifies how to test classes to determine if they<a name="line.390"></a>
+<FONT color="green">391</FONT>         * are to be included in the results produced by the ResolverUtil.<a name="line.391"></a>
+<FONT color="green">392</FONT>         */<a name="line.392"></a>
+<FONT color="green">393</FONT>        public interface Test {<a name="line.393"></a>
+<FONT color="green">394</FONT>            /**<a name="line.394"></a>
+<FONT color="green">395</FONT>             * Will be called repeatedly with candidate classes. Must return True if a class<a name="line.395"></a>
+<FONT color="green">396</FONT>             * is to be included in the results, false otherwise.<a name="line.396"></a>
+<FONT color="green">397</FONT>             * @param type The Class to match against.<a name="line.397"></a>
+<FONT color="green">398</FONT>             * @return true if the Class matches.<a name="line.398"></a>
+<FONT color="green">399</FONT>             */<a name="line.399"></a>
+<FONT color="green">400</FONT>            boolean matches(Class&lt;?&gt; type);<a name="line.400"></a>
+<FONT color="green">401</FONT>    <a name="line.401"></a>
+<FONT color="green">402</FONT>            /**<a name="line.402"></a>
+<FONT color="green">403</FONT>             * Test for a resource.<a name="line.403"></a>
+<FONT color="green">404</FONT>             * @param resource The URI to the resource.<a name="line.404"></a>
+<FONT color="green">405</FONT>             * @return true if the resource matches.<a name="line.405"></a>
+<FONT color="green">406</FONT>             */<a name="line.406"></a>
+<FONT color="green">407</FONT>            boolean matches(URI resource);<a name="line.407"></a>
+<FONT color="green">408</FONT>    <a name="line.408"></a>
+<FONT color="green">409</FONT>            boolean doesMatchClass();<a name="line.409"></a>
+<FONT color="green">410</FONT>    <a name="line.410"></a>
+<FONT color="green">411</FONT>            boolean doesMatchResource();<a name="line.411"></a>
+<FONT color="green">412</FONT>        }<a name="line.412"></a>
+<FONT color="green">413</FONT>    <a name="line.413"></a>
+<FONT color="green">414</FONT>    }<a name="line.414"></a>
 
 
 

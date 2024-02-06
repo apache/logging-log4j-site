@@ -72,17 +72,17 @@
 <a class="jxr_linenumber" name="62" href="#62">62</a>  <em class="jxr_javadoccomment">     *             deprecated.</em>
 <a class="jxr_linenumber" name="63" href="#63">63</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="64" href="#64">64</a>      @Deprecated
-<a class="jxr_linenumber" name="65" href="#65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> addSuppressed(Throwable throwable, Throwable suppressedThrowable) {
+<a class="jxr_linenumber" name="65" href="#65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> addSuppressed(<strong class="jxr_keyword">final</strong> Throwable throwable, <strong class="jxr_keyword">final</strong> Throwable suppressedThrowable) {
 <a class="jxr_linenumber" name="66" href="#66">66</a>          <strong class="jxr_keyword">if</strong> (ADD_SUPPRESSED != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="67" href="#67">67</a>              <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="68" href="#68">68</a>                  ADD_SUPPRESSED.invoke(throwable, suppressedThrowable);
-<a class="jxr_linenumber" name="69" href="#69">69</a>              } <strong class="jxr_keyword">catch</strong> (IllegalAccessException e) {
+<a class="jxr_linenumber" name="69" href="#69">69</a>              } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IllegalAccessException e) {
 <a class="jxr_linenumber" name="70" href="#70">70</a>                  <em class="jxr_comment">// Only happens on Java &gt;= 7 if this class has a bug.</em>
 <a class="jxr_linenumber" name="71" href="#71">71</a>                  StatusLogger.getLogger().error(e);
-<a class="jxr_linenumber" name="72" href="#72">72</a>              } <strong class="jxr_keyword">catch</strong> (IllegalArgumentException e) {
+<a class="jxr_linenumber" name="72" href="#72">72</a>              } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IllegalArgumentException e) {
 <a class="jxr_linenumber" name="73" href="#73">73</a>                  <em class="jxr_comment">// Only happens on Java &gt;= 7 if this class has a bug.</em>
 <a class="jxr_linenumber" name="74" href="#74">74</a>                  StatusLogger.getLogger().error(e);
-<a class="jxr_linenumber" name="75" href="#75">75</a>              } <strong class="jxr_keyword">catch</strong> (InvocationTargetException e) {
+<a class="jxr_linenumber" name="75" href="#75">75</a>              } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InvocationTargetException e) {
 <a class="jxr_linenumber" name="76" href="#76">76</a>                  <em class="jxr_comment">// Only happens on Java &gt;= 7 if this class has a bug.</em>
 <a class="jxr_linenumber" name="77" href="#77">77</a>                  StatusLogger.getLogger().error(e);
 <a class="jxr_linenumber" name="78" href="#78">78</a>              }
@@ -100,7 +100,7 @@
 <a class="jxr_linenumber" name="90" href="#90">90</a>  <em class="jxr_javadoccomment">     *             deprecated.</em>
 <a class="jxr_linenumber" name="91" href="#91">91</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="92" href="#92">92</a>      @Deprecated
-<a class="jxr_linenumber" name="93" href="#93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Throwable[] getSuppressed(Throwable throwable) {
+<a class="jxr_linenumber" name="93" href="#93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Throwable[] getSuppressed(<strong class="jxr_keyword">final</strong> Throwable throwable) {
 <a class="jxr_linenumber" name="94" href="#94">94</a>          <strong class="jxr_keyword">if</strong> (GET_SUPPRESSED != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="95" href="#95">95</a>              <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="96" href="#96">96</a>                  <strong class="jxr_keyword">return</strong> (Throwable[]) GET_SUPPRESSED.invoke(throwable);
@@ -151,7 +151,7 @@
 <a class="jxr_linenumber" name="141" href="#141">141</a>             }
 <a class="jxr_linenumber" name="142" href="#142">142</a>             lines.add(ex.toString());
 <a class="jxr_linenumber" name="143" href="#143">143</a>         } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="144" href="#144">144</a>             Closer.closeSilent(reader);
+<a class="jxr_linenumber" name="144" href="#144">144</a>             Closer.closeSilently(reader);
 <a class="jxr_linenumber" name="145" href="#145">145</a>         }
 <a class="jxr_linenumber" name="146" href="#146">146</a>         <strong class="jxr_keyword">return</strong> lines;
 <a class="jxr_linenumber" name="147" href="#147">147</a>     }
