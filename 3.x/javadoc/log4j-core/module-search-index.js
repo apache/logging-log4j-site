@@ -1,1 +1,1 @@
-moduleSearchIndex = [{"l":"org.apache.logging.log4j.core"}]
+moduleSearchIndex = [];updateSearchResults();
