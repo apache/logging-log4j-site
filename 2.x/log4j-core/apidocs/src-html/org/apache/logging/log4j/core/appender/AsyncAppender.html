@@ -357,59 +357,62 @@
 <span class="sourceLineNo">349</span>            if (queue.isEmpty()) {<a name="line.349"></a>
 <span class="sourceLineNo">350</span>                queue.offer(SHUTDOWN);<a name="line.350"></a>
 <span class="sourceLineNo">351</span>            }<a name="line.351"></a>
-<span class="sourceLineNo">352</span>        }<a name="line.352"></a>
-<span class="sourceLineNo">353</span>    }<a name="line.353"></a>
-<span class="sourceLineNo">354</span><a name="line.354"></a>
-<span class="sourceLineNo">355</span>    /**<a name="line.355"></a>
-<span class="sourceLineNo">356</span>     * Returns the names of the appenders that this asyncAppender delegates to as an array of Strings.<a name="line.356"></a>
-<span class="sourceLineNo">357</span>     *<a name="line.357"></a>
-<span class="sourceLineNo">358</span>     * @return the names of the sink appenders<a name="line.358"></a>
-<span class="sourceLineNo">359</span>     */<a name="line.359"></a>
-<span class="sourceLineNo">360</span>    public String[] getAppenderRefStrings() {<a name="line.360"></a>
-<span class="sourceLineNo">361</span>        final String[] result = new String[appenderRefs.length];<a name="line.361"></a>
-<span class="sourceLineNo">362</span>        for (int i = 0; i &lt; result.length; i++) {<a name="line.362"></a>
-<span class="sourceLineNo">363</span>            result[i] = appenderRefs[i].getRef();<a name="line.363"></a>
-<span class="sourceLineNo">364</span>        }<a name="line.364"></a>
-<span class="sourceLineNo">365</span>        return result;<a name="line.365"></a>
-<span class="sourceLineNo">366</span>    }<a name="line.366"></a>
-<span class="sourceLineNo">367</span><a name="line.367"></a>
-<span class="sourceLineNo">368</span>    /**<a name="line.368"></a>
-<span class="sourceLineNo">369</span>     * Returns {@code true} if this AsyncAppender will take a snapshot of the stack with every log event to determine<a name="line.369"></a>
-<span class="sourceLineNo">370</span>     * the class and method where the logging call was made.<a name="line.370"></a>
-<span class="sourceLineNo">371</span>     *<a name="line.371"></a>
-<span class="sourceLineNo">372</span>     * @return {@code true} if location is included with every event, {@code false} otherwise<a name="line.372"></a>
-<span class="sourceLineNo">373</span>     */<a name="line.373"></a>
-<span class="sourceLineNo">374</span>    public boolean isIncludeLocation() {<a name="line.374"></a>
-<span class="sourceLineNo">375</span>        return includeLocation;<a name="line.375"></a>
-<span class="sourceLineNo">376</span>    }<a name="line.376"></a>
-<span class="sourceLineNo">377</span><a name="line.377"></a>
-<span class="sourceLineNo">378</span>    /**<a name="line.378"></a>
-<span class="sourceLineNo">379</span>     * Returns {@code true} if this AsyncAppender will block when the queue is full, or {@code false} if events are<a name="line.379"></a>
-<span class="sourceLineNo">380</span>     * dropped when the queue is full.<a name="line.380"></a>
-<span class="sourceLineNo">381</span>     *<a name="line.381"></a>
-<span class="sourceLineNo">382</span>     * @return whether this AsyncAppender will block or drop events when the queue is full.<a name="line.382"></a>
-<span class="sourceLineNo">383</span>     */<a name="line.383"></a>
-<span class="sourceLineNo">384</span>    public boolean isBlocking() {<a name="line.384"></a>
-<span class="sourceLineNo">385</span>        return blocking;<a name="line.385"></a>
-<span class="sourceLineNo">386</span>    }<a name="line.386"></a>
-<span class="sourceLineNo">387</span><a name="line.387"></a>
-<span class="sourceLineNo">388</span>    /**<a name="line.388"></a>
-<span class="sourceLineNo">389</span>     * Returns the name of the appender that any errors are logged to or {@code null}.<a name="line.389"></a>
-<span class="sourceLineNo">390</span>     *<a name="line.390"></a>
-<span class="sourceLineNo">391</span>     * @return the name of the appender that any errors are logged to or {@code null}<a name="line.391"></a>
-<span class="sourceLineNo">392</span>     */<a name="line.392"></a>
-<span class="sourceLineNo">393</span>    public String getErrorRef() {<a name="line.393"></a>
-<span class="sourceLineNo">394</span>        return errorRef;<a name="line.394"></a>
-<span class="sourceLineNo">395</span>    }<a name="line.395"></a>
-<span class="sourceLineNo">396</span><a name="line.396"></a>
-<span class="sourceLineNo">397</span>    public int getQueueCapacity() {<a name="line.397"></a>
-<span class="sourceLineNo">398</span>        return queueSize;<a name="line.398"></a>
-<span class="sourceLineNo">399</span>    }<a name="line.399"></a>
-<span class="sourceLineNo">400</span><a name="line.400"></a>
-<span class="sourceLineNo">401</span>    public int getQueueRemainingCapacity() {<a name="line.401"></a>
-<span class="sourceLineNo">402</span>        return queue.remainingCapacity();<a name="line.402"></a>
-<span class="sourceLineNo">403</span>    }<a name="line.403"></a>
-<span class="sourceLineNo">404</span>}<a name="line.404"></a>
+<span class="sourceLineNo">352</span>            if (getState() == State.TIMED_WAITING || getState() == State.WAITING) {<a name="line.352"></a>
+<span class="sourceLineNo">353</span>                this.interrupt(); // LOG4J2-1422: if underlying appender is stuck in wait/sleep/join/park call<a name="line.353"></a>
+<span class="sourceLineNo">354</span>            }<a name="line.354"></a>
+<span class="sourceLineNo">355</span>        }<a name="line.355"></a>
+<span class="sourceLineNo">356</span>    }<a name="line.356"></a>
+<span class="sourceLineNo">357</span><a name="line.357"></a>
+<span class="sourceLineNo">358</span>    /**<a name="line.358"></a>
+<span class="sourceLineNo">359</span>     * Returns the names of the appenders that this asyncAppender delegates to as an array of Strings.<a name="line.359"></a>
+<span class="sourceLineNo">360</span>     *<a name="line.360"></a>
+<span class="sourceLineNo">361</span>     * @return the names of the sink appenders<a name="line.361"></a>
+<span class="sourceLineNo">362</span>     */<a name="line.362"></a>
+<span class="sourceLineNo">363</span>    public String[] getAppenderRefStrings() {<a name="line.363"></a>
+<span class="sourceLineNo">364</span>        final String[] result = new String[appenderRefs.length];<a name="line.364"></a>
+<span class="sourceLineNo">365</span>        for (int i = 0; i &lt; result.length; i++) {<a name="line.365"></a>
+<span class="sourceLineNo">366</span>            result[i] = appenderRefs[i].getRef();<a name="line.366"></a>
+<span class="sourceLineNo">367</span>        }<a name="line.367"></a>
+<span class="sourceLineNo">368</span>        return result;<a name="line.368"></a>
+<span class="sourceLineNo">369</span>    }<a name="line.369"></a>
+<span class="sourceLineNo">370</span><a name="line.370"></a>
+<span class="sourceLineNo">371</span>    /**<a name="line.371"></a>
+<span class="sourceLineNo">372</span>     * Returns {@code true} if this AsyncAppender will take a snapshot of the stack with every log event to determine<a name="line.372"></a>
+<span class="sourceLineNo">373</span>     * the class and method where the logging call was made.<a name="line.373"></a>
+<span class="sourceLineNo">374</span>     *<a name="line.374"></a>
+<span class="sourceLineNo">375</span>     * @return {@code true} if location is included with every event, {@code false} otherwise<a name="line.375"></a>
+<span class="sourceLineNo">376</span>     */<a name="line.376"></a>
+<span class="sourceLineNo">377</span>    public boolean isIncludeLocation() {<a name="line.377"></a>
+<span class="sourceLineNo">378</span>        return includeLocation;<a name="line.378"></a>
+<span class="sourceLineNo">379</span>    }<a name="line.379"></a>
+<span class="sourceLineNo">380</span><a name="line.380"></a>
+<span class="sourceLineNo">381</span>    /**<a name="line.381"></a>
+<span class="sourceLineNo">382</span>     * Returns {@code true} if this AsyncAppender will block when the queue is full, or {@code false} if events are<a name="line.382"></a>
+<span class="sourceLineNo">383</span>     * dropped when the queue is full.<a name="line.383"></a>
+<span class="sourceLineNo">384</span>     *<a name="line.384"></a>
+<span class="sourceLineNo">385</span>     * @return whether this AsyncAppender will block or drop events when the queue is full.<a name="line.385"></a>
+<span class="sourceLineNo">386</span>     */<a name="line.386"></a>
+<span class="sourceLineNo">387</span>    public boolean isBlocking() {<a name="line.387"></a>
+<span class="sourceLineNo">388</span>        return blocking;<a name="line.388"></a>
+<span class="sourceLineNo">389</span>    }<a name="line.389"></a>
+<span class="sourceLineNo">390</span><a name="line.390"></a>
+<span class="sourceLineNo">391</span>    /**<a name="line.391"></a>
+<span class="sourceLineNo">392</span>     * Returns the name of the appender that any errors are logged to or {@code null}.<a name="line.392"></a>
+<span class="sourceLineNo">393</span>     *<a name="line.393"></a>
+<span class="sourceLineNo">394</span>     * @return the name of the appender that any errors are logged to or {@code null}<a name="line.394"></a>
+<span class="sourceLineNo">395</span>     */<a name="line.395"></a>
+<span class="sourceLineNo">396</span>    public String getErrorRef() {<a name="line.396"></a>
+<span class="sourceLineNo">397</span>        return errorRef;<a name="line.397"></a>
+<span class="sourceLineNo">398</span>    }<a name="line.398"></a>
+<span class="sourceLineNo">399</span><a name="line.399"></a>
+<span class="sourceLineNo">400</span>    public int getQueueCapacity() {<a name="line.400"></a>
+<span class="sourceLineNo">401</span>        return queueSize;<a name="line.401"></a>
+<span class="sourceLineNo">402</span>    }<a name="line.402"></a>
+<span class="sourceLineNo">403</span><a name="line.403"></a>
+<span class="sourceLineNo">404</span>    public int getQueueRemainingCapacity() {<a name="line.404"></a>
+<span class="sourceLineNo">405</span>        return queue.remainingCapacity();<a name="line.405"></a>
+<span class="sourceLineNo">406</span>    }<a name="line.406"></a>
+<span class="sourceLineNo">407</span>}<a name="line.407"></a>
 
 
 

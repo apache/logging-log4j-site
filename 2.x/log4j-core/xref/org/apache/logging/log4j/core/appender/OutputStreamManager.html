@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Layout&lt;?&gt; layout;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">protected</strong> ByteBuffer byteBuffer;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">volatile</strong> OutputStream os;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> skipFooter = false;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> skipFooter;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/OutputStreamManager.html">OutputStreamManager</a>(<strong class="jxr_keyword">final</strong> OutputStream os, <strong class="jxr_keyword">final</strong> String streamName, <strong class="jxr_keyword">final</strong> Layout&lt;?&gt; layout,
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> writeHeader) {
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>                  <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>                      <strong class="jxr_keyword">this</strong>.os.write(header, 0, header.length);
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>                  } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException e) {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>                      logError(<span class="jxr_string">"unable to write header"</span>, e);
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>                      logError(<span class="jxr_string">"Unable to write header"</span>, e);
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>                  }
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>              }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          }
@@ -93,7 +93,7 @@
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">     * Indicate whether the footer should be skipped or not.</em>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">     * @param skipFooter true if the footer should be skipped.</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> skipFooter(<strong class="jxr_keyword">boolean</strong> skipFooter) {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> skipFooter(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> skipFooter) {
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">this</strong>.skipFooter = skipFooter;
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      }
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  
@@ -138,7 +138,7 @@
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>                 os.write(header, 0, header.length);
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>                 <strong class="jxr_keyword">this</strong>.os = os; <em class="jxr_comment">// only update field if os.write() succeeded</em>
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioe) {
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>                 logError(<span class="jxr_string">"unable to write header"</span>, ioe);
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>                 logError(<span class="jxr_string">"Unable to write header"</span>, ioe);
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>             }
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>             <strong class="jxr_keyword">this</strong>.os = os;
@@ -269,7 +269,7 @@
 <a class="jxr_linenumber" name="L261" href="#L261">261</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L262" href="#L262">262</a>             stream.close();
 <a class="jxr_linenumber" name="L263" href="#L263">263</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>             logError(<span class="jxr_string">"unable to close stream"</span>, ex);
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>             logError(<span class="jxr_string">"Unable to close stream"</span>, ex);
 <a class="jxr_linenumber" name="L265" href="#L265">265</a>         }
 <a class="jxr_linenumber" name="L266" href="#L266">266</a>     }
 <a class="jxr_linenumber" name="L267" href="#L267">267</a> 

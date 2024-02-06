@@ -308,59 +308,61 @@
 <span class="sourceLineNo">300</span>         * @param append Append to existing file or truncate.<a name="line.300"></a>
 <span class="sourceLineNo">301</span>         * @param force forces the memory content to be written to the storage device on every event<a name="line.301"></a>
 <span class="sourceLineNo">302</span>         * @param regionLength length of the mapped region<a name="line.302"></a>
-<span class="sourceLineNo">303</span>         */<a name="line.303"></a>
-<span class="sourceLineNo">304</span>        public FactoryData(final boolean append, final boolean force, final int regionLength,<a name="line.304"></a>
-<span class="sourceLineNo">305</span>                final String advertiseURI, final Layout&lt;? extends Serializable&gt; layout) {<a name="line.305"></a>
-<span class="sourceLineNo">306</span>            this.append = append;<a name="line.306"></a>
-<span class="sourceLineNo">307</span>            this.force = force;<a name="line.307"></a>
-<span class="sourceLineNo">308</span>            this.regionLength = regionLength;<a name="line.308"></a>
-<span class="sourceLineNo">309</span>            this.advertiseURI = advertiseURI;<a name="line.309"></a>
-<span class="sourceLineNo">310</span>            this.layout = layout;<a name="line.310"></a>
-<span class="sourceLineNo">311</span>        }<a name="line.311"></a>
-<span class="sourceLineNo">312</span>    }<a name="line.312"></a>
-<span class="sourceLineNo">313</span><a name="line.313"></a>
-<span class="sourceLineNo">314</span>    /**<a name="line.314"></a>
-<span class="sourceLineNo">315</span>     * Factory to create a MemoryMappedFileManager.<a name="line.315"></a>
-<span class="sourceLineNo">316</span>     */<a name="line.316"></a>
-<span class="sourceLineNo">317</span>    private static class MemoryMappedFileManagerFactory<a name="line.317"></a>
-<span class="sourceLineNo">318</span>            implements ManagerFactory&lt;MemoryMappedFileManager, FactoryData&gt; {<a name="line.318"></a>
-<span class="sourceLineNo">319</span><a name="line.319"></a>
-<span class="sourceLineNo">320</span>        /**<a name="line.320"></a>
-<span class="sourceLineNo">321</span>         * Create a MemoryMappedFileManager.<a name="line.321"></a>
-<span class="sourceLineNo">322</span>         *<a name="line.322"></a>
-<span class="sourceLineNo">323</span>         * @param name The name of the File.<a name="line.323"></a>
-<span class="sourceLineNo">324</span>         * @param data The FactoryData<a name="line.324"></a>
-<span class="sourceLineNo">325</span>         * @return The MemoryMappedFileManager for the File.<a name="line.325"></a>
-<span class="sourceLineNo">326</span>         */<a name="line.326"></a>
-<span class="sourceLineNo">327</span>        @SuppressWarnings("resource")<a name="line.327"></a>
-<span class="sourceLineNo">328</span>        @Override<a name="line.328"></a>
-<span class="sourceLineNo">329</span>        public MemoryMappedFileManager createManager(final String name, final FactoryData data) {<a name="line.329"></a>
-<span class="sourceLineNo">330</span>            final File file = new File(name);<a name="line.330"></a>
-<span class="sourceLineNo">331</span>            final File parent = file.getParentFile();<a name="line.331"></a>
-<span class="sourceLineNo">332</span>            if (null != parent &amp;&amp; !parent.exists()) {<a name="line.332"></a>
-<span class="sourceLineNo">333</span>                parent.mkdirs();<a name="line.333"></a>
-<span class="sourceLineNo">334</span>            }<a name="line.334"></a>
-<span class="sourceLineNo">335</span>            if (!data.append) {<a name="line.335"></a>
-<span class="sourceLineNo">336</span>                file.delete();<a name="line.336"></a>
-<span class="sourceLineNo">337</span>            }<a name="line.337"></a>
-<span class="sourceLineNo">338</span><a name="line.338"></a>
-<span class="sourceLineNo">339</span>            final boolean writeHeader = !data.append || !file.exists();<a name="line.339"></a>
-<span class="sourceLineNo">340</span>            final OutputStream os = NullOutputStream.NULL_OUTPUT_STREAM;<a name="line.340"></a>
-<span class="sourceLineNo">341</span>            RandomAccessFile raf = null;<a name="line.341"></a>
-<span class="sourceLineNo">342</span>            try {<a name="line.342"></a>
-<span class="sourceLineNo">343</span>                raf = new RandomAccessFile(name, "rw");<a name="line.343"></a>
-<span class="sourceLineNo">344</span>                final long position = (data.append) ? raf.length() : 0;<a name="line.344"></a>
-<span class="sourceLineNo">345</span>                raf.setLength(position + data.regionLength);<a name="line.345"></a>
-<span class="sourceLineNo">346</span>                return new MemoryMappedFileManager(raf, name, os, data.force, position, data.regionLength,<a name="line.346"></a>
-<span class="sourceLineNo">347</span>                        data.advertiseURI, data.layout, writeHeader);<a name="line.347"></a>
-<span class="sourceLineNo">348</span>            } catch (final Exception ex) {<a name="line.348"></a>
-<span class="sourceLineNo">349</span>                LOGGER.error("MemoryMappedFileManager (" + name + ") " + ex, ex);<a name="line.349"></a>
-<span class="sourceLineNo">350</span>                Closer.closeSilently(raf);<a name="line.350"></a>
-<span class="sourceLineNo">351</span>            }<a name="line.351"></a>
-<span class="sourceLineNo">352</span>            return null;<a name="line.352"></a>
-<span class="sourceLineNo">353</span>        }<a name="line.353"></a>
-<span class="sourceLineNo">354</span>    }<a name="line.354"></a>
-<span class="sourceLineNo">355</span>}<a name="line.355"></a>
+<span class="sourceLineNo">303</span>         * @param advertiseURI the URI to use when advertising the file<a name="line.303"></a>
+<span class="sourceLineNo">304</span>         * @param layout The layout.<a name="line.304"></a>
+<span class="sourceLineNo">305</span>         */<a name="line.305"></a>
+<span class="sourceLineNo">306</span>        public FactoryData(final boolean append, final boolean force, final int regionLength,<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                final String advertiseURI, final Layout&lt;? extends Serializable&gt; layout) {<a name="line.307"></a>
+<span class="sourceLineNo">308</span>            this.append = append;<a name="line.308"></a>
+<span class="sourceLineNo">309</span>            this.force = force;<a name="line.309"></a>
+<span class="sourceLineNo">310</span>            this.regionLength = regionLength;<a name="line.310"></a>
+<span class="sourceLineNo">311</span>            this.advertiseURI = advertiseURI;<a name="line.311"></a>
+<span class="sourceLineNo">312</span>            this.layout = layout;<a name="line.312"></a>
+<span class="sourceLineNo">313</span>        }<a name="line.313"></a>
+<span class="sourceLineNo">314</span>    }<a name="line.314"></a>
+<span class="sourceLineNo">315</span><a name="line.315"></a>
+<span class="sourceLineNo">316</span>    /**<a name="line.316"></a>
+<span class="sourceLineNo">317</span>     * Factory to create a MemoryMappedFileManager.<a name="line.317"></a>
+<span class="sourceLineNo">318</span>     */<a name="line.318"></a>
+<span class="sourceLineNo">319</span>    private static class MemoryMappedFileManagerFactory<a name="line.319"></a>
+<span class="sourceLineNo">320</span>            implements ManagerFactory&lt;MemoryMappedFileManager, FactoryData&gt; {<a name="line.320"></a>
+<span class="sourceLineNo">321</span><a name="line.321"></a>
+<span class="sourceLineNo">322</span>        /**<a name="line.322"></a>
+<span class="sourceLineNo">323</span>         * Create a MemoryMappedFileManager.<a name="line.323"></a>
+<span class="sourceLineNo">324</span>         *<a name="line.324"></a>
+<span class="sourceLineNo">325</span>         * @param name The name of the File.<a name="line.325"></a>
+<span class="sourceLineNo">326</span>         * @param data The FactoryData<a name="line.326"></a>
+<span class="sourceLineNo">327</span>         * @return The MemoryMappedFileManager for the File.<a name="line.327"></a>
+<span class="sourceLineNo">328</span>         */<a name="line.328"></a>
+<span class="sourceLineNo">329</span>        @SuppressWarnings("resource")<a name="line.329"></a>
+<span class="sourceLineNo">330</span>        @Override<a name="line.330"></a>
+<span class="sourceLineNo">331</span>        public MemoryMappedFileManager createManager(final String name, final FactoryData data) {<a name="line.331"></a>
+<span class="sourceLineNo">332</span>            final File file = new File(name);<a name="line.332"></a>
+<span class="sourceLineNo">333</span>            final File parent = file.getParentFile();<a name="line.333"></a>
+<span class="sourceLineNo">334</span>            if (null != parent &amp;&amp; !parent.exists()) {<a name="line.334"></a>
+<span class="sourceLineNo">335</span>                parent.mkdirs();<a name="line.335"></a>
+<span class="sourceLineNo">336</span>            }<a name="line.336"></a>
+<span class="sourceLineNo">337</span>            if (!data.append) {<a name="line.337"></a>
+<span class="sourceLineNo">338</span>                file.delete();<a name="line.338"></a>
+<span class="sourceLineNo">339</span>            }<a name="line.339"></a>
+<span class="sourceLineNo">340</span><a name="line.340"></a>
+<span class="sourceLineNo">341</span>            final boolean writeHeader = !data.append || !file.exists();<a name="line.341"></a>
+<span class="sourceLineNo">342</span>            final OutputStream os = NullOutputStream.NULL_OUTPUT_STREAM;<a name="line.342"></a>
+<span class="sourceLineNo">343</span>            RandomAccessFile raf = null;<a name="line.343"></a>
+<span class="sourceLineNo">344</span>            try {<a name="line.344"></a>
+<span class="sourceLineNo">345</span>                raf = new RandomAccessFile(name, "rw");<a name="line.345"></a>
+<span class="sourceLineNo">346</span>                final long position = (data.append) ? raf.length() : 0;<a name="line.346"></a>
+<span class="sourceLineNo">347</span>                raf.setLength(position + data.regionLength);<a name="line.347"></a>
+<span class="sourceLineNo">348</span>                return new MemoryMappedFileManager(raf, name, os, data.force, position, data.regionLength,<a name="line.348"></a>
+<span class="sourceLineNo">349</span>                        data.advertiseURI, data.layout, writeHeader);<a name="line.349"></a>
+<span class="sourceLineNo">350</span>            } catch (final Exception ex) {<a name="line.350"></a>
+<span class="sourceLineNo">351</span>                LOGGER.error("MemoryMappedFileManager (" + name + ") " + ex, ex);<a name="line.351"></a>
+<span class="sourceLineNo">352</span>                Closer.closeSilently(raf);<a name="line.352"></a>
+<span class="sourceLineNo">353</span>            }<a name="line.353"></a>
+<span class="sourceLineNo">354</span>            return null;<a name="line.354"></a>
+<span class="sourceLineNo">355</span>        }<a name="line.355"></a>
+<span class="sourceLineNo">356</span>    }<a name="line.356"></a>
+<span class="sourceLineNo">357</span>}<a name="line.357"></a>
 
 
 

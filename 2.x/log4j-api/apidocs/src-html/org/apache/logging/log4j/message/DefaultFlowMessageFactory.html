@@ -28,15 +28,15 @@
 <span class="sourceLineNo">020</span><a name="line.20"></a>
 <span class="sourceLineNo">021</span>/**<a name="line.21"></a>
 <span class="sourceLineNo">022</span> * Default factory for flow messages.<a name="line.22"></a>
-<span class="sourceLineNo">023</span> * <a name="line.23"></a>
+<span class="sourceLineNo">023</span> *<a name="line.23"></a>
 <span class="sourceLineNo">024</span> * @since 2.6<a name="line.24"></a>
 <span class="sourceLineNo">025</span> */<a name="line.25"></a>
 <span class="sourceLineNo">026</span>public class DefaultFlowMessageFactory implements FlowMessageFactory, Serializable {<a name="line.26"></a>
-<span class="sourceLineNo">027</span>    <a name="line.27"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
 <span class="sourceLineNo">028</span>    private static final String EXIT_DEFAULT_PREFIX = "Exit";<a name="line.28"></a>
 <span class="sourceLineNo">029</span>    private static final String ENTRY_DEFAULT_PREFIX = "Enter";<a name="line.29"></a>
 <span class="sourceLineNo">030</span>    private static final long serialVersionUID = 8578655591131397576L;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>    <a name="line.31"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
 <span class="sourceLineNo">032</span>    private final String entryText;<a name="line.32"></a>
 <span class="sourceLineNo">033</span>    private final String exitText;<a name="line.33"></a>
 <span class="sourceLineNo">034</span><a name="line.34"></a>
@@ -180,39 +180,46 @@
 <span class="sourceLineNo">172</span>     */<a name="line.172"></a>
 <span class="sourceLineNo">173</span>    @Override<a name="line.173"></a>
 <span class="sourceLineNo">174</span>    public EntryMessage newEntryMessage(final Message message) {<a name="line.174"></a>
-<span class="sourceLineNo">175</span>        return new SimpleEntryMessage(entryText, message);<a name="line.175"></a>
+<span class="sourceLineNo">175</span>        return new SimpleEntryMessage(entryText, makeImmutable(message));<a name="line.175"></a>
 <span class="sourceLineNo">176</span>    }<a name="line.176"></a>
 <span class="sourceLineNo">177</span><a name="line.177"></a>
-<span class="sourceLineNo">178</span>    /*<a name="line.178"></a>
-<span class="sourceLineNo">179</span>     * (non-Javadoc)<a name="line.179"></a>
-<span class="sourceLineNo">180</span>     *<a name="line.180"></a>
-<span class="sourceLineNo">181</span>     * @see org.apache.logging.log4j.message.FlowMessageFactory#newExitMessage(org.apache.logging.log4j.message.EntryMessage)<a name="line.181"></a>
-<span class="sourceLineNo">182</span>     */<a name="line.182"></a>
-<span class="sourceLineNo">183</span>    @Override<a name="line.183"></a>
-<span class="sourceLineNo">184</span>    public ExitMessage newExitMessage(final EntryMessage message) {<a name="line.184"></a>
-<span class="sourceLineNo">185</span>        return new SimpleExitMessage(exitText, message);<a name="line.185"></a>
-<span class="sourceLineNo">186</span>    }<a name="line.186"></a>
-<span class="sourceLineNo">187</span><a name="line.187"></a>
-<span class="sourceLineNo">188</span>    /*<a name="line.188"></a>
-<span class="sourceLineNo">189</span>     * (non-Javadoc)<a name="line.189"></a>
-<span class="sourceLineNo">190</span>     *<a name="line.190"></a>
-<span class="sourceLineNo">191</span>     * @see org.apache.logging.log4j.message.FlowMessageFactory#newExitMessage(java.lang.Object, org.apache.logging.log4j.message.EntryMessage)<a name="line.191"></a>
-<span class="sourceLineNo">192</span>     */<a name="line.192"></a>
-<span class="sourceLineNo">193</span>    @Override<a name="line.193"></a>
-<span class="sourceLineNo">194</span>    public ExitMessage newExitMessage(final Object result, final EntryMessage message) {<a name="line.194"></a>
-<span class="sourceLineNo">195</span>        return new SimpleExitMessage(exitText, result, message);<a name="line.195"></a>
-<span class="sourceLineNo">196</span>    }<a name="line.196"></a>
-<span class="sourceLineNo">197</span><a name="line.197"></a>
-<span class="sourceLineNo">198</span>    /*<a name="line.198"></a>
-<span class="sourceLineNo">199</span>     * (non-Javadoc)<a name="line.199"></a>
-<span class="sourceLineNo">200</span>     *<a name="line.200"></a>
-<span class="sourceLineNo">201</span>     * @see org.apache.logging.log4j.message.FlowMessageFactory#newExitMessage(java.lang.Object, org.apache.logging.log4j.message.Message)<a name="line.201"></a>
-<span class="sourceLineNo">202</span>     */<a name="line.202"></a>
-<span class="sourceLineNo">203</span>    @Override<a name="line.203"></a>
-<span class="sourceLineNo">204</span>    public ExitMessage newExitMessage(final Object result, final Message message) {<a name="line.204"></a>
-<span class="sourceLineNo">205</span>        return new SimpleExitMessage(exitText, result, message);<a name="line.205"></a>
-<span class="sourceLineNo">206</span>    }<a name="line.206"></a>
-<span class="sourceLineNo">207</span>}<a name="line.207"></a>
+<span class="sourceLineNo">178</span>    private Message makeImmutable(final Message message) {<a name="line.178"></a>
+<span class="sourceLineNo">179</span>        if (!(message instanceof ReusableMessage)) {<a name="line.179"></a>
+<span class="sourceLineNo">180</span>            return message;<a name="line.180"></a>
+<span class="sourceLineNo">181</span>        }<a name="line.181"></a>
+<span class="sourceLineNo">182</span>        return new SimpleMessage(message.getFormattedMessage());<a name="line.182"></a>
+<span class="sourceLineNo">183</span>    }<a name="line.183"></a>
+<span class="sourceLineNo">184</span><a name="line.184"></a>
+<span class="sourceLineNo">185</span>    /*<a name="line.185"></a>
+<span class="sourceLineNo">186</span>     * (non-Javadoc)<a name="line.186"></a>
+<span class="sourceLineNo">187</span>     *<a name="line.187"></a>
+<span class="sourceLineNo">188</span>     * @see org.apache.logging.log4j.message.FlowMessageFactory#newExitMessage(org.apache.logging.log4j.message.EntryMessage)<a name="line.188"></a>
+<span class="sourceLineNo">189</span>     */<a name="line.189"></a>
+<span class="sourceLineNo">190</span>    @Override<a name="line.190"></a>
+<span class="sourceLineNo">191</span>    public ExitMessage newExitMessage(final EntryMessage message) {<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        return new SimpleExitMessage(exitText, message);<a name="line.192"></a>
+<span class="sourceLineNo">193</span>    }<a name="line.193"></a>
+<span class="sourceLineNo">194</span><a name="line.194"></a>
+<span class="sourceLineNo">195</span>    /*<a name="line.195"></a>
+<span class="sourceLineNo">196</span>     * (non-Javadoc)<a name="line.196"></a>
+<span class="sourceLineNo">197</span>     *<a name="line.197"></a>
+<span class="sourceLineNo">198</span>     * @see org.apache.logging.log4j.message.FlowMessageFactory#newExitMessage(java.lang.Object, org.apache.logging.log4j.message.EntryMessage)<a name="line.198"></a>
+<span class="sourceLineNo">199</span>     */<a name="line.199"></a>
+<span class="sourceLineNo">200</span>    @Override<a name="line.200"></a>
+<span class="sourceLineNo">201</span>    public ExitMessage newExitMessage(final Object result, final EntryMessage message) {<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        return new SimpleExitMessage(exitText, result, message);<a name="line.202"></a>
+<span class="sourceLineNo">203</span>    }<a name="line.203"></a>
+<span class="sourceLineNo">204</span><a name="line.204"></a>
+<span class="sourceLineNo">205</span>    /*<a name="line.205"></a>
+<span class="sourceLineNo">206</span>     * (non-Javadoc)<a name="line.206"></a>
+<span class="sourceLineNo">207</span>     *<a name="line.207"></a>
+<span class="sourceLineNo">208</span>     * @see org.apache.logging.log4j.message.FlowMessageFactory#newExitMessage(java.lang.Object, org.apache.logging.log4j.message.Message)<a name="line.208"></a>
+<span class="sourceLineNo">209</span>     */<a name="line.209"></a>
+<span class="sourceLineNo">210</span>    @Override<a name="line.210"></a>
+<span class="sourceLineNo">211</span>    public ExitMessage newExitMessage(final Object result, final Message message) {<a name="line.211"></a>
+<span class="sourceLineNo">212</span>        return new SimpleExitMessage(exitText, result, message);<a name="line.212"></a>
+<span class="sourceLineNo">213</span>    }<a name="line.213"></a>
+<span class="sourceLineNo">214</span>}<a name="line.214"></a>
 
 
 

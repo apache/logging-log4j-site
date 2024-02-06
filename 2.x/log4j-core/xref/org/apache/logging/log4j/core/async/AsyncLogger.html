@@ -110,214 +110,213 @@
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         nanoClock = newConfig.getNanoClock();
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         includeLocation = newConfig.getLoggerConfig(name).isIncludeLocation();
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>         <strong class="jxr_keyword">super</strong>.updateConfiguration(newConfig);
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>         LOGGER.trace(<span class="jxr_string">"[{}] AsyncLogger {} uses {}."</span>, getContext().getName(), getName(), nanoClock);
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>     }
-<a class="jxr_linenumber" name="L107" href="#L107">107</a> 
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <em class="jxr_comment">// package protected for unit tests</em>
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <a href="../../../../../../org/apache/logging/log4j/core/util/NanoClock.html">NanoClock</a> getNanoClock() {
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>         <strong class="jxr_keyword">return</strong> nanoClock;
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>     }
-<a class="jxr_linenumber" name="L112" href="#L112">112</a> 
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> getCachedTranslator() {
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>         <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> result = threadLocalTranslator.get();
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>         <strong class="jxr_keyword">if</strong> (result == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>             result = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a>();
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>             threadLocalTranslator.set(result);
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>         }
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">return</strong> result;
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>     }
-<a class="jxr_linenumber" name="L121" href="#L121">121</a> 
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>     @Override
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> logMessage(<strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker, <strong class="jxr_keyword">final</strong> Message message,
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>             <strong class="jxr_keyword">final</strong> Throwable thrown) {
-<a class="jxr_linenumber" name="L125" href="#L125">125</a> 
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">if</strong> (loggerDisruptor.isUseThreadLocals()) {
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>             logWithThreadLocalTranslator(fqcn, level, marker, message, thrown);
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>             <em class="jxr_comment">// LOG4J2-1172: avoid storing non-JDK classes in ThreadLocals to avoid memory leaks in web apps</em>
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>             logWithVarargTranslator(fqcn, level, marker, message, thrown);
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         }
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>     }
-<a class="jxr_linenumber" name="L133" href="#L133">133</a> 
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> isReused(<strong class="jxr_keyword">final</strong> Message message) {
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>         <strong class="jxr_keyword">return</strong> message instanceof ReusableMessage;
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>     }
-<a class="jxr_linenumber" name="L137" href="#L137">137</a> 
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">     * Enqueues the specified log event data for logging in a background thread.</em>
-<a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
-<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">     * This re-uses a {@code RingBufferLogEventTranslator} instance cached in a {@code ThreadLocal} to avoid creating</em>
-<a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_javadoccomment">     * unnecessary objects with each event.</em>
-<a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">     * @param fqcn fully qualified name of the caller</em>
-<a class="jxr_linenumber" name="L145" href="#L145">145</a> <em class="jxr_javadoccomment">     * @param level level at which the caller wants to log the message</em>
-<a class="jxr_linenumber" name="L146" href="#L146">146</a> <em class="jxr_javadoccomment">     * @param marker message marker</em>
-<a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_javadoccomment">     * @param message the log message</em>
-<a class="jxr_linenumber" name="L148" href="#L148">148</a> <em class="jxr_javadoccomment">     * @param thrown a {@code Throwable} or {@code null}</em>
-<a class="jxr_linenumber" name="L149" href="#L149">149</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> logWithThreadLocalTranslator(<strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker,
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>             <strong class="jxr_keyword">final</strong> Message message, <strong class="jxr_keyword">final</strong> Throwable thrown) {
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <em class="jxr_comment">// Implementation note: this method is tuned for performance. MODIFY WITH CARE!</em>
-<a class="jxr_linenumber" name="L153" href="#L153">153</a> 
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator = getCachedTranslator();
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>         initTranslator(translator, fqcn, level, marker, message, thrown);
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         initTranslatorThreadValues(translator);
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>         publish(translator);
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>     }
-<a class="jxr_linenumber" name="L159" href="#L159">159</a> 
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> publish(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator) {
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>         <strong class="jxr_keyword">if</strong> (!loggerDisruptor.tryPublish(translator)) {
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>             handleRingBufferFull(translator);
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>         }
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>     }
-<a class="jxr_linenumber" name="L165" href="#L165">165</a> 
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleRingBufferFull(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator) {
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/EventRoute.html">EventRoute</a> eventRoute = loggerDisruptor.getEventRoute(translator.level);
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">switch</strong> (eventRoute) {
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>             <strong class="jxr_keyword">case</strong> ENQUEUE:
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 loggerDisruptor.enqueueLogMessageInfo(translator);
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>             <strong class="jxr_keyword">case</strong> SYNCHRONOUS:
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>                 logMessageInCurrentThread(translator.fqcn, translator.level, translator.marker, translator.message,
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>                         translator.thrown);
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">case</strong> DISCARD:
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>             <strong class="jxr_keyword">default</strong>:
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Unknown EventRoute "</span> + eventRoute);
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>         }
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>     }
-<a class="jxr_linenumber" name="L182" href="#L182">182</a> 
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> initTranslator(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator, <strong class="jxr_keyword">final</strong> String fqcn,
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>             <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker, <strong class="jxr_keyword">final</strong> Message message, <strong class="jxr_keyword">final</strong> Throwable thrown) {
-<a class="jxr_linenumber" name="L185" href="#L185">185</a> 
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>         translator.setBasicValues(<strong class="jxr_keyword">this</strong>, name, marker, fqcn, level, message, <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>                 <em class="jxr_comment">// don't construct ThrowableProxy until required</em>
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>                 thrown,
-<a class="jxr_linenumber" name="L189" href="#L189">189</a> 
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>                 <em class="jxr_comment">// config properties are taken care of in the EventHandler thread</em>
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>                 <em class="jxr_comment">// in the AsyncLogger#actualAsyncLog method</em>
-<a class="jxr_linenumber" name="L192" href="#L192">192</a> 
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>                 <em class="jxr_comment">// needs shallow copy to be fast (LOG4J2-154)</em>
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>                 ThreadContext.getImmutableContext(), <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L195" href="#L195">195</a> 
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>                 <em class="jxr_comment">// needs shallow copy to be fast (LOG4J2-154)</em>
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>                 ThreadContext.getImmutableStack(), <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>                 <em class="jxr_comment">// location (expensive to calculate)</em>
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>                 calcLocationIfRequested(fqcn), <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>                 CLOCK.currentTimeMillis(), <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>                 nanoClock.nanoTime() <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>         );
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>     }
-<a class="jxr_linenumber" name="L204" href="#L204">204</a> 
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> initTranslatorThreadValues(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator) {
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <em class="jxr_comment">// constant check should be optimized out when using default (CACHED)</em>
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>         <strong class="jxr_keyword">if</strong> (THREAD_NAME_CACHING_STRATEGY == ThreadNameCachingStrategy.UNCACHED) {
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>             translator.updateThreadValues();
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>         }
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>     }
-<a class="jxr_linenumber" name="L211" href="#L211">211</a> 
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L213" href="#L213">213</a> <em class="jxr_javadoccomment">     * Returns the caller location if requested, {@code null} otherwise.</em>
-<a class="jxr_linenumber" name="L214" href="#L214">214</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L215" href="#L215">215</a> <em class="jxr_javadoccomment">     * @param fqcn fully qualified caller name.</em>
-<a class="jxr_linenumber" name="L216" href="#L216">216</a> <em class="jxr_javadoccomment">     * @return the caller location if requested, {@code null} otherwise.</em>
-<a class="jxr_linenumber" name="L217" href="#L217">217</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>     <strong class="jxr_keyword">private</strong> StackTraceElement calcLocationIfRequested(<strong class="jxr_keyword">final</strong> String fqcn) {
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>         <em class="jxr_comment">// location: very expensive operation. LOG4J2-153:</em>
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>         <em class="jxr_comment">// Only include if "includeLocation=true" is specified,</em>
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>         <em class="jxr_comment">// exclude if not specified or if "false" was specified.</em>
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>         <strong class="jxr_keyword">return</strong> includeLocation ? Log4jLogEvent.calcLocation(fqcn) : <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>     }
-<a class="jxr_linenumber" name="L224" href="#L224">224</a> 
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L226" href="#L226">226</a> <em class="jxr_javadoccomment">     * Enqueues the specified log event data for logging in a background thread.</em>
-<a class="jxr_linenumber" name="L227" href="#L227">227</a> <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
-<a class="jxr_linenumber" name="L228" href="#L228">228</a> <em class="jxr_javadoccomment">     * This creates a new varargs Object array for each invocation, but does not store any non-JDK classes in a</em>
-<a class="jxr_linenumber" name="L229" href="#L229">229</a> <em class="jxr_javadoccomment">     * {@code ThreadLocal} to avoid memory leaks in web applications (see LOG4J2-1172).</em>
-<a class="jxr_linenumber" name="L230" href="#L230">230</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L231" href="#L231">231</a> <em class="jxr_javadoccomment">     * @param fqcn fully qualified name of the caller</em>
-<a class="jxr_linenumber" name="L232" href="#L232">232</a> <em class="jxr_javadoccomment">     * @param level level at which the caller wants to log the message</em>
-<a class="jxr_linenumber" name="L233" href="#L233">233</a> <em class="jxr_javadoccomment">     * @param marker message marker</em>
-<a class="jxr_linenumber" name="L234" href="#L234">234</a> <em class="jxr_javadoccomment">     * @param message the log message</em>
-<a class="jxr_linenumber" name="L235" href="#L235">235</a> <em class="jxr_javadoccomment">     * @param thrown a {@code Throwable} or {@code null}</em>
-<a class="jxr_linenumber" name="L236" href="#L236">236</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> logWithVarargTranslator(<strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker,
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>             <strong class="jxr_keyword">final</strong> Message message, <strong class="jxr_keyword">final</strong> Throwable thrown) {
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>         <em class="jxr_comment">// Implementation note: candidate for optimization: exceeds 35 bytecodes.</em>
-<a class="jxr_linenumber" name="L240" href="#L240">240</a> 
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>         <strong class="jxr_keyword">final</strong> Disruptor&lt;RingBufferLogEvent&gt; disruptor = loggerDisruptor.getDisruptor();
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>         <strong class="jxr_keyword">if</strong> (disruptor == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>             LOGGER.error(<span class="jxr_string">"Ignoring log event after Log4j has been shut down."</span>);
-<a class="jxr_linenumber" name="L244" href="#L244">244</a>             <strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>         }
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <em class="jxr_comment">// if the Message instance is reused, there is no point in freezing its message here</em>
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">if</strong> (!Constants.FORMAT_MESSAGES_IN_BACKGROUND &amp;&amp; !isReused(message)) { <em class="jxr_comment">// LOG4J2-898: user may choose</em>
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>             message.getFormattedMessage(); <em class="jxr_comment">// LOG4J2-763: ask message to freeze parameters</em>
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>         }
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>         <em class="jxr_comment">// calls the translateTo method on this AsyncLogger</em>
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>         disruptor.getRingBuffer().publishEvent(<strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">this</strong>, calcLocationIfRequested(fqcn), fqcn, level, marker, message,
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>                 thrown);
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>     }
-<a class="jxr_linenumber" name="L254" href="#L254">254</a> 
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>     <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="L256" href="#L256">256</a> <em class="jxr_comment">     * (non-Javadoc)</em>
-<a class="jxr_linenumber" name="L257" href="#L257">257</a> <em class="jxr_comment">     *</em>
-<a class="jxr_linenumber" name="L258" href="#L258">258</a> <em class="jxr_comment">     * @see com.lmax.disruptor.EventTranslatorVararg#translateTo(java.lang.Object, long, java.lang.Object[])</em>
-<a class="jxr_linenumber" name="L259" href="#L259">259</a> <em class="jxr_comment">     */</em>
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>     @Override
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> translateTo(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEvent.html">RingBufferLogEvent</a> event, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> sequence, <strong class="jxr_keyword">final</strong> Object... args) {
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>         <em class="jxr_comment">// Implementation note: candidate for optimization: exceeds 35 bytecodes.</em>
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLogger.html">AsyncLogger</a> asyncLogger = (AsyncLogger) args[0];
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>         <strong class="jxr_keyword">final</strong> StackTraceElement location = (StackTraceElement) args[1];
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>         <strong class="jxr_keyword">final</strong> String fqcn = (String) args[2];
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>         <strong class="jxr_keyword">final</strong> Level level = (Level) args[3];
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>         <strong class="jxr_keyword">final</strong> Marker marker = (Marker) args[4];
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>         <strong class="jxr_keyword">final</strong> Message message = (Message) args[5];
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>         <strong class="jxr_keyword">final</strong> Throwable thrown = (Throwable) args[6];
-<a class="jxr_linenumber" name="L270" href="#L270">270</a> 
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>         <em class="jxr_comment">// needs shallow copy to be fast (LOG4J2-154)</em>
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; contextMap = ThreadContext.getImmutableContext();
-<a class="jxr_linenumber" name="L273" href="#L273">273</a> 
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>         <em class="jxr_comment">// needs shallow copy to be fast (LOG4J2-154)</em>
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>         <strong class="jxr_keyword">final</strong> ContextStack contextStack = ThreadContext.getImmutableStack();
-<a class="jxr_linenumber" name="L276" href="#L276">276</a> 
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>         <strong class="jxr_keyword">final</strong> Thread currentThread = Thread.currentThread();
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>         <strong class="jxr_keyword">final</strong> String threadName = THREAD_NAME_CACHING_STRATEGY.getThreadName();
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>         event.setValues(asyncLogger, asyncLogger.getName(), marker, fqcn, level, message, thrown, contextMap,
-<a class="jxr_linenumber" name="L280" href="#L280">280</a>                 contextStack, currentThread.getId(), threadName, currentThread.getPriority(), location,
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>                 CLOCK.currentTimeMillis(), nanoClock.nanoTime());
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>     }
-<a class="jxr_linenumber" name="L283" href="#L283">283</a> 
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L285" href="#L285">285</a> <em class="jxr_javadoccomment">     * LOG4J2-471: prevent deadlock when RingBuffer is full and object being logged calls Logger.log() from its</em>
-<a class="jxr_linenumber" name="L286" href="#L286">286</a> <em class="jxr_javadoccomment">     * toString() method</em>
-<a class="jxr_linenumber" name="L287" href="#L287">287</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L288" href="#L288">288</a> <em class="jxr_javadoccomment">     * @param fqcn fully qualified caller name</em>
-<a class="jxr_linenumber" name="L289" href="#L289">289</a> <em class="jxr_javadoccomment">     * @param level log level</em>
-<a class="jxr_linenumber" name="L290" href="#L290">290</a> <em class="jxr_javadoccomment">     * @param marker optional marker</em>
-<a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">     * @param message log message</em>
-<a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">     * @param thrown optional exception</em>
-<a class="jxr_linenumber" name="L293" href="#L293">293</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>     <strong class="jxr_keyword">void</strong> logMessageInCurrentThread(<strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker,
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>             <strong class="jxr_keyword">final</strong> Message message, <strong class="jxr_keyword">final</strong> Throwable thrown) {
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>         <em class="jxr_comment">// bypass RingBuffer and invoke Appender directly</em>
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ReliabilityStrategy.html">ReliabilityStrategy</a> strategy = privateConfig.loggerConfig.getReliabilityStrategy();
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>         strategy.log(<strong class="jxr_keyword">this</strong>, getName(), fqcn, marker, level, message, thrown);
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>     }
-<a class="jxr_linenumber" name="L300" href="#L300">300</a> 
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L302" href="#L302">302</a> <em class="jxr_javadoccomment">     * This method is called by the EventHandler that processes the RingBufferLogEvent in a separate thread.</em>
-<a class="jxr_linenumber" name="L303" href="#L303">303</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">     * @param event the event to log</em>
-<a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> actualAsyncLog(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEvent.html">RingBufferLogEvent</a> event) {
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>         <strong class="jxr_keyword">final</strong> Map&lt;Property, Boolean&gt; properties = privateConfig.loggerConfig.getProperties();
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>         event.mergePropertiesIntoContextMap(properties, privateConfig.config.getStrSubstitutor());
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ReliabilityStrategy.html">ReliabilityStrategy</a> strategy = privateConfig.loggerConfig.getReliabilityStrategy();
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>         strategy.log(<strong class="jxr_keyword">this</strong>, event);
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>     }
-<a class="jxr_linenumber" name="L312" href="#L312">312</a> }
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>     }
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     <em class="jxr_comment">// package protected for unit tests</em>
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <a href="../../../../../../org/apache/logging/log4j/core/util/NanoClock.html">NanoClock</a> getNanoClock() {
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         <strong class="jxr_keyword">return</strong> nanoClock;
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>     }
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> 
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> getCachedTranslator() {
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> result = threadLocalTranslator.get();
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">if</strong> (result == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>             result = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a>();
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>             threadLocalTranslator.set(result);
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>         }
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>         <strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>     }
+<a class="jxr_linenumber" name="L120" href="#L120">120</a> 
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>     @Override
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> logMessage(<strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker, <strong class="jxr_keyword">final</strong> Message message,
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>             <strong class="jxr_keyword">final</strong> Throwable thrown) {
+<a class="jxr_linenumber" name="L124" href="#L124">124</a> 
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>         <strong class="jxr_keyword">if</strong> (loggerDisruptor.isUseThreadLocals()) {
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>             logWithThreadLocalTranslator(fqcn, level, marker, message, thrown);
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>             <em class="jxr_comment">// LOG4J2-1172: avoid storing non-JDK classes in ThreadLocals to avoid memory leaks in web apps</em>
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>             logWithVarargTranslator(fqcn, level, marker, message, thrown);
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         }
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>     }
+<a class="jxr_linenumber" name="L132" href="#L132">132</a> 
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> isReused(<strong class="jxr_keyword">final</strong> Message message) {
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">return</strong> message instanceof ReusableMessage;
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     }
+<a class="jxr_linenumber" name="L136" href="#L136">136</a> 
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">     * Enqueues the specified log event data for logging in a background thread.</em>
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">     * This re-uses a {@code RingBufferLogEventTranslator} instance cached in a {@code ThreadLocal} to avoid creating</em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">     * unnecessary objects with each event.</em>
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">     * @param fqcn fully qualified name of the caller</em>
+<a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">     * @param level level at which the caller wants to log the message</em>
+<a class="jxr_linenumber" name="L145" href="#L145">145</a> <em class="jxr_javadoccomment">     * @param marker message marker</em>
+<a class="jxr_linenumber" name="L146" href="#L146">146</a> <em class="jxr_javadoccomment">     * @param message the log message</em>
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_javadoccomment">     * @param thrown a {@code Throwable} or {@code null}</em>
+<a class="jxr_linenumber" name="L148" href="#L148">148</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> logWithThreadLocalTranslator(<strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker,
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>             <strong class="jxr_keyword">final</strong> Message message, <strong class="jxr_keyword">final</strong> Throwable thrown) {
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         <em class="jxr_comment">// Implementation note: this method is tuned for performance. MODIFY WITH CARE!</em>
+<a class="jxr_linenumber" name="L152" href="#L152">152</a> 
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator = getCachedTranslator();
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         initTranslator(translator, fqcn, level, marker, message, thrown);
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         initTranslatorThreadValues(translator);
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         publish(translator);
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>     }
+<a class="jxr_linenumber" name="L158" href="#L158">158</a> 
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> publish(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator) {
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">if</strong> (!loggerDisruptor.tryPublish(translator)) {
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>             handleRingBufferFull(translator);
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>         }
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     }
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> 
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleRingBufferFull(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator) {
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/EventRoute.html">EventRoute</a> eventRoute = loggerDisruptor.getEventRoute(translator.level);
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">switch</strong> (eventRoute) {
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>             <strong class="jxr_keyword">case</strong> ENQUEUE:
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>                 loggerDisruptor.enqueueLogMessageInfo(translator);
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>             <strong class="jxr_keyword">case</strong> SYNCHRONOUS:
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>                 logMessageInCurrentThread(translator.fqcn, translator.level, translator.marker, translator.message,
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>                         translator.thrown);
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>             <strong class="jxr_keyword">case</strong> DISCARD:
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>             <strong class="jxr_keyword">default</strong>:
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Unknown EventRoute "</span> + eventRoute);
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>         }
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>     }
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> 
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> initTranslator(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator, <strong class="jxr_keyword">final</strong> String fqcn,
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>             <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker, <strong class="jxr_keyword">final</strong> Message message, <strong class="jxr_keyword">final</strong> Throwable thrown) {
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> 
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>         translator.setBasicValues(<strong class="jxr_keyword">this</strong>, name, marker, fqcn, level, message, <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>                 <em class="jxr_comment">// don't construct ThrowableProxy until required</em>
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>                 thrown,
+<a class="jxr_linenumber" name="L188" href="#L188">188</a> 
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>                 <em class="jxr_comment">// config properties are taken care of in the EventHandler thread</em>
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>                 <em class="jxr_comment">// in the AsyncLogger#actualAsyncLog method</em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a> 
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>                 <em class="jxr_comment">// needs shallow copy to be fast (LOG4J2-154)</em>
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>                 ThreadContext.getImmutableContext(), <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L194" href="#L194">194</a> 
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>                 <em class="jxr_comment">// needs shallow copy to be fast (LOG4J2-154)</em>
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>                 ThreadContext.getImmutableStack(), <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>                 <em class="jxr_comment">// location (expensive to calculate)</em>
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>                 calcLocationIfRequested(fqcn), <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>                 CLOCK.currentTimeMillis(), <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>                 nanoClock.nanoTime() <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>         );
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>     }
+<a class="jxr_linenumber" name="L203" href="#L203">203</a> 
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> initTranslatorThreadValues(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator) {
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>         <em class="jxr_comment">// constant check should be optimized out when using default (CACHED)</em>
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">if</strong> (THREAD_NAME_CACHING_STRATEGY == ThreadNameCachingStrategy.UNCACHED) {
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>             translator.updateThreadValues();
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         }
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>     }
+<a class="jxr_linenumber" name="L210" href="#L210">210</a> 
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_javadoccomment">     * Returns the caller location if requested, {@code null} otherwise.</em>
+<a class="jxr_linenumber" name="L213" href="#L213">213</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L214" href="#L214">214</a> <em class="jxr_javadoccomment">     * @param fqcn fully qualified caller name.</em>
+<a class="jxr_linenumber" name="L215" href="#L215">215</a> <em class="jxr_javadoccomment">     * @return the caller location if requested, {@code null} otherwise.</em>
+<a class="jxr_linenumber" name="L216" href="#L216">216</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>     <strong class="jxr_keyword">private</strong> StackTraceElement calcLocationIfRequested(<strong class="jxr_keyword">final</strong> String fqcn) {
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>         <em class="jxr_comment">// location: very expensive operation. LOG4J2-153:</em>
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>         <em class="jxr_comment">// Only include if "includeLocation=true" is specified,</em>
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>         <em class="jxr_comment">// exclude if not specified or if "false" was specified.</em>
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>         <strong class="jxr_keyword">return</strong> includeLocation ? Log4jLogEvent.calcLocation(fqcn) : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>     }
+<a class="jxr_linenumber" name="L223" href="#L223">223</a> 
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L225" href="#L225">225</a> <em class="jxr_javadoccomment">     * Enqueues the specified log event data for logging in a background thread.</em>
+<a class="jxr_linenumber" name="L226" href="#L226">226</a> <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L227" href="#L227">227</a> <em class="jxr_javadoccomment">     * This creates a new varargs Object array for each invocation, but does not store any non-JDK classes in a</em>
+<a class="jxr_linenumber" name="L228" href="#L228">228</a> <em class="jxr_javadoccomment">     * {@code ThreadLocal} to avoid memory leaks in web applications (see LOG4J2-1172).</em>
+<a class="jxr_linenumber" name="L229" href="#L229">229</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L230" href="#L230">230</a> <em class="jxr_javadoccomment">     * @param fqcn fully qualified name of the caller</em>
+<a class="jxr_linenumber" name="L231" href="#L231">231</a> <em class="jxr_javadoccomment">     * @param level level at which the caller wants to log the message</em>
+<a class="jxr_linenumber" name="L232" href="#L232">232</a> <em class="jxr_javadoccomment">     * @param marker message marker</em>
+<a class="jxr_linenumber" name="L233" href="#L233">233</a> <em class="jxr_javadoccomment">     * @param message the log message</em>
+<a class="jxr_linenumber" name="L234" href="#L234">234</a> <em class="jxr_javadoccomment">     * @param thrown a {@code Throwable} or {@code null}</em>
+<a class="jxr_linenumber" name="L235" href="#L235">235</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> logWithVarargTranslator(<strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker,
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>             <strong class="jxr_keyword">final</strong> Message message, <strong class="jxr_keyword">final</strong> Throwable thrown) {
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>         <em class="jxr_comment">// Implementation note: candidate for optimization: exceeds 35 bytecodes.</em>
+<a class="jxr_linenumber" name="L239" href="#L239">239</a> 
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>         <strong class="jxr_keyword">final</strong> Disruptor&lt;RingBufferLogEvent&gt; disruptor = loggerDisruptor.getDisruptor();
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>         <strong class="jxr_keyword">if</strong> (disruptor == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>             LOGGER.error(<span class="jxr_string">"Ignoring log event after Log4j has been shut down."</span>);
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>         }
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>         <em class="jxr_comment">// if the Message instance is reused, there is no point in freezing its message here</em>
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <strong class="jxr_keyword">if</strong> (!Constants.FORMAT_MESSAGES_IN_BACKGROUND &amp;&amp; !isReused(message)) { <em class="jxr_comment">// LOG4J2-898: user may choose</em>
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>             message.getFormattedMessage(); <em class="jxr_comment">// LOG4J2-763: ask message to freeze parameters</em>
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>         }
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>         <em class="jxr_comment">// calls the translateTo method on this AsyncLogger</em>
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>         disruptor.getRingBuffer().publishEvent(<strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">this</strong>, calcLocationIfRequested(fqcn), fqcn, level, marker, message,
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>                 thrown);
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>     }
+<a class="jxr_linenumber" name="L253" href="#L253">253</a> 
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>     <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L255" href="#L255">255</a> <em class="jxr_comment">     * (non-Javadoc)</em>
+<a class="jxr_linenumber" name="L256" href="#L256">256</a> <em class="jxr_comment">     *</em>
+<a class="jxr_linenumber" name="L257" href="#L257">257</a> <em class="jxr_comment">     * @see com.lmax.disruptor.EventTranslatorVararg#translateTo(java.lang.Object, long, java.lang.Object[])</em>
+<a class="jxr_linenumber" name="L258" href="#L258">258</a> <em class="jxr_comment">     */</em>
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>     @Override
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> translateTo(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEvent.html">RingBufferLogEvent</a> event, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> sequence, <strong class="jxr_keyword">final</strong> Object... args) {
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>         <em class="jxr_comment">// Implementation note: candidate for optimization: exceeds 35 bytecodes.</em>
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLogger.html">AsyncLogger</a> asyncLogger = (AsyncLogger) args[0];
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>         <strong class="jxr_keyword">final</strong> StackTraceElement location = (StackTraceElement) args[1];
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>         <strong class="jxr_keyword">final</strong> String fqcn = (String) args[2];
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>         <strong class="jxr_keyword">final</strong> Level level = (Level) args[3];
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>         <strong class="jxr_keyword">final</strong> Marker marker = (Marker) args[4];
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>         <strong class="jxr_keyword">final</strong> Message message = (Message) args[5];
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>         <strong class="jxr_keyword">final</strong> Throwable thrown = (Throwable) args[6];
+<a class="jxr_linenumber" name="L269" href="#L269">269</a> 
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>         <em class="jxr_comment">// needs shallow copy to be fast (LOG4J2-154)</em>
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; contextMap = ThreadContext.getImmutableContext();
+<a class="jxr_linenumber" name="L272" href="#L272">272</a> 
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>         <em class="jxr_comment">// needs shallow copy to be fast (LOG4J2-154)</em>
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>         <strong class="jxr_keyword">final</strong> ContextStack contextStack = ThreadContext.getImmutableStack();
+<a class="jxr_linenumber" name="L275" href="#L275">275</a> 
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>         <strong class="jxr_keyword">final</strong> Thread currentThread = Thread.currentThread();
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>         <strong class="jxr_keyword">final</strong> String threadName = THREAD_NAME_CACHING_STRATEGY.getThreadName();
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>         event.setValues(asyncLogger, asyncLogger.getName(), marker, fqcn, level, message, thrown, contextMap,
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>                 contextStack, currentThread.getId(), threadName, currentThread.getPriority(), location,
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>                 CLOCK.currentTimeMillis(), nanoClock.nanoTime());
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>     }
+<a class="jxr_linenumber" name="L282" href="#L282">282</a> 
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L284" href="#L284">284</a> <em class="jxr_javadoccomment">     * LOG4J2-471: prevent deadlock when RingBuffer is full and object being logged calls Logger.log() from its</em>
+<a class="jxr_linenumber" name="L285" href="#L285">285</a> <em class="jxr_javadoccomment">     * toString() method</em>
+<a class="jxr_linenumber" name="L286" href="#L286">286</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L287" href="#L287">287</a> <em class="jxr_javadoccomment">     * @param fqcn fully qualified caller name</em>
+<a class="jxr_linenumber" name="L288" href="#L288">288</a> <em class="jxr_javadoccomment">     * @param level log level</em>
+<a class="jxr_linenumber" name="L289" href="#L289">289</a> <em class="jxr_javadoccomment">     * @param marker optional marker</em>
+<a class="jxr_linenumber" name="L290" href="#L290">290</a> <em class="jxr_javadoccomment">     * @param message log message</em>
+<a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">     * @param thrown optional exception</em>
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>     <strong class="jxr_keyword">void</strong> logMessageInCurrentThread(<strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker,
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>             <strong class="jxr_keyword">final</strong> Message message, <strong class="jxr_keyword">final</strong> Throwable thrown) {
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>         <em class="jxr_comment">// bypass RingBuffer and invoke Appender directly</em>
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ReliabilityStrategy.html">ReliabilityStrategy</a> strategy = privateConfig.loggerConfig.getReliabilityStrategy();
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>         strategy.log(<strong class="jxr_keyword">this</strong>, getName(), fqcn, marker, level, message, thrown);
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>     }
+<a class="jxr_linenumber" name="L299" href="#L299">299</a> 
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L301" href="#L301">301</a> <em class="jxr_javadoccomment">     * This method is called by the EventHandler that processes the RingBufferLogEvent in a separate thread.</em>
+<a class="jxr_linenumber" name="L302" href="#L302">302</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L303" href="#L303">303</a> <em class="jxr_javadoccomment">     * @param event the event to log</em>
+<a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> actualAsyncLog(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEvent.html">RingBufferLogEvent</a> event) {
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>         <strong class="jxr_keyword">final</strong> Map&lt;Property, Boolean&gt; properties = privateConfig.loggerConfig.getProperties();
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>         event.mergePropertiesIntoContextMap(properties, privateConfig.config.getStrSubstitutor());
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ReliabilityStrategy.html">ReliabilityStrategy</a> strategy = privateConfig.loggerConfig.getReliabilityStrategy();
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>         strategy.log(<strong class="jxr_keyword">this</strong>, event);
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>     }
+<a class="jxr_linenumber" name="L311" href="#L311">311</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>

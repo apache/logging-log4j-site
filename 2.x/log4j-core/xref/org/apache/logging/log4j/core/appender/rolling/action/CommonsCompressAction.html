@@ -64,7 +64,7 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">     * Creates new instance of Bzip2CompressAction.</em>
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     * @param name the compressor name. One of "gz", "bzip2", "xz", "pack200", or "deflate".</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     * @param source file to compress, may not be null.</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * @param destination compressed file, may not be null.</em>
@@ -94,7 +94,7 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">     * Compresses a file.</em>
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">     * @param name the compressor name, i.e. "gz", "bzip2", "xz", "pack200", or "deflate".</em>
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">     * @param source file to compress, may not be null.</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">     * @param destination compressed file, may not be null.</em>
@@ -109,53 +109,58 @@
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>         <strong class="jxr_keyword">if</strong> (!source.exists()) {
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>             <strong class="jxr_keyword">return</strong> false;
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         }
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> FileInputStream input = <strong class="jxr_keyword">new</strong> FileInputStream(source);
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>                 <strong class="jxr_keyword">final</strong> BufferedOutputStream output = <strong class="jxr_keyword">new</strong> BufferedOutputStream(
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>                         <strong class="jxr_keyword">new</strong> CompressorStreamFactory().createCompressorOutputStream(name, <strong class="jxr_keyword">new</strong> FileOutputStream(
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>                                 destination)))) {
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>             IOUtils.copy(input, output, BUF_SIZE);
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> CompressorException e) {
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IOException(e);
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>         }
-<a class="jxr_linenumber" name="L112" href="#L112">112</a> 
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>         <strong class="jxr_keyword">if</strong> (deleteSource &amp;&amp; !source.delete()) {
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>             LOGGER.warn(<span class="jxr_string">"Unable to delete "</span> + source.toString() + '.');
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>         }
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>     }
-<a class="jxr_linenumber" name="L118" href="#L118">118</a> 
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L120" href="#L120">120</a> <em class="jxr_javadoccomment">     * Reports exception.</em>
-<a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L122" href="#L122">122</a> <em class="jxr_javadoccomment">     * @param ex exception.</em>
-<a class="jxr_linenumber" name="L123" href="#L123">123</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>     @Override
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> reportException(<strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>         LOGGER.warn(<span class="jxr_string">"Exception during "</span> + name + <span class="jxr_string">" compression of '"</span> + source.toString() + <span class="jxr_string">"'."</span>, ex);
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>     }
-<a class="jxr_linenumber" name="L128" href="#L128">128</a> 
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>         LOGGER.debug(<span class="jxr_string">"Starting {} compression of {}"</span>, name, source.getPath() );
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> FileInputStream input = <strong class="jxr_keyword">new</strong> FileInputStream(source);
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>                 <strong class="jxr_keyword">final</strong> BufferedOutputStream output = <strong class="jxr_keyword">new</strong> BufferedOutputStream(
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>                         <strong class="jxr_keyword">new</strong> CompressorStreamFactory().createCompressorOutputStream(name, <strong class="jxr_keyword">new</strong> FileOutputStream(
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>                                 destination)))) {
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>             IOUtils.copy(input, output, BUF_SIZE);
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> CompressorException e) {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IOException(e);
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>             LOGGER.debug(<span class="jxr_string">"Finished {} compression of {}"</span>, name, source.getPath() );
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>         }
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> 
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>         <strong class="jxr_keyword">if</strong> (deleteSource &amp;&amp; !source.delete()) {
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>             LOGGER.warn(<span class="jxr_string">"Unable to delete "</span> + source.toString() + '.');
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>             LOGGER.debug(<span class="jxr_string">"Deleted {}"</span>, source.toString());
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>         }
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>     }
+<a class="jxr_linenumber" name="L123" href="#L123">123</a> 
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">     * Reports exception.</em>
+<a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L127" href="#L127">127</a> <em class="jxr_javadoccomment">     * @param ex exception.</em>
+<a class="jxr_linenumber" name="L128" href="#L128">128</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>     @Override
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         <strong class="jxr_keyword">return</strong> CommonsCompressAction.<strong class="jxr_keyword">class</strong>.getSimpleName() + '[' + source + <span class="jxr_string">" to "</span> + destination <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>                 + <span class="jxr_string">", deleteSource="</span> + deleteSource + ']';
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>     }
-<a class="jxr_linenumber" name="L134" href="#L134">134</a> 
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>     <strong class="jxr_keyword">public</strong> String getName() {
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>         <strong class="jxr_keyword">return</strong> name;
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>     }
-<a class="jxr_linenumber" name="L138" href="#L138">138</a> 
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>     <strong class="jxr_keyword">public</strong> File getSource() {
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">return</strong> source;
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>     }
-<a class="jxr_linenumber" name="L142" href="#L142">142</a> 
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>     <strong class="jxr_keyword">public</strong> File getDestination() {
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>         <strong class="jxr_keyword">return</strong> destination;
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>     }
-<a class="jxr_linenumber" name="L146" href="#L146">146</a> 
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isDeleteSource() {
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>         <strong class="jxr_keyword">return</strong> deleteSource;
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>     }
-<a class="jxr_linenumber" name="L150" href="#L150">150</a> }
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> reportException(<strong class="jxr_keyword">final</strong> Exception ex) {
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         LOGGER.warn(<span class="jxr_string">"Exception during "</span> + name + <span class="jxr_string">" compression of '"</span> + source.toString() + <span class="jxr_string">"'."</span>, ex);
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>     }
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> 
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>     @Override
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>         <strong class="jxr_keyword">return</strong> CommonsCompressAction.<strong class="jxr_keyword">class</strong>.getSimpleName() + '[' + source + <span class="jxr_string">" to "</span> + destination <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>                 + <span class="jxr_string">", deleteSource="</span> + deleteSource + ']';
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     }
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> 
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>     <strong class="jxr_keyword">public</strong> String getName() {
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">return</strong> name;
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>     }
+<a class="jxr_linenumber" name="L143" href="#L143">143</a> 
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>     <strong class="jxr_keyword">public</strong> File getSource() {
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>         <strong class="jxr_keyword">return</strong> source;
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>     }
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> 
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">public</strong> File getDestination() {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">return</strong> destination;
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>     }
+<a class="jxr_linenumber" name="L151" href="#L151">151</a> 
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isDeleteSource() {
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">return</strong> deleteSource;
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>     }
+<a class="jxr_linenumber" name="L155" href="#L155">155</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>

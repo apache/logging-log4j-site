@@ -189,7 +189,7 @@
 <a class="jxr_linenumber" name="L181" href="#L181">181</a> 
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     * Create the DefaultRolloverStrategy.</em>
-<a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L185" href="#L185">185</a> <em class="jxr_javadoccomment">     * @param max The maximum number of files to keep.</em>
 <a class="jxr_linenumber" name="L186" href="#L186">186</a> <em class="jxr_javadoccomment">     * @param min The minimum number of files to keep.</em>
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> <em class="jxr_javadoccomment">     * @param fileIndex If set to "max" (the default), files with a higher index will be newer than files with a smaller</em>
@@ -251,7 +251,7 @@
 <a class="jxr_linenumber" name="L243" href="#L243">243</a> 
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L245" href="#L245">245</a> <em class="jxr_javadoccomment">     * Constructs a new instance.</em>
-<a class="jxr_linenumber" name="L246" href="#L246">246</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L246" href="#L246">246</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L247" href="#L247">247</a> <em class="jxr_javadoccomment">     * @param minIndex The minimum index.</em>
 <a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_javadoccomment">     * @param maxIndex The maximum index.</em>
 <a class="jxr_linenumber" name="L249" href="#L249">249</a> <em class="jxr_javadoccomment">     * @param customActions custom actions to perform asynchronously after rollover</em>
@@ -518,7 +518,7 @@
 <a class="jxr_linenumber" name="L510" href="#L510">510</a> 
 <a class="jxr_linenumber" name="L511" href="#L511">511</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L512" href="#L512">512</a> <em class="jxr_javadoccomment">     * Perform the rollover.</em>
-<a class="jxr_linenumber" name="L513" href="#L513">513</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L513" href="#L513">513</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L514" href="#L514">514</a> <em class="jxr_javadoccomment">     * @param manager The RollingFileManager name for current active log file.</em>
 <a class="jxr_linenumber" name="L515" href="#L515">515</a> <em class="jxr_javadoccomment">     * @return A RolloverDescription.</em>
 <a class="jxr_linenumber" name="L516" href="#L516">516</a> <em class="jxr_javadoccomment">     * @throws SecurityException if an error occurs.</em>
@@ -553,27 +553,28 @@
 <a class="jxr_linenumber" name="L545" href="#L545">545</a>             }
 <a class="jxr_linenumber" name="L546" href="#L546">546</a>         }
 <a class="jxr_linenumber" name="L547" href="#L547">547</a> 
-<a class="jxr_linenumber" name="L548" href="#L548">548</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/action/FileRenameAction.html">FileRenameAction</a> renameAction = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/action/FileRenameAction.html">FileRenameAction</a>(<strong class="jxr_keyword">new</strong> File(currentFileName), <strong class="jxr_keyword">new</strong> File(renameTo), false);
-<a class="jxr_linenumber" name="L549" href="#L549">549</a> 
-<a class="jxr_linenumber" name="L550" href="#L550">550</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/action/Action.html">Action</a> asyncAction = merge(compressAction, customActions, stopCustomActionsOnError);
-<a class="jxr_linenumber" name="L551" href="#L551">551</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RolloverDescriptionImpl.html">RolloverDescriptionImpl</a>(currentFileName, false, renameAction, asyncAction);
-<a class="jxr_linenumber" name="L552" href="#L552">552</a>     }
-<a class="jxr_linenumber" name="L553" href="#L553">553</a> 
-<a class="jxr_linenumber" name="L554" href="#L554">554</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> suffixLength(<strong class="jxr_keyword">final</strong> String lowFilename) {
-<a class="jxr_linenumber" name="L555" href="#L555">555</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> FileExtensions extension : FileExtensions.values()) {
-<a class="jxr_linenumber" name="L556" href="#L556">556</a>             <strong class="jxr_keyword">if</strong> (extension.isExtensionFor(lowFilename)) {
-<a class="jxr_linenumber" name="L557" href="#L557">557</a>                 <strong class="jxr_keyword">return</strong> extension.length();
-<a class="jxr_linenumber" name="L558" href="#L558">558</a>             }
-<a class="jxr_linenumber" name="L559" href="#L559">559</a>         }
-<a class="jxr_linenumber" name="L560" href="#L560">560</a>         <strong class="jxr_keyword">return</strong> 0;
-<a class="jxr_linenumber" name="L561" href="#L561">561</a>     }
-<a class="jxr_linenumber" name="L562" href="#L562">562</a> 
-<a class="jxr_linenumber" name="L563" href="#L563">563</a>     @Override
-<a class="jxr_linenumber" name="L564" href="#L564">564</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="L565" href="#L565">565</a>         <strong class="jxr_keyword">return</strong> <span class="jxr_string">"DefaultRolloverStrategy(min="</span> + minIndex + <span class="jxr_string">", max="</span> + maxIndex + ')';
-<a class="jxr_linenumber" name="L566" href="#L566">566</a>     }
-<a class="jxr_linenumber" name="L567" href="#L567">567</a> 
-<a class="jxr_linenumber" name="L568" href="#L568">568</a> }
+<a class="jxr_linenumber" name="L548" href="#L548">548</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/action/FileRenameAction.html">FileRenameAction</a> renameAction = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/action/FileRenameAction.html">FileRenameAction</a>(<strong class="jxr_keyword">new</strong> File(currentFileName), <strong class="jxr_keyword">new</strong> File(renameTo),
+<a class="jxr_linenumber" name="L549" href="#L549">549</a>                 manager.isRenameEmptyFiles());
+<a class="jxr_linenumber" name="L550" href="#L550">550</a> 
+<a class="jxr_linenumber" name="L551" href="#L551">551</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/action/Action.html">Action</a> asyncAction = merge(compressAction, customActions, stopCustomActionsOnError);
+<a class="jxr_linenumber" name="L552" href="#L552">552</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RolloverDescriptionImpl.html">RolloverDescriptionImpl</a>(currentFileName, false, renameAction, asyncAction);
+<a class="jxr_linenumber" name="L553" href="#L553">553</a>     }
+<a class="jxr_linenumber" name="L554" href="#L554">554</a> 
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> suffixLength(<strong class="jxr_keyword">final</strong> String lowFilename) {
+<a class="jxr_linenumber" name="L556" href="#L556">556</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> FileExtensions extension : FileExtensions.values()) {
+<a class="jxr_linenumber" name="L557" href="#L557">557</a>             <strong class="jxr_keyword">if</strong> (extension.isExtensionFor(lowFilename)) {
+<a class="jxr_linenumber" name="L558" href="#L558">558</a>                 <strong class="jxr_keyword">return</strong> extension.length();
+<a class="jxr_linenumber" name="L559" href="#L559">559</a>             }
+<a class="jxr_linenumber" name="L560" href="#L560">560</a>         }
+<a class="jxr_linenumber" name="L561" href="#L561">561</a>         <strong class="jxr_keyword">return</strong> 0;
+<a class="jxr_linenumber" name="L562" href="#L562">562</a>     }
+<a class="jxr_linenumber" name="L563" href="#L563">563</a> 
+<a class="jxr_linenumber" name="L564" href="#L564">564</a>     @Override
+<a class="jxr_linenumber" name="L565" href="#L565">565</a>     <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="L566" href="#L566">566</a>         <strong class="jxr_keyword">return</strong> <span class="jxr_string">"DefaultRolloverStrategy(min="</span> + minIndex + <span class="jxr_string">", max="</span> + maxIndex + ')';
+<a class="jxr_linenumber" name="L567" href="#L567">567</a>     }
+<a class="jxr_linenumber" name="L568" href="#L568">568</a> 
+<a class="jxr_linenumber" name="L569" href="#L569">569</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>

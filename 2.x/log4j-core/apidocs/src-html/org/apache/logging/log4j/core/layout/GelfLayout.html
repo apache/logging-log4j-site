@@ -24,32 +24,32 @@
 <span class="sourceLineNo">016</span> */<a name="line.16"></a>
 <span class="sourceLineNo">017</span>package org.apache.logging.log4j.core.layout;<a name="line.17"></a>
 <span class="sourceLineNo">018</span><a name="line.18"></a>
-<span class="sourceLineNo">019</span>import org.apache.logging.log4j.Level;<a name="line.19"></a>
-<span class="sourceLineNo">020</span>import org.apache.logging.log4j.core.Layout;<a name="line.20"></a>
-<span class="sourceLineNo">021</span>import org.apache.logging.log4j.core.LogEvent;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import org.apache.logging.log4j.core.config.Node;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.24"></a>
-<span class="sourceLineNo">025</span>import org.apache.logging.log4j.core.config.plugins.PluginElement;<a name="line.25"></a>
-<span class="sourceLineNo">026</span>import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import org.apache.logging.log4j.core.net.Severity;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import org.apache.logging.log4j.core.util.JsonUtils;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import org.apache.logging.log4j.core.util.KeyValuePair;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>import org.apache.logging.log4j.message.Message;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.31"></a>
-<span class="sourceLineNo">032</span>import org.apache.logging.log4j.util.StringBuilderFormattable;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>import org.apache.logging.log4j.util.Strings;<a name="line.33"></a>
-<span class="sourceLineNo">034</span><a name="line.34"></a>
-<span class="sourceLineNo">035</span>import java.io.ByteArrayOutputStream;<a name="line.35"></a>
-<span class="sourceLineNo">036</span>import java.io.IOException;<a name="line.36"></a>
-<span class="sourceLineNo">037</span>import java.io.OutputStream;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import java.io.PrintWriter;<a name="line.38"></a>
-<span class="sourceLineNo">039</span>import java.io.StringWriter;<a name="line.39"></a>
-<span class="sourceLineNo">040</span>import java.nio.charset.StandardCharsets;<a name="line.40"></a>
-<span class="sourceLineNo">041</span>import java.util.Collections;<a name="line.41"></a>
-<span class="sourceLineNo">042</span>import java.util.Map;<a name="line.42"></a>
-<span class="sourceLineNo">043</span>import java.util.zip.DeflaterOutputStream;<a name="line.43"></a>
-<span class="sourceLineNo">044</span>import java.util.zip.GZIPOutputStream;<a name="line.44"></a>
+<span class="sourceLineNo">019</span>import java.io.ByteArrayOutputStream;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.io.IOException;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.io.OutputStream;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.io.PrintWriter;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.io.StringWriter;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.nio.charset.StandardCharsets;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.util.Collections;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.util.Map;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.util.zip.DeflaterOutputStream;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.zip.GZIPOutputStream;<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.logging.log4j.Level;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.logging.log4j.core.Layout;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.apache.logging.log4j.core.LogEvent;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.logging.log4j.core.config.Node;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.apache.logging.log4j.core.config.plugins.PluginElement;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.apache.logging.log4j.core.net.Severity;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.apache.logging.log4j.core.util.JsonUtils;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.apache.logging.log4j.core.util.KeyValuePair;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.apache.logging.log4j.message.Message;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.apache.logging.log4j.util.StringBuilderFormattable;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.apache.logging.log4j.util.Strings;<a name="line.44"></a>
 <span class="sourceLineNo">045</span><a name="line.45"></a>
 <span class="sourceLineNo">046</span>/**<a name="line.46"></a>
 <span class="sourceLineNo">047</span> * Lays out events in the Graylog Extended Log Format (GELF) 1.1.<a name="line.47"></a>
@@ -123,7 +123,7 @@
 <span class="sourceLineNo">115</span>        this.compressionThreshold = compressionThreshold;<a name="line.115"></a>
 <span class="sourceLineNo">116</span>        this.includeStacktrace = includeStacktrace;<a name="line.116"></a>
 <span class="sourceLineNo">117</span>    }<a name="line.117"></a>
-<span class="sourceLineNo">118</span>    <a name="line.118"></a>
+<span class="sourceLineNo">118</span><a name="line.118"></a>
 <span class="sourceLineNo">119</span>    @PluginFactory<a name="line.119"></a>
 <span class="sourceLineNo">120</span>    public static GelfLayout createLayout(<a name="line.120"></a>
 <span class="sourceLineNo">121</span>            //@formatter:off<a name="line.121"></a>
@@ -239,76 +239,80 @@
 <span class="sourceLineNo">231</span>            JsonUtils.quoteAsString(((CharSequence)message), builder);<a name="line.231"></a>
 <span class="sourceLineNo">232</span>        } else if (gcFree &amp;&amp; message instanceof StringBuilderFormattable) {<a name="line.232"></a>
 <span class="sourceLineNo">233</span>            final StringBuilder messageBuffer = getMessageStringBuilder();<a name="line.233"></a>
-<span class="sourceLineNo">234</span>            ((StringBuilderFormattable)message).formatTo(messageBuffer);<a name="line.234"></a>
-<span class="sourceLineNo">235</span>            JsonUtils.quoteAsString(messageBuffer, builder);<a name="line.235"></a>
-<span class="sourceLineNo">236</span>        } else {<a name="line.236"></a>
-<span class="sourceLineNo">237</span>            JsonUtils.quoteAsString(toNullSafeString(message.getFormattedMessage()), builder);<a name="line.237"></a>
-<span class="sourceLineNo">238</span>        }<a name="line.238"></a>
-<span class="sourceLineNo">239</span>        builder.append(Q);<a name="line.239"></a>
-<span class="sourceLineNo">240</span>        builder.append('}');<a name="line.240"></a>
-<span class="sourceLineNo">241</span>        return builder;<a name="line.241"></a>
-<span class="sourceLineNo">242</span>    }<a name="line.242"></a>
-<span class="sourceLineNo">243</span><a name="line.243"></a>
-<span class="sourceLineNo">244</span>    private static final ThreadLocal&lt;StringBuilder&gt; messageStringBuilder = new ThreadLocal&lt;&gt;();<a name="line.244"></a>
-<span class="sourceLineNo">245</span><a name="line.245"></a>
-<span class="sourceLineNo">246</span>    private static StringBuilder getMessageStringBuilder() {<a name="line.246"></a>
-<span class="sourceLineNo">247</span>        StringBuilder result = messageStringBuilder.get();<a name="line.247"></a>
-<span class="sourceLineNo">248</span>        if (result == null) {<a name="line.248"></a>
-<span class="sourceLineNo">249</span>            result = new StringBuilder(DEFAULT_STRING_BUILDER_SIZE);<a name="line.249"></a>
-<span class="sourceLineNo">250</span>            messageStringBuilder.set(result);<a name="line.250"></a>
-<span class="sourceLineNo">251</span>        }<a name="line.251"></a>
-<span class="sourceLineNo">252</span>        result.setLength(0);<a name="line.252"></a>
-<span class="sourceLineNo">253</span>        return result;<a name="line.253"></a>
-<span class="sourceLineNo">254</span>    }<a name="line.254"></a>
-<span class="sourceLineNo">255</span><a name="line.255"></a>
-<span class="sourceLineNo">256</span>    private CharSequence toNullSafeString(final CharSequence s) {<a name="line.256"></a>
-<span class="sourceLineNo">257</span>        return s == null ? Strings.EMPTY : s;<a name="line.257"></a>
+<span class="sourceLineNo">234</span>            try {<a name="line.234"></a>
+<span class="sourceLineNo">235</span>                ((StringBuilderFormattable) message).formatTo(messageBuffer);<a name="line.235"></a>
+<span class="sourceLineNo">236</span>                JsonUtils.quoteAsString(messageBuffer, builder);<a name="line.236"></a>
+<span class="sourceLineNo">237</span>            } finally {<a name="line.237"></a>
+<span class="sourceLineNo">238</span>                trimToMaxSize(messageBuffer);<a name="line.238"></a>
+<span class="sourceLineNo">239</span>            }<a name="line.239"></a>
+<span class="sourceLineNo">240</span>        } else {<a name="line.240"></a>
+<span class="sourceLineNo">241</span>            JsonUtils.quoteAsString(toNullSafeString(message.getFormattedMessage()), builder);<a name="line.241"></a>
+<span class="sourceLineNo">242</span>        }<a name="line.242"></a>
+<span class="sourceLineNo">243</span>        builder.append(Q);<a name="line.243"></a>
+<span class="sourceLineNo">244</span>        builder.append('}');<a name="line.244"></a>
+<span class="sourceLineNo">245</span>        return builder;<a name="line.245"></a>
+<span class="sourceLineNo">246</span>    }<a name="line.246"></a>
+<span class="sourceLineNo">247</span><a name="line.247"></a>
+<span class="sourceLineNo">248</span>    private static final ThreadLocal&lt;StringBuilder&gt; messageStringBuilder = new ThreadLocal&lt;&gt;();<a name="line.248"></a>
+<span class="sourceLineNo">249</span><a name="line.249"></a>
+<span class="sourceLineNo">250</span>    private static StringBuilder getMessageStringBuilder() {<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        StringBuilder result = messageStringBuilder.get();<a name="line.251"></a>
+<span class="sourceLineNo">252</span>        if (result == null) {<a name="line.252"></a>
+<span class="sourceLineNo">253</span>            result = new StringBuilder(DEFAULT_STRING_BUILDER_SIZE);<a name="line.253"></a>
+<span class="sourceLineNo">254</span>            messageStringBuilder.set(result);<a name="line.254"></a>
+<span class="sourceLineNo">255</span>        }<a name="line.255"></a>
+<span class="sourceLineNo">256</span>        result.setLength(0);<a name="line.256"></a>
+<span class="sourceLineNo">257</span>        return result;<a name="line.257"></a>
 <span class="sourceLineNo">258</span>    }<a name="line.258"></a>
 <span class="sourceLineNo">259</span><a name="line.259"></a>
-<span class="sourceLineNo">260</span>    /**<a name="line.260"></a>
-<span class="sourceLineNo">261</span>     * Non-private to make it accessible from unit test.<a name="line.261"></a>
-<span class="sourceLineNo">262</span>     */<a name="line.262"></a>
-<span class="sourceLineNo">263</span>    static CharSequence formatTimestamp(final long timeMillis) {<a name="line.263"></a>
-<span class="sourceLineNo">264</span>        if (timeMillis &lt; 1000) {<a name="line.264"></a>
-<span class="sourceLineNo">265</span>            return "0";<a name="line.265"></a>
-<span class="sourceLineNo">266</span>        }<a name="line.266"></a>
-<span class="sourceLineNo">267</span>        final StringBuilder builder = getTimestampStringBuilder();<a name="line.267"></a>
-<span class="sourceLineNo">268</span>        builder.append(timeMillis);<a name="line.268"></a>
-<span class="sourceLineNo">269</span>        builder.insert(builder.length() - 3, '.');<a name="line.269"></a>
-<span class="sourceLineNo">270</span>        return builder;<a name="line.270"></a>
-<span class="sourceLineNo">271</span>    }<a name="line.271"></a>
-<span class="sourceLineNo">272</span><a name="line.272"></a>
-<span class="sourceLineNo">273</span>    private static final ThreadLocal&lt;StringBuilder&gt; timestampStringBuilder = new ThreadLocal&lt;&gt;();<a name="line.273"></a>
-<span class="sourceLineNo">274</span><a name="line.274"></a>
-<span class="sourceLineNo">275</span>    private static StringBuilder getTimestampStringBuilder() {<a name="line.275"></a>
-<span class="sourceLineNo">276</span>        StringBuilder result = timestampStringBuilder.get();<a name="line.276"></a>
-<span class="sourceLineNo">277</span>        if (result == null) {<a name="line.277"></a>
-<span class="sourceLineNo">278</span>            result = new StringBuilder(20);<a name="line.278"></a>
-<span class="sourceLineNo">279</span>            timestampStringBuilder.set(result);<a name="line.279"></a>
-<span class="sourceLineNo">280</span>        }<a name="line.280"></a>
-<span class="sourceLineNo">281</span>        result.setLength(0);<a name="line.281"></a>
-<span class="sourceLineNo">282</span>        return result;<a name="line.282"></a>
-<span class="sourceLineNo">283</span>    }<a name="line.283"></a>
-<span class="sourceLineNo">284</span><a name="line.284"></a>
-<span class="sourceLineNo">285</span>    /**<a name="line.285"></a>
-<span class="sourceLineNo">286</span>     * http://en.wikipedia.org/wiki/Syslog#Severity_levels<a name="line.286"></a>
-<span class="sourceLineNo">287</span>     */<a name="line.287"></a>
-<span class="sourceLineNo">288</span>    private int formatLevel(final Level level) {<a name="line.288"></a>
-<span class="sourceLineNo">289</span>        return Severity.getSeverity(level).getCode();<a name="line.289"></a>
-<span class="sourceLineNo">290</span>    }<a name="line.290"></a>
-<span class="sourceLineNo">291</span><a name="line.291"></a>
-<span class="sourceLineNo">292</span>    /**<a name="line.292"></a>
-<span class="sourceLineNo">293</span>     * Non-private to make it accessible from unit test.<a name="line.293"></a>
-<span class="sourceLineNo">294</span>     */<a name="line.294"></a>
-<span class="sourceLineNo">295</span>    static CharSequence formatThrowable(final Throwable throwable) {<a name="line.295"></a>
-<span class="sourceLineNo">296</span>        // stack traces are big enough to provide a reasonably large initial capacity here<a name="line.296"></a>
-<span class="sourceLineNo">297</span>        final StringWriter sw = new StringWriter(2048);<a name="line.297"></a>
-<span class="sourceLineNo">298</span>        final PrintWriter pw = new PrintWriter(sw);<a name="line.298"></a>
-<span class="sourceLineNo">299</span>        throwable.printStackTrace(pw);<a name="line.299"></a>
-<span class="sourceLineNo">300</span>        pw.flush();<a name="line.300"></a>
-<span class="sourceLineNo">301</span>        return sw.getBuffer();<a name="line.301"></a>
-<span class="sourceLineNo">302</span>    }<a name="line.302"></a>
-<span class="sourceLineNo">303</span>}<a name="line.303"></a>
+<span class="sourceLineNo">260</span>    private CharSequence toNullSafeString(final CharSequence s) {<a name="line.260"></a>
+<span class="sourceLineNo">261</span>        return s == null ? Strings.EMPTY : s;<a name="line.261"></a>
+<span class="sourceLineNo">262</span>    }<a name="line.262"></a>
+<span class="sourceLineNo">263</span><a name="line.263"></a>
+<span class="sourceLineNo">264</span>    /**<a name="line.264"></a>
+<span class="sourceLineNo">265</span>     * Non-private to make it accessible from unit test.<a name="line.265"></a>
+<span class="sourceLineNo">266</span>     */<a name="line.266"></a>
+<span class="sourceLineNo">267</span>    static CharSequence formatTimestamp(final long timeMillis) {<a name="line.267"></a>
+<span class="sourceLineNo">268</span>        if (timeMillis &lt; 1000) {<a name="line.268"></a>
+<span class="sourceLineNo">269</span>            return "0";<a name="line.269"></a>
+<span class="sourceLineNo">270</span>        }<a name="line.270"></a>
+<span class="sourceLineNo">271</span>        final StringBuilder builder = getTimestampStringBuilder();<a name="line.271"></a>
+<span class="sourceLineNo">272</span>        builder.append(timeMillis);<a name="line.272"></a>
+<span class="sourceLineNo">273</span>        builder.insert(builder.length() - 3, '.');<a name="line.273"></a>
+<span class="sourceLineNo">274</span>        return builder;<a name="line.274"></a>
+<span class="sourceLineNo">275</span>    }<a name="line.275"></a>
+<span class="sourceLineNo">276</span><a name="line.276"></a>
+<span class="sourceLineNo">277</span>    private static final ThreadLocal&lt;StringBuilder&gt; timestampStringBuilder = new ThreadLocal&lt;&gt;();<a name="line.277"></a>
+<span class="sourceLineNo">278</span><a name="line.278"></a>
+<span class="sourceLineNo">279</span>    private static StringBuilder getTimestampStringBuilder() {<a name="line.279"></a>
+<span class="sourceLineNo">280</span>        StringBuilder result = timestampStringBuilder.get();<a name="line.280"></a>
+<span class="sourceLineNo">281</span>        if (result == null) {<a name="line.281"></a>
+<span class="sourceLineNo">282</span>            result = new StringBuilder(20);<a name="line.282"></a>
+<span class="sourceLineNo">283</span>            timestampStringBuilder.set(result);<a name="line.283"></a>
+<span class="sourceLineNo">284</span>        }<a name="line.284"></a>
+<span class="sourceLineNo">285</span>        result.setLength(0);<a name="line.285"></a>
+<span class="sourceLineNo">286</span>        return result;<a name="line.286"></a>
+<span class="sourceLineNo">287</span>    }<a name="line.287"></a>
+<span class="sourceLineNo">288</span><a name="line.288"></a>
+<span class="sourceLineNo">289</span>    /**<a name="line.289"></a>
+<span class="sourceLineNo">290</span>     * http://en.wikipedia.org/wiki/Syslog#Severity_levels<a name="line.290"></a>
+<span class="sourceLineNo">291</span>     */<a name="line.291"></a>
+<span class="sourceLineNo">292</span>    private int formatLevel(final Level level) {<a name="line.292"></a>
+<span class="sourceLineNo">293</span>        return Severity.getSeverity(level).getCode();<a name="line.293"></a>
+<span class="sourceLineNo">294</span>    }<a name="line.294"></a>
+<span class="sourceLineNo">295</span><a name="line.295"></a>
+<span class="sourceLineNo">296</span>    /**<a name="line.296"></a>
+<span class="sourceLineNo">297</span>     * Non-private to make it accessible from unit test.<a name="line.297"></a>
+<span class="sourceLineNo">298</span>     */<a name="line.298"></a>
+<span class="sourceLineNo">299</span>    static CharSequence formatThrowable(final Throwable throwable) {<a name="line.299"></a>
+<span class="sourceLineNo">300</span>        // stack traces are big enough to provide a reasonably large initial capacity here<a name="line.300"></a>
+<span class="sourceLineNo">301</span>        final StringWriter sw = new StringWriter(2048);<a name="line.301"></a>
+<span class="sourceLineNo">302</span>        final PrintWriter pw = new PrintWriter(sw);<a name="line.302"></a>
+<span class="sourceLineNo">303</span>        throwable.printStackTrace(pw);<a name="line.303"></a>
+<span class="sourceLineNo">304</span>        pw.flush();<a name="line.304"></a>
+<span class="sourceLineNo">305</span>        return sw.getBuffer();<a name="line.305"></a>
+<span class="sourceLineNo">306</span>    }<a name="line.306"></a>
+<span class="sourceLineNo">307</span>}<a name="line.307"></a>
 
 
 

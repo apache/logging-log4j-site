@@ -189,7 +189,7 @@
 <span class="sourceLineNo">181</span><a name="line.181"></a>
 <span class="sourceLineNo">182</span>    /**<a name="line.182"></a>
 <span class="sourceLineNo">183</span>     * Create the DefaultRolloverStrategy.<a name="line.183"></a>
-<span class="sourceLineNo">184</span>     * <a name="line.184"></a>
+<span class="sourceLineNo">184</span>     *<a name="line.184"></a>
 <span class="sourceLineNo">185</span>     * @param max The maximum number of files to keep.<a name="line.185"></a>
 <span class="sourceLineNo">186</span>     * @param min The minimum number of files to keep.<a name="line.186"></a>
 <span class="sourceLineNo">187</span>     * @param fileIndex If set to "max" (the default), files with a higher index will be newer than files with a smaller<a name="line.187"></a>
@@ -251,7 +251,7 @@
 <span class="sourceLineNo">243</span><a name="line.243"></a>
 <span class="sourceLineNo">244</span>    /**<a name="line.244"></a>
 <span class="sourceLineNo">245</span>     * Constructs a new instance.<a name="line.245"></a>
-<span class="sourceLineNo">246</span>     * <a name="line.246"></a>
+<span class="sourceLineNo">246</span>     *<a name="line.246"></a>
 <span class="sourceLineNo">247</span>     * @param minIndex The minimum index.<a name="line.247"></a>
 <span class="sourceLineNo">248</span>     * @param maxIndex The maximum index.<a name="line.248"></a>
 <span class="sourceLineNo">249</span>     * @param customActions custom actions to perform asynchronously after rollover<a name="line.249"></a>
@@ -518,7 +518,7 @@
 <span class="sourceLineNo">510</span><a name="line.510"></a>
 <span class="sourceLineNo">511</span>    /**<a name="line.511"></a>
 <span class="sourceLineNo">512</span>     * Perform the rollover.<a name="line.512"></a>
-<span class="sourceLineNo">513</span>     * <a name="line.513"></a>
+<span class="sourceLineNo">513</span>     *<a name="line.513"></a>
 <span class="sourceLineNo">514</span>     * @param manager The RollingFileManager name for current active log file.<a name="line.514"></a>
 <span class="sourceLineNo">515</span>     * @return A RolloverDescription.<a name="line.515"></a>
 <span class="sourceLineNo">516</span>     * @throws SecurityException if an error occurs.<a name="line.516"></a>
@@ -553,27 +553,28 @@
 <span class="sourceLineNo">545</span>            }<a name="line.545"></a>
 <span class="sourceLineNo">546</span>        }<a name="line.546"></a>
 <span class="sourceLineNo">547</span><a name="line.547"></a>
-<span class="sourceLineNo">548</span>        final FileRenameAction renameAction = new FileRenameAction(new File(currentFileName), new File(renameTo), false);<a name="line.548"></a>
-<span class="sourceLineNo">549</span><a name="line.549"></a>
-<span class="sourceLineNo">550</span>        final Action asyncAction = merge(compressAction, customActions, stopCustomActionsOnError);<a name="line.550"></a>
-<span class="sourceLineNo">551</span>        return new RolloverDescriptionImpl(currentFileName, false, renameAction, asyncAction);<a name="line.551"></a>
-<span class="sourceLineNo">552</span>    }<a name="line.552"></a>
-<span class="sourceLineNo">553</span><a name="line.553"></a>
-<span class="sourceLineNo">554</span>    private int suffixLength(final String lowFilename) {<a name="line.554"></a>
-<span class="sourceLineNo">555</span>        for (final FileExtensions extension : FileExtensions.values()) {<a name="line.555"></a>
-<span class="sourceLineNo">556</span>            if (extension.isExtensionFor(lowFilename)) {<a name="line.556"></a>
-<span class="sourceLineNo">557</span>                return extension.length();<a name="line.557"></a>
-<span class="sourceLineNo">558</span>            }<a name="line.558"></a>
-<span class="sourceLineNo">559</span>        }<a name="line.559"></a>
-<span class="sourceLineNo">560</span>        return 0;<a name="line.560"></a>
-<span class="sourceLineNo">561</span>    }<a name="line.561"></a>
-<span class="sourceLineNo">562</span><a name="line.562"></a>
-<span class="sourceLineNo">563</span>    @Override<a name="line.563"></a>
-<span class="sourceLineNo">564</span>    public String toString() {<a name="line.564"></a>
-<span class="sourceLineNo">565</span>        return "DefaultRolloverStrategy(min=" + minIndex + ", max=" + maxIndex + ')';<a name="line.565"></a>
-<span class="sourceLineNo">566</span>    }<a name="line.566"></a>
-<span class="sourceLineNo">567</span><a name="line.567"></a>
-<span class="sourceLineNo">568</span>}<a name="line.568"></a>
+<span class="sourceLineNo">548</span>        final FileRenameAction renameAction = new FileRenameAction(new File(currentFileName), new File(renameTo),<a name="line.548"></a>
+<span class="sourceLineNo">549</span>                manager.isRenameEmptyFiles());<a name="line.549"></a>
+<span class="sourceLineNo">550</span><a name="line.550"></a>
+<span class="sourceLineNo">551</span>        final Action asyncAction = merge(compressAction, customActions, stopCustomActionsOnError);<a name="line.551"></a>
+<span class="sourceLineNo">552</span>        return new RolloverDescriptionImpl(currentFileName, false, renameAction, asyncAction);<a name="line.552"></a>
+<span class="sourceLineNo">553</span>    }<a name="line.553"></a>
+<span class="sourceLineNo">554</span><a name="line.554"></a>
+<span class="sourceLineNo">555</span>    private int suffixLength(final String lowFilename) {<a name="line.555"></a>
+<span class="sourceLineNo">556</span>        for (final FileExtensions extension : FileExtensions.values()) {<a name="line.556"></a>
+<span class="sourceLineNo">557</span>            if (extension.isExtensionFor(lowFilename)) {<a name="line.557"></a>
+<span class="sourceLineNo">558</span>                return extension.length();<a name="line.558"></a>
+<span class="sourceLineNo">559</span>            }<a name="line.559"></a>
+<span class="sourceLineNo">560</span>        }<a name="line.560"></a>
+<span class="sourceLineNo">561</span>        return 0;<a name="line.561"></a>
+<span class="sourceLineNo">562</span>    }<a name="line.562"></a>
+<span class="sourceLineNo">563</span><a name="line.563"></a>
+<span class="sourceLineNo">564</span>    @Override<a name="line.564"></a>
+<span class="sourceLineNo">565</span>    public String toString() {<a name="line.565"></a>
+<span class="sourceLineNo">566</span>        return "DefaultRolloverStrategy(min=" + minIndex + ", max=" + maxIndex + ')';<a name="line.566"></a>
+<span class="sourceLineNo">567</span>    }<a name="line.567"></a>
+<span class="sourceLineNo">568</span><a name="line.568"></a>
+<span class="sourceLineNo">569</span>}<a name="line.569"></a>
 
 
 
