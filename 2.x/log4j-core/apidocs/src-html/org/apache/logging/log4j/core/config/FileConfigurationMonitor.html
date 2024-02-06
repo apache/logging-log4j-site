@@ -43,7 +43,7 @@
 <FONT color="green">040</FONT>    <a name="line.40"></a>
 <FONT color="green">041</FONT>        private final List&lt;ConfigurationListener&gt; listeners;<a name="line.41"></a>
 <FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>        private final int interval;<a name="line.43"></a>
+<FONT color="green">043</FONT>        private final int intervalSeconds;<a name="line.43"></a>
 <FONT color="green">044</FONT>    <a name="line.44"></a>
 <FONT color="green">045</FONT>        private long nextCheck;<a name="line.45"></a>
 <FONT color="green">046</FONT>    <a name="line.46"></a>
@@ -58,17 +58,17 @@
 <FONT color="green">055</FONT>         * @param reconfigurable The Configuration that can be reconfigured.<a name="line.55"></a>
 <FONT color="green">056</FONT>         * @param file The File to monitor.<a name="line.56"></a>
 <FONT color="green">057</FONT>         * @param listeners The List of ConfigurationListeners to notify upon a change.<a name="line.57"></a>
-<FONT color="green">058</FONT>         * @param interval The monitor interval in seconds. The minimum interval is 5 seconds.<a name="line.58"></a>
+<FONT color="green">058</FONT>         * @param intervalSeconds The monitor interval in seconds. The minimum interval is 5 seconds.<a name="line.58"></a>
 <FONT color="green">059</FONT>         */<a name="line.59"></a>
 <FONT color="green">060</FONT>        public FileConfigurationMonitor(final Reconfigurable reconfigurable, final File file,<a name="line.60"></a>
 <FONT color="green">061</FONT>                                        final List&lt;ConfigurationListener&gt; listeners,<a name="line.61"></a>
-<FONT color="green">062</FONT>                                        final int interval) {<a name="line.62"></a>
+<FONT color="green">062</FONT>                                        final int intervalSeconds) {<a name="line.62"></a>
 <FONT color="green">063</FONT>            this.reconfigurable = reconfigurable;<a name="line.63"></a>
 <FONT color="green">064</FONT>            this.file = file;<a name="line.64"></a>
 <FONT color="green">065</FONT>            this.lastModified = file.lastModified();<a name="line.65"></a>
 <FONT color="green">066</FONT>            this.listeners = listeners;<a name="line.66"></a>
-<FONT color="green">067</FONT>            this.interval = (interval &lt; MIN_INTERVAL ? MIN_INTERVAL : interval) * MILLIS_PER_SECOND;<a name="line.67"></a>
-<FONT color="green">068</FONT>            this.nextCheck = System.currentTimeMillis() + interval;<a name="line.68"></a>
+<FONT color="green">067</FONT>            this.intervalSeconds = (intervalSeconds &lt; MIN_INTERVAL ? MIN_INTERVAL : intervalSeconds) * MILLIS_PER_SECOND;<a name="line.67"></a>
+<FONT color="green">068</FONT>            this.nextCheck = System.currentTimeMillis() + intervalSeconds;<a name="line.68"></a>
 <FONT color="green">069</FONT>        }<a name="line.69"></a>
 <FONT color="green">070</FONT>    <a name="line.70"></a>
 <FONT color="green">071</FONT>        /**<a name="line.71"></a>
@@ -80,7 +80,7 @@
 <FONT color="green">077</FONT>            if (((counter.incrementAndGet() &amp; MASK) == 0) &amp;&amp; (current &gt;= nextCheck)) {<a name="line.77"></a>
 <FONT color="green">078</FONT>                LOCK.lock();<a name="line.78"></a>
 <FONT color="green">079</FONT>                try {<a name="line.79"></a>
-<FONT color="green">080</FONT>                    nextCheck = current + interval;<a name="line.80"></a>
+<FONT color="green">080</FONT>                    nextCheck = current + intervalSeconds;<a name="line.80"></a>
 <FONT color="green">081</FONT>                    if (file.lastModified() &gt; lastModified) {<a name="line.81"></a>
 <FONT color="green">082</FONT>                        lastModified = file.lastModified();<a name="line.82"></a>
 <FONT color="green">083</FONT>                        for (final ConfigurationListener listener : listeners) {<a name="line.83"></a>

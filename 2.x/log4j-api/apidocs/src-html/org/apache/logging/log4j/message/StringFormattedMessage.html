@@ -136,32 +136,34 @@
 <FONT color="green">133</FONT>            stringArgs = new String[argArray.length];<a name="line.133"></a>
 <FONT color="green">134</FONT>            int i = 0;<a name="line.134"></a>
 <FONT color="green">135</FONT>            for (final Object obj : argArray) {<a name="line.135"></a>
-<FONT color="green">136</FONT>                stringArgs[i] = obj.toString();<a name="line.136"></a>
-<FONT color="green">137</FONT>                ++i;<a name="line.137"></a>
-<FONT color="green">138</FONT>            }<a name="line.138"></a>
-<FONT color="green">139</FONT>        }<a name="line.139"></a>
-<FONT color="green">140</FONT>    <a name="line.140"></a>
-<FONT color="green">141</FONT>        private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {<a name="line.141"></a>
-<FONT color="green">142</FONT>            in.defaultReadObject();<a name="line.142"></a>
-<FONT color="green">143</FONT>            formattedMessage = in.readUTF();<a name="line.143"></a>
-<FONT color="green">144</FONT>            messagePattern = in.readUTF();<a name="line.144"></a>
-<FONT color="green">145</FONT>            final int length = in.readInt();<a name="line.145"></a>
-<FONT color="green">146</FONT>            stringArgs = new String[length];<a name="line.146"></a>
-<FONT color="green">147</FONT>            for (int i = 0; i &lt; length; ++i) {<a name="line.147"></a>
-<FONT color="green">148</FONT>                stringArgs[i] = in.readUTF();<a name="line.148"></a>
-<FONT color="green">149</FONT>            }<a name="line.149"></a>
-<FONT color="green">150</FONT>        }<a name="line.150"></a>
-<FONT color="green">151</FONT>    <a name="line.151"></a>
-<FONT color="green">152</FONT>        /**<a name="line.152"></a>
-<FONT color="green">153</FONT>         * Return the throwable passed to the Message.<a name="line.153"></a>
-<FONT color="green">154</FONT>         *<a name="line.154"></a>
-<FONT color="green">155</FONT>         * @return the Throwable.<a name="line.155"></a>
-<FONT color="green">156</FONT>         */<a name="line.156"></a>
-<FONT color="green">157</FONT>        @Override<a name="line.157"></a>
-<FONT color="green">158</FONT>        public Throwable getThrowable() {<a name="line.158"></a>
-<FONT color="green">159</FONT>            return throwable;<a name="line.159"></a>
-<FONT color="green">160</FONT>        }<a name="line.160"></a>
-<FONT color="green">161</FONT>    }<a name="line.161"></a>
+<FONT color="green">136</FONT>                final String string = String.valueOf(obj);<a name="line.136"></a>
+<FONT color="green">137</FONT>                stringArgs[i] = string;<a name="line.137"></a>
+<FONT color="green">138</FONT>                out.writeUTF(string);<a name="line.138"></a>
+<FONT color="green">139</FONT>                ++i;<a name="line.139"></a>
+<FONT color="green">140</FONT>            }<a name="line.140"></a>
+<FONT color="green">141</FONT>        }<a name="line.141"></a>
+<FONT color="green">142</FONT>    <a name="line.142"></a>
+<FONT color="green">143</FONT>        private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {<a name="line.143"></a>
+<FONT color="green">144</FONT>            in.defaultReadObject();<a name="line.144"></a>
+<FONT color="green">145</FONT>            formattedMessage = in.readUTF();<a name="line.145"></a>
+<FONT color="green">146</FONT>            messagePattern = in.readUTF();<a name="line.146"></a>
+<FONT color="green">147</FONT>            final int length = in.readInt();<a name="line.147"></a>
+<FONT color="green">148</FONT>            stringArgs = new String[length];<a name="line.148"></a>
+<FONT color="green">149</FONT>            for (int i = 0; i &lt; length; ++i) {<a name="line.149"></a>
+<FONT color="green">150</FONT>                stringArgs[i] = in.readUTF();<a name="line.150"></a>
+<FONT color="green">151</FONT>            }<a name="line.151"></a>
+<FONT color="green">152</FONT>        }<a name="line.152"></a>
+<FONT color="green">153</FONT>    <a name="line.153"></a>
+<FONT color="green">154</FONT>        /**<a name="line.154"></a>
+<FONT color="green">155</FONT>         * Return the throwable passed to the Message.<a name="line.155"></a>
+<FONT color="green">156</FONT>         *<a name="line.156"></a>
+<FONT color="green">157</FONT>         * @return the Throwable.<a name="line.157"></a>
+<FONT color="green">158</FONT>         */<a name="line.158"></a>
+<FONT color="green">159</FONT>        @Override<a name="line.159"></a>
+<FONT color="green">160</FONT>        public Throwable getThrowable() {<a name="line.160"></a>
+<FONT color="green">161</FONT>            return throwable;<a name="line.161"></a>
+<FONT color="green">162</FONT>        }<a name="line.162"></a>
+<FONT color="green">163</FONT>    }<a name="line.163"></a>
 
 
 

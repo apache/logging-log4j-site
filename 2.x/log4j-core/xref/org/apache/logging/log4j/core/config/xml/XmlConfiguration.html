@@ -170,9 +170,9 @@
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"schema"</span>.equalsIgnoreCase(key)) {
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>                     schemaResource = value;
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"monitorInterval"</span>.equalsIgnoreCase(key)) {
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>                     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> interval = Integer.parseInt(value);
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>                     <strong class="jxr_keyword">if</strong> (interval &gt; 0 &amp;&amp; configFile != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>                         monitor = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/FileConfigurationMonitor.html">FileConfigurationMonitor</a>(<strong class="jxr_keyword">this</strong>, configFile, listeners, interval);
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>                     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> intervalSeconds = Integer.parseInt(value);
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>                     <strong class="jxr_keyword">if</strong> (intervalSeconds &gt; 0 &amp;&amp; configFile != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>                         monitor = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/FileConfigurationMonitor.html">FileConfigurationMonitor</a>(<strong class="jxr_keyword">this</strong>, configFile, listeners, intervalSeconds);
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>                     }
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"advertiser"</span>.equalsIgnoreCase(key)) {
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>                     createAdvertiser(value, configSource, buffer, <span class="jxr_string">"text/xml"</span>);
@@ -244,7 +244,7 @@
 <a class="jxr_linenumber" name="L236" href="#L236">236</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>             }
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/xml/XmlConfiguration.html">XmlConfiguration</a> config = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/xml/XmlConfiguration.html">XmlConfiguration</a>(source);
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>             <strong class="jxr_keyword">return</strong> (config.rootElement == <strong class="jxr_keyword">null</strong>) ? <strong class="jxr_keyword">null</strong> : config;
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>             <strong class="jxr_keyword">return</strong> config.rootElement == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong> : config;
 <a class="jxr_linenumber" name="L240" href="#L240">240</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
 <a class="jxr_linenumber" name="L241" href="#L241">241</a>             LOGGER.error(<span class="jxr_string">"Cannot locate file {}"</span>, getConfigurationSource(), ex);
 <a class="jxr_linenumber" name="L242" href="#L242">242</a>         }

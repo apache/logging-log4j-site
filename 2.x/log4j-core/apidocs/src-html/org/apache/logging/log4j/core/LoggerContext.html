@@ -73,7 +73,7 @@
 <FONT color="green">070</FONT>        private volatile Configuration config = new DefaultConfiguration();<a name="line.70"></a>
 <FONT color="green">071</FONT>        private Object externalContext;<a name="line.71"></a>
 <FONT color="green">072</FONT>        private final String name;<a name="line.72"></a>
-<FONT color="green">073</FONT>        private URI configLocation;<a name="line.73"></a>
+<FONT color="green">073</FONT>        private volatile URI configLocation;<a name="line.73"></a>
 <FONT color="green">074</FONT>        private Cancellable shutdownCallback;<a name="line.74"></a>
 <FONT color="green">075</FONT>    <a name="line.75"></a>
 <FONT color="green">076</FONT>        private final Lock configLock = new ReentrantLock();<a name="line.76"></a>
@@ -152,7 +152,7 @@
 <FONT color="green">149</FONT>        }<a name="line.149"></a>
 <FONT color="green">150</FONT>    <a name="line.150"></a>
 <FONT color="green">151</FONT>        /**<a name="line.151"></a>
-<FONT color="green">152</FONT>         * Start with a specific configuration.<a name="line.152"></a>
+<FONT color="green">152</FONT>         * Starts with a specific configuration.<a name="line.152"></a>
 <FONT color="green">153</FONT>         * @param config The new Configuration.<a name="line.153"></a>
 <FONT color="green">154</FONT>         */<a name="line.154"></a>
 <FONT color="green">155</FONT>        public void start(final Configuration config) {<a name="line.155"></a>
@@ -244,7 +244,7 @@
 <FONT color="green">241</FONT>        }<a name="line.241"></a>
 <FONT color="green">242</FONT>    <a name="line.242"></a>
 <FONT color="green">243</FONT>        /**<a name="line.243"></a>
-<FONT color="green">244</FONT>         * Set the external context.<a name="line.244"></a>
+<FONT color="green">244</FONT>         * Sets the external context.<a name="line.244"></a>
 <FONT color="green">245</FONT>         * @param context The external context.<a name="line.245"></a>
 <FONT color="green">246</FONT>         */<a name="line.246"></a>
 <FONT color="green">247</FONT>        public void setExternalContext(final Object context) {<a name="line.247"></a>
@@ -261,7 +261,7 @@
 <FONT color="green">258</FONT>        }<a name="line.258"></a>
 <FONT color="green">259</FONT>    <a name="line.259"></a>
 <FONT color="green">260</FONT>        /**<a name="line.260"></a>
-<FONT color="green">261</FONT>         * Obtain a Logger from the Context.<a name="line.261"></a>
+<FONT color="green">261</FONT>         * Obtains a Logger from the Context.<a name="line.261"></a>
 <FONT color="green">262</FONT>         * @param name The name of the Logger to return.<a name="line.262"></a>
 <FONT color="green">263</FONT>         * @return The Logger.<a name="line.263"></a>
 <FONT color="green">264</FONT>         */<a name="line.264"></a>
@@ -284,7 +284,7 @@
 <FONT color="green">281</FONT>        }<a name="line.281"></a>
 <FONT color="green">282</FONT>    <a name="line.282"></a>
 <FONT color="green">283</FONT>        /**<a name="line.283"></a>
-<FONT color="green">284</FONT>         * Obtain a Logger from the Context.<a name="line.284"></a>
+<FONT color="green">284</FONT>         * Obtains a Logger from the Context.<a name="line.284"></a>
 <FONT color="green">285</FONT>         * @param name The name of the Logger to return.<a name="line.285"></a>
 <FONT color="green">286</FONT>         * @param messageFactory The message factory is used only when creating a<a name="line.286"></a>
 <FONT color="green">287</FONT>         *            logger, subsequent use does not change the logger but will log<a name="line.287"></a>
@@ -305,7 +305,7 @@
 <FONT color="green">302</FONT>        }<a name="line.302"></a>
 <FONT color="green">303</FONT>    <a name="line.303"></a>
 <FONT color="green">304</FONT>        /**<a name="line.304"></a>
-<FONT color="green">305</FONT>         * Determine if the specified Logger exists.<a name="line.305"></a>
+<FONT color="green">305</FONT>         * Determines if the specified Logger exists.<a name="line.305"></a>
 <FONT color="green">306</FONT>         * @param name The Logger name to search for.<a name="line.306"></a>
 <FONT color="green">307</FONT>         * @return True if the Logger exists, false otherwise.<a name="line.307"></a>
 <FONT color="green">308</FONT>         */<a name="line.308"></a>
@@ -325,7 +325,7 @@
 <FONT color="green">322</FONT>        }<a name="line.322"></a>
 <FONT color="green">323</FONT>    <a name="line.323"></a>
 <FONT color="green">324</FONT>        /**<a name="line.324"></a>
-<FONT color="green">325</FONT>         * Add a Filter to the Configuration. Filters that are added through the API will be lost<a name="line.325"></a>
+<FONT color="green">325</FONT>         * Adds a Filter to the Configuration. Filters that are added through the API will be lost<a name="line.325"></a>
 <FONT color="green">326</FONT>         * when a reconfigure occurs.<a name="line.326"></a>
 <FONT color="green">327</FONT>         * @param filter The Filter to add.<a name="line.327"></a>
 <FONT color="green">328</FONT>         */<a name="line.328"></a>
@@ -342,135 +342,150 @@
 <FONT color="green">339</FONT>        }<a name="line.339"></a>
 <FONT color="green">340</FONT>    <a name="line.340"></a>
 <FONT color="green">341</FONT>        /**<a name="line.341"></a>
-<FONT color="green">342</FONT>         * Set the Configuration to be used.<a name="line.342"></a>
+<FONT color="green">342</FONT>         * Sets the Configuration to be used.<a name="line.342"></a>
 <FONT color="green">343</FONT>         * @param config The new Configuration.<a name="line.343"></a>
 <FONT color="green">344</FONT>         * @return The previous Configuration.<a name="line.344"></a>
 <FONT color="green">345</FONT>         */<a name="line.345"></a>
-<FONT color="green">346</FONT>        private synchronized Configuration setConfiguration(final Configuration config) {<a name="line.346"></a>
+<FONT color="green">346</FONT>        private Configuration setConfiguration(final Configuration config) {<a name="line.346"></a>
 <FONT color="green">347</FONT>            Assert.requireNonNull(config, "No Configuration was provided");<a name="line.347"></a>
-<FONT color="green">348</FONT>            final Configuration prev = this.config;<a name="line.348"></a>
-<FONT color="green">349</FONT>            config.addListener(this);<a name="line.349"></a>
-<FONT color="green">350</FONT>            final ConcurrentMap&lt;String, String&gt; map = config.getComponent(Configuration.CONTEXT_PROPERTIES);<a name="line.350"></a>
-<FONT color="green">351</FONT>    <a name="line.351"></a>
-<FONT color="green">352</FONT>            try { // LOG4J2-719 network access may throw android.os.NetworkOnMainThreadException<a name="line.352"></a>
-<FONT color="green">353</FONT>                map.putIfAbsent("hostName", NetUtils.getLocalHostname());<a name="line.353"></a>
-<FONT color="green">354</FONT>            } catch (final Exception ex) {<a name="line.354"></a>
-<FONT color="green">355</FONT>                LOGGER.debug("Ignoring {}, setting hostName to 'unknown'", ex.toString());<a name="line.355"></a>
-<FONT color="green">356</FONT>                map.putIfAbsent("hostName", "unknown");<a name="line.356"></a>
-<FONT color="green">357</FONT>            }<a name="line.357"></a>
-<FONT color="green">358</FONT>            map.putIfAbsent("contextName", name);<a name="line.358"></a>
-<FONT color="green">359</FONT>            config.start();<a name="line.359"></a>
-<FONT color="green">360</FONT>            this.config = config;<a name="line.360"></a>
-<FONT color="green">361</FONT>            updateLoggers();<a name="line.361"></a>
-<FONT color="green">362</FONT>            if (prev != null) {<a name="line.362"></a>
-<FONT color="green">363</FONT>                prev.removeListener(this);<a name="line.363"></a>
-<FONT color="green">364</FONT>                prev.stop();<a name="line.364"></a>
-<FONT color="green">365</FONT>            }<a name="line.365"></a>
-<FONT color="green">366</FONT>    <a name="line.366"></a>
-<FONT color="green">367</FONT>            firePropertyChangeEvent(new PropertyChangeEvent(this, PROPERTY_CONFIG, prev, config));<a name="line.367"></a>
+<FONT color="green">348</FONT>            configLock.lock();<a name="line.348"></a>
+<FONT color="green">349</FONT>            try {<a name="line.349"></a>
+<FONT color="green">350</FONT>                final Configuration prev = this.config;<a name="line.350"></a>
+<FONT color="green">351</FONT>                config.addListener(this);<a name="line.351"></a>
+<FONT color="green">352</FONT>                final ConcurrentMap&lt;String, String&gt; map = config.getComponent(Configuration.CONTEXT_PROPERTIES);<a name="line.352"></a>
+<FONT color="green">353</FONT>    <a name="line.353"></a>
+<FONT color="green">354</FONT>                try { // LOG4J2-719 network access may throw android.os.NetworkOnMainThreadException<a name="line.354"></a>
+<FONT color="green">355</FONT>                    map.putIfAbsent("hostName", NetUtils.getLocalHostname());<a name="line.355"></a>
+<FONT color="green">356</FONT>                } catch (final Exception ex) {<a name="line.356"></a>
+<FONT color="green">357</FONT>                    LOGGER.debug("Ignoring {}, setting hostName to 'unknown'", ex.toString());<a name="line.357"></a>
+<FONT color="green">358</FONT>                    map.putIfAbsent("hostName", "unknown");<a name="line.358"></a>
+<FONT color="green">359</FONT>                }<a name="line.359"></a>
+<FONT color="green">360</FONT>                map.putIfAbsent("contextName", name);<a name="line.360"></a>
+<FONT color="green">361</FONT>                config.start();<a name="line.361"></a>
+<FONT color="green">362</FONT>                this.config = config;<a name="line.362"></a>
+<FONT color="green">363</FONT>                updateLoggers();<a name="line.363"></a>
+<FONT color="green">364</FONT>                if (prev != null) {<a name="line.364"></a>
+<FONT color="green">365</FONT>                    prev.removeListener(this);<a name="line.365"></a>
+<FONT color="green">366</FONT>                    prev.stop();<a name="line.366"></a>
+<FONT color="green">367</FONT>                }<a name="line.367"></a>
 <FONT color="green">368</FONT>    <a name="line.368"></a>
-<FONT color="green">369</FONT>            try {<a name="line.369"></a>
-<FONT color="green">370</FONT>                Server.reregisterMBeansAfterReconfigure();<a name="line.370"></a>
-<FONT color="green">371</FONT>            } catch (final Throwable t) {<a name="line.371"></a>
-<FONT color="green">372</FONT>                // LOG4J2-716: Android has no java.lang.management<a name="line.372"></a>
-<FONT color="green">373</FONT>                LOGGER.error("Could not reconfigure JMX", t);<a name="line.373"></a>
-<FONT color="green">374</FONT>            }<a name="line.374"></a>
-<FONT color="green">375</FONT>            return prev;<a name="line.375"></a>
-<FONT color="green">376</FONT>        }<a name="line.376"></a>
-<FONT color="green">377</FONT>    <a name="line.377"></a>
-<FONT color="green">378</FONT>        private void firePropertyChangeEvent(final PropertyChangeEvent event) {<a name="line.378"></a>
-<FONT color="green">379</FONT>            for (final PropertyChangeListener listener : propertyChangeListeners) {<a name="line.379"></a>
-<FONT color="green">380</FONT>                listener.propertyChange(event);<a name="line.380"></a>
-<FONT color="green">381</FONT>            }<a name="line.381"></a>
-<FONT color="green">382</FONT>        }<a name="line.382"></a>
-<FONT color="green">383</FONT>    <a name="line.383"></a>
-<FONT color="green">384</FONT>        public void addPropertyChangeListener(final PropertyChangeListener listener) {<a name="line.384"></a>
-<FONT color="green">385</FONT>            propertyChangeListeners.add(Assert.requireNonNull(listener, "listener"));<a name="line.385"></a>
-<FONT color="green">386</FONT>        }<a name="line.386"></a>
-<FONT color="green">387</FONT>    <a name="line.387"></a>
-<FONT color="green">388</FONT>        public void removePropertyChangeListener(final PropertyChangeListener listener) {<a name="line.388"></a>
-<FONT color="green">389</FONT>            propertyChangeListeners.remove(listener);<a name="line.389"></a>
-<FONT color="green">390</FONT>        }<a name="line.390"></a>
-<FONT color="green">391</FONT>    <a name="line.391"></a>
-<FONT color="green">392</FONT>        /**<a name="line.392"></a>
-<FONT color="green">393</FONT>         * Returns the initial configuration location or {@code null}. The returned value may not be the location of the<a name="line.393"></a>
-<FONT color="green">394</FONT>         * current configuration. Use<a name="line.394"></a>
-<FONT color="green">395</FONT>         * {@link #getConfiguration()}.{@link Configuration#getConfigurationSource() getConfigurationSource()}.{@link<a name="line.395"></a>
-<FONT color="green">396</FONT>         * ConfigurationSource#getLocation() getLocation()} to get the actual source of the current configuration.<a name="line.396"></a>
-<FONT color="green">397</FONT>         * @return the initial configuration location or {@code null}<a name="line.397"></a>
-<FONT color="green">398</FONT>         */<a name="line.398"></a>
-<FONT color="green">399</FONT>        public synchronized URI getConfigLocation() {<a name="line.399"></a>
-<FONT color="green">400</FONT>            return configLocation;<a name="line.400"></a>
-<FONT color="green">401</FONT>        }<a name="line.401"></a>
-<FONT color="green">402</FONT>    <a name="line.402"></a>
-<FONT color="green">403</FONT>        /**<a name="line.403"></a>
-<FONT color="green">404</FONT>         * Sets the configLocation to the specified value and reconfigures this context.<a name="line.404"></a>
-<FONT color="green">405</FONT>         * @param configLocation the location of the new configuration<a name="line.405"></a>
-<FONT color="green">406</FONT>         */<a name="line.406"></a>
-<FONT color="green">407</FONT>        public synchronized void setConfigLocation(final URI configLocation) {<a name="line.407"></a>
-<FONT color="green">408</FONT>            this.configLocation = configLocation;<a name="line.408"></a>
-<FONT color="green">409</FONT>            reconfigure();<a name="line.409"></a>
-<FONT color="green">410</FONT>        }<a name="line.410"></a>
-<FONT color="green">411</FONT>    <a name="line.411"></a>
-<FONT color="green">412</FONT>        /**<a name="line.412"></a>
-<FONT color="green">413</FONT>         * Reconfigure the context.<a name="line.413"></a>
-<FONT color="green">414</FONT>         */<a name="line.414"></a>
-<FONT color="green">415</FONT>        public synchronized void reconfigure() {<a name="line.415"></a>
-<FONT color="green">416</FONT>            final ClassLoader cl = ClassLoader.class.isInstance(externalContext) ? (ClassLoader) externalContext : null;<a name="line.416"></a>
-<FONT color="green">417</FONT>            LOGGER.debug("Reconfiguration started for context[name={}] at {} ({}) with optional ClassLoader: {}", name,<a name="line.417"></a>
-<FONT color="green">418</FONT>                configLocation, this, cl);<a name="line.418"></a>
-<FONT color="green">419</FONT>            final Configuration instance = ConfigurationFactory.getInstance().getConfiguration(name, configLocation, cl);<a name="line.419"></a>
-<FONT color="green">420</FONT>            setConfiguration(instance);<a name="line.420"></a>
-<FONT color="green">421</FONT>            /*<a name="line.421"></a>
-<FONT color="green">422</FONT>             * instance.start(); Configuration old = setConfiguration(instance);<a name="line.422"></a>
-<FONT color="green">423</FONT>             * updateLoggers(); if (old != null) { old.stop(); }<a name="line.423"></a>
-<FONT color="green">424</FONT>             */<a name="line.424"></a>
-<FONT color="green">425</FONT>    <a name="line.425"></a>
-<FONT color="green">426</FONT>            LOGGER.debug("Reconfiguration complete for context[name={}] at {} ({}) with optional ClassLoader: {}", name,<a name="line.426"></a>
-<FONT color="green">427</FONT>                configLocation, this, cl);<a name="line.427"></a>
-<FONT color="green">428</FONT>        }<a name="line.428"></a>
-<FONT color="green">429</FONT>    <a name="line.429"></a>
-<FONT color="green">430</FONT>        /**<a name="line.430"></a>
-<FONT color="green">431</FONT>         * Cause all Loggers to be updated against the current Configuration.<a name="line.431"></a>
-<FONT color="green">432</FONT>         */<a name="line.432"></a>
-<FONT color="green">433</FONT>        public void updateLoggers() {<a name="line.433"></a>
-<FONT color="green">434</FONT>            updateLoggers(this.config);<a name="line.434"></a>
-<FONT color="green">435</FONT>        }<a name="line.435"></a>
-<FONT color="green">436</FONT>    <a name="line.436"></a>
-<FONT color="green">437</FONT>        /**<a name="line.437"></a>
-<FONT color="green">438</FONT>         * Cause all Logger to be updated against the specified Configuration.<a name="line.438"></a>
-<FONT color="green">439</FONT>         * @param config The Configuration.<a name="line.439"></a>
+<FONT color="green">369</FONT>                firePropertyChangeEvent(new PropertyChangeEvent(this, PROPERTY_CONFIG, prev, config));<a name="line.369"></a>
+<FONT color="green">370</FONT>    <a name="line.370"></a>
+<FONT color="green">371</FONT>                try {<a name="line.371"></a>
+<FONT color="green">372</FONT>                    Server.reregisterMBeansAfterReconfigure();<a name="line.372"></a>
+<FONT color="green">373</FONT>                } catch (final Throwable t) {<a name="line.373"></a>
+<FONT color="green">374</FONT>                    // LOG4J2-716: Android has no java.lang.management<a name="line.374"></a>
+<FONT color="green">375</FONT>                    LOGGER.error("Could not reconfigure JMX", t);<a name="line.375"></a>
+<FONT color="green">376</FONT>                }<a name="line.376"></a>
+<FONT color="green">377</FONT>                return prev;<a name="line.377"></a>
+<FONT color="green">378</FONT>            } finally {<a name="line.378"></a>
+<FONT color="green">379</FONT>                configLock.unlock();<a name="line.379"></a>
+<FONT color="green">380</FONT>            }<a name="line.380"></a>
+<FONT color="green">381</FONT>        }<a name="line.381"></a>
+<FONT color="green">382</FONT>    <a name="line.382"></a>
+<FONT color="green">383</FONT>        private void firePropertyChangeEvent(final PropertyChangeEvent event) {<a name="line.383"></a>
+<FONT color="green">384</FONT>            for (final PropertyChangeListener listener : propertyChangeListeners) {<a name="line.384"></a>
+<FONT color="green">385</FONT>                listener.propertyChange(event);<a name="line.385"></a>
+<FONT color="green">386</FONT>            }<a name="line.386"></a>
+<FONT color="green">387</FONT>        }<a name="line.387"></a>
+<FONT color="green">388</FONT>    <a name="line.388"></a>
+<FONT color="green">389</FONT>        public void addPropertyChangeListener(final PropertyChangeListener listener) {<a name="line.389"></a>
+<FONT color="green">390</FONT>            propertyChangeListeners.add(Assert.requireNonNull(listener, "listener"));<a name="line.390"></a>
+<FONT color="green">391</FONT>        }<a name="line.391"></a>
+<FONT color="green">392</FONT>    <a name="line.392"></a>
+<FONT color="green">393</FONT>        public void removePropertyChangeListener(final PropertyChangeListener listener) {<a name="line.393"></a>
+<FONT color="green">394</FONT>            propertyChangeListeners.remove(listener);<a name="line.394"></a>
+<FONT color="green">395</FONT>        }<a name="line.395"></a>
+<FONT color="green">396</FONT>    <a name="line.396"></a>
+<FONT color="green">397</FONT>        /**<a name="line.397"></a>
+<FONT color="green">398</FONT>         * Returns the initial configuration location or {@code null}. The returned value may not be the location of the<a name="line.398"></a>
+<FONT color="green">399</FONT>         * current configuration. Use<a name="line.399"></a>
+<FONT color="green">400</FONT>         * {@link #getConfiguration()}.{@link Configuration#getConfigurationSource() getConfigurationSource()}.{@link<a name="line.400"></a>
+<FONT color="green">401</FONT>         * ConfigurationSource#getLocation() getLocation()} to get the actual source of the current configuration.<a name="line.401"></a>
+<FONT color="green">402</FONT>         * @return the initial configuration location or {@code null}<a name="line.402"></a>
+<FONT color="green">403</FONT>         */<a name="line.403"></a>
+<FONT color="green">404</FONT>        public URI getConfigLocation() {<a name="line.404"></a>
+<FONT color="green">405</FONT>            return configLocation;<a name="line.405"></a>
+<FONT color="green">406</FONT>        }<a name="line.406"></a>
+<FONT color="green">407</FONT>    <a name="line.407"></a>
+<FONT color="green">408</FONT>        /**<a name="line.408"></a>
+<FONT color="green">409</FONT>         * Sets the configLocation to the specified value and reconfigures this context.<a name="line.409"></a>
+<FONT color="green">410</FONT>         * @param configLocation the location of the new configuration<a name="line.410"></a>
+<FONT color="green">411</FONT>         */<a name="line.411"></a>
+<FONT color="green">412</FONT>        public void setConfigLocation(final URI configLocation) {<a name="line.412"></a>
+<FONT color="green">413</FONT>            this.configLocation = configLocation;<a name="line.413"></a>
+<FONT color="green">414</FONT>    <a name="line.414"></a>
+<FONT color="green">415</FONT>            reconfigure(configLocation);<a name="line.415"></a>
+<FONT color="green">416</FONT>        }<a name="line.416"></a>
+<FONT color="green">417</FONT>    <a name="line.417"></a>
+<FONT color="green">418</FONT>        /**<a name="line.418"></a>
+<FONT color="green">419</FONT>         * Reconfigure the context.<a name="line.419"></a>
+<FONT color="green">420</FONT>         */<a name="line.420"></a>
+<FONT color="green">421</FONT>        private void reconfigure(final URI configURI) {<a name="line.421"></a>
+<FONT color="green">422</FONT>            final ClassLoader cl = ClassLoader.class.isInstance(externalContext) ? (ClassLoader) externalContext : null;<a name="line.422"></a>
+<FONT color="green">423</FONT>            LOGGER.debug("Reconfiguration started for context[name={}] at {} ({}) with optional ClassLoader: {}", name,<a name="line.423"></a>
+<FONT color="green">424</FONT>                    configURI, this, cl);<a name="line.424"></a>
+<FONT color="green">425</FONT>            final Configuration instance = ConfigurationFactory.getInstance().getConfiguration(name, configURI, cl);<a name="line.425"></a>
+<FONT color="green">426</FONT>            setConfiguration(instance);<a name="line.426"></a>
+<FONT color="green">427</FONT>            /*<a name="line.427"></a>
+<FONT color="green">428</FONT>             * instance.start(); Configuration old = setConfiguration(instance);<a name="line.428"></a>
+<FONT color="green">429</FONT>             * updateLoggers(); if (old != null) { old.stop(); }<a name="line.429"></a>
+<FONT color="green">430</FONT>             */<a name="line.430"></a>
+<FONT color="green">431</FONT>    <a name="line.431"></a>
+<FONT color="green">432</FONT>            LOGGER.debug("Reconfiguration complete for context[name={}] at {} ({}) with optional ClassLoader: {}", name,<a name="line.432"></a>
+<FONT color="green">433</FONT>                    configURI, this, cl);<a name="line.433"></a>
+<FONT color="green">434</FONT>        }<a name="line.434"></a>
+<FONT color="green">435</FONT>    <a name="line.435"></a>
+<FONT color="green">436</FONT>        /**<a name="line.436"></a>
+<FONT color="green">437</FONT>         * Reconfigure the context. Log4j does not remove Loggers during a reconfiguration. Log4j will create new<a name="line.437"></a>
+<FONT color="green">438</FONT>         * LoggerConfig objects and Log4j will point the Loggers at the new LoggerConfigs. Log4j will free the old<a name="line.438"></a>
+<FONT color="green">439</FONT>         * LoggerConfig, along with old Appenders and Filters.<a name="line.439"></a>
 <FONT color="green">440</FONT>         */<a name="line.440"></a>
-<FONT color="green">441</FONT>        public void updateLoggers(final Configuration config) {<a name="line.441"></a>
-<FONT color="green">442</FONT>            for (final Logger logger : loggers.values()) {<a name="line.442"></a>
-<FONT color="green">443</FONT>                logger.updateConfiguration(config);<a name="line.443"></a>
-<FONT color="green">444</FONT>            }<a name="line.444"></a>
-<FONT color="green">445</FONT>        }<a name="line.445"></a>
-<FONT color="green">446</FONT>    <a name="line.446"></a>
-<FONT color="green">447</FONT>        /**<a name="line.447"></a>
-<FONT color="green">448</FONT>         * Cause a reconfiguration to take place when the underlying configuration<a name="line.448"></a>
-<FONT color="green">449</FONT>         * file changes.<a name="line.449"></a>
-<FONT color="green">450</FONT>         *<a name="line.450"></a>
-<FONT color="green">451</FONT>         * @param reconfigurable The Configuration that can be reconfigured.<a name="line.451"></a>
-<FONT color="green">452</FONT>         */<a name="line.452"></a>
-<FONT color="green">453</FONT>        @Override<a name="line.453"></a>
-<FONT color="green">454</FONT>        public synchronized void onChange(final Reconfigurable reconfigurable) {<a name="line.454"></a>
-<FONT color="green">455</FONT>            LOGGER.debug("Reconfiguration started for context {} ({})", name, this);<a name="line.455"></a>
-<FONT color="green">456</FONT>            final Configuration newConfig = reconfigurable.reconfigure();<a name="line.456"></a>
-<FONT color="green">457</FONT>            if (newConfig != null) {<a name="line.457"></a>
-<FONT color="green">458</FONT>                setConfiguration(newConfig);<a name="line.458"></a>
-<FONT color="green">459</FONT>                LOGGER.debug("Reconfiguration completed for {} ({})", name, this);<a name="line.459"></a>
-<FONT color="green">460</FONT>            } else {<a name="line.460"></a>
-<FONT color="green">461</FONT>                LOGGER.debug("Reconfiguration failed for {} ({})", name, this);<a name="line.461"></a>
-<FONT color="green">462</FONT>            }<a name="line.462"></a>
-<FONT color="green">463</FONT>        }<a name="line.463"></a>
-<FONT color="green">464</FONT>    <a name="line.464"></a>
-<FONT color="green">465</FONT>        // LOG4J2-151: changed visibility from private to protected<a name="line.465"></a>
-<FONT color="green">466</FONT>        protected Logger newInstance(final LoggerContext ctx, final String name, final MessageFactory messageFactory) {<a name="line.466"></a>
-<FONT color="green">467</FONT>            return new Logger(ctx, name, messageFactory);<a name="line.467"></a>
-<FONT color="green">468</FONT>        }<a name="line.468"></a>
-<FONT color="green">469</FONT>    <a name="line.469"></a>
-<FONT color="green">470</FONT>    }<a name="line.470"></a>
+<FONT color="green">441</FONT>        public void reconfigure() {<a name="line.441"></a>
+<FONT color="green">442</FONT>            reconfigure(configLocation);<a name="line.442"></a>
+<FONT color="green">443</FONT>        }<a name="line.443"></a>
+<FONT color="green">444</FONT>    <a name="line.444"></a>
+<FONT color="green">445</FONT>        /**<a name="line.445"></a>
+<FONT color="green">446</FONT>         * Causes all Loggers to be updated against the current Configuration.<a name="line.446"></a>
+<FONT color="green">447</FONT>         */<a name="line.447"></a>
+<FONT color="green">448</FONT>        public void updateLoggers() {<a name="line.448"></a>
+<FONT color="green">449</FONT>            updateLoggers(this.config);<a name="line.449"></a>
+<FONT color="green">450</FONT>        }<a name="line.450"></a>
+<FONT color="green">451</FONT>    <a name="line.451"></a>
+<FONT color="green">452</FONT>        /**<a name="line.452"></a>
+<FONT color="green">453</FONT>         * Causes all Logger to be updated against the specified Configuration.<a name="line.453"></a>
+<FONT color="green">454</FONT>         * @param config The Configuration.<a name="line.454"></a>
+<FONT color="green">455</FONT>         */<a name="line.455"></a>
+<FONT color="green">456</FONT>        public void updateLoggers(final Configuration config) {<a name="line.456"></a>
+<FONT color="green">457</FONT>            for (final Logger logger : loggers.values()) {<a name="line.457"></a>
+<FONT color="green">458</FONT>                logger.updateConfiguration(config);<a name="line.458"></a>
+<FONT color="green">459</FONT>            }<a name="line.459"></a>
+<FONT color="green">460</FONT>        }<a name="line.460"></a>
+<FONT color="green">461</FONT>    <a name="line.461"></a>
+<FONT color="green">462</FONT>        /**<a name="line.462"></a>
+<FONT color="green">463</FONT>         * Causes a reconfiguration to take place when the underlying configuration<a name="line.463"></a>
+<FONT color="green">464</FONT>         * file changes.<a name="line.464"></a>
+<FONT color="green">465</FONT>         *<a name="line.465"></a>
+<FONT color="green">466</FONT>         * @param reconfigurable The Configuration that can be reconfigured.<a name="line.466"></a>
+<FONT color="green">467</FONT>         */<a name="line.467"></a>
+<FONT color="green">468</FONT>        @Override<a name="line.468"></a>
+<FONT color="green">469</FONT>        public synchronized void onChange(final Reconfigurable reconfigurable) {<a name="line.469"></a>
+<FONT color="green">470</FONT>            LOGGER.debug("Reconfiguration started for context {} ({})", name, this);<a name="line.470"></a>
+<FONT color="green">471</FONT>            final Configuration newConfig = reconfigurable.reconfigure();<a name="line.471"></a>
+<FONT color="green">472</FONT>            if (newConfig != null) {<a name="line.472"></a>
+<FONT color="green">473</FONT>                setConfiguration(newConfig);<a name="line.473"></a>
+<FONT color="green">474</FONT>                LOGGER.debug("Reconfiguration completed for {} ({})", name, this);<a name="line.474"></a>
+<FONT color="green">475</FONT>            } else {<a name="line.475"></a>
+<FONT color="green">476</FONT>                LOGGER.debug("Reconfiguration failed for {} ({})", name, this);<a name="line.476"></a>
+<FONT color="green">477</FONT>            }<a name="line.477"></a>
+<FONT color="green">478</FONT>        }<a name="line.478"></a>
+<FONT color="green">479</FONT>    <a name="line.479"></a>
+<FONT color="green">480</FONT>        // LOG4J2-151: changed visibility from private to protected<a name="line.480"></a>
+<FONT color="green">481</FONT>        protected Logger newInstance(final LoggerContext ctx, final String name, final MessageFactory messageFactory) {<a name="line.481"></a>
+<FONT color="green">482</FONT>            return new Logger(ctx, name, messageFactory);<a name="line.482"></a>
+<FONT color="green">483</FONT>        }<a name="line.483"></a>
+<FONT color="green">484</FONT>    <a name="line.484"></a>
+<FONT color="green">485</FONT>    }<a name="line.485"></a>
 
 
 

@@ -25,396 +25,420 @@
 <FONT color="green">022</FONT>    import java.io.IOException;<a name="line.22"></a>
 <FONT color="green">023</FONT>    import java.io.UnsupportedEncodingException;<a name="line.23"></a>
 <FONT color="green">024</FONT>    import java.net.URI;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import java.net.URL;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import java.net.URLDecoder;<a name="line.26"></a>
-<FONT color="green">027</FONT>    import java.util.Arrays;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import java.util.Collection;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import java.util.Enumeration;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import java.util.HashSet;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import java.util.List;<a name="line.31"></a>
-<FONT color="green">032</FONT>    import java.util.Set;<a name="line.32"></a>
-<FONT color="green">033</FONT>    import java.util.jar.JarEntry;<a name="line.33"></a>
-<FONT color="green">034</FONT>    import java.util.jar.JarInputStream;<a name="line.34"></a>
-<FONT color="green">035</FONT>    <a name="line.35"></a>
-<FONT color="green">036</FONT>    import org.apache.logging.log4j.Logger;<a name="line.36"></a>
-<FONT color="green">037</FONT>    import org.apache.logging.log4j.core.util.Charsets;<a name="line.37"></a>
-<FONT color="green">038</FONT>    import org.apache.logging.log4j.core.util.Loader;<a name="line.38"></a>
-<FONT color="green">039</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.39"></a>
-<FONT color="green">040</FONT>    import org.osgi.framework.FrameworkUtil;<a name="line.40"></a>
-<FONT color="green">041</FONT>    import org.osgi.framework.wiring.BundleWiring;<a name="line.41"></a>
-<FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>    /**<a name="line.43"></a>
-<FONT color="green">044</FONT>     * &lt;p&gt;ResolverUtil is used to locate classes that are available in the/a class path and meet<a name="line.44"></a>
-<FONT color="green">045</FONT>     * arbitrary conditions. The two most common conditions are that a class implements/extends<a name="line.45"></a>
-<FONT color="green">046</FONT>     * another class, or that is it annotated with a specific annotation. However, through the use<a name="line.46"></a>
-<FONT color="green">047</FONT>     * of the {@link Test} class it is possible to search using arbitrary conditions.&lt;/p&gt;<a name="line.47"></a>
-<FONT color="green">048</FONT>     *<a name="line.48"></a>
-<FONT color="green">049</FONT>     * &lt;p&gt;A ClassLoader is used to locate all locations (directories and jar files) in the class<a name="line.49"></a>
-<FONT color="green">050</FONT>     * path that contain classes within certain packages, and then to load those classes and<a name="line.50"></a>
-<FONT color="green">051</FONT>     * check them. By default the ClassLoader returned by<a name="line.51"></a>
-<FONT color="green">052</FONT>     *  {@code Thread.currentThread().getContextClassLoader()} is used, but this can be overridden<a name="line.52"></a>
-<FONT color="green">053</FONT>     * by calling {@link #setClassLoader(ClassLoader)} prior to invoking any of the {@code find()}<a name="line.53"></a>
-<FONT color="green">054</FONT>     * methods.&lt;/p&gt;<a name="line.54"></a>
-<FONT color="green">055</FONT>     *<a name="line.55"></a>
-<FONT color="green">056</FONT>     * &lt;p&gt;General searches are initiated by calling the<a name="line.56"></a>
-<FONT color="green">057</FONT>     * {@link #find(ResolverUtil.Test, String...)} method and supplying<a name="line.57"></a>
-<FONT color="green">058</FONT>     * a package name and a Test instance. This will cause the named package &lt;b&gt;and all sub-packages&lt;/b&gt;<a name="line.58"></a>
-<FONT color="green">059</FONT>     * to be scanned for classes that meet the test. There are also utility methods for the common<a name="line.59"></a>
-<FONT color="green">060</FONT>     * use cases of scanning multiple packages for extensions of particular classes, or classes<a name="line.60"></a>
-<FONT color="green">061</FONT>     * annotated with a specific annotation.&lt;/p&gt;<a name="line.61"></a>
-<FONT color="green">062</FONT>     *<a name="line.62"></a>
-<FONT color="green">063</FONT>     * &lt;p&gt;The standard usage pattern for the ResolverUtil class is as follows:&lt;/p&gt;<a name="line.63"></a>
+<FONT color="green">025</FONT>    import java.net.URISyntaxException;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import java.net.URL;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import java.net.URLDecoder;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import java.util.Arrays;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import java.util.Collection;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import java.util.Enumeration;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import java.util.HashSet;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import java.util.List;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import java.util.Set;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import java.util.jar.JarEntry;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import java.util.jar.JarInputStream;<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.apache.logging.log4j.Logger;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.apache.logging.log4j.core.util.Constants;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.apache.logging.log4j.core.util.Loader;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import org.osgi.framework.FrameworkUtil;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import org.osgi.framework.wiring.BundleWiring;<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>    /**<a name="line.44"></a>
+<FONT color="green">045</FONT>     * &lt;p&gt;<a name="line.45"></a>
+<FONT color="green">046</FONT>     * ResolverUtil is used to locate classes that are available in the/a class path and meet arbitrary conditions. The two<a name="line.46"></a>
+<FONT color="green">047</FONT>     * most common conditions are that a class implements/extends another class, or that is it annotated with a specific<a name="line.47"></a>
+<FONT color="green">048</FONT>     * annotation. However, through the use of the {@link Test} class it is possible to search using arbitrary conditions.<a name="line.48"></a>
+<FONT color="green">049</FONT>     * &lt;/p&gt;<a name="line.49"></a>
+<FONT color="green">050</FONT>     *<a name="line.50"></a>
+<FONT color="green">051</FONT>     * &lt;p&gt;<a name="line.51"></a>
+<FONT color="green">052</FONT>     * A ClassLoader is used to locate all locations (directories and jar files) in the class path that contain classes<a name="line.52"></a>
+<FONT color="green">053</FONT>     * within certain packages, and then to load those classes and check them. By default the ClassLoader returned by<a name="line.53"></a>
+<FONT color="green">054</FONT>     * {@code Thread.currentThread().getContextClassLoader()} is used, but this can be overridden by calling<a name="line.54"></a>
+<FONT color="green">055</FONT>     * {@link #setClassLoader(ClassLoader)} prior to invoking any of the {@code find()} methods.<a name="line.55"></a>
+<FONT color="green">056</FONT>     * &lt;/p&gt;<a name="line.56"></a>
+<FONT color="green">057</FONT>     *<a name="line.57"></a>
+<FONT color="green">058</FONT>     * &lt;p&gt;<a name="line.58"></a>
+<FONT color="green">059</FONT>     * General searches are initiated by calling the {@link #find(ResolverUtil.Test, String...)} method and supplying a<a name="line.59"></a>
+<FONT color="green">060</FONT>     * package name and a Test instance. This will cause the named package &lt;b&gt;and all sub-packages&lt;/b&gt; to be scanned for<a name="line.60"></a>
+<FONT color="green">061</FONT>     * classes that meet the test. There are also utility methods for the common use cases of scanning multiple packages for<a name="line.61"></a>
+<FONT color="green">062</FONT>     * extensions of particular classes, or classes annotated with a specific annotation.<a name="line.62"></a>
+<FONT color="green">063</FONT>     * &lt;/p&gt;<a name="line.63"></a>
 <FONT color="green">064</FONT>     *<a name="line.64"></a>
-<FONT color="green">065</FONT>     *&lt;pre&gt;<a name="line.65"></a>
-<FONT color="green">066</FONT>     *ResolverUtil&amp;lt;ActionBean&amp;gt; resolver = new ResolverUtil&amp;lt;ActionBean&amp;gt;();<a name="line.66"></a>
-<FONT color="green">067</FONT>     *resolver.findImplementation(ActionBean.class, pkg1, pkg2);<a name="line.67"></a>
-<FONT color="green">068</FONT>     *resolver.find(new CustomTest(), pkg1);<a name="line.68"></a>
-<FONT color="green">069</FONT>     *resolver.find(new CustomTest(), pkg2);<a name="line.69"></a>
-<FONT color="green">070</FONT>     *Collection&amp;lt;ActionBean&amp;gt; beans = resolver.getClasses();<a name="line.70"></a>
-<FONT color="green">071</FONT>     *&lt;/pre&gt;<a name="line.71"></a>
-<FONT color="green">072</FONT>     *<a name="line.72"></a>
-<FONT color="green">073</FONT>     * &lt;p&gt;This class was copied and modified from Stripes - http://stripes.mc4j.org/confluence/display/stripes/Home<a name="line.73"></a>
-<FONT color="green">074</FONT>     * &lt;/p&gt;<a name="line.74"></a>
-<FONT color="green">075</FONT>     */<a name="line.75"></a>
-<FONT color="green">076</FONT>    public class ResolverUtil {<a name="line.76"></a>
-<FONT color="green">077</FONT>        /** An instance of Log to use for logging in this class. */<a name="line.77"></a>
-<FONT color="green">078</FONT>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.78"></a>
-<FONT color="green">079</FONT>    <a name="line.79"></a>
-<FONT color="green">080</FONT>        private static final String VFSZIP = "vfszip";<a name="line.80"></a>
-<FONT color="green">081</FONT>    <a name="line.81"></a>
-<FONT color="green">082</FONT>        private static final String BUNDLE_RESOURCE = "bundleresource";<a name="line.82"></a>
-<FONT color="green">083</FONT>    <a name="line.83"></a>
-<FONT color="green">084</FONT>        /** The set of matches being accumulated. */<a name="line.84"></a>
-<FONT color="green">085</FONT>        private final Set&lt;Class&lt;?&gt;&gt; classMatches = new HashSet&lt;Class&lt;?&gt;&gt;();<a name="line.85"></a>
+<FONT color="green">065</FONT>     * &lt;p&gt;<a name="line.65"></a>
+<FONT color="green">066</FONT>     * The standard usage pattern for the ResolverUtil class is as follows:<a name="line.66"></a>
+<FONT color="green">067</FONT>     * &lt;/p&gt;<a name="line.67"></a>
+<FONT color="green">068</FONT>     *<a name="line.68"></a>
+<FONT color="green">069</FONT>     * &lt;pre&gt;<a name="line.69"></a>
+<FONT color="green">070</FONT>     * ResolverUtil&amp;lt;ActionBean&amp;gt; resolver = new ResolverUtil&amp;lt;ActionBean&amp;gt;();<a name="line.70"></a>
+<FONT color="green">071</FONT>     * resolver.findImplementation(ActionBean.class, pkg1, pkg2);<a name="line.71"></a>
+<FONT color="green">072</FONT>     * resolver.find(new CustomTest(), pkg1);<a name="line.72"></a>
+<FONT color="green">073</FONT>     * resolver.find(new CustomTest(), pkg2);<a name="line.73"></a>
+<FONT color="green">074</FONT>     * Collection&amp;lt;ActionBean&amp;gt; beans = resolver.getClasses();<a name="line.74"></a>
+<FONT color="green">075</FONT>     * &lt;/pre&gt;<a name="line.75"></a>
+<FONT color="green">076</FONT>     *<a name="line.76"></a>
+<FONT color="green">077</FONT>     * &lt;p&gt;<a name="line.77"></a>
+<FONT color="green">078</FONT>     * This class was copied and modified from Stripes - http://stripes.mc4j.org/confluence/display/stripes/Home<a name="line.78"></a>
+<FONT color="green">079</FONT>     * &lt;/p&gt;<a name="line.79"></a>
+<FONT color="green">080</FONT>     */<a name="line.80"></a>
+<FONT color="green">081</FONT>    public class ResolverUtil {<a name="line.81"></a>
+<FONT color="green">082</FONT>        /** An instance of Log to use for logging in this class. */<a name="line.82"></a>
+<FONT color="green">083</FONT>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>        private static final String VFSZIP = "vfszip";<a name="line.85"></a>
 <FONT color="green">086</FONT>    <a name="line.86"></a>
-<FONT color="green">087</FONT>        /** The set of matches being accumulated. */<a name="line.87"></a>
-<FONT color="green">088</FONT>        private final Set&lt;URI&gt; resourceMatches = new HashSet&lt;URI&gt;();<a name="line.88"></a>
-<FONT color="green">089</FONT>    <a name="line.89"></a>
-<FONT color="green">090</FONT>        /**<a name="line.90"></a>
-<FONT color="green">091</FONT>         * The ClassLoader to use when looking for classes. If null then the ClassLoader returned<a name="line.91"></a>
-<FONT color="green">092</FONT>         * by Thread.currentThread().getContextClassLoader() will be used.<a name="line.92"></a>
-<FONT color="green">093</FONT>         */<a name="line.93"></a>
-<FONT color="green">094</FONT>        private ClassLoader classloader;<a name="line.94"></a>
-<FONT color="green">095</FONT>    <a name="line.95"></a>
-<FONT color="green">096</FONT>        /**<a name="line.96"></a>
-<FONT color="green">097</FONT>         * Provides access to the classes discovered so far. If no calls have been made to<a name="line.97"></a>
-<FONT color="green">098</FONT>         * any of the {@code find()} methods, this set will be empty.<a name="line.98"></a>
-<FONT color="green">099</FONT>         *<a name="line.99"></a>
-<FONT color="green">100</FONT>         * @return the set of classes that have been discovered.<a name="line.100"></a>
-<FONT color="green">101</FONT>         */<a name="line.101"></a>
-<FONT color="green">102</FONT>        public Set&lt;Class&lt;?&gt;&gt; getClasses() {<a name="line.102"></a>
-<FONT color="green">103</FONT>            return classMatches;<a name="line.103"></a>
-<FONT color="green">104</FONT>        }<a name="line.104"></a>
-<FONT color="green">105</FONT>    <a name="line.105"></a>
-<FONT color="green">106</FONT>        /**<a name="line.106"></a>
-<FONT color="green">107</FONT>         * Returns the matching resources.<a name="line.107"></a>
-<FONT color="green">108</FONT>         * @return A Set of URIs that match the criteria.<a name="line.108"></a>
-<FONT color="green">109</FONT>         */<a name="line.109"></a>
-<FONT color="green">110</FONT>        public Set&lt;URI&gt; getResources() {<a name="line.110"></a>
-<FONT color="green">111</FONT>            return resourceMatches;<a name="line.111"></a>
-<FONT color="green">112</FONT>        }<a name="line.112"></a>
-<FONT color="green">113</FONT>    <a name="line.113"></a>
-<FONT color="green">114</FONT>    <a name="line.114"></a>
-<FONT color="green">115</FONT>        /**<a name="line.115"></a>
-<FONT color="green">116</FONT>         * Returns the classloader that will be used for scanning for classes. If no explicit<a name="line.116"></a>
-<FONT color="green">117</FONT>         * ClassLoader has been set by the calling, the context class loader will be used.<a name="line.117"></a>
-<FONT color="green">118</FONT>         *<a name="line.118"></a>
-<FONT color="green">119</FONT>         * @return the ClassLoader that will be used to scan for classes<a name="line.119"></a>
-<FONT color="green">120</FONT>         */<a name="line.120"></a>
-<FONT color="green">121</FONT>        public ClassLoader getClassLoader() {<a name="line.121"></a>
-<FONT color="green">122</FONT>            return classloader != null ? classloader : (classloader = Loader.getClassLoader(ResolverUtil.class, null));<a name="line.122"></a>
-<FONT color="green">123</FONT>        }<a name="line.123"></a>
-<FONT color="green">124</FONT>    <a name="line.124"></a>
-<FONT color="green">125</FONT>        /**<a name="line.125"></a>
-<FONT color="green">126</FONT>         * Sets an explicit ClassLoader that should be used when scanning for classes. If none<a name="line.126"></a>
-<FONT color="green">127</FONT>         * is set then the context classloader will be used.<a name="line.127"></a>
-<FONT color="green">128</FONT>         *<a name="line.128"></a>
-<FONT color="green">129</FONT>         * @param classloader a ClassLoader to use when scanning for classes<a name="line.129"></a>
-<FONT color="green">130</FONT>         */<a name="line.130"></a>
-<FONT color="green">131</FONT>        public void setClassLoader(final ClassLoader classloader) { this.classloader = classloader; }<a name="line.131"></a>
-<FONT color="green">132</FONT>    <a name="line.132"></a>
-<FONT color="green">133</FONT>        /**<a name="line.133"></a>
-<FONT color="green">134</FONT>         * Attempts to discover classes that pass the test. Accumulated<a name="line.134"></a>
-<FONT color="green">135</FONT>         * classes can be accessed by calling {@link #getClasses()}.<a name="line.135"></a>
-<FONT color="green">136</FONT>         *<a name="line.136"></a>
-<FONT color="green">137</FONT>         * @param test the test to determine matching classes<a name="line.137"></a>
-<FONT color="green">138</FONT>         * @param packageNames one or more package names to scan (including subpackages) for classes<a name="line.138"></a>
-<FONT color="green">139</FONT>         */<a name="line.139"></a>
-<FONT color="green">140</FONT>        public void find(final Test test, final String... packageNames) {<a name="line.140"></a>
-<FONT color="green">141</FONT>            if (packageNames == null) {<a name="line.141"></a>
-<FONT color="green">142</FONT>                return;<a name="line.142"></a>
-<FONT color="green">143</FONT>            }<a name="line.143"></a>
-<FONT color="green">144</FONT>    <a name="line.144"></a>
-<FONT color="green">145</FONT>            for (final String pkg : packageNames) {<a name="line.145"></a>
-<FONT color="green">146</FONT>                findInPackage(test, pkg);<a name="line.146"></a>
-<FONT color="green">147</FONT>            }<a name="line.147"></a>
-<FONT color="green">148</FONT>        }<a name="line.148"></a>
-<FONT color="green">149</FONT>    <a name="line.149"></a>
-<FONT color="green">150</FONT>        /**<a name="line.150"></a>
-<FONT color="green">151</FONT>         * Scans for classes starting at the package provided and descending into subpackages.<a name="line.151"></a>
-<FONT color="green">152</FONT>         * Each class is offered up to the Test as it is discovered, and if the Test returns<a name="line.152"></a>
-<FONT color="green">153</FONT>         * true the class is retained.  Accumulated classes can be fetched by calling<a name="line.153"></a>
-<FONT color="green">154</FONT>         * {@link #getClasses()}.<a name="line.154"></a>
-<FONT color="green">155</FONT>         *<a name="line.155"></a>
-<FONT color="green">156</FONT>         * @param test an instance of {@link Test} that will be used to filter classes<a name="line.156"></a>
-<FONT color="green">157</FONT>         * @param packageName the name of the package from which to start scanning for<a name="line.157"></a>
-<FONT color="green">158</FONT>         *        classes, e.g. {@code net.sourceforge.stripes}<a name="line.158"></a>
-<FONT color="green">159</FONT>         */<a name="line.159"></a>
-<FONT color="green">160</FONT>        public void findInPackage(final Test test, String packageName) {<a name="line.160"></a>
-<FONT color="green">161</FONT>            packageName = packageName.replace('.', '/');<a name="line.161"></a>
-<FONT color="green">162</FONT>            final ClassLoader loader = getClassLoader();<a name="line.162"></a>
-<FONT color="green">163</FONT>            Enumeration&lt;URL&gt; urls;<a name="line.163"></a>
-<FONT color="green">164</FONT>    <a name="line.164"></a>
-<FONT color="green">165</FONT>            try {<a name="line.165"></a>
-<FONT color="green">166</FONT>                urls = loader.getResources(packageName);<a name="line.166"></a>
-<FONT color="green">167</FONT>            } catch (final IOException ioe) {<a name="line.167"></a>
-<FONT color="green">168</FONT>                LOGGER.warn("Could not read package: " + packageName, ioe);<a name="line.168"></a>
-<FONT color="green">169</FONT>                return;<a name="line.169"></a>
-<FONT color="green">170</FONT>            }<a name="line.170"></a>
-<FONT color="green">171</FONT>    <a name="line.171"></a>
-<FONT color="green">172</FONT>            while (urls.hasMoreElements()) {<a name="line.172"></a>
-<FONT color="green">173</FONT>                try {<a name="line.173"></a>
-<FONT color="green">174</FONT>                    final URL url = urls.nextElement();<a name="line.174"></a>
-<FONT color="green">175</FONT>                    final String urlPath = extractPath(url);<a name="line.175"></a>
-<FONT color="green">176</FONT>    <a name="line.176"></a>
-<FONT color="green">177</FONT>                    LOGGER.info("Scanning for classes in [" + urlPath + "] matching criteria: " + test);<a name="line.177"></a>
-<FONT color="green">178</FONT>                    // Check for a jar in a war in JBoss<a name="line.178"></a>
-<FONT color="green">179</FONT>                    if (VFSZIP.equals(url.getProtocol())) {<a name="line.179"></a>
-<FONT color="green">180</FONT>                        final String path = urlPath.substring(0, urlPath.length() - packageName.length() - 2);<a name="line.180"></a>
-<FONT color="green">181</FONT>                        final URL newURL = new URL(url.getProtocol(), url.getHost(), path);<a name="line.181"></a>
-<FONT color="green">182</FONT>                        @SuppressWarnings("resource")<a name="line.182"></a>
-<FONT color="green">183</FONT>                        final JarInputStream stream = new JarInputStream(newURL.openStream());<a name="line.183"></a>
-<FONT color="green">184</FONT>                        try {<a name="line.184"></a>
-<FONT color="green">185</FONT>                            loadImplementationsInJar(test, packageName, path, stream);<a name="line.185"></a>
-<FONT color="green">186</FONT>                        } finally {<a name="line.186"></a>
-<FONT color="green">187</FONT>                            close(stream, newURL);<a name="line.187"></a>
-<FONT color="green">188</FONT>                        }<a name="line.188"></a>
-<FONT color="green">189</FONT>                    } else if (BUNDLE_RESOURCE.equals(url.getProtocol())) {<a name="line.189"></a>
-<FONT color="green">190</FONT>                        loadImplementationsInBundle(test, packageName);<a name="line.190"></a>
-<FONT color="green">191</FONT>                    } else {<a name="line.191"></a>
-<FONT color="green">192</FONT>                        final File file = new File(urlPath);<a name="line.192"></a>
-<FONT color="green">193</FONT>                        if (file.isDirectory()) {<a name="line.193"></a>
-<FONT color="green">194</FONT>                            loadImplementationsInDirectory(test, packageName, file);<a name="line.194"></a>
-<FONT color="green">195</FONT>                        } else {<a name="line.195"></a>
-<FONT color="green">196</FONT>                            loadImplementationsInJar(test, packageName, file);<a name="line.196"></a>
-<FONT color="green">197</FONT>                        }<a name="line.197"></a>
-<FONT color="green">198</FONT>                    }<a name="line.198"></a>
-<FONT color="green">199</FONT>                } catch (final IOException ioe) {<a name="line.199"></a>
-<FONT color="green">200</FONT>                    LOGGER.warn("could not read entries", ioe);<a name="line.200"></a>
-<FONT color="green">201</FONT>                }<a name="line.201"></a>
-<FONT color="green">202</FONT>            }<a name="line.202"></a>
-<FONT color="green">203</FONT>        }<a name="line.203"></a>
-<FONT color="green">204</FONT>    <a name="line.204"></a>
-<FONT color="green">205</FONT>        String extractPath(final URL url) throws UnsupportedEncodingException {<a name="line.205"></a>
-<FONT color="green">206</FONT>            String urlPath = url.getPath(); // same as getFile but without the Query portion<a name="line.206"></a>
-<FONT color="green">207</FONT>            //System.out.println(url.getProtocol() + "-&gt;" + urlPath);<a name="line.207"></a>
-<FONT color="green">208</FONT>    <a name="line.208"></a>
-<FONT color="green">209</FONT>            // I would be surprised if URL.getPath() ever starts with "jar:" but no harm in checking<a name="line.209"></a>
-<FONT color="green">210</FONT>            if (urlPath.startsWith("jar:")) {<a name="line.210"></a>
-<FONT color="green">211</FONT>                urlPath = urlPath.substring(4);<a name="line.211"></a>
-<FONT color="green">212</FONT>            }<a name="line.212"></a>
-<FONT color="green">213</FONT>            // For jar: URLs, the path part starts with "file:"<a name="line.213"></a>
-<FONT color="green">214</FONT>            if (urlPath.startsWith("file:")) {<a name="line.214"></a>
-<FONT color="green">215</FONT>                urlPath = urlPath.substring(5);<a name="line.215"></a>
-<FONT color="green">216</FONT>            }<a name="line.216"></a>
-<FONT color="green">217</FONT>            // If it was in a JAR, grab the path to the jar<a name="line.217"></a>
-<FONT color="green">218</FONT>            if (urlPath.indexOf('!') &gt; 0) {<a name="line.218"></a>
-<FONT color="green">219</FONT>                urlPath = urlPath.substring(0, urlPath.indexOf('!'));<a name="line.219"></a>
-<FONT color="green">220</FONT>            }<a name="line.220"></a>
-<FONT color="green">221</FONT>    <a name="line.221"></a>
-<FONT color="green">222</FONT>            // LOG4J2-445<a name="line.222"></a>
-<FONT color="green">223</FONT>            // Finally, decide whether to URL-decode the file name or not...<a name="line.223"></a>
-<FONT color="green">224</FONT>            final String protocol = url.getProtocol();<a name="line.224"></a>
-<FONT color="green">225</FONT>            final List&lt;String&gt; neverDecode = Arrays.asList(VFSZIP, BUNDLE_RESOURCE);<a name="line.225"></a>
-<FONT color="green">226</FONT>            if (neverDecode.contains(protocol)) {<a name="line.226"></a>
-<FONT color="green">227</FONT>                return urlPath;<a name="line.227"></a>
+<FONT color="green">087</FONT>        private static final String BUNDLE_RESOURCE = "bundleresource";<a name="line.87"></a>
+<FONT color="green">088</FONT>    <a name="line.88"></a>
+<FONT color="green">089</FONT>        /** The set of matches being accumulated. */<a name="line.89"></a>
+<FONT color="green">090</FONT>        private final Set&lt;Class&lt;?&gt;&gt; classMatches = new HashSet&lt;Class&lt;?&gt;&gt;();<a name="line.90"></a>
+<FONT color="green">091</FONT>    <a name="line.91"></a>
+<FONT color="green">092</FONT>        /** The set of matches being accumulated. */<a name="line.92"></a>
+<FONT color="green">093</FONT>        private final Set&lt;URI&gt; resourceMatches = new HashSet&lt;URI&gt;();<a name="line.93"></a>
+<FONT color="green">094</FONT>    <a name="line.94"></a>
+<FONT color="green">095</FONT>        /**<a name="line.95"></a>
+<FONT color="green">096</FONT>         * The ClassLoader to use when looking for classes. If null then the ClassLoader returned by<a name="line.96"></a>
+<FONT color="green">097</FONT>         * Thread.currentThread().getContextClassLoader() will be used.<a name="line.97"></a>
+<FONT color="green">098</FONT>         */<a name="line.98"></a>
+<FONT color="green">099</FONT>        private ClassLoader classloader;<a name="line.99"></a>
+<FONT color="green">100</FONT>    <a name="line.100"></a>
+<FONT color="green">101</FONT>        /**<a name="line.101"></a>
+<FONT color="green">102</FONT>         * Provides access to the classes discovered so far. If no calls have been made to any of the {@code find()}<a name="line.102"></a>
+<FONT color="green">103</FONT>         * methods, this set will be empty.<a name="line.103"></a>
+<FONT color="green">104</FONT>         *<a name="line.104"></a>
+<FONT color="green">105</FONT>         * @return the set of classes that have been discovered.<a name="line.105"></a>
+<FONT color="green">106</FONT>         */<a name="line.106"></a>
+<FONT color="green">107</FONT>        public Set&lt;Class&lt;?&gt;&gt; getClasses() {<a name="line.107"></a>
+<FONT color="green">108</FONT>            return classMatches;<a name="line.108"></a>
+<FONT color="green">109</FONT>        }<a name="line.109"></a>
+<FONT color="green">110</FONT>    <a name="line.110"></a>
+<FONT color="green">111</FONT>        /**<a name="line.111"></a>
+<FONT color="green">112</FONT>         * Returns the matching resources.<a name="line.112"></a>
+<FONT color="green">113</FONT>         * <a name="line.113"></a>
+<FONT color="green">114</FONT>         * @return A Set of URIs that match the criteria.<a name="line.114"></a>
+<FONT color="green">115</FONT>         */<a name="line.115"></a>
+<FONT color="green">116</FONT>        public Set&lt;URI&gt; getResources() {<a name="line.116"></a>
+<FONT color="green">117</FONT>            return resourceMatches;<a name="line.117"></a>
+<FONT color="green">118</FONT>        }<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>        /**<a name="line.120"></a>
+<FONT color="green">121</FONT>         * Returns the classloader that will be used for scanning for classes. If no explicit ClassLoader has been set by<a name="line.121"></a>
+<FONT color="green">122</FONT>         * the calling, the context class loader will be used.<a name="line.122"></a>
+<FONT color="green">123</FONT>         *<a name="line.123"></a>
+<FONT color="green">124</FONT>         * @return the ClassLoader that will be used to scan for classes<a name="line.124"></a>
+<FONT color="green">125</FONT>         */<a name="line.125"></a>
+<FONT color="green">126</FONT>        public ClassLoader getClassLoader() {<a name="line.126"></a>
+<FONT color="green">127</FONT>            return classloader != null ? classloader : (classloader = Loader.getClassLoader(ResolverUtil.class, null));<a name="line.127"></a>
+<FONT color="green">128</FONT>        }<a name="line.128"></a>
+<FONT color="green">129</FONT>    <a name="line.129"></a>
+<FONT color="green">130</FONT>        /**<a name="line.130"></a>
+<FONT color="green">131</FONT>         * Sets an explicit ClassLoader that should be used when scanning for classes. If none is set then the context<a name="line.131"></a>
+<FONT color="green">132</FONT>         * classloader will be used.<a name="line.132"></a>
+<FONT color="green">133</FONT>         *<a name="line.133"></a>
+<FONT color="green">134</FONT>         * @param classloader<a name="line.134"></a>
+<FONT color="green">135</FONT>         *        a ClassLoader to use when scanning for classes<a name="line.135"></a>
+<FONT color="green">136</FONT>         */<a name="line.136"></a>
+<FONT color="green">137</FONT>        public void setClassLoader(final ClassLoader classloader) {<a name="line.137"></a>
+<FONT color="green">138</FONT>            this.classloader = classloader;<a name="line.138"></a>
+<FONT color="green">139</FONT>        }<a name="line.139"></a>
+<FONT color="green">140</FONT>    <a name="line.140"></a>
+<FONT color="green">141</FONT>        /**<a name="line.141"></a>
+<FONT color="green">142</FONT>         * Attempts to discover classes that pass the test. Accumulated classes can be accessed by calling<a name="line.142"></a>
+<FONT color="green">143</FONT>         * {@link #getClasses()}.<a name="line.143"></a>
+<FONT color="green">144</FONT>         *<a name="line.144"></a>
+<FONT color="green">145</FONT>         * @param test<a name="line.145"></a>
+<FONT color="green">146</FONT>         *        the test to determine matching classes<a name="line.146"></a>
+<FONT color="green">147</FONT>         * @param packageNames<a name="line.147"></a>
+<FONT color="green">148</FONT>         *        one or more package names to scan (including subpackages) for classes<a name="line.148"></a>
+<FONT color="green">149</FONT>         */<a name="line.149"></a>
+<FONT color="green">150</FONT>        public void find(final Test test, final String... packageNames) {<a name="line.150"></a>
+<FONT color="green">151</FONT>            if (packageNames == null) {<a name="line.151"></a>
+<FONT color="green">152</FONT>                return;<a name="line.152"></a>
+<FONT color="green">153</FONT>            }<a name="line.153"></a>
+<FONT color="green">154</FONT>    <a name="line.154"></a>
+<FONT color="green">155</FONT>            for (final String pkg : packageNames) {<a name="line.155"></a>
+<FONT color="green">156</FONT>                findInPackage(test, pkg);<a name="line.156"></a>
+<FONT color="green">157</FONT>            }<a name="line.157"></a>
+<FONT color="green">158</FONT>        }<a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>        /**<a name="line.160"></a>
+<FONT color="green">161</FONT>         * Scans for classes starting at the package provided and descending into subpackages. Each class is offered up to<a name="line.161"></a>
+<FONT color="green">162</FONT>         * the Test as it is discovered, and if the Test returns true the class is retained. Accumulated classes can be<a name="line.162"></a>
+<FONT color="green">163</FONT>         * fetched by calling {@link #getClasses()}.<a name="line.163"></a>
+<FONT color="green">164</FONT>         *<a name="line.164"></a>
+<FONT color="green">165</FONT>         * @param test<a name="line.165"></a>
+<FONT color="green">166</FONT>         *        an instance of {@link Test} that will be used to filter classes<a name="line.166"></a>
+<FONT color="green">167</FONT>         * @param packageName<a name="line.167"></a>
+<FONT color="green">168</FONT>         *        the name of the package from which to start scanning for classes, e.g. {@code net.sourceforge.stripes}<a name="line.168"></a>
+<FONT color="green">169</FONT>         */<a name="line.169"></a>
+<FONT color="green">170</FONT>        public void findInPackage(final Test test, String packageName) {<a name="line.170"></a>
+<FONT color="green">171</FONT>            packageName = packageName.replace('.', '/');<a name="line.171"></a>
+<FONT color="green">172</FONT>            final ClassLoader loader = getClassLoader();<a name="line.172"></a>
+<FONT color="green">173</FONT>            Enumeration&lt;URL&gt; urls;<a name="line.173"></a>
+<FONT color="green">174</FONT>    <a name="line.174"></a>
+<FONT color="green">175</FONT>            try {<a name="line.175"></a>
+<FONT color="green">176</FONT>                urls = loader.getResources(packageName);<a name="line.176"></a>
+<FONT color="green">177</FONT>            } catch (final IOException ioe) {<a name="line.177"></a>
+<FONT color="green">178</FONT>                LOGGER.warn("Could not read package: " + packageName, ioe);<a name="line.178"></a>
+<FONT color="green">179</FONT>                return;<a name="line.179"></a>
+<FONT color="green">180</FONT>            }<a name="line.180"></a>
+<FONT color="green">181</FONT>    <a name="line.181"></a>
+<FONT color="green">182</FONT>            while (urls.hasMoreElements()) {<a name="line.182"></a>
+<FONT color="green">183</FONT>                try {<a name="line.183"></a>
+<FONT color="green">184</FONT>                    final URL url = urls.nextElement();<a name="line.184"></a>
+<FONT color="green">185</FONT>                    final String urlPath = extractPath(url);<a name="line.185"></a>
+<FONT color="green">186</FONT>    <a name="line.186"></a>
+<FONT color="green">187</FONT>                    LOGGER.info("Scanning for classes in [" + urlPath + "] matching criteria: " + test);<a name="line.187"></a>
+<FONT color="green">188</FONT>                    // Check for a jar in a war in JBoss<a name="line.188"></a>
+<FONT color="green">189</FONT>                    if (VFSZIP.equals(url.getProtocol())) {<a name="line.189"></a>
+<FONT color="green">190</FONT>                        final String path = urlPath.substring(0, urlPath.length() - packageName.length() - 2);<a name="line.190"></a>
+<FONT color="green">191</FONT>                        final URL newURL = new URL(url.getProtocol(), url.getHost(), path);<a name="line.191"></a>
+<FONT color="green">192</FONT>                        @SuppressWarnings("resource")<a name="line.192"></a>
+<FONT color="green">193</FONT>                        final JarInputStream stream = new JarInputStream(newURL.openStream());<a name="line.193"></a>
+<FONT color="green">194</FONT>                        try {<a name="line.194"></a>
+<FONT color="green">195</FONT>                            loadImplementationsInJar(test, packageName, path, stream);<a name="line.195"></a>
+<FONT color="green">196</FONT>                        } finally {<a name="line.196"></a>
+<FONT color="green">197</FONT>                            close(stream, newURL);<a name="line.197"></a>
+<FONT color="green">198</FONT>                        }<a name="line.198"></a>
+<FONT color="green">199</FONT>                    } else if (BUNDLE_RESOURCE.equals(url.getProtocol())) {<a name="line.199"></a>
+<FONT color="green">200</FONT>                        loadImplementationsInBundle(test, packageName);<a name="line.200"></a>
+<FONT color="green">201</FONT>                    } else {<a name="line.201"></a>
+<FONT color="green">202</FONT>                        final File file = new File(urlPath);<a name="line.202"></a>
+<FONT color="green">203</FONT>                        if (file.isDirectory()) {<a name="line.203"></a>
+<FONT color="green">204</FONT>                            loadImplementationsInDirectory(test, packageName, file);<a name="line.204"></a>
+<FONT color="green">205</FONT>                        } else {<a name="line.205"></a>
+<FONT color="green">206</FONT>                            loadImplementationsInJar(test, packageName, file);<a name="line.206"></a>
+<FONT color="green">207</FONT>                        }<a name="line.207"></a>
+<FONT color="green">208</FONT>                    }<a name="line.208"></a>
+<FONT color="green">209</FONT>                } catch (final IOException ioe) {<a name="line.209"></a>
+<FONT color="green">210</FONT>                    LOGGER.warn("could not read entries", ioe);<a name="line.210"></a>
+<FONT color="green">211</FONT>                } catch (URISyntaxException e) {<a name="line.211"></a>
+<FONT color="green">212</FONT>                    LOGGER.warn("could not read entries", e);<a name="line.212"></a>
+<FONT color="green">213</FONT>                }<a name="line.213"></a>
+<FONT color="green">214</FONT>            }<a name="line.214"></a>
+<FONT color="green">215</FONT>        }<a name="line.215"></a>
+<FONT color="green">216</FONT>    <a name="line.216"></a>
+<FONT color="green">217</FONT>        String extractPath(final URL url) throws UnsupportedEncodingException, URISyntaxException {<a name="line.217"></a>
+<FONT color="green">218</FONT>            String urlPath = url.getPath(); // same as getFile but without the Query portion<a name="line.218"></a>
+<FONT color="green">219</FONT>            // System.out.println(url.getProtocol() + "-&gt;" + urlPath);<a name="line.219"></a>
+<FONT color="green">220</FONT>    <a name="line.220"></a>
+<FONT color="green">221</FONT>            // I would be surprised if URL.getPath() ever starts with "jar:" but no harm in checking<a name="line.221"></a>
+<FONT color="green">222</FONT>            if (urlPath.startsWith("jar:")) {<a name="line.222"></a>
+<FONT color="green">223</FONT>                urlPath = urlPath.substring(4);<a name="line.223"></a>
+<FONT color="green">224</FONT>            }<a name="line.224"></a>
+<FONT color="green">225</FONT>            // For jar: URLs, the path part starts with "file:"<a name="line.225"></a>
+<FONT color="green">226</FONT>            if (urlPath.startsWith("file:")) {<a name="line.226"></a>
+<FONT color="green">227</FONT>                urlPath = urlPath.substring(5);<a name="line.227"></a>
 <FONT color="green">228</FONT>            }<a name="line.228"></a>
-<FONT color="green">229</FONT>            if (new File(urlPath).exists()) {<a name="line.229"></a>
-<FONT color="green">230</FONT>                // if URL-encoded file exists, don't decode it<a name="line.230"></a>
-<FONT color="green">231</FONT>                return urlPath;<a name="line.231"></a>
+<FONT color="green">229</FONT>            // If it was in a JAR, grab the path to the jar<a name="line.229"></a>
+<FONT color="green">230</FONT>            if (urlPath.indexOf('!') &gt; 0) {<a name="line.230"></a>
+<FONT color="green">231</FONT>                urlPath = urlPath.substring(0, urlPath.indexOf('!'));<a name="line.231"></a>
 <FONT color="green">232</FONT>            }<a name="line.232"></a>
-<FONT color="green">233</FONT>            urlPath = URLDecoder.decode(urlPath, Charsets.UTF_8.name());<a name="line.233"></a>
-<FONT color="green">234</FONT>            return urlPath;<a name="line.234"></a>
-<FONT color="green">235</FONT>        }<a name="line.235"></a>
-<FONT color="green">236</FONT>    <a name="line.236"></a>
-<FONT color="green">237</FONT>        private void loadImplementationsInBundle(final Test test, final String packageName) {<a name="line.237"></a>
-<FONT color="green">238</FONT>            //Do not remove the cast on the next line as removing it will cause a compile error on Java 7.<a name="line.238"></a>
-<FONT color="green">239</FONT>            @SuppressWarnings("RedundantCast")<a name="line.239"></a>
-<FONT color="green">240</FONT>            final BundleWiring wiring = (BundleWiring) FrameworkUtil.getBundle(<a name="line.240"></a>
-<FONT color="green">241</FONT>                    ResolverUtil.class).adapt(BundleWiring.class);<a name="line.241"></a>
-<FONT color="green">242</FONT>            @SuppressWarnings("unchecked")<a name="line.242"></a>
-<FONT color="green">243</FONT>            final Collection&lt;String&gt; list = (Collection&lt;String&gt;) wiring.listResources(packageName, "*.class",<a name="line.243"></a>
-<FONT color="green">244</FONT>                BundleWiring.LISTRESOURCES_RECURSE);<a name="line.244"></a>
-<FONT color="green">245</FONT>            for (final String name : list) {<a name="line.245"></a>
-<FONT color="green">246</FONT>                addIfMatching(test, name);<a name="line.246"></a>
-<FONT color="green">247</FONT>            }<a name="line.247"></a>
-<FONT color="green">248</FONT>        }<a name="line.248"></a>
-<FONT color="green">249</FONT>    <a name="line.249"></a>
-<FONT color="green">250</FONT>    <a name="line.250"></a>
-<FONT color="green">251</FONT>        /**<a name="line.251"></a>
-<FONT color="green">252</FONT>         * Finds matches in a physical directory on a filesystem.  Examines all<a name="line.252"></a>
-<FONT color="green">253</FONT>         * files within a directory - if the File object is not a directory, and ends with &lt;i&gt;.class&lt;/i&gt;<a name="line.253"></a>
-<FONT color="green">254</FONT>         * the file is loaded and tested to see if it is acceptable according to the Test.  Operates<a name="line.254"></a>
-<FONT color="green">255</FONT>         * recursively to find classes within a folder structure matching the package structure.<a name="line.255"></a>
-<FONT color="green">256</FONT>         *<a name="line.256"></a>
-<FONT color="green">257</FONT>         * @param test a Test used to filter the classes that are discovered<a name="line.257"></a>
-<FONT color="green">258</FONT>         * @param parent the package name up to this directory in the package hierarchy.  E.g. if<a name="line.258"></a>
-<FONT color="green">259</FONT>         *        /classes is in the classpath and we wish to examine files in /classes/org/apache then<a name="line.259"></a>
-<FONT color="green">260</FONT>         *        the values of &lt;i&gt;parent&lt;/i&gt; would be &lt;i&gt;org/apache&lt;/i&gt;<a name="line.260"></a>
-<FONT color="green">261</FONT>         * @param location a File object representing a directory<a name="line.261"></a>
-<FONT color="green">262</FONT>         */<a name="line.262"></a>
-<FONT color="green">263</FONT>        private void loadImplementationsInDirectory(final Test test, final String parent, final File location) {<a name="line.263"></a>
-<FONT color="green">264</FONT>            final File[] files = location.listFiles();<a name="line.264"></a>
-<FONT color="green">265</FONT>            if (files == null) {<a name="line.265"></a>
-<FONT color="green">266</FONT>                return;<a name="line.266"></a>
-<FONT color="green">267</FONT>            }<a name="line.267"></a>
-<FONT color="green">268</FONT>    <a name="line.268"></a>
-<FONT color="green">269</FONT>            StringBuilder builder;<a name="line.269"></a>
-<FONT color="green">270</FONT>            for (final File file : files) {<a name="line.270"></a>
-<FONT color="green">271</FONT>                builder = new StringBuilder();<a name="line.271"></a>
-<FONT color="green">272</FONT>                builder.append(parent).append('/').append(file.getName());<a name="line.272"></a>
-<FONT color="green">273</FONT>                final String packageOrClass = parent == null ? file.getName() : builder.toString();<a name="line.273"></a>
-<FONT color="green">274</FONT>    <a name="line.274"></a>
-<FONT color="green">275</FONT>                if (file.isDirectory()) {<a name="line.275"></a>
-<FONT color="green">276</FONT>                    loadImplementationsInDirectory(test, packageOrClass, file);<a name="line.276"></a>
-<FONT color="green">277</FONT>                } else if (isTestApplicable(test, file.getName())) {<a name="line.277"></a>
-<FONT color="green">278</FONT>                    addIfMatching(test, packageOrClass);<a name="line.278"></a>
-<FONT color="green">279</FONT>                }<a name="line.279"></a>
-<FONT color="green">280</FONT>            }<a name="line.280"></a>
-<FONT color="green">281</FONT>        }<a name="line.281"></a>
+<FONT color="green">233</FONT>    <a name="line.233"></a>
+<FONT color="green">234</FONT>            // LOG4J2-445<a name="line.234"></a>
+<FONT color="green">235</FONT>            // Finally, decide whether to URL-decode the file name or not...<a name="line.235"></a>
+<FONT color="green">236</FONT>            final String protocol = url.getProtocol();<a name="line.236"></a>
+<FONT color="green">237</FONT>            final List&lt;String&gt; neverDecode = Arrays.asList(VFSZIP, BUNDLE_RESOURCE);<a name="line.237"></a>
+<FONT color="green">238</FONT>            if (neverDecode.contains(protocol)) {<a name="line.238"></a>
+<FONT color="green">239</FONT>                return urlPath;<a name="line.239"></a>
+<FONT color="green">240</FONT>            }<a name="line.240"></a>
+<FONT color="green">241</FONT>            final String cleanPath = new URI(urlPath).getPath();<a name="line.241"></a>
+<FONT color="green">242</FONT>            if (new File(cleanPath).exists()) {<a name="line.242"></a>
+<FONT color="green">243</FONT>                // if URL-encoded file exists, don't decode it<a name="line.243"></a>
+<FONT color="green">244</FONT>                return cleanPath;<a name="line.244"></a>
+<FONT color="green">245</FONT>            }<a name="line.245"></a>
+<FONT color="green">246</FONT>            return URLDecoder.decode(urlPath, Constants.UTF_8.name());<a name="line.246"></a>
+<FONT color="green">247</FONT>        }<a name="line.247"></a>
+<FONT color="green">248</FONT>    <a name="line.248"></a>
+<FONT color="green">249</FONT>        private void loadImplementationsInBundle(final Test test, final String packageName) {<a name="line.249"></a>
+<FONT color="green">250</FONT>            // Do not remove the cast on the next line as removing it will cause a compile error on Java 7.<a name="line.250"></a>
+<FONT color="green">251</FONT>            @SuppressWarnings("RedundantCast")<a name="line.251"></a>
+<FONT color="green">252</FONT>            final BundleWiring wiring = (BundleWiring) FrameworkUtil.getBundle(ResolverUtil.class)<a name="line.252"></a>
+<FONT color="green">253</FONT>                    .adapt(BundleWiring.class);<a name="line.253"></a>
+<FONT color="green">254</FONT>            @SuppressWarnings("unchecked")<a name="line.254"></a>
+<FONT color="green">255</FONT>            final Collection&lt;String&gt; list = (Collection&lt;String&gt;) wiring.listResources(packageName, "*.class",<a name="line.255"></a>
+<FONT color="green">256</FONT>                    BundleWiring.LISTRESOURCES_RECURSE);<a name="line.256"></a>
+<FONT color="green">257</FONT>            for (final String name : list) {<a name="line.257"></a>
+<FONT color="green">258</FONT>                addIfMatching(test, name);<a name="line.258"></a>
+<FONT color="green">259</FONT>            }<a name="line.259"></a>
+<FONT color="green">260</FONT>        }<a name="line.260"></a>
+<FONT color="green">261</FONT>    <a name="line.261"></a>
+<FONT color="green">262</FONT>        /**<a name="line.262"></a>
+<FONT color="green">263</FONT>         * Finds matches in a physical directory on a filesystem. Examines all files within a directory - if the File object<a name="line.263"></a>
+<FONT color="green">264</FONT>         * is not a directory, and ends with &lt;i&gt;.class&lt;/i&gt; the file is loaded and tested to see if it is acceptable<a name="line.264"></a>
+<FONT color="green">265</FONT>         * according to the Test. Operates recursively to find classes within a folder structure matching the package<a name="line.265"></a>
+<FONT color="green">266</FONT>         * structure.<a name="line.266"></a>
+<FONT color="green">267</FONT>         *<a name="line.267"></a>
+<FONT color="green">268</FONT>         * @param test<a name="line.268"></a>
+<FONT color="green">269</FONT>         *        a Test used to filter the classes that are discovered<a name="line.269"></a>
+<FONT color="green">270</FONT>         * @param parent<a name="line.270"></a>
+<FONT color="green">271</FONT>         *        the package name up to this directory in the package hierarchy. E.g. if /classes is in the classpath and<a name="line.271"></a>
+<FONT color="green">272</FONT>         *        we wish to examine files in /classes/org/apache then the values of &lt;i&gt;parent&lt;/i&gt; would be<a name="line.272"></a>
+<FONT color="green">273</FONT>         *        &lt;i&gt;org/apache&lt;/i&gt;<a name="line.273"></a>
+<FONT color="green">274</FONT>         * @param location<a name="line.274"></a>
+<FONT color="green">275</FONT>         *        a File object representing a directory<a name="line.275"></a>
+<FONT color="green">276</FONT>         */<a name="line.276"></a>
+<FONT color="green">277</FONT>        private void loadImplementationsInDirectory(final Test test, final String parent, final File location) {<a name="line.277"></a>
+<FONT color="green">278</FONT>            final File[] files = location.listFiles();<a name="line.278"></a>
+<FONT color="green">279</FONT>            if (files == null) {<a name="line.279"></a>
+<FONT color="green">280</FONT>                return;<a name="line.280"></a>
+<FONT color="green">281</FONT>            }<a name="line.281"></a>
 <FONT color="green">282</FONT>    <a name="line.282"></a>
-<FONT color="green">283</FONT>        private boolean isTestApplicable(final Test test, final String path) {<a name="line.283"></a>
-<FONT color="green">284</FONT>            return test.doesMatchResource() || path.endsWith(".class") &amp;&amp; test.doesMatchClass();<a name="line.284"></a>
-<FONT color="green">285</FONT>        }<a name="line.285"></a>
-<FONT color="green">286</FONT>    <a name="line.286"></a>
-<FONT color="green">287</FONT>        /**<a name="line.287"></a>
-<FONT color="green">288</FONT>         * Finds matching classes within a jar files that contains a folder structure<a name="line.288"></a>
-<FONT color="green">289</FONT>         * matching the package structure.  If the File is not a JarFile or does not exist a warning<a name="line.289"></a>
-<FONT color="green">290</FONT>         * will be logged, but no error will be raised.<a name="line.290"></a>
-<FONT color="green">291</FONT>         *<a name="line.291"></a>
-<FONT color="green">292</FONT>         * @param test a Test used to filter the classes that are discovered<a name="line.292"></a>
-<FONT color="green">293</FONT>         * @param parent the parent package under which classes must be in order to be considered<a name="line.293"></a>
-<FONT color="green">294</FONT>         * @param jarFile the jar file to be examined for classes<a name="line.294"></a>
-<FONT color="green">295</FONT>         */<a name="line.295"></a>
-<FONT color="green">296</FONT>        private void loadImplementationsInJar(final Test test, final String parent, final File jarFile) {<a name="line.296"></a>
-<FONT color="green">297</FONT>            @SuppressWarnings("resource")<a name="line.297"></a>
-<FONT color="green">298</FONT>            JarInputStream jarStream = null;<a name="line.298"></a>
-<FONT color="green">299</FONT>            try {<a name="line.299"></a>
-<FONT color="green">300</FONT>                jarStream = new JarInputStream(new FileInputStream(jarFile));<a name="line.300"></a>
-<FONT color="green">301</FONT>                loadImplementationsInJar(test, parent, jarFile.getPath(), jarStream);<a name="line.301"></a>
-<FONT color="green">302</FONT>            } catch (final FileNotFoundException ex) {<a name="line.302"></a>
-<FONT color="green">303</FONT>                LOGGER.error("Could not search jar file '" + jarFile + "' for classes matching criteria: " + test<a name="line.303"></a>
-<FONT color="green">304</FONT>                        + " file not found", ex);<a name="line.304"></a>
-<FONT color="green">305</FONT>            } catch (final IOException ioe) {<a name="line.305"></a>
-<FONT color="green">306</FONT>                LOGGER.error("Could not search jar file '" + jarFile + "' for classes matching criteria: " + test<a name="line.306"></a>
-<FONT color="green">307</FONT>                        + " due to an IOException", ioe);<a name="line.307"></a>
-<FONT color="green">308</FONT>            } finally {<a name="line.308"></a>
-<FONT color="green">309</FONT>                close(jarStream, jarFile);<a name="line.309"></a>
-<FONT color="green">310</FONT>            }<a name="line.310"></a>
-<FONT color="green">311</FONT>        }<a name="line.311"></a>
-<FONT color="green">312</FONT>    <a name="line.312"></a>
-<FONT color="green">313</FONT>        /**<a name="line.313"></a>
-<FONT color="green">314</FONT>         * @param jarStream<a name="line.314"></a>
-<FONT color="green">315</FONT>         * @param source<a name="line.315"></a>
-<FONT color="green">316</FONT>         */<a name="line.316"></a>
-<FONT color="green">317</FONT>        private void close(final JarInputStream jarStream, final Object source) {<a name="line.317"></a>
-<FONT color="green">318</FONT>            if (jarStream != null) {<a name="line.318"></a>
-<FONT color="green">319</FONT>                try {<a name="line.319"></a>
-<FONT color="green">320</FONT>                    jarStream.close();<a name="line.320"></a>
-<FONT color="green">321</FONT>                } catch (final IOException e) {<a name="line.321"></a>
-<FONT color="green">322</FONT>                    LOGGER.error("Error closing JAR file stream for {}", source, e);<a name="line.322"></a>
-<FONT color="green">323</FONT>                }<a name="line.323"></a>
-<FONT color="green">324</FONT>            }<a name="line.324"></a>
-<FONT color="green">325</FONT>        }<a name="line.325"></a>
-<FONT color="green">326</FONT>    <a name="line.326"></a>
-<FONT color="green">327</FONT>        /**<a name="line.327"></a>
-<FONT color="green">328</FONT>         * Finds matching classes within a jar files that contains a folder structure<a name="line.328"></a>
-<FONT color="green">329</FONT>         * matching the package structure.  If the File is not a JarFile or does not exist a warning<a name="line.329"></a>
-<FONT color="green">330</FONT>         * will be logged, but no error will be raised.<a name="line.330"></a>
-<FONT color="green">331</FONT>         *<a name="line.331"></a>
-<FONT color="green">332</FONT>         * @param test a Test used to filter the classes that are discovered<a name="line.332"></a>
-<FONT color="green">333</FONT>         * @param parent the parent package under which classes must be in order to be considered<a name="line.333"></a>
-<FONT color="green">334</FONT>         * @param stream The jar InputStream<a name="line.334"></a>
-<FONT color="green">335</FONT>         */<a name="line.335"></a>
-<FONT color="green">336</FONT>        private void loadImplementationsInJar(final Test test, final String parent, final String path,<a name="line.336"></a>
-<FONT color="green">337</FONT>                                              final JarInputStream stream) {<a name="line.337"></a>
-<FONT color="green">338</FONT>    <a name="line.338"></a>
-<FONT color="green">339</FONT>            try {<a name="line.339"></a>
-<FONT color="green">340</FONT>                JarEntry entry;<a name="line.340"></a>
-<FONT color="green">341</FONT>    <a name="line.341"></a>
-<FONT color="green">342</FONT>                while ((entry = stream.getNextJarEntry()) != null) {<a name="line.342"></a>
-<FONT color="green">343</FONT>                    final String name = entry.getName();<a name="line.343"></a>
-<FONT color="green">344</FONT>                    if (!entry.isDirectory() &amp;&amp; name.startsWith(parent) &amp;&amp; isTestApplicable(test, name)) {<a name="line.344"></a>
-<FONT color="green">345</FONT>                        addIfMatching(test, name);<a name="line.345"></a>
-<FONT color="green">346</FONT>                    }<a name="line.346"></a>
-<FONT color="green">347</FONT>                }<a name="line.347"></a>
-<FONT color="green">348</FONT>            } catch (final IOException ioe) {<a name="line.348"></a>
-<FONT color="green">349</FONT>                LOGGER.error("Could not search jar file '" + path + "' for classes matching criteria: " +<a name="line.349"></a>
-<FONT color="green">350</FONT>                    test + " due to an IOException", ioe);<a name="line.350"></a>
-<FONT color="green">351</FONT>            }<a name="line.351"></a>
-<FONT color="green">352</FONT>        }<a name="line.352"></a>
-<FONT color="green">353</FONT>    <a name="line.353"></a>
-<FONT color="green">354</FONT>        /**<a name="line.354"></a>
-<FONT color="green">355</FONT>         * Add the class designated by the fully qualified class name provided to the set of<a name="line.355"></a>
-<FONT color="green">356</FONT>         * resolved classes if and only if it is approved by the Test supplied.<a name="line.356"></a>
-<FONT color="green">357</FONT>         *<a name="line.357"></a>
-<FONT color="green">358</FONT>         * @param test the test used to determine if the class matches<a name="line.358"></a>
-<FONT color="green">359</FONT>         * @param fqn the fully qualified name of a class<a name="line.359"></a>
-<FONT color="green">360</FONT>         */<a name="line.360"></a>
-<FONT color="green">361</FONT>        protected void addIfMatching(final Test test, final String fqn) {<a name="line.361"></a>
-<FONT color="green">362</FONT>            try {<a name="line.362"></a>
-<FONT color="green">363</FONT>                final ClassLoader loader = getClassLoader();<a name="line.363"></a>
-<FONT color="green">364</FONT>                if (test.doesMatchClass()) {<a name="line.364"></a>
-<FONT color="green">365</FONT>                    final String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');<a name="line.365"></a>
-<FONT color="green">366</FONT>                    if (LOGGER.isDebugEnabled()) {<a name="line.366"></a>
-<FONT color="green">367</FONT>                        LOGGER.debug("Checking to see if class " + externalName + " matches criteria [" + test + ']');<a name="line.367"></a>
-<FONT color="green">368</FONT>                    }<a name="line.368"></a>
-<FONT color="green">369</FONT>    <a name="line.369"></a>
-<FONT color="green">370</FONT>                    final Class&lt;?&gt; type = loader.loadClass(externalName);<a name="line.370"></a>
-<FONT color="green">371</FONT>                    if (test.matches(type)) {<a name="line.371"></a>
-<FONT color="green">372</FONT>                        classMatches.add(type);<a name="line.372"></a>
-<FONT color="green">373</FONT>                    }<a name="line.373"></a>
-<FONT color="green">374</FONT>                }<a name="line.374"></a>
-<FONT color="green">375</FONT>                if (test.doesMatchResource()) {<a name="line.375"></a>
-<FONT color="green">376</FONT>                    URL url = loader.getResource(fqn);<a name="line.376"></a>
-<FONT color="green">377</FONT>                    if (url == null) {<a name="line.377"></a>
-<FONT color="green">378</FONT>                        url = loader.getResource(fqn.substring(1));<a name="line.378"></a>
-<FONT color="green">379</FONT>                    }<a name="line.379"></a>
-<FONT color="green">380</FONT>                    if (url != null &amp;&amp; test.matches(url.toURI())) {<a name="line.380"></a>
-<FONT color="green">381</FONT>                        resourceMatches.add(url.toURI());<a name="line.381"></a>
-<FONT color="green">382</FONT>                    }<a name="line.382"></a>
-<FONT color="green">383</FONT>                }<a name="line.383"></a>
-<FONT color="green">384</FONT>            } catch (final Throwable t) {<a name="line.384"></a>
-<FONT color="green">385</FONT>                LOGGER.warn("Could not examine class '" + fqn, t);<a name="line.385"></a>
-<FONT color="green">386</FONT>            }<a name="line.386"></a>
-<FONT color="green">387</FONT>        }<a name="line.387"></a>
-<FONT color="green">388</FONT>    <a name="line.388"></a>
-<FONT color="green">389</FONT>        /**<a name="line.389"></a>
-<FONT color="green">390</FONT>         * A simple interface that specifies how to test classes to determine if they<a name="line.390"></a>
-<FONT color="green">391</FONT>         * are to be included in the results produced by the ResolverUtil.<a name="line.391"></a>
-<FONT color="green">392</FONT>         */<a name="line.392"></a>
-<FONT color="green">393</FONT>        public interface Test {<a name="line.393"></a>
-<FONT color="green">394</FONT>            /**<a name="line.394"></a>
-<FONT color="green">395</FONT>             * Will be called repeatedly with candidate classes. Must return True if a class<a name="line.395"></a>
-<FONT color="green">396</FONT>             * is to be included in the results, false otherwise.<a name="line.396"></a>
-<FONT color="green">397</FONT>             * @param type The Class to match against.<a name="line.397"></a>
-<FONT color="green">398</FONT>             * @return true if the Class matches.<a name="line.398"></a>
-<FONT color="green">399</FONT>             */<a name="line.399"></a>
-<FONT color="green">400</FONT>            boolean matches(Class&lt;?&gt; type);<a name="line.400"></a>
-<FONT color="green">401</FONT>    <a name="line.401"></a>
-<FONT color="green">402</FONT>            /**<a name="line.402"></a>
-<FONT color="green">403</FONT>             * Test for a resource.<a name="line.403"></a>
-<FONT color="green">404</FONT>             * @param resource The URI to the resource.<a name="line.404"></a>
-<FONT color="green">405</FONT>             * @return true if the resource matches.<a name="line.405"></a>
-<FONT color="green">406</FONT>             */<a name="line.406"></a>
-<FONT color="green">407</FONT>            boolean matches(URI resource);<a name="line.407"></a>
+<FONT color="green">283</FONT>            StringBuilder builder;<a name="line.283"></a>
+<FONT color="green">284</FONT>            for (final File file : files) {<a name="line.284"></a>
+<FONT color="green">285</FONT>                builder = new StringBuilder();<a name="line.285"></a>
+<FONT color="green">286</FONT>                builder.append(parent).append('/').append(file.getName());<a name="line.286"></a>
+<FONT color="green">287</FONT>                final String packageOrClass = parent == null ? file.getName() : builder.toString();<a name="line.287"></a>
+<FONT color="green">288</FONT>    <a name="line.288"></a>
+<FONT color="green">289</FONT>                if (file.isDirectory()) {<a name="line.289"></a>
+<FONT color="green">290</FONT>                    loadImplementationsInDirectory(test, packageOrClass, file);<a name="line.290"></a>
+<FONT color="green">291</FONT>                } else if (isTestApplicable(test, file.getName())) {<a name="line.291"></a>
+<FONT color="green">292</FONT>                    addIfMatching(test, packageOrClass);<a name="line.292"></a>
+<FONT color="green">293</FONT>                }<a name="line.293"></a>
+<FONT color="green">294</FONT>            }<a name="line.294"></a>
+<FONT color="green">295</FONT>        }<a name="line.295"></a>
+<FONT color="green">296</FONT>    <a name="line.296"></a>
+<FONT color="green">297</FONT>        private boolean isTestApplicable(final Test test, final String path) {<a name="line.297"></a>
+<FONT color="green">298</FONT>            return test.doesMatchResource() || path.endsWith(".class") &amp;&amp; test.doesMatchClass();<a name="line.298"></a>
+<FONT color="green">299</FONT>        }<a name="line.299"></a>
+<FONT color="green">300</FONT>    <a name="line.300"></a>
+<FONT color="green">301</FONT>        /**<a name="line.301"></a>
+<FONT color="green">302</FONT>         * Finds matching classes within a jar files that contains a folder structure matching the package structure. If the<a name="line.302"></a>
+<FONT color="green">303</FONT>         * File is not a JarFile or does not exist a warning will be logged, but no error will be raised.<a name="line.303"></a>
+<FONT color="green">304</FONT>         *<a name="line.304"></a>
+<FONT color="green">305</FONT>         * @param test<a name="line.305"></a>
+<FONT color="green">306</FONT>         *        a Test used to filter the classes that are discovered<a name="line.306"></a>
+<FONT color="green">307</FONT>         * @param parent<a name="line.307"></a>
+<FONT color="green">308</FONT>         *        the parent package under which classes must be in order to be considered<a name="line.308"></a>
+<FONT color="green">309</FONT>         * @param jarFile<a name="line.309"></a>
+<FONT color="green">310</FONT>         *        the jar file to be examined for classes<a name="line.310"></a>
+<FONT color="green">311</FONT>         */<a name="line.311"></a>
+<FONT color="green">312</FONT>        private void loadImplementationsInJar(final Test test, final String parent, final File jarFile) {<a name="line.312"></a>
+<FONT color="green">313</FONT>            @SuppressWarnings("resource")<a name="line.313"></a>
+<FONT color="green">314</FONT>            JarInputStream jarStream = null;<a name="line.314"></a>
+<FONT color="green">315</FONT>            try {<a name="line.315"></a>
+<FONT color="green">316</FONT>                jarStream = new JarInputStream(new FileInputStream(jarFile));<a name="line.316"></a>
+<FONT color="green">317</FONT>                loadImplementationsInJar(test, parent, jarFile.getPath(), jarStream);<a name="line.317"></a>
+<FONT color="green">318</FONT>            } catch (final FileNotFoundException ex) {<a name="line.318"></a>
+<FONT color="green">319</FONT>                LOGGER.error("Could not search jar file '" + jarFile + "' for classes matching criteria: " + test<a name="line.319"></a>
+<FONT color="green">320</FONT>                        + " file not found", ex);<a name="line.320"></a>
+<FONT color="green">321</FONT>            } catch (final IOException ioe) {<a name="line.321"></a>
+<FONT color="green">322</FONT>                LOGGER.error("Could not search jar file '" + jarFile + "' for classes matching criteria: " + test<a name="line.322"></a>
+<FONT color="green">323</FONT>                        + " due to an IOException", ioe);<a name="line.323"></a>
+<FONT color="green">324</FONT>            } finally {<a name="line.324"></a>
+<FONT color="green">325</FONT>                close(jarStream, jarFile);<a name="line.325"></a>
+<FONT color="green">326</FONT>            }<a name="line.326"></a>
+<FONT color="green">327</FONT>        }<a name="line.327"></a>
+<FONT color="green">328</FONT>    <a name="line.328"></a>
+<FONT color="green">329</FONT>        /**<a name="line.329"></a>
+<FONT color="green">330</FONT>         * @param jarStream<a name="line.330"></a>
+<FONT color="green">331</FONT>         * @param source<a name="line.331"></a>
+<FONT color="green">332</FONT>         */<a name="line.332"></a>
+<FONT color="green">333</FONT>        private void close(final JarInputStream jarStream, final Object source) {<a name="line.333"></a>
+<FONT color="green">334</FONT>            if (jarStream != null) {<a name="line.334"></a>
+<FONT color="green">335</FONT>                try {<a name="line.335"></a>
+<FONT color="green">336</FONT>                    jarStream.close();<a name="line.336"></a>
+<FONT color="green">337</FONT>                } catch (final IOException e) {<a name="line.337"></a>
+<FONT color="green">338</FONT>                    LOGGER.error("Error closing JAR file stream for {}", source, e);<a name="line.338"></a>
+<FONT color="green">339</FONT>                }<a name="line.339"></a>
+<FONT color="green">340</FONT>            }<a name="line.340"></a>
+<FONT color="green">341</FONT>        }<a name="line.341"></a>
+<FONT color="green">342</FONT>    <a name="line.342"></a>
+<FONT color="green">343</FONT>        /**<a name="line.343"></a>
+<FONT color="green">344</FONT>         * Finds matching classes within a jar files that contains a folder structure matching the package structure. If the<a name="line.344"></a>
+<FONT color="green">345</FONT>         * File is not a JarFile or does not exist a warning will be logged, but no error will be raised.<a name="line.345"></a>
+<FONT color="green">346</FONT>         *<a name="line.346"></a>
+<FONT color="green">347</FONT>         * @param test<a name="line.347"></a>
+<FONT color="green">348</FONT>         *        a Test used to filter the classes that are discovered<a name="line.348"></a>
+<FONT color="green">349</FONT>         * @param parent<a name="line.349"></a>
+<FONT color="green">350</FONT>         *        the parent package under which classes must be in order to be considered<a name="line.350"></a>
+<FONT color="green">351</FONT>         * @param stream<a name="line.351"></a>
+<FONT color="green">352</FONT>         *        The jar InputStream<a name="line.352"></a>
+<FONT color="green">353</FONT>         */<a name="line.353"></a>
+<FONT color="green">354</FONT>        private void loadImplementationsInJar(final Test test, final String parent, final String path,<a name="line.354"></a>
+<FONT color="green">355</FONT>                final JarInputStream stream) {<a name="line.355"></a>
+<FONT color="green">356</FONT>    <a name="line.356"></a>
+<FONT color="green">357</FONT>            try {<a name="line.357"></a>
+<FONT color="green">358</FONT>                JarEntry entry;<a name="line.358"></a>
+<FONT color="green">359</FONT>    <a name="line.359"></a>
+<FONT color="green">360</FONT>                while ((entry = stream.getNextJarEntry()) != null) {<a name="line.360"></a>
+<FONT color="green">361</FONT>                    final String name = entry.getName();<a name="line.361"></a>
+<FONT color="green">362</FONT>                    if (!entry.isDirectory() &amp;&amp; name.startsWith(parent) &amp;&amp; isTestApplicable(test, name)) {<a name="line.362"></a>
+<FONT color="green">363</FONT>                        addIfMatching(test, name);<a name="line.363"></a>
+<FONT color="green">364</FONT>                    }<a name="line.364"></a>
+<FONT color="green">365</FONT>                }<a name="line.365"></a>
+<FONT color="green">366</FONT>            } catch (final IOException ioe) {<a name="line.366"></a>
+<FONT color="green">367</FONT>                LOGGER.error("Could not search jar file '" + path + "' for classes matching criteria: " + test<a name="line.367"></a>
+<FONT color="green">368</FONT>                        + " due to an IOException", ioe);<a name="line.368"></a>
+<FONT color="green">369</FONT>            }<a name="line.369"></a>
+<FONT color="green">370</FONT>        }<a name="line.370"></a>
+<FONT color="green">371</FONT>    <a name="line.371"></a>
+<FONT color="green">372</FONT>        /**<a name="line.372"></a>
+<FONT color="green">373</FONT>         * Add the class designated by the fully qualified class name provided to the set of resolved classes if and only if<a name="line.373"></a>
+<FONT color="green">374</FONT>         * it is approved by the Test supplied.<a name="line.374"></a>
+<FONT color="green">375</FONT>         *<a name="line.375"></a>
+<FONT color="green">376</FONT>         * @param test<a name="line.376"></a>
+<FONT color="green">377</FONT>         *        the test used to determine if the class matches<a name="line.377"></a>
+<FONT color="green">378</FONT>         * @param fqn<a name="line.378"></a>
+<FONT color="green">379</FONT>         *        the fully qualified name of a class<a name="line.379"></a>
+<FONT color="green">380</FONT>         */<a name="line.380"></a>
+<FONT color="green">381</FONT>        protected void addIfMatching(final Test test, final String fqn) {<a name="line.381"></a>
+<FONT color="green">382</FONT>            try {<a name="line.382"></a>
+<FONT color="green">383</FONT>                final ClassLoader loader = getClassLoader();<a name="line.383"></a>
+<FONT color="green">384</FONT>                if (test.doesMatchClass()) {<a name="line.384"></a>
+<FONT color="green">385</FONT>                    final String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');<a name="line.385"></a>
+<FONT color="green">386</FONT>                    if (LOGGER.isDebugEnabled()) {<a name="line.386"></a>
+<FONT color="green">387</FONT>                        LOGGER.debug("Checking to see if class " + externalName + " matches criteria [" + test + ']');<a name="line.387"></a>
+<FONT color="green">388</FONT>                    }<a name="line.388"></a>
+<FONT color="green">389</FONT>    <a name="line.389"></a>
+<FONT color="green">390</FONT>                    final Class&lt;?&gt; type = loader.loadClass(externalName);<a name="line.390"></a>
+<FONT color="green">391</FONT>                    if (test.matches(type)) {<a name="line.391"></a>
+<FONT color="green">392</FONT>                        classMatches.add(type);<a name="line.392"></a>
+<FONT color="green">393</FONT>                    }<a name="line.393"></a>
+<FONT color="green">394</FONT>                }<a name="line.394"></a>
+<FONT color="green">395</FONT>                if (test.doesMatchResource()) {<a name="line.395"></a>
+<FONT color="green">396</FONT>                    URL url = loader.getResource(fqn);<a name="line.396"></a>
+<FONT color="green">397</FONT>                    if (url == null) {<a name="line.397"></a>
+<FONT color="green">398</FONT>                        url = loader.getResource(fqn.substring(1));<a name="line.398"></a>
+<FONT color="green">399</FONT>                    }<a name="line.399"></a>
+<FONT color="green">400</FONT>                    if (url != null &amp;&amp; test.matches(url.toURI())) {<a name="line.400"></a>
+<FONT color="green">401</FONT>                        resourceMatches.add(url.toURI());<a name="line.401"></a>
+<FONT color="green">402</FONT>                    }<a name="line.402"></a>
+<FONT color="green">403</FONT>                }<a name="line.403"></a>
+<FONT color="green">404</FONT>            } catch (final Throwable t) {<a name="line.404"></a>
+<FONT color="green">405</FONT>                LOGGER.warn("Could not examine class '" + fqn, t);<a name="line.405"></a>
+<FONT color="green">406</FONT>            }<a name="line.406"></a>
+<FONT color="green">407</FONT>        }<a name="line.407"></a>
 <FONT color="green">408</FONT>    <a name="line.408"></a>
-<FONT color="green">409</FONT>            boolean doesMatchClass();<a name="line.409"></a>
-<FONT color="green">410</FONT>    <a name="line.410"></a>
-<FONT color="green">411</FONT>            boolean doesMatchResource();<a name="line.411"></a>
-<FONT color="green">412</FONT>        }<a name="line.412"></a>
-<FONT color="green">413</FONT>    <a name="line.413"></a>
-<FONT color="green">414</FONT>    }<a name="line.414"></a>
+<FONT color="green">409</FONT>        /**<a name="line.409"></a>
+<FONT color="green">410</FONT>         * A simple interface that specifies how to test classes to determine if they are to be included in the results<a name="line.410"></a>
+<FONT color="green">411</FONT>         * produced by the ResolverUtil.<a name="line.411"></a>
+<FONT color="green">412</FONT>         */<a name="line.412"></a>
+<FONT color="green">413</FONT>        public interface Test {<a name="line.413"></a>
+<FONT color="green">414</FONT>            /**<a name="line.414"></a>
+<FONT color="green">415</FONT>             * Will be called repeatedly with candidate classes. Must return True if a class is to be included in the<a name="line.415"></a>
+<FONT color="green">416</FONT>             * results, false otherwise.<a name="line.416"></a>
+<FONT color="green">417</FONT>             * <a name="line.417"></a>
+<FONT color="green">418</FONT>             * @param type<a name="line.418"></a>
+<FONT color="green">419</FONT>             *        The Class to match against.<a name="line.419"></a>
+<FONT color="green">420</FONT>             * @return true if the Class matches.<a name="line.420"></a>
+<FONT color="green">421</FONT>             */<a name="line.421"></a>
+<FONT color="green">422</FONT>            boolean matches(Class&lt;?&gt; type);<a name="line.422"></a>
+<FONT color="green">423</FONT>    <a name="line.423"></a>
+<FONT color="green">424</FONT>            /**<a name="line.424"></a>
+<FONT color="green">425</FONT>             * Test for a resource.<a name="line.425"></a>
+<FONT color="green">426</FONT>             * <a name="line.426"></a>
+<FONT color="green">427</FONT>             * @param resource<a name="line.427"></a>
+<FONT color="green">428</FONT>             *        The URI to the resource.<a name="line.428"></a>
+<FONT color="green">429</FONT>             * @return true if the resource matches.<a name="line.429"></a>
+<FONT color="green">430</FONT>             */<a name="line.430"></a>
+<FONT color="green">431</FONT>            boolean matches(URI resource);<a name="line.431"></a>
+<FONT color="green">432</FONT>    <a name="line.432"></a>
+<FONT color="green">433</FONT>            boolean doesMatchClass();<a name="line.433"></a>
+<FONT color="green">434</FONT>    <a name="line.434"></a>
+<FONT color="green">435</FONT>            boolean doesMatchResource();<a name="line.435"></a>
+<FONT color="green">436</FONT>        }<a name="line.436"></a>
+<FONT color="green">437</FONT>    <a name="line.437"></a>
+<FONT color="green">438</FONT>    }<a name="line.438"></a>
 
 
 

@@ -24,26 +24,27 @@
 <FONT color="green">021</FONT>    import org.apache.logging.log4j.core.config.Configuration;<a name="line.21"></a>
 <FONT color="green">022</FONT>    import org.apache.logging.log4j.core.config.Node;<a name="line.22"></a>
 <FONT color="green">023</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginValue;<a name="line.23"></a>
-<FONT color="green">024</FONT>    <a name="line.24"></a>
-<FONT color="green">025</FONT>    /**<a name="line.25"></a>
-<FONT color="green">026</FONT>     * PluginVisitor implementation for {@link PluginValue}.<a name="line.26"></a>
-<FONT color="green">027</FONT>     */<a name="line.27"></a>
-<FONT color="green">028</FONT>    public class PluginValueVisitor extends AbstractPluginVisitor&lt;PluginValue&gt; {<a name="line.28"></a>
-<FONT color="green">029</FONT>        public PluginValueVisitor() {<a name="line.29"></a>
-<FONT color="green">030</FONT>            super(PluginValue.class);<a name="line.30"></a>
-<FONT color="green">031</FONT>        }<a name="line.31"></a>
-<FONT color="green">032</FONT>    <a name="line.32"></a>
-<FONT color="green">033</FONT>        @Override<a name="line.33"></a>
-<FONT color="green">034</FONT>        public Object visit(final Configuration configuration, final Node node, final LogEvent event,<a name="line.34"></a>
-<FONT color="green">035</FONT>                            final StringBuilder log) {<a name="line.35"></a>
-<FONT color="green">036</FONT>            final String name = this.annotation.value();<a name="line.36"></a>
-<FONT color="green">037</FONT>            final String rawValue = node.getValue() != null ? node.getValue() :<a name="line.37"></a>
-<FONT color="green">038</FONT>                removeAttributeValue(node.getAttributes(), "value");<a name="line.38"></a>
-<FONT color="green">039</FONT>            final String value = this.substitutor.replace(event, rawValue);<a name="line.39"></a>
-<FONT color="green">040</FONT>            log.append(name).append("=\"").append(value).append('"');<a name="line.40"></a>
-<FONT color="green">041</FONT>            return value;<a name="line.41"></a>
-<FONT color="green">042</FONT>        }<a name="line.42"></a>
-<FONT color="green">043</FONT>    }<a name="line.43"></a>
+<FONT color="green">024</FONT>    import org.apache.logging.log4j.util.StringBuilders;<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>    /**<a name="line.26"></a>
+<FONT color="green">027</FONT>     * PluginVisitor implementation for {@link PluginValue}.<a name="line.27"></a>
+<FONT color="green">028</FONT>     */<a name="line.28"></a>
+<FONT color="green">029</FONT>    public class PluginValueVisitor extends AbstractPluginVisitor&lt;PluginValue&gt; {<a name="line.29"></a>
+<FONT color="green">030</FONT>        public PluginValueVisitor() {<a name="line.30"></a>
+<FONT color="green">031</FONT>            super(PluginValue.class);<a name="line.31"></a>
+<FONT color="green">032</FONT>        }<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>        @Override<a name="line.34"></a>
+<FONT color="green">035</FONT>        public Object visit(final Configuration configuration, final Node node, final LogEvent event,<a name="line.35"></a>
+<FONT color="green">036</FONT>                            final StringBuilder log) {<a name="line.36"></a>
+<FONT color="green">037</FONT>            final String name = this.annotation.value();<a name="line.37"></a>
+<FONT color="green">038</FONT>            final String rawValue = node.getValue() != null ? node.getValue() :<a name="line.38"></a>
+<FONT color="green">039</FONT>                removeAttributeValue(node.getAttributes(), "value");<a name="line.39"></a>
+<FONT color="green">040</FONT>            final String value = this.substitutor.replace(event, rawValue);<a name="line.40"></a>
+<FONT color="green">041</FONT>            StringBuilders.appendKeyDqValue(log, name, value);<a name="line.41"></a>
+<FONT color="green">042</FONT>            return value;<a name="line.42"></a>
+<FONT color="green">043</FONT>        }<a name="line.43"></a>
+<FONT color="green">044</FONT>    }<a name="line.44"></a>
 
 
 
