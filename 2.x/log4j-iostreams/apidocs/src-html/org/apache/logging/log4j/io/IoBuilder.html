@@ -1,383 +1,388 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    /*<a name="line.1"></a>
-<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
-<FONT color="green">003</FONT>     * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
-<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
-<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
-<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
-<FONT color="green">007</FONT>     * the License. You may obtain a copy of the License at<a name="line.7"></a>
-<FONT color="green">008</FONT>     *<a name="line.8"></a>
-<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
-<FONT color="green">010</FONT>     *<a name="line.10"></a>
-<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
-<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
-<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
-<FONT color="green">014</FONT>     * See the license for the specific language governing permissions and<a name="line.14"></a>
-<FONT color="green">015</FONT>     * limitations under the license.<a name="line.15"></a>
-<FONT color="green">016</FONT>     */<a name="line.16"></a>
-<FONT color="green">017</FONT>    package org.apache.logging.log4j.io;<a name="line.17"></a>
-<FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    import java.io.InputStream;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import java.io.OutputStream;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import java.io.PrintStream;<a name="line.21"></a>
-<FONT color="green">022</FONT>    import java.io.PrintWriter;<a name="line.22"></a>
-<FONT color="green">023</FONT>    import java.io.Reader;<a name="line.23"></a>
-<FONT color="green">024</FONT>    import java.io.UnsupportedEncodingException;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import java.io.Writer;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import java.nio.charset.Charset;<a name="line.26"></a>
-<FONT color="green">027</FONT>    <a name="line.27"></a>
-<FONT color="green">028</FONT>    import org.apache.logging.log4j.Level;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import org.apache.logging.log4j.LogManager;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import org.apache.logging.log4j.Logger;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import org.apache.logging.log4j.LoggingException;<a name="line.31"></a>
-<FONT color="green">032</FONT>    import org.apache.logging.log4j.Marker;<a name="line.32"></a>
-<FONT color="green">033</FONT>    import org.apache.logging.log4j.spi.ExtendedLogger;<a name="line.33"></a>
-<FONT color="green">034</FONT>    import org.apache.logging.log4j.util.ReflectionUtil;<a name="line.34"></a>
-<FONT color="green">035</FONT>    <a name="line.35"></a>
-<FONT color="green">036</FONT>    /**<a name="line.36"></a>
-<FONT color="green">037</FONT>     * Builder class to wrap {@link Logger Loggers} into Java IO compatible classes.<a name="line.37"></a>
-<FONT color="green">038</FONT>     *<a name="line.38"></a>
-<FONT color="green">039</FONT>     * &lt;p&gt;Both the {@link InputStream}/{@link OutputStream} and {@link Reader}/{@link Writer} family of classes are<a name="line.39"></a>
-<FONT color="green">040</FONT>     * supported. {@link OutputStream} and {@link Writer} instances can be wrapped by a filtered version of their<a name="line.40"></a>
-<FONT color="green">041</FONT>     * corresponding classes ({@link java.io.FilterOutputStream} and {@link java.io.FilterWriter}) in order to log all<a name="line.41"></a>
-<FONT color="green">042</FONT>     * lines written to these instances. {@link InputStream} and {@link Reader} instances can be wrapped by a sort of<a name="line.42"></a>
-<FONT color="green">043</FONT>     * wiretapped version of their respective classes; all lines read from these instances will be logged.&lt;/p&gt;<a name="line.43"></a>
-<FONT color="green">044</FONT>     *<a name="line.44"></a>
-<FONT color="green">045</FONT>     * &lt;p&gt;The main feature, however, is the ability to create a {@link PrintWriter}, {@link PrintStream}, {@link Writer},<a name="line.45"></a>
-<FONT color="green">046</FONT>     * {@link java.io.BufferedWriter}, {@link OutputStream}, or {@link java.io.BufferedOutputStream} that is backed by a<a name="line.46"></a>
-<FONT color="green">047</FONT>     * {@link Logger}. The main inspiration for this feature is the JDBC API which uses a PrintWriter to perform debug<a name="line.47"></a>
-<FONT color="green">048</FONT>     * logging. In order to properly integrate APIs like JDBC into Log4j, create a PrintWriter using this class.&lt;/p&gt;<a name="line.48"></a>
-<FONT color="green">049</FONT>     *<a name="line.49"></a>
-<FONT color="green">050</FONT>     * &lt;p&gt;The IoBuilder support configuration of the logging {@link Level} it should use (defaults to the level of<a name="line.50"></a>
-<FONT color="green">051</FONT>     * the underlying Logger), and an optional {@link Marker}. The other configurable objects are explained in more<a name="line.51"></a>
-<FONT color="green">052</FONT>     * detail below.&lt;/p&gt;<a name="line.52"></a>
-<FONT color="green">053</FONT>     *<a name="line.53"></a>
-<FONT color="green">054</FONT>     * @since 2.1<a name="line.54"></a>
-<FONT color="green">055</FONT>     */<a name="line.55"></a>
-<FONT color="green">056</FONT>    public class IoBuilder {<a name="line.56"></a>
-<FONT color="green">057</FONT>        private final ExtendedLogger logger;<a name="line.57"></a>
-<FONT color="green">058</FONT>        private Level level;<a name="line.58"></a>
-<FONT color="green">059</FONT>        private Marker marker;<a name="line.59"></a>
-<FONT color="green">060</FONT>        private String fqcn;<a name="line.60"></a>
-<FONT color="green">061</FONT>        private boolean autoFlush;<a name="line.61"></a>
-<FONT color="green">062</FONT>        private boolean buffered;<a name="line.62"></a>
-<FONT color="green">063</FONT>        private int bufferSize;<a name="line.63"></a>
-<FONT color="green">064</FONT>        private Charset charset;<a name="line.64"></a>
-<FONT color="green">065</FONT>        private Reader reader;<a name="line.65"></a>
-<FONT color="green">066</FONT>        private Writer writer;<a name="line.66"></a>
-<FONT color="green">067</FONT>        private InputStream inputStream;<a name="line.67"></a>
-<FONT color="green">068</FONT>        private OutputStream outputStream;<a name="line.68"></a>
-<FONT color="green">069</FONT>    <a name="line.69"></a>
-<FONT color="green">070</FONT>        /**<a name="line.70"></a>
-<FONT color="green">071</FONT>         * Creates a new builder for a given {@link Logger}. The Logger instance must implement {@link ExtendedLogger} or<a name="line.71"></a>
-<FONT color="green">072</FONT>         * an exception will be thrown.<a name="line.72"></a>
-<FONT color="green">073</FONT>         *<a name="line.73"></a>
-<FONT color="green">074</FONT>         * @param logger the Logger to wrap into a LoggerStream<a name="line.74"></a>
-<FONT color="green">075</FONT>         * @return a new IoBuilder<a name="line.75"></a>
-<FONT color="green">076</FONT>         * @throws UnsupportedOperationException if {@code logger} does not implement {@link ExtendedLogger} or if<a name="line.76"></a>
-<FONT color="green">077</FONT>         *                                       {@code logger} is {@code null}<a name="line.77"></a>
-<FONT color="green">078</FONT>         */<a name="line.78"></a>
-<FONT color="green">079</FONT>        public static IoBuilder forLogger(final Logger logger) {<a name="line.79"></a>
-<FONT color="green">080</FONT>            return new IoBuilder(logger);<a name="line.80"></a>
-<FONT color="green">081</FONT>        }<a name="line.81"></a>
-<FONT color="green">082</FONT>    <a name="line.82"></a>
-<FONT color="green">083</FONT>        /**<a name="line.83"></a>
-<FONT color="green">084</FONT>         * Creates a new builder using a Logger name. The name provided is used to get a Logger from<a name="line.84"></a>
-<FONT color="green">085</FONT>         * {@link LogManager#getLogger(String)} which will be wrapped into a LoggerStream.<a name="line.85"></a>
-<FONT color="green">086</FONT>         *<a name="line.86"></a>
-<FONT color="green">087</FONT>         * @param loggerName the name of the Logger to wrap into a LoggerStream<a name="line.87"></a>
-<FONT color="green">088</FONT>         * @return a new IoBuilder<a name="line.88"></a>
-<FONT color="green">089</FONT>         */<a name="line.89"></a>
-<FONT color="green">090</FONT>        public static IoBuilder forLogger(final String loggerName) {<a name="line.90"></a>
-<FONT color="green">091</FONT>            return new IoBuilder(LogManager.getLogger(loggerName));<a name="line.91"></a>
-<FONT color="green">092</FONT>        }<a name="line.92"></a>
-<FONT color="green">093</FONT>    <a name="line.93"></a>
-<FONT color="green">094</FONT>        /**<a name="line.94"></a>
-<FONT color="green">095</FONT>         * Creates a new builder using a Logger named after a given Class. The Class provided is used to get a Logger from<a name="line.95"></a>
-<FONT color="green">096</FONT>         * {@link LogManager#getLogger(Class)} which will be wrapped into a LoggerStream.<a name="line.96"></a>
-<FONT color="green">097</FONT>         *<a name="line.97"></a>
-<FONT color="green">098</FONT>         * @param clazz the Class to use as the Logger name to wrap into a LoggerStream<a name="line.98"></a>
-<FONT color="green">099</FONT>         * @return a new IoBuilder<a name="line.99"></a>
-<FONT color="green">100</FONT>         */<a name="line.100"></a>
-<FONT color="green">101</FONT>        public static IoBuilder forLogger(final Class&lt;?&gt; clazz) {<a name="line.101"></a>
-<FONT color="green">102</FONT>            return new IoBuilder(LogManager.getLogger(clazz));<a name="line.102"></a>
-<FONT color="green">103</FONT>        }<a name="line.103"></a>
-<FONT color="green">104</FONT>    <a name="line.104"></a>
-<FONT color="green">105</FONT>        /**<a name="line.105"></a>
-<FONT color="green">106</FONT>         * Creates a new builder using a Logger named after the calling Class. This is equivalent to the following:<a name="line.106"></a>
-<FONT color="green">107</FONT>         * &lt;pre&gt;<a name="line.107"></a>
-<FONT color="green">108</FONT>         *     IoBuilder builder = IoBuilder.forLogger(LogManager.getLogger());<a name="line.108"></a>
-<FONT color="green">109</FONT>         * &lt;/pre&gt;<a name="line.109"></a>
-<FONT color="green">110</FONT>         *<a name="line.110"></a>
-<FONT color="green">111</FONT>         * @return a new IoBuilder<a name="line.111"></a>
-<FONT color="green">112</FONT>         */<a name="line.112"></a>
-<FONT color="green">113</FONT>        public static IoBuilder forLogger() {<a name="line.113"></a>
-<FONT color="green">114</FONT>            return new IoBuilder(LogManager.getLogger(ReflectionUtil.getCallerClass(2)));<a name="line.114"></a>
-<FONT color="green">115</FONT>        }<a name="line.115"></a>
-<FONT color="green">116</FONT>    <a name="line.116"></a>
-<FONT color="green">117</FONT>        /**<a name="line.117"></a>
-<FONT color="green">118</FONT>         * Constructs a new IoBuilder for the given Logger. This method is provided for extensibility of this builder<a name="line.118"></a>
-<FONT color="green">119</FONT>         * class. The static factory methods should be used normally.<a name="line.119"></a>
-<FONT color="green">120</FONT>         *<a name="line.120"></a>
-<FONT color="green">121</FONT>         * @param logger the {@link ExtendedLogger} to wrap<a name="line.121"></a>
-<FONT color="green">122</FONT>         */<a name="line.122"></a>
-<FONT color="green">123</FONT>        protected IoBuilder(final Logger logger) {<a name="line.123"></a>
-<FONT color="green">124</FONT>            if (!(logger instanceof ExtendedLogger)) {<a name="line.124"></a>
-<FONT color="green">125</FONT>                throw new UnsupportedOperationException("The provided Logger [" + String.valueOf(logger) +<a name="line.125"></a>
-<FONT color="green">126</FONT>                    "] does not implement " + ExtendedLogger.class.getName());<a name="line.126"></a>
-<FONT color="green">127</FONT>            }<a name="line.127"></a>
-<FONT color="green">128</FONT>            this.logger = (ExtendedLogger) logger;<a name="line.128"></a>
-<FONT color="green">129</FONT>        }<a name="line.129"></a>
-<FONT color="green">130</FONT>    <a name="line.130"></a>
-<FONT color="green">131</FONT>        /**<a name="line.131"></a>
-<FONT color="green">132</FONT>         * Specifies the {@link Level} to log at. If no Level is configured, then the Level of the wrapped Logger will be<a name="line.132"></a>
-<FONT color="green">133</FONT>         * used.<a name="line.133"></a>
-<FONT color="green">134</FONT>         *<a name="line.134"></a>
-<FONT color="green">135</FONT>         * @param level the Level to use for logging<a name="line.135"></a>
-<FONT color="green">136</FONT>         * @return {@code this}<a name="line.136"></a>
-<FONT color="green">137</FONT>         */<a name="line.137"></a>
-<FONT color="green">138</FONT>        public IoBuilder setLevel(final Level level) {<a name="line.138"></a>
-<FONT color="green">139</FONT>            this.level = level;<a name="line.139"></a>
-<FONT color="green">140</FONT>            return this;<a name="line.140"></a>
-<FONT color="green">141</FONT>        }<a name="line.141"></a>
-<FONT color="green">142</FONT>    <a name="line.142"></a>
-<FONT color="green">143</FONT>        /**<a name="line.143"></a>
-<FONT color="green">144</FONT>         * Specifies an optional {@link Marker} to use in all logging messages. If no Marker is specified, then no Marker<a name="line.144"></a>
-<FONT color="green">145</FONT>         * will be used.<a name="line.145"></a>
-<FONT color="green">146</FONT>         *<a name="line.146"></a>
-<FONT color="green">147</FONT>         * @param marker the Marker to associate with all logging messages<a name="line.147"></a>
-<FONT color="green">148</FONT>         * @return {@code this}<a name="line.148"></a>
-<FONT color="green">149</FONT>         */<a name="line.149"></a>
-<FONT color="green">150</FONT>        public IoBuilder setMarker(final Marker marker) {<a name="line.150"></a>
-<FONT color="green">151</FONT>            this.marker = marker;<a name="line.151"></a>
-<FONT color="green">152</FONT>            return this;<a name="line.152"></a>
-<FONT color="green">153</FONT>        }<a name="line.153"></a>
-<FONT color="green">154</FONT>    <a name="line.154"></a>
-<FONT color="green">155</FONT>        /**<a name="line.155"></a>
-<FONT color="green">156</FONT>         * Specifies the fully qualified class name of the IO wrapper class implementation. This method should only be<a name="line.156"></a>
-<FONT color="green">157</FONT>         * used when making significant extensions to the provided classes in this component and is normally unnecessary.<a name="line.157"></a>
-<FONT color="green">158</FONT>         *<a name="line.158"></a>
-<FONT color="green">159</FONT>         * @param fqcn the fully qualified class name of the IO wrapper class being built<a name="line.159"></a>
-<FONT color="green">160</FONT>         * @return {@code this}<a name="line.160"></a>
-<FONT color="green">161</FONT>         */<a name="line.161"></a>
-<FONT color="green">162</FONT>        public IoBuilder setWrapperClassName(final String fqcn) {<a name="line.162"></a>
-<FONT color="green">163</FONT>            this.fqcn = fqcn;<a name="line.163"></a>
-<FONT color="green">164</FONT>            return this;<a name="line.164"></a>
-<FONT color="green">165</FONT>        }<a name="line.165"></a>
-<FONT color="green">166</FONT>    <a name="line.166"></a>
-<FONT color="green">167</FONT>        /**<a name="line.167"></a>
-<FONT color="green">168</FONT>         * Indicates whether or not a built {@link PrintWriter} or {@link PrintStream} should automatically flush when<a name="line.168"></a>
-<FONT color="green">169</FONT>         * one of the {@code println}, {@code printf}, or {@code format} methods are invoked, or when a new line character<a name="line.169"></a>
-<FONT color="green">170</FONT>         * is printed.<a name="line.170"></a>
-<FONT color="green">171</FONT>         *<a name="line.171"></a>
-<FONT color="green">172</FONT>         * @param autoFlush if {@code true}, then {@code println}, {@code printf}, and {@code format} will auto flush<a name="line.172"></a>
-<FONT color="green">173</FONT>         * @return {@code this}<a name="line.173"></a>
-<FONT color="green">174</FONT>         */<a name="line.174"></a>
-<FONT color="green">175</FONT>        public IoBuilder setAutoFlush(final boolean autoFlush) {<a name="line.175"></a>
-<FONT color="green">176</FONT>            this.autoFlush = autoFlush;<a name="line.176"></a>
-<FONT color="green">177</FONT>            return this;<a name="line.177"></a>
-<FONT color="green">178</FONT>        }<a name="line.178"></a>
-<FONT color="green">179</FONT>    <a name="line.179"></a>
-<FONT color="green">180</FONT>        /**<a name="line.180"></a>
-<FONT color="green">181</FONT>         * Enables or disables using a buffered variant of the desired IO class. If this is set to {@code true}, then the<a name="line.181"></a>
-<FONT color="green">182</FONT>         * instances returned by {@link #buildReader()} and {@link #buildInputStream()} can be safely cast (if necessary)<a name="line.182"></a>
-<FONT color="green">183</FONT>         * to {@link java.io.BufferedReader} and {@link java.io.BufferedInputStream} respectively. This option does not<a name="line.183"></a>
-<FONT color="green">184</FONT>         * have any effect on the other built variants.<a name="line.184"></a>
-<FONT color="green">185</FONT>         *<a name="line.185"></a>
-<FONT color="green">186</FONT>         * @param buffered indicates whether or not a wrapped {@link InputStream} or {@link Reader} should be buffered<a name="line.186"></a>
-<FONT color="green">187</FONT>         * @return {@code this}<a name="line.187"></a>
-<FONT color="green">188</FONT>         */<a name="line.188"></a>
-<FONT color="green">189</FONT>        public IoBuilder setBuffered(final boolean buffered) {<a name="line.189"></a>
-<FONT color="green">190</FONT>            this.buffered = buffered;<a name="line.190"></a>
-<FONT color="green">191</FONT>            return this;<a name="line.191"></a>
-<FONT color="green">192</FONT>        }<a name="line.192"></a>
-<FONT color="green">193</FONT>    <a name="line.193"></a>
-<FONT color="green">194</FONT>        /**<a name="line.194"></a>
-<FONT color="green">195</FONT>         * Configures the buffer size to use when building a {@link java.io.BufferedReader} or<a name="line.195"></a>
-<FONT color="green">196</FONT>         * {@link java.io.BufferedInputStream} LoggerStream.<a name="line.196"></a>
-<FONT color="green">197</FONT>         *<a name="line.197"></a>
-<FONT color="green">198</FONT>         * @param bufferSize the buffer size to use or a non-positive integer to use the default size<a name="line.198"></a>
-<FONT color="green">199</FONT>         * @return {@code this}<a name="line.199"></a>
-<FONT color="green">200</FONT>         */<a name="line.200"></a>
-<FONT color="green">201</FONT>        public IoBuilder setBufferSize(final int bufferSize) {<a name="line.201"></a>
-<FONT color="green">202</FONT>            this.bufferSize = bufferSize;<a name="line.202"></a>
-<FONT color="green">203</FONT>            return this;<a name="line.203"></a>
-<FONT color="green">204</FONT>        }<a name="line.204"></a>
-<FONT color="green">205</FONT>    <a name="line.205"></a>
-<FONT color="green">206</FONT>        /**<a name="line.206"></a>
-<FONT color="green">207</FONT>         * Specifies the character set to use when building an {@link InputStream}, {@link OutputStream}, or<a name="line.207"></a>
-<FONT color="green">208</FONT>         * {@link PrintStream}. If no character set is specified, then {@link java.nio.charset.Charset#defaultCharset()}<a name="line.208"></a>
-<FONT color="green">209</FONT>         * is used.<a name="line.209"></a>
-<FONT color="green">210</FONT>         *<a name="line.210"></a>
-<FONT color="green">211</FONT>         * @param charset the character set to use when building an InputStream, OutputStream, or PrintStream<a name="line.211"></a>
-<FONT color="green">212</FONT>         * @return {@code this}<a name="line.212"></a>
-<FONT color="green">213</FONT>         */<a name="line.213"></a>
-<FONT color="green">214</FONT>        public IoBuilder setCharset(final Charset charset) {<a name="line.214"></a>
-<FONT color="green">215</FONT>            this.charset = charset;<a name="line.215"></a>
-<FONT color="green">216</FONT>            return this;<a name="line.216"></a>
-<FONT color="green">217</FONT>        }<a name="line.217"></a>
-<FONT color="green">218</FONT>    <a name="line.218"></a>
-<FONT color="green">219</FONT>        /**<a name="line.219"></a>
-<FONT color="green">220</FONT>         * Configures a {@link Reader} to be wiretapped when building a Reader. This must be set to a non-{@code null}<a name="line.220"></a>
-<FONT color="green">221</FONT>         * value in order to call {@link #buildReader()}.<a name="line.221"></a>
-<FONT color="green">222</FONT>         *<a name="line.222"></a>
-<FONT color="green">223</FONT>         * @param reader the Reader to wiretap<a name="line.223"></a>
-<FONT color="green">224</FONT>         * @return {@code this}<a name="line.224"></a>
-<FONT color="green">225</FONT>         */<a name="line.225"></a>
-<FONT color="green">226</FONT>        public IoBuilder filter(final Reader reader) {<a name="line.226"></a>
-<FONT color="green">227</FONT>            this.reader = reader;<a name="line.227"></a>
-<FONT color="green">228</FONT>            return this;<a name="line.228"></a>
-<FONT color="green">229</FONT>        }<a name="line.229"></a>
-<FONT color="green">230</FONT>    <a name="line.230"></a>
-<FONT color="green">231</FONT>        /**<a name="line.231"></a>
-<FONT color="green">232</FONT>         * Configures a {@link Writer} to be written to in addition to the underlying Logger. If no Writer is specified,<a name="line.232"></a>
-<FONT color="green">233</FONT>         * then the built Writer or PrintWriter will only write to the underlying Logger.<a name="line.233"></a>
-<FONT color="green">234</FONT>         *<a name="line.234"></a>
-<FONT color="green">235</FONT>         * @param writer the Writer to write to in addition to the Logger<a name="line.235"></a>
-<FONT color="green">236</FONT>         * @return {@code this}<a name="line.236"></a>
-<FONT color="green">237</FONT>         */<a name="line.237"></a>
-<FONT color="green">238</FONT>        public IoBuilder filter(final Writer writer) {<a name="line.238"></a>
-<FONT color="green">239</FONT>            this.writer = writer;<a name="line.239"></a>
-<FONT color="green">240</FONT>            return this;<a name="line.240"></a>
-<FONT color="green">241</FONT>        }<a name="line.241"></a>
-<FONT color="green">242</FONT>    <a name="line.242"></a>
-<FONT color="green">243</FONT>        /**<a name="line.243"></a>
-<FONT color="green">244</FONT>         * Configures an {@link InputStream} to be wiretapped when building an InputStream. This must be set to a<a name="line.244"></a>
-<FONT color="green">245</FONT>         * non-{@code null} value in order to call {@link #buildInputStream()}.<a name="line.245"></a>
-<FONT color="green">246</FONT>         *<a name="line.246"></a>
-<FONT color="green">247</FONT>         * @param inputStream the InputStream to wiretap<a name="line.247"></a>
-<FONT color="green">248</FONT>         * @return {@code this}<a name="line.248"></a>
-<FONT color="green">249</FONT>         */<a name="line.249"></a>
-<FONT color="green">250</FONT>        public IoBuilder filter(final InputStream inputStream) {<a name="line.250"></a>
-<FONT color="green">251</FONT>            this.inputStream = inputStream;<a name="line.251"></a>
-<FONT color="green">252</FONT>            return this;<a name="line.252"></a>
-<FONT color="green">253</FONT>        }<a name="line.253"></a>
-<FONT color="green">254</FONT>    <a name="line.254"></a>
-<FONT color="green">255</FONT>        /**<a name="line.255"></a>
-<FONT color="green">256</FONT>         * Configures an {@link OutputStream} to be written to in addition to the underlying Logger. If no OutputStream is<a name="line.256"></a>
-<FONT color="green">257</FONT>         * specified, then the built OutputStream or PrintStream will only write to the underlying Logger.<a name="line.257"></a>
-<FONT color="green">258</FONT>         *<a name="line.258"></a>
-<FONT color="green">259</FONT>         * @param outputStream the OutputStream to write to in addition to the Logger<a name="line.259"></a>
-<FONT color="green">260</FONT>         * @return {@code this}<a name="line.260"></a>
-<FONT color="green">261</FONT>         */<a name="line.261"></a>
-<FONT color="green">262</FONT>        public IoBuilder filter(final OutputStream outputStream) {<a name="line.262"></a>
-<FONT color="green">263</FONT>            this.outputStream = outputStream;<a name="line.263"></a>
-<FONT color="green">264</FONT>            return this;<a name="line.264"></a>
-<FONT color="green">265</FONT>        }<a name="line.265"></a>
-<FONT color="green">266</FONT>    <a name="line.266"></a>
-<FONT color="green">267</FONT>        // TODO: could this builder use generics to infer the desired IO class?<a name="line.267"></a>
-<FONT color="green">268</FONT>    <a name="line.268"></a>
-<FONT color="green">269</FONT>        /**<a name="line.269"></a>
-<FONT color="green">270</FONT>         * Builds a new {@link Reader} that is wiretapped by its underlying Logger. If buffering is enabled, then a<a name="line.270"></a>
-<FONT color="green">271</FONT>         * {@link java.io.BufferedReader} will be returned.<a name="line.271"></a>
-<FONT color="green">272</FONT>         *<a name="line.272"></a>
-<FONT color="green">273</FONT>         * @return a new Reader wiretapped by a Logger<a name="line.273"></a>
-<FONT color="green">274</FONT>         * @throws IllegalStateException if no Reader was configured for this builder<a name="line.274"></a>
-<FONT color="green">275</FONT>         */<a name="line.275"></a>
-<FONT color="green">276</FONT>        public Reader buildReader() {<a name="line.276"></a>
-<FONT color="green">277</FONT>            final Reader in = requireNonNull(this.reader, "reader");<a name="line.277"></a>
-<FONT color="green">278</FONT>            if (this.buffered) {<a name="line.278"></a>
-<FONT color="green">279</FONT>                if (this.bufferSize &gt; 0) {<a name="line.279"></a>
-<FONT color="green">280</FONT>                    return new LoggerBufferedReader(in, this.bufferSize, this.logger, this.fqcn, this.level, this.marker);<a name="line.280"></a>
-<FONT color="green">281</FONT>                }<a name="line.281"></a>
-<FONT color="green">282</FONT>                return new LoggerBufferedReader(in, this.logger, this.fqcn, this.level, this.marker);<a name="line.282"></a>
-<FONT color="green">283</FONT>            }<a name="line.283"></a>
-<FONT color="green">284</FONT>            return new LoggerReader(in, this.logger, this.fqcn, this.level, this.marker);<a name="line.284"></a>
-<FONT color="green">285</FONT>        }<a name="line.285"></a>
-<FONT color="green">286</FONT>    <a name="line.286"></a>
-<FONT color="green">287</FONT>        /**<a name="line.287"></a>
-<FONT color="green">288</FONT>         * Builds a new {@link Writer} that is backed by a Logger and optionally writes to another Writer as well. If no<a name="line.288"></a>
-<FONT color="green">289</FONT>         * Writer is configured for this builder, then the returned Writer will only write to its underlying Logger.<a name="line.289"></a>
-<FONT color="green">290</FONT>         *<a name="line.290"></a>
-<FONT color="green">291</FONT>         * @return a new Writer or {@link java.io.FilterWriter} backed by a Logger<a name="line.291"></a>
-<FONT color="green">292</FONT>         */<a name="line.292"></a>
-<FONT color="green">293</FONT>        public Writer buildWriter() {<a name="line.293"></a>
-<FONT color="green">294</FONT>            if (this.writer == null) {<a name="line.294"></a>
-<FONT color="green">295</FONT>                return new LoggerWriter(this.logger, this.fqcn, this.level, this.marker);<a name="line.295"></a>
-<FONT color="green">296</FONT>            }<a name="line.296"></a>
-<FONT color="green">297</FONT>            return new LoggerFilterWriter(this.writer, this.logger, this.fqcn, this.level, this.marker);<a name="line.297"></a>
-<FONT color="green">298</FONT>        }<a name="line.298"></a>
-<FONT color="green">299</FONT>    <a name="line.299"></a>
-<FONT color="green">300</FONT>        /**<a name="line.300"></a>
-<FONT color="green">301</FONT>         * Builds a new {@link PrintWriter} that is backed by a Logger and optionally writes to another Writer as well. If<a name="line.301"></a>
-<FONT color="green">302</FONT>         * no Writer is configured for this builder, then the returned PrintWriter will only write to its underlying<a name="line.302"></a>
-<FONT color="green">303</FONT>         * Logger.<a name="line.303"></a>
-<FONT color="green">304</FONT>         *<a name="line.304"></a>
-<FONT color="green">305</FONT>         * @return a new PrintWriter that optionally writes to another Writer in addition to its underlying Logger<a name="line.305"></a>
-<FONT color="green">306</FONT>         */<a name="line.306"></a>
-<FONT color="green">307</FONT>        public PrintWriter buildPrintWriter() {<a name="line.307"></a>
-<FONT color="green">308</FONT>            if (this.writer == null) {<a name="line.308"></a>
-<FONT color="green">309</FONT>                return new LoggerPrintWriter(this.logger, this.autoFlush, this.fqcn, this.level, this.marker);<a name="line.309"></a>
-<FONT color="green">310</FONT>            }<a name="line.310"></a>
-<FONT color="green">311</FONT>            return new LoggerPrintWriter(this.writer, this.autoFlush, this.logger, this.fqcn, this.level, this.marker);<a name="line.311"></a>
-<FONT color="green">312</FONT>        }<a name="line.312"></a>
-<FONT color="green">313</FONT>    <a name="line.313"></a>
-<FONT color="green">314</FONT>        /**<a name="line.314"></a>
-<FONT color="green">315</FONT>         * Builds a new {@link InputStream} that is wiretapped by its underlying Logger. If buffering is enabled, then a<a name="line.315"></a>
-<FONT color="green">316</FONT>         * {@link java.io.BufferedInputStream} will be returned.<a name="line.316"></a>
-<FONT color="green">317</FONT>         *<a name="line.317"></a>
-<FONT color="green">318</FONT>         * @return a new InputStream wiretapped by a Logger<a name="line.318"></a>
-<FONT color="green">319</FONT>         * @throws IllegalStateException if no InputStream was configured for this builder<a name="line.319"></a>
-<FONT color="green">320</FONT>         */<a name="line.320"></a>
-<FONT color="green">321</FONT>        public InputStream buildInputStream() {<a name="line.321"></a>
-<FONT color="green">322</FONT>            final InputStream in = requireNonNull(this.inputStream, "inputStream");<a name="line.322"></a>
-<FONT color="green">323</FONT>            if (this.buffered) {<a name="line.323"></a>
-<FONT color="green">324</FONT>                if (this.bufferSize &gt; 0) {<a name="line.324"></a>
-<FONT color="green">325</FONT>                    return new LoggerBufferedInputStream(in, this.charset, this.bufferSize, this.logger, this.fqcn,<a name="line.325"></a>
-<FONT color="green">326</FONT>                        this.level, this.marker);<a name="line.326"></a>
-<FONT color="green">327</FONT>                }<a name="line.327"></a>
-<FONT color="green">328</FONT>                return new LoggerBufferedInputStream(in, this.charset, this.logger, this.fqcn, this.level, this.marker);<a name="line.328"></a>
-<FONT color="green">329</FONT>            }<a name="line.329"></a>
-<FONT color="green">330</FONT>            return new LoggerInputStream(in, this.charset, this.logger, this.fqcn, this.level, this.marker);<a name="line.330"></a>
-<FONT color="green">331</FONT>        }<a name="line.331"></a>
-<FONT color="green">332</FONT>    <a name="line.332"></a>
-<FONT color="green">333</FONT>        /**<a name="line.333"></a>
-<FONT color="green">334</FONT>         * Builds a new {@link OutputStream} that is backed by a Logger and optionally writes to another OutputStream as<a name="line.334"></a>
-<FONT color="green">335</FONT>         * well. If no OutputStream is configured for this builder, then the returned OutputStream will only write to its<a name="line.335"></a>
-<FONT color="green">336</FONT>         * underlying Logger.<a name="line.336"></a>
-<FONT color="green">337</FONT>         *<a name="line.337"></a>
-<FONT color="green">338</FONT>         * @return a new OutputStream that optionally writes to another OutputStream in addition to its underlying Logger<a name="line.338"></a>
-<FONT color="green">339</FONT>         */<a name="line.339"></a>
-<FONT color="green">340</FONT>        public OutputStream buildOutputStream() {<a name="line.340"></a>
-<FONT color="green">341</FONT>            if (this.outputStream == null) {<a name="line.341"></a>
-<FONT color="green">342</FONT>                return new LoggerOutputStream(this.logger, this.level, this.marker, this.charset, this.fqcn);<a name="line.342"></a>
-<FONT color="green">343</FONT>            }<a name="line.343"></a>
-<FONT color="green">344</FONT>            return new LoggerFilterOutputStream(this.outputStream, this.charset, this.logger, this.fqcn, this.level,<a name="line.344"></a>
-<FONT color="green">345</FONT>                this.marker);<a name="line.345"></a>
-<FONT color="green">346</FONT>        }<a name="line.346"></a>
-<FONT color="green">347</FONT>    <a name="line.347"></a>
-<FONT color="green">348</FONT>        /**<a name="line.348"></a>
-<FONT color="green">349</FONT>         * Builds a new {@link PrintStream} that is backed by a Logger and optionally writes to another OutputStream as<a name="line.349"></a>
-<FONT color="green">350</FONT>         * well. If no OutputStream is configured for this builder, then the returned PrintStream will only write to its<a name="line.350"></a>
-<FONT color="green">351</FONT>         * underlying Logger.<a name="line.351"></a>
-<FONT color="green">352</FONT>         *<a name="line.352"></a>
-<FONT color="green">353</FONT>         * @return a new PrintStream that optionally writes to another OutputStream in addition to its underlying Logger<a name="line.353"></a>
-<FONT color="green">354</FONT>         * @throws LoggingException if the configured character set is unsupported by {@link PrintStream}<a name="line.354"></a>
-<FONT color="green">355</FONT>         */<a name="line.355"></a>
-<FONT color="green">356</FONT>        public PrintStream buildPrintStream() {<a name="line.356"></a>
-<FONT color="green">357</FONT>            try {<a name="line.357"></a>
-<FONT color="green">358</FONT>                if (this.outputStream == null) {<a name="line.358"></a>
-<FONT color="green">359</FONT>                    return new LoggerPrintStream(this.logger, this.autoFlush, this.charset, this.fqcn, this.level,<a name="line.359"></a>
-<FONT color="green">360</FONT>                        this.marker);<a name="line.360"></a>
-<FONT color="green">361</FONT>                }<a name="line.361"></a>
-<FONT color="green">362</FONT>                return new LoggerPrintStream(this.outputStream, this.autoFlush, this.charset, this.logger, this.fqcn,<a name="line.362"></a>
-<FONT color="green">363</FONT>                    this.level, this.marker);<a name="line.363"></a>
-<FONT color="green">364</FONT>            } catch (final UnsupportedEncodingException e) {<a name="line.364"></a>
-<FONT color="green">365</FONT>                // this exception shouldn't really happen since we use Charset and not String<a name="line.365"></a>
-<FONT color="green">366</FONT>                throw new LoggingException(e);<a name="line.366"></a>
-<FONT color="green">367</FONT>            }<a name="line.367"></a>
-<FONT color="green">368</FONT>        }<a name="line.368"></a>
-<FONT color="green">369</FONT>    <a name="line.369"></a>
-<FONT color="green">370</FONT>        private static &lt;T&gt; T requireNonNull(final T obj, final String name) {<a name="line.370"></a>
-<FONT color="green">371</FONT>            if (obj == null) {<a name="line.371"></a>
-<FONT color="green">372</FONT>                throw new IllegalStateException("The property " + name + " was not set");<a name="line.372"></a>
-<FONT color="green">373</FONT>            }<a name="line.373"></a>
-<FONT color="green">374</FONT>            return obj;<a name="line.374"></a>
-<FONT color="green">375</FONT>        }<a name="line.375"></a>
-<FONT color="green">376</FONT>    <a name="line.376"></a>
-<FONT color="green">377</FONT>    }<a name="line.377"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License. You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the license for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the license.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span>package org.apache.logging.log4j.io;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.io.InputStream;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.io.OutputStream;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.io.PrintStream;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.io.PrintWriter;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.io.Reader;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.io.UnsupportedEncodingException;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.io.Writer;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.nio.charset.Charset;<a name="line.26"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.logging.log4j.Level;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.apache.logging.log4j.LogManager;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.logging.log4j.Logger;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.logging.log4j.LoggingException;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.apache.logging.log4j.Marker;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.logging.log4j.spi.ExtendedLogger;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.apache.logging.log4j.util.ReflectionUtil;<a name="line.34"></a>
+<span class="sourceLineNo">035</span><a name="line.35"></a>
+<span class="sourceLineNo">036</span>/**<a name="line.36"></a>
+<span class="sourceLineNo">037</span> * Builder class to wrap {@link Logger Loggers} into Java IO compatible classes.<a name="line.37"></a>
+<span class="sourceLineNo">038</span> *<a name="line.38"></a>
+<span class="sourceLineNo">039</span> * &lt;p&gt;Both the {@link InputStream}/{@link OutputStream} and {@link Reader}/{@link Writer} family of classes are<a name="line.39"></a>
+<span class="sourceLineNo">040</span> * supported. {@link OutputStream} and {@link Writer} instances can be wrapped by a filtered version of their<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * corresponding classes ({@link java.io.FilterOutputStream} and {@link java.io.FilterWriter}) in order to log all<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * lines written to these instances. {@link InputStream} and {@link Reader} instances can be wrapped by a sort of<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * wiretapped version of their respective classes; all lines read from these instances will be logged.&lt;/p&gt;<a name="line.43"></a>
+<span class="sourceLineNo">044</span> *<a name="line.44"></a>
+<span class="sourceLineNo">045</span> * &lt;p&gt;The main feature, however, is the ability to create a {@link PrintWriter}, {@link PrintStream}, {@link Writer},<a name="line.45"></a>
+<span class="sourceLineNo">046</span> * {@link java.io.BufferedWriter}, {@link OutputStream}, or {@link java.io.BufferedOutputStream} that is backed by a<a name="line.46"></a>
+<span class="sourceLineNo">047</span> * {@link Logger}. The main inspiration for this feature is the JDBC API which uses a PrintWriter to perform debug<a name="line.47"></a>
+<span class="sourceLineNo">048</span> * logging. In order to properly integrate APIs like JDBC into Log4j, create a PrintWriter using this class.&lt;/p&gt;<a name="line.48"></a>
+<span class="sourceLineNo">049</span> *<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * &lt;p&gt;The IoBuilder support configuration of the logging {@link Level} it should use (defaults to the level of<a name="line.50"></a>
+<span class="sourceLineNo">051</span> * the underlying Logger), and an optional {@link Marker}. The other configurable objects are explained in more<a name="line.51"></a>
+<span class="sourceLineNo">052</span> * detail below.&lt;/p&gt;<a name="line.52"></a>
+<span class="sourceLineNo">053</span> *<a name="line.53"></a>
+<span class="sourceLineNo">054</span> * @since 2.1<a name="line.54"></a>
+<span class="sourceLineNo">055</span> */<a name="line.55"></a>
+<span class="sourceLineNo">056</span>public class IoBuilder {<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    private final ExtendedLogger logger;<a name="line.57"></a>
+<span class="sourceLineNo">058</span>    private Level level;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    private Marker marker;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    private String fqcn;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    private boolean autoFlush;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    private boolean buffered;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    private int bufferSize;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    private Charset charset;<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    private Reader reader;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    private Writer writer;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    private InputStream inputStream;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    private OutputStream outputStream;<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>    /**<a name="line.70"></a>
+<span class="sourceLineNo">071</span>     * Creates a new builder for a given {@link Logger}. The Logger instance must implement {@link ExtendedLogger} or<a name="line.71"></a>
+<span class="sourceLineNo">072</span>     * an exception will be thrown.<a name="line.72"></a>
+<span class="sourceLineNo">073</span>     *<a name="line.73"></a>
+<span class="sourceLineNo">074</span>     * @param logger the Logger to wrap into a LoggerStream<a name="line.74"></a>
+<span class="sourceLineNo">075</span>     * @return a new IoBuilder<a name="line.75"></a>
+<span class="sourceLineNo">076</span>     * @throws UnsupportedOperationException if {@code logger} does not implement {@link ExtendedLogger} or if<a name="line.76"></a>
+<span class="sourceLineNo">077</span>     *                                       {@code logger} is {@code null}<a name="line.77"></a>
+<span class="sourceLineNo">078</span>     */<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    public static IoBuilder forLogger(final Logger logger) {<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        return new IoBuilder(logger);<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    }<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>    /**<a name="line.83"></a>
+<span class="sourceLineNo">084</span>     * Creates a new builder using a Logger name. The name provided is used to get a Logger from<a name="line.84"></a>
+<span class="sourceLineNo">085</span>     * {@link LogManager#getLogger(String)} which will be wrapped into a LoggerStream.<a name="line.85"></a>
+<span class="sourceLineNo">086</span>     *<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     * @param loggerName the name of the Logger to wrap into a LoggerStream<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * @return a new IoBuilder<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     */<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    public static IoBuilder forLogger(final String loggerName) {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        return new IoBuilder(LogManager.getLogger(loggerName));<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    }<a name="line.92"></a>
+<span class="sourceLineNo">093</span><a name="line.93"></a>
+<span class="sourceLineNo">094</span>    /**<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     * Creates a new builder using a Logger named after a given Class. The Class provided is used to get a Logger from<a name="line.95"></a>
+<span class="sourceLineNo">096</span>     * {@link LogManager#getLogger(Class)} which will be wrapped into a LoggerStream.<a name="line.96"></a>
+<span class="sourceLineNo">097</span>     *<a name="line.97"></a>
+<span class="sourceLineNo">098</span>     * @param clazz the Class to use as the Logger name to wrap into a LoggerStream<a name="line.98"></a>
+<span class="sourceLineNo">099</span>     * @return a new IoBuilder<a name="line.99"></a>
+<span class="sourceLineNo">100</span>     */<a name="line.100"></a>
+<span class="sourceLineNo">101</span>    public static IoBuilder forLogger(final Class&lt;?&gt; clazz) {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        return new IoBuilder(LogManager.getLogger(clazz));<a name="line.102"></a>
+<span class="sourceLineNo">103</span>    }<a name="line.103"></a>
+<span class="sourceLineNo">104</span><a name="line.104"></a>
+<span class="sourceLineNo">105</span>    /**<a name="line.105"></a>
+<span class="sourceLineNo">106</span>     * Creates a new builder using a Logger named after the calling Class. This is equivalent to the following:<a name="line.106"></a>
+<span class="sourceLineNo">107</span>     * &lt;pre&gt;<a name="line.107"></a>
+<span class="sourceLineNo">108</span>     *     IoBuilder builder = IoBuilder.forLogger(LogManager.getLogger());<a name="line.108"></a>
+<span class="sourceLineNo">109</span>     * &lt;/pre&gt;<a name="line.109"></a>
+<span class="sourceLineNo">110</span>     *<a name="line.110"></a>
+<span class="sourceLineNo">111</span>     * @return a new IoBuilder<a name="line.111"></a>
+<span class="sourceLineNo">112</span>     */<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    public static IoBuilder forLogger() {<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        return new IoBuilder(LogManager.getLogger(ReflectionUtil.getCallerClass(2)));<a name="line.114"></a>
+<span class="sourceLineNo">115</span>    }<a name="line.115"></a>
+<span class="sourceLineNo">116</span><a name="line.116"></a>
+<span class="sourceLineNo">117</span>    /**<a name="line.117"></a>
+<span class="sourceLineNo">118</span>     * Constructs a new IoBuilder for the given Logger. This method is provided for extensibility of this builder<a name="line.118"></a>
+<span class="sourceLineNo">119</span>     * class. The static factory methods should be used normally.<a name="line.119"></a>
+<span class="sourceLineNo">120</span>     *<a name="line.120"></a>
+<span class="sourceLineNo">121</span>     * @param logger the {@link ExtendedLogger} to wrap<a name="line.121"></a>
+<span class="sourceLineNo">122</span>     */<a name="line.122"></a>
+<span class="sourceLineNo">123</span>    protected IoBuilder(final Logger logger) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        if (!(logger instanceof ExtendedLogger)) {<a name="line.124"></a>
+<span class="sourceLineNo">125</span>            throw new UnsupportedOperationException("The provided Logger [" + String.valueOf(logger) +<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                "] does not implement " + ExtendedLogger.class.getName());<a name="line.126"></a>
+<span class="sourceLineNo">127</span>        }<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        this.logger = (ExtendedLogger) logger;<a name="line.128"></a>
+<span class="sourceLineNo">129</span>    }<a name="line.129"></a>
+<span class="sourceLineNo">130</span><a name="line.130"></a>
+<span class="sourceLineNo">131</span>    /**<a name="line.131"></a>
+<span class="sourceLineNo">132</span>     * Specifies the {@link Level} to log at. If no Level is configured, then the Level of the wrapped Logger will be<a name="line.132"></a>
+<span class="sourceLineNo">133</span>     * used.<a name="line.133"></a>
+<span class="sourceLineNo">134</span>     *<a name="line.134"></a>
+<span class="sourceLineNo">135</span>     * @param level the Level to use for logging<a name="line.135"></a>
+<span class="sourceLineNo">136</span>     * @return {@code this}<a name="line.136"></a>
+<span class="sourceLineNo">137</span>     */<a name="line.137"></a>
+<span class="sourceLineNo">138</span>    public IoBuilder setLevel(final Level level) {<a name="line.138"></a>
+<span class="sourceLineNo">139</span>        this.level = level;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>        return this;<a name="line.140"></a>
+<span class="sourceLineNo">141</span>    }<a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>    /**<a name="line.143"></a>
+<span class="sourceLineNo">144</span>     * Specifies an optional {@link Marker} to use in all logging messages. If no Marker is specified, then no Marker<a name="line.144"></a>
+<span class="sourceLineNo">145</span>     * will be used.<a name="line.145"></a>
+<span class="sourceLineNo">146</span>     *<a name="line.146"></a>
+<span class="sourceLineNo">147</span>     * @param marker the Marker to associate with all logging messages<a name="line.147"></a>
+<span class="sourceLineNo">148</span>     * @return {@code this}<a name="line.148"></a>
+<span class="sourceLineNo">149</span>     */<a name="line.149"></a>
+<span class="sourceLineNo">150</span>    public IoBuilder setMarker(final Marker marker) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        this.marker = marker;<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        return this;<a name="line.152"></a>
+<span class="sourceLineNo">153</span>    }<a name="line.153"></a>
+<span class="sourceLineNo">154</span><a name="line.154"></a>
+<span class="sourceLineNo">155</span>    /**<a name="line.155"></a>
+<span class="sourceLineNo">156</span>     * Specifies the fully qualified class name of the IO wrapper class implementation. This method should only be<a name="line.156"></a>
+<span class="sourceLineNo">157</span>     * used when making significant extensions to the provided classes in this component and is normally unnecessary.<a name="line.157"></a>
+<span class="sourceLineNo">158</span>     *<a name="line.158"></a>
+<span class="sourceLineNo">159</span>     * @param fqcn the fully qualified class name of the IO wrapper class being built<a name="line.159"></a>
+<span class="sourceLineNo">160</span>     * @return {@code this}<a name="line.160"></a>
+<span class="sourceLineNo">161</span>     */<a name="line.161"></a>
+<span class="sourceLineNo">162</span>    public IoBuilder setWrapperClassName(final String fqcn) {<a name="line.162"></a>
+<span class="sourceLineNo">163</span>        this.fqcn = fqcn;<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        return this;<a name="line.164"></a>
+<span class="sourceLineNo">165</span>    }<a name="line.165"></a>
+<span class="sourceLineNo">166</span><a name="line.166"></a>
+<span class="sourceLineNo">167</span>    /**<a name="line.167"></a>
+<span class="sourceLineNo">168</span>     * Indicates whether or not a built {@link PrintWriter} or {@link PrintStream} should automatically flush when<a name="line.168"></a>
+<span class="sourceLineNo">169</span>     * one of the {@code println}, {@code printf}, or {@code format} methods are invoked, or when a new line character<a name="line.169"></a>
+<span class="sourceLineNo">170</span>     * is printed.<a name="line.170"></a>
+<span class="sourceLineNo">171</span>     *<a name="line.171"></a>
+<span class="sourceLineNo">172</span>     * @param autoFlush if {@code true}, then {@code println}, {@code printf}, and {@code format} will auto flush<a name="line.172"></a>
+<span class="sourceLineNo">173</span>     * @return {@code this}<a name="line.173"></a>
+<span class="sourceLineNo">174</span>     */<a name="line.174"></a>
+<span class="sourceLineNo">175</span>    public IoBuilder setAutoFlush(final boolean autoFlush) {<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        this.autoFlush = autoFlush;<a name="line.176"></a>
+<span class="sourceLineNo">177</span>        return this;<a name="line.177"></a>
+<span class="sourceLineNo">178</span>    }<a name="line.178"></a>
+<span class="sourceLineNo">179</span><a name="line.179"></a>
+<span class="sourceLineNo">180</span>    /**<a name="line.180"></a>
+<span class="sourceLineNo">181</span>     * Enables or disables using a buffered variant of the desired IO class. If this is set to {@code true}, then the<a name="line.181"></a>
+<span class="sourceLineNo">182</span>     * instances returned by {@link #buildReader()} and {@link #buildInputStream()} can be safely cast (if necessary)<a name="line.182"></a>
+<span class="sourceLineNo">183</span>     * to {@link java.io.BufferedReader} and {@link java.io.BufferedInputStream} respectively. This option does not<a name="line.183"></a>
+<span class="sourceLineNo">184</span>     * have any effect on the other built variants.<a name="line.184"></a>
+<span class="sourceLineNo">185</span>     *<a name="line.185"></a>
+<span class="sourceLineNo">186</span>     * @param buffered indicates whether or not a wrapped {@link InputStream} or {@link Reader} should be buffered<a name="line.186"></a>
+<span class="sourceLineNo">187</span>     * @return {@code this}<a name="line.187"></a>
+<span class="sourceLineNo">188</span>     */<a name="line.188"></a>
+<span class="sourceLineNo">189</span>    public IoBuilder setBuffered(final boolean buffered) {<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        this.buffered = buffered;<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        return this;<a name="line.191"></a>
+<span class="sourceLineNo">192</span>    }<a name="line.192"></a>
+<span class="sourceLineNo">193</span><a name="line.193"></a>
+<span class="sourceLineNo">194</span>    /**<a name="line.194"></a>
+<span class="sourceLineNo">195</span>     * Configures the buffer size to use when building a {@link java.io.BufferedReader} or<a name="line.195"></a>
+<span class="sourceLineNo">196</span>     * {@link java.io.BufferedInputStream} LoggerStream.<a name="line.196"></a>
+<span class="sourceLineNo">197</span>     *<a name="line.197"></a>
+<span class="sourceLineNo">198</span>     * @param bufferSize the buffer size to use or a non-positive integer to use the default size<a name="line.198"></a>
+<span class="sourceLineNo">199</span>     * @return {@code this}<a name="line.199"></a>
+<span class="sourceLineNo">200</span>     */<a name="line.200"></a>
+<span class="sourceLineNo">201</span>    public IoBuilder setBufferSize(final int bufferSize) {<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        this.bufferSize = bufferSize;<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        return this;<a name="line.203"></a>
+<span class="sourceLineNo">204</span>    }<a name="line.204"></a>
+<span class="sourceLineNo">205</span><a name="line.205"></a>
+<span class="sourceLineNo">206</span>    /**<a name="line.206"></a>
+<span class="sourceLineNo">207</span>     * Specifies the character set to use when building an {@link InputStream}, {@link OutputStream}, or<a name="line.207"></a>
+<span class="sourceLineNo">208</span>     * {@link PrintStream}. If no character set is specified, then {@link java.nio.charset.Charset#defaultCharset()}<a name="line.208"></a>
+<span class="sourceLineNo">209</span>     * is used.<a name="line.209"></a>
+<span class="sourceLineNo">210</span>     *<a name="line.210"></a>
+<span class="sourceLineNo">211</span>     * @param charset the character set to use when building an InputStream, OutputStream, or PrintStream<a name="line.211"></a>
+<span class="sourceLineNo">212</span>     * @return {@code this}<a name="line.212"></a>
+<span class="sourceLineNo">213</span>     */<a name="line.213"></a>
+<span class="sourceLineNo">214</span>    public IoBuilder setCharset(final Charset charset) {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        this.charset = charset;<a name="line.215"></a>
+<span class="sourceLineNo">216</span>        return this;<a name="line.216"></a>
+<span class="sourceLineNo">217</span>    }<a name="line.217"></a>
+<span class="sourceLineNo">218</span><a name="line.218"></a>
+<span class="sourceLineNo">219</span>    /**<a name="line.219"></a>
+<span class="sourceLineNo">220</span>     * Configures a {@link Reader} to be wiretapped when building a Reader. This must be set to a non-{@code null}<a name="line.220"></a>
+<span class="sourceLineNo">221</span>     * value in order to call {@link #buildReader()}.<a name="line.221"></a>
+<span class="sourceLineNo">222</span>     *<a name="line.222"></a>
+<span class="sourceLineNo">223</span>     * @param reader the Reader to wiretap<a name="line.223"></a>
+<span class="sourceLineNo">224</span>     * @return {@code this}<a name="line.224"></a>
+<span class="sourceLineNo">225</span>     */<a name="line.225"></a>
+<span class="sourceLineNo">226</span>    public IoBuilder filter(final Reader reader) {<a name="line.226"></a>
+<span class="sourceLineNo">227</span>        this.reader = reader;<a name="line.227"></a>
+<span class="sourceLineNo">228</span>        return this;<a name="line.228"></a>
+<span class="sourceLineNo">229</span>    }<a name="line.229"></a>
+<span class="sourceLineNo">230</span><a name="line.230"></a>
+<span class="sourceLineNo">231</span>    /**<a name="line.231"></a>
+<span class="sourceLineNo">232</span>     * Configures a {@link Writer} to be written to in addition to the underlying Logger. If no Writer is specified,<a name="line.232"></a>
+<span class="sourceLineNo">233</span>     * then the built Writer or PrintWriter will only write to the underlying Logger.<a name="line.233"></a>
+<span class="sourceLineNo">234</span>     *<a name="line.234"></a>
+<span class="sourceLineNo">235</span>     * @param writer the Writer to write to in addition to the Logger<a name="line.235"></a>
+<span class="sourceLineNo">236</span>     * @return {@code this}<a name="line.236"></a>
+<span class="sourceLineNo">237</span>     */<a name="line.237"></a>
+<span class="sourceLineNo">238</span>    public IoBuilder filter(final Writer writer) {<a name="line.238"></a>
+<span class="sourceLineNo">239</span>        this.writer = writer;<a name="line.239"></a>
+<span class="sourceLineNo">240</span>        return this;<a name="line.240"></a>
+<span class="sourceLineNo">241</span>    }<a name="line.241"></a>
+<span class="sourceLineNo">242</span><a name="line.242"></a>
+<span class="sourceLineNo">243</span>    /**<a name="line.243"></a>
+<span class="sourceLineNo">244</span>     * Configures an {@link InputStream} to be wiretapped when building an InputStream. This must be set to a<a name="line.244"></a>
+<span class="sourceLineNo">245</span>     * non-{@code null} value in order to call {@link #buildInputStream()}.<a name="line.245"></a>
+<span class="sourceLineNo">246</span>     *<a name="line.246"></a>
+<span class="sourceLineNo">247</span>     * @param inputStream the InputStream to wiretap<a name="line.247"></a>
+<span class="sourceLineNo">248</span>     * @return {@code this}<a name="line.248"></a>
+<span class="sourceLineNo">249</span>     */<a name="line.249"></a>
+<span class="sourceLineNo">250</span>    public IoBuilder filter(final InputStream inputStream) {<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        this.inputStream = inputStream;<a name="line.251"></a>
+<span class="sourceLineNo">252</span>        return this;<a name="line.252"></a>
+<span class="sourceLineNo">253</span>    }<a name="line.253"></a>
+<span class="sourceLineNo">254</span><a name="line.254"></a>
+<span class="sourceLineNo">255</span>    /**<a name="line.255"></a>
+<span class="sourceLineNo">256</span>     * Configures an {@link OutputStream} to be written to in addition to the underlying Logger. If no OutputStream is<a name="line.256"></a>
+<span class="sourceLineNo">257</span>     * specified, then the built OutputStream or PrintStream will only write to the underlying Logger.<a name="line.257"></a>
+<span class="sourceLineNo">258</span>     *<a name="line.258"></a>
+<span class="sourceLineNo">259</span>     * @param outputStream the OutputStream to write to in addition to the Logger<a name="line.259"></a>
+<span class="sourceLineNo">260</span>     * @return {@code this}<a name="line.260"></a>
+<span class="sourceLineNo">261</span>     */<a name="line.261"></a>
+<span class="sourceLineNo">262</span>    public IoBuilder filter(final OutputStream outputStream) {<a name="line.262"></a>
+<span class="sourceLineNo">263</span>        this.outputStream = outputStream;<a name="line.263"></a>
+<span class="sourceLineNo">264</span>        return this;<a name="line.264"></a>
+<span class="sourceLineNo">265</span>    }<a name="line.265"></a>
+<span class="sourceLineNo">266</span><a name="line.266"></a>
+<span class="sourceLineNo">267</span>    // TODO: could this builder use generics to infer the desired IO class?<a name="line.267"></a>
+<span class="sourceLineNo">268</span><a name="line.268"></a>
+<span class="sourceLineNo">269</span>    /**<a name="line.269"></a>
+<span class="sourceLineNo">270</span>     * Builds a new {@link Reader} that is wiretapped by its underlying Logger. If buffering is enabled, then a<a name="line.270"></a>
+<span class="sourceLineNo">271</span>     * {@link java.io.BufferedReader} will be returned.<a name="line.271"></a>
+<span class="sourceLineNo">272</span>     *<a name="line.272"></a>
+<span class="sourceLineNo">273</span>     * @return a new Reader wiretapped by a Logger<a name="line.273"></a>
+<span class="sourceLineNo">274</span>     * @throws IllegalStateException if no Reader was configured for this builder<a name="line.274"></a>
+<span class="sourceLineNo">275</span>     */<a name="line.275"></a>
+<span class="sourceLineNo">276</span>    public Reader buildReader() {<a name="line.276"></a>
+<span class="sourceLineNo">277</span>        final Reader in = requireNonNull(this.reader, "reader");<a name="line.277"></a>
+<span class="sourceLineNo">278</span>        if (this.buffered) {<a name="line.278"></a>
+<span class="sourceLineNo">279</span>            if (this.bufferSize &gt; 0) {<a name="line.279"></a>
+<span class="sourceLineNo">280</span>                return new LoggerBufferedReader(in, this.bufferSize, this.logger, this.fqcn, this.level, this.marker);<a name="line.280"></a>
+<span class="sourceLineNo">281</span>            }<a name="line.281"></a>
+<span class="sourceLineNo">282</span>            return new LoggerBufferedReader(in, this.logger, this.fqcn, this.level, this.marker);<a name="line.282"></a>
+<span class="sourceLineNo">283</span>        }<a name="line.283"></a>
+<span class="sourceLineNo">284</span>        return new LoggerReader(in, this.logger, this.fqcn, this.level, this.marker);<a name="line.284"></a>
+<span class="sourceLineNo">285</span>    }<a name="line.285"></a>
+<span class="sourceLineNo">286</span><a name="line.286"></a>
+<span class="sourceLineNo">287</span>    /**<a name="line.287"></a>
+<span class="sourceLineNo">288</span>     * Builds a new {@link Writer} that is backed by a Logger and optionally writes to another Writer as well. If no<a name="line.288"></a>
+<span class="sourceLineNo">289</span>     * Writer is configured for this builder, then the returned Writer will only write to its underlying Logger.<a name="line.289"></a>
+<span class="sourceLineNo">290</span>     *<a name="line.290"></a>
+<span class="sourceLineNo">291</span>     * @return a new Writer or {@link java.io.FilterWriter} backed by a Logger<a name="line.291"></a>
+<span class="sourceLineNo">292</span>     */<a name="line.292"></a>
+<span class="sourceLineNo">293</span>    public Writer buildWriter() {<a name="line.293"></a>
+<span class="sourceLineNo">294</span>        if (this.writer == null) {<a name="line.294"></a>
+<span class="sourceLineNo">295</span>            return new LoggerWriter(this.logger, this.fqcn, this.level, this.marker);<a name="line.295"></a>
+<span class="sourceLineNo">296</span>        }<a name="line.296"></a>
+<span class="sourceLineNo">297</span>        return new LoggerFilterWriter(this.writer, this.logger, this.fqcn, this.level, this.marker);<a name="line.297"></a>
+<span class="sourceLineNo">298</span>    }<a name="line.298"></a>
+<span class="sourceLineNo">299</span><a name="line.299"></a>
+<span class="sourceLineNo">300</span>    /**<a name="line.300"></a>
+<span class="sourceLineNo">301</span>     * Builds a new {@link PrintWriter} that is backed by a Logger and optionally writes to another Writer as well. If<a name="line.301"></a>
+<span class="sourceLineNo">302</span>     * no Writer is configured for this builder, then the returned PrintWriter will only write to its underlying<a name="line.302"></a>
+<span class="sourceLineNo">303</span>     * Logger.<a name="line.303"></a>
+<span class="sourceLineNo">304</span>     *<a name="line.304"></a>
+<span class="sourceLineNo">305</span>     * @return a new PrintWriter that optionally writes to another Writer in addition to its underlying Logger<a name="line.305"></a>
+<span class="sourceLineNo">306</span>     */<a name="line.306"></a>
+<span class="sourceLineNo">307</span>    public PrintWriter buildPrintWriter() {<a name="line.307"></a>
+<span class="sourceLineNo">308</span>        if (this.writer == null) {<a name="line.308"></a>
+<span class="sourceLineNo">309</span>            return new LoggerPrintWriter(this.logger, this.autoFlush, this.fqcn, this.level, this.marker);<a name="line.309"></a>
+<span class="sourceLineNo">310</span>        }<a name="line.310"></a>
+<span class="sourceLineNo">311</span>        return new LoggerPrintWriter(this.writer, this.autoFlush, this.logger, this.fqcn, this.level, this.marker);<a name="line.311"></a>
+<span class="sourceLineNo">312</span>    }<a name="line.312"></a>
+<span class="sourceLineNo">313</span><a name="line.313"></a>
+<span class="sourceLineNo">314</span>    /**<a name="line.314"></a>
+<span class="sourceLineNo">315</span>     * Builds a new {@link InputStream} that is wiretapped by its underlying Logger. If buffering is enabled, then a<a name="line.315"></a>
+<span class="sourceLineNo">316</span>     * {@link java.io.BufferedInputStream} will be returned.<a name="line.316"></a>
+<span class="sourceLineNo">317</span>     *<a name="line.317"></a>
+<span class="sourceLineNo">318</span>     * @return a new InputStream wiretapped by a Logger<a name="line.318"></a>
+<span class="sourceLineNo">319</span>     * @throws IllegalStateException if no InputStream was configured for this builder<a name="line.319"></a>
+<span class="sourceLineNo">320</span>     */<a name="line.320"></a>
+<span class="sourceLineNo">321</span>    public InputStream buildInputStream() {<a name="line.321"></a>
+<span class="sourceLineNo">322</span>        final InputStream in = requireNonNull(this.inputStream, "inputStream");<a name="line.322"></a>
+<span class="sourceLineNo">323</span>        if (this.buffered) {<a name="line.323"></a>
+<span class="sourceLineNo">324</span>            if (this.bufferSize &gt; 0) {<a name="line.324"></a>
+<span class="sourceLineNo">325</span>                return new LoggerBufferedInputStream(in, this.charset, this.bufferSize, this.logger, this.fqcn,<a name="line.325"></a>
+<span class="sourceLineNo">326</span>                    this.level, this.marker);<a name="line.326"></a>
+<span class="sourceLineNo">327</span>            }<a name="line.327"></a>
+<span class="sourceLineNo">328</span>            return new LoggerBufferedInputStream(in, this.charset, this.logger, this.fqcn, this.level, this.marker);<a name="line.328"></a>
+<span class="sourceLineNo">329</span>        }<a name="line.329"></a>
+<span class="sourceLineNo">330</span>        return new LoggerInputStream(in, this.charset, this.logger, this.fqcn, this.level, this.marker);<a name="line.330"></a>
+<span class="sourceLineNo">331</span>    }<a name="line.331"></a>
+<span class="sourceLineNo">332</span><a name="line.332"></a>
+<span class="sourceLineNo">333</span>    /**<a name="line.333"></a>
+<span class="sourceLineNo">334</span>     * Builds a new {@link OutputStream} that is backed by a Logger and optionally writes to another OutputStream as<a name="line.334"></a>
+<span class="sourceLineNo">335</span>     * well. If no OutputStream is configured for this builder, then the returned OutputStream will only write to its<a name="line.335"></a>
+<span class="sourceLineNo">336</span>     * underlying Logger.<a name="line.336"></a>
+<span class="sourceLineNo">337</span>     *<a name="line.337"></a>
+<span class="sourceLineNo">338</span>     * @return a new OutputStream that optionally writes to another OutputStream in addition to its underlying Logger<a name="line.338"></a>
+<span class="sourceLineNo">339</span>     */<a name="line.339"></a>
+<span class="sourceLineNo">340</span>    public OutputStream buildOutputStream() {<a name="line.340"></a>
+<span class="sourceLineNo">341</span>        if (this.outputStream == null) {<a name="line.341"></a>
+<span class="sourceLineNo">342</span>            return new LoggerOutputStream(this.logger, this.level, this.marker, this.charset, this.fqcn);<a name="line.342"></a>
+<span class="sourceLineNo">343</span>        }<a name="line.343"></a>
+<span class="sourceLineNo">344</span>        return new LoggerFilterOutputStream(this.outputStream, this.charset, this.logger, this.fqcn, this.level,<a name="line.344"></a>
+<span class="sourceLineNo">345</span>            this.marker);<a name="line.345"></a>
+<span class="sourceLineNo">346</span>    }<a name="line.346"></a>
+<span class="sourceLineNo">347</span><a name="line.347"></a>
+<span class="sourceLineNo">348</span>    /**<a name="line.348"></a>
+<span class="sourceLineNo">349</span>     * Builds a new {@link PrintStream} that is backed by a Logger and optionally writes to another OutputStream as<a name="line.349"></a>
+<span class="sourceLineNo">350</span>     * well. If no OutputStream is configured for this builder, then the returned PrintStream will only write to its<a name="line.350"></a>
+<span class="sourceLineNo">351</span>     * underlying Logger.<a name="line.351"></a>
+<span class="sourceLineNo">352</span>     *<a name="line.352"></a>
+<span class="sourceLineNo">353</span>     * @return a new PrintStream that optionally writes to another OutputStream in addition to its underlying Logger<a name="line.353"></a>
+<span class="sourceLineNo">354</span>     * @throws LoggingException if the configured character set is unsupported by {@link PrintStream}<a name="line.354"></a>
+<span class="sourceLineNo">355</span>     */<a name="line.355"></a>
+<span class="sourceLineNo">356</span>    public PrintStream buildPrintStream() {<a name="line.356"></a>
+<span class="sourceLineNo">357</span>        try {<a name="line.357"></a>
+<span class="sourceLineNo">358</span>            if (this.outputStream == null) {<a name="line.358"></a>
+<span class="sourceLineNo">359</span>                return new LoggerPrintStream(this.logger, this.autoFlush, this.charset, this.fqcn, this.level,<a name="line.359"></a>
+<span class="sourceLineNo">360</span>                    this.marker);<a name="line.360"></a>
+<span class="sourceLineNo">361</span>            }<a name="line.361"></a>
+<span class="sourceLineNo">362</span>            return new LoggerPrintStream(this.outputStream, this.autoFlush, this.charset, this.logger, this.fqcn,<a name="line.362"></a>
+<span class="sourceLineNo">363</span>                this.level, this.marker);<a name="line.363"></a>
+<span class="sourceLineNo">364</span>        } catch (final UnsupportedEncodingException e) {<a name="line.364"></a>
+<span class="sourceLineNo">365</span>            // this exception shouldn't really happen since we use Charset and not String<a name="line.365"></a>
+<span class="sourceLineNo">366</span>            throw new LoggingException(e);<a name="line.366"></a>
+<span class="sourceLineNo">367</span>        }<a name="line.367"></a>
+<span class="sourceLineNo">368</span>    }<a name="line.368"></a>
+<span class="sourceLineNo">369</span><a name="line.369"></a>
+<span class="sourceLineNo">370</span>    private static &lt;T&gt; T requireNonNull(final T obj, final String name) {<a name="line.370"></a>
+<span class="sourceLineNo">371</span>        if (obj == null) {<a name="line.371"></a>
+<span class="sourceLineNo">372</span>            throw new IllegalStateException("The property " + name + " was not set");<a name="line.372"></a>
+<span class="sourceLineNo">373</span>        }<a name="line.373"></a>
+<span class="sourceLineNo">374</span>        return obj;<a name="line.374"></a>
+<span class="sourceLineNo">375</span>    }<a name="line.375"></a>
+<span class="sourceLineNo">376</span><a name="line.376"></a>
+<span class="sourceLineNo">377</span>}<a name="line.377"></a>
 
 
 
@@ -438,6 +443,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>
