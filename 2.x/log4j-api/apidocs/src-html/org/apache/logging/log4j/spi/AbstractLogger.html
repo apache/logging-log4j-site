@@ -2097,8 +2097,8 @@
 <span class="sourceLineNo">2089</span>        try {<a name="line.2089"></a>
 <span class="sourceLineNo">2090</span>            incrementRecursionDepth();<a name="line.2090"></a>
 <span class="sourceLineNo">2091</span>            log(level, marker, fqcn, location, message, throwable);<a name="line.2091"></a>
-<span class="sourceLineNo">2092</span>        } catch (Exception ex) {<a name="line.2092"></a>
-<span class="sourceLineNo">2093</span>            handleLogMessageException(ex, fqcn, message);<a name="line.2093"></a>
+<span class="sourceLineNo">2092</span>        } catch (Throwable t) {<a name="line.2092"></a>
+<span class="sourceLineNo">2093</span>            handleLogMessageException(t, fqcn, message);<a name="line.2093"></a>
 <span class="sourceLineNo">2094</span>        } finally {<a name="line.2094"></a>
 <span class="sourceLineNo">2095</span>            decrementRecursionDepth();<a name="line.2095"></a>
 <span class="sourceLineNo">2096</span>            ReusableMessageFactory.release(message);<a name="line.2096"></a>
@@ -2196,9 +2196,9 @@
 <span class="sourceLineNo">2188</span>                               final Throwable throwable) {<a name="line.2188"></a>
 <span class="sourceLineNo">2189</span>        try {<a name="line.2189"></a>
 <span class="sourceLineNo">2190</span>            log(level, marker, fqcn, location, msg, throwable);<a name="line.2190"></a>
-<span class="sourceLineNo">2191</span>        } catch (final Exception e) {<a name="line.2191"></a>
+<span class="sourceLineNo">2191</span>        } catch (final Throwable t) {<a name="line.2191"></a>
 <span class="sourceLineNo">2192</span>            // LOG4J2-1990 Log4j2 suppresses all exceptions that occur once application called the logger<a name="line.2192"></a>
-<span class="sourceLineNo">2193</span>            handleLogMessageException(e, fqcn, msg);<a name="line.2193"></a>
+<span class="sourceLineNo">2193</span>            handleLogMessageException(t, fqcn, msg);<a name="line.2193"></a>
 <span class="sourceLineNo">2194</span>        }<a name="line.2194"></a>
 <span class="sourceLineNo">2195</span>    }<a name="line.2195"></a>
 <span class="sourceLineNo">2196</span><a name="line.2196"></a>
@@ -2211,7 +2211,7 @@
 <span class="sourceLineNo">2203</span><a name="line.2203"></a>
 <span class="sourceLineNo">2204</span>    // LOG4J2-1990 Log4j2 suppresses all exceptions that occur once application called the logger<a name="line.2204"></a>
 <span class="sourceLineNo">2205</span>    // TODO Configuration setting to propagate exceptions back to the caller *if requested*<a name="line.2205"></a>
-<span class="sourceLineNo">2206</span>    private void handleLogMessageException(final Exception exception, final String fqcn, final Message msg) {<a name="line.2206"></a>
+<span class="sourceLineNo">2206</span>    private void handleLogMessageException(final Throwable exception, final String fqcn, final Message msg) {<a name="line.2206"></a>
 <span class="sourceLineNo">2207</span>        if (exception instanceof LoggingException) {<a name="line.2207"></a>
 <span class="sourceLineNo">2208</span>            throw (LoggingException) exception;<a name="line.2208"></a>
 <span class="sourceLineNo">2209</span>        }<a name="line.2209"></a>

@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.apache.logging.log4j.spring.cloud.config.client"}]
+packageSearchIndex = [{"l":"org.apache.logging.log4j.spring.cloud.config.client"}]

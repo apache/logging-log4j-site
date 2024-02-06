@@ -2097,8 +2097,8 @@
 <a class="jxr_linenumber" name="L2089" href="#L2089">2089</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L2090" href="#L2090">2090</a>             incrementRecursionDepth();
 <a class="jxr_linenumber" name="L2091" href="#L2091">2091</a>             log(level, marker, fqcn, location, message, throwable);
-<a class="jxr_linenumber" name="L2092" href="#L2092">2092</a>         } <strong class="jxr_keyword">catch</strong> (Exception ex) {
-<a class="jxr_linenumber" name="L2093" href="#L2093">2093</a>             handleLogMessageException(ex, fqcn, message);
+<a class="jxr_linenumber" name="L2092" href="#L2092">2092</a>         } <strong class="jxr_keyword">catch</strong> (Throwable t) {
+<a class="jxr_linenumber" name="L2093" href="#L2093">2093</a>             handleLogMessageException(t, fqcn, message);
 <a class="jxr_linenumber" name="L2094" href="#L2094">2094</a>         } <strong class="jxr_keyword">finally</strong> {
 <a class="jxr_linenumber" name="L2095" href="#L2095">2095</a>             decrementRecursionDepth();
 <a class="jxr_linenumber" name="L2096" href="#L2096">2096</a>             ReusableMessageFactory.release(message);
@@ -2196,9 +2196,9 @@
 <a class="jxr_linenumber" name="L2188" href="#L2188">2188</a>                                <strong class="jxr_keyword">final</strong> Throwable throwable) {
 <a class="jxr_linenumber" name="L2189" href="#L2189">2189</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L2190" href="#L2190">2190</a>             log(level, marker, fqcn, location, msg, throwable);
-<a class="jxr_linenumber" name="L2191" href="#L2191">2191</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L2191" href="#L2191">2191</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Throwable t) {
 <a class="jxr_linenumber" name="L2192" href="#L2192">2192</a>             <em class="jxr_comment">// LOG4J2-1990 Log4j2 suppresses all exceptions that occur once application called the logger</em>
-<a class="jxr_linenumber" name="L2193" href="#L2193">2193</a>             handleLogMessageException(e, fqcn, msg);
+<a class="jxr_linenumber" name="L2193" href="#L2193">2193</a>             handleLogMessageException(t, fqcn, msg);
 <a class="jxr_linenumber" name="L2194" href="#L2194">2194</a>         }
 <a class="jxr_linenumber" name="L2195" href="#L2195">2195</a>     }
 <a class="jxr_linenumber" name="L2196" href="#L2196">2196</a> 
@@ -2211,7 +2211,7 @@
 <a class="jxr_linenumber" name="L2203" href="#L2203">2203</a> 
 <a class="jxr_linenumber" name="L2204" href="#L2204">2204</a>     <em class="jxr_comment">// LOG4J2-1990 Log4j2 suppresses all exceptions that occur once application called the logger</em>
 <a class="jxr_linenumber" name="L2205" href="#L2205">2205</a>     <em class="jxr_comment">// TODO Configuration setting to propagate exceptions back to the caller *if requested*</em>
-<a class="jxr_linenumber" name="L2206" href="#L2206">2206</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleLogMessageException(<strong class="jxr_keyword">final</strong> Exception exception, <strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/apache/logging/log4j/message/Message.html">Message</a> msg) {
+<a class="jxr_linenumber" name="L2206" href="#L2206">2206</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleLogMessageException(<strong class="jxr_keyword">final</strong> Throwable exception, <strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/apache/logging/log4j/message/Message.html">Message</a> msg) {
 <a class="jxr_linenumber" name="L2207" href="#L2207">2207</a>         <strong class="jxr_keyword">if</strong> (exception instanceof LoggingException) {
 <a class="jxr_linenumber" name="L2208" href="#L2208">2208</a>             <strong class="jxr_keyword">throw</strong> (LoggingException) exception;
 <a class="jxr_linenumber" name="L2209" href="#L2209">2209</a>         }

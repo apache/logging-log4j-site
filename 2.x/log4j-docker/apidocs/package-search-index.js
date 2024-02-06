@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.apache.logging.log4j.docker"},{"l":"org.apache.logging.log4j.docker.model"}]
+packageSearchIndex = [{"l":"org.apache.logging.log4j.docker"},{"l":"org.apache.logging.log4j.docker.model"}]
