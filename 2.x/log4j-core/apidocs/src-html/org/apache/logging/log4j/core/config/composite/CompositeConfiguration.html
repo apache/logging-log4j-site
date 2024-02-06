@@ -70,7 +70,7 @@
 <span class="sourceLineNo">062</span>     * @param configurations The List of Configurations to merge.<a name="line.62"></a>
 <span class="sourceLineNo">063</span>     */<a name="line.63"></a>
 <span class="sourceLineNo">064</span>    public CompositeConfiguration(final List&lt;? extends AbstractConfiguration&gt; configurations) {<a name="line.64"></a>
-<span class="sourceLineNo">065</span>        super(ConfigurationSource.NULL_SOURCE);<a name="line.65"></a>
+<span class="sourceLineNo">065</span>        super(configurations.get(0).getLoggerContext(), ConfigurationSource.NULL_SOURCE);<a name="line.65"></a>
 <span class="sourceLineNo">066</span>        rootNode = configurations.get(0).getRootNode();<a name="line.66"></a>
 <span class="sourceLineNo">067</span>        this.configurations = configurations;<a name="line.67"></a>
 <span class="sourceLineNo">068</span>        final String mergeStrategyClassName = PropertiesUtil.getProperties().getStringProperty(MERGE_STRATEGY_PROPERTY,<a name="line.68"></a>
@@ -160,7 +160,7 @@
 <span class="sourceLineNo">152</span>            if (sourceURI != null) {<a name="line.152"></a>
 <span class="sourceLineNo">153</span>                LOGGER.warn("Unable to determine URI for configuration {}, changes to it will be ignored",<a name="line.153"></a>
 <span class="sourceLineNo">154</span>                        config.getName());<a name="line.154"></a>
-<span class="sourceLineNo">155</span>                currentConfig = factory.getConfiguration(config.getName(), sourceURI);<a name="line.155"></a>
+<span class="sourceLineNo">155</span>                currentConfig = factory.getConfiguration(getLoggerContext(), config.getName(), sourceURI);<a name="line.155"></a>
 <span class="sourceLineNo">156</span>                if (currentConfig == null) {<a name="line.156"></a>
 <span class="sourceLineNo">157</span>                    LOGGER.warn("Unable to reload configuration {}, changes to it will be ignored", config.getName());<a name="line.157"></a>
 <span class="sourceLineNo">158</span>                    currentConfig = config;<a name="line.158"></a>

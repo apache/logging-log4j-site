@@ -24,75 +24,75 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.core.config;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.Logger;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.AbstractLifeCycle;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.async.DaemonThreadFactory;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.CronExpression;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.status.StatusLogger;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.Callable;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.ScheduledExecutorService;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.ScheduledFuture;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.ScheduledThreadPoolExecutor;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.TimeUnit;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> *</em>
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationScheduler.html">ConfigurationScheduler</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/AbstractLifeCycle.html">AbstractLifeCycle</a> {
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Logger.html">Logger</a> LOGGER = StatusLogger.getLogger();
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">private</strong> ScheduledExecutorService executorService;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> scheduledItems = 0;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>      @Override
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> start() {
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>          <strong class="jxr_keyword">super</strong>.start();
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>          <strong class="jxr_keyword">if</strong> (scheduledItems &gt; 0) {
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>              LOGGER.debug(<span class="jxr_string">"Starting {} Log4j2Scheduled threads"</span>, scheduledItems);
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>              <strong class="jxr_keyword">if</strong> (scheduledItems &gt; 5) {
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>                  scheduledItems = 5;
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>              }
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>              executorService = <strong class="jxr_keyword">new</strong> ScheduledThreadPoolExecutor(scheduledItems, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/DaemonThreadFactory.html">DaemonThreadFactory</a>(<span class="jxr_string">"Log4j2Scheduled-"</span>));
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>          } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>              LOGGER.debug(<span class="jxr_string">"No scheduled items"</span>);
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>          }
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      }
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      @Override
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> stop() {
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">if</strong> (executorService != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>              LOGGER.debug(<span class="jxr_string">"Stopping Log4j2Scheduled threads."</span>);
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>              executorService.shutdown();
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>          }
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">super</strong>.stop();
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      }
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     * Increment the number of threads in the pool.</em>
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> incrementScheduledItems() {
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">if</strong> (!isStarted()) {
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>              ++scheduledItems;
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>              LOGGER.error(<span class="jxr_string">"Attempted to increment scheduled items after start"</span>);
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>          }
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>  
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">     * Decrement the number of threads in the pool</em>
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> decrementScheduledItems() {
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">if</strong> (!isStarted() &amp;&amp; scheduledItems &gt; 0) {
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>              --scheduledItems;
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>          }
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>      }
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>  
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     * Creates and executes a ScheduledFuture that becomes enabled after the given delay.</em>
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.Callable;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.ScheduledExecutorService;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.ScheduledFuture;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.ScheduledThreadPoolExecutor;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.TimeUnit;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.AbstractLifeCycle;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.CronExpression;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Log4jThreadFactory;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationScheduler.html">ConfigurationScheduler</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/AbstractLifeCycle.html">AbstractLifeCycle</a> {
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String SIMPLE_NAME = <span class="jxr_string">"Log4j2 "</span> + ConfigurationScheduler.<strong class="jxr_keyword">class</strong>.getSimpleName();
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> MAX_SCHEDULED_ITEMS = 5;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">private</strong> ScheduledExecutorService executorService;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> scheduledItems = 0;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      @Override
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> start() {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">super</strong>.start();
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">if</strong> (scheduledItems &gt; 0) {
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>              LOGGER.debug(<span class="jxr_string">"{} starting {} threads"</span>, scheduledItems, SIMPLE_NAME);
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>              scheduledItems = Math.min(scheduledItems, MAX_SCHEDULED_ITEMS);
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>              executorService = <strong class="jxr_keyword">new</strong> ScheduledThreadPoolExecutor(scheduledItems,
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>                      Log4jThreadFactory.createDaemonThreadFactory(<span class="jxr_string">"Scheduled"</span>));
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>              LOGGER.debug(<span class="jxr_string">"{}: No scheduled items"</span>, SIMPLE_NAME);
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          }
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      }
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      @Override
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> stop(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeout, <strong class="jxr_keyword">final</strong> TimeUnit timeUnit) {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>          setStopping();
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">if</strong> (executorService != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>              LOGGER.debug(<span class="jxr_string">"{} shutting down threads in {}"</span>, SIMPLE_NAME, executorService);
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>              executorService.shutdown();
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          }
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>          setStopped();
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      }
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">     * Increment the number of threads in the pool.</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> incrementScheduledItems() {
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">if</strong> (!isStarted()) {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>              ++scheduledItems;
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>              LOGGER.error(<span class="jxr_string">"{} attempted to increment scheduled items after start"</span>, SIMPLE_NAME);
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          }
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">     * Decrement the number of threads in the pool</em>
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> decrementScheduledItems() {
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">if</strong> (!isStarted() &amp;&amp; scheduledItems &gt; 0) {
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>              --scheduledItems;
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          }
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>      }
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">     * Creates and executes a ScheduledFuture that becomes enabled after the given delay.</em>
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     * @param &lt;V&gt; The result type returned by this Future</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">     * @param callable the function to execute.</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">     * @param delay the time from now to delay execution.</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">     * @param unit the time unit of the delay parameter.</em>
@@ -123,7 +123,7 @@
 <a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">     * @return a ScheduledFuture representing the next time the command will run.</em>
 <a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">public</strong> CronScheduledFuture&lt;?&gt; scheduleWithCron(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/CronExpression.html">CronExpression</a> cronExpression, <strong class="jxr_keyword">final</strong> Runnable command) {
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>         Date fireDate = cronExpression.getNextValidTimeAfter(<strong class="jxr_keyword">new</strong> Date());
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>         <strong class="jxr_keyword">final</strong> Date fireDate = cronExpression.getNextValidTimeAfter(<strong class="jxr_keyword">new</strong> Date());
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationScheduler.html">CronRunnable</a> runnable = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationScheduler.html">CronRunnable</a>(command, cronExpression);
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>         <strong class="jxr_keyword">final</strong> ScheduledFuture&lt;?&gt; future = schedule(runnable, nextFireInterval(fireDate), TimeUnit.MILLISECONDS);
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         <strong class="jxr_keyword">final</strong> CronScheduledFuture&lt;?&gt; cronScheduledFuture = <strong class="jxr_keyword">new</strong> CronScheduledFuture&lt;&gt;(future, fireDate);
@@ -161,7 +161,7 @@
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">return</strong> executorService.scheduleWithFixedDelay(command, initialDelay, delay, unit);
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>     }
 <a class="jxr_linenumber" name="L155" href="#L155">155</a> 
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> nextFireInterval(Date fireDate) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> nextFireInterval(<strong class="jxr_keyword">final</strong> Date fireDate) {
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">return</strong> fireDate.getTime() - <strong class="jxr_keyword">new</strong> Date().getTime();
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>     }
 <a class="jxr_linenumber" name="L159" href="#L159">159</a> 
@@ -180,23 +180,21 @@
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>             <strong class="jxr_keyword">this</strong>.scheduledFuture = future;
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>         }
 <a class="jxr_linenumber" name="L174" href="#L174">174</a> 
-<a class="jxr_linenumber" name="L175" href="#L175">175</a> 
-<a class="jxr_linenumber" name="L176" href="#L176">176</a> 
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>         @Override
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run() {
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>                 runnable.run();
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>             } <strong class="jxr_keyword">catch</strong>(<strong class="jxr_keyword">final</strong> Throwable ex) {
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>                 LOGGER.error(<span class="jxr_string">"Error running command"</span>, ex);
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>             } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>                 Date fireDate = cronExpression.getNextInvalidTimeAfter(<strong class="jxr_keyword">new</strong> Date());
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>                 <strong class="jxr_keyword">final</strong> ScheduledFuture&lt;?&gt; future = schedule(<strong class="jxr_keyword">this</strong>, nextFireInterval(fireDate), TimeUnit.MILLISECONDS);
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>                 scheduledFuture.reset(future, fireDate);
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>             }
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>         }
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>     }
-<a class="jxr_linenumber" name="L190" href="#L190">190</a> 
-<a class="jxr_linenumber" name="L191" href="#L191">191</a> }
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         @Override
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run() {
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>                 runnable.run();
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>             } <strong class="jxr_keyword">catch</strong>(<strong class="jxr_keyword">final</strong> Throwable ex) {
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>                 LOGGER.error(<span class="jxr_string">"{} caught error running command"</span>, SIMPLE_NAME, ex);
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>             } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>                 <strong class="jxr_keyword">final</strong> Date fireDate = cronExpression.getNextValidTimeAfter(<strong class="jxr_keyword">new</strong> Date());
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>                 <strong class="jxr_keyword">final</strong> ScheduledFuture&lt;?&gt; future = schedule(<strong class="jxr_keyword">this</strong>, nextFireInterval(fireDate), TimeUnit.MILLISECONDS);
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>                 scheduledFuture.reset(future, fireDate);
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>             }
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>         }
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>     }
+<a class="jxr_linenumber" name="L188" href="#L188">188</a> 
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>

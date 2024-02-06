@@ -155,7 +155,7 @@
 <span class="sourceLineNo">147</span>        for (final Method method : clazz.getDeclaredMethods()) {<a name="line.147"></a>
 <span class="sourceLineNo">148</span>            if (method.isAnnotationPresent(PluginBuilderFactory.class) &amp;&amp;<a name="line.148"></a>
 <span class="sourceLineNo">149</span>                Modifier.isStatic(method.getModifiers()) &amp;&amp;<a name="line.149"></a>
-<span class="sourceLineNo">150</span>                TypeUtil.isAssignable(Builder.class, method.getGenericReturnType())) {<a name="line.150"></a>
+<span class="sourceLineNo">150</span>                TypeUtil.isAssignable(Builder.class, method.getReturnType())) {<a name="line.150"></a>
 <span class="sourceLineNo">151</span>                ReflectionUtil.makeAccessible(method);<a name="line.151"></a>
 <span class="sourceLineNo">152</span>                return (Builder&lt;?&gt;) method.invoke(null);<a name="line.152"></a>
 <span class="sourceLineNo">153</span>            }<a name="line.153"></a>
@@ -164,8 +164,8 @@
 <span class="sourceLineNo">156</span>    }<a name="line.156"></a>
 <span class="sourceLineNo">157</span><a name="line.157"></a>
 <span class="sourceLineNo">158</span>    private void injectFields(final Builder&lt;?&gt; builder) throws IllegalAccessException {<a name="line.158"></a>
-<span class="sourceLineNo">159</span>        final Field[] fields = builder.getClass().getDeclaredFields();<a name="line.159"></a>
-<span class="sourceLineNo">160</span>        AccessibleObject.setAccessible(fields, true);<a name="line.160"></a>
+<span class="sourceLineNo">159</span>        final List&lt;Field&gt; fields = TypeUtil.getAllDeclaredFields(builder.getClass());<a name="line.159"></a>
+<span class="sourceLineNo">160</span>        AccessibleObject.setAccessible(fields.toArray(new Field[] {}), true);<a name="line.160"></a>
 <span class="sourceLineNo">161</span>        final StringBuilder log = new StringBuilder();<a name="line.161"></a>
 <span class="sourceLineNo">162</span>        boolean invalid = false;<a name="line.162"></a>
 <span class="sourceLineNo">163</span>        for (final Field field : fields) {<a name="line.163"></a>

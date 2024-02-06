@@ -60,32 +60,34 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">     * @param inetAddress The Internet address.</em>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">     * @param host The target host name.</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     * @param port The target port number.</em>
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/AbstractSocketManager.html">AbstractSocketManager</a>(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> OutputStream os, <strong class="jxr_keyword">final</strong> InetAddress inetAddress,
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>              <strong class="jxr_keyword">final</strong> String host, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> port, <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> writeHeader) {
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">super</strong>(os, name, layout, writeHeader);
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">this</strong>.inetAddress = inetAddress;
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">this</strong>.host = host;
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>          <strong class="jxr_keyword">this</strong>.port = port;
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      }
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">     * Gets this AbstractSocketManager's content format. Specified by:</em>
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">     * &lt;ul&gt;</em>
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     * &lt;li&gt;Key: "port" Value: provided "port" param&lt;/li&gt;</em>
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">     * &lt;li&gt;Key: "address" Value: provided "address" param&lt;/li&gt;</em>
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     * &lt;/ul&gt;</em>
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">     * @return Map of content format keys supporting AbstractSocketManager</em>
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>      @Override
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> Map&lt;String, String&gt; getContentFormat() {
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; result = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;(<strong class="jxr_keyword">super</strong>.getContentFormat());
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>          result.put(<span class="jxr_string">"port"</span>, Integer.toString(port));
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>          result.put(<span class="jxr_string">"address"</span>, inetAddress.getHostAddress());
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">return</strong> result;
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>      }
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>  }
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     * @param bufferSize The buffer size.</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/AbstractSocketManager.html">AbstractSocketManager</a>(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> OutputStream os, <strong class="jxr_keyword">final</strong> InetAddress inetAddress,
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>              <strong class="jxr_keyword">final</strong> String host, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> port, <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> writeHeader, 
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize) {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">super</strong>(os, name, layout, writeHeader, bufferSize);
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>          <strong class="jxr_keyword">this</strong>.inetAddress = inetAddress;
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">this</strong>.host = host;
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">this</strong>.port = port;
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      }
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     * Gets this AbstractSocketManager's content format. Specified by:</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">     * &lt;ul&gt;</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     * &lt;li&gt;Key: "port" Value: provided "port" param&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     * &lt;li&gt;Key: "address" Value: provided "address" param&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">     * &lt;/ul&gt;</em>
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">     * @return Map of content format keys supporting AbstractSocketManager</em>
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      @Override
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">public</strong> Map&lt;String, String&gt; getContentFormat() {
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; result = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;(<strong class="jxr_keyword">super</strong>.getContentFormat());
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          result.put(<span class="jxr_string">"port"</span>, Integer.toString(port));
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          result.put(<span class="jxr_string">"address"</span>, inetAddress.getHostAddress());
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      }
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>

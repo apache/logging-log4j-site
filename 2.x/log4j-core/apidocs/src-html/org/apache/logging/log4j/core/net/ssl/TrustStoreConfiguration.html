@@ -60,7 +60,7 @@
 <span class="sourceLineNo">052</span>     * @param trustManagerFactoryAlgorithm<a name="line.52"></a>
 <span class="sourceLineNo">053</span>     *        The standard name of the requested trust management algorithm. See the Java Secure Socket Extension Reference Guide for information these names.<a name="line.53"></a>
 <span class="sourceLineNo">054</span>     * @return a new TrustStoreConfiguration<a name="line.54"></a>
-<span class="sourceLineNo">055</span>     * @throws StoreConfigurationException<a name="line.55"></a>
+<span class="sourceLineNo">055</span>     * @throws StoreConfigurationException Thrown if this instance cannot load the KeyStore.<a name="line.55"></a>
 <span class="sourceLineNo">056</span>     */<a name="line.56"></a>
 <span class="sourceLineNo">057</span>    @PluginFactory<a name="line.57"></a>
 <span class="sourceLineNo">058</span>    public static TrustStoreConfiguration createKeyStoreConfiguration(<a name="line.58"></a>
@@ -78,7 +78,38 @@
 <span class="sourceLineNo">070</span>        tmFactory.init(this.getKeyStore());<a name="line.70"></a>
 <span class="sourceLineNo">071</span>        return tmFactory;<a name="line.71"></a>
 <span class="sourceLineNo">072</span>    }<a name="line.72"></a>
-<span class="sourceLineNo">073</span>}<a name="line.73"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>    @Override<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    public int hashCode() {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        final int prime = 31;<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        int result = super.hashCode();<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        result = prime * result<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                + ((trustManagerFactoryAlgorithm == null) ? 0 : trustManagerFactoryAlgorithm.hashCode());<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        return result;<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    }<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>    @Override<a name="line.83"></a>
+<span class="sourceLineNo">084</span>    public boolean equals(Object obj) {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>        if (this == obj) {<a name="line.85"></a>
+<span class="sourceLineNo">086</span>            return true;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        }<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        if (!super.equals(obj)) {<a name="line.88"></a>
+<span class="sourceLineNo">089</span>            return false;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        if (getClass() != obj.getClass()) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>            return false;<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        }<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        TrustStoreConfiguration other = (TrustStoreConfiguration) obj;<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        if (trustManagerFactoryAlgorithm == null) {<a name="line.95"></a>
+<span class="sourceLineNo">096</span>            if (other.trustManagerFactoryAlgorithm != null) {<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                return false;<a name="line.97"></a>
+<span class="sourceLineNo">098</span>            }<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        } else if (!trustManagerFactoryAlgorithm.equals(other.trustManagerFactoryAlgorithm)) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>            return false;<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        }<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        return true;<a name="line.102"></a>
+<span class="sourceLineNo">103</span>    }<a name="line.103"></a>
+<span class="sourceLineNo">104</span>}<a name="line.104"></a>
 
 
 

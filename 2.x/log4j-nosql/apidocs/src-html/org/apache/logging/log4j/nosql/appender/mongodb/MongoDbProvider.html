@@ -34,10 +34,10 @@
 <span class="sourceLineNo">026</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.26"></a>
 <span class="sourceLineNo">027</span>import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.27"></a>
 <span class="sourceLineNo">028</span>import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import org.apache.logging.log4j.core.util.Loader;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>import org.apache.logging.log4j.core.util.NameUtil;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>import org.apache.logging.log4j.nosql.appender.NoSqlProvider;<a name="line.31"></a>
-<span class="sourceLineNo">032</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.32"></a>
+<span class="sourceLineNo">029</span>import org.apache.logging.log4j.core.util.NameUtil;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.logging.log4j.nosql.appender.NoSqlProvider;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.apache.logging.log4j.util.LoaderUtil;<a name="line.32"></a>
 <span class="sourceLineNo">033</span>import org.apache.logging.log4j.util.Strings;<a name="line.33"></a>
 <span class="sourceLineNo">034</span><a name="line.34"></a>
 <span class="sourceLineNo">035</span>import com.mongodb.DB;<a name="line.35"></a>
@@ -116,7 +116,7 @@
 <span class="sourceLineNo">108</span>        String description;<a name="line.108"></a>
 <span class="sourceLineNo">109</span>        if (Strings.isNotEmpty(factoryClassName) &amp;&amp; Strings.isNotEmpty(factoryMethodName)) {<a name="line.109"></a>
 <span class="sourceLineNo">110</span>            try {<a name="line.110"></a>
-<span class="sourceLineNo">111</span>                final Class&lt;?&gt; factoryClass = Loader.loadClass(factoryClassName);<a name="line.111"></a>
+<span class="sourceLineNo">111</span>                final Class&lt;?&gt; factoryClass = LoaderUtil.loadClass(factoryClassName);<a name="line.111"></a>
 <span class="sourceLineNo">112</span>                final Method method = factoryClass.getMethod(factoryMethodName);<a name="line.112"></a>
 <span class="sourceLineNo">113</span>                final Object object = method.invoke(null);<a name="line.113"></a>
 <span class="sourceLineNo">114</span><a name="line.114"></a>
@@ -214,7 +214,7 @@
 <span class="sourceLineNo">206</span>        if (Strings.isNotEmpty(writeConcernConstant)) {<a name="line.206"></a>
 <span class="sourceLineNo">207</span>            if (Strings.isNotEmpty(writeConcernConstantClassName)) {<a name="line.207"></a>
 <span class="sourceLineNo">208</span>                try {<a name="line.208"></a>
-<span class="sourceLineNo">209</span>                    final Class&lt;?&gt; writeConcernConstantClass = Loader.loadClass(writeConcernConstantClassName);<a name="line.209"></a>
+<span class="sourceLineNo">209</span>                    final Class&lt;?&gt; writeConcernConstantClass = LoaderUtil.loadClass(writeConcernConstantClassName);<a name="line.209"></a>
 <span class="sourceLineNo">210</span>                    final Field field = writeConcernConstantClass.getField(writeConcernConstant);<a name="line.210"></a>
 <span class="sourceLineNo">211</span>                    writeConcern = (WriteConcern) field.get(null);<a name="line.211"></a>
 <span class="sourceLineNo">212</span>                } catch (final Exception e) {<a name="line.212"></a>

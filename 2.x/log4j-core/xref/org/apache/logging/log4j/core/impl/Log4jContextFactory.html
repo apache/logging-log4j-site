@@ -181,7 +181,7 @@
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>         <strong class="jxr_keyword">if</strong> (ctx.getState() == LifeCycle.State.INITIALIZED) {
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>             <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>                 ContextAnchor.THREAD_CONTEXT.set(ctx);
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = ConfigurationFactory.getInstance().getConfiguration(source);
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = ConfigurationFactory.getInstance().getConfiguration(ctx, source);
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>                 LOGGER.debug(<span class="jxr_string">"Starting LoggerContext[name={}] from configuration {}"</span>, ctx.getName(), source);
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>                 ctx.start(config);
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>                 ContextAnchor.THREAD_CONTEXT.remove();
@@ -242,7 +242,7 @@
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>         <strong class="jxr_keyword">if</strong> (ctx.getState() == LifeCycle.State.INITIALIZED) {
 <a class="jxr_linenumber" name="L235" href="#L235">235</a>             <strong class="jxr_keyword">if</strong> (configLocation != <strong class="jxr_keyword">null</strong> || name != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L236" href="#L236">236</a>                 ContextAnchor.THREAD_CONTEXT.set(ctx);
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = ConfigurationFactory.getInstance().getConfiguration(name, configLocation);
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = ConfigurationFactory.getInstance().getConfiguration(ctx, name, configLocation);
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>                 LOGGER.debug(<span class="jxr_string">"Starting LoggerContext[name={}] from configuration at {}"</span>, ctx.getName(), configLocation);
 <a class="jxr_linenumber" name="L239" href="#L239">239</a>                 ctx.start(config);
 <a class="jxr_linenumber" name="L240" href="#L240">240</a>                 ContextAnchor.THREAD_CONTEXT.remove();
@@ -269,7 +269,7 @@
 <a class="jxr_linenumber" name="L261" href="#L261">261</a>                 <strong class="jxr_keyword">final</strong> List&lt;AbstractConfiguration&gt; configurations = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(configLocations.size());
 <a class="jxr_linenumber" name="L262" href="#L262">262</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> URI configLocation : configLocations) {
 <a class="jxr_linenumber" name="L263" href="#L263">263</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> currentReadConfiguration = ConfigurationFactory.getInstance()
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>                             .getConfiguration(name, configLocation);
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>                             .getConfiguration(ctx, name, configLocation);
 <a class="jxr_linenumber" name="L265" href="#L265">265</a>                     <strong class="jxr_keyword">if</strong> (currentReadConfiguration instanceof AbstractConfiguration) {
 <a class="jxr_linenumber" name="L266" href="#L266">266</a>                         configurations.add((AbstractConfiguration) currentReadConfiguration);
 <a class="jxr_linenumber" name="L267" href="#L267">267</a>                     } <strong class="jxr_keyword">else</strong> {

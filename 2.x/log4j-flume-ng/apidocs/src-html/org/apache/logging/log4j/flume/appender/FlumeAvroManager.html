@@ -264,81 +264,85 @@
 <span class="sourceLineNo">256</span>    }<a name="line.256"></a>
 <span class="sourceLineNo">257</span><a name="line.257"></a>
 <span class="sourceLineNo">258</span>    @Override<a name="line.258"></a>
-<span class="sourceLineNo">259</span>    protected void releaseSub() {<a name="line.259"></a>
-<span class="sourceLineNo">260</span>        if (rpcClient != null) {<a name="line.260"></a>
-<span class="sourceLineNo">261</span>            try {<a name="line.261"></a>
-<span class="sourceLineNo">262</span>                synchronized(this) {<a name="line.262"></a>
-<span class="sourceLineNo">263</span>                    try {<a name="line.263"></a>
-<span class="sourceLineNo">264</span>                        if (batchSize &gt; 1 &amp;&amp; batchEvent.getEvents().size() &gt; 0) {<a name="line.264"></a>
-<span class="sourceLineNo">265</span>                            send(batchEvent);<a name="line.265"></a>
-<span class="sourceLineNo">266</span>                        }<a name="line.266"></a>
-<span class="sourceLineNo">267</span>                    } catch (final Exception ex) {<a name="line.267"></a>
-<span class="sourceLineNo">268</span>                        LOGGER.error("Error sending final batch: {}", ex.getMessage());<a name="line.268"></a>
-<span class="sourceLineNo">269</span>                    }<a name="line.269"></a>
-<span class="sourceLineNo">270</span>                }<a name="line.270"></a>
-<span class="sourceLineNo">271</span>                rpcClient.close();<a name="line.271"></a>
-<span class="sourceLineNo">272</span>            } catch (final Exception ex) {<a name="line.272"></a>
-<span class="sourceLineNo">273</span>                LOGGER.error("Attempt to close RPC client failed", ex);<a name="line.273"></a>
-<span class="sourceLineNo">274</span>            }<a name="line.274"></a>
-<span class="sourceLineNo">275</span>        }<a name="line.275"></a>
-<span class="sourceLineNo">276</span>        rpcClient = null;<a name="line.276"></a>
-<span class="sourceLineNo">277</span>    }<a name="line.277"></a>
-<span class="sourceLineNo">278</span><a name="line.278"></a>
-<span class="sourceLineNo">279</span>    /**<a name="line.279"></a>
-<span class="sourceLineNo">280</span>     * Factory data.<a name="line.280"></a>
-<span class="sourceLineNo">281</span>     */<a name="line.281"></a>
-<span class="sourceLineNo">282</span>    private static class FactoryData {<a name="line.282"></a>
-<span class="sourceLineNo">283</span>        private final String name;<a name="line.283"></a>
-<span class="sourceLineNo">284</span>        private final Agent[] agents;<a name="line.284"></a>
-<span class="sourceLineNo">285</span>        private final int batchSize;<a name="line.285"></a>
-<span class="sourceLineNo">286</span>        private final int delayMillis;<a name="line.286"></a>
-<span class="sourceLineNo">287</span>        private final int retries;<a name="line.287"></a>
-<span class="sourceLineNo">288</span>        private final int conntectTimeoutMillis;<a name="line.288"></a>
-<span class="sourceLineNo">289</span>        private final int requestTimeoutMillis;<a name="line.289"></a>
-<span class="sourceLineNo">290</span><a name="line.290"></a>
-<span class="sourceLineNo">291</span>        /**<a name="line.291"></a>
-<span class="sourceLineNo">292</span>         * Constructor.<a name="line.292"></a>
-<span class="sourceLineNo">293</span>         * @param name The name of the Appender.<a name="line.293"></a>
-<span class="sourceLineNo">294</span>         * @param agents The agents.<a name="line.294"></a>
-<span class="sourceLineNo">295</span>         * @param batchSize The number of events to include in a batch.<a name="line.295"></a>
-<span class="sourceLineNo">296</span>         */<a name="line.296"></a>
-<span class="sourceLineNo">297</span>        public FactoryData(final String name, final Agent[] agents, final int batchSize, final int delayMillis,<a name="line.297"></a>
-<span class="sourceLineNo">298</span>                final int retries, final int connectTimeoutMillis, final int requestTimeoutMillis) {<a name="line.298"></a>
-<span class="sourceLineNo">299</span>            this.name = name;<a name="line.299"></a>
-<span class="sourceLineNo">300</span>            this.agents = agents;<a name="line.300"></a>
-<span class="sourceLineNo">301</span>            this.batchSize = batchSize;<a name="line.301"></a>
-<span class="sourceLineNo">302</span>            this.delayMillis = delayMillis;<a name="line.302"></a>
-<span class="sourceLineNo">303</span>            this.retries = retries;<a name="line.303"></a>
-<span class="sourceLineNo">304</span>            this.conntectTimeoutMillis = connectTimeoutMillis;<a name="line.304"></a>
-<span class="sourceLineNo">305</span>            this.requestTimeoutMillis = requestTimeoutMillis;<a name="line.305"></a>
-<span class="sourceLineNo">306</span>        }<a name="line.306"></a>
-<span class="sourceLineNo">307</span>    }<a name="line.307"></a>
-<span class="sourceLineNo">308</span><a name="line.308"></a>
-<span class="sourceLineNo">309</span>    /**<a name="line.309"></a>
-<span class="sourceLineNo">310</span>     * Avro Manager Factory.<a name="line.310"></a>
-<span class="sourceLineNo">311</span>     */<a name="line.311"></a>
-<span class="sourceLineNo">312</span>    private static class AvroManagerFactory implements ManagerFactory&lt;FlumeAvroManager, FactoryData&gt; {<a name="line.312"></a>
-<span class="sourceLineNo">313</span><a name="line.313"></a>
-<span class="sourceLineNo">314</span>        /**<a name="line.314"></a>
-<span class="sourceLineNo">315</span>         * Create the FlumeAvroManager.<a name="line.315"></a>
-<span class="sourceLineNo">316</span>         * @param name The name of the entity to manage.<a name="line.316"></a>
-<span class="sourceLineNo">317</span>         * @param data The data required to create the entity.<a name="line.317"></a>
-<span class="sourceLineNo">318</span>         * @return The FlumeAvroManager.<a name="line.318"></a>
-<span class="sourceLineNo">319</span>         */<a name="line.319"></a>
-<span class="sourceLineNo">320</span>        @Override<a name="line.320"></a>
-<span class="sourceLineNo">321</span>        public FlumeAvroManager createManager(final String name, final FactoryData data) {<a name="line.321"></a>
-<span class="sourceLineNo">322</span>            try {<a name="line.322"></a>
-<span class="sourceLineNo">323</span><a name="line.323"></a>
-<span class="sourceLineNo">324</span>                return new FlumeAvroManager(name, data.name, data.agents, data.batchSize, data.delayMillis,<a name="line.324"></a>
-<span class="sourceLineNo">325</span>                        data.retries, data.conntectTimeoutMillis, data.requestTimeoutMillis);<a name="line.325"></a>
-<span class="sourceLineNo">326</span>            } catch (final Exception ex) {<a name="line.326"></a>
-<span class="sourceLineNo">327</span>                LOGGER.error("Could not create FlumeAvroManager", ex);<a name="line.327"></a>
-<span class="sourceLineNo">328</span>            }<a name="line.328"></a>
-<span class="sourceLineNo">329</span>            return null;<a name="line.329"></a>
-<span class="sourceLineNo">330</span>        }<a name="line.330"></a>
-<span class="sourceLineNo">331</span>    }<a name="line.331"></a>
-<span class="sourceLineNo">332</span><a name="line.332"></a>
-<span class="sourceLineNo">333</span>}<a name="line.333"></a>
+<span class="sourceLineNo">259</span>    protected boolean releaseSub(final long timeout, final TimeUnit timeUnit) {<a name="line.259"></a>
+<span class="sourceLineNo">260</span>        boolean closed = true;<a name="line.260"></a>
+<span class="sourceLineNo">261</span>        if (rpcClient != null) {<a name="line.261"></a>
+<span class="sourceLineNo">262</span>            try {<a name="line.262"></a>
+<span class="sourceLineNo">263</span>                synchronized(this) {<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                    try {<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                        if (batchSize &gt; 1 &amp;&amp; batchEvent.getEvents().size() &gt; 0) {<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                            send(batchEvent);<a name="line.266"></a>
+<span class="sourceLineNo">267</span>                        }<a name="line.267"></a>
+<span class="sourceLineNo">268</span>                    } catch (final Exception ex) {<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                        LOGGER.error("Error sending final batch: {}", ex.getMessage());<a name="line.269"></a>
+<span class="sourceLineNo">270</span>                        closed = false;<a name="line.270"></a>
+<span class="sourceLineNo">271</span>                    }<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                }<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                rpcClient.close();<a name="line.273"></a>
+<span class="sourceLineNo">274</span>            } catch (final Exception ex) {<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                LOGGER.error("Attempt to close RPC client failed", ex);<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                closed = false;<a name="line.276"></a>
+<span class="sourceLineNo">277</span>            }<a name="line.277"></a>
+<span class="sourceLineNo">278</span>        }<a name="line.278"></a>
+<span class="sourceLineNo">279</span>        rpcClient = null;<a name="line.279"></a>
+<span class="sourceLineNo">280</span>        return closed;<a name="line.280"></a>
+<span class="sourceLineNo">281</span>    }<a name="line.281"></a>
+<span class="sourceLineNo">282</span><a name="line.282"></a>
+<span class="sourceLineNo">283</span>    /**<a name="line.283"></a>
+<span class="sourceLineNo">284</span>     * Factory data.<a name="line.284"></a>
+<span class="sourceLineNo">285</span>     */<a name="line.285"></a>
+<span class="sourceLineNo">286</span>    private static class FactoryData {<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        private final String name;<a name="line.287"></a>
+<span class="sourceLineNo">288</span>        private final Agent[] agents;<a name="line.288"></a>
+<span class="sourceLineNo">289</span>        private final int batchSize;<a name="line.289"></a>
+<span class="sourceLineNo">290</span>        private final int delayMillis;<a name="line.290"></a>
+<span class="sourceLineNo">291</span>        private final int retries;<a name="line.291"></a>
+<span class="sourceLineNo">292</span>        private final int conntectTimeoutMillis;<a name="line.292"></a>
+<span class="sourceLineNo">293</span>        private final int requestTimeoutMillis;<a name="line.293"></a>
+<span class="sourceLineNo">294</span><a name="line.294"></a>
+<span class="sourceLineNo">295</span>        /**<a name="line.295"></a>
+<span class="sourceLineNo">296</span>         * Constructor.<a name="line.296"></a>
+<span class="sourceLineNo">297</span>         * @param name The name of the Appender.<a name="line.297"></a>
+<span class="sourceLineNo">298</span>         * @param agents The agents.<a name="line.298"></a>
+<span class="sourceLineNo">299</span>         * @param batchSize The number of events to include in a batch.<a name="line.299"></a>
+<span class="sourceLineNo">300</span>         */<a name="line.300"></a>
+<span class="sourceLineNo">301</span>        public FactoryData(final String name, final Agent[] agents, final int batchSize, final int delayMillis,<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                final int retries, final int connectTimeoutMillis, final int requestTimeoutMillis) {<a name="line.302"></a>
+<span class="sourceLineNo">303</span>            this.name = name;<a name="line.303"></a>
+<span class="sourceLineNo">304</span>            this.agents = agents;<a name="line.304"></a>
+<span class="sourceLineNo">305</span>            this.batchSize = batchSize;<a name="line.305"></a>
+<span class="sourceLineNo">306</span>            this.delayMillis = delayMillis;<a name="line.306"></a>
+<span class="sourceLineNo">307</span>            this.retries = retries;<a name="line.307"></a>
+<span class="sourceLineNo">308</span>            this.conntectTimeoutMillis = connectTimeoutMillis;<a name="line.308"></a>
+<span class="sourceLineNo">309</span>            this.requestTimeoutMillis = requestTimeoutMillis;<a name="line.309"></a>
+<span class="sourceLineNo">310</span>        }<a name="line.310"></a>
+<span class="sourceLineNo">311</span>    }<a name="line.311"></a>
+<span class="sourceLineNo">312</span><a name="line.312"></a>
+<span class="sourceLineNo">313</span>    /**<a name="line.313"></a>
+<span class="sourceLineNo">314</span>     * Avro Manager Factory.<a name="line.314"></a>
+<span class="sourceLineNo">315</span>     */<a name="line.315"></a>
+<span class="sourceLineNo">316</span>    private static class AvroManagerFactory implements ManagerFactory&lt;FlumeAvroManager, FactoryData&gt; {<a name="line.316"></a>
+<span class="sourceLineNo">317</span><a name="line.317"></a>
+<span class="sourceLineNo">318</span>        /**<a name="line.318"></a>
+<span class="sourceLineNo">319</span>         * Create the FlumeAvroManager.<a name="line.319"></a>
+<span class="sourceLineNo">320</span>         * @param name The name of the entity to manage.<a name="line.320"></a>
+<span class="sourceLineNo">321</span>         * @param data The data required to create the entity.<a name="line.321"></a>
+<span class="sourceLineNo">322</span>         * @return The FlumeAvroManager.<a name="line.322"></a>
+<span class="sourceLineNo">323</span>         */<a name="line.323"></a>
+<span class="sourceLineNo">324</span>        @Override<a name="line.324"></a>
+<span class="sourceLineNo">325</span>        public FlumeAvroManager createManager(final String name, final FactoryData data) {<a name="line.325"></a>
+<span class="sourceLineNo">326</span>            try {<a name="line.326"></a>
+<span class="sourceLineNo">327</span><a name="line.327"></a>
+<span class="sourceLineNo">328</span>                return new FlumeAvroManager(name, data.name, data.agents, data.batchSize, data.delayMillis,<a name="line.328"></a>
+<span class="sourceLineNo">329</span>                        data.retries, data.conntectTimeoutMillis, data.requestTimeoutMillis);<a name="line.329"></a>
+<span class="sourceLineNo">330</span>            } catch (final Exception ex) {<a name="line.330"></a>
+<span class="sourceLineNo">331</span>                LOGGER.error("Could not create FlumeAvroManager", ex);<a name="line.331"></a>
+<span class="sourceLineNo">332</span>            }<a name="line.332"></a>
+<span class="sourceLineNo">333</span>            return null;<a name="line.333"></a>
+<span class="sourceLineNo">334</span>        }<a name="line.334"></a>
+<span class="sourceLineNo">335</span>    }<a name="line.335"></a>
+<span class="sourceLineNo">336</span><a name="line.336"></a>
+<span class="sourceLineNo">337</span>}<a name="line.337"></a>
 
 
 

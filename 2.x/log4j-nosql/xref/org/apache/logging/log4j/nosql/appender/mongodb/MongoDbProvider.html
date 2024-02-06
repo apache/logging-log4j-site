@@ -34,10 +34,10 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.Plugin;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginFactory;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Loader;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.NameUtil;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.nosql.appender.NoSqlProvider;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.status.StatusLogger;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.NameUtil;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.nosql.appender.NoSqlProvider;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.status.StatusLogger;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.LoaderUtil;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.Strings;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> com.mongodb.DB;
@@ -116,7 +116,7 @@
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         String description;
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>         <strong class="jxr_keyword">if</strong> (Strings.isNotEmpty(factoryClassName) &amp;&amp; Strings.isNotEmpty(factoryMethodName)) {
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>                 <strong class="jxr_keyword">final</strong> Class&lt;?&gt; factoryClass = Loader.loadClass(factoryClassName);
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>                 <strong class="jxr_keyword">final</strong> Class&lt;?&gt; factoryClass = LoaderUtil.loadClass(factoryClassName);
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>                 <strong class="jxr_keyword">final</strong> Method method = factoryClass.getMethod(factoryMethodName);
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>                 <strong class="jxr_keyword">final</strong> Object object = method.invoke(<strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> 
@@ -214,7 +214,7 @@
 <a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">if</strong> (Strings.isNotEmpty(writeConcernConstant)) {
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>             <strong class="jxr_keyword">if</strong> (Strings.isNotEmpty(writeConcernConstantClassName)) {
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>                     <strong class="jxr_keyword">final</strong> Class&lt;?&gt; writeConcernConstantClass = Loader.loadClass(writeConcernConstantClassName);
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>                     <strong class="jxr_keyword">final</strong> Class&lt;?&gt; writeConcernConstantClass = LoaderUtil.loadClass(writeConcernConstantClassName);
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>                     <strong class="jxr_keyword">final</strong> Field field = writeConcernConstantClass.getField(writeConcernConstant);
 <a class="jxr_linenumber" name="L211" href="#L211">211</a>                     writeConcern = (WriteConcern) field.get(<strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {

@@ -718,8 +718,8 @@
 <a class="jxr_linenumber" name="L710" href="#L710">710</a> 
 <a class="jxr_linenumber" name="L711" href="#L711">711</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/YamlLayout.html">YamlLayout</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> locationInfo, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> properties,
 <a class="jxr_linenumber" name="L712" href="#L712">712</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> complete, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> compact, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> eventEol, <strong class="jxr_keyword">final</strong> String headerPattern,
-<a class="jxr_linenumber" name="L713" href="#L713">713</a>             <strong class="jxr_keyword">final</strong> String footerPattern, <strong class="jxr_keyword">final</strong> Charset charset) {
-<a class="jxr_linenumber" name="L714" href="#L714">714</a>         <strong class="jxr_keyword">super</strong>(config, <strong class="jxr_keyword">new</strong> JacksonFactory.YAML().newWriter(locationInfo, properties, compact), charset, compact,
+<a class="jxr_linenumber" name="L713" href="#L713">713</a>             <strong class="jxr_keyword">final</strong> String footerPattern, <strong class="jxr_keyword">final</strong> Charset charset, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> includeStacktrace) {
+<a class="jxr_linenumber" name="L714" href="#L714">714</a>         <strong class="jxr_keyword">super</strong>(config, <strong class="jxr_keyword">new</strong> JacksonFactory.YAML(includeStacktrace).newWriter(locationInfo, properties, compact), charset, compact,
 <a class="jxr_linenumber" name="L715" href="#L715">715</a>                 complete, eventEol,
 <a class="jxr_linenumber" name="L716" href="#L716">716</a>                 PatternLayout.createSerializer(config, <strong class="jxr_keyword">null</strong>, headerPattern, DEFAULT_HEADER, <strong class="jxr_keyword">null</strong>, false, false),
 <a class="jxr_linenumber" name="L717" href="#L717">717</a>                 PatternLayout.createSerializer(config, <strong class="jxr_keyword">null</strong>, footerPattern, DEFAULT_FOOTER, <strong class="jxr_keyword">null</strong>, false, false));
@@ -794,41 +794,44 @@
 <a class="jxr_linenumber" name="L786" href="#L786">786</a> <em class="jxr_javadoccomment">     *            The header pattern, defaults to {@code ""} if null.</em>
 <a class="jxr_linenumber" name="L787" href="#L787">787</a> <em class="jxr_javadoccomment">     * @param charset</em>
 <a class="jxr_linenumber" name="L788" href="#L788">788</a> <em class="jxr_javadoccomment">     *            The character set to use, if {@code null}, uses "UTF-8".</em>
-<a class="jxr_linenumber" name="L789" href="#L789">789</a> <em class="jxr_javadoccomment">     * @return A YAML Layout.</em>
-<a class="jxr_linenumber" name="L790" href="#L790">790</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L791" href="#L791">791</a>     @PluginFactory
-<a class="jxr_linenumber" name="L792" href="#L792">792</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/AbstractJacksonLayout.html">AbstractJacksonLayout</a> createLayout(
-<a class="jxr_linenumber" name="L793" href="#L793">793</a>             <em class="jxr_comment">// @formatter:off</em>
-<a class="jxr_linenumber" name="L794" href="#L794">794</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config,
-<a class="jxr_linenumber" name="L795" href="#L795">795</a>             @PluginAttribute(value = <span class="jxr_string">"locationInfo"</span>, defaultBoolean = false) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> locationInfo,
-<a class="jxr_linenumber" name="L796" href="#L796">796</a>             @PluginAttribute(value = <span class="jxr_string">"properties"</span>, defaultBoolean = false) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> properties,
-<a class="jxr_linenumber" name="L797" href="#L797">797</a>             @PluginAttribute(value = <span class="jxr_string">"header"</span>, defaultString = DEFAULT_HEADER) <strong class="jxr_keyword">final</strong> String headerPattern,
-<a class="jxr_linenumber" name="L798" href="#L798">798</a>             @PluginAttribute(value = <span class="jxr_string">"footer"</span>, defaultString = DEFAULT_FOOTER) <strong class="jxr_keyword">final</strong> String footerPattern,
-<a class="jxr_linenumber" name="L799" href="#L799">799</a>             @PluginAttribute(value = <span class="jxr_string">"charset"</span>, defaultString = <span class="jxr_string">"UTF-8"</span>) <strong class="jxr_keyword">final</strong> Charset charset
-<a class="jxr_linenumber" name="L800" href="#L800">800</a>             <em class="jxr_comment">// @formatter:on</em>
-<a class="jxr_linenumber" name="L801" href="#L801">801</a>     ) {
-<a class="jxr_linenumber" name="L802" href="#L802">802</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/YamlLayout.html">YamlLayout</a>(config, locationInfo, properties, false, false, <strong class="jxr_keyword">true</strong>, headerPattern, footerPattern,
-<a class="jxr_linenumber" name="L803" href="#L803">803</a>                 charset);
-<a class="jxr_linenumber" name="L804" href="#L804">804</a>     }
-<a class="jxr_linenumber" name="L805" href="#L805">805</a> 
-<a class="jxr_linenumber" name="L806" href="#L806">806</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L807" href="#L807">807</a> <em class="jxr_javadoccomment">     * Creates a YAML Layout using the default settings. Useful for testing.</em>
-<a class="jxr_linenumber" name="L808" href="#L808">808</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L809" href="#L809">809</a> <em class="jxr_javadoccomment">     * @return A YAML Layout.</em>
-<a class="jxr_linenumber" name="L810" href="#L810">810</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L811" href="#L811">811</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/AbstractJacksonLayout.html">AbstractJacksonLayout</a> createDefaultLayout() {
-<a class="jxr_linenumber" name="L812" href="#L812">812</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/YamlLayout.html">YamlLayout</a>(<strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/DefaultConfiguration.html">DefaultConfiguration</a>(), false, false, false, false, false, DEFAULT_HEADER,
-<a class="jxr_linenumber" name="L813" href="#L813">813</a>                 DEFAULT_FOOTER, StandardCharsets.UTF_8);
-<a class="jxr_linenumber" name="L814" href="#L814">814</a>     }
-<a class="jxr_linenumber" name="L815" href="#L815">815</a> 
-<a class="jxr_linenumber" name="L816" href="#L816">816</a>     @Override
-<a class="jxr_linenumber" name="L817" href="#L817">817</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> toSerializable(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event, <strong class="jxr_keyword">final</strong> Writer writer) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L818" href="#L818">818</a>         <strong class="jxr_keyword">if</strong> (complete &amp;&amp; eventCount &gt; 0) {
-<a class="jxr_linenumber" name="L819" href="#L819">819</a>             writer.append(<span class="jxr_string">", "</span>);
-<a class="jxr_linenumber" name="L820" href="#L820">820</a>         }
-<a class="jxr_linenumber" name="L821" href="#L821">821</a>         <strong class="jxr_keyword">super</strong>.toSerializable(event, writer);
-<a class="jxr_linenumber" name="L822" href="#L822">822</a>     }
-<a class="jxr_linenumber" name="L823" href="#L823">823</a> }
+<a class="jxr_linenumber" name="L789" href="#L789">789</a> <em class="jxr_javadoccomment">     * @param includeStacktrace</em>
+<a class="jxr_linenumber" name="L790" href="#L790">790</a> <em class="jxr_javadoccomment">     *            If "true", includes the stacktrace of any Throwable in the generated YAML, defaults to "true".</em>
+<a class="jxr_linenumber" name="L791" href="#L791">791</a> <em class="jxr_javadoccomment">     * @return A YAML Layout.</em>
+<a class="jxr_linenumber" name="L792" href="#L792">792</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L793" href="#L793">793</a>     @PluginFactory
+<a class="jxr_linenumber" name="L794" href="#L794">794</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/AbstractJacksonLayout.html">AbstractJacksonLayout</a> createLayout(
+<a class="jxr_linenumber" name="L795" href="#L795">795</a>             <em class="jxr_comment">// @formatter:off</em>
+<a class="jxr_linenumber" name="L796" href="#L796">796</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config,
+<a class="jxr_linenumber" name="L797" href="#L797">797</a>             @PluginAttribute(value = <span class="jxr_string">"locationInfo"</span>, defaultBoolean = false) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> locationInfo,
+<a class="jxr_linenumber" name="L798" href="#L798">798</a>             @PluginAttribute(value = <span class="jxr_string">"properties"</span>, defaultBoolean = false) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> properties,
+<a class="jxr_linenumber" name="L799" href="#L799">799</a>             @PluginAttribute(value = <span class="jxr_string">"header"</span>, defaultString = DEFAULT_HEADER) <strong class="jxr_keyword">final</strong> String headerPattern,
+<a class="jxr_linenumber" name="L800" href="#L800">800</a>             @PluginAttribute(value = <span class="jxr_string">"footer"</span>, defaultString = DEFAULT_FOOTER) <strong class="jxr_keyword">final</strong> String footerPattern,
+<a class="jxr_linenumber" name="L801" href="#L801">801</a>             @PluginAttribute(value = <span class="jxr_string">"charset"</span>, defaultString = <span class="jxr_string">"UTF-8"</span>) <strong class="jxr_keyword">final</strong> Charset charset,
+<a class="jxr_linenumber" name="L802" href="#L802">802</a>             @PluginAttribute(value = <span class="jxr_string">"includeStacktrace"</span>, defaultBoolean = <strong class="jxr_keyword">true</strong>) <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> includeStacktrace
+<a class="jxr_linenumber" name="L803" href="#L803">803</a>             <em class="jxr_comment">// @formatter:on</em>
+<a class="jxr_linenumber" name="L804" href="#L804">804</a>     ) {
+<a class="jxr_linenumber" name="L805" href="#L805">805</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/YamlLayout.html">YamlLayout</a>(config, locationInfo, properties, false, false, <strong class="jxr_keyword">true</strong>, headerPattern, footerPattern,
+<a class="jxr_linenumber" name="L806" href="#L806">806</a>                 charset, includeStacktrace);
+<a class="jxr_linenumber" name="L807" href="#L807">807</a>     }
+<a class="jxr_linenumber" name="L808" href="#L808">808</a> 
+<a class="jxr_linenumber" name="L809" href="#L809">809</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L810" href="#L810">810</a> <em class="jxr_javadoccomment">     * Creates a YAML Layout using the default settings. Useful for testing.</em>
+<a class="jxr_linenumber" name="L811" href="#L811">811</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L812" href="#L812">812</a> <em class="jxr_javadoccomment">     * @return A YAML Layout.</em>
+<a class="jxr_linenumber" name="L813" href="#L813">813</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L814" href="#L814">814</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/AbstractJacksonLayout.html">AbstractJacksonLayout</a> createDefaultLayout() {
+<a class="jxr_linenumber" name="L815" href="#L815">815</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/YamlLayout.html">YamlLayout</a>(<strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/DefaultConfiguration.html">DefaultConfiguration</a>(), false, false, false, false, false, DEFAULT_HEADER,
+<a class="jxr_linenumber" name="L816" href="#L816">816</a>                 DEFAULT_FOOTER, StandardCharsets.UTF_8, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L817" href="#L817">817</a>     }
+<a class="jxr_linenumber" name="L818" href="#L818">818</a> 
+<a class="jxr_linenumber" name="L819" href="#L819">819</a>     @Override
+<a class="jxr_linenumber" name="L820" href="#L820">820</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> toSerializable(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event, <strong class="jxr_keyword">final</strong> Writer writer) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L821" href="#L821">821</a>         <strong class="jxr_keyword">if</strong> (complete &amp;&amp; eventCount &gt; 0) {
+<a class="jxr_linenumber" name="L822" href="#L822">822</a>             writer.append(<span class="jxr_string">", "</span>);
+<a class="jxr_linenumber" name="L823" href="#L823">823</a>         }
+<a class="jxr_linenumber" name="L824" href="#L824">824</a>         <strong class="jxr_keyword">super</strong>.toSerializable(event, writer);
+<a class="jxr_linenumber" name="L825" href="#L825">825</a>     }
+<a class="jxr_linenumber" name="L826" href="#L826">826</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>

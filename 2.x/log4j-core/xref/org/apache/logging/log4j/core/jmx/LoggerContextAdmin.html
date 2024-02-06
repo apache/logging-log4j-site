@@ -140,7 +140,7 @@
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>             LOGGER.debug(<span class="jxr_string">"Opening config URL {}"</span>, configURL);
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>             configSource = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a>(configURL.openStream(), configURL);
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>         }
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = ConfigurationFactory.getInstance().getConfiguration(configSource);
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = ConfigurationFactory.getInstance().getConfiguration(loggerContext, configSource);
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>         loggerContext.start(config);
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>         LOGGER.debug(<span class="jxr_string">"Completed remote request to reconfigure."</span>);
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>     }
@@ -205,7 +205,7 @@
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>             <strong class="jxr_keyword">final</strong> InputStream in = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(configText.getBytes(charsetName));
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a> source = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a>(in);
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> updated = ConfigurationFactory.getInstance().getConfiguration(source);
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> updated = ConfigurationFactory.getInstance().getConfiguration(loggerContext, source);
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>             loggerContext.start(updated);
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>             LOGGER.debug(<span class="jxr_string">"Completed remote request to reconfigure from config text."</span>);
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {

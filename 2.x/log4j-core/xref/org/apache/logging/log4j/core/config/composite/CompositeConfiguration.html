@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * @param configurations The List of Configurations to merge.</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/composite/CompositeConfiguration.html">CompositeConfiguration</a>(<strong class="jxr_keyword">final</strong> List&lt;? <strong class="jxr_keyword">extends</strong> AbstractConfiguration&gt; configurations) {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">super</strong>(ConfigurationSource.NULL_SOURCE);
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">super</strong>(configurations.get(0).getLoggerContext(), ConfigurationSource.NULL_SOURCE);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          rootNode = configurations.get(0).getRootNode();
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">this</strong>.configurations = configurations;
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">final</strong> String mergeStrategyClassName = PropertiesUtil.getProperties().getStringProperty(MERGE_STRATEGY_PROPERTY,
@@ -160,7 +160,7 @@
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">if</strong> (sourceURI != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>                 LOGGER.warn(<span class="jxr_string">"Unable to determine URI for configuration {}, changes to it will be ignored"</span>,
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>                         config.getName());
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>                 currentConfig = factory.getConfiguration(config.getName(), sourceURI);
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>                 currentConfig = factory.getConfiguration(getLoggerContext(), config.getName(), sourceURI);
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>                 <strong class="jxr_keyword">if</strong> (currentConfig == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>                     LOGGER.warn(<span class="jxr_string">"Unable to reload configuration {}, changes to it will be ignored"</span>, config.getName());
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>                     currentConfig = config;

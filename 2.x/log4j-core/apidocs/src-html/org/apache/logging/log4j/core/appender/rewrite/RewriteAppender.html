@@ -44,7 +44,7 @@
 <span class="sourceLineNo">036</span>/**<a name="line.36"></a>
 <span class="sourceLineNo">037</span> * This Appender allows the logging event to be manipulated before it is processed by other Appenders.<a name="line.37"></a>
 <span class="sourceLineNo">038</span> */<a name="line.38"></a>
-<span class="sourceLineNo">039</span>@Plugin(name = "Rewrite", category = "Core", elementType = "appender", printObject = true)<a name="line.39"></a>
+<span class="sourceLineNo">039</span>@Plugin(name = "Rewrite", category = "Core", elementType = Appender.ELEMENT_TYPE, printObject = true)<a name="line.39"></a>
 <span class="sourceLineNo">040</span>public final class RewriteAppender extends AbstractAppender {<a name="line.40"></a>
 <span class="sourceLineNo">041</span><a name="line.41"></a>
 <span class="sourceLineNo">042</span>    private final Configuration config;<a name="line.42"></a>
@@ -77,57 +77,52 @@
 <span class="sourceLineNo">069</span>        super.start();<a name="line.69"></a>
 <span class="sourceLineNo">070</span>    }<a name="line.70"></a>
 <span class="sourceLineNo">071</span><a name="line.71"></a>
-<span class="sourceLineNo">072</span>    @Override<a name="line.72"></a>
-<span class="sourceLineNo">073</span>    public void stop() {<a name="line.73"></a>
-<span class="sourceLineNo">074</span>        super.stop();<a name="line.74"></a>
-<span class="sourceLineNo">075</span>    }<a name="line.75"></a>
-<span class="sourceLineNo">076</span><a name="line.76"></a>
-<span class="sourceLineNo">077</span>    /**<a name="line.77"></a>
-<span class="sourceLineNo">078</span>     * Modifies the event and pass to the subordinate Appenders.<a name="line.78"></a>
-<span class="sourceLineNo">079</span>     * @param event The LogEvent.<a name="line.79"></a>
-<span class="sourceLineNo">080</span>     */<a name="line.80"></a>
-<span class="sourceLineNo">081</span>    @Override<a name="line.81"></a>
-<span class="sourceLineNo">082</span>    public void append(LogEvent event) {<a name="line.82"></a>
-<span class="sourceLineNo">083</span>        if (rewritePolicy != null) {<a name="line.83"></a>
-<span class="sourceLineNo">084</span>            event = rewritePolicy.rewrite(event);<a name="line.84"></a>
-<span class="sourceLineNo">085</span>        }<a name="line.85"></a>
-<span class="sourceLineNo">086</span>        for (final AppenderControl control : appenders.values()) {<a name="line.86"></a>
-<span class="sourceLineNo">087</span>            control.callAppender(event);<a name="line.87"></a>
-<span class="sourceLineNo">088</span>        }<a name="line.88"></a>
-<span class="sourceLineNo">089</span>    }<a name="line.89"></a>
-<span class="sourceLineNo">090</span><a name="line.90"></a>
-<span class="sourceLineNo">091</span>    /**<a name="line.91"></a>
-<span class="sourceLineNo">092</span>     * Creates a RewriteAppender.<a name="line.92"></a>
-<span class="sourceLineNo">093</span>     * @param name The name of the Appender.<a name="line.93"></a>
-<span class="sourceLineNo">094</span>     * @param ignore If {@code "true"} (default) exceptions encountered when appending events are logged; otherwise<a name="line.94"></a>
-<span class="sourceLineNo">095</span>     *               they are propagated to the caller.<a name="line.95"></a>
-<span class="sourceLineNo">096</span>     * @param appenderRefs An array of Appender names to call.<a name="line.96"></a>
-<span class="sourceLineNo">097</span>     * @param config The Configuration.<a name="line.97"></a>
-<span class="sourceLineNo">098</span>     * @param rewritePolicy The policy to use to modify the event.<a name="line.98"></a>
-<span class="sourceLineNo">099</span>     * @param filter A Filter to filter events.<a name="line.99"></a>
-<span class="sourceLineNo">100</span>     * @return The created RewriteAppender.<a name="line.100"></a>
-<span class="sourceLineNo">101</span>     */<a name="line.101"></a>
-<span class="sourceLineNo">102</span>    @PluginFactory<a name="line.102"></a>
-<span class="sourceLineNo">103</span>    public static RewriteAppender createAppender(<a name="line.103"></a>
-<span class="sourceLineNo">104</span>            @PluginAttribute("name") final String name,<a name="line.104"></a>
-<span class="sourceLineNo">105</span>            @PluginAttribute("ignoreExceptions") final String ignore,<a name="line.105"></a>
-<span class="sourceLineNo">106</span>            @PluginElement("AppenderRef") final AppenderRef[] appenderRefs,<a name="line.106"></a>
-<span class="sourceLineNo">107</span>            @PluginConfiguration final Configuration config,<a name="line.107"></a>
-<span class="sourceLineNo">108</span>            @PluginElement("RewritePolicy") final RewritePolicy rewritePolicy,<a name="line.108"></a>
-<span class="sourceLineNo">109</span>            @PluginElement("Filter") final Filter filter) {<a name="line.109"></a>
-<span class="sourceLineNo">110</span><a name="line.110"></a>
-<span class="sourceLineNo">111</span>        final boolean ignoreExceptions = Booleans.parseBoolean(ignore, true);<a name="line.111"></a>
-<span class="sourceLineNo">112</span>        if (name == null) {<a name="line.112"></a>
-<span class="sourceLineNo">113</span>            LOGGER.error("No name provided for RewriteAppender");<a name="line.113"></a>
-<span class="sourceLineNo">114</span>            return null;<a name="line.114"></a>
-<span class="sourceLineNo">115</span>        }<a name="line.115"></a>
-<span class="sourceLineNo">116</span>        if (appenderRefs == null) {<a name="line.116"></a>
-<span class="sourceLineNo">117</span>            LOGGER.error("No appender references defined for RewriteAppender");<a name="line.117"></a>
-<span class="sourceLineNo">118</span>            return null;<a name="line.118"></a>
-<span class="sourceLineNo">119</span>        }<a name="line.119"></a>
-<span class="sourceLineNo">120</span>        return new RewriteAppender(name, filter, ignoreExceptions, appenderRefs, rewritePolicy, config);<a name="line.120"></a>
-<span class="sourceLineNo">121</span>    }<a name="line.121"></a>
-<span class="sourceLineNo">122</span>}<a name="line.122"></a>
+<span class="sourceLineNo">072</span>    /**<a name="line.72"></a>
+<span class="sourceLineNo">073</span>     * Modifies the event and pass to the subordinate Appenders.<a name="line.73"></a>
+<span class="sourceLineNo">074</span>     * @param event The LogEvent.<a name="line.74"></a>
+<span class="sourceLineNo">075</span>     */<a name="line.75"></a>
+<span class="sourceLineNo">076</span>    @Override<a name="line.76"></a>
+<span class="sourceLineNo">077</span>    public void append(LogEvent event) {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        if (rewritePolicy != null) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            event = rewritePolicy.rewrite(event);<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        }<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        for (final AppenderControl control : appenders.values()) {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            control.callAppender(event);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        }<a name="line.83"></a>
+<span class="sourceLineNo">084</span>    }<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>    /**<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     * Creates a RewriteAppender.<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * @param name The name of the Appender.<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     * @param ignore If {@code "true"} (default) exceptions encountered when appending events are logged; otherwise<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     *               they are propagated to the caller.<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     * @param appenderRefs An array of Appender names to call.<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     * @param config The Configuration.<a name="line.92"></a>
+<span class="sourceLineNo">093</span>     * @param rewritePolicy The policy to use to modify the event.<a name="line.93"></a>
+<span class="sourceLineNo">094</span>     * @param filter A Filter to filter events.<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     * @return The created RewriteAppender.<a name="line.95"></a>
+<span class="sourceLineNo">096</span>     */<a name="line.96"></a>
+<span class="sourceLineNo">097</span>    @PluginFactory<a name="line.97"></a>
+<span class="sourceLineNo">098</span>    public static RewriteAppender createAppender(<a name="line.98"></a>
+<span class="sourceLineNo">099</span>            @PluginAttribute("name") final String name,<a name="line.99"></a>
+<span class="sourceLineNo">100</span>            @PluginAttribute("ignoreExceptions") final String ignore,<a name="line.100"></a>
+<span class="sourceLineNo">101</span>            @PluginElement("AppenderRef") final AppenderRef[] appenderRefs,<a name="line.101"></a>
+<span class="sourceLineNo">102</span>            @PluginConfiguration final Configuration config,<a name="line.102"></a>
+<span class="sourceLineNo">103</span>            @PluginElement("RewritePolicy") final RewritePolicy rewritePolicy,<a name="line.103"></a>
+<span class="sourceLineNo">104</span>            @PluginElement("Filter") final Filter filter) {<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>        final boolean ignoreExceptions = Booleans.parseBoolean(ignore, true);<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        if (name == null) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            LOGGER.error("No name provided for RewriteAppender");<a name="line.108"></a>
+<span class="sourceLineNo">109</span>            return null;<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        }<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        if (appenderRefs == null) {<a name="line.111"></a>
+<span class="sourceLineNo">112</span>            LOGGER.error("No appender references defined for RewriteAppender");<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            return null;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        return new RewriteAppender(name, filter, ignoreExceptions, appenderRefs, rewritePolicy, config);<a name="line.115"></a>
+<span class="sourceLineNo">116</span>    }<a name="line.116"></a>
+<span class="sourceLineNo">117</span>}<a name="line.117"></a>
 
 
 

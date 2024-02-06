@@ -46,13 +46,13 @@
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> CSVFormat createFormat(<strong class="jxr_keyword">final</strong> String format, <strong class="jxr_keyword">final</strong> Character delimiter, <strong class="jxr_keyword">final</strong> Character escape,
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>              <strong class="jxr_keyword">final</strong> Character quote, <strong class="jxr_keyword">final</strong> QuoteMode quoteMode, <strong class="jxr_keyword">final</strong> String nullString, <strong class="jxr_keyword">final</strong> String recordSeparator) {
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>          CSVFormat csvFormat = CSVFormat.valueOf(format);
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">if</strong> (delimiter != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">if</strong> (isNotNul(delimiter)) {
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>              csvFormat = csvFormat.withDelimiter(delimiter);
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>          }
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">if</strong> (escape != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">if</strong> (isNotNul(escape)) {
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>              csvFormat = csvFormat.withEscape(escape);
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>          }
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>          <strong class="jxr_keyword">if</strong> (quote != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>          <strong class="jxr_keyword">if</strong> (isNotNul(quote)) {
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>              csvFormat = csvFormat.withQuote(quote);
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          }
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">if</strong> (quoteMode != <strong class="jxr_keyword">null</strong>) {
@@ -67,24 +67,28 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">return</strong> csvFormat;
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      }
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> CSVFormat format;
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/AbstractCsvLayout.html">AbstractCsvLayout</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, <strong class="jxr_keyword">final</strong> Charset charset, <strong class="jxr_keyword">final</strong> CSVFormat csvFormat,
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>              <strong class="jxr_keyword">final</strong> String header, <strong class="jxr_keyword">final</strong> String footer) {
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">super</strong>(config, charset, PatternLayout.createSerializer(config, <strong class="jxr_keyword">null</strong>, header, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, false, false),
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>                  PatternLayout.createSerializer(config, <strong class="jxr_keyword">null</strong>, footer, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, false, false));
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">this</strong>.format = csvFormat;
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>      }
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>  
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>      @Override
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> String getContentType() {
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">return</strong> CONTENT_TYPE + <span class="jxr_string">"; charset="</span> + <strong class="jxr_keyword">this</strong>.getCharset();
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>  
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">public</strong> CSVFormat getFormat() {
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">return</strong> format;
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> isNotNul(<strong class="jxr_keyword">final</strong> Character character) {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">return</strong> character != <strong class="jxr_keyword">null</strong> &amp;&amp; character.charValue() != 0;
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      }
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> CSVFormat format;
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/AbstractCsvLayout.html">AbstractCsvLayout</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, <strong class="jxr_keyword">final</strong> Charset charset, <strong class="jxr_keyword">final</strong> CSVFormat csvFormat,
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>              <strong class="jxr_keyword">final</strong> String header, <strong class="jxr_keyword">final</strong> String footer) {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">super</strong>(config, charset, PatternLayout.createSerializer(config, <strong class="jxr_keyword">null</strong>, header, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, false, false),
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>                  PatternLayout.createSerializer(config, <strong class="jxr_keyword">null</strong>, footer, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, false, false));
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">this</strong>.format = csvFormat;
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>      }
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      @Override
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">public</strong> String getContentType() {
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">return</strong> CONTENT_TYPE + <span class="jxr_string">"; charset="</span> + <strong class="jxr_keyword">this</strong>.getCharset();
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>  }
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">public</strong> CSVFormat getFormat() {
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">return</strong> format;
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>      }
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>

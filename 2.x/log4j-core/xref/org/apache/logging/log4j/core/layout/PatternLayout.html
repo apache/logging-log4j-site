@@ -72,9 +72,9 @@
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFAULT_CONVERSION_PATTERN = <span class="jxr_string">"%m%n"</span>;
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     * A conversion pattern equivalent to the TTCCCLayout. Current value is &lt;b&gt;%r [%t] %p %c %x - %m%n&lt;/b&gt;.</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     * A conversion pattern equivalent to the TTCCLayout. Current value is &lt;b&gt;%r [%t] %p %c %notEmpty{%x }- %m%n&lt;/b&gt;.</em>
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TTCC_CONVERSION_PATTERN = <span class="jxr_string">"%r [%t] %p %c %x - %m%n"</span>;
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TTCC_CONVERSION_PATTERN = <span class="jxr_string">"%r [%t] %p %c %notEmpty{%x }- %m%n"</span>;
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">     * A simple pattern. Current value is &lt;b&gt;%d [%t] %p %c - %m%n&lt;/b&gt;.</em>
@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/AbstractStringLayout.html">Serializer</a> eventSerializer;
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     * Constructs a EnhancedPatternLayout using the supplied conversion pattern.</em>
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     * Constructs a PatternLayout using the supplied conversion pattern.</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">     * @param config The Configuration.</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">     * @param replace The regular expression to match.</em>
@@ -416,13 +416,13 @@
 <a class="jxr_linenumber" name="L408" href="#L408">408</a>         <strong class="jxr_keyword">private</strong> String pattern = PatternLayout.DEFAULT_CONVERSION_PATTERN;
 <a class="jxr_linenumber" name="L409" href="#L409">409</a> 
 <a class="jxr_linenumber" name="L410" href="#L410">410</a>         @PluginElement(<span class="jxr_string">"PatternSelector"</span>)
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternSelector.html">PatternSelector</a> patternSelector = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternSelector.html">PatternSelector</a> patternSelector;
 <a class="jxr_linenumber" name="L412" href="#L412">412</a> 
 <a class="jxr_linenumber" name="L413" href="#L413">413</a>         @PluginConfiguration
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration;
 <a class="jxr_linenumber" name="L415" href="#L415">415</a> 
 <a class="jxr_linenumber" name="L416" href="#L416">416</a>         @PluginElement(<span class="jxr_string">"Replace"</span>)
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RegexReplacement.html">RegexReplacement</a> regexReplacement = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RegexReplacement.html">RegexReplacement</a> regexReplacement;
 <a class="jxr_linenumber" name="L418" href="#L418">418</a> 
 <a class="jxr_linenumber" name="L419" href="#L419">419</a>         <em class="jxr_comment">// LOG4J2-783 use platform default by default</em>
 <a class="jxr_linenumber" name="L420" href="#L420">420</a>         @PluginBuilderAttribute
@@ -432,13 +432,13 @@
 <a class="jxr_linenumber" name="L424" href="#L424">424</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> alwaysWriteExceptions = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L425" href="#L425">425</a> 
 <a class="jxr_linenumber" name="L426" href="#L426">426</a>         @PluginBuilderAttribute
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> noConsoleNoAnsi = false;
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> noConsoleNoAnsi;
 <a class="jxr_linenumber" name="L428" href="#L428">428</a> 
 <a class="jxr_linenumber" name="L429" href="#L429">429</a>         @PluginBuilderAttribute
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>         <strong class="jxr_keyword">private</strong> String header = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>         <strong class="jxr_keyword">private</strong> String header;
 <a class="jxr_linenumber" name="L431" href="#L431">431</a> 
 <a class="jxr_linenumber" name="L432" href="#L432">432</a>         @PluginBuilderAttribute
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>         <strong class="jxr_keyword">private</strong> String footer = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>         <strong class="jxr_keyword">private</strong> String footer;
 <a class="jxr_linenumber" name="L434" href="#L434">434</a> 
 <a class="jxr_linenumber" name="L435" href="#L435">435</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternMatch.html">Builder</a>() {
 <a class="jxr_linenumber" name="L436" href="#L436">436</a>         }

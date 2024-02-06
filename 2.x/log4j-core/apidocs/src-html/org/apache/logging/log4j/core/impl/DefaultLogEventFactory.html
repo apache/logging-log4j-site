@@ -33,30 +33,35 @@
 <span class="sourceLineNo">025</span>import org.apache.logging.log4j.message.Message;<a name="line.25"></a>
 <span class="sourceLineNo">026</span><a name="line.26"></a>
 <span class="sourceLineNo">027</span>/**<a name="line.27"></a>
-<span class="sourceLineNo">028</span> *<a name="line.28"></a>
+<span class="sourceLineNo">028</span> * Always creates new LogEvent instances.<a name="line.28"></a>
 <span class="sourceLineNo">029</span> */<a name="line.29"></a>
 <span class="sourceLineNo">030</span>public class DefaultLogEventFactory implements LogEventFactory {<a name="line.30"></a>
 <span class="sourceLineNo">031</span><a name="line.31"></a>
-<span class="sourceLineNo">032</span><a name="line.32"></a>
-<span class="sourceLineNo">033</span>    /**<a name="line.33"></a>
-<span class="sourceLineNo">034</span>     * Creates a log event.<a name="line.34"></a>
-<span class="sourceLineNo">035</span>     *<a name="line.35"></a>
-<span class="sourceLineNo">036</span>     * @param loggerName The name of the Logger.<a name="line.36"></a>
-<span class="sourceLineNo">037</span>     * @param marker An optional Marker.<a name="line.37"></a>
-<span class="sourceLineNo">038</span>     * @param fqcn The fully qualified class name of the caller.<a name="line.38"></a>
-<span class="sourceLineNo">039</span>     * @param level The event Level.<a name="line.39"></a>
-<span class="sourceLineNo">040</span>     * @param data The Message.<a name="line.40"></a>
-<span class="sourceLineNo">041</span>     * @param properties Properties to be added to the log event.<a name="line.41"></a>
-<span class="sourceLineNo">042</span>     * @param t An optional Throwable.<a name="line.42"></a>
-<span class="sourceLineNo">043</span>     * @return The LogEvent.<a name="line.43"></a>
-<span class="sourceLineNo">044</span>     */<a name="line.44"></a>
-<span class="sourceLineNo">045</span>    @Override<a name="line.45"></a>
-<span class="sourceLineNo">046</span>    public LogEvent createEvent(final String loggerName, final Marker marker,<a name="line.46"></a>
-<span class="sourceLineNo">047</span>                                final String fqcn, final Level level, final Message data,<a name="line.47"></a>
-<span class="sourceLineNo">048</span>                                final List&lt;Property&gt; properties, final Throwable t) {<a name="line.48"></a>
-<span class="sourceLineNo">049</span>        return new Log4jLogEvent(loggerName, marker, fqcn, level, data, properties, t);<a name="line.49"></a>
-<span class="sourceLineNo">050</span>    }<a name="line.50"></a>
-<span class="sourceLineNo">051</span>}<a name="line.51"></a>
+<span class="sourceLineNo">032</span>    private static final DefaultLogEventFactory instance = new DefaultLogEventFactory();<a name="line.32"></a>
+<span class="sourceLineNo">033</span><a name="line.33"></a>
+<span class="sourceLineNo">034</span>    public static DefaultLogEventFactory getInstance() {<a name="line.34"></a>
+<span class="sourceLineNo">035</span>        return instance;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>    }<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>    /**<a name="line.38"></a>
+<span class="sourceLineNo">039</span>     * Creates a log event.<a name="line.39"></a>
+<span class="sourceLineNo">040</span>     *<a name="line.40"></a>
+<span class="sourceLineNo">041</span>     * @param loggerName The name of the Logger.<a name="line.41"></a>
+<span class="sourceLineNo">042</span>     * @param marker An optional Marker.<a name="line.42"></a>
+<span class="sourceLineNo">043</span>     * @param fqcn The fully qualified class name of the caller.<a name="line.43"></a>
+<span class="sourceLineNo">044</span>     * @param level The event Level.<a name="line.44"></a>
+<span class="sourceLineNo">045</span>     * @param data The Message.<a name="line.45"></a>
+<span class="sourceLineNo">046</span>     * @param properties Properties to be added to the log event.<a name="line.46"></a>
+<span class="sourceLineNo">047</span>     * @param t An optional Throwable.<a name="line.47"></a>
+<span class="sourceLineNo">048</span>     * @return The LogEvent.<a name="line.48"></a>
+<span class="sourceLineNo">049</span>     */<a name="line.49"></a>
+<span class="sourceLineNo">050</span>    @Override<a name="line.50"></a>
+<span class="sourceLineNo">051</span>    public LogEvent createEvent(final String loggerName, final Marker marker,<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                                final String fqcn, final Level level, final Message data,<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                                final List&lt;Property&gt; properties, final Throwable t) {<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        return new Log4jLogEvent(loggerName, marker, fqcn, level, data, properties, t);<a name="line.54"></a>
+<span class="sourceLineNo">055</span>    }<a name="line.55"></a>
+<span class="sourceLineNo">056</span>}<a name="line.56"></a>
 
 
 

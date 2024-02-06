@@ -181,7 +181,7 @@
 <span class="sourceLineNo">173</span>        if (ctx.getState() == LifeCycle.State.INITIALIZED) {<a name="line.173"></a>
 <span class="sourceLineNo">174</span>            if (source != null) {<a name="line.174"></a>
 <span class="sourceLineNo">175</span>                ContextAnchor.THREAD_CONTEXT.set(ctx);<a name="line.175"></a>
-<span class="sourceLineNo">176</span>                final Configuration config = ConfigurationFactory.getInstance().getConfiguration(source);<a name="line.176"></a>
+<span class="sourceLineNo">176</span>                final Configuration config = ConfigurationFactory.getInstance().getConfiguration(ctx, source);<a name="line.176"></a>
 <span class="sourceLineNo">177</span>                LOGGER.debug("Starting LoggerContext[name={}] from configuration {}", ctx.getName(), source);<a name="line.177"></a>
 <span class="sourceLineNo">178</span>                ctx.start(config);<a name="line.178"></a>
 <span class="sourceLineNo">179</span>                ContextAnchor.THREAD_CONTEXT.remove();<a name="line.179"></a>
@@ -242,7 +242,7 @@
 <span class="sourceLineNo">234</span>        if (ctx.getState() == LifeCycle.State.INITIALIZED) {<a name="line.234"></a>
 <span class="sourceLineNo">235</span>            if (configLocation != null || name != null) {<a name="line.235"></a>
 <span class="sourceLineNo">236</span>                ContextAnchor.THREAD_CONTEXT.set(ctx);<a name="line.236"></a>
-<span class="sourceLineNo">237</span>                final Configuration config = ConfigurationFactory.getInstance().getConfiguration(name, configLocation);<a name="line.237"></a>
+<span class="sourceLineNo">237</span>                final Configuration config = ConfigurationFactory.getInstance().getConfiguration(ctx, name, configLocation);<a name="line.237"></a>
 <span class="sourceLineNo">238</span>                LOGGER.debug("Starting LoggerContext[name={}] from configuration at {}", ctx.getName(), configLocation);<a name="line.238"></a>
 <span class="sourceLineNo">239</span>                ctx.start(config);<a name="line.239"></a>
 <span class="sourceLineNo">240</span>                ContextAnchor.THREAD_CONTEXT.remove();<a name="line.240"></a>
@@ -269,7 +269,7 @@
 <span class="sourceLineNo">261</span>                final List&lt;AbstractConfiguration&gt; configurations = new ArrayList&lt;&gt;(configLocations.size());<a name="line.261"></a>
 <span class="sourceLineNo">262</span>                for (final URI configLocation : configLocations) {<a name="line.262"></a>
 <span class="sourceLineNo">263</span>                    final Configuration currentReadConfiguration = ConfigurationFactory.getInstance()<a name="line.263"></a>
-<span class="sourceLineNo">264</span>                            .getConfiguration(name, configLocation);<a name="line.264"></a>
+<span class="sourceLineNo">264</span>                            .getConfiguration(ctx, name, configLocation);<a name="line.264"></a>
 <span class="sourceLineNo">265</span>                    if (currentReadConfiguration instanceof AbstractConfiguration) {<a name="line.265"></a>
 <span class="sourceLineNo">266</span>                        configurations.add((AbstractConfiguration) currentReadConfiguration);<a name="line.266"></a>
 <span class="sourceLineNo">267</span>                    } else {<a name="line.267"></a>

@@ -818,133 +818,137 @@
 <span class="sourceLineNo">810</span>    protected JsonLayout(final Configuration config, final boolean locationInfo, final boolean properties,<a name="line.810"></a>
 <span class="sourceLineNo">811</span>            final boolean encodeThreadContextAsList,<a name="line.811"></a>
 <span class="sourceLineNo">812</span>            final boolean complete, final boolean compact, final boolean eventEol, final String headerPattern,<a name="line.812"></a>
-<span class="sourceLineNo">813</span>            final String footerPattern, final Charset charset) {<a name="line.813"></a>
-<span class="sourceLineNo">814</span>        super(config, new JacksonFactory.JSON(encodeThreadContextAsList).newWriter(locationInfo, properties, compact),<a name="line.814"></a>
-<span class="sourceLineNo">815</span>                charset, compact, complete, eventEol,<a name="line.815"></a>
-<span class="sourceLineNo">816</span>                PatternLayout.createSerializer(config, null, headerPattern, DEFAULT_HEADER, null, false, false),<a name="line.816"></a>
-<span class="sourceLineNo">817</span>                PatternLayout.createSerializer(config, null, footerPattern, DEFAULT_FOOTER, null, false, false));<a name="line.817"></a>
-<span class="sourceLineNo">818</span>    }<a name="line.818"></a>
-<span class="sourceLineNo">819</span><a name="line.819"></a>
-<span class="sourceLineNo">820</span>    /**<a name="line.820"></a>
-<span class="sourceLineNo">821</span>     * Returns appropriate JSON header.<a name="line.821"></a>
-<span class="sourceLineNo">822</span>     *<a name="line.822"></a>
-<span class="sourceLineNo">823</span>     * @return a byte array containing the header, opening the JSON array.<a name="line.823"></a>
-<span class="sourceLineNo">824</span>     */<a name="line.824"></a>
-<span class="sourceLineNo">825</span>    @Override<a name="line.825"></a>
-<span class="sourceLineNo">826</span>    public byte[] getHeader() {<a name="line.826"></a>
-<span class="sourceLineNo">827</span>        if (!this.complete) {<a name="line.827"></a>
-<span class="sourceLineNo">828</span>            return null;<a name="line.828"></a>
-<span class="sourceLineNo">829</span>        }<a name="line.829"></a>
-<span class="sourceLineNo">830</span>        final StringBuilder buf = new StringBuilder();<a name="line.830"></a>
-<span class="sourceLineNo">831</span>        final String str = serializeToString(getHeaderSerializer());<a name="line.831"></a>
-<span class="sourceLineNo">832</span>        if (str != null) {<a name="line.832"></a>
-<span class="sourceLineNo">833</span>            buf.append(str);<a name="line.833"></a>
-<span class="sourceLineNo">834</span>        }<a name="line.834"></a>
-<span class="sourceLineNo">835</span>        buf.append(this.eol);<a name="line.835"></a>
-<span class="sourceLineNo">836</span>        return getBytes(buf.toString());<a name="line.836"></a>
-<span class="sourceLineNo">837</span>    }<a name="line.837"></a>
-<span class="sourceLineNo">838</span><a name="line.838"></a>
-<span class="sourceLineNo">839</span>    /**<a name="line.839"></a>
-<span class="sourceLineNo">840</span>     * Returns appropriate JSON footer.<a name="line.840"></a>
-<span class="sourceLineNo">841</span>     *<a name="line.841"></a>
-<span class="sourceLineNo">842</span>     * @return a byte array containing the footer, closing the JSON array.<a name="line.842"></a>
-<span class="sourceLineNo">843</span>     */<a name="line.843"></a>
-<span class="sourceLineNo">844</span>    @Override<a name="line.844"></a>
-<span class="sourceLineNo">845</span>    public byte[] getFooter() {<a name="line.845"></a>
-<span class="sourceLineNo">846</span>        if (!this.complete) {<a name="line.846"></a>
-<span class="sourceLineNo">847</span>            return null;<a name="line.847"></a>
-<span class="sourceLineNo">848</span>        }<a name="line.848"></a>
-<span class="sourceLineNo">849</span>        final StringBuilder buf = new StringBuilder();<a name="line.849"></a>
-<span class="sourceLineNo">850</span>        buf.append(this.eol);<a name="line.850"></a>
-<span class="sourceLineNo">851</span>        final String str = serializeToString(getFooterSerializer());<a name="line.851"></a>
-<span class="sourceLineNo">852</span>        if (str != null) {<a name="line.852"></a>
-<span class="sourceLineNo">853</span>            buf.append(str);<a name="line.853"></a>
-<span class="sourceLineNo">854</span>        }<a name="line.854"></a>
-<span class="sourceLineNo">855</span>        buf.append(this.eol);<a name="line.855"></a>
-<span class="sourceLineNo">856</span>        return getBytes(buf.toString());<a name="line.856"></a>
-<span class="sourceLineNo">857</span>    }<a name="line.857"></a>
-<span class="sourceLineNo">858</span><a name="line.858"></a>
-<span class="sourceLineNo">859</span>    @Override<a name="line.859"></a>
-<span class="sourceLineNo">860</span>    public Map&lt;String, String&gt; getContentFormat() {<a name="line.860"></a>
-<span class="sourceLineNo">861</span>        final Map&lt;String, String&gt; result = new HashMap&lt;&gt;();<a name="line.861"></a>
-<span class="sourceLineNo">862</span>        result.put("version", "2.0");<a name="line.862"></a>
-<span class="sourceLineNo">863</span>        return result;<a name="line.863"></a>
-<span class="sourceLineNo">864</span>    }<a name="line.864"></a>
-<span class="sourceLineNo">865</span><a name="line.865"></a>
-<span class="sourceLineNo">866</span>    @Override<a name="line.866"></a>
-<span class="sourceLineNo">867</span>    /**<a name="line.867"></a>
-<span class="sourceLineNo">868</span>     * @return The content type.<a name="line.868"></a>
-<span class="sourceLineNo">869</span>     */<a name="line.869"></a>
-<span class="sourceLineNo">870</span>    public String getContentType() {<a name="line.870"></a>
-<span class="sourceLineNo">871</span>        return CONTENT_TYPE + "; charset=" + this.getCharset();<a name="line.871"></a>
-<span class="sourceLineNo">872</span>    }<a name="line.872"></a>
-<span class="sourceLineNo">873</span><a name="line.873"></a>
-<span class="sourceLineNo">874</span>    /**<a name="line.874"></a>
-<span class="sourceLineNo">875</span>     * Creates a JSON Layout.<a name="line.875"></a>
-<span class="sourceLineNo">876</span>     * @param config<a name="line.876"></a>
-<span class="sourceLineNo">877</span>     *           The plugin configuration.<a name="line.877"></a>
-<span class="sourceLineNo">878</span>     * @param locationInfo<a name="line.878"></a>
-<span class="sourceLineNo">879</span>     *            If "true", includes the location information in the generated JSON.<a name="line.879"></a>
-<span class="sourceLineNo">880</span>     * @param properties<a name="line.880"></a>
-<span class="sourceLineNo">881</span>     *            If "true", includes the thread context map in the generated JSON.<a name="line.881"></a>
-<span class="sourceLineNo">882</span>     * @param propertiesAsList<a name="line.882"></a>
-<span class="sourceLineNo">883</span>     *            If true, the thread context map is included as a list of map entry objects, where each entry has<a name="line.883"></a>
-<span class="sourceLineNo">884</span>     *            a "key" attribute (whose value is the key) and a "value" attribute (whose value is the value).<a name="line.884"></a>
-<span class="sourceLineNo">885</span>     *            Defaults to false, in which case the thread context map is included as a simple map of key-value<a name="line.885"></a>
-<span class="sourceLineNo">886</span>     *            pairs.<a name="line.886"></a>
-<span class="sourceLineNo">887</span>     * @param complete<a name="line.887"></a>
-<span class="sourceLineNo">888</span>     *            If "true", includes the JSON header and footer, and comma between records.<a name="line.888"></a>
-<span class="sourceLineNo">889</span>     * @param compact<a name="line.889"></a>
-<span class="sourceLineNo">890</span>     *            If "true", does not use end-of-lines and indentation, defaults to "false".<a name="line.890"></a>
-<span class="sourceLineNo">891</span>     * @param eventEol<a name="line.891"></a>
-<span class="sourceLineNo">892</span>     *            If "true", forces an EOL after each log event (even if compact is "true"), defaults to "false". This<a name="line.892"></a>
-<span class="sourceLineNo">893</span>     *            allows one even per line, even in compact mode.<a name="line.893"></a>
-<span class="sourceLineNo">894</span>     * @param headerPattern<a name="line.894"></a>
-<span class="sourceLineNo">895</span>     *            The header pattern, defaults to {@code "["} if null.<a name="line.895"></a>
-<span class="sourceLineNo">896</span>     * @param footerPattern<a name="line.896"></a>
-<span class="sourceLineNo">897</span>     *            The header pattern, defaults to {@code "]"} if null.<a name="line.897"></a>
-<span class="sourceLineNo">898</span>     * @param charset<a name="line.898"></a>
-<span class="sourceLineNo">899</span>     *            The character set to use, if {@code null}, uses "UTF-8".<a name="line.899"></a>
-<span class="sourceLineNo">900</span>     * @return A JSON Layout.<a name="line.900"></a>
-<span class="sourceLineNo">901</span>     */<a name="line.901"></a>
-<span class="sourceLineNo">902</span>    @PluginFactory<a name="line.902"></a>
-<span class="sourceLineNo">903</span>    public static JsonLayout createLayout(<a name="line.903"></a>
-<span class="sourceLineNo">904</span>            // @formatter:off<a name="line.904"></a>
-<span class="sourceLineNo">905</span>            @PluginConfiguration final Configuration config,<a name="line.905"></a>
-<span class="sourceLineNo">906</span>            @PluginAttribute(value = "locationInfo", defaultBoolean = false) final boolean locationInfo,<a name="line.906"></a>
-<span class="sourceLineNo">907</span>            @PluginAttribute(value = "properties", defaultBoolean = false) final boolean properties,<a name="line.907"></a>
-<span class="sourceLineNo">908</span>            @PluginAttribute(value = "propertiesAsList", defaultBoolean = false) final boolean propertiesAsList,<a name="line.908"></a>
-<span class="sourceLineNo">909</span>            @PluginAttribute(value = "complete", defaultBoolean = false) final boolean complete,<a name="line.909"></a>
-<span class="sourceLineNo">910</span>            @PluginAttribute(value = "compact", defaultBoolean = false) final boolean compact,<a name="line.910"></a>
-<span class="sourceLineNo">911</span>            @PluginAttribute(value = "eventEol", defaultBoolean = false) final boolean eventEol,<a name="line.911"></a>
-<span class="sourceLineNo">912</span>            @PluginAttribute(value = "header", defaultString = DEFAULT_HEADER) final String headerPattern,<a name="line.912"></a>
-<span class="sourceLineNo">913</span>            @PluginAttribute(value = "footer", defaultString = DEFAULT_FOOTER) final String footerPattern,<a name="line.913"></a>
-<span class="sourceLineNo">914</span>            @PluginAttribute(value = "charset", defaultString = "UTF-8") final Charset charset<a name="line.914"></a>
-<span class="sourceLineNo">915</span>            // @formatter:on<a name="line.915"></a>
-<span class="sourceLineNo">916</span>    ) {<a name="line.916"></a>
-<span class="sourceLineNo">917</span>        final boolean encodeThreadContextAsList = properties &amp;&amp; propertiesAsList;<a name="line.917"></a>
-<span class="sourceLineNo">918</span>        return new JsonLayout(config, locationInfo, properties, encodeThreadContextAsList, complete, compact, eventEol,<a name="line.918"></a>
-<span class="sourceLineNo">919</span>                headerPattern, footerPattern, charset);<a name="line.919"></a>
-<span class="sourceLineNo">920</span>    }<a name="line.920"></a>
-<span class="sourceLineNo">921</span><a name="line.921"></a>
-<span class="sourceLineNo">922</span>    /**<a name="line.922"></a>
-<span class="sourceLineNo">923</span>     * Creates a JSON Layout using the default settings. Useful for testing.<a name="line.923"></a>
-<span class="sourceLineNo">924</span>     *<a name="line.924"></a>
-<span class="sourceLineNo">925</span>     * @return A JSON Layout.<a name="line.925"></a>
-<span class="sourceLineNo">926</span>     */<a name="line.926"></a>
-<span class="sourceLineNo">927</span>    public static JsonLayout createDefaultLayout() {<a name="line.927"></a>
-<span class="sourceLineNo">928</span>        return new JsonLayout(new DefaultConfiguration(), false, false, false, false, false, false,<a name="line.928"></a>
-<span class="sourceLineNo">929</span>                DEFAULT_HEADER, DEFAULT_FOOTER, StandardCharsets.UTF_8);<a name="line.929"></a>
-<span class="sourceLineNo">930</span>    }<a name="line.930"></a>
-<span class="sourceLineNo">931</span><a name="line.931"></a>
-<span class="sourceLineNo">932</span>    @Override<a name="line.932"></a>
-<span class="sourceLineNo">933</span>    public void toSerializable(final LogEvent event, final Writer writer) throws IOException {<a name="line.933"></a>
-<span class="sourceLineNo">934</span>        if (complete &amp;&amp; eventCount &gt; 0) {<a name="line.934"></a>
-<span class="sourceLineNo">935</span>            writer.append(", ");<a name="line.935"></a>
-<span class="sourceLineNo">936</span>        }<a name="line.936"></a>
-<span class="sourceLineNo">937</span>        super.toSerializable(event, writer);<a name="line.937"></a>
-<span class="sourceLineNo">938</span>    }<a name="line.938"></a>
-<span class="sourceLineNo">939</span>}<a name="line.939"></a>
+<span class="sourceLineNo">813</span>            final String footerPattern, final Charset charset, final boolean includeStacktrace) {<a name="line.813"></a>
+<span class="sourceLineNo">814</span>        super(config, new JacksonFactory.JSON(encodeThreadContextAsList, includeStacktrace).newWriter(<a name="line.814"></a>
+<span class="sourceLineNo">815</span>                    locationInfo, properties, compact),<a name="line.815"></a>
+<span class="sourceLineNo">816</span>                charset, compact, complete, eventEol,<a name="line.816"></a>
+<span class="sourceLineNo">817</span>                PatternLayout.createSerializer(config, null, headerPattern, DEFAULT_HEADER, null, false, false),<a name="line.817"></a>
+<span class="sourceLineNo">818</span>                PatternLayout.createSerializer(config, null, footerPattern, DEFAULT_FOOTER, null, false, false));<a name="line.818"></a>
+<span class="sourceLineNo">819</span>    }<a name="line.819"></a>
+<span class="sourceLineNo">820</span><a name="line.820"></a>
+<span class="sourceLineNo">821</span>    /**<a name="line.821"></a>
+<span class="sourceLineNo">822</span>     * Returns appropriate JSON header.<a name="line.822"></a>
+<span class="sourceLineNo">823</span>     *<a name="line.823"></a>
+<span class="sourceLineNo">824</span>     * @return a byte array containing the header, opening the JSON array.<a name="line.824"></a>
+<span class="sourceLineNo">825</span>     */<a name="line.825"></a>
+<span class="sourceLineNo">826</span>    @Override<a name="line.826"></a>
+<span class="sourceLineNo">827</span>    public byte[] getHeader() {<a name="line.827"></a>
+<span class="sourceLineNo">828</span>        if (!this.complete) {<a name="line.828"></a>
+<span class="sourceLineNo">829</span>            return null;<a name="line.829"></a>
+<span class="sourceLineNo">830</span>        }<a name="line.830"></a>
+<span class="sourceLineNo">831</span>        final StringBuilder buf = new StringBuilder();<a name="line.831"></a>
+<span class="sourceLineNo">832</span>        final String str = serializeToString(getHeaderSerializer());<a name="line.832"></a>
+<span class="sourceLineNo">833</span>        if (str != null) {<a name="line.833"></a>
+<span class="sourceLineNo">834</span>            buf.append(str);<a name="line.834"></a>
+<span class="sourceLineNo">835</span>        }<a name="line.835"></a>
+<span class="sourceLineNo">836</span>        buf.append(this.eol);<a name="line.836"></a>
+<span class="sourceLineNo">837</span>        return getBytes(buf.toString());<a name="line.837"></a>
+<span class="sourceLineNo">838</span>    }<a name="line.838"></a>
+<span class="sourceLineNo">839</span><a name="line.839"></a>
+<span class="sourceLineNo">840</span>    /**<a name="line.840"></a>
+<span class="sourceLineNo">841</span>     * Returns appropriate JSON footer.<a name="line.841"></a>
+<span class="sourceLineNo">842</span>     *<a name="line.842"></a>
+<span class="sourceLineNo">843</span>     * @return a byte array containing the footer, closing the JSON array.<a name="line.843"></a>
+<span class="sourceLineNo">844</span>     */<a name="line.844"></a>
+<span class="sourceLineNo">845</span>    @Override<a name="line.845"></a>
+<span class="sourceLineNo">846</span>    public byte[] getFooter() {<a name="line.846"></a>
+<span class="sourceLineNo">847</span>        if (!this.complete) {<a name="line.847"></a>
+<span class="sourceLineNo">848</span>            return null;<a name="line.848"></a>
+<span class="sourceLineNo">849</span>        }<a name="line.849"></a>
+<span class="sourceLineNo">850</span>        final StringBuilder buf = new StringBuilder();<a name="line.850"></a>
+<span class="sourceLineNo">851</span>        buf.append(this.eol);<a name="line.851"></a>
+<span class="sourceLineNo">852</span>        final String str = serializeToString(getFooterSerializer());<a name="line.852"></a>
+<span class="sourceLineNo">853</span>        if (str != null) {<a name="line.853"></a>
+<span class="sourceLineNo">854</span>            buf.append(str);<a name="line.854"></a>
+<span class="sourceLineNo">855</span>        }<a name="line.855"></a>
+<span class="sourceLineNo">856</span>        buf.append(this.eol);<a name="line.856"></a>
+<span class="sourceLineNo">857</span>        return getBytes(buf.toString());<a name="line.857"></a>
+<span class="sourceLineNo">858</span>    }<a name="line.858"></a>
+<span class="sourceLineNo">859</span><a name="line.859"></a>
+<span class="sourceLineNo">860</span>    @Override<a name="line.860"></a>
+<span class="sourceLineNo">861</span>    public Map&lt;String, String&gt; getContentFormat() {<a name="line.861"></a>
+<span class="sourceLineNo">862</span>        final Map&lt;String, String&gt; result = new HashMap&lt;&gt;();<a name="line.862"></a>
+<span class="sourceLineNo">863</span>        result.put("version", "2.0");<a name="line.863"></a>
+<span class="sourceLineNo">864</span>        return result;<a name="line.864"></a>
+<span class="sourceLineNo">865</span>    }<a name="line.865"></a>
+<span class="sourceLineNo">866</span><a name="line.866"></a>
+<span class="sourceLineNo">867</span>    @Override<a name="line.867"></a>
+<span class="sourceLineNo">868</span>    /**<a name="line.868"></a>
+<span class="sourceLineNo">869</span>     * @return The content type.<a name="line.869"></a>
+<span class="sourceLineNo">870</span>     */<a name="line.870"></a>
+<span class="sourceLineNo">871</span>    public String getContentType() {<a name="line.871"></a>
+<span class="sourceLineNo">872</span>        return CONTENT_TYPE + "; charset=" + this.getCharset();<a name="line.872"></a>
+<span class="sourceLineNo">873</span>    }<a name="line.873"></a>
+<span class="sourceLineNo">874</span><a name="line.874"></a>
+<span class="sourceLineNo">875</span>    /**<a name="line.875"></a>
+<span class="sourceLineNo">876</span>     * Creates a JSON Layout.<a name="line.876"></a>
+<span class="sourceLineNo">877</span>     * @param config<a name="line.877"></a>
+<span class="sourceLineNo">878</span>     *           The plugin configuration.<a name="line.878"></a>
+<span class="sourceLineNo">879</span>     * @param locationInfo<a name="line.879"></a>
+<span class="sourceLineNo">880</span>     *            If "true", includes the location information in the generated JSON.<a name="line.880"></a>
+<span class="sourceLineNo">881</span>     * @param properties<a name="line.881"></a>
+<span class="sourceLineNo">882</span>     *            If "true", includes the thread context map in the generated JSON.<a name="line.882"></a>
+<span class="sourceLineNo">883</span>     * @param propertiesAsList<a name="line.883"></a>
+<span class="sourceLineNo">884</span>     *            If true, the thread context map is included as a list of map entry objects, where each entry has<a name="line.884"></a>
+<span class="sourceLineNo">885</span>     *            a "key" attribute (whose value is the key) and a "value" attribute (whose value is the value).<a name="line.885"></a>
+<span class="sourceLineNo">886</span>     *            Defaults to false, in which case the thread context map is included as a simple map of key-value<a name="line.886"></a>
+<span class="sourceLineNo">887</span>     *            pairs.<a name="line.887"></a>
+<span class="sourceLineNo">888</span>     * @param complete<a name="line.888"></a>
+<span class="sourceLineNo">889</span>     *            If "true", includes the JSON header and footer, and comma between records.<a name="line.889"></a>
+<span class="sourceLineNo">890</span>     * @param compact<a name="line.890"></a>
+<span class="sourceLineNo">891</span>     *            If "true", does not use end-of-lines and indentation, defaults to "false".<a name="line.891"></a>
+<span class="sourceLineNo">892</span>     * @param eventEol<a name="line.892"></a>
+<span class="sourceLineNo">893</span>     *            If "true", forces an EOL after each log event (even if compact is "true"), defaults to "false". This<a name="line.893"></a>
+<span class="sourceLineNo">894</span>     *            allows one even per line, even in compact mode.<a name="line.894"></a>
+<span class="sourceLineNo">895</span>     * @param headerPattern<a name="line.895"></a>
+<span class="sourceLineNo">896</span>     *            The header pattern, defaults to {@code "["} if null.<a name="line.896"></a>
+<span class="sourceLineNo">897</span>     * @param footerPattern<a name="line.897"></a>
+<span class="sourceLineNo">898</span>     *            The header pattern, defaults to {@code "]"} if null.<a name="line.898"></a>
+<span class="sourceLineNo">899</span>     * @param charset<a name="line.899"></a>
+<span class="sourceLineNo">900</span>     *            The character set to use, if {@code null}, uses "UTF-8".<a name="line.900"></a>
+<span class="sourceLineNo">901</span>     * @param includeStacktrace<a name="line.901"></a>
+<span class="sourceLineNo">902</span>     *            If "true", includes the stacktrace of any Throwable in the generated JSON, defaults to "true".<a name="line.902"></a>
+<span class="sourceLineNo">903</span>     * @return A JSON Layout.<a name="line.903"></a>
+<span class="sourceLineNo">904</span>     */<a name="line.904"></a>
+<span class="sourceLineNo">905</span>    @PluginFactory<a name="line.905"></a>
+<span class="sourceLineNo">906</span>    public static JsonLayout createLayout(<a name="line.906"></a>
+<span class="sourceLineNo">907</span>            // @formatter:off<a name="line.907"></a>
+<span class="sourceLineNo">908</span>            @PluginConfiguration final Configuration config,<a name="line.908"></a>
+<span class="sourceLineNo">909</span>            @PluginAttribute(value = "locationInfo", defaultBoolean = false) final boolean locationInfo,<a name="line.909"></a>
+<span class="sourceLineNo">910</span>            @PluginAttribute(value = "properties", defaultBoolean = false) final boolean properties,<a name="line.910"></a>
+<span class="sourceLineNo">911</span>            @PluginAttribute(value = "propertiesAsList", defaultBoolean = false) final boolean propertiesAsList,<a name="line.911"></a>
+<span class="sourceLineNo">912</span>            @PluginAttribute(value = "complete", defaultBoolean = false) final boolean complete,<a name="line.912"></a>
+<span class="sourceLineNo">913</span>            @PluginAttribute(value = "compact", defaultBoolean = false) final boolean compact,<a name="line.913"></a>
+<span class="sourceLineNo">914</span>            @PluginAttribute(value = "eventEol", defaultBoolean = false) final boolean eventEol,<a name="line.914"></a>
+<span class="sourceLineNo">915</span>            @PluginAttribute(value = "header", defaultString = DEFAULT_HEADER) final String headerPattern,<a name="line.915"></a>
+<span class="sourceLineNo">916</span>            @PluginAttribute(value = "footer", defaultString = DEFAULT_FOOTER) final String footerPattern,<a name="line.916"></a>
+<span class="sourceLineNo">917</span>            @PluginAttribute(value = "charset", defaultString = "UTF-8") final Charset charset,<a name="line.917"></a>
+<span class="sourceLineNo">918</span>            @PluginAttribute(value = "includeStacktrace", defaultBoolean = true) final boolean includeStacktrace<a name="line.918"></a>
+<span class="sourceLineNo">919</span>            // @formatter:on<a name="line.919"></a>
+<span class="sourceLineNo">920</span>    ) {<a name="line.920"></a>
+<span class="sourceLineNo">921</span>        final boolean encodeThreadContextAsList = properties &amp;&amp; propertiesAsList;<a name="line.921"></a>
+<span class="sourceLineNo">922</span>        return new JsonLayout(config, locationInfo, properties, encodeThreadContextAsList, complete, compact, eventEol,<a name="line.922"></a>
+<span class="sourceLineNo">923</span>                headerPattern, footerPattern, charset, includeStacktrace);<a name="line.923"></a>
+<span class="sourceLineNo">924</span>    }<a name="line.924"></a>
+<span class="sourceLineNo">925</span><a name="line.925"></a>
+<span class="sourceLineNo">926</span>    /**<a name="line.926"></a>
+<span class="sourceLineNo">927</span>     * Creates a JSON Layout using the default settings. Useful for testing.<a name="line.927"></a>
+<span class="sourceLineNo">928</span>     *<a name="line.928"></a>
+<span class="sourceLineNo">929</span>     * @return A JSON Layout.<a name="line.929"></a>
+<span class="sourceLineNo">930</span>     */<a name="line.930"></a>
+<span class="sourceLineNo">931</span>    public static JsonLayout createDefaultLayout() {<a name="line.931"></a>
+<span class="sourceLineNo">932</span>        return new JsonLayout(new DefaultConfiguration(), false, false, false, false, false, false,<a name="line.932"></a>
+<span class="sourceLineNo">933</span>                DEFAULT_HEADER, DEFAULT_FOOTER, StandardCharsets.UTF_8, true);<a name="line.933"></a>
+<span class="sourceLineNo">934</span>    }<a name="line.934"></a>
+<span class="sourceLineNo">935</span><a name="line.935"></a>
+<span class="sourceLineNo">936</span>    @Override<a name="line.936"></a>
+<span class="sourceLineNo">937</span>    public void toSerializable(final LogEvent event, final Writer writer) throws IOException {<a name="line.937"></a>
+<span class="sourceLineNo">938</span>        if (complete &amp;&amp; eventCount &gt; 0) {<a name="line.938"></a>
+<span class="sourceLineNo">939</span>            writer.append(", ");<a name="line.939"></a>
+<span class="sourceLineNo">940</span>        }<a name="line.940"></a>
+<span class="sourceLineNo">941</span>        super.toSerializable(event, writer);<a name="line.941"></a>
+<span class="sourceLineNo">942</span>    }<a name="line.942"></a>
+<span class="sourceLineNo">943</span>}<a name="line.943"></a>
 
 
 

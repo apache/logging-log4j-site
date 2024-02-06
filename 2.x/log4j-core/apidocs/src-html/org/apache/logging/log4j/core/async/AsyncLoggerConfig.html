@@ -26,211 +26,215 @@
 <span class="sourceLineNo">018</span><a name="line.18"></a>
 <span class="sourceLineNo">019</span>import java.util.Arrays;<a name="line.19"></a>
 <span class="sourceLineNo">020</span>import java.util.List;<a name="line.20"></a>
-<span class="sourceLineNo">021</span><a name="line.21"></a>
-<span class="sourceLineNo">022</span>import org.apache.logging.log4j.Level;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import org.apache.logging.log4j.LogManager;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import org.apache.logging.log4j.core.Filter;<a name="line.24"></a>
-<span class="sourceLineNo">025</span>import org.apache.logging.log4j.core.LogEvent;<a name="line.25"></a>
-<span class="sourceLineNo">026</span>import org.apache.logging.log4j.core.config.AppenderRef;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import org.apache.logging.log4j.core.config.Configuration;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import org.apache.logging.log4j.core.config.LoggerConfig;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import org.apache.logging.log4j.core.config.Node;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>import org.apache.logging.log4j.core.config.Property;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.31"></a>
-<span class="sourceLineNo">032</span>import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>import org.apache.logging.log4j.core.config.plugins.PluginElement;<a name="line.34"></a>
-<span class="sourceLineNo">035</span>import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.35"></a>
-<span class="sourceLineNo">036</span>import org.apache.logging.log4j.core.jmx.RingBufferAdmin;<a name="line.36"></a>
-<span class="sourceLineNo">037</span>import org.apache.logging.log4j.core.util.Booleans;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import org.apache.logging.log4j.util.Strings;<a name="line.38"></a>
-<span class="sourceLineNo">039</span><a name="line.39"></a>
-<span class="sourceLineNo">040</span>/**<a name="line.40"></a>
-<span class="sourceLineNo">041</span> * Asynchronous Logger object that is created via configuration and can be<a name="line.41"></a>
-<span class="sourceLineNo">042</span> * combined with synchronous loggers.<a name="line.42"></a>
-<span class="sourceLineNo">043</span> * &lt;p&gt;<a name="line.43"></a>
-<span class="sourceLineNo">044</span> * AsyncLoggerConfig is a logger designed for high throughput and low latency<a name="line.44"></a>
-<span class="sourceLineNo">045</span> * logging. It does not perform any I/O in the calling (application) thread, but<a name="line.45"></a>
-<span class="sourceLineNo">046</span> * instead hands off the work to another thread as soon as possible. The actual<a name="line.46"></a>
-<span class="sourceLineNo">047</span> * logging is performed in the background thread. It uses the LMAX Disruptor<a name="line.47"></a>
-<span class="sourceLineNo">048</span> * library for inter-thread communication. (&lt;a<a name="line.48"></a>
-<span class="sourceLineNo">049</span> * href="http://lmax-exchange.github.com/disruptor/"<a name="line.49"></a>
-<span class="sourceLineNo">050</span> * &gt;http://lmax-exchange.github.com/disruptor/&lt;/a&gt;)<a name="line.50"></a>
-<span class="sourceLineNo">051</span> * &lt;p&gt;<a name="line.51"></a>
-<span class="sourceLineNo">052</span> * To use AsyncLoggerConfig, specify {@code &lt;asyncLogger&gt;} or<a name="line.52"></a>
-<span class="sourceLineNo">053</span> * {@code &lt;asyncRoot&gt;} in configuration.<a name="line.53"></a>
-<span class="sourceLineNo">054</span> * &lt;p&gt;<a name="line.54"></a>
-<span class="sourceLineNo">055</span> * Note that for performance reasons, this logger does not include source<a name="line.55"></a>
-<span class="sourceLineNo">056</span> * location by default. You need to specify {@code includeLocation="true"} in<a name="line.56"></a>
-<span class="sourceLineNo">057</span> * the configuration or any %class, %location or %line conversion patterns in<a name="line.57"></a>
-<span class="sourceLineNo">058</span> * your log4j.xml configuration will produce either a "?" character or no output<a name="line.58"></a>
-<span class="sourceLineNo">059</span> * at all.<a name="line.59"></a>
-<span class="sourceLineNo">060</span> * &lt;p&gt;<a name="line.60"></a>
-<span class="sourceLineNo">061</span> * For best performance, use AsyncLoggerConfig with the RandomAccessFileAppender or<a name="line.61"></a>
-<span class="sourceLineNo">062</span> * RollingRandomAccessFileAppender, with immediateFlush=false. These appenders have<a name="line.62"></a>
-<span class="sourceLineNo">063</span> * built-in support for the batching mechanism used by the Disruptor library,<a name="line.63"></a>
-<span class="sourceLineNo">064</span> * and they will flush to disk at the end of each batch. This means that even<a name="line.64"></a>
-<span class="sourceLineNo">065</span> * with immediateFlush=false, there will never be any items left in the buffer;<a name="line.65"></a>
-<span class="sourceLineNo">066</span> * all log events will all be written to disk in a very efficient manner.<a name="line.66"></a>
-<span class="sourceLineNo">067</span> */<a name="line.67"></a>
-<span class="sourceLineNo">068</span>@Plugin(name = "asyncLogger", category = Node.CATEGORY, printObject = true)<a name="line.68"></a>
-<span class="sourceLineNo">069</span>public class AsyncLoggerConfig extends LoggerConfig {<a name="line.69"></a>
-<span class="sourceLineNo">070</span><a name="line.70"></a>
-<span class="sourceLineNo">071</span>    private final AsyncLoggerConfigDelegate delegate;<a name="line.71"></a>
-<span class="sourceLineNo">072</span><a name="line.72"></a>
-<span class="sourceLineNo">073</span>    protected AsyncLoggerConfig(final String name,<a name="line.73"></a>
-<span class="sourceLineNo">074</span>            final List&lt;AppenderRef&gt; appenders, final Filter filter,<a name="line.74"></a>
-<span class="sourceLineNo">075</span>            final Level level, final boolean additive,<a name="line.75"></a>
-<span class="sourceLineNo">076</span>            final Property[] properties, final Configuration config,<a name="line.76"></a>
-<span class="sourceLineNo">077</span>            final boolean includeLocation) {<a name="line.77"></a>
-<span class="sourceLineNo">078</span>        super(name, appenders, filter, level, additive, properties, config,<a name="line.78"></a>
-<span class="sourceLineNo">079</span>                includeLocation);<a name="line.79"></a>
-<span class="sourceLineNo">080</span>        delegate = config.getAsyncLoggerConfigDelegate();<a name="line.80"></a>
-<span class="sourceLineNo">081</span>        delegate.setLogEventFactory(getLogEventFactory());<a name="line.81"></a>
-<span class="sourceLineNo">082</span>    }<a name="line.82"></a>
-<span class="sourceLineNo">083</span><a name="line.83"></a>
-<span class="sourceLineNo">084</span>    /**<a name="line.84"></a>
-<span class="sourceLineNo">085</span>     * Passes on the event to a separate thread that will call<a name="line.85"></a>
-<span class="sourceLineNo">086</span>     * {@link #asyncCallAppenders(LogEvent)}.<a name="line.86"></a>
-<span class="sourceLineNo">087</span>     */<a name="line.87"></a>
-<span class="sourceLineNo">088</span>    @Override<a name="line.88"></a>
-<span class="sourceLineNo">089</span>    protected void callAppenders(final LogEvent event) {<a name="line.89"></a>
-<span class="sourceLineNo">090</span>        populateLazilyInitializedFields(event);<a name="line.90"></a>
-<span class="sourceLineNo">091</span><a name="line.91"></a>
-<span class="sourceLineNo">092</span>        if (!delegate.tryEnqueue(event, this)) {<a name="line.92"></a>
-<span class="sourceLineNo">093</span>            final EventRoute eventRoute = delegate.getEventRoute(event.getLevel());<a name="line.93"></a>
-<span class="sourceLineNo">094</span>            eventRoute.logMessage(this, event);<a name="line.94"></a>
-<span class="sourceLineNo">095</span>        }<a name="line.95"></a>
-<span class="sourceLineNo">096</span>    }<a name="line.96"></a>
-<span class="sourceLineNo">097</span><a name="line.97"></a>
-<span class="sourceLineNo">098</span>    private void populateLazilyInitializedFields(final LogEvent event) {<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        event.getSource();<a name="line.99"></a>
-<span class="sourceLineNo">100</span>        event.getThreadName();<a name="line.100"></a>
-<span class="sourceLineNo">101</span>    }<a name="line.101"></a>
-<span class="sourceLineNo">102</span><a name="line.102"></a>
-<span class="sourceLineNo">103</span>    void callAppendersInCurrentThread(final LogEvent event) {<a name="line.103"></a>
-<span class="sourceLineNo">104</span>        super.callAppenders(event);<a name="line.104"></a>
-<span class="sourceLineNo">105</span>    }<a name="line.105"></a>
-<span class="sourceLineNo">106</span><a name="line.106"></a>
-<span class="sourceLineNo">107</span>    void callAppendersInBackgroundThread(final LogEvent event) {<a name="line.107"></a>
-<span class="sourceLineNo">108</span>        delegate.enqueueEvent(event, this);<a name="line.108"></a>
-<span class="sourceLineNo">109</span>    }<a name="line.109"></a>
-<span class="sourceLineNo">110</span><a name="line.110"></a>
-<span class="sourceLineNo">111</span>    /** Called by AsyncLoggerConfigHelper.RingBufferLog4jEventHandler. */<a name="line.111"></a>
-<span class="sourceLineNo">112</span>    void asyncCallAppenders(final LogEvent event) {<a name="line.112"></a>
-<span class="sourceLineNo">113</span>        super.callAppenders(event);<a name="line.113"></a>
-<span class="sourceLineNo">114</span>    }<a name="line.114"></a>
-<span class="sourceLineNo">115</span><a name="line.115"></a>
-<span class="sourceLineNo">116</span>    private String displayName() {<a name="line.116"></a>
-<span class="sourceLineNo">117</span>        return LogManager.ROOT_LOGGER_NAME.equals(getName()) ? LoggerConfig.ROOT : getName();<a name="line.117"></a>
-<span class="sourceLineNo">118</span>    }<a name="line.118"></a>
-<span class="sourceLineNo">119</span><a name="line.119"></a>
-<span class="sourceLineNo">120</span>    @Override<a name="line.120"></a>
-<span class="sourceLineNo">121</span>    public void start() {<a name="line.121"></a>
-<span class="sourceLineNo">122</span>        LOGGER.trace("AsyncLoggerConfig[{}] starting...", displayName());<a name="line.122"></a>
-<span class="sourceLineNo">123</span>        super.start();<a name="line.123"></a>
-<span class="sourceLineNo">124</span>    }<a name="line.124"></a>
-<span class="sourceLineNo">125</span><a name="line.125"></a>
-<span class="sourceLineNo">126</span>    @Override<a name="line.126"></a>
-<span class="sourceLineNo">127</span>    public void stop() {<a name="line.127"></a>
-<span class="sourceLineNo">128</span>        LOGGER.trace("AsyncLoggerConfig[{}] stopping...", displayName());<a name="line.128"></a>
-<span class="sourceLineNo">129</span>        super.stop();<a name="line.129"></a>
-<span class="sourceLineNo">130</span>    }<a name="line.130"></a>
-<span class="sourceLineNo">131</span><a name="line.131"></a>
-<span class="sourceLineNo">132</span>    /**<a name="line.132"></a>
-<span class="sourceLineNo">133</span>     * Creates and returns a new {@code RingBufferAdmin} that instruments the<a name="line.133"></a>
-<span class="sourceLineNo">134</span>     * ringbuffer of this {@code AsyncLoggerConfig}.<a name="line.134"></a>
-<span class="sourceLineNo">135</span>     *<a name="line.135"></a>
-<span class="sourceLineNo">136</span>     * @param contextName name of the {@code LoggerContext}<a name="line.136"></a>
-<span class="sourceLineNo">137</span>     * @return a new {@code RingBufferAdmin} that instruments the ringbuffer<a name="line.137"></a>
-<span class="sourceLineNo">138</span>     */<a name="line.138"></a>
-<span class="sourceLineNo">139</span>    public RingBufferAdmin createRingBufferAdmin(final String contextName) {<a name="line.139"></a>
-<span class="sourceLineNo">140</span>        return delegate.createRingBufferAdmin(contextName, getName());<a name="line.140"></a>
-<span class="sourceLineNo">141</span>    }<a name="line.141"></a>
-<span class="sourceLineNo">142</span><a name="line.142"></a>
-<span class="sourceLineNo">143</span>    /**<a name="line.143"></a>
-<span class="sourceLineNo">144</span>     * Factory method to create a LoggerConfig.<a name="line.144"></a>
-<span class="sourceLineNo">145</span>     *<a name="line.145"></a>
-<span class="sourceLineNo">146</span>     * @param additivity True if additive, false otherwise.<a name="line.146"></a>
-<span class="sourceLineNo">147</span>     * @param levelName The Level to be associated with the Logger.<a name="line.147"></a>
-<span class="sourceLineNo">148</span>     * @param loggerName The name of the Logger.<a name="line.148"></a>
-<span class="sourceLineNo">149</span>     * @param includeLocation "true" if location should be passed downstream<a name="line.149"></a>
-<span class="sourceLineNo">150</span>     * @param refs An array of Appender names.<a name="line.150"></a>
-<span class="sourceLineNo">151</span>     * @param properties Properties to pass to the Logger.<a name="line.151"></a>
-<span class="sourceLineNo">152</span>     * @param config The Configuration.<a name="line.152"></a>
-<span class="sourceLineNo">153</span>     * @param filter A Filter.<a name="line.153"></a>
-<span class="sourceLineNo">154</span>     * @return A new LoggerConfig.<a name="line.154"></a>
-<span class="sourceLineNo">155</span>     */<a name="line.155"></a>
-<span class="sourceLineNo">156</span>    @PluginFactory<a name="line.156"></a>
-<span class="sourceLineNo">157</span>    public static LoggerConfig createLogger(<a name="line.157"></a>
-<span class="sourceLineNo">158</span>            @PluginAttribute("additivity") final String additivity,<a name="line.158"></a>
-<span class="sourceLineNo">159</span>            @PluginAttribute("level") final String levelName,<a name="line.159"></a>
-<span class="sourceLineNo">160</span>            @PluginAttribute("name") final String loggerName,<a name="line.160"></a>
-<span class="sourceLineNo">161</span>            @PluginAttribute("includeLocation") final String includeLocation,<a name="line.161"></a>
-<span class="sourceLineNo">162</span>            @PluginElement("AppenderRef") final AppenderRef[] refs,<a name="line.162"></a>
-<span class="sourceLineNo">163</span>            @PluginElement("Properties") final Property[] properties,<a name="line.163"></a>
-<span class="sourceLineNo">164</span>            @PluginConfiguration final Configuration config,<a name="line.164"></a>
-<span class="sourceLineNo">165</span>            @PluginElement("Filter") final Filter filter) {<a name="line.165"></a>
-<span class="sourceLineNo">166</span>        if (loggerName == null) {<a name="line.166"></a>
-<span class="sourceLineNo">167</span>            LOGGER.error("Loggers cannot be configured without a name");<a name="line.167"></a>
-<span class="sourceLineNo">168</span>            return null;<a name="line.168"></a>
-<span class="sourceLineNo">169</span>        }<a name="line.169"></a>
-<span class="sourceLineNo">170</span><a name="line.170"></a>
-<span class="sourceLineNo">171</span>        final List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.171"></a>
-<span class="sourceLineNo">172</span>        Level level;<a name="line.172"></a>
-<span class="sourceLineNo">173</span>        try {<a name="line.173"></a>
-<span class="sourceLineNo">174</span>            level = Level.toLevel(levelName, Level.ERROR);<a name="line.174"></a>
-<span class="sourceLineNo">175</span>        } catch (final Exception ex) {<a name="line.175"></a>
-<span class="sourceLineNo">176</span>            LOGGER.error(<a name="line.176"></a>
-<span class="sourceLineNo">177</span>                    "Invalid Log level specified: {}. Defaulting to Error",<a name="line.177"></a>
-<span class="sourceLineNo">178</span>                    levelName);<a name="line.178"></a>
-<span class="sourceLineNo">179</span>            level = Level.ERROR;<a name="line.179"></a>
-<span class="sourceLineNo">180</span>        }<a name="line.180"></a>
-<span class="sourceLineNo">181</span>        final String name = loggerName.equals(LoggerConfig.ROOT) ? Strings.EMPTY : loggerName;<a name="line.181"></a>
-<span class="sourceLineNo">182</span>        final boolean additive = Booleans.parseBoolean(additivity, true);<a name="line.182"></a>
-<span class="sourceLineNo">183</span><a name="line.183"></a>
-<span class="sourceLineNo">184</span>        return new AsyncLoggerConfig(name, appenderRefs, filter, level,<a name="line.184"></a>
-<span class="sourceLineNo">185</span>                additive, properties, config, includeLocation(includeLocation));<a name="line.185"></a>
-<span class="sourceLineNo">186</span>    }<a name="line.186"></a>
+<span class="sourceLineNo">021</span>import java.util.concurrent.TimeUnit;<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>import org.apache.logging.log4j.Level;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.apache.logging.log4j.LogManager;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.apache.logging.log4j.core.Filter;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.apache.logging.log4j.core.LogEvent;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.logging.log4j.core.config.AppenderRef;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.logging.log4j.core.config.Configuration;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.apache.logging.log4j.core.config.LoggerConfig;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.logging.log4j.core.config.Node;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.logging.log4j.core.config.Property;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.apache.logging.log4j.core.config.plugins.PluginElement;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.apache.logging.log4j.core.jmx.RingBufferAdmin;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.apache.logging.log4j.core.util.Booleans;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.apache.logging.log4j.util.Strings;<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>/**<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * Asynchronous Logger object that is created via configuration and can be<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * combined with synchronous loggers.<a name="line.43"></a>
+<span class="sourceLineNo">044</span> * &lt;p&gt;<a name="line.44"></a>
+<span class="sourceLineNo">045</span> * AsyncLoggerConfig is a logger designed for high throughput and low latency<a name="line.45"></a>
+<span class="sourceLineNo">046</span> * logging. It does not perform any I/O in the calling (application) thread, but<a name="line.46"></a>
+<span class="sourceLineNo">047</span> * instead hands off the work to another thread as soon as possible. The actual<a name="line.47"></a>
+<span class="sourceLineNo">048</span> * logging is performed in the background thread. It uses the LMAX Disruptor<a name="line.48"></a>
+<span class="sourceLineNo">049</span> * library for inter-thread communication. (&lt;a<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * href="http://lmax-exchange.github.com/disruptor/"<a name="line.50"></a>
+<span class="sourceLineNo">051</span> * &gt;http://lmax-exchange.github.com/disruptor/&lt;/a&gt;)<a name="line.51"></a>
+<span class="sourceLineNo">052</span> * &lt;p&gt;<a name="line.52"></a>
+<span class="sourceLineNo">053</span> * To use AsyncLoggerConfig, specify {@code &lt;asyncLogger&gt;} or<a name="line.53"></a>
+<span class="sourceLineNo">054</span> * {@code &lt;asyncRoot&gt;} in configuration.<a name="line.54"></a>
+<span class="sourceLineNo">055</span> * &lt;p&gt;<a name="line.55"></a>
+<span class="sourceLineNo">056</span> * Note that for performance reasons, this logger does not include source<a name="line.56"></a>
+<span class="sourceLineNo">057</span> * location by default. You need to specify {@code includeLocation="true"} in<a name="line.57"></a>
+<span class="sourceLineNo">058</span> * the configuration or any %class, %location or %line conversion patterns in<a name="line.58"></a>
+<span class="sourceLineNo">059</span> * your log4j.xml configuration will produce either a "?" character or no output<a name="line.59"></a>
+<span class="sourceLineNo">060</span> * at all.<a name="line.60"></a>
+<span class="sourceLineNo">061</span> * &lt;p&gt;<a name="line.61"></a>
+<span class="sourceLineNo">062</span> * For best performance, use AsyncLoggerConfig with the RandomAccessFileAppender or<a name="line.62"></a>
+<span class="sourceLineNo">063</span> * RollingRandomAccessFileAppender, with immediateFlush=false. These appenders have<a name="line.63"></a>
+<span class="sourceLineNo">064</span> * built-in support for the batching mechanism used by the Disruptor library,<a name="line.64"></a>
+<span class="sourceLineNo">065</span> * and they will flush to disk at the end of each batch. This means that even<a name="line.65"></a>
+<span class="sourceLineNo">066</span> * with immediateFlush=false, there will never be any items left in the buffer;<a name="line.66"></a>
+<span class="sourceLineNo">067</span> * all log events will all be written to disk in a very efficient manner.<a name="line.67"></a>
+<span class="sourceLineNo">068</span> */<a name="line.68"></a>
+<span class="sourceLineNo">069</span>@Plugin(name = "asyncLogger", category = Node.CATEGORY, printObject = true)<a name="line.69"></a>
+<span class="sourceLineNo">070</span>public class AsyncLoggerConfig extends LoggerConfig {<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>    private final AsyncLoggerConfigDelegate delegate;<a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>    protected AsyncLoggerConfig(final String name,<a name="line.74"></a>
+<span class="sourceLineNo">075</span>            final List&lt;AppenderRef&gt; appenders, final Filter filter,<a name="line.75"></a>
+<span class="sourceLineNo">076</span>            final Level level, final boolean additive,<a name="line.76"></a>
+<span class="sourceLineNo">077</span>            final Property[] properties, final Configuration config,<a name="line.77"></a>
+<span class="sourceLineNo">078</span>            final boolean includeLocation) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        super(name, appenders, filter, level, additive, properties, config,<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                includeLocation);<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        delegate = config.getAsyncLoggerConfigDelegate();<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        delegate.setLogEventFactory(getLogEventFactory());<a name="line.82"></a>
+<span class="sourceLineNo">083</span>    }<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>    /**<a name="line.85"></a>
+<span class="sourceLineNo">086</span>     * Passes on the event to a separate thread that will call<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     * {@link #asyncCallAppenders(LogEvent)}.<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     */<a name="line.88"></a>
+<span class="sourceLineNo">089</span>    @Override<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    protected void callAppenders(final LogEvent event) {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        populateLazilyInitializedFields(event);<a name="line.91"></a>
+<span class="sourceLineNo">092</span><a name="line.92"></a>
+<span class="sourceLineNo">093</span>        if (!delegate.tryEnqueue(event, this)) {<a name="line.93"></a>
+<span class="sourceLineNo">094</span>            final EventRoute eventRoute = delegate.getEventRoute(event.getLevel());<a name="line.94"></a>
+<span class="sourceLineNo">095</span>            eventRoute.logMessage(this, event);<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        }<a name="line.96"></a>
+<span class="sourceLineNo">097</span>    }<a name="line.97"></a>
+<span class="sourceLineNo">098</span><a name="line.98"></a>
+<span class="sourceLineNo">099</span>    private void populateLazilyInitializedFields(final LogEvent event) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        event.getSource();<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        event.getThreadName();<a name="line.101"></a>
+<span class="sourceLineNo">102</span>    }<a name="line.102"></a>
+<span class="sourceLineNo">103</span><a name="line.103"></a>
+<span class="sourceLineNo">104</span>    void callAppendersInCurrentThread(final LogEvent event) {<a name="line.104"></a>
+<span class="sourceLineNo">105</span>        super.callAppenders(event);<a name="line.105"></a>
+<span class="sourceLineNo">106</span>    }<a name="line.106"></a>
+<span class="sourceLineNo">107</span><a name="line.107"></a>
+<span class="sourceLineNo">108</span>    void callAppendersInBackgroundThread(final LogEvent event) {<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        delegate.enqueueEvent(event, this);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>    }<a name="line.110"></a>
+<span class="sourceLineNo">111</span><a name="line.111"></a>
+<span class="sourceLineNo">112</span>    /** Called by AsyncLoggerConfigHelper.RingBufferLog4jEventHandler. */<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    void asyncCallAppenders(final LogEvent event) {<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        super.callAppenders(event);<a name="line.114"></a>
+<span class="sourceLineNo">115</span>    }<a name="line.115"></a>
+<span class="sourceLineNo">116</span><a name="line.116"></a>
+<span class="sourceLineNo">117</span>    private String displayName() {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        return LogManager.ROOT_LOGGER_NAME.equals(getName()) ? LoggerConfig.ROOT : getName();<a name="line.118"></a>
+<span class="sourceLineNo">119</span>    }<a name="line.119"></a>
+<span class="sourceLineNo">120</span><a name="line.120"></a>
+<span class="sourceLineNo">121</span>    @Override<a name="line.121"></a>
+<span class="sourceLineNo">122</span>    public void start() {<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        LOGGER.trace("AsyncLoggerConfig[{}] starting...", displayName());<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        super.start();<a name="line.124"></a>
+<span class="sourceLineNo">125</span>    }<a name="line.125"></a>
+<span class="sourceLineNo">126</span><a name="line.126"></a>
+<span class="sourceLineNo">127</span>    @Override<a name="line.127"></a>
+<span class="sourceLineNo">128</span>    public boolean stop(final long timeout, final TimeUnit timeUnit) {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        setStopping();<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        super.stop(timeout, timeUnit, false);<a name="line.130"></a>
+<span class="sourceLineNo">131</span>        LOGGER.trace("AsyncLoggerConfig[{}] stopping...", displayName());<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        setStopped();<a name="line.132"></a>
+<span class="sourceLineNo">133</span>        return true;<a name="line.133"></a>
+<span class="sourceLineNo">134</span>    }<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>    /**<a name="line.136"></a>
+<span class="sourceLineNo">137</span>     * Creates and returns a new {@code RingBufferAdmin} that instruments the<a name="line.137"></a>
+<span class="sourceLineNo">138</span>     * ringbuffer of this {@code AsyncLoggerConfig}.<a name="line.138"></a>
+<span class="sourceLineNo">139</span>     *<a name="line.139"></a>
+<span class="sourceLineNo">140</span>     * @param contextName name of the {@code LoggerContext}<a name="line.140"></a>
+<span class="sourceLineNo">141</span>     * @return a new {@code RingBufferAdmin} that instruments the ringbuffer<a name="line.141"></a>
+<span class="sourceLineNo">142</span>     */<a name="line.142"></a>
+<span class="sourceLineNo">143</span>    public RingBufferAdmin createRingBufferAdmin(final String contextName) {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        return delegate.createRingBufferAdmin(contextName, getName());<a name="line.144"></a>
+<span class="sourceLineNo">145</span>    }<a name="line.145"></a>
+<span class="sourceLineNo">146</span><a name="line.146"></a>
+<span class="sourceLineNo">147</span>    /**<a name="line.147"></a>
+<span class="sourceLineNo">148</span>     * Factory method to create a LoggerConfig.<a name="line.148"></a>
+<span class="sourceLineNo">149</span>     *<a name="line.149"></a>
+<span class="sourceLineNo">150</span>     * @param additivity True if additive, false otherwise.<a name="line.150"></a>
+<span class="sourceLineNo">151</span>     * @param levelName The Level to be associated with the Logger.<a name="line.151"></a>
+<span class="sourceLineNo">152</span>     * @param loggerName The name of the Logger.<a name="line.152"></a>
+<span class="sourceLineNo">153</span>     * @param includeLocation "true" if location should be passed downstream<a name="line.153"></a>
+<span class="sourceLineNo">154</span>     * @param refs An array of Appender names.<a name="line.154"></a>
+<span class="sourceLineNo">155</span>     * @param properties Properties to pass to the Logger.<a name="line.155"></a>
+<span class="sourceLineNo">156</span>     * @param config The Configuration.<a name="line.156"></a>
+<span class="sourceLineNo">157</span>     * @param filter A Filter.<a name="line.157"></a>
+<span class="sourceLineNo">158</span>     * @return A new LoggerConfig.<a name="line.158"></a>
+<span class="sourceLineNo">159</span>     */<a name="line.159"></a>
+<span class="sourceLineNo">160</span>    @PluginFactory<a name="line.160"></a>
+<span class="sourceLineNo">161</span>    public static LoggerConfig createLogger(<a name="line.161"></a>
+<span class="sourceLineNo">162</span>            @PluginAttribute("additivity") final String additivity,<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            @PluginAttribute("level") final String levelName,<a name="line.163"></a>
+<span class="sourceLineNo">164</span>            @PluginAttribute("name") final String loggerName,<a name="line.164"></a>
+<span class="sourceLineNo">165</span>            @PluginAttribute("includeLocation") final String includeLocation,<a name="line.165"></a>
+<span class="sourceLineNo">166</span>            @PluginElement("AppenderRef") final AppenderRef[] refs,<a name="line.166"></a>
+<span class="sourceLineNo">167</span>            @PluginElement("Properties") final Property[] properties,<a name="line.167"></a>
+<span class="sourceLineNo">168</span>            @PluginConfiguration final Configuration config,<a name="line.168"></a>
+<span class="sourceLineNo">169</span>            @PluginElement("Filter") final Filter filter) {<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        if (loggerName == null) {<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            LOGGER.error("Loggers cannot be configured without a name");<a name="line.171"></a>
+<span class="sourceLineNo">172</span>            return null;<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        }<a name="line.173"></a>
+<span class="sourceLineNo">174</span><a name="line.174"></a>
+<span class="sourceLineNo">175</span>        final List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        Level level;<a name="line.176"></a>
+<span class="sourceLineNo">177</span>        try {<a name="line.177"></a>
+<span class="sourceLineNo">178</span>            level = Level.toLevel(levelName, Level.ERROR);<a name="line.178"></a>
+<span class="sourceLineNo">179</span>        } catch (final Exception ex) {<a name="line.179"></a>
+<span class="sourceLineNo">180</span>            LOGGER.error(<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                    "Invalid Log level specified: {}. Defaulting to Error",<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                    levelName);<a name="line.182"></a>
+<span class="sourceLineNo">183</span>            level = Level.ERROR;<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        }<a name="line.184"></a>
+<span class="sourceLineNo">185</span>        final String name = loggerName.equals(LoggerConfig.ROOT) ? Strings.EMPTY : loggerName;<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        final boolean additive = Booleans.parseBoolean(additivity, true);<a name="line.186"></a>
 <span class="sourceLineNo">187</span><a name="line.187"></a>
-<span class="sourceLineNo">188</span>    // Note: for asynchronous loggers, includeLocation default is FALSE<a name="line.188"></a>
-<span class="sourceLineNo">189</span>    protected static boolean includeLocation(final String includeLocationConfigValue) {<a name="line.189"></a>
-<span class="sourceLineNo">190</span>        return Boolean.parseBoolean(includeLocationConfigValue);<a name="line.190"></a>
-<span class="sourceLineNo">191</span>    }<a name="line.191"></a>
-<span class="sourceLineNo">192</span><a name="line.192"></a>
-<span class="sourceLineNo">193</span>    /**<a name="line.193"></a>
-<span class="sourceLineNo">194</span>     * An asynchronous root Logger.<a name="line.194"></a>
-<span class="sourceLineNo">195</span>     */<a name="line.195"></a>
-<span class="sourceLineNo">196</span>    @Plugin(name = "asyncRoot", category = "Core", printObject = true)<a name="line.196"></a>
-<span class="sourceLineNo">197</span>    public static class RootLogger extends LoggerConfig {<a name="line.197"></a>
-<span class="sourceLineNo">198</span><a name="line.198"></a>
-<span class="sourceLineNo">199</span>        @PluginFactory<a name="line.199"></a>
-<span class="sourceLineNo">200</span>        public static LoggerConfig createLogger(<a name="line.200"></a>
-<span class="sourceLineNo">201</span>                @PluginAttribute("additivity") final String additivity,<a name="line.201"></a>
-<span class="sourceLineNo">202</span>                @PluginAttribute("level") final String levelName,<a name="line.202"></a>
-<span class="sourceLineNo">203</span>                @PluginAttribute("includeLocation") final String includeLocation,<a name="line.203"></a>
-<span class="sourceLineNo">204</span>                @PluginElement("AppenderRef") final AppenderRef[] refs,<a name="line.204"></a>
-<span class="sourceLineNo">205</span>                @PluginElement("Properties") final Property[] properties,<a name="line.205"></a>
-<span class="sourceLineNo">206</span>                @PluginConfiguration final Configuration config,<a name="line.206"></a>
-<span class="sourceLineNo">207</span>                @PluginElement("Filter") final Filter filter) {<a name="line.207"></a>
-<span class="sourceLineNo">208</span>            final List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.208"></a>
-<span class="sourceLineNo">209</span>            Level level;<a name="line.209"></a>
-<span class="sourceLineNo">210</span>            try {<a name="line.210"></a>
-<span class="sourceLineNo">211</span>                level = Level.toLevel(levelName, Level.ERROR);<a name="line.211"></a>
-<span class="sourceLineNo">212</span>            } catch (final Exception ex) {<a name="line.212"></a>
-<span class="sourceLineNo">213</span>                LOGGER.error(<a name="line.213"></a>
-<span class="sourceLineNo">214</span>                        "Invalid Log level specified: {}. Defaulting to Error",<a name="line.214"></a>
-<span class="sourceLineNo">215</span>                        levelName);<a name="line.215"></a>
-<span class="sourceLineNo">216</span>                level = Level.ERROR;<a name="line.216"></a>
-<span class="sourceLineNo">217</span>            }<a name="line.217"></a>
-<span class="sourceLineNo">218</span>            final boolean additive = Booleans.parseBoolean(additivity, true);<a name="line.218"></a>
-<span class="sourceLineNo">219</span><a name="line.219"></a>
-<span class="sourceLineNo">220</span>            return new AsyncLoggerConfig(LogManager.ROOT_LOGGER_NAME,<a name="line.220"></a>
-<span class="sourceLineNo">221</span>                    appenderRefs, filter, level, additive, properties, config,<a name="line.221"></a>
-<span class="sourceLineNo">222</span>                    AsyncLoggerConfig.includeLocation(includeLocation));<a name="line.222"></a>
-<span class="sourceLineNo">223</span>        }<a name="line.223"></a>
-<span class="sourceLineNo">224</span>    }<a name="line.224"></a>
-<span class="sourceLineNo">225</span>}<a name="line.225"></a>
+<span class="sourceLineNo">188</span>        return new AsyncLoggerConfig(name, appenderRefs, filter, level,<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                additive, properties, config, includeLocation(includeLocation));<a name="line.189"></a>
+<span class="sourceLineNo">190</span>    }<a name="line.190"></a>
+<span class="sourceLineNo">191</span><a name="line.191"></a>
+<span class="sourceLineNo">192</span>    // Note: for asynchronous loggers, includeLocation default is FALSE<a name="line.192"></a>
+<span class="sourceLineNo">193</span>    protected static boolean includeLocation(final String includeLocationConfigValue) {<a name="line.193"></a>
+<span class="sourceLineNo">194</span>        return Boolean.parseBoolean(includeLocationConfigValue);<a name="line.194"></a>
+<span class="sourceLineNo">195</span>    }<a name="line.195"></a>
+<span class="sourceLineNo">196</span><a name="line.196"></a>
+<span class="sourceLineNo">197</span>    /**<a name="line.197"></a>
+<span class="sourceLineNo">198</span>     * An asynchronous root Logger.<a name="line.198"></a>
+<span class="sourceLineNo">199</span>     */<a name="line.199"></a>
+<span class="sourceLineNo">200</span>    @Plugin(name = "asyncRoot", category = "Core", printObject = true)<a name="line.200"></a>
+<span class="sourceLineNo">201</span>    public static class RootLogger extends LoggerConfig {<a name="line.201"></a>
+<span class="sourceLineNo">202</span><a name="line.202"></a>
+<span class="sourceLineNo">203</span>        @PluginFactory<a name="line.203"></a>
+<span class="sourceLineNo">204</span>        public static LoggerConfig createLogger(<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                @PluginAttribute("additivity") final String additivity,<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                @PluginAttribute("level") final String levelName,<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                @PluginAttribute("includeLocation") final String includeLocation,<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                @PluginElement("AppenderRef") final AppenderRef[] refs,<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                @PluginElement("Properties") final Property[] properties,<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                @PluginConfiguration final Configuration config,<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                @PluginElement("Filter") final Filter filter) {<a name="line.211"></a>
+<span class="sourceLineNo">212</span>            final List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.212"></a>
+<span class="sourceLineNo">213</span>            Level level;<a name="line.213"></a>
+<span class="sourceLineNo">214</span>            try {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                level = Level.toLevel(levelName, Level.ERROR);<a name="line.215"></a>
+<span class="sourceLineNo">216</span>            } catch (final Exception ex) {<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                LOGGER.error(<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                        "Invalid Log level specified: {}. Defaulting to Error",<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                        levelName);<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                level = Level.ERROR;<a name="line.220"></a>
+<span class="sourceLineNo">221</span>            }<a name="line.221"></a>
+<span class="sourceLineNo">222</span>            final boolean additive = Booleans.parseBoolean(additivity, true);<a name="line.222"></a>
+<span class="sourceLineNo">223</span><a name="line.223"></a>
+<span class="sourceLineNo">224</span>            return new AsyncLoggerConfig(LogManager.ROOT_LOGGER_NAME,<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                    appenderRefs, filter, level, additive, properties, config,<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                    AsyncLoggerConfig.includeLocation(includeLocation));<a name="line.226"></a>
+<span class="sourceLineNo">227</span>        }<a name="line.227"></a>
+<span class="sourceLineNo">228</span>    }<a name="line.228"></a>
+<span class="sourceLineNo">229</span>}<a name="line.229"></a>
 
 
 

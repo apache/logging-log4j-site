@@ -24,75 +24,75 @@
 <span class="sourceLineNo">016</span> */<a name="line.16"></a>
 <span class="sourceLineNo">017</span>package org.apache.logging.log4j.core.config;<a name="line.17"></a>
 <span class="sourceLineNo">018</span><a name="line.18"></a>
-<span class="sourceLineNo">019</span>import org.apache.logging.log4j.Logger;<a name="line.19"></a>
-<span class="sourceLineNo">020</span>import org.apache.logging.log4j.core.AbstractLifeCycle;<a name="line.20"></a>
-<span class="sourceLineNo">021</span>import org.apache.logging.log4j.core.async.DaemonThreadFactory;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import org.apache.logging.log4j.core.util.CronExpression;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.23"></a>
-<span class="sourceLineNo">024</span><a name="line.24"></a>
-<span class="sourceLineNo">025</span>import java.util.Date;<a name="line.25"></a>
-<span class="sourceLineNo">026</span>import java.util.concurrent.Callable;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import java.util.concurrent.ScheduledExecutorService;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import java.util.concurrent.ScheduledFuture;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import java.util.concurrent.ScheduledThreadPoolExecutor;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>import java.util.concurrent.TimeUnit;<a name="line.30"></a>
-<span class="sourceLineNo">031</span><a name="line.31"></a>
-<span class="sourceLineNo">032</span>/**<a name="line.32"></a>
-<span class="sourceLineNo">033</span> *<a name="line.33"></a>
-<span class="sourceLineNo">034</span> */<a name="line.34"></a>
-<span class="sourceLineNo">035</span>public class ConfigurationScheduler extends AbstractLifeCycle {<a name="line.35"></a>
-<span class="sourceLineNo">036</span><a name="line.36"></a>
-<span class="sourceLineNo">037</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.37"></a>
-<span class="sourceLineNo">038</span>    private ScheduledExecutorService executorService;<a name="line.38"></a>
-<span class="sourceLineNo">039</span><a name="line.39"></a>
-<span class="sourceLineNo">040</span>    private int scheduledItems = 0;<a name="line.40"></a>
-<span class="sourceLineNo">041</span><a name="line.41"></a>
-<span class="sourceLineNo">042</span><a name="line.42"></a>
-<span class="sourceLineNo">043</span>    @Override<a name="line.43"></a>
-<span class="sourceLineNo">044</span>    public void start() {<a name="line.44"></a>
-<span class="sourceLineNo">045</span>        super.start();<a name="line.45"></a>
-<span class="sourceLineNo">046</span>        if (scheduledItems &gt; 0) {<a name="line.46"></a>
-<span class="sourceLineNo">047</span>            LOGGER.debug("Starting {} Log4j2Scheduled threads", scheduledItems);<a name="line.47"></a>
-<span class="sourceLineNo">048</span>            if (scheduledItems &gt; 5) {<a name="line.48"></a>
-<span class="sourceLineNo">049</span>                scheduledItems = 5;<a name="line.49"></a>
-<span class="sourceLineNo">050</span>            }<a name="line.50"></a>
-<span class="sourceLineNo">051</span>            executorService = new ScheduledThreadPoolExecutor(scheduledItems, new DaemonThreadFactory("Log4j2Scheduled-"));<a name="line.51"></a>
-<span class="sourceLineNo">052</span>        } else {<a name="line.52"></a>
-<span class="sourceLineNo">053</span>            LOGGER.debug("No scheduled items");<a name="line.53"></a>
-<span class="sourceLineNo">054</span>        }<a name="line.54"></a>
-<span class="sourceLineNo">055</span>    }<a name="line.55"></a>
-<span class="sourceLineNo">056</span><a name="line.56"></a>
-<span class="sourceLineNo">057</span>    @Override<a name="line.57"></a>
-<span class="sourceLineNo">058</span>    public void stop() {<a name="line.58"></a>
-<span class="sourceLineNo">059</span>        if (executorService != null) {<a name="line.59"></a>
-<span class="sourceLineNo">060</span>            LOGGER.debug("Stopping Log4j2Scheduled threads.");<a name="line.60"></a>
-<span class="sourceLineNo">061</span>            executorService.shutdown();<a name="line.61"></a>
-<span class="sourceLineNo">062</span>        }<a name="line.62"></a>
-<span class="sourceLineNo">063</span>        super.stop();<a name="line.63"></a>
-<span class="sourceLineNo">064</span>    }<a name="line.64"></a>
-<span class="sourceLineNo">065</span><a name="line.65"></a>
-<span class="sourceLineNo">066</span>    /**<a name="line.66"></a>
-<span class="sourceLineNo">067</span>     * Increment the number of threads in the pool.<a name="line.67"></a>
-<span class="sourceLineNo">068</span>     */<a name="line.68"></a>
-<span class="sourceLineNo">069</span>    public void incrementScheduledItems() {<a name="line.69"></a>
-<span class="sourceLineNo">070</span>        if (!isStarted()) {<a name="line.70"></a>
-<span class="sourceLineNo">071</span>            ++scheduledItems;<a name="line.71"></a>
-<span class="sourceLineNo">072</span>        } else {<a name="line.72"></a>
-<span class="sourceLineNo">073</span>            LOGGER.error("Attempted to increment scheduled items after start");<a name="line.73"></a>
-<span class="sourceLineNo">074</span>        }<a name="line.74"></a>
-<span class="sourceLineNo">075</span>    }<a name="line.75"></a>
-<span class="sourceLineNo">076</span><a name="line.76"></a>
-<span class="sourceLineNo">077</span>    /**<a name="line.77"></a>
-<span class="sourceLineNo">078</span>     * Decrement the number of threads in the pool<a name="line.78"></a>
-<span class="sourceLineNo">079</span>     */<a name="line.79"></a>
-<span class="sourceLineNo">080</span>    public void decrementScheduledItems() {<a name="line.80"></a>
-<span class="sourceLineNo">081</span>        if (!isStarted() &amp;&amp; scheduledItems &gt; 0) {<a name="line.81"></a>
-<span class="sourceLineNo">082</span>            --scheduledItems;<a name="line.82"></a>
-<span class="sourceLineNo">083</span>        }<a name="line.83"></a>
-<span class="sourceLineNo">084</span>    }<a name="line.84"></a>
-<span class="sourceLineNo">085</span><a name="line.85"></a>
-<span class="sourceLineNo">086</span>    /**<a name="line.86"></a>
-<span class="sourceLineNo">087</span>     * Creates and executes a ScheduledFuture that becomes enabled after the given delay.<a name="line.87"></a>
+<span class="sourceLineNo">019</span>import java.util.Date;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.util.concurrent.Callable;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.util.concurrent.ScheduledExecutorService;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.util.concurrent.ScheduledFuture;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.util.concurrent.ScheduledThreadPoolExecutor;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.util.concurrent.TimeUnit;<a name="line.24"></a>
+<span class="sourceLineNo">025</span><a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.apache.logging.log4j.core.AbstractLifeCycle;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.logging.log4j.core.util.CronExpression;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.logging.log4j.core.util.Log4jThreadFactory;<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>/**<a name="line.30"></a>
+<span class="sourceLineNo">031</span> *<a name="line.31"></a>
+<span class="sourceLineNo">032</span> */<a name="line.32"></a>
+<span class="sourceLineNo">033</span>public class ConfigurationScheduler extends AbstractLifeCycle {<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>    private static final String SIMPLE_NAME = "Log4j2 " + ConfigurationScheduler.class.getSimpleName();<a name="line.35"></a>
+<span class="sourceLineNo">036</span>    private static final int MAX_SCHEDULED_ITEMS = 5;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>    private ScheduledExecutorService executorService;<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>    private int scheduledItems = 0;<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>    @Override<a name="line.41"></a>
+<span class="sourceLineNo">042</span>    public void start() {<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        super.start();<a name="line.43"></a>
+<span class="sourceLineNo">044</span>        if (scheduledItems &gt; 0) {<a name="line.44"></a>
+<span class="sourceLineNo">045</span>            LOGGER.debug("{} starting {} threads", scheduledItems, SIMPLE_NAME);<a name="line.45"></a>
+<span class="sourceLineNo">046</span>            scheduledItems = Math.min(scheduledItems, MAX_SCHEDULED_ITEMS);<a name="line.46"></a>
+<span class="sourceLineNo">047</span>            executorService = new ScheduledThreadPoolExecutor(scheduledItems,<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                    Log4jThreadFactory.createDaemonThreadFactory("Scheduled"));<a name="line.48"></a>
+<span class="sourceLineNo">049</span>        } else {<a name="line.49"></a>
+<span class="sourceLineNo">050</span>            LOGGER.debug("{}: No scheduled items", SIMPLE_NAME);<a name="line.50"></a>
+<span class="sourceLineNo">051</span>        }<a name="line.51"></a>
+<span class="sourceLineNo">052</span>    }<a name="line.52"></a>
+<span class="sourceLineNo">053</span><a name="line.53"></a>
+<span class="sourceLineNo">054</span>    @Override<a name="line.54"></a>
+<span class="sourceLineNo">055</span>    public boolean stop(final long timeout, final TimeUnit timeUnit) {<a name="line.55"></a>
+<span class="sourceLineNo">056</span>        setStopping();<a name="line.56"></a>
+<span class="sourceLineNo">057</span>        if (executorService != null) {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>            LOGGER.debug("{} shutting down threads in {}", SIMPLE_NAME, executorService);<a name="line.58"></a>
+<span class="sourceLineNo">059</span>            executorService.shutdown();<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        }<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        setStopped();<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        return true;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    }<a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>    /**<a name="line.65"></a>
+<span class="sourceLineNo">066</span>     * Increment the number of threads in the pool.<a name="line.66"></a>
+<span class="sourceLineNo">067</span>     */<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    public void incrementScheduledItems() {<a name="line.68"></a>
+<span class="sourceLineNo">069</span>        if (!isStarted()) {<a name="line.69"></a>
+<span class="sourceLineNo">070</span>            ++scheduledItems;<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        } else {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>            LOGGER.error("{} attempted to increment scheduled items after start", SIMPLE_NAME);<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        }<a name="line.73"></a>
+<span class="sourceLineNo">074</span>    }<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>    /**<a name="line.76"></a>
+<span class="sourceLineNo">077</span>     * Decrement the number of threads in the pool<a name="line.77"></a>
+<span class="sourceLineNo">078</span>     */<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    public void decrementScheduledItems() {<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        if (!isStarted() &amp;&amp; scheduledItems &gt; 0) {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>            --scheduledItems;<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        }<a name="line.82"></a>
+<span class="sourceLineNo">083</span>    }<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>    /**<a name="line.85"></a>
+<span class="sourceLineNo">086</span>     * Creates and executes a ScheduledFuture that becomes enabled after the given delay.<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     * @param &lt;V&gt; The result type returned by this Future<a name="line.87"></a>
 <span class="sourceLineNo">088</span>     * @param callable the function to execute.<a name="line.88"></a>
 <span class="sourceLineNo">089</span>     * @param delay the time from now to delay execution.<a name="line.89"></a>
 <span class="sourceLineNo">090</span>     * @param unit the time unit of the delay parameter.<a name="line.90"></a>
@@ -123,7 +123,7 @@
 <span class="sourceLineNo">115</span>     * @return a ScheduledFuture representing the next time the command will run.<a name="line.115"></a>
 <span class="sourceLineNo">116</span>     */<a name="line.116"></a>
 <span class="sourceLineNo">117</span>    public CronScheduledFuture&lt;?&gt; scheduleWithCron(final CronExpression cronExpression, final Runnable command) {<a name="line.117"></a>
-<span class="sourceLineNo">118</span>        Date fireDate = cronExpression.getNextValidTimeAfter(new Date());<a name="line.118"></a>
+<span class="sourceLineNo">118</span>        final Date fireDate = cronExpression.getNextValidTimeAfter(new Date());<a name="line.118"></a>
 <span class="sourceLineNo">119</span>        final CronRunnable runnable = new CronRunnable(command, cronExpression);<a name="line.119"></a>
 <span class="sourceLineNo">120</span>        final ScheduledFuture&lt;?&gt; future = schedule(runnable, nextFireInterval(fireDate), TimeUnit.MILLISECONDS);<a name="line.120"></a>
 <span class="sourceLineNo">121</span>        final CronScheduledFuture&lt;?&gt; cronScheduledFuture = new CronScheduledFuture&lt;&gt;(future, fireDate);<a name="line.121"></a>
@@ -161,7 +161,7 @@
 <span class="sourceLineNo">153</span>        return executorService.scheduleWithFixedDelay(command, initialDelay, delay, unit);<a name="line.153"></a>
 <span class="sourceLineNo">154</span>    }<a name="line.154"></a>
 <span class="sourceLineNo">155</span><a name="line.155"></a>
-<span class="sourceLineNo">156</span>    public long nextFireInterval(Date fireDate) {<a name="line.156"></a>
+<span class="sourceLineNo">156</span>    public long nextFireInterval(final Date fireDate) {<a name="line.156"></a>
 <span class="sourceLineNo">157</span>        return fireDate.getTime() - new Date().getTime();<a name="line.157"></a>
 <span class="sourceLineNo">158</span>    }<a name="line.158"></a>
 <span class="sourceLineNo">159</span><a name="line.159"></a>
@@ -180,23 +180,21 @@
 <span class="sourceLineNo">172</span>            this.scheduledFuture = future;<a name="line.172"></a>
 <span class="sourceLineNo">173</span>        }<a name="line.173"></a>
 <span class="sourceLineNo">174</span><a name="line.174"></a>
-<span class="sourceLineNo">175</span><a name="line.175"></a>
-<span class="sourceLineNo">176</span><a name="line.176"></a>
-<span class="sourceLineNo">177</span>        @Override<a name="line.177"></a>
-<span class="sourceLineNo">178</span>        public void run() {<a name="line.178"></a>
-<span class="sourceLineNo">179</span>            try {<a name="line.179"></a>
-<span class="sourceLineNo">180</span>                runnable.run();<a name="line.180"></a>
-<span class="sourceLineNo">181</span>            } catch(final Throwable ex) {<a name="line.181"></a>
-<span class="sourceLineNo">182</span>                LOGGER.error("Error running command", ex);<a name="line.182"></a>
-<span class="sourceLineNo">183</span>            } finally {<a name="line.183"></a>
-<span class="sourceLineNo">184</span>                Date fireDate = cronExpression.getNextInvalidTimeAfter(new Date());<a name="line.184"></a>
-<span class="sourceLineNo">185</span>                final ScheduledFuture&lt;?&gt; future = schedule(this, nextFireInterval(fireDate), TimeUnit.MILLISECONDS);<a name="line.185"></a>
-<span class="sourceLineNo">186</span>                scheduledFuture.reset(future, fireDate);<a name="line.186"></a>
-<span class="sourceLineNo">187</span>            }<a name="line.187"></a>
-<span class="sourceLineNo">188</span>        }<a name="line.188"></a>
-<span class="sourceLineNo">189</span>    }<a name="line.189"></a>
-<span class="sourceLineNo">190</span><a name="line.190"></a>
-<span class="sourceLineNo">191</span>}<a name="line.191"></a>
+<span class="sourceLineNo">175</span>        @Override<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        public void run() {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>            try {<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                runnable.run();<a name="line.178"></a>
+<span class="sourceLineNo">179</span>            } catch(final Throwable ex) {<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                LOGGER.error("{} caught error running command", SIMPLE_NAME, ex);<a name="line.180"></a>
+<span class="sourceLineNo">181</span>            } finally {<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                final Date fireDate = cronExpression.getNextValidTimeAfter(new Date());<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                final ScheduledFuture&lt;?&gt; future = schedule(this, nextFireInterval(fireDate), TimeUnit.MILLISECONDS);<a name="line.183"></a>
+<span class="sourceLineNo">184</span>                scheduledFuture.reset(future, fireDate);<a name="line.184"></a>
+<span class="sourceLineNo">185</span>            }<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        }<a name="line.186"></a>
+<span class="sourceLineNo">187</span>    }<a name="line.187"></a>
+<span class="sourceLineNo">188</span><a name="line.188"></a>
+<span class="sourceLineNo">189</span>}<a name="line.189"></a>
 
 
 
