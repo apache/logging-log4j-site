@@ -40,13 +40,13 @@
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.LoaderUtil;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.PropertiesUtil;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.ProviderUtil;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.ReflectionUtil;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.StackLocatorUtil;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.Strings;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * The anchor point for the logging system. The most common usage of this class is to obtain a named {@link Logger}. The</em>
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * method {@link #getLogger()} is provided as the most convenient way to obtain a named Logger based on the calling</em>
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> * class name. This class also provides method for obtaining named Loggers that use</em>
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * The anchor point for the Log4j logging system. The most common usage of this class is to obtain a named</em>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * {@link Logger}. The method {@link #getLogger()} is provided as the most convenient way to obtain a named Logger based</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> * on the calling class name. This class also provides method for obtaining named Loggers that use</em>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> * {@link String#format(String, Object...)} style messages instead of the default type of parameterized messages. These</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment"> * are obtained through the {@link #getFormatterLogger(Class)} family of methods. Other service provider methods are</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment"> * given through the {@link #getContext()} and {@link #getFactory()} family of methods; these methods are not normally</em>
@@ -101,8 +101,8 @@
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>                          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>                              factories.put(provider.getPriority(), factoryClass.newInstance());
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>                          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>                              LOGGER.error(<span class="jxr_string">"Unable to create class {} specified in {}"</span>, factoryClass.getName(), provider
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>                                      .getUrl().toString(), e);
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>                              LOGGER.error(<span class="jxr_string">"Unable to create class {} specified in provider URL {}"</span>, factoryClass.getName(), provider
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>                                      .getUrl(), e);
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>                          }
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>                      }
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>                 }
@@ -426,7 +426,7 @@
 <a class="jxr_linenumber" name="L418" href="#L418">418</a> <em class="jxr_javadoccomment">     * @since 2.4</em>
 <a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L420" href="#L420">420</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getFormatterLogger() {
-<a class="jxr_linenumber" name="L421" href="#L421">421</a>         <strong class="jxr_keyword">return</strong> getFormatterLogger(ReflectionUtil.getCallerClass(2));
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>         <strong class="jxr_keyword">return</strong> getFormatterLogger(StackLocatorUtil.getCallerClass(2));
 <a class="jxr_linenumber" name="L422" href="#L422">422</a>     }
 <a class="jxr_linenumber" name="L423" href="#L423">423</a> 
 <a class="jxr_linenumber" name="L424" href="#L424">424</a>     <em class="jxr_javadoccomment">/**</em>
@@ -457,7 +457,7 @@
 <a class="jxr_linenumber" name="L449" href="#L449">449</a> <em class="jxr_javadoccomment">     * @see StringFormatterMessageFactory</em>
 <a class="jxr_linenumber" name="L450" href="#L450">450</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L451" href="#L451">451</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getFormatterLogger(<strong class="jxr_keyword">final</strong> Class&lt;?&gt; clazz) {
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>         <strong class="jxr_keyword">return</strong> getLogger(clazz != <strong class="jxr_keyword">null</strong> ? clazz : ReflectionUtil.getCallerClass(2),
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>         <strong class="jxr_keyword">return</strong> getLogger(clazz != <strong class="jxr_keyword">null</strong> ? clazz : StackLocatorUtil.getCallerClass(2),
 <a class="jxr_linenumber" name="L453" href="#L453">453</a>                 StringFormatterMessageFactory.INSTANCE);
 <a class="jxr_linenumber" name="L454" href="#L454">454</a>     }
 <a class="jxr_linenumber" name="L455" href="#L455">455</a> 
@@ -489,7 +489,7 @@
 <a class="jxr_linenumber" name="L481" href="#L481">481</a> <em class="jxr_javadoccomment">     * @see StringFormatterMessageFactory</em>
 <a class="jxr_linenumber" name="L482" href="#L482">482</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L483" href="#L483">483</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getFormatterLogger(<strong class="jxr_keyword">final</strong> Object value) {
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>         <strong class="jxr_keyword">return</strong> getLogger(value != <strong class="jxr_keyword">null</strong> ? value.getClass() : ReflectionUtil.getCallerClass(2),
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>         <strong class="jxr_keyword">return</strong> getLogger(value != <strong class="jxr_keyword">null</strong> ? value.getClass() : StackLocatorUtil.getCallerClass(2),
 <a class="jxr_linenumber" name="L485" href="#L485">485</a>                 StringFormatterMessageFactory.INSTANCE);
 <a class="jxr_linenumber" name="L486" href="#L486">486</a>     }
 <a class="jxr_linenumber" name="L487" href="#L487">487</a> 
@@ -520,7 +520,7 @@
 <a class="jxr_linenumber" name="L512" href="#L512">512</a> <em class="jxr_javadoccomment">     * @see StringFormatterMessageFactory</em>
 <a class="jxr_linenumber" name="L513" href="#L513">513</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L514" href="#L514">514</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getFormatterLogger(<strong class="jxr_keyword">final</strong> String name) {
-<a class="jxr_linenumber" name="L515" href="#L515">515</a>         <strong class="jxr_keyword">return</strong> name == <strong class="jxr_keyword">null</strong> ? getFormatterLogger(ReflectionUtil.getCallerClass(2)) : getLogger(name,
+<a class="jxr_linenumber" name="L515" href="#L515">515</a>         <strong class="jxr_keyword">return</strong> name == <strong class="jxr_keyword">null</strong> ? getFormatterLogger(StackLocatorUtil.getCallerClass(2)) : getLogger(name,
 <a class="jxr_linenumber" name="L516" href="#L516">516</a>                 StringFormatterMessageFactory.INSTANCE);
 <a class="jxr_linenumber" name="L517" href="#L517">517</a>     }
 <a class="jxr_linenumber" name="L518" href="#L518">518</a> 
@@ -528,7 +528,7 @@
 <a class="jxr_linenumber" name="L520" href="#L520">520</a>         <strong class="jxr_keyword">if</strong> (clazz != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L521" href="#L521">521</a>             <strong class="jxr_keyword">return</strong> clazz;
 <a class="jxr_linenumber" name="L522" href="#L522">522</a>         }
-<a class="jxr_linenumber" name="L523" href="#L523">523</a>         <strong class="jxr_keyword">final</strong> Class&lt;?&gt; candidate = ReflectionUtil.getCallerClass(3);
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>         <strong class="jxr_keyword">final</strong> Class&lt;?&gt; candidate = StackLocatorUtil.getCallerClass(3);
 <a class="jxr_linenumber" name="L524" href="#L524">524</a>         <strong class="jxr_keyword">if</strong> (candidate == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L525" href="#L525">525</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException(<span class="jxr_string">"No class provided, and an appropriate one cannot be found."</span>);
 <a class="jxr_linenumber" name="L526" href="#L526">526</a>         }
@@ -542,7 +542,7 @@
 <a class="jxr_linenumber" name="L534" href="#L534">534</a> <em class="jxr_javadoccomment">     * @throws UnsupportedOperationException if the calling class cannot be determined.</em>
 <a class="jxr_linenumber" name="L535" href="#L535">535</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L536" href="#L536">536</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getLogger() {
-<a class="jxr_linenumber" name="L537" href="#L537">537</a>         <strong class="jxr_keyword">return</strong> getLogger(ReflectionUtil.getCallerClass(2));
+<a class="jxr_linenumber" name="L537" href="#L537">537</a>         <strong class="jxr_keyword">return</strong> getLogger(StackLocatorUtil.getCallerClass(2));
 <a class="jxr_linenumber" name="L538" href="#L538">538</a>     }
 <a class="jxr_linenumber" name="L539" href="#L539">539</a> 
 <a class="jxr_linenumber" name="L540" href="#L540">540</a>     <em class="jxr_javadoccomment">/**</em>
@@ -556,7 +556,7 @@
 <a class="jxr_linenumber" name="L548" href="#L548">548</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L549" href="#L549">549</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getLogger(<strong class="jxr_keyword">final</strong> Class&lt;?&gt; clazz) {
 <a class="jxr_linenumber" name="L550" href="#L550">550</a>         <strong class="jxr_keyword">final</strong> Class&lt;?&gt; cls = callerClass(clazz);
-<a class="jxr_linenumber" name="L551" href="#L551">551</a>         <strong class="jxr_keyword">return</strong> getContext(cls.getClassLoader(), false).getLogger(cls.getName());
+<a class="jxr_linenumber" name="L551" href="#L551">551</a>         <strong class="jxr_keyword">return</strong> getContext(cls.getClassLoader(), false).getLogger(cls.getCanonicalName());
 <a class="jxr_linenumber" name="L552" href="#L552">552</a>     }
 <a class="jxr_linenumber" name="L553" href="#L553">553</a> 
 <a class="jxr_linenumber" name="L554" href="#L554">554</a>     <em class="jxr_javadoccomment">/**</em>
@@ -572,7 +572,7 @@
 <a class="jxr_linenumber" name="L564" href="#L564">564</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L565" href="#L565">565</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getLogger(<strong class="jxr_keyword">final</strong> Class&lt;?&gt; clazz, <strong class="jxr_keyword">final</strong> <a href="../../../../org/apache/logging/log4j/message/MessageFactory.html">MessageFactory</a> messageFactory) {
 <a class="jxr_linenumber" name="L566" href="#L566">566</a>         <strong class="jxr_keyword">final</strong> Class&lt;?&gt; cls = callerClass(clazz);
-<a class="jxr_linenumber" name="L567" href="#L567">567</a>         <strong class="jxr_keyword">return</strong> getContext(cls.getClassLoader(), false).getLogger(cls.getName(), messageFactory);
+<a class="jxr_linenumber" name="L567" href="#L567">567</a>         <strong class="jxr_keyword">return</strong> getContext(cls.getClassLoader(), false).getLogger(cls.getCanonicalName(), messageFactory);
 <a class="jxr_linenumber" name="L568" href="#L568">568</a>     }
 <a class="jxr_linenumber" name="L569" href="#L569">569</a> 
 <a class="jxr_linenumber" name="L570" href="#L570">570</a>     <em class="jxr_javadoccomment">/**</em>
@@ -584,7 +584,7 @@
 <a class="jxr_linenumber" name="L576" href="#L576">576</a> <em class="jxr_javadoccomment">     * @throws UnsupportedOperationException if the calling class cannot be determined.</em>
 <a class="jxr_linenumber" name="L577" href="#L577">577</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L578" href="#L578">578</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getLogger(<strong class="jxr_keyword">final</strong> <a href="../../../../org/apache/logging/log4j/message/MessageFactory.html">MessageFactory</a> messageFactory) {
-<a class="jxr_linenumber" name="L579" href="#L579">579</a>         <strong class="jxr_keyword">return</strong> getLogger(ReflectionUtil.getCallerClass(2), messageFactory);
+<a class="jxr_linenumber" name="L579" href="#L579">579</a>         <strong class="jxr_keyword">return</strong> getLogger(StackLocatorUtil.getCallerClass(2), messageFactory);
 <a class="jxr_linenumber" name="L580" href="#L580">580</a>     }
 <a class="jxr_linenumber" name="L581" href="#L581">581</a> 
 <a class="jxr_linenumber" name="L582" href="#L582">582</a>     <em class="jxr_javadoccomment">/**</em>
@@ -597,7 +597,7 @@
 <a class="jxr_linenumber" name="L589" href="#L589">589</a> <em class="jxr_javadoccomment">     *             determined.</em>
 <a class="jxr_linenumber" name="L590" href="#L590">590</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L591" href="#L591">591</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getLogger(<strong class="jxr_keyword">final</strong> Object value) {
-<a class="jxr_linenumber" name="L592" href="#L592">592</a>         <strong class="jxr_keyword">return</strong> getLogger(value != <strong class="jxr_keyword">null</strong> ? value.getClass() : ReflectionUtil.getCallerClass(2));
+<a class="jxr_linenumber" name="L592" href="#L592">592</a>         <strong class="jxr_keyword">return</strong> getLogger(value != <strong class="jxr_keyword">null</strong> ? value.getClass() : StackLocatorUtil.getCallerClass(2));
 <a class="jxr_linenumber" name="L593" href="#L593">593</a>     }
 <a class="jxr_linenumber" name="L594" href="#L594">594</a> 
 <a class="jxr_linenumber" name="L595" href="#L595">595</a>     <em class="jxr_javadoccomment">/**</em>
@@ -612,7 +612,7 @@
 <a class="jxr_linenumber" name="L604" href="#L604">604</a> <em class="jxr_javadoccomment">     *             determined.</em>
 <a class="jxr_linenumber" name="L605" href="#L605">605</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L606" href="#L606">606</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getLogger(<strong class="jxr_keyword">final</strong> Object value, <strong class="jxr_keyword">final</strong> <a href="../../../../org/apache/logging/log4j/message/MessageFactory.html">MessageFactory</a> messageFactory) {
-<a class="jxr_linenumber" name="L607" href="#L607">607</a>         <strong class="jxr_keyword">return</strong> getLogger(value != <strong class="jxr_keyword">null</strong> ? value.getClass() : ReflectionUtil.getCallerClass(2), messageFactory);
+<a class="jxr_linenumber" name="L607" href="#L607">607</a>         <strong class="jxr_keyword">return</strong> getLogger(value != <strong class="jxr_keyword">null</strong> ? value.getClass() : StackLocatorUtil.getCallerClass(2), messageFactory);
 <a class="jxr_linenumber" name="L608" href="#L608">608</a>     }
 <a class="jxr_linenumber" name="L609" href="#L609">609</a> 
 <a class="jxr_linenumber" name="L610" href="#L610">610</a>     <em class="jxr_javadoccomment">/**</em>
@@ -623,7 +623,7 @@
 <a class="jxr_linenumber" name="L615" href="#L615">615</a> <em class="jxr_javadoccomment">     * @throws UnsupportedOperationException if {@code name} is {@code null} and the calling class cannot be determined.</em>
 <a class="jxr_linenumber" name="L616" href="#L616">616</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L617" href="#L617">617</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getLogger(<strong class="jxr_keyword">final</strong> String name) {
-<a class="jxr_linenumber" name="L618" href="#L618">618</a>         <strong class="jxr_keyword">return</strong> name != <strong class="jxr_keyword">null</strong> ? getContext(false).getLogger(name) : getLogger(ReflectionUtil.getCallerClass(2));
+<a class="jxr_linenumber" name="L618" href="#L618">618</a>         <strong class="jxr_keyword">return</strong> name != <strong class="jxr_keyword">null</strong> ? getContext(false).getLogger(name) : getLogger(StackLocatorUtil.getCallerClass(2));
 <a class="jxr_linenumber" name="L619" href="#L619">619</a>     }
 <a class="jxr_linenumber" name="L620" href="#L620">620</a> 
 <a class="jxr_linenumber" name="L621" href="#L621">621</a>     <em class="jxr_javadoccomment">/**</em>
@@ -637,7 +637,7 @@
 <a class="jxr_linenumber" name="L629" href="#L629">629</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L630" href="#L630">630</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/log4j/Logger.html">Logger</a> getLogger(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../org/apache/logging/log4j/message/MessageFactory.html">MessageFactory</a> messageFactory) {
 <a class="jxr_linenumber" name="L631" href="#L631">631</a>         <strong class="jxr_keyword">return</strong> name != <strong class="jxr_keyword">null</strong> ? getContext(false).getLogger(name, messageFactory) : getLogger(
-<a class="jxr_linenumber" name="L632" href="#L632">632</a>                 ReflectionUtil.getCallerClass(2), messageFactory);
+<a class="jxr_linenumber" name="L632" href="#L632">632</a>                 StackLocatorUtil.getCallerClass(2), messageFactory);
 <a class="jxr_linenumber" name="L633" href="#L633">633</a>     }
 <a class="jxr_linenumber" name="L634" href="#L634">634</a> 
 <a class="jxr_linenumber" name="L635" href="#L635">635</a>     <em class="jxr_javadoccomment">/**</em>

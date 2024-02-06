@@ -104,31 +104,32 @@
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> send(<strong class="jxr_keyword">final</strong> byte[] msg) <strong class="jxr_keyword">throws</strong> ExecutionException, InterruptedException, TimeoutException {
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">if</strong> (producer != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>              ProducerRecord&lt;byte[], byte[]&gt; newRecord = <strong class="jxr_keyword">new</strong> ProducerRecord&lt;&gt;(topic, msg);
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">final</strong> ProducerRecord&lt;byte[], byte[]&gt; newRecord = <strong class="jxr_keyword">new</strong> ProducerRecord&lt;&gt;(topic, msg);
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>             <strong class="jxr_keyword">if</strong> (syncSend) {
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>                 Future&lt;RecordMetadata&gt; response = producer.send(newRecord);
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>                 <strong class="jxr_keyword">final</strong> Future&lt;RecordMetadata&gt; response = producer.send(newRecord);
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>                 response.get(timeoutMillis, TimeUnit.MILLISECONDS);
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>             } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>                 producer.send(newRecord, <strong class="jxr_keyword">new</strong> Callback() {
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>                     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> onCompletion(RecordMetadata metadata, Exception e) {
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>                         <strong class="jxr_keyword">if</strong> (e != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>                             LOGGER.error(<span class="jxr_string">"Unable to write to Kafka ["</span> + getName() + <span class="jxr_string">"]."</span>, e);
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>                         }
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>                     }
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>                 });
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>             }
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>         }
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>     }
-<a class="jxr_linenumber" name="L114" href="#L114">114</a> 
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> startup() {
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>         producer = producerFactory.newKafkaProducer(config);
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>     }
-<a class="jxr_linenumber" name="L118" href="#L118">118</a> 
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>     <strong class="jxr_keyword">public</strong> String getTopic() {
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>         <strong class="jxr_keyword">return</strong> topic;
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>     }
-<a class="jxr_linenumber" name="L122" href="#L122">122</a> 
-<a class="jxr_linenumber" name="L123" href="#L123">123</a> }
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>                     @Override
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>                     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> onCompletion(<strong class="jxr_keyword">final</strong> RecordMetadata metadata, <strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>                         <strong class="jxr_keyword">if</strong> (e != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>                             LOGGER.error(<span class="jxr_string">"Unable to write to Kafka in appender ["</span> + getName() + <span class="jxr_string">"]"</span>, e);
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>                         }
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>                     }
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>                 });
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>             }
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         }
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>     }
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> 
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> startup() {
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>         producer = producerFactory.newKafkaProducer(config);
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     }
+<a class="jxr_linenumber" name="L119" href="#L119">119</a> 
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>     <strong class="jxr_keyword">public</strong> String getTopic() {
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>         <strong class="jxr_keyword">return</strong> topic;
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>     }
+<a class="jxr_linenumber" name="L123" href="#L123">123</a> 
+<a class="jxr_linenumber" name="L124" href="#L124">124</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>

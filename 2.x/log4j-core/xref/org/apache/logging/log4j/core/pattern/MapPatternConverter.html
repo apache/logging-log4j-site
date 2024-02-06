@@ -26,7 +26,7 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.LogEvent;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.Plugin;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.message.MapMessage;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.message.StringMapMessage;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.IndexedReadOnlyStringMap;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <em class="jxr_javadoccomment">/**</em>
@@ -68,9 +68,9 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      @Override
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> format(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event, <strong class="jxr_keyword">final</strong> StringBuilder toAppendTo) {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          MapMessage msg;
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">if</strong> (event.getMessage() instanceof MapMessage) {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>              msg = (MapMessage) event.getMessage();
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          StringMapMessage msg;
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">if</strong> (event.getMessage() instanceof StringMapMessage) {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>              msg = (StringMapMessage) event.getMessage();
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>              <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          }
@@ -87,7 +87,7 @@
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>                  <strong class="jxr_keyword">if</strong> (i &gt; 0) {
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>                      toAppendTo.append(<span class="jxr_string">", "</span>);
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>                  }
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>                  toAppendTo.append(sortedMap.getKeyAt(i)).append('=').append(sortedMap.getValueAt(i));
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>                  toAppendTo.append(sortedMap.getKeyAt(i)).append('=').append((String)sortedMap.getValueAt(i));
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>              }
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>              toAppendTo.append('}');
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          } <strong class="jxr_keyword">else</strong> {

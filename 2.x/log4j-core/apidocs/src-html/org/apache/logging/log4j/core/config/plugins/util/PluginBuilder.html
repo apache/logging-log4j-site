@@ -129,200 +129,205 @@
 <span class="sourceLineNo">121</span>                injectFields(builder);<a name="line.121"></a>
 <span class="sourceLineNo">122</span>                return builder.build();<a name="line.122"></a>
 <span class="sourceLineNo">123</span>            }<a name="line.123"></a>
-<span class="sourceLineNo">124</span>        } catch (final Exception e) {<a name="line.124"></a>
-<span class="sourceLineNo">125</span>            LOGGER.error("Unable to inject fields into builder class for plugin type {}, element {}.", this.clazz,<a name="line.125"></a>
-<span class="sourceLineNo">126</span>                node.getName(), e);<a name="line.126"></a>
-<span class="sourceLineNo">127</span>        }<a name="line.127"></a>
-<span class="sourceLineNo">128</span>        // or fall back to factory method if no builder class is available<a name="line.128"></a>
-<span class="sourceLineNo">129</span>        try {<a name="line.129"></a>
-<span class="sourceLineNo">130</span>            final Method factory = findFactoryMethod(this.clazz);<a name="line.130"></a>
-<span class="sourceLineNo">131</span>            final Object[] params = generateParameters(factory);<a name="line.131"></a>
-<span class="sourceLineNo">132</span>            return factory.invoke(null, params);<a name="line.132"></a>
-<span class="sourceLineNo">133</span>        } catch (final Exception e) {<a name="line.133"></a>
-<span class="sourceLineNo">134</span>            LOGGER.error("Unable to invoke factory method in class {} for element {}.", this.clazz, this.node.getName(),<a name="line.134"></a>
-<span class="sourceLineNo">135</span>                e);<a name="line.135"></a>
-<span class="sourceLineNo">136</span>            return null;<a name="line.136"></a>
-<span class="sourceLineNo">137</span>        }<a name="line.137"></a>
-<span class="sourceLineNo">138</span>    }<a name="line.138"></a>
-<span class="sourceLineNo">139</span><a name="line.139"></a>
-<span class="sourceLineNo">140</span>    private void verify() {<a name="line.140"></a>
-<span class="sourceLineNo">141</span>        Objects.requireNonNull(this.configuration, "No Configuration object was set.");<a name="line.141"></a>
-<span class="sourceLineNo">142</span>        Objects.requireNonNull(this.node, "No Node object was set.");<a name="line.142"></a>
+<span class="sourceLineNo">124</span>        } catch (final ConfigurationException e) { // LOG4J2-1908<a name="line.124"></a>
+<span class="sourceLineNo">125</span>            LOGGER.error("Could not create plugin of type {} for element {}", this.clazz, node.getName(), e);<a name="line.125"></a>
+<span class="sourceLineNo">126</span>            return null; // no point in trying the factory method<a name="line.126"></a>
+<span class="sourceLineNo">127</span>        } catch (final Exception e) {<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            LOGGER.error("Could not create plugin of type {} for element {}: {}",<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                    this.clazz, node.getName(),<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                    (e instanceof InvocationTargetException ? ((InvocationTargetException) e).getCause() : e).toString(), e);<a name="line.130"></a>
+<span class="sourceLineNo">131</span>        }<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        // or fall back to factory method if no builder class is available<a name="line.132"></a>
+<span class="sourceLineNo">133</span>        try {<a name="line.133"></a>
+<span class="sourceLineNo">134</span>            final Method factory = findFactoryMethod(this.clazz);<a name="line.134"></a>
+<span class="sourceLineNo">135</span>            final Object[] params = generateParameters(factory);<a name="line.135"></a>
+<span class="sourceLineNo">136</span>            return factory.invoke(null, params);<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        } catch (final Exception e) {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>            LOGGER.error("Unable to invoke factory method in {} for element {}: {}",<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                    this.clazz, this.node.getName(),<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                    (e instanceof InvocationTargetException ? ((InvocationTargetException) e).getCause() : e).toString(), e);<a name="line.140"></a>
+<span class="sourceLineNo">141</span>            return null;<a name="line.141"></a>
+<span class="sourceLineNo">142</span>        }<a name="line.142"></a>
 <span class="sourceLineNo">143</span>    }<a name="line.143"></a>
 <span class="sourceLineNo">144</span><a name="line.144"></a>
-<span class="sourceLineNo">145</span>    private static Builder&lt;?&gt; createBuilder(final Class&lt;?&gt; clazz)<a name="line.145"></a>
-<span class="sourceLineNo">146</span>        throws InvocationTargetException, IllegalAccessException {<a name="line.146"></a>
-<span class="sourceLineNo">147</span>        for (final Method method : clazz.getDeclaredMethods()) {<a name="line.147"></a>
-<span class="sourceLineNo">148</span>            if (method.isAnnotationPresent(PluginBuilderFactory.class) &amp;&amp;<a name="line.148"></a>
-<span class="sourceLineNo">149</span>                Modifier.isStatic(method.getModifiers()) &amp;&amp;<a name="line.149"></a>
-<span class="sourceLineNo">150</span>                TypeUtil.isAssignable(Builder.class, method.getReturnType())) {<a name="line.150"></a>
-<span class="sourceLineNo">151</span>                ReflectionUtil.makeAccessible(method);<a name="line.151"></a>
-<span class="sourceLineNo">152</span>                return (Builder&lt;?&gt;) method.invoke(null);<a name="line.152"></a>
-<span class="sourceLineNo">153</span>            }<a name="line.153"></a>
-<span class="sourceLineNo">154</span>        }<a name="line.154"></a>
-<span class="sourceLineNo">155</span>        return null;<a name="line.155"></a>
-<span class="sourceLineNo">156</span>    }<a name="line.156"></a>
-<span class="sourceLineNo">157</span><a name="line.157"></a>
-<span class="sourceLineNo">158</span>    private void injectFields(final Builder&lt;?&gt; builder) throws IllegalAccessException {<a name="line.158"></a>
-<span class="sourceLineNo">159</span>        final List&lt;Field&gt; fields = TypeUtil.getAllDeclaredFields(builder.getClass());<a name="line.159"></a>
-<span class="sourceLineNo">160</span>        AccessibleObject.setAccessible(fields.toArray(new Field[] {}), true);<a name="line.160"></a>
-<span class="sourceLineNo">161</span>        final StringBuilder log = new StringBuilder();<a name="line.161"></a>
-<span class="sourceLineNo">162</span>        boolean invalid = false;<a name="line.162"></a>
-<span class="sourceLineNo">163</span>        for (final Field field : fields) {<a name="line.163"></a>
-<span class="sourceLineNo">164</span>            log.append(log.length() == 0 ? simpleName(builder) + "(" : ", ");<a name="line.164"></a>
-<span class="sourceLineNo">165</span>            final Annotation[] annotations = field.getDeclaredAnnotations();<a name="line.165"></a>
-<span class="sourceLineNo">166</span>            final String[] aliases = extractPluginAliases(annotations);<a name="line.166"></a>
-<span class="sourceLineNo">167</span>            for (final Annotation a : annotations) {<a name="line.167"></a>
-<span class="sourceLineNo">168</span>                if (a instanceof PluginAliases) {<a name="line.168"></a>
-<span class="sourceLineNo">169</span>                    continue; // already processed<a name="line.169"></a>
-<span class="sourceLineNo">170</span>                }<a name="line.170"></a>
-<span class="sourceLineNo">171</span>                final PluginVisitor&lt;? extends Annotation&gt; visitor =<a name="line.171"></a>
-<span class="sourceLineNo">172</span>                    PluginVisitors.findVisitor(a.annotationType());<a name="line.172"></a>
-<span class="sourceLineNo">173</span>                if (visitor != null) {<a name="line.173"></a>
-<span class="sourceLineNo">174</span>                    final Object value = visitor.setAliases(aliases)<a name="line.174"></a>
-<span class="sourceLineNo">175</span>                        .setAnnotation(a)<a name="line.175"></a>
-<span class="sourceLineNo">176</span>                        .setConversionType(field.getType())<a name="line.176"></a>
-<span class="sourceLineNo">177</span>                        .setStrSubstitutor(configuration.getStrSubstitutor())<a name="line.177"></a>
-<span class="sourceLineNo">178</span>                        .setMember(field)<a name="line.178"></a>
-<span class="sourceLineNo">179</span>                        .visit(configuration, node, event, log);<a name="line.179"></a>
-<span class="sourceLineNo">180</span>                    // don't overwrite default values if the visitor gives us no value to inject<a name="line.180"></a>
-<span class="sourceLineNo">181</span>                    if (value != null) {<a name="line.181"></a>
-<span class="sourceLineNo">182</span>                        field.set(builder, value);<a name="line.182"></a>
-<span class="sourceLineNo">183</span>                    }<a name="line.183"></a>
-<span class="sourceLineNo">184</span>                }<a name="line.184"></a>
-<span class="sourceLineNo">185</span>            }<a name="line.185"></a>
-<span class="sourceLineNo">186</span>            final Collection&lt;ConstraintValidator&lt;?&gt;&gt; validators =<a name="line.186"></a>
-<span class="sourceLineNo">187</span>                ConstraintValidators.findValidators(annotations);<a name="line.187"></a>
-<span class="sourceLineNo">188</span>            final Object value = field.get(builder);<a name="line.188"></a>
-<span class="sourceLineNo">189</span>            for (final ConstraintValidator&lt;?&gt; validator : validators) {<a name="line.189"></a>
-<span class="sourceLineNo">190</span>                if (!validator.isValid(field.getName(), value)) {<a name="line.190"></a>
-<span class="sourceLineNo">191</span>                    invalid = true;<a name="line.191"></a>
-<span class="sourceLineNo">192</span>                }<a name="line.192"></a>
-<span class="sourceLineNo">193</span>            }<a name="line.193"></a>
-<span class="sourceLineNo">194</span>        }<a name="line.194"></a>
-<span class="sourceLineNo">195</span>        log.append(log.length() == 0 ? builder.getClass().getSimpleName() + "()" : ")");<a name="line.195"></a>
-<span class="sourceLineNo">196</span>        LOGGER.debug(log.toString());<a name="line.196"></a>
-<span class="sourceLineNo">197</span>        if (invalid) {<a name="line.197"></a>
-<span class="sourceLineNo">198</span>            throw new ConfigurationException("Arguments given for element " + node.getName() + " are invalid");<a name="line.198"></a>
+<span class="sourceLineNo">145</span>    private void verify() {<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        Objects.requireNonNull(this.configuration, "No Configuration object was set.");<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        Objects.requireNonNull(this.node, "No Node object was set.");<a name="line.147"></a>
+<span class="sourceLineNo">148</span>    }<a name="line.148"></a>
+<span class="sourceLineNo">149</span><a name="line.149"></a>
+<span class="sourceLineNo">150</span>    private static Builder&lt;?&gt; createBuilder(final Class&lt;?&gt; clazz)<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        throws InvocationTargetException, IllegalAccessException {<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        for (final Method method : clazz.getDeclaredMethods()) {<a name="line.152"></a>
+<span class="sourceLineNo">153</span>            if (method.isAnnotationPresent(PluginBuilderFactory.class) &amp;&amp;<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                Modifier.isStatic(method.getModifiers()) &amp;&amp;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                TypeUtil.isAssignable(Builder.class, method.getReturnType())) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                ReflectionUtil.makeAccessible(method);<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                return (Builder&lt;?&gt;) method.invoke(null);<a name="line.157"></a>
+<span class="sourceLineNo">158</span>            }<a name="line.158"></a>
+<span class="sourceLineNo">159</span>        }<a name="line.159"></a>
+<span class="sourceLineNo">160</span>        return null;<a name="line.160"></a>
+<span class="sourceLineNo">161</span>    }<a name="line.161"></a>
+<span class="sourceLineNo">162</span><a name="line.162"></a>
+<span class="sourceLineNo">163</span>    private void injectFields(final Builder&lt;?&gt; builder) throws IllegalAccessException {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        final List&lt;Field&gt; fields = TypeUtil.getAllDeclaredFields(builder.getClass());<a name="line.164"></a>
+<span class="sourceLineNo">165</span>        AccessibleObject.setAccessible(fields.toArray(new Field[] {}), true);<a name="line.165"></a>
+<span class="sourceLineNo">166</span>        final StringBuilder log = new StringBuilder();<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        boolean invalid = false;<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        for (final Field field : fields) {<a name="line.168"></a>
+<span class="sourceLineNo">169</span>            log.append(log.length() == 0 ? simpleName(builder) + "(" : ", ");<a name="line.169"></a>
+<span class="sourceLineNo">170</span>            final Annotation[] annotations = field.getDeclaredAnnotations();<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            final String[] aliases = extractPluginAliases(annotations);<a name="line.171"></a>
+<span class="sourceLineNo">172</span>            for (final Annotation a : annotations) {<a name="line.172"></a>
+<span class="sourceLineNo">173</span>                if (a instanceof PluginAliases) {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                    continue; // already processed<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                }<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                final PluginVisitor&lt;? extends Annotation&gt; visitor =<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                    PluginVisitors.findVisitor(a.annotationType());<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                if (visitor != null) {<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                    final Object value = visitor.setAliases(aliases)<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                        .setAnnotation(a)<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                        .setConversionType(field.getType())<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                        .setStrSubstitutor(configuration.getStrSubstitutor())<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                        .setMember(field)<a name="line.183"></a>
+<span class="sourceLineNo">184</span>                        .visit(configuration, node, event, log);<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                    // don't overwrite default values if the visitor gives us no value to inject<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                    if (value != null) {<a name="line.186"></a>
+<span class="sourceLineNo">187</span>                        field.set(builder, value);<a name="line.187"></a>
+<span class="sourceLineNo">188</span>                    }<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                }<a name="line.189"></a>
+<span class="sourceLineNo">190</span>            }<a name="line.190"></a>
+<span class="sourceLineNo">191</span>            final Collection&lt;ConstraintValidator&lt;?&gt;&gt; validators =<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                ConstraintValidators.findValidators(annotations);<a name="line.192"></a>
+<span class="sourceLineNo">193</span>            final Object value = field.get(builder);<a name="line.193"></a>
+<span class="sourceLineNo">194</span>            for (final ConstraintValidator&lt;?&gt; validator : validators) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                if (!validator.isValid(field.getName(), value)) {<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                    invalid = true;<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                }<a name="line.197"></a>
+<span class="sourceLineNo">198</span>            }<a name="line.198"></a>
 <span class="sourceLineNo">199</span>        }<a name="line.199"></a>
-<span class="sourceLineNo">200</span>        checkForRemainingAttributes();<a name="line.200"></a>
-<span class="sourceLineNo">201</span>        verifyNodeChildrenUsed();<a name="line.201"></a>
-<span class="sourceLineNo">202</span>    }<a name="line.202"></a>
-<span class="sourceLineNo">203</span><a name="line.203"></a>
-<span class="sourceLineNo">204</span>    /**<a name="line.204"></a>
-<span class="sourceLineNo">205</span>     * {@code object.getClass().getSimpleName()} returns {@code Builder}, when we want {@code PatternLayout$Builder}.<a name="line.205"></a>
-<span class="sourceLineNo">206</span>     */<a name="line.206"></a>
-<span class="sourceLineNo">207</span>    private static String simpleName(final Object object) {<a name="line.207"></a>
-<span class="sourceLineNo">208</span>        if (object == null) {<a name="line.208"></a>
-<span class="sourceLineNo">209</span>            return "null";<a name="line.209"></a>
-<span class="sourceLineNo">210</span>        }<a name="line.210"></a>
-<span class="sourceLineNo">211</span>        final String cls = object.getClass().getName();<a name="line.211"></a>
-<span class="sourceLineNo">212</span>        final int index = cls.lastIndexOf('.');<a name="line.212"></a>
-<span class="sourceLineNo">213</span>        return index &lt; 0 ? cls : cls.substring(index + 1);<a name="line.213"></a>
-<span class="sourceLineNo">214</span>    }<a name="line.214"></a>
-<span class="sourceLineNo">215</span><a name="line.215"></a>
-<span class="sourceLineNo">216</span>    private static Method findFactoryMethod(final Class&lt;?&gt; clazz) {<a name="line.216"></a>
-<span class="sourceLineNo">217</span>        for (final Method method : clazz.getDeclaredMethods()) {<a name="line.217"></a>
-<span class="sourceLineNo">218</span>            if (method.isAnnotationPresent(PluginFactory.class) &amp;&amp;<a name="line.218"></a>
-<span class="sourceLineNo">219</span>                Modifier.isStatic(method.getModifiers())) {<a name="line.219"></a>
-<span class="sourceLineNo">220</span>                ReflectionUtil.makeAccessible(method);<a name="line.220"></a>
-<span class="sourceLineNo">221</span>                return method;<a name="line.221"></a>
-<span class="sourceLineNo">222</span>            }<a name="line.222"></a>
-<span class="sourceLineNo">223</span>        }<a name="line.223"></a>
-<span class="sourceLineNo">224</span>        throw new IllegalStateException("No factory method found for class " + clazz.getName());<a name="line.224"></a>
-<span class="sourceLineNo">225</span>    }<a name="line.225"></a>
-<span class="sourceLineNo">226</span><a name="line.226"></a>
-<span class="sourceLineNo">227</span>    private Object[] generateParameters(final Method factory) {<a name="line.227"></a>
-<span class="sourceLineNo">228</span>        final StringBuilder log = new StringBuilder();<a name="line.228"></a>
-<span class="sourceLineNo">229</span>        final Class&lt;?&gt;[] types = factory.getParameterTypes();<a name="line.229"></a>
-<span class="sourceLineNo">230</span>        final Annotation[][] annotations = factory.getParameterAnnotations();<a name="line.230"></a>
-<span class="sourceLineNo">231</span>        final Object[] args = new Object[annotations.length];<a name="line.231"></a>
-<span class="sourceLineNo">232</span>        boolean invalid = false;<a name="line.232"></a>
-<span class="sourceLineNo">233</span>        for (int i = 0; i &lt; annotations.length; i++) {<a name="line.233"></a>
-<span class="sourceLineNo">234</span>            log.append(log.length() == 0 ? factory.getName() + "(" : ", ");<a name="line.234"></a>
-<span class="sourceLineNo">235</span>            final String[] aliases = extractPluginAliases(annotations[i]);<a name="line.235"></a>
-<span class="sourceLineNo">236</span>            for (final Annotation a : annotations[i]) {<a name="line.236"></a>
-<span class="sourceLineNo">237</span>                if (a instanceof PluginAliases) {<a name="line.237"></a>
-<span class="sourceLineNo">238</span>                    continue; // already processed<a name="line.238"></a>
-<span class="sourceLineNo">239</span>                }<a name="line.239"></a>
-<span class="sourceLineNo">240</span>                final PluginVisitor&lt;? extends Annotation&gt; visitor = PluginVisitors.findVisitor(<a name="line.240"></a>
-<span class="sourceLineNo">241</span>                    a.annotationType());<a name="line.241"></a>
-<span class="sourceLineNo">242</span>                if (visitor != null) {<a name="line.242"></a>
-<span class="sourceLineNo">243</span>                    final Object value = visitor.setAliases(aliases)<a name="line.243"></a>
-<span class="sourceLineNo">244</span>                        .setAnnotation(a)<a name="line.244"></a>
-<span class="sourceLineNo">245</span>                        .setConversionType(types[i])<a name="line.245"></a>
-<span class="sourceLineNo">246</span>                        .setStrSubstitutor(configuration.getStrSubstitutor())<a name="line.246"></a>
-<span class="sourceLineNo">247</span>                        .setMember(factory)<a name="line.247"></a>
-<span class="sourceLineNo">248</span>                        .visit(configuration, node, event, log);<a name="line.248"></a>
-<span class="sourceLineNo">249</span>                    // don't overwrite existing values if the visitor gives us no value to inject<a name="line.249"></a>
-<span class="sourceLineNo">250</span>                    if (value != null) {<a name="line.250"></a>
-<span class="sourceLineNo">251</span>                        args[i] = value;<a name="line.251"></a>
-<span class="sourceLineNo">252</span>                    }<a name="line.252"></a>
-<span class="sourceLineNo">253</span>                }<a name="line.253"></a>
-<span class="sourceLineNo">254</span>            }<a name="line.254"></a>
-<span class="sourceLineNo">255</span>            final Collection&lt;ConstraintValidator&lt;?&gt;&gt; validators =<a name="line.255"></a>
-<span class="sourceLineNo">256</span>                ConstraintValidators.findValidators(annotations[i]);<a name="line.256"></a>
-<span class="sourceLineNo">257</span>            final Object value = args[i];<a name="line.257"></a>
-<span class="sourceLineNo">258</span>            final String argName = "arg[" + i + "](" + simpleName(value) + ")";<a name="line.258"></a>
-<span class="sourceLineNo">259</span>            for (final ConstraintValidator&lt;?&gt; validator : validators) {<a name="line.259"></a>
-<span class="sourceLineNo">260</span>                if (!validator.isValid(argName, value)) {<a name="line.260"></a>
-<span class="sourceLineNo">261</span>                    invalid = true;<a name="line.261"></a>
-<span class="sourceLineNo">262</span>                }<a name="line.262"></a>
-<span class="sourceLineNo">263</span>            }<a name="line.263"></a>
-<span class="sourceLineNo">264</span>        }<a name="line.264"></a>
-<span class="sourceLineNo">265</span>        log.append(log.length() == 0 ? factory.getName() + "()" : ")");<a name="line.265"></a>
-<span class="sourceLineNo">266</span>        checkForRemainingAttributes();<a name="line.266"></a>
-<span class="sourceLineNo">267</span>        verifyNodeChildrenUsed();<a name="line.267"></a>
-<span class="sourceLineNo">268</span>        LOGGER.debug(log.toString());<a name="line.268"></a>
-<span class="sourceLineNo">269</span>        if (invalid) {<a name="line.269"></a>
-<span class="sourceLineNo">270</span>            throw new ConfigurationException("Arguments given for element " + node.getName() + " are invalid");<a name="line.270"></a>
-<span class="sourceLineNo">271</span>        }<a name="line.271"></a>
-<span class="sourceLineNo">272</span>        return args;<a name="line.272"></a>
-<span class="sourceLineNo">273</span>    }<a name="line.273"></a>
-<span class="sourceLineNo">274</span><a name="line.274"></a>
-<span class="sourceLineNo">275</span>    private static String[] extractPluginAliases(final Annotation... parmTypes) {<a name="line.275"></a>
-<span class="sourceLineNo">276</span>        String[] aliases = null;<a name="line.276"></a>
-<span class="sourceLineNo">277</span>        for (final Annotation a : parmTypes) {<a name="line.277"></a>
-<span class="sourceLineNo">278</span>            if (a instanceof PluginAliases) {<a name="line.278"></a>
-<span class="sourceLineNo">279</span>                aliases = ((PluginAliases) a).value();<a name="line.279"></a>
-<span class="sourceLineNo">280</span>            }<a name="line.280"></a>
-<span class="sourceLineNo">281</span>        }<a name="line.281"></a>
-<span class="sourceLineNo">282</span>        return aliases;<a name="line.282"></a>
-<span class="sourceLineNo">283</span>    }<a name="line.283"></a>
-<span class="sourceLineNo">284</span><a name="line.284"></a>
-<span class="sourceLineNo">285</span>    private void checkForRemainingAttributes() {<a name="line.285"></a>
-<span class="sourceLineNo">286</span>        final Map&lt;String, String&gt; attrs = node.getAttributes();<a name="line.286"></a>
-<span class="sourceLineNo">287</span>        if (!attrs.isEmpty()) {<a name="line.287"></a>
-<span class="sourceLineNo">288</span>            final StringBuilder sb = new StringBuilder();<a name="line.288"></a>
-<span class="sourceLineNo">289</span>            for (final String key : attrs.keySet()) {<a name="line.289"></a>
-<span class="sourceLineNo">290</span>                if (sb.length() == 0) {<a name="line.290"></a>
-<span class="sourceLineNo">291</span>                    sb.append(node.getName());<a name="line.291"></a>
-<span class="sourceLineNo">292</span>                    sb.append(" contains ");<a name="line.292"></a>
-<span class="sourceLineNo">293</span>                    if (attrs.size() == 1) {<a name="line.293"></a>
-<span class="sourceLineNo">294</span>                        sb.append("an invalid element or attribute ");<a name="line.294"></a>
-<span class="sourceLineNo">295</span>                    } else {<a name="line.295"></a>
-<span class="sourceLineNo">296</span>                        sb.append("invalid attributes ");<a name="line.296"></a>
-<span class="sourceLineNo">297</span>                    }<a name="line.297"></a>
-<span class="sourceLineNo">298</span>                } else {<a name="line.298"></a>
-<span class="sourceLineNo">299</span>                    sb.append(", ");<a name="line.299"></a>
-<span class="sourceLineNo">300</span>                }<a name="line.300"></a>
-<span class="sourceLineNo">301</span>                StringBuilders.appendDqValue(sb, key);<a name="line.301"></a>
-<span class="sourceLineNo">302</span>            }<a name="line.302"></a>
-<span class="sourceLineNo">303</span>            LOGGER.error(sb.toString());<a name="line.303"></a>
-<span class="sourceLineNo">304</span>        }<a name="line.304"></a>
-<span class="sourceLineNo">305</span>    }<a name="line.305"></a>
-<span class="sourceLineNo">306</span><a name="line.306"></a>
-<span class="sourceLineNo">307</span>    private void verifyNodeChildrenUsed() {<a name="line.307"></a>
-<span class="sourceLineNo">308</span>        final List&lt;Node&gt; children = node.getChildren();<a name="line.308"></a>
-<span class="sourceLineNo">309</span>        if (!(pluginType.isDeferChildren() || children.isEmpty())) {<a name="line.309"></a>
-<span class="sourceLineNo">310</span>            for (final Node child : children) {<a name="line.310"></a>
-<span class="sourceLineNo">311</span>                final String nodeType = node.getType().getElementName();<a name="line.311"></a>
-<span class="sourceLineNo">312</span>                final String start = nodeType.equals(node.getName()) ? node.getName() : nodeType + ' ' + node.getName();<a name="line.312"></a>
-<span class="sourceLineNo">313</span>                LOGGER.error("{} has no parameter that matches element {}", start, child.getName());<a name="line.313"></a>
-<span class="sourceLineNo">314</span>            }<a name="line.314"></a>
-<span class="sourceLineNo">315</span>        }<a name="line.315"></a>
-<span class="sourceLineNo">316</span>    }<a name="line.316"></a>
-<span class="sourceLineNo">317</span>}<a name="line.317"></a>
+<span class="sourceLineNo">200</span>        log.append(log.length() == 0 ? builder.getClass().getSimpleName() + "()" : ")");<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        LOGGER.debug(log.toString());<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        if (invalid) {<a name="line.202"></a>
+<span class="sourceLineNo">203</span>            throw new ConfigurationException("Arguments given for element " + node.getName() + " are invalid");<a name="line.203"></a>
+<span class="sourceLineNo">204</span>        }<a name="line.204"></a>
+<span class="sourceLineNo">205</span>        checkForRemainingAttributes();<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        verifyNodeChildrenUsed();<a name="line.206"></a>
+<span class="sourceLineNo">207</span>    }<a name="line.207"></a>
+<span class="sourceLineNo">208</span><a name="line.208"></a>
+<span class="sourceLineNo">209</span>    /**<a name="line.209"></a>
+<span class="sourceLineNo">210</span>     * {@code object.getClass().getSimpleName()} returns {@code Builder}, when we want {@code PatternLayout$Builder}.<a name="line.210"></a>
+<span class="sourceLineNo">211</span>     */<a name="line.211"></a>
+<span class="sourceLineNo">212</span>    private static String simpleName(final Object object) {<a name="line.212"></a>
+<span class="sourceLineNo">213</span>        if (object == null) {<a name="line.213"></a>
+<span class="sourceLineNo">214</span>            return "null";<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        }<a name="line.215"></a>
+<span class="sourceLineNo">216</span>        final String cls = object.getClass().getName();<a name="line.216"></a>
+<span class="sourceLineNo">217</span>        final int index = cls.lastIndexOf('.');<a name="line.217"></a>
+<span class="sourceLineNo">218</span>        return index &lt; 0 ? cls : cls.substring(index + 1);<a name="line.218"></a>
+<span class="sourceLineNo">219</span>    }<a name="line.219"></a>
+<span class="sourceLineNo">220</span><a name="line.220"></a>
+<span class="sourceLineNo">221</span>    private static Method findFactoryMethod(final Class&lt;?&gt; clazz) {<a name="line.221"></a>
+<span class="sourceLineNo">222</span>        for (final Method method : clazz.getDeclaredMethods()) {<a name="line.222"></a>
+<span class="sourceLineNo">223</span>            if (method.isAnnotationPresent(PluginFactory.class) &amp;&amp;<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                Modifier.isStatic(method.getModifiers())) {<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                ReflectionUtil.makeAccessible(method);<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                return method;<a name="line.226"></a>
+<span class="sourceLineNo">227</span>            }<a name="line.227"></a>
+<span class="sourceLineNo">228</span>        }<a name="line.228"></a>
+<span class="sourceLineNo">229</span>        throw new IllegalStateException("No factory method found for class " + clazz.getName());<a name="line.229"></a>
+<span class="sourceLineNo">230</span>    }<a name="line.230"></a>
+<span class="sourceLineNo">231</span><a name="line.231"></a>
+<span class="sourceLineNo">232</span>    private Object[] generateParameters(final Method factory) {<a name="line.232"></a>
+<span class="sourceLineNo">233</span>        final StringBuilder log = new StringBuilder();<a name="line.233"></a>
+<span class="sourceLineNo">234</span>        final Class&lt;?&gt;[] types = factory.getParameterTypes();<a name="line.234"></a>
+<span class="sourceLineNo">235</span>        final Annotation[][] annotations = factory.getParameterAnnotations();<a name="line.235"></a>
+<span class="sourceLineNo">236</span>        final Object[] args = new Object[annotations.length];<a name="line.236"></a>
+<span class="sourceLineNo">237</span>        boolean invalid = false;<a name="line.237"></a>
+<span class="sourceLineNo">238</span>        for (int i = 0; i &lt; annotations.length; i++) {<a name="line.238"></a>
+<span class="sourceLineNo">239</span>            log.append(log.length() == 0 ? factory.getName() + "(" : ", ");<a name="line.239"></a>
+<span class="sourceLineNo">240</span>            final String[] aliases = extractPluginAliases(annotations[i]);<a name="line.240"></a>
+<span class="sourceLineNo">241</span>            for (final Annotation a : annotations[i]) {<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                if (a instanceof PluginAliases) {<a name="line.242"></a>
+<span class="sourceLineNo">243</span>                    continue; // already processed<a name="line.243"></a>
+<span class="sourceLineNo">244</span>                }<a name="line.244"></a>
+<span class="sourceLineNo">245</span>                final PluginVisitor&lt;? extends Annotation&gt; visitor = PluginVisitors.findVisitor(<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                    a.annotationType());<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                if (visitor != null) {<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                    final Object value = visitor.setAliases(aliases)<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                        .setAnnotation(a)<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                        .setConversionType(types[i])<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                        .setStrSubstitutor(configuration.getStrSubstitutor())<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                        .setMember(factory)<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                        .visit(configuration, node, event, log);<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                    // don't overwrite existing values if the visitor gives us no value to inject<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                    if (value != null) {<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                        args[i] = value;<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                    }<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                }<a name="line.258"></a>
+<span class="sourceLineNo">259</span>            }<a name="line.259"></a>
+<span class="sourceLineNo">260</span>            final Collection&lt;ConstraintValidator&lt;?&gt;&gt; validators =<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                ConstraintValidators.findValidators(annotations[i]);<a name="line.261"></a>
+<span class="sourceLineNo">262</span>            final Object value = args[i];<a name="line.262"></a>
+<span class="sourceLineNo">263</span>            final String argName = "arg[" + i + "](" + simpleName(value) + ")";<a name="line.263"></a>
+<span class="sourceLineNo">264</span>            for (final ConstraintValidator&lt;?&gt; validator : validators) {<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                if (!validator.isValid(argName, value)) {<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                    invalid = true;<a name="line.266"></a>
+<span class="sourceLineNo">267</span>                }<a name="line.267"></a>
+<span class="sourceLineNo">268</span>            }<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        }<a name="line.269"></a>
+<span class="sourceLineNo">270</span>        log.append(log.length() == 0 ? factory.getName() + "()" : ")");<a name="line.270"></a>
+<span class="sourceLineNo">271</span>        checkForRemainingAttributes();<a name="line.271"></a>
+<span class="sourceLineNo">272</span>        verifyNodeChildrenUsed();<a name="line.272"></a>
+<span class="sourceLineNo">273</span>        LOGGER.debug(log.toString());<a name="line.273"></a>
+<span class="sourceLineNo">274</span>        if (invalid) {<a name="line.274"></a>
+<span class="sourceLineNo">275</span>            throw new ConfigurationException("Arguments given for element " + node.getName() + " are invalid");<a name="line.275"></a>
+<span class="sourceLineNo">276</span>        }<a name="line.276"></a>
+<span class="sourceLineNo">277</span>        return args;<a name="line.277"></a>
+<span class="sourceLineNo">278</span>    }<a name="line.278"></a>
+<span class="sourceLineNo">279</span><a name="line.279"></a>
+<span class="sourceLineNo">280</span>    private static String[] extractPluginAliases(final Annotation... parmTypes) {<a name="line.280"></a>
+<span class="sourceLineNo">281</span>        String[] aliases = null;<a name="line.281"></a>
+<span class="sourceLineNo">282</span>        for (final Annotation a : parmTypes) {<a name="line.282"></a>
+<span class="sourceLineNo">283</span>            if (a instanceof PluginAliases) {<a name="line.283"></a>
+<span class="sourceLineNo">284</span>                aliases = ((PluginAliases) a).value();<a name="line.284"></a>
+<span class="sourceLineNo">285</span>            }<a name="line.285"></a>
+<span class="sourceLineNo">286</span>        }<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        return aliases;<a name="line.287"></a>
+<span class="sourceLineNo">288</span>    }<a name="line.288"></a>
+<span class="sourceLineNo">289</span><a name="line.289"></a>
+<span class="sourceLineNo">290</span>    private void checkForRemainingAttributes() {<a name="line.290"></a>
+<span class="sourceLineNo">291</span>        final Map&lt;String, String&gt; attrs = node.getAttributes();<a name="line.291"></a>
+<span class="sourceLineNo">292</span>        if (!attrs.isEmpty()) {<a name="line.292"></a>
+<span class="sourceLineNo">293</span>            final StringBuilder sb = new StringBuilder();<a name="line.293"></a>
+<span class="sourceLineNo">294</span>            for (final String key : attrs.keySet()) {<a name="line.294"></a>
+<span class="sourceLineNo">295</span>                if (sb.length() == 0) {<a name="line.295"></a>
+<span class="sourceLineNo">296</span>                    sb.append(node.getName());<a name="line.296"></a>
+<span class="sourceLineNo">297</span>                    sb.append(" contains ");<a name="line.297"></a>
+<span class="sourceLineNo">298</span>                    if (attrs.size() == 1) {<a name="line.298"></a>
+<span class="sourceLineNo">299</span>                        sb.append("an invalid element or attribute ");<a name="line.299"></a>
+<span class="sourceLineNo">300</span>                    } else {<a name="line.300"></a>
+<span class="sourceLineNo">301</span>                        sb.append("invalid attributes ");<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                    }<a name="line.302"></a>
+<span class="sourceLineNo">303</span>                } else {<a name="line.303"></a>
+<span class="sourceLineNo">304</span>                    sb.append(", ");<a name="line.304"></a>
+<span class="sourceLineNo">305</span>                }<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                StringBuilders.appendDqValue(sb, key);<a name="line.306"></a>
+<span class="sourceLineNo">307</span>            }<a name="line.307"></a>
+<span class="sourceLineNo">308</span>            LOGGER.error(sb.toString());<a name="line.308"></a>
+<span class="sourceLineNo">309</span>        }<a name="line.309"></a>
+<span class="sourceLineNo">310</span>    }<a name="line.310"></a>
+<span class="sourceLineNo">311</span><a name="line.311"></a>
+<span class="sourceLineNo">312</span>    private void verifyNodeChildrenUsed() {<a name="line.312"></a>
+<span class="sourceLineNo">313</span>        final List&lt;Node&gt; children = node.getChildren();<a name="line.313"></a>
+<span class="sourceLineNo">314</span>        if (!(pluginType.isDeferChildren() || children.isEmpty())) {<a name="line.314"></a>
+<span class="sourceLineNo">315</span>            for (final Node child : children) {<a name="line.315"></a>
+<span class="sourceLineNo">316</span>                final String nodeType = node.getType().getElementName();<a name="line.316"></a>
+<span class="sourceLineNo">317</span>                final String start = nodeType.equals(node.getName()) ? node.getName() : nodeType + ' ' + node.getName();<a name="line.317"></a>
+<span class="sourceLineNo">318</span>                LOGGER.error("{} has no parameter that matches element {}", start, child.getName());<a name="line.318"></a>
+<span class="sourceLineNo">319</span>            }<a name="line.319"></a>
+<span class="sourceLineNo">320</span>        }<a name="line.320"></a>
+<span class="sourceLineNo">321</span>    }<a name="line.321"></a>
+<span class="sourceLineNo">322</span>}<a name="line.322"></a>
 
 
 
