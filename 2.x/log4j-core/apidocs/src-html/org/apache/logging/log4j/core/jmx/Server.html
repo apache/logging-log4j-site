@@ -397,10 +397,18 @@
 <span class="sourceLineNo">389</span><a name="line.389"></a>
 <span class="sourceLineNo">390</span>    private static void register(final MBeanServer mbs, final Object mbean, final ObjectName objectName)<a name="line.390"></a>
 <span class="sourceLineNo">391</span>            throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {<a name="line.391"></a>
-<span class="sourceLineNo">392</span>        LOGGER.debug("Registering MBean {}", objectName);<a name="line.392"></a>
-<span class="sourceLineNo">393</span>        mbs.registerMBean(mbean, objectName);<a name="line.393"></a>
-<span class="sourceLineNo">394</span>    }<a name="line.394"></a>
-<span class="sourceLineNo">395</span>}<a name="line.395"></a>
+<span class="sourceLineNo">392</span>        if (mbs.isRegistered(objectName)) {<a name="line.392"></a>
+<span class="sourceLineNo">393</span>            try {<a name="line.393"></a>
+<span class="sourceLineNo">394</span>                mbs.unregisterMBean(objectName);<a name="line.394"></a>
+<span class="sourceLineNo">395</span>            } catch (MBeanRegistrationException | InstanceNotFoundException ex) {<a name="line.395"></a>
+<span class="sourceLineNo">396</span>                LOGGER.trace("Failed to unregister MBean {}", objectName);<a name="line.396"></a>
+<span class="sourceLineNo">397</span>            }<a name="line.397"></a>
+<span class="sourceLineNo">398</span>        }<a name="line.398"></a>
+<span class="sourceLineNo">399</span>        LOGGER.debug("Registering MBean {}", objectName);<a name="line.399"></a>
+<span class="sourceLineNo">400</span>        mbs.registerMBean(mbean, objectName);<a name="line.400"></a>
+<span class="sourceLineNo">401</span>    }<a name="line.401"></a>
+<span class="sourceLineNo">402</span><a name="line.402"></a>
+<span class="sourceLineNo">403</span>}<a name="line.403"></a>
 
 
 

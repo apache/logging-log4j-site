@@ -265,7 +265,7 @@
 <span class="sourceLineNo">257</span>    /**<a name="line.257"></a>
 <span class="sourceLineNo">258</span>     * Fragment of an pattern abbreviator.<a name="line.258"></a>
 <span class="sourceLineNo">259</span>     */<a name="line.259"></a>
-<span class="sourceLineNo">260</span>    private static class PatternAbbreviatorFragment {<a name="line.260"></a>
+<span class="sourceLineNo">260</span>    private static final class PatternAbbreviatorFragment {<a name="line.260"></a>
 <span class="sourceLineNo">261</span>        /**<a name="line.261"></a>
 <span class="sourceLineNo">262</span>         * Count of initial characters of element to output.<a name="line.262"></a>
 <span class="sourceLineNo">263</span>         */<a name="line.263"></a>
@@ -284,7 +284,7 @@
 <span class="sourceLineNo">276</span>         * @param ellipsis  character to represent elimination of characters,<a name="line.276"></a>
 <span class="sourceLineNo">277</span>         *                  '\0' if no ellipsis is desired.<a name="line.277"></a>
 <span class="sourceLineNo">278</span>         */<a name="line.278"></a>
-<span class="sourceLineNo">279</span>        public PatternAbbreviatorFragment(<a name="line.279"></a>
+<span class="sourceLineNo">279</span>        PatternAbbreviatorFragment(<a name="line.279"></a>
 <span class="sourceLineNo">280</span>            final int charCount, final char ellipsis) {<a name="line.280"></a>
 <span class="sourceLineNo">281</span>            this.charCount = charCount;<a name="line.281"></a>
 <span class="sourceLineNo">282</span>            this.ellipsis = ellipsis;<a name="line.282"></a>
@@ -293,58 +293,58 @@
 <span class="sourceLineNo">285</span>        /**<a name="line.285"></a>
 <span class="sourceLineNo">286</span>         * Abbreviate element of name.<a name="line.286"></a>
 <span class="sourceLineNo">287</span>         *<a name="line.287"></a>
-<span class="sourceLineNo">288</span>         * @param buf      buffer to receive element.<a name="line.288"></a>
-<span class="sourceLineNo">289</span>         * @param startPos starting index of name element.<a name="line.289"></a>
-<span class="sourceLineNo">290</span>         * @return starting index of next element.<a name="line.290"></a>
-<span class="sourceLineNo">291</span>         */<a name="line.291"></a>
-<span class="sourceLineNo">292</span>        public int abbreviate(final StringBuilder buf, final int startPos) {<a name="line.292"></a>
-<span class="sourceLineNo">293</span>            final int start = (startPos &lt; 0) ? 0 : startPos;<a name="line.293"></a>
-<span class="sourceLineNo">294</span>            final int max = buf.length();<a name="line.294"></a>
-<span class="sourceLineNo">295</span>            int nextDot = -1;<a name="line.295"></a>
-<span class="sourceLineNo">296</span>            for (int i = start; i &lt; max; i++) {<a name="line.296"></a>
-<span class="sourceLineNo">297</span>                if (buf.charAt(i) == '.') {<a name="line.297"></a>
-<span class="sourceLineNo">298</span>                    nextDot = i;<a name="line.298"></a>
-<span class="sourceLineNo">299</span>                    break;<a name="line.299"></a>
-<span class="sourceLineNo">300</span>                }<a name="line.300"></a>
-<span class="sourceLineNo">301</span>            }<a name="line.301"></a>
-<span class="sourceLineNo">302</span>            if (nextDot != -1) {<a name="line.302"></a>
-<span class="sourceLineNo">303</span>                if (nextDot - startPos &gt; charCount) {<a name="line.303"></a>
-<span class="sourceLineNo">304</span>                    buf.delete(startPos + charCount, nextDot);<a name="line.304"></a>
-<span class="sourceLineNo">305</span>                    nextDot = startPos + charCount;<a name="line.305"></a>
-<span class="sourceLineNo">306</span><a name="line.306"></a>
-<span class="sourceLineNo">307</span>                    if (ellipsis != '\0') {<a name="line.307"></a>
-<span class="sourceLineNo">308</span>                        buf.insert(nextDot, ellipsis);<a name="line.308"></a>
-<span class="sourceLineNo">309</span>                        nextDot++;<a name="line.309"></a>
-<span class="sourceLineNo">310</span>                    }<a name="line.310"></a>
-<span class="sourceLineNo">311</span>                }<a name="line.311"></a>
-<span class="sourceLineNo">312</span>                nextDot++;<a name="line.312"></a>
-<span class="sourceLineNo">313</span>            }<a name="line.313"></a>
-<span class="sourceLineNo">314</span>            return nextDot;<a name="line.314"></a>
-<span class="sourceLineNo">315</span>        }<a name="line.315"></a>
-<span class="sourceLineNo">316</span>    }<a name="line.316"></a>
-<span class="sourceLineNo">317</span><a name="line.317"></a>
-<span class="sourceLineNo">318</span>    /**<a name="line.318"></a>
-<span class="sourceLineNo">319</span>     * Pattern abbreviator.<a name="line.319"></a>
-<span class="sourceLineNo">320</span>     */<a name="line.320"></a>
-<span class="sourceLineNo">321</span>    private static class PatternAbbreviator extends NameAbbreviator {<a name="line.321"></a>
-<span class="sourceLineNo">322</span>        /**<a name="line.322"></a>
-<span class="sourceLineNo">323</span>         * Element abbreviation patterns.<a name="line.323"></a>
-<span class="sourceLineNo">324</span>         */<a name="line.324"></a>
-<span class="sourceLineNo">325</span>        private final PatternAbbreviatorFragment[] fragments;<a name="line.325"></a>
-<span class="sourceLineNo">326</span><a name="line.326"></a>
-<span class="sourceLineNo">327</span>        /**<a name="line.327"></a>
-<span class="sourceLineNo">328</span>         * Create PatternAbbreviator.<a name="line.328"></a>
-<span class="sourceLineNo">329</span>         *<a name="line.329"></a>
-<span class="sourceLineNo">330</span>         * @param fragments element abbreviation patterns.<a name="line.330"></a>
-<span class="sourceLineNo">331</span>         */<a name="line.331"></a>
-<span class="sourceLineNo">332</span>        public PatternAbbreviator(final List&lt;PatternAbbreviatorFragment&gt; fragments) {<a name="line.332"></a>
-<span class="sourceLineNo">333</span>            if (fragments.isEmpty()) {<a name="line.333"></a>
-<span class="sourceLineNo">334</span>                throw new IllegalArgumentException(<a name="line.334"></a>
-<span class="sourceLineNo">335</span>                    "fragments must have at least one element");<a name="line.335"></a>
-<span class="sourceLineNo">336</span>            }<a name="line.336"></a>
-<span class="sourceLineNo">337</span><a name="line.337"></a>
-<span class="sourceLineNo">338</span>            this.fragments = new PatternAbbreviatorFragment[fragments.size()];<a name="line.338"></a>
-<span class="sourceLineNo">339</span>            fragments.toArray(this.fragments);<a name="line.339"></a>
+<span class="sourceLineNo">288</span>         * @param input      input string which is being written to the output {@code buf}.<a name="line.288"></a>
+<span class="sourceLineNo">289</span>         * @param inputIndex starting index of name element in the {@code input} string.<a name="line.289"></a>
+<span class="sourceLineNo">290</span>         * @param buf        buffer to receive element.<a name="line.290"></a>
+<span class="sourceLineNo">291</span>         * @return starting  index of next element.<a name="line.291"></a>
+<span class="sourceLineNo">292</span>         */<a name="line.292"></a>
+<span class="sourceLineNo">293</span>        int abbreviate(final String input, final int inputIndex, final StringBuilder buf) {<a name="line.293"></a>
+<span class="sourceLineNo">294</span>            // Note that indexOf(char) performs worse than indexOf(String) on pre-16 JREs<a name="line.294"></a>
+<span class="sourceLineNo">295</span>            // due to missing intrinsics for the character implementation. The difference<a name="line.295"></a>
+<span class="sourceLineNo">296</span>            // is a few nanoseconds in most cases, so we opt to give the jre as much<a name="line.296"></a>
+<span class="sourceLineNo">297</span>            // information as possible for best performance on new runtimes, with the<a name="line.297"></a>
+<span class="sourceLineNo">298</span>            // possibility that such optimizations may be back-ported.<a name="line.298"></a>
+<span class="sourceLineNo">299</span>            // See https://bugs.openjdk.java.net/browse/JDK-8173585<a name="line.299"></a>
+<span class="sourceLineNo">300</span>            int nextDot = input.indexOf('.', inputIndex);<a name="line.300"></a>
+<span class="sourceLineNo">301</span>            if (nextDot &lt; 0) {<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                buf.append(input, inputIndex, input.length());<a name="line.302"></a>
+<span class="sourceLineNo">303</span>                return nextDot;<a name="line.303"></a>
+<span class="sourceLineNo">304</span>            }<a name="line.304"></a>
+<span class="sourceLineNo">305</span>            if (nextDot - inputIndex &gt; charCount) {<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                buf.append(input, inputIndex, inputIndex + charCount);<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                if (ellipsis != '\0') {<a name="line.307"></a>
+<span class="sourceLineNo">308</span>                    buf.append(ellipsis);<a name="line.308"></a>
+<span class="sourceLineNo">309</span>                }<a name="line.309"></a>
+<span class="sourceLineNo">310</span>                buf.append('.');<a name="line.310"></a>
+<span class="sourceLineNo">311</span>            } else {<a name="line.311"></a>
+<span class="sourceLineNo">312</span>                // Include the period to reduce interactions with the buffer<a name="line.312"></a>
+<span class="sourceLineNo">313</span>                buf.append(input, inputIndex, nextDot + 1);<a name="line.313"></a>
+<span class="sourceLineNo">314</span>            }<a name="line.314"></a>
+<span class="sourceLineNo">315</span>            return nextDot + 1;<a name="line.315"></a>
+<span class="sourceLineNo">316</span>        }<a name="line.316"></a>
+<span class="sourceLineNo">317</span>    }<a name="line.317"></a>
+<span class="sourceLineNo">318</span><a name="line.318"></a>
+<span class="sourceLineNo">319</span>    /**<a name="line.319"></a>
+<span class="sourceLineNo">320</span>     * Pattern abbreviator.<a name="line.320"></a>
+<span class="sourceLineNo">321</span>     */<a name="line.321"></a>
+<span class="sourceLineNo">322</span>    private static final class PatternAbbreviator extends NameAbbreviator {<a name="line.322"></a>
+<span class="sourceLineNo">323</span>        /**<a name="line.323"></a>
+<span class="sourceLineNo">324</span>         * Element abbreviation patterns.<a name="line.324"></a>
+<span class="sourceLineNo">325</span>         */<a name="line.325"></a>
+<span class="sourceLineNo">326</span>        private final PatternAbbreviatorFragment[] fragments;<a name="line.326"></a>
+<span class="sourceLineNo">327</span><a name="line.327"></a>
+<span class="sourceLineNo">328</span>        /**<a name="line.328"></a>
+<span class="sourceLineNo">329</span>         * Create PatternAbbreviator.<a name="line.329"></a>
+<span class="sourceLineNo">330</span>         *<a name="line.330"></a>
+<span class="sourceLineNo">331</span>         * @param fragments element abbreviation patterns.<a name="line.331"></a>
+<span class="sourceLineNo">332</span>         */<a name="line.332"></a>
+<span class="sourceLineNo">333</span>        PatternAbbreviator(final List&lt;PatternAbbreviatorFragment&gt; fragments) {<a name="line.333"></a>
+<span class="sourceLineNo">334</span>            if (fragments.isEmpty()) {<a name="line.334"></a>
+<span class="sourceLineNo">335</span>                throw new IllegalArgumentException(<a name="line.335"></a>
+<span class="sourceLineNo">336</span>                    "fragments must have at least one element");<a name="line.336"></a>
+<span class="sourceLineNo">337</span>            }<a name="line.337"></a>
+<span class="sourceLineNo">338</span><a name="line.338"></a>
+<span class="sourceLineNo">339</span>            this.fragments = fragments.toArray(new PatternAbbreviatorFragment[0]);<a name="line.339"></a>
 <span class="sourceLineNo">340</span>        }<a name="line.340"></a>
 <span class="sourceLineNo">341</span><a name="line.341"></a>
 <span class="sourceLineNo">342</span>        /**<a name="line.342"></a>
@@ -355,25 +355,20 @@
 <span class="sourceLineNo">347</span>         */<a name="line.347"></a>
 <span class="sourceLineNo">348</span>        @Override<a name="line.348"></a>
 <span class="sourceLineNo">349</span>        public void abbreviate(final String original, final StringBuilder destination) {<a name="line.349"></a>
-<span class="sourceLineNo">350</span>            //<a name="line.350"></a>
-<span class="sourceLineNo">351</span>            //  all non-terminal patterns are executed once<a name="line.351"></a>
-<span class="sourceLineNo">352</span>            //<a name="line.352"></a>
-<span class="sourceLineNo">353</span>            int pos = destination.length();<a name="line.353"></a>
-<span class="sourceLineNo">354</span>            final int max = pos + original.length();<a name="line.354"></a>
-<span class="sourceLineNo">355</span><a name="line.355"></a>
-<span class="sourceLineNo">356</span>            destination.append(original);<a name="line.356"></a>
-<span class="sourceLineNo">357</span><a name="line.357"></a>
-<span class="sourceLineNo">358</span>            int fragmentIndex = 0;<a name="line.358"></a>
-<span class="sourceLineNo">359</span>            while (pos &lt; max &amp;&amp; pos &gt;= 0) {<a name="line.359"></a>
-<span class="sourceLineNo">360</span>                pos = fragments[fragmentIndex].abbreviate(destination, pos);<a name="line.360"></a>
-<span class="sourceLineNo">361</span>                // last pattern in executed repeatedly<a name="line.361"></a>
-<span class="sourceLineNo">362</span>                if (fragmentIndex &lt; fragments.length - 1) {<a name="line.362"></a>
-<span class="sourceLineNo">363</span>                    fragmentIndex++;<a name="line.363"></a>
-<span class="sourceLineNo">364</span>                }<a name="line.364"></a>
-<span class="sourceLineNo">365</span>            }<a name="line.365"></a>
-<span class="sourceLineNo">366</span>        }<a name="line.366"></a>
-<span class="sourceLineNo">367</span>    }<a name="line.367"></a>
-<span class="sourceLineNo">368</span>}<a name="line.368"></a>
+<span class="sourceLineNo">350</span>            // non-terminal patterns are executed once<a name="line.350"></a>
+<span class="sourceLineNo">351</span>            int originalIndex = 0;<a name="line.351"></a>
+<span class="sourceLineNo">352</span>            int iteration = 0;<a name="line.352"></a>
+<span class="sourceLineNo">353</span>            int originalLength = original.length();<a name="line.353"></a>
+<span class="sourceLineNo">354</span>            while (originalIndex &gt;= 0 &amp;&amp; originalIndex &lt; originalLength) {<a name="line.354"></a>
+<span class="sourceLineNo">355</span>                originalIndex = fragment(iteration++).abbreviate(original, originalIndex, destination);<a name="line.355"></a>
+<span class="sourceLineNo">356</span>            }<a name="line.356"></a>
+<span class="sourceLineNo">357</span>        }<a name="line.357"></a>
+<span class="sourceLineNo">358</span><a name="line.358"></a>
+<span class="sourceLineNo">359</span>        PatternAbbreviatorFragment fragment(int index) {<a name="line.359"></a>
+<span class="sourceLineNo">360</span>            return fragments[Math.min(index, fragments.length - 1)];<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        }<a name="line.361"></a>
+<span class="sourceLineNo">362</span>    }<a name="line.362"></a>
+<span class="sourceLineNo">363</span>}<a name="line.363"></a>
 
 
 

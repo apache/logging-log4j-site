@@ -247,115 +247,107 @@
 <span class="sourceLineNo">239</span>        final RollingRandomAccessFileManager manager = getManager();<a name="line.239"></a>
 <span class="sourceLineNo">240</span>        manager.checkRollover(event);<a name="line.240"></a>
 <span class="sourceLineNo">241</span><a name="line.241"></a>
-<span class="sourceLineNo">242</span>        // Leverage the nice batching behaviour of async Loggers/Appenders:<a name="line.242"></a>
-<span class="sourceLineNo">243</span>        // we can signal the file manager that it needs to flush the buffer<a name="line.243"></a>
-<span class="sourceLineNo">244</span>        // to disk at the end of a batch.<a name="line.244"></a>
-<span class="sourceLineNo">245</span>        // From a user's point of view, this means that all log events are<a name="line.245"></a>
-<span class="sourceLineNo">246</span>        // _always_ available in the log file, without incurring the overhead<a name="line.246"></a>
-<span class="sourceLineNo">247</span>        // of immediateFlush=true.<a name="line.247"></a>
-<span class="sourceLineNo">248</span>        manager.setEndOfBatch(event.isEndOfBatch()); // FIXME manager's EndOfBatch threadlocal can be deleted<a name="line.248"></a>
-<span class="sourceLineNo">249</span><a name="line.249"></a>
-<span class="sourceLineNo">250</span>        // LOG4J2-1292 utilize gc-free Layout.encode() method: taken care of in superclass<a name="line.250"></a>
-<span class="sourceLineNo">251</span>        super.append(event);<a name="line.251"></a>
-<span class="sourceLineNo">252</span>    }<a name="line.252"></a>
-<span class="sourceLineNo">253</span><a name="line.253"></a>
-<span class="sourceLineNo">254</span>    /**<a name="line.254"></a>
-<span class="sourceLineNo">255</span>     * Returns the File name for the Appender.<a name="line.255"></a>
-<span class="sourceLineNo">256</span>     *<a name="line.256"></a>
-<span class="sourceLineNo">257</span>     * @return The file name.<a name="line.257"></a>
-<span class="sourceLineNo">258</span>     */<a name="line.258"></a>
-<span class="sourceLineNo">259</span>    public String getFileName() {<a name="line.259"></a>
-<span class="sourceLineNo">260</span>        return fileName;<a name="line.260"></a>
-<span class="sourceLineNo">261</span>    }<a name="line.261"></a>
-<span class="sourceLineNo">262</span><a name="line.262"></a>
-<span class="sourceLineNo">263</span>    /**<a name="line.263"></a>
-<span class="sourceLineNo">264</span>     * Returns the file pattern used when rolling over.<a name="line.264"></a>
-<span class="sourceLineNo">265</span>     *<a name="line.265"></a>
-<span class="sourceLineNo">266</span>     * @return The file pattern.<a name="line.266"></a>
+<span class="sourceLineNo">242</span>        // LOG4J2-1292 utilize gc-free Layout.encode() method: taken care of in superclass<a name="line.242"></a>
+<span class="sourceLineNo">243</span>        super.append(event);<a name="line.243"></a>
+<span class="sourceLineNo">244</span>    }<a name="line.244"></a>
+<span class="sourceLineNo">245</span><a name="line.245"></a>
+<span class="sourceLineNo">246</span>    /**<a name="line.246"></a>
+<span class="sourceLineNo">247</span>     * Returns the File name for the Appender.<a name="line.247"></a>
+<span class="sourceLineNo">248</span>     *<a name="line.248"></a>
+<span class="sourceLineNo">249</span>     * @return The file name.<a name="line.249"></a>
+<span class="sourceLineNo">250</span>     */<a name="line.250"></a>
+<span class="sourceLineNo">251</span>    public String getFileName() {<a name="line.251"></a>
+<span class="sourceLineNo">252</span>        return fileName;<a name="line.252"></a>
+<span class="sourceLineNo">253</span>    }<a name="line.253"></a>
+<span class="sourceLineNo">254</span><a name="line.254"></a>
+<span class="sourceLineNo">255</span>    /**<a name="line.255"></a>
+<span class="sourceLineNo">256</span>     * Returns the file pattern used when rolling over.<a name="line.256"></a>
+<span class="sourceLineNo">257</span>     *<a name="line.257"></a>
+<span class="sourceLineNo">258</span>     * @return The file pattern.<a name="line.258"></a>
+<span class="sourceLineNo">259</span>     */<a name="line.259"></a>
+<span class="sourceLineNo">260</span>    public String getFilePattern() {<a name="line.260"></a>
+<span class="sourceLineNo">261</span>        return filePattern;<a name="line.261"></a>
+<span class="sourceLineNo">262</span>    }<a name="line.262"></a>
+<span class="sourceLineNo">263</span><a name="line.263"></a>
+<span class="sourceLineNo">264</span>    /**<a name="line.264"></a>
+<span class="sourceLineNo">265</span>     * Returns the size of the file manager's buffer.<a name="line.265"></a>
+<span class="sourceLineNo">266</span>     * @return the buffer size<a name="line.266"></a>
 <span class="sourceLineNo">267</span>     */<a name="line.267"></a>
-<span class="sourceLineNo">268</span>    public String getFilePattern() {<a name="line.268"></a>
-<span class="sourceLineNo">269</span>        return filePattern;<a name="line.269"></a>
+<span class="sourceLineNo">268</span>    public int getBufferSize() {<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        return getManager().getBufferSize();<a name="line.269"></a>
 <span class="sourceLineNo">270</span>    }<a name="line.270"></a>
 <span class="sourceLineNo">271</span><a name="line.271"></a>
 <span class="sourceLineNo">272</span>    /**<a name="line.272"></a>
-<span class="sourceLineNo">273</span>     * Returns the size of the file manager's buffer.<a name="line.273"></a>
-<span class="sourceLineNo">274</span>     * @return the buffer size<a name="line.274"></a>
-<span class="sourceLineNo">275</span>     */<a name="line.275"></a>
-<span class="sourceLineNo">276</span>    public int getBufferSize() {<a name="line.276"></a>
-<span class="sourceLineNo">277</span>        return getManager().getBufferSize();<a name="line.277"></a>
-<span class="sourceLineNo">278</span>    }<a name="line.278"></a>
-<span class="sourceLineNo">279</span><a name="line.279"></a>
-<span class="sourceLineNo">280</span>    /**<a name="line.280"></a>
-<span class="sourceLineNo">281</span>     * Create a RollingRandomAccessFileAppender.<a name="line.281"></a>
-<span class="sourceLineNo">282</span>     *<a name="line.282"></a>
-<span class="sourceLineNo">283</span>     * @param fileName The name of the file that is actively written to.<a name="line.283"></a>
-<span class="sourceLineNo">284</span>     *            (required).<a name="line.284"></a>
-<span class="sourceLineNo">285</span>     * @param filePattern The pattern of the file name to use on rollover.<a name="line.285"></a>
-<span class="sourceLineNo">286</span>     *            (required).<a name="line.286"></a>
-<span class="sourceLineNo">287</span>     * @param append If true, events are appended to the file. If false, the<a name="line.287"></a>
-<span class="sourceLineNo">288</span>     *            file is overwritten when opened. Defaults to "true"<a name="line.288"></a>
-<span class="sourceLineNo">289</span>     * @param name The name of the Appender (required).<a name="line.289"></a>
-<span class="sourceLineNo">290</span>     * @param immediateFlush When true, events are immediately flushed. Defaults<a name="line.290"></a>
-<span class="sourceLineNo">291</span>     *            to "true".<a name="line.291"></a>
-<span class="sourceLineNo">292</span>     * @param bufferSizeStr The buffer size, defaults to {@value RollingRandomAccessFileManager#DEFAULT_BUFFER_SIZE}.<a name="line.292"></a>
-<span class="sourceLineNo">293</span>     * @param policy The triggering policy. (required).<a name="line.293"></a>
-<span class="sourceLineNo">294</span>     * @param strategy The rollover strategy. Defaults to<a name="line.294"></a>
-<span class="sourceLineNo">295</span>     *            DefaultRolloverStrategy.<a name="line.295"></a>
-<span class="sourceLineNo">296</span>     * @param layout The layout to use (defaults to the default PatternLayout).<a name="line.296"></a>
-<span class="sourceLineNo">297</span>     * @param filter The Filter or null.<a name="line.297"></a>
-<span class="sourceLineNo">298</span>     * @param ignoreExceptions If {@code "true"} (default) exceptions encountered when appending events are logged; otherwise<a name="line.298"></a>
-<span class="sourceLineNo">299</span>     *               they are propagated to the caller.<a name="line.299"></a>
-<span class="sourceLineNo">300</span>     * @param advertise "true" if the appender configuration should be<a name="line.300"></a>
-<span class="sourceLineNo">301</span>     *            advertised, "false" otherwise.<a name="line.301"></a>
-<span class="sourceLineNo">302</span>     * @param advertiseURI The advertised URI which can be used to retrieve the<a name="line.302"></a>
-<span class="sourceLineNo">303</span>     *            file contents.<a name="line.303"></a>
-<span class="sourceLineNo">304</span>     * @param configuration The Configuration.<a name="line.304"></a>
-<span class="sourceLineNo">305</span>     * @return A RollingRandomAccessFileAppender.<a name="line.305"></a>
-<span class="sourceLineNo">306</span>     * @deprecated Use {@link #newBuilder()}.<a name="line.306"></a>
-<span class="sourceLineNo">307</span>     */<a name="line.307"></a>
-<span class="sourceLineNo">308</span>    @Deprecated<a name="line.308"></a>
-<span class="sourceLineNo">309</span>    public static &lt;B extends Builder&lt;B&gt;&gt; RollingRandomAccessFileAppender createAppender(<a name="line.309"></a>
-<span class="sourceLineNo">310</span>            final String fileName,<a name="line.310"></a>
-<span class="sourceLineNo">311</span>            final String filePattern,<a name="line.311"></a>
-<span class="sourceLineNo">312</span>            final String append,<a name="line.312"></a>
-<span class="sourceLineNo">313</span>            final String name,<a name="line.313"></a>
-<span class="sourceLineNo">314</span>            final String immediateFlush,<a name="line.314"></a>
-<span class="sourceLineNo">315</span>            final String bufferSizeStr,<a name="line.315"></a>
-<span class="sourceLineNo">316</span>            final TriggeringPolicy policy,<a name="line.316"></a>
-<span class="sourceLineNo">317</span>            final RolloverStrategy strategy,<a name="line.317"></a>
-<span class="sourceLineNo">318</span>            final Layout&lt;? extends Serializable&gt; layout,<a name="line.318"></a>
-<span class="sourceLineNo">319</span>            final Filter filter,<a name="line.319"></a>
-<span class="sourceLineNo">320</span>            final String ignoreExceptions,<a name="line.320"></a>
-<span class="sourceLineNo">321</span>            final String advertise,<a name="line.321"></a>
-<span class="sourceLineNo">322</span>            final String advertiseURI,<a name="line.322"></a>
-<span class="sourceLineNo">323</span>            final Configuration configuration) {<a name="line.323"></a>
-<span class="sourceLineNo">324</span><a name="line.324"></a>
-<span class="sourceLineNo">325</span>        final boolean isAppend = Booleans.parseBoolean(append, true);<a name="line.325"></a>
-<span class="sourceLineNo">326</span>        final boolean isIgnoreExceptions = Booleans.parseBoolean(ignoreExceptions, true);<a name="line.326"></a>
-<span class="sourceLineNo">327</span>        final boolean isImmediateFlush = Booleans.parseBoolean(immediateFlush, true);<a name="line.327"></a>
-<span class="sourceLineNo">328</span>        final boolean isAdvertise = Boolean.parseBoolean(advertise);<a name="line.328"></a>
-<span class="sourceLineNo">329</span>        final int bufferSize = Integers.parseInt(bufferSizeStr, RollingRandomAccessFileManager.DEFAULT_BUFFER_SIZE);<a name="line.329"></a>
-<span class="sourceLineNo">330</span><a name="line.330"></a>
-<span class="sourceLineNo">331</span>        return RollingRandomAccessFileAppender.&lt;B&gt;newBuilder()<a name="line.331"></a>
-<span class="sourceLineNo">332</span>           .withAdvertise(isAdvertise)<a name="line.332"></a>
-<span class="sourceLineNo">333</span>           .withAdvertiseURI(advertiseURI)<a name="line.333"></a>
-<span class="sourceLineNo">334</span>           .withAppend(isAppend)<a name="line.334"></a>
-<span class="sourceLineNo">335</span>           .withBufferSize(bufferSize)<a name="line.335"></a>
-<span class="sourceLineNo">336</span>           .setConfiguration(configuration)<a name="line.336"></a>
-<span class="sourceLineNo">337</span>           .withFileName(fileName)<a name="line.337"></a>
-<span class="sourceLineNo">338</span>           .withFilePattern(filePattern).setFilter(filter).setIgnoreExceptions(isIgnoreExceptions)<a name="line.338"></a>
-<span class="sourceLineNo">339</span>           .withImmediateFlush(isImmediateFlush).setLayout(layout).setName(name)<a name="line.339"></a>
-<span class="sourceLineNo">340</span>           .withPolicy(policy)<a name="line.340"></a>
-<span class="sourceLineNo">341</span>           .withStrategy(strategy)<a name="line.341"></a>
-<span class="sourceLineNo">342</span>           .build();<a name="line.342"></a>
-<span class="sourceLineNo">343</span>    }<a name="line.343"></a>
-<span class="sourceLineNo">344</span><a name="line.344"></a>
-<span class="sourceLineNo">345</span>    @PluginBuilderFactory<a name="line.345"></a>
-<span class="sourceLineNo">346</span>    public static &lt;B extends Builder&lt;B&gt;&gt; B newBuilder() {<a name="line.346"></a>
-<span class="sourceLineNo">347</span>        return new Builder&lt;B&gt;().asBuilder();<a name="line.347"></a>
-<span class="sourceLineNo">348</span>    }<a name="line.348"></a>
-<span class="sourceLineNo">349</span><a name="line.349"></a>
-<span class="sourceLineNo">350</span>}<a name="line.350"></a>
+<span class="sourceLineNo">273</span>     * Create a RollingRandomAccessFileAppender.<a name="line.273"></a>
+<span class="sourceLineNo">274</span>     *<a name="line.274"></a>
+<span class="sourceLineNo">275</span>     * @param fileName The name of the file that is actively written to.<a name="line.275"></a>
+<span class="sourceLineNo">276</span>     *            (required).<a name="line.276"></a>
+<span class="sourceLineNo">277</span>     * @param filePattern The pattern of the file name to use on rollover.<a name="line.277"></a>
+<span class="sourceLineNo">278</span>     *            (required).<a name="line.278"></a>
+<span class="sourceLineNo">279</span>     * @param append If true, events are appended to the file. If false, the<a name="line.279"></a>
+<span class="sourceLineNo">280</span>     *            file is overwritten when opened. Defaults to "true"<a name="line.280"></a>
+<span class="sourceLineNo">281</span>     * @param name The name of the Appender (required).<a name="line.281"></a>
+<span class="sourceLineNo">282</span>     * @param immediateFlush When true, events are immediately flushed. Defaults<a name="line.282"></a>
+<span class="sourceLineNo">283</span>     *            to "true".<a name="line.283"></a>
+<span class="sourceLineNo">284</span>     * @param bufferSizeStr The buffer size, defaults to {@value RollingRandomAccessFileManager#DEFAULT_BUFFER_SIZE}.<a name="line.284"></a>
+<span class="sourceLineNo">285</span>     * @param policy The triggering policy. (required).<a name="line.285"></a>
+<span class="sourceLineNo">286</span>     * @param strategy The rollover strategy. Defaults to<a name="line.286"></a>
+<span class="sourceLineNo">287</span>     *            DefaultRolloverStrategy.<a name="line.287"></a>
+<span class="sourceLineNo">288</span>     * @param layout The layout to use (defaults to the default PatternLayout).<a name="line.288"></a>
+<span class="sourceLineNo">289</span>     * @param filter The Filter or null.<a name="line.289"></a>
+<span class="sourceLineNo">290</span>     * @param ignoreExceptions If {@code "true"} (default) exceptions encountered when appending events are logged; otherwise<a name="line.290"></a>
+<span class="sourceLineNo">291</span>     *               they are propagated to the caller.<a name="line.291"></a>
+<span class="sourceLineNo">292</span>     * @param advertise "true" if the appender configuration should be<a name="line.292"></a>
+<span class="sourceLineNo">293</span>     *            advertised, "false" otherwise.<a name="line.293"></a>
+<span class="sourceLineNo">294</span>     * @param advertiseURI The advertised URI which can be used to retrieve the<a name="line.294"></a>
+<span class="sourceLineNo">295</span>     *            file contents.<a name="line.295"></a>
+<span class="sourceLineNo">296</span>     * @param configuration The Configuration.<a name="line.296"></a>
+<span class="sourceLineNo">297</span>     * @return A RollingRandomAccessFileAppender.<a name="line.297"></a>
+<span class="sourceLineNo">298</span>     * @deprecated Use {@link #newBuilder()}.<a name="line.298"></a>
+<span class="sourceLineNo">299</span>     */<a name="line.299"></a>
+<span class="sourceLineNo">300</span>    @Deprecated<a name="line.300"></a>
+<span class="sourceLineNo">301</span>    public static &lt;B extends Builder&lt;B&gt;&gt; RollingRandomAccessFileAppender createAppender(<a name="line.301"></a>
+<span class="sourceLineNo">302</span>            final String fileName,<a name="line.302"></a>
+<span class="sourceLineNo">303</span>            final String filePattern,<a name="line.303"></a>
+<span class="sourceLineNo">304</span>            final String append,<a name="line.304"></a>
+<span class="sourceLineNo">305</span>            final String name,<a name="line.305"></a>
+<span class="sourceLineNo">306</span>            final String immediateFlush,<a name="line.306"></a>
+<span class="sourceLineNo">307</span>            final String bufferSizeStr,<a name="line.307"></a>
+<span class="sourceLineNo">308</span>            final TriggeringPolicy policy,<a name="line.308"></a>
+<span class="sourceLineNo">309</span>            final RolloverStrategy strategy,<a name="line.309"></a>
+<span class="sourceLineNo">310</span>            final Layout&lt;? extends Serializable&gt; layout,<a name="line.310"></a>
+<span class="sourceLineNo">311</span>            final Filter filter,<a name="line.311"></a>
+<span class="sourceLineNo">312</span>            final String ignoreExceptions,<a name="line.312"></a>
+<span class="sourceLineNo">313</span>            final String advertise,<a name="line.313"></a>
+<span class="sourceLineNo">314</span>            final String advertiseURI,<a name="line.314"></a>
+<span class="sourceLineNo">315</span>            final Configuration configuration) {<a name="line.315"></a>
+<span class="sourceLineNo">316</span><a name="line.316"></a>
+<span class="sourceLineNo">317</span>        final boolean isAppend = Booleans.parseBoolean(append, true);<a name="line.317"></a>
+<span class="sourceLineNo">318</span>        final boolean isIgnoreExceptions = Booleans.parseBoolean(ignoreExceptions, true);<a name="line.318"></a>
+<span class="sourceLineNo">319</span>        final boolean isImmediateFlush = Booleans.parseBoolean(immediateFlush, true);<a name="line.319"></a>
+<span class="sourceLineNo">320</span>        final boolean isAdvertise = Boolean.parseBoolean(advertise);<a name="line.320"></a>
+<span class="sourceLineNo">321</span>        final int bufferSize = Integers.parseInt(bufferSizeStr, RollingRandomAccessFileManager.DEFAULT_BUFFER_SIZE);<a name="line.321"></a>
+<span class="sourceLineNo">322</span><a name="line.322"></a>
+<span class="sourceLineNo">323</span>        return RollingRandomAccessFileAppender.&lt;B&gt;newBuilder()<a name="line.323"></a>
+<span class="sourceLineNo">324</span>           .withAdvertise(isAdvertise)<a name="line.324"></a>
+<span class="sourceLineNo">325</span>           .withAdvertiseURI(advertiseURI)<a name="line.325"></a>
+<span class="sourceLineNo">326</span>           .withAppend(isAppend)<a name="line.326"></a>
+<span class="sourceLineNo">327</span>           .withBufferSize(bufferSize)<a name="line.327"></a>
+<span class="sourceLineNo">328</span>           .setConfiguration(configuration)<a name="line.328"></a>
+<span class="sourceLineNo">329</span>           .withFileName(fileName)<a name="line.329"></a>
+<span class="sourceLineNo">330</span>           .withFilePattern(filePattern).setFilter(filter).setIgnoreExceptions(isIgnoreExceptions)<a name="line.330"></a>
+<span class="sourceLineNo">331</span>           .withImmediateFlush(isImmediateFlush).setLayout(layout).setName(name)<a name="line.331"></a>
+<span class="sourceLineNo">332</span>           .withPolicy(policy)<a name="line.332"></a>
+<span class="sourceLineNo">333</span>           .withStrategy(strategy)<a name="line.333"></a>
+<span class="sourceLineNo">334</span>           .build();<a name="line.334"></a>
+<span class="sourceLineNo">335</span>    }<a name="line.335"></a>
+<span class="sourceLineNo">336</span><a name="line.336"></a>
+<span class="sourceLineNo">337</span>    @PluginBuilderFactory<a name="line.337"></a>
+<span class="sourceLineNo">338</span>    public static &lt;B extends Builder&lt;B&gt;&gt; B newBuilder() {<a name="line.338"></a>
+<span class="sourceLineNo">339</span>        return new Builder&lt;B&gt;().asBuilder();<a name="line.339"></a>
+<span class="sourceLineNo">340</span>    }<a name="line.340"></a>
+<span class="sourceLineNo">341</span><a name="line.341"></a>
+<span class="sourceLineNo">342</span>}<a name="line.342"></a>
 
 
 
