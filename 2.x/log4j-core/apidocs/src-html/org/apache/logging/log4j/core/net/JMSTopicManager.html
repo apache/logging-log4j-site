@@ -1,242 +1,247 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    /*<a name="line.1"></a>
-<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
-<FONT color="green">003</FONT>     * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
-<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
-<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
-<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
-<FONT color="green">007</FONT>     * the License. You may obtain a copy of the License at<a name="line.7"></a>
-<FONT color="green">008</FONT>     *<a name="line.8"></a>
-<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
-<FONT color="green">010</FONT>     *<a name="line.10"></a>
-<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
-<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
-<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
-<FONT color="green">014</FONT>     * See the license for the specific language governing permissions and<a name="line.14"></a>
-<FONT color="green">015</FONT>     * limitations under the license.<a name="line.15"></a>
-<FONT color="green">016</FONT>     */<a name="line.16"></a>
-<FONT color="green">017</FONT>    package org.apache.logging.log4j.core.net;<a name="line.17"></a>
-<FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    import java.io.Serializable;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import javax.jms.JMSException;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import javax.jms.Session;<a name="line.21"></a>
-<FONT color="green">022</FONT>    import javax.jms.Topic;<a name="line.22"></a>
-<FONT color="green">023</FONT>    import javax.jms.TopicConnection;<a name="line.23"></a>
-<FONT color="green">024</FONT>    import javax.jms.TopicConnectionFactory;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import javax.jms.TopicPublisher;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import javax.jms.TopicSession;<a name="line.26"></a>
-<FONT color="green">027</FONT>    import javax.naming.Context;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import javax.naming.NamingException;<a name="line.28"></a>
-<FONT color="green">029</FONT>    <a name="line.29"></a>
-<FONT color="green">030</FONT>    import org.apache.logging.log4j.core.appender.ManagerFactory;<a name="line.30"></a>
-<FONT color="green">031</FONT>    <a name="line.31"></a>
-<FONT color="green">032</FONT>    /**<a name="line.32"></a>
-<FONT color="green">033</FONT>     * Manager for JMS Topic connections.<a name="line.33"></a>
-<FONT color="green">034</FONT>     */<a name="line.34"></a>
-<FONT color="green">035</FONT>    public class JMSTopicManager extends AbstractJMSManager {<a name="line.35"></a>
-<FONT color="green">036</FONT>    <a name="line.36"></a>
-<FONT color="green">037</FONT>        private static final JMSTopicManagerFactory FACTORY = new JMSTopicManagerFactory();<a name="line.37"></a>
-<FONT color="green">038</FONT>    <a name="line.38"></a>
-<FONT color="green">039</FONT>        private TopicInfo info;<a name="line.39"></a>
-<FONT color="green">040</FONT>        private final String factoryBindingName;<a name="line.40"></a>
-<FONT color="green">041</FONT>        private final String topicBindingName;<a name="line.41"></a>
-<FONT color="green">042</FONT>        private final String userName;<a name="line.42"></a>
-<FONT color="green">043</FONT>        private final String password;<a name="line.43"></a>
-<FONT color="green">044</FONT>        private final Context context;<a name="line.44"></a>
-<FONT color="green">045</FONT>        /**<a name="line.45"></a>
-<FONT color="green">046</FONT>         * Constructor.<a name="line.46"></a>
-<FONT color="green">047</FONT>         * @param name The unique name of the connection.<a name="line.47"></a>
-<FONT color="green">048</FONT>         * @param context The context.<a name="line.48"></a>
-<FONT color="green">049</FONT>         * @param factoryBindingName The factory binding name.<a name="line.49"></a>
-<FONT color="green">050</FONT>         * @param topicBindingName The queue binding name.<a name="line.50"></a>
-<FONT color="green">051</FONT>         * @param userName The user name.<a name="line.51"></a>
-<FONT color="green">052</FONT>         * @param password The credentials for the user.<a name="line.52"></a>
-<FONT color="green">053</FONT>         * @param info The Queue connection info.<a name="line.53"></a>
-<FONT color="green">054</FONT>         */<a name="line.54"></a>
-<FONT color="green">055</FONT>        protected JMSTopicManager(final String name, final Context context, final String factoryBindingName,<a name="line.55"></a>
-<FONT color="green">056</FONT>                                  final String topicBindingName, final String userName, final String password,<a name="line.56"></a>
-<FONT color="green">057</FONT>                                  final TopicInfo info) {<a name="line.57"></a>
-<FONT color="green">058</FONT>            super(name);<a name="line.58"></a>
-<FONT color="green">059</FONT>            this.context = context;<a name="line.59"></a>
-<FONT color="green">060</FONT>            this.factoryBindingName = factoryBindingName;<a name="line.60"></a>
-<FONT color="green">061</FONT>            this.topicBindingName = topicBindingName;<a name="line.61"></a>
-<FONT color="green">062</FONT>            this.userName = userName;<a name="line.62"></a>
-<FONT color="green">063</FONT>            this.password = password;<a name="line.63"></a>
-<FONT color="green">064</FONT>            this.info = info;<a name="line.64"></a>
-<FONT color="green">065</FONT>        }<a name="line.65"></a>
-<FONT color="green">066</FONT>    <a name="line.66"></a>
-<FONT color="green">067</FONT>        /**<a name="line.67"></a>
-<FONT color="green">068</FONT>         * Obtain a JSMTopicManager.<a name="line.68"></a>
-<FONT color="green">069</FONT>         * @param factoryName The fully qualified class name of the InitialContextFactory.<a name="line.69"></a>
-<FONT color="green">070</FONT>         * @param providerURL The URL of the provider to use.<a name="line.70"></a>
-<FONT color="green">071</FONT>         * @param urlPkgPrefixes A colon-separated list of package prefixes for the class name of the factory class that<a name="line.71"></a>
-<FONT color="green">072</FONT>         * will create a URL context factory<a name="line.72"></a>
-<FONT color="green">073</FONT>         * @param securityPrincipalName The name of the identity of the Principal.<a name="line.73"></a>
-<FONT color="green">074</FONT>         * @param securityCredentials The security credentials of the Principal.<a name="line.74"></a>
-<FONT color="green">075</FONT>         * @param factoryBindingName The name to locate in the Context that provides the TopicConnectionFactory.<a name="line.75"></a>
-<FONT color="green">076</FONT>         * @param topicBindingName The name to use to locate the Topic.<a name="line.76"></a>
-<FONT color="green">077</FONT>         * @param userName The userid to use to create the Topic Connection.<a name="line.77"></a>
-<FONT color="green">078</FONT>         * @param password The password to use to create the Topic Connection.<a name="line.78"></a>
-<FONT color="green">079</FONT>         * @return A JMSTopicManager.<a name="line.79"></a>
-<FONT color="green">080</FONT>         */<a name="line.80"></a>
-<FONT color="green">081</FONT>        public static JMSTopicManager getJMSTopicManager(final String factoryName, final String providerURL,<a name="line.81"></a>
-<FONT color="green">082</FONT>                                                         final String urlPkgPrefixes, final String securityPrincipalName,<a name="line.82"></a>
-<FONT color="green">083</FONT>                                                         final String securityCredentials, final String factoryBindingName,<a name="line.83"></a>
-<FONT color="green">084</FONT>                                                         final String topicBindingName, final String userName,<a name="line.84"></a>
-<FONT color="green">085</FONT>                                                         final String password) {<a name="line.85"></a>
-<FONT color="green">086</FONT>    <a name="line.86"></a>
-<FONT color="green">087</FONT>            if (factoryBindingName == null) {<a name="line.87"></a>
-<FONT color="green">088</FONT>                LOGGER.error("No factory name provided for JMSTopicManager");<a name="line.88"></a>
-<FONT color="green">089</FONT>                return null;<a name="line.89"></a>
-<FONT color="green">090</FONT>            }<a name="line.90"></a>
-<FONT color="green">091</FONT>            if (topicBindingName == null) {<a name="line.91"></a>
-<FONT color="green">092</FONT>                LOGGER.error("No topic name provided for JMSTopicManager");<a name="line.92"></a>
-<FONT color="green">093</FONT>                return null;<a name="line.93"></a>
-<FONT color="green">094</FONT>            }<a name="line.94"></a>
-<FONT color="green">095</FONT>    <a name="line.95"></a>
-<FONT color="green">096</FONT>            final String name = "JMSTopic:" + factoryBindingName + '.' + topicBindingName;<a name="line.96"></a>
-<FONT color="green">097</FONT>            return getManager(name, FACTORY, new FactoryData(factoryName, providerURL, urlPkgPrefixes,<a name="line.97"></a>
-<FONT color="green">098</FONT>                securityPrincipalName, securityCredentials, factoryBindingName, topicBindingName, userName, password));<a name="line.98"></a>
-<FONT color="green">099</FONT>        }<a name="line.99"></a>
-<FONT color="green">100</FONT>    <a name="line.100"></a>
-<FONT color="green">101</FONT>    <a name="line.101"></a>
-<FONT color="green">102</FONT>        @Override<a name="line.102"></a>
-<FONT color="green">103</FONT>        public void send(final Serializable object) throws Exception {<a name="line.103"></a>
-<FONT color="green">104</FONT>            if (info == null) {<a name="line.104"></a>
-<FONT color="green">105</FONT>                info = connect(context, factoryBindingName, topicBindingName, userName, password, false);<a name="line.105"></a>
-<FONT color="green">106</FONT>            }<a name="line.106"></a>
-<FONT color="green">107</FONT>            try {<a name="line.107"></a>
-<FONT color="green">108</FONT>                super.send(object, info.session, info.publisher);<a name="line.108"></a>
-<FONT color="green">109</FONT>            } catch (final Exception ex) {<a name="line.109"></a>
-<FONT color="green">110</FONT>                cleanup(true);<a name="line.110"></a>
-<FONT color="green">111</FONT>                throw ex;<a name="line.111"></a>
-<FONT color="green">112</FONT>            }<a name="line.112"></a>
-<FONT color="green">113</FONT>        }<a name="line.113"></a>
-<FONT color="green">114</FONT>    <a name="line.114"></a>
-<FONT color="green">115</FONT>        @Override<a name="line.115"></a>
-<FONT color="green">116</FONT>        public void releaseSub() {<a name="line.116"></a>
-<FONT color="green">117</FONT>            if (info != null) {<a name="line.117"></a>
-<FONT color="green">118</FONT>                cleanup(false);<a name="line.118"></a>
-<FONT color="green">119</FONT>            }<a name="line.119"></a>
-<FONT color="green">120</FONT>        }<a name="line.120"></a>
-<FONT color="green">121</FONT>    <a name="line.121"></a>
-<FONT color="green">122</FONT>        private void cleanup(final boolean quiet) {<a name="line.122"></a>
-<FONT color="green">123</FONT>            try {<a name="line.123"></a>
-<FONT color="green">124</FONT>                info.session.close();<a name="line.124"></a>
-<FONT color="green">125</FONT>            } catch (final Exception e) {<a name="line.125"></a>
-<FONT color="green">126</FONT>                if (!quiet) {<a name="line.126"></a>
-<FONT color="green">127</FONT>                    LOGGER.error("Error closing session for " + getName(), e);<a name="line.127"></a>
-<FONT color="green">128</FONT>                }<a name="line.128"></a>
-<FONT color="green">129</FONT>            }<a name="line.129"></a>
-<FONT color="green">130</FONT>            try {<a name="line.130"></a>
-<FONT color="green">131</FONT>                info.conn.close();<a name="line.131"></a>
-<FONT color="green">132</FONT>            } catch (final Exception e) {<a name="line.132"></a>
-<FONT color="green">133</FONT>                if (!quiet) {<a name="line.133"></a>
-<FONT color="green">134</FONT>                    LOGGER.error("Error closing connection for " + getName(), e);<a name="line.134"></a>
-<FONT color="green">135</FONT>                }<a name="line.135"></a>
-<FONT color="green">136</FONT>            }<a name="line.136"></a>
-<FONT color="green">137</FONT>            info = null;<a name="line.137"></a>
-<FONT color="green">138</FONT>        }<a name="line.138"></a>
-<FONT color="green">139</FONT>    <a name="line.139"></a>
-<FONT color="green">140</FONT>        /**<a name="line.140"></a>
-<FONT color="green">141</FONT>         * Data for the factory.<a name="line.141"></a>
-<FONT color="green">142</FONT>         */<a name="line.142"></a>
-<FONT color="green">143</FONT>        private static class FactoryData {<a name="line.143"></a>
-<FONT color="green">144</FONT>            private final String factoryName;<a name="line.144"></a>
-<FONT color="green">145</FONT>            private final String providerURL;<a name="line.145"></a>
-<FONT color="green">146</FONT>            private final String urlPkgPrefixes;<a name="line.146"></a>
-<FONT color="green">147</FONT>            private final String securityPrincipalName;<a name="line.147"></a>
-<FONT color="green">148</FONT>            private final String securityCredentials;<a name="line.148"></a>
-<FONT color="green">149</FONT>            private final String factoryBindingName;<a name="line.149"></a>
-<FONT color="green">150</FONT>            private final String topicBindingName;<a name="line.150"></a>
-<FONT color="green">151</FONT>            private final String userName;<a name="line.151"></a>
-<FONT color="green">152</FONT>            private final String password;<a name="line.152"></a>
-<FONT color="green">153</FONT>    <a name="line.153"></a>
-<FONT color="green">154</FONT>            public FactoryData(final String factoryName, final String providerURL, final String urlPkgPrefixes,<a name="line.154"></a>
-<FONT color="green">155</FONT>                               final String securityPrincipalName, final String securityCredentials,<a name="line.155"></a>
-<FONT color="green">156</FONT>                               final String factoryBindingName, final String topicBindingName,<a name="line.156"></a>
-<FONT color="green">157</FONT>                               final String userName, final String password) {<a name="line.157"></a>
-<FONT color="green">158</FONT>                this.factoryName = factoryName;<a name="line.158"></a>
-<FONT color="green">159</FONT>                this.providerURL = providerURL;<a name="line.159"></a>
-<FONT color="green">160</FONT>                this.urlPkgPrefixes = urlPkgPrefixes;<a name="line.160"></a>
-<FONT color="green">161</FONT>                this.securityPrincipalName = securityPrincipalName;<a name="line.161"></a>
-<FONT color="green">162</FONT>                this.securityCredentials = securityCredentials;<a name="line.162"></a>
-<FONT color="green">163</FONT>                this.factoryBindingName = factoryBindingName;<a name="line.163"></a>
-<FONT color="green">164</FONT>                this.topicBindingName = topicBindingName;<a name="line.164"></a>
-<FONT color="green">165</FONT>                this.userName = userName;<a name="line.165"></a>
-<FONT color="green">166</FONT>                this.password = password;<a name="line.166"></a>
-<FONT color="green">167</FONT>            }<a name="line.167"></a>
-<FONT color="green">168</FONT>        }<a name="line.168"></a>
-<FONT color="green">169</FONT>    <a name="line.169"></a>
-<FONT color="green">170</FONT>        private static TopicInfo connect(final Context context, final String factoryBindingName,<a name="line.170"></a>
-<FONT color="green">171</FONT>                                         final String queueBindingName, final String userName, final String password,<a name="line.171"></a>
-<FONT color="green">172</FONT>                                         final boolean suppress) throws Exception {<a name="line.172"></a>
-<FONT color="green">173</FONT>            try {<a name="line.173"></a>
-<FONT color="green">174</FONT>                final TopicConnectionFactory factory = (TopicConnectionFactory) lookup(context, factoryBindingName);<a name="line.174"></a>
-<FONT color="green">175</FONT>                TopicConnection conn;<a name="line.175"></a>
-<FONT color="green">176</FONT>                if (userName != null) {<a name="line.176"></a>
-<FONT color="green">177</FONT>                    conn = factory.createTopicConnection(userName, password);<a name="line.177"></a>
-<FONT color="green">178</FONT>                } else {<a name="line.178"></a>
-<FONT color="green">179</FONT>                    conn = factory.createTopicConnection();<a name="line.179"></a>
-<FONT color="green">180</FONT>                }<a name="line.180"></a>
-<FONT color="green">181</FONT>                final TopicSession sess = conn.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);<a name="line.181"></a>
-<FONT color="green">182</FONT>                final Topic topic = (Topic) lookup(context, queueBindingName);<a name="line.182"></a>
-<FONT color="green">183</FONT>                final TopicPublisher publisher = sess.createPublisher(topic);<a name="line.183"></a>
-<FONT color="green">184</FONT>                conn.start();<a name="line.184"></a>
-<FONT color="green">185</FONT>                return new TopicInfo(conn, sess, publisher);<a name="line.185"></a>
-<FONT color="green">186</FONT>            } catch (final NamingException ex) {<a name="line.186"></a>
-<FONT color="green">187</FONT>                LOGGER.warn("Unable to locate connection factory " + factoryBindingName, ex);<a name="line.187"></a>
-<FONT color="green">188</FONT>                if (!suppress) {<a name="line.188"></a>
-<FONT color="green">189</FONT>                    throw ex;<a name="line.189"></a>
-<FONT color="green">190</FONT>                }<a name="line.190"></a>
-<FONT color="green">191</FONT>            } catch (final JMSException ex) {<a name="line.191"></a>
-<FONT color="green">192</FONT>                LOGGER.warn("Unable to create connection to queue " + queueBindingName, ex);<a name="line.192"></a>
-<FONT color="green">193</FONT>                if (!suppress) {<a name="line.193"></a>
-<FONT color="green">194</FONT>                    throw ex;<a name="line.194"></a>
-<FONT color="green">195</FONT>                }<a name="line.195"></a>
-<FONT color="green">196</FONT>            }<a name="line.196"></a>
-<FONT color="green">197</FONT>            return null;<a name="line.197"></a>
-<FONT color="green">198</FONT>        }<a name="line.198"></a>
-<FONT color="green">199</FONT>    <a name="line.199"></a>
-<FONT color="green">200</FONT>        /** Topic connection information */<a name="line.200"></a>
-<FONT color="green">201</FONT>        private static class TopicInfo {<a name="line.201"></a>
-<FONT color="green">202</FONT>            private final TopicConnection conn;<a name="line.202"></a>
-<FONT color="green">203</FONT>            private final TopicSession session;<a name="line.203"></a>
-<FONT color="green">204</FONT>            private final TopicPublisher publisher;<a name="line.204"></a>
-<FONT color="green">205</FONT>    <a name="line.205"></a>
-<FONT color="green">206</FONT>            public TopicInfo(final TopicConnection conn, final TopicSession session, final TopicPublisher publisher) {<a name="line.206"></a>
-<FONT color="green">207</FONT>                this.conn = conn;<a name="line.207"></a>
-<FONT color="green">208</FONT>                this.session = session;<a name="line.208"></a>
-<FONT color="green">209</FONT>                this.publisher = publisher;<a name="line.209"></a>
-<FONT color="green">210</FONT>            }<a name="line.210"></a>
-<FONT color="green">211</FONT>        }<a name="line.211"></a>
-<FONT color="green">212</FONT>    <a name="line.212"></a>
-<FONT color="green">213</FONT>        /**<a name="line.213"></a>
-<FONT color="green">214</FONT>         * Factory to create the JMSQueueManager.<a name="line.214"></a>
-<FONT color="green">215</FONT>         */<a name="line.215"></a>
-<FONT color="green">216</FONT>        private static class JMSTopicManagerFactory implements ManagerFactory&lt;JMSTopicManager, FactoryData&gt; {<a name="line.216"></a>
-<FONT color="green">217</FONT>    <a name="line.217"></a>
-<FONT color="green">218</FONT>            @Override<a name="line.218"></a>
-<FONT color="green">219</FONT>            public JMSTopicManager createManager(final String name, final FactoryData data) {<a name="line.219"></a>
-<FONT color="green">220</FONT>                try {<a name="line.220"></a>
-<FONT color="green">221</FONT>                    final Context ctx = createContext(data.factoryName, data.providerURL, data.urlPkgPrefixes,<a name="line.221"></a>
-<FONT color="green">222</FONT>                        data.securityPrincipalName, data.securityCredentials);<a name="line.222"></a>
-<FONT color="green">223</FONT>                    final TopicInfo info = connect(ctx, data.factoryBindingName, data.topicBindingName, data.userName,<a name="line.223"></a>
-<FONT color="green">224</FONT>                        data.password, true);<a name="line.224"></a>
-<FONT color="green">225</FONT>                    return new JMSTopicManager(name, ctx, data.factoryBindingName, data.topicBindingName,<a name="line.225"></a>
-<FONT color="green">226</FONT>                        data.userName, data.password, info);<a name="line.226"></a>
-<FONT color="green">227</FONT>                } catch (final NamingException ex) {<a name="line.227"></a>
-<FONT color="green">228</FONT>                    LOGGER.error("Unable to locate resource", ex);<a name="line.228"></a>
-<FONT color="green">229</FONT>                } catch (final Exception ex) {<a name="line.229"></a>
-<FONT color="green">230</FONT>                    LOGGER.error("Unable to connect", ex);<a name="line.230"></a>
-<FONT color="green">231</FONT>                }<a name="line.231"></a>
-<FONT color="green">232</FONT>    <a name="line.232"></a>
-<FONT color="green">233</FONT>                return null;<a name="line.233"></a>
-<FONT color="green">234</FONT>            }<a name="line.234"></a>
-<FONT color="green">235</FONT>        }<a name="line.235"></a>
-<FONT color="green">236</FONT>    }<a name="line.236"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License. You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the license for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the license.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span>package org.apache.logging.log4j.core.net;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.io.Serializable;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import javax.jms.JMSException;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import javax.jms.Session;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import javax.jms.Topic;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import javax.jms.TopicConnection;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import javax.jms.TopicConnectionFactory;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import javax.jms.TopicPublisher;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import javax.jms.TopicSession;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import javax.naming.Context;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import javax.naming.NamingException;<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.logging.log4j.core.appender.ManagerFactory;<a name="line.30"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
+<span class="sourceLineNo">032</span>/**<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * Manager for JMS Topic connections.<a name="line.33"></a>
+<span class="sourceLineNo">034</span> */<a name="line.34"></a>
+<span class="sourceLineNo">035</span>public class JMSTopicManager extends AbstractJMSManager {<a name="line.35"></a>
+<span class="sourceLineNo">036</span><a name="line.36"></a>
+<span class="sourceLineNo">037</span>    private static final JMSTopicManagerFactory FACTORY = new JMSTopicManagerFactory();<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>    private TopicInfo info;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>    private final String factoryBindingName;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>    private final String topicBindingName;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>    private final String userName;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>    private final String password;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>    private final Context context;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>    /**<a name="line.45"></a>
+<span class="sourceLineNo">046</span>     * Constructor.<a name="line.46"></a>
+<span class="sourceLineNo">047</span>     * @param name The unique name of the connection.<a name="line.47"></a>
+<span class="sourceLineNo">048</span>     * @param context The context.<a name="line.48"></a>
+<span class="sourceLineNo">049</span>     * @param factoryBindingName The factory binding name.<a name="line.49"></a>
+<span class="sourceLineNo">050</span>     * @param topicBindingName The queue binding name.<a name="line.50"></a>
+<span class="sourceLineNo">051</span>     * @param userName The user name.<a name="line.51"></a>
+<span class="sourceLineNo">052</span>     * @param password The credentials for the user.<a name="line.52"></a>
+<span class="sourceLineNo">053</span>     * @param info The Queue connection info.<a name="line.53"></a>
+<span class="sourceLineNo">054</span>     */<a name="line.54"></a>
+<span class="sourceLineNo">055</span>    protected JMSTopicManager(final String name, final Context context, final String factoryBindingName,<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                              final String topicBindingName, final String userName, final String password,<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                              final TopicInfo info) {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        super(name);<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        this.context = context;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        this.factoryBindingName = factoryBindingName;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        this.topicBindingName = topicBindingName;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        this.userName = userName;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        this.password = password;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        this.info = info;<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    }<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>    /**<a name="line.67"></a>
+<span class="sourceLineNo">068</span>     * Obtain a JSMTopicManager.<a name="line.68"></a>
+<span class="sourceLineNo">069</span>     * @param factoryName The fully qualified class name of the InitialContextFactory.<a name="line.69"></a>
+<span class="sourceLineNo">070</span>     * @param providerURL The URL of the provider to use.<a name="line.70"></a>
+<span class="sourceLineNo">071</span>     * @param urlPkgPrefixes A colon-separated list of package prefixes for the class name of the factory class that<a name="line.71"></a>
+<span class="sourceLineNo">072</span>     * will create a URL context factory<a name="line.72"></a>
+<span class="sourceLineNo">073</span>     * @param securityPrincipalName The name of the identity of the Principal.<a name="line.73"></a>
+<span class="sourceLineNo">074</span>     * @param securityCredentials The security credentials of the Principal.<a name="line.74"></a>
+<span class="sourceLineNo">075</span>     * @param factoryBindingName The name to locate in the Context that provides the TopicConnectionFactory.<a name="line.75"></a>
+<span class="sourceLineNo">076</span>     * @param topicBindingName The name to use to locate the Topic.<a name="line.76"></a>
+<span class="sourceLineNo">077</span>     * @param userName The userid to use to create the Topic Connection.<a name="line.77"></a>
+<span class="sourceLineNo">078</span>     * @param password The password to use to create the Topic Connection.<a name="line.78"></a>
+<span class="sourceLineNo">079</span>     * @return A JMSTopicManager.<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     */<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    public static JMSTopicManager getJMSTopicManager(final String factoryName, final String providerURL,<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                                                     final String urlPkgPrefixes, final String securityPrincipalName,<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                                                     final String securityCredentials, final String factoryBindingName,<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                                                     final String topicBindingName, final String userName,<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                                                     final String password) {<a name="line.85"></a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span>        if (factoryBindingName == null) {<a name="line.87"></a>
+<span class="sourceLineNo">088</span>            LOGGER.error("No factory name provided for JMSTopicManager");<a name="line.88"></a>
+<span class="sourceLineNo">089</span>            return null;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        if (topicBindingName == null) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>            LOGGER.error("No topic name provided for JMSTopicManager");<a name="line.92"></a>
+<span class="sourceLineNo">093</span>            return null;<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        }<a name="line.94"></a>
+<span class="sourceLineNo">095</span><a name="line.95"></a>
+<span class="sourceLineNo">096</span>        final String name = "JMSTopic:" + factoryBindingName + '.' + topicBindingName;<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        return getManager(name, FACTORY, new FactoryData(factoryName, providerURL, urlPkgPrefixes,<a name="line.97"></a>
+<span class="sourceLineNo">098</span>            securityPrincipalName, securityCredentials, factoryBindingName, topicBindingName, userName, password));<a name="line.98"></a>
+<span class="sourceLineNo">099</span>    }<a name="line.99"></a>
+<span class="sourceLineNo">100</span><a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>    @Override<a name="line.102"></a>
+<span class="sourceLineNo">103</span>    public void send(final Serializable object) throws Exception {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        if (info == null) {<a name="line.104"></a>
+<span class="sourceLineNo">105</span>            info = connect(context, factoryBindingName, topicBindingName, userName, password, false);<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        }<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        try {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            super.send(object, info.session, info.publisher);<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        } catch (final Exception ex) {<a name="line.109"></a>
+<span class="sourceLineNo">110</span>            cleanup(true);<a name="line.110"></a>
+<span class="sourceLineNo">111</span>            throw ex;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    }<a name="line.113"></a>
+<span class="sourceLineNo">114</span><a name="line.114"></a>
+<span class="sourceLineNo">115</span>    @Override<a name="line.115"></a>
+<span class="sourceLineNo">116</span>    public void releaseSub() {<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        if (info != null) {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            cleanup(false);<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        }<a name="line.119"></a>
+<span class="sourceLineNo">120</span>    }<a name="line.120"></a>
+<span class="sourceLineNo">121</span><a name="line.121"></a>
+<span class="sourceLineNo">122</span>    private void cleanup(final boolean quiet) {<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        try {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>            info.session.close();<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        } catch (final Exception e) {<a name="line.125"></a>
+<span class="sourceLineNo">126</span>            if (!quiet) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                LOGGER.error("Error closing session for " + getName(), e);<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            }<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        }<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        try {<a name="line.130"></a>
+<span class="sourceLineNo">131</span>            info.conn.close();<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        } catch (final Exception e) {<a name="line.132"></a>
+<span class="sourceLineNo">133</span>            if (!quiet) {<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                LOGGER.error("Error closing connection for " + getName(), e);<a name="line.134"></a>
+<span class="sourceLineNo">135</span>            }<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        }<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        info = null;<a name="line.137"></a>
+<span class="sourceLineNo">138</span>    }<a name="line.138"></a>
+<span class="sourceLineNo">139</span><a name="line.139"></a>
+<span class="sourceLineNo">140</span>    /**<a name="line.140"></a>
+<span class="sourceLineNo">141</span>     * Data for the factory.<a name="line.141"></a>
+<span class="sourceLineNo">142</span>     */<a name="line.142"></a>
+<span class="sourceLineNo">143</span>    private static class FactoryData {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        private final String factoryName;<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        private final String providerURL;<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        private final String urlPkgPrefixes;<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        private final String securityPrincipalName;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        private final String securityCredentials;<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        private final String factoryBindingName;<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        private final String topicBindingName;<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        private final String userName;<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        private final String password;<a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>        public FactoryData(final String factoryName, final String providerURL, final String urlPkgPrefixes,<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                           final String securityPrincipalName, final String securityCredentials,<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                           final String factoryBindingName, final String topicBindingName,<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                           final String userName, final String password) {<a name="line.157"></a>
+<span class="sourceLineNo">158</span>            this.factoryName = factoryName;<a name="line.158"></a>
+<span class="sourceLineNo">159</span>            this.providerURL = providerURL;<a name="line.159"></a>
+<span class="sourceLineNo">160</span>            this.urlPkgPrefixes = urlPkgPrefixes;<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            this.securityPrincipalName = securityPrincipalName;<a name="line.161"></a>
+<span class="sourceLineNo">162</span>            this.securityCredentials = securityCredentials;<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            this.factoryBindingName = factoryBindingName;<a name="line.163"></a>
+<span class="sourceLineNo">164</span>            this.topicBindingName = topicBindingName;<a name="line.164"></a>
+<span class="sourceLineNo">165</span>            this.userName = userName;<a name="line.165"></a>
+<span class="sourceLineNo">166</span>            this.password = password;<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        }<a name="line.167"></a>
+<span class="sourceLineNo">168</span>    }<a name="line.168"></a>
+<span class="sourceLineNo">169</span><a name="line.169"></a>
+<span class="sourceLineNo">170</span>    private static TopicInfo connect(final Context context, final String factoryBindingName,<a name="line.170"></a>
+<span class="sourceLineNo">171</span>                                     final String queueBindingName, final String userName, final String password,<a name="line.171"></a>
+<span class="sourceLineNo">172</span>                                     final boolean suppress) throws Exception {<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        try {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>            final TopicConnectionFactory factory = (TopicConnectionFactory) lookup(context, factoryBindingName);<a name="line.174"></a>
+<span class="sourceLineNo">175</span>            TopicConnection conn;<a name="line.175"></a>
+<span class="sourceLineNo">176</span>            if (userName != null) {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                conn = factory.createTopicConnection(userName, password);<a name="line.177"></a>
+<span class="sourceLineNo">178</span>            } else {<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                conn = factory.createTopicConnection();<a name="line.179"></a>
+<span class="sourceLineNo">180</span>            }<a name="line.180"></a>
+<span class="sourceLineNo">181</span>            final TopicSession sess = conn.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);<a name="line.181"></a>
+<span class="sourceLineNo">182</span>            final Topic topic = (Topic) lookup(context, queueBindingName);<a name="line.182"></a>
+<span class="sourceLineNo">183</span>            final TopicPublisher publisher = sess.createPublisher(topic);<a name="line.183"></a>
+<span class="sourceLineNo">184</span>            conn.start();<a name="line.184"></a>
+<span class="sourceLineNo">185</span>            return new TopicInfo(conn, sess, publisher);<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        } catch (final NamingException ex) {<a name="line.186"></a>
+<span class="sourceLineNo">187</span>            LOGGER.warn("Unable to locate connection factory " + factoryBindingName, ex);<a name="line.187"></a>
+<span class="sourceLineNo">188</span>            if (!suppress) {<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                throw ex;<a name="line.189"></a>
+<span class="sourceLineNo">190</span>            }<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        } catch (final JMSException ex) {<a name="line.191"></a>
+<span class="sourceLineNo">192</span>            LOGGER.warn("Unable to create connection to queue " + queueBindingName, ex);<a name="line.192"></a>
+<span class="sourceLineNo">193</span>            if (!suppress) {<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                throw ex;<a name="line.194"></a>
+<span class="sourceLineNo">195</span>            }<a name="line.195"></a>
+<span class="sourceLineNo">196</span>        }<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        return null;<a name="line.197"></a>
+<span class="sourceLineNo">198</span>    }<a name="line.198"></a>
+<span class="sourceLineNo">199</span><a name="line.199"></a>
+<span class="sourceLineNo">200</span>    /** Topic connection information */<a name="line.200"></a>
+<span class="sourceLineNo">201</span>    private static class TopicInfo {<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        private final TopicConnection conn;<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        private final TopicSession session;<a name="line.203"></a>
+<span class="sourceLineNo">204</span>        private final TopicPublisher publisher;<a name="line.204"></a>
+<span class="sourceLineNo">205</span><a name="line.205"></a>
+<span class="sourceLineNo">206</span>        public TopicInfo(final TopicConnection conn, final TopicSession session, final TopicPublisher publisher) {<a name="line.206"></a>
+<span class="sourceLineNo">207</span>            this.conn = conn;<a name="line.207"></a>
+<span class="sourceLineNo">208</span>            this.session = session;<a name="line.208"></a>
+<span class="sourceLineNo">209</span>            this.publisher = publisher;<a name="line.209"></a>
+<span class="sourceLineNo">210</span>        }<a name="line.210"></a>
+<span class="sourceLineNo">211</span>    }<a name="line.211"></a>
+<span class="sourceLineNo">212</span><a name="line.212"></a>
+<span class="sourceLineNo">213</span>    /**<a name="line.213"></a>
+<span class="sourceLineNo">214</span>     * Factory to create the JMSQueueManager.<a name="line.214"></a>
+<span class="sourceLineNo">215</span>     */<a name="line.215"></a>
+<span class="sourceLineNo">216</span>    private static class JMSTopicManagerFactory implements ManagerFactory&lt;JMSTopicManager, FactoryData&gt; {<a name="line.216"></a>
+<span class="sourceLineNo">217</span><a name="line.217"></a>
+<span class="sourceLineNo">218</span>        @Override<a name="line.218"></a>
+<span class="sourceLineNo">219</span>        public JMSTopicManager createManager(final String name, final FactoryData data) {<a name="line.219"></a>
+<span class="sourceLineNo">220</span>            try {<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                final Context ctx = createContext(data.factoryName, data.providerURL, data.urlPkgPrefixes,<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                    data.securityPrincipalName, data.securityCredentials);<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                final TopicInfo info = connect(ctx, data.factoryBindingName, data.topicBindingName, data.userName,<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                    data.password, true);<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                return new JMSTopicManager(name, ctx, data.factoryBindingName, data.topicBindingName,<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                    data.userName, data.password, info);<a name="line.226"></a>
+<span class="sourceLineNo">227</span>            } catch (final NamingException ex) {<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                LOGGER.error("Unable to locate resource", ex);<a name="line.228"></a>
+<span class="sourceLineNo">229</span>            } catch (final Exception ex) {<a name="line.229"></a>
+<span class="sourceLineNo">230</span>                LOGGER.error("Unable to connect", ex);<a name="line.230"></a>
+<span class="sourceLineNo">231</span>            }<a name="line.231"></a>
+<span class="sourceLineNo">232</span><a name="line.232"></a>
+<span class="sourceLineNo">233</span>            return null;<a name="line.233"></a>
+<span class="sourceLineNo">234</span>        }<a name="line.234"></a>
+<span class="sourceLineNo">235</span>    }<a name="line.235"></a>
+<span class="sourceLineNo">236</span>}<a name="line.236"></a>
 
 
 
@@ -297,6 +302,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>

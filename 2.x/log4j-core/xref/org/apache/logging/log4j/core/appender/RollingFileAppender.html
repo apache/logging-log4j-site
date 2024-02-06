@@ -52,7 +52,7 @@
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment"> * An appender that writes to files and can roll over at intervals.</em>
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="44" href="#44">44</a>  @Plugin(name = <span class="jxr_string">"RollingFile"</span>, category = <span class="jxr_string">"Core"</span>, elementType = <span class="jxr_string">"appender"</span>, printObject = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RollingFileAppender.html">RollingFileAppender</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AbstractOutputStreamAppender.html">AbstractOutputStreamAppender</a> {
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RollingFileAppender.html">RollingFileAppender</a> <strong class="jxr_keyword">extends</strong> AbstractOutputStreamAppender&lt;RollingFileManager&gt; {
 <a class="jxr_linenumber" name="46" href="#46">46</a>  
 <a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String fileName;
 <a class="jxr_linenumber" name="48" href="#48">48</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String filePattern;
@@ -91,7 +91,7 @@
 <a class="jxr_linenumber" name="81" href="#81">81</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="82" href="#82">82</a>      @Override
 <a class="jxr_linenumber" name="83" href="#83">83</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> append(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
-<a class="jxr_linenumber" name="84" href="#84">84</a>          ((<a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a>) getManager()).checkRollover(event);
+<a class="jxr_linenumber" name="84" href="#84">84</a>          getManager().checkRollover(event);
 <a class="jxr_linenumber" name="85" href="#85">85</a>          <strong class="jxr_keyword">super</strong>.append(event);
 <a class="jxr_linenumber" name="86" href="#86">86</a>      }
 <a class="jxr_linenumber" name="87" href="#87">87</a>  
@@ -179,7 +179,7 @@
 <a class="jxr_linenumber" name="169" href="#169">169</a>         }
 <a class="jxr_linenumber" name="170" href="#170">170</a> 
 <a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="172" href="#172">172</a>             layout = PatternLayout.createLayout(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="172" href="#172">172</a>             layout = PatternLayout.createLayout(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="173" href="#173">173</a>         }
 <a class="jxr_linenumber" name="174" href="#174">174</a> 
 <a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> manager = RollingFileManager.getFileManager(fileName, filePattern, isAppend,

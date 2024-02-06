@@ -105,132 +105,145 @@
 <a class="jxr_linenumber" name="95" href="#95">95</a>  
 <a class="jxr_linenumber" name="96" href="#96">96</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> alwaysWriteExceptions;
 <a class="jxr_linenumber" name="97" href="#97">97</a>  
-<a class="jxr_linenumber" name="98" href="#98">98</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="99" href="#99">99</a>  <em class="jxr_javadoccomment">     * Constructs a EnhancedPatternLayout using the supplied conversion pattern.</em>
-<a class="jxr_linenumber" name="100" href="#100">100</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="101" href="#101">101</a> <em class="jxr_javadoccomment">     * @param config The Configuration.</em>
-<a class="jxr_linenumber" name="102" href="#102">102</a> <em class="jxr_javadoccomment">     * @param replace The regular expression to match.</em>
-<a class="jxr_linenumber" name="103" href="#103">103</a> <em class="jxr_javadoccomment">     * @param pattern conversion pattern.</em>
-<a class="jxr_linenumber" name="104" href="#104">104</a> <em class="jxr_javadoccomment">     * @param charset The character set.</em>
-<a class="jxr_linenumber" name="105" href="#105">105</a> <em class="jxr_javadoccomment">     * @param alwaysWriteExceptions Whether or not exceptions should always be handled in this pattern (if {@code true},</em>
-<a class="jxr_linenumber" name="106" href="#106">106</a> <em class="jxr_javadoccomment">     *                         exceptions will be written even if the pattern does not specify so).</em>
-<a class="jxr_linenumber" name="107" href="#107">107</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="108" href="#108">108</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternLayout</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RegexReplacement.html">RegexReplacement</a> replace, <strong class="jxr_keyword">final</strong> String pattern,
-<a class="jxr_linenumber" name="109" href="#109">109</a>                           <strong class="jxr_keyword">final</strong> Charset charset, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> alwaysWriteExceptions) {
-<a class="jxr_linenumber" name="110" href="#110">110</a>         <strong class="jxr_keyword">super</strong>(charset);
-<a class="jxr_linenumber" name="111" href="#111">111</a>         <strong class="jxr_keyword">this</strong>.replace = replace;
-<a class="jxr_linenumber" name="112" href="#112">112</a>         <strong class="jxr_keyword">this</strong>.conversionPattern = pattern;
-<a class="jxr_linenumber" name="113" href="#113">113</a>         <strong class="jxr_keyword">this</strong>.config = config;
-<a class="jxr_linenumber" name="114" href="#114">114</a>         <strong class="jxr_keyword">this</strong>.alwaysWriteExceptions = alwaysWriteExceptions;
-<a class="jxr_linenumber" name="115" href="#115">115</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> parser = createPatternParser(config);
-<a class="jxr_linenumber" name="116" href="#116">116</a>         formatters = parser.parse(pattern == <strong class="jxr_keyword">null</strong> ? DEFAULT_CONVERSION_PATTERN : pattern, <strong class="jxr_keyword">this</strong>.alwaysWriteExceptions);
-<a class="jxr_linenumber" name="117" href="#117">117</a>     }
-<a class="jxr_linenumber" name="118" href="#118">118</a> 
-<a class="jxr_linenumber" name="119" href="#119">119</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="120" href="#120">120</a> <em class="jxr_javadoccomment">     * Set the &lt;b&gt;ConversionPattern&lt;/b&gt; option. This is the string which</em>
-<a class="jxr_linenumber" name="121" href="#121">121</a> <em class="jxr_javadoccomment">     * controls formatting and consists of a mix of literal content and</em>
-<a class="jxr_linenumber" name="122" href="#122">122</a> <em class="jxr_javadoccomment">     * conversion specifiers.</em>
-<a class="jxr_linenumber" name="123" href="#123">123</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_javadoccomment">     * @param conversionPattern conversion pattern.</em>
-<a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="126" href="#126">126</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setConversionPattern(<strong class="jxr_keyword">final</strong> String conversionPattern) {
-<a class="jxr_linenumber" name="127" href="#127">127</a>         <strong class="jxr_keyword">final</strong> String pattern = OptionConverter.convertSpecialChars(conversionPattern);
-<a class="jxr_linenumber" name="128" href="#128">128</a>         <strong class="jxr_keyword">if</strong> (pattern == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="129" href="#129">129</a>             <strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="130" href="#130">130</a>         }
-<a class="jxr_linenumber" name="131" href="#131">131</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> parser = createPatternParser(<strong class="jxr_keyword">this</strong>.config);
-<a class="jxr_linenumber" name="132" href="#132">132</a>         formatters = parser.parse(pattern, <strong class="jxr_keyword">this</strong>.alwaysWriteExceptions);
-<a class="jxr_linenumber" name="133" href="#133">133</a>     }
-<a class="jxr_linenumber" name="134" href="#134">134</a> 
-<a class="jxr_linenumber" name="135" href="#135">135</a>     <strong class="jxr_keyword">public</strong> String getConversionPattern() {
-<a class="jxr_linenumber" name="136" href="#136">136</a>         <strong class="jxr_keyword">return</strong> conversionPattern;
-<a class="jxr_linenumber" name="137" href="#137">137</a>     }
-<a class="jxr_linenumber" name="138" href="#138">138</a> 
-<a class="jxr_linenumber" name="139" href="#139">139</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">     * PatternLayout's content format is specified by:&lt;p/&gt;</em>
-<a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">     * Key: "structured" Value: "false"&lt;p/&gt;</em>
-<a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">     * Key: "formatType" Value: "conversion" (format uses the keywords supported by OptionConverter)&lt;p/&gt;</em>
-<a class="jxr_linenumber" name="143" href="#143">143</a> <em class="jxr_javadoccomment">     * Key: "format" Value: provided "conversionPattern" param</em>
-<a class="jxr_linenumber" name="144" href="#144">144</a> <em class="jxr_javadoccomment">     * @return Map of content format keys supporting PatternLayout</em>
-<a class="jxr_linenumber" name="145" href="#145">145</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="146" href="#146">146</a>     @Override
-<a class="jxr_linenumber" name="147" href="#147">147</a>     <strong class="jxr_keyword">public</strong> Map&lt;String, String&gt; getContentFormat()
-<a class="jxr_linenumber" name="148" href="#148">148</a>     {
-<a class="jxr_linenumber" name="149" href="#149">149</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; result = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;();
-<a class="jxr_linenumber" name="150" href="#150">150</a>         result.put(<span class="jxr_string">"structured"</span>, <span class="jxr_string">"false"</span>);
-<a class="jxr_linenumber" name="151" href="#151">151</a>         result.put(<span class="jxr_string">"formatType"</span>, <span class="jxr_string">"conversion"</span>);
-<a class="jxr_linenumber" name="152" href="#152">152</a>         result.put(<span class="jxr_string">"format"</span>, conversionPattern);
-<a class="jxr_linenumber" name="153" href="#153">153</a>         <strong class="jxr_keyword">return</strong> result;
-<a class="jxr_linenumber" name="154" href="#154">154</a>     }
-<a class="jxr_linenumber" name="155" href="#155">155</a> 
-<a class="jxr_linenumber" name="156" href="#156">156</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="157" href="#157">157</a> <em class="jxr_javadoccomment">     * Formats a logging event to a writer.</em>
-<a class="jxr_linenumber" name="158" href="#158">158</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="159" href="#159">159</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="160" href="#160">160</a> <em class="jxr_javadoccomment">     * @param event logging event to be formatted.</em>
-<a class="jxr_linenumber" name="161" href="#161">161</a> <em class="jxr_javadoccomment">     * @return The event formatted as a String.</em>
-<a class="jxr_linenumber" name="162" href="#162">162</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="163" href="#163">163</a>     @Override
-<a class="jxr_linenumber" name="164" href="#164">164</a>     <strong class="jxr_keyword">public</strong> String toSerializable(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
-<a class="jxr_linenumber" name="165" href="#165">165</a>         <strong class="jxr_keyword">final</strong> StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="166" href="#166">166</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> PatternFormatter formatter : formatters) {
-<a class="jxr_linenumber" name="167" href="#167">167</a>             formatter.format(event, buf);
-<a class="jxr_linenumber" name="168" href="#168">168</a>         }
-<a class="jxr_linenumber" name="169" href="#169">169</a>         String str = buf.toString();
-<a class="jxr_linenumber" name="170" href="#170">170</a>         <strong class="jxr_keyword">if</strong> (replace != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="171" href="#171">171</a>             str = replace.format(str);
-<a class="jxr_linenumber" name="172" href="#172">172</a>         }
-<a class="jxr_linenumber" name="173" href="#173">173</a>         <strong class="jxr_keyword">return</strong> str;
-<a class="jxr_linenumber" name="174" href="#174">174</a>     }
-<a class="jxr_linenumber" name="175" href="#175">175</a> 
-<a class="jxr_linenumber" name="176" href="#176">176</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="177" href="#177">177</a> <em class="jxr_javadoccomment">     * Create a PatternParser.</em>
-<a class="jxr_linenumber" name="178" href="#178">178</a> <em class="jxr_javadoccomment">     * @param config The Configuration.</em>
-<a class="jxr_linenumber" name="179" href="#179">179</a> <em class="jxr_javadoccomment">     * @return The PatternParser.</em>
-<a class="jxr_linenumber" name="180" href="#180">180</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="181" href="#181">181</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> createPatternParser(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config) {
-<a class="jxr_linenumber" name="182" href="#182">182</a>         <strong class="jxr_keyword">if</strong> (config == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="183" href="#183">183</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a>(config, KEY, LogEventPatternConverter.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="184" href="#184">184</a>         }
-<a class="jxr_linenumber" name="185" href="#185">185</a>         <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> parser = config.getComponent(KEY);
-<a class="jxr_linenumber" name="186" href="#186">186</a>         <strong class="jxr_keyword">if</strong> (parser == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="187" href="#187">187</a>             parser = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a>(config, KEY, LogEventPatternConverter.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="188" href="#188">188</a>             config.addComponent(KEY, parser);
-<a class="jxr_linenumber" name="189" href="#189">189</a>             parser = (PatternParser) config.getComponent(KEY);
-<a class="jxr_linenumber" name="190" href="#190">190</a>         }
-<a class="jxr_linenumber" name="191" href="#191">191</a>         <strong class="jxr_keyword">return</strong> parser;
-<a class="jxr_linenumber" name="192" href="#192">192</a>     }
-<a class="jxr_linenumber" name="193" href="#193">193</a> 
-<a class="jxr_linenumber" name="194" href="#194">194</a>     @Override
-<a class="jxr_linenumber" name="195" href="#195">195</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="196" href="#196">196</a>         <strong class="jxr_keyword">return</strong> conversionPattern;
+<a class="jxr_linenumber" name="98" href="#98">98</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> noConsoleNoAnsi;
+<a class="jxr_linenumber" name="99" href="#99">99</a>  
+<a class="jxr_linenumber" name="100" href="#100">100</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="101" href="#101">101</a> <em class="jxr_javadoccomment">     * Constructs a EnhancedPatternLayout using the supplied conversion pattern.</em>
+<a class="jxr_linenumber" name="102" href="#102">102</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="103" href="#103">103</a> <em class="jxr_javadoccomment">     * @param config The Configuration.</em>
+<a class="jxr_linenumber" name="104" href="#104">104</a> <em class="jxr_javadoccomment">     * @param replace The regular expression to match.</em>
+<a class="jxr_linenumber" name="105" href="#105">105</a> <em class="jxr_javadoccomment">     * @param pattern conversion pattern.</em>
+<a class="jxr_linenumber" name="106" href="#106">106</a> <em class="jxr_javadoccomment">     * @param charset The character set.</em>
+<a class="jxr_linenumber" name="107" href="#107">107</a> <em class="jxr_javadoccomment">     * @param alwaysWriteExceptions Whether or not exceptions should always be handled in this pattern (if {@code true},</em>
+<a class="jxr_linenumber" name="108" href="#108">108</a> <em class="jxr_javadoccomment">     *                         exceptions will be written even if the pattern does not specify so).</em>
+<a class="jxr_linenumber" name="109" href="#109">109</a> <em class="jxr_javadoccomment">     * @param noConsoleNoAnsiStr</em>
+<a class="jxr_linenumber" name="110" href="#110">110</a> <em class="jxr_javadoccomment">     *            If {@code "true"} (default) and {@link System#console()} is null, do not output ANSI escape codes</em>
+<a class="jxr_linenumber" name="111" href="#111">111</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="112" href="#112">112</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternLayout</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RegexReplacement.html">RegexReplacement</a> replace, <strong class="jxr_keyword">final</strong> String pattern,
+<a class="jxr_linenumber" name="113" href="#113">113</a>                           <strong class="jxr_keyword">final</strong> Charset charset, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> alwaysWriteExceptions, <strong class="jxr_keyword">boolean</strong> noConsoleNoAnsi) {
+<a class="jxr_linenumber" name="114" href="#114">114</a>         <strong class="jxr_keyword">super</strong>(charset);
+<a class="jxr_linenumber" name="115" href="#115">115</a>         <strong class="jxr_keyword">this</strong>.replace = replace;
+<a class="jxr_linenumber" name="116" href="#116">116</a>         <strong class="jxr_keyword">this</strong>.conversionPattern = pattern;
+<a class="jxr_linenumber" name="117" href="#117">117</a>         <strong class="jxr_keyword">this</strong>.config = config;
+<a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">this</strong>.alwaysWriteExceptions = alwaysWriteExceptions;
+<a class="jxr_linenumber" name="119" href="#119">119</a>         <strong class="jxr_keyword">this</strong>.noConsoleNoAnsi = noConsoleNoAnsi;
+<a class="jxr_linenumber" name="120" href="#120">120</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> parser = createPatternParser(config);
+<a class="jxr_linenumber" name="121" href="#121">121</a>         <strong class="jxr_keyword">this</strong>.formatters = parser.parse(pattern == <strong class="jxr_keyword">null</strong> ? DEFAULT_CONVERSION_PATTERN : pattern, <strong class="jxr_keyword">this</strong>.alwaysWriteExceptions, <strong class="jxr_keyword">this</strong>.noConsoleNoAnsi);
+<a class="jxr_linenumber" name="122" href="#122">122</a>     }
+<a class="jxr_linenumber" name="123" href="#123">123</a> 
+<a class="jxr_linenumber" name="124" href="#124">124</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">     * Set the &lt;b&gt;ConversionPattern&lt;/b&gt; option. This is the string which</em>
+<a class="jxr_linenumber" name="126" href="#126">126</a> <em class="jxr_javadoccomment">     * controls formatting and consists of a mix of literal content and</em>
+<a class="jxr_linenumber" name="127" href="#127">127</a> <em class="jxr_javadoccomment">     * conversion specifiers.</em>
+<a class="jxr_linenumber" name="128" href="#128">128</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="129" href="#129">129</a> <em class="jxr_javadoccomment">     * @param conversionPattern conversion pattern.</em>
+<a class="jxr_linenumber" name="130" href="#130">130</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="131" href="#131">131</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setConversionPattern(<strong class="jxr_keyword">final</strong> String conversionPattern) {
+<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">final</strong> String pattern = OptionConverter.convertSpecialChars(conversionPattern);
+<a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">if</strong> (pattern == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="134" href="#134">134</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="135" href="#135">135</a>         }
+<a class="jxr_linenumber" name="136" href="#136">136</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> parser = createPatternParser(<strong class="jxr_keyword">this</strong>.config);
+<a class="jxr_linenumber" name="137" href="#137">137</a>         formatters = parser.parse(pattern, <strong class="jxr_keyword">this</strong>.alwaysWriteExceptions, <strong class="jxr_keyword">this</strong>.noConsoleNoAnsi);
+<a class="jxr_linenumber" name="138" href="#138">138</a>     }
+<a class="jxr_linenumber" name="139" href="#139">139</a> 
+<a class="jxr_linenumber" name="140" href="#140">140</a>     <strong class="jxr_keyword">public</strong> String getConversionPattern() {
+<a class="jxr_linenumber" name="141" href="#141">141</a>         <strong class="jxr_keyword">return</strong> conversionPattern;
+<a class="jxr_linenumber" name="142" href="#142">142</a>     }
+<a class="jxr_linenumber" name="143" href="#143">143</a> 
+<a class="jxr_linenumber" name="144" href="#144">144</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="145" href="#145">145</a> <em class="jxr_javadoccomment">     * PatternLayout's content format is specified by:&lt;p/&gt;</em>
+<a class="jxr_linenumber" name="146" href="#146">146</a> <em class="jxr_javadoccomment">     * Key: "structured" Value: "false"&lt;p/&gt;</em>
+<a class="jxr_linenumber" name="147" href="#147">147</a> <em class="jxr_javadoccomment">     * Key: "formatType" Value: "conversion" (format uses the keywords supported by OptionConverter)&lt;p/&gt;</em>
+<a class="jxr_linenumber" name="148" href="#148">148</a> <em class="jxr_javadoccomment">     * Key: "format" Value: provided "conversionPattern" param</em>
+<a class="jxr_linenumber" name="149" href="#149">149</a> <em class="jxr_javadoccomment">     * @return Map of content format keys supporting PatternLayout</em>
+<a class="jxr_linenumber" name="150" href="#150">150</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="151" href="#151">151</a>     @Override
+<a class="jxr_linenumber" name="152" href="#152">152</a>     <strong class="jxr_keyword">public</strong> Map&lt;String, String&gt; getContentFormat()
+<a class="jxr_linenumber" name="153" href="#153">153</a>     {
+<a class="jxr_linenumber" name="154" href="#154">154</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; result = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;();
+<a class="jxr_linenumber" name="155" href="#155">155</a>         result.put(<span class="jxr_string">"structured"</span>, <span class="jxr_string">"false"</span>);
+<a class="jxr_linenumber" name="156" href="#156">156</a>         result.put(<span class="jxr_string">"formatType"</span>, <span class="jxr_string">"conversion"</span>);
+<a class="jxr_linenumber" name="157" href="#157">157</a>         result.put(<span class="jxr_string">"format"</span>, conversionPattern);
+<a class="jxr_linenumber" name="158" href="#158">158</a>         <strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="159" href="#159">159</a>     }
+<a class="jxr_linenumber" name="160" href="#160">160</a> 
+<a class="jxr_linenumber" name="161" href="#161">161</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="162" href="#162">162</a> <em class="jxr_javadoccomment">     * Formats a logging event to a writer.</em>
+<a class="jxr_linenumber" name="163" href="#163">163</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="164" href="#164">164</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     * @param event logging event to be formatted.</em>
+<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     * @return The event formatted as a String.</em>
+<a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="168" href="#168">168</a>     @Override
+<a class="jxr_linenumber" name="169" href="#169">169</a>     <strong class="jxr_keyword">public</strong> String toSerializable(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
+<a class="jxr_linenumber" name="170" href="#170">170</a>         <strong class="jxr_keyword">final</strong> StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> PatternFormatter formatter : formatters) {
+<a class="jxr_linenumber" name="172" href="#172">172</a>             formatter.format(event, buf);
+<a class="jxr_linenumber" name="173" href="#173">173</a>         }
+<a class="jxr_linenumber" name="174" href="#174">174</a>         String str = buf.toString();
+<a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">if</strong> (replace != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="176" href="#176">176</a>             str = replace.format(str);
+<a class="jxr_linenumber" name="177" href="#177">177</a>         }
+<a class="jxr_linenumber" name="178" href="#178">178</a>         <strong class="jxr_keyword">return</strong> str;
+<a class="jxr_linenumber" name="179" href="#179">179</a>     }
+<a class="jxr_linenumber" name="180" href="#180">180</a> 
+<a class="jxr_linenumber" name="181" href="#181">181</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="182" href="#182">182</a> <em class="jxr_javadoccomment">     * Create a PatternParser.</em>
+<a class="jxr_linenumber" name="183" href="#183">183</a> <em class="jxr_javadoccomment">     * @param config The Configuration.</em>
+<a class="jxr_linenumber" name="184" href="#184">184</a> <em class="jxr_javadoccomment">     * @return The PatternParser.</em>
+<a class="jxr_linenumber" name="185" href="#185">185</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="186" href="#186">186</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> createPatternParser(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config) {
+<a class="jxr_linenumber" name="187" href="#187">187</a>         <strong class="jxr_keyword">if</strong> (config == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="188" href="#188">188</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a>(config, KEY, LogEventPatternConverter.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="189" href="#189">189</a>         }
+<a class="jxr_linenumber" name="190" href="#190">190</a>         <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> parser = config.getComponent(KEY);
+<a class="jxr_linenumber" name="191" href="#191">191</a>         <strong class="jxr_keyword">if</strong> (parser == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="192" href="#192">192</a>             parser = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a>(config, KEY, LogEventPatternConverter.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="193" href="#193">193</a>             config.addComponent(KEY, parser);
+<a class="jxr_linenumber" name="194" href="#194">194</a>             parser = (PatternParser) config.getComponent(KEY);
+<a class="jxr_linenumber" name="195" href="#195">195</a>         }
+<a class="jxr_linenumber" name="196" href="#196">196</a>         <strong class="jxr_keyword">return</strong> parser;
 <a class="jxr_linenumber" name="197" href="#197">197</a>     }
 <a class="jxr_linenumber" name="198" href="#198">198</a> 
-<a class="jxr_linenumber" name="199" href="#199">199</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="200" href="#200">200</a> <em class="jxr_javadoccomment">     * Create a pattern layout.</em>
-<a class="jxr_linenumber" name="201" href="#201">201</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="202" href="#202">202</a> <em class="jxr_javadoccomment">     * @param pattern The pattern. If not specified, defaults to DEFAULT_CONVERSION_PATTERN.</em>
-<a class="jxr_linenumber" name="203" href="#203">203</a> <em class="jxr_javadoccomment">     * @param config The Configuration. Some Converters require access to the Interpolator.</em>
-<a class="jxr_linenumber" name="204" href="#204">204</a> <em class="jxr_javadoccomment">     * @param replace A Regex replacement String.</em>
-<a class="jxr_linenumber" name="205" href="#205">205</a> <em class="jxr_javadoccomment">     * @param charsetName The character set.</em>
-<a class="jxr_linenumber" name="206" href="#206">206</a> <em class="jxr_javadoccomment">     * @param always If {@code "true"} (default) exceptions are always written even if the pattern contains no exception</em>
-<a class="jxr_linenumber" name="207" href="#207">207</a> <em class="jxr_javadoccomment">     *               tokens.</em>
-<a class="jxr_linenumber" name="208" href="#208">208</a> <em class="jxr_javadoccomment">     * @return The PatternLayout.</em>
-<a class="jxr_linenumber" name="209" href="#209">209</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="210" href="#210">210</a>     @PluginFactory
-<a class="jxr_linenumber" name="211" href="#211">211</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternLayout</a> createLayout(
-<a class="jxr_linenumber" name="212" href="#212">212</a>             @PluginAttribute(<span class="jxr_string">"pattern"</span>) <strong class="jxr_keyword">final</strong> String pattern,
-<a class="jxr_linenumber" name="213" href="#213">213</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config,
-<a class="jxr_linenumber" name="214" href="#214">214</a>             @PluginElement(<span class="jxr_string">"Replace"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RegexReplacement.html">RegexReplacement</a> replace,
-<a class="jxr_linenumber" name="215" href="#215">215</a>             @PluginAttribute(<span class="jxr_string">"charset"</span>) <strong class="jxr_keyword">final</strong> String charsetName,
-<a class="jxr_linenumber" name="216" href="#216">216</a>             @PluginAttribute(<span class="jxr_string">"alwaysWriteExceptions"</span>) <strong class="jxr_keyword">final</strong> String always) {
-<a class="jxr_linenumber" name="217" href="#217">217</a>         <strong class="jxr_keyword">final</strong> Charset charset = Charsets.getSupportedCharset(charsetName);
-<a class="jxr_linenumber" name="218" href="#218">218</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> alwaysWriteExceptions = Booleans.parseBoolean(always, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="219" href="#219">219</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternLayout</a>(
-<a class="jxr_linenumber" name="220" href="#220">220</a>                 config, replace, pattern == <strong class="jxr_keyword">null</strong> ? DEFAULT_CONVERSION_PATTERN : pattern, charset, alwaysWriteExceptions
-<a class="jxr_linenumber" name="221" href="#221">221</a>         );
-<a class="jxr_linenumber" name="222" href="#222">222</a>     }
-<a class="jxr_linenumber" name="223" href="#223">223</a> }
+<a class="jxr_linenumber" name="199" href="#199">199</a>     @Override
+<a class="jxr_linenumber" name="200" href="#200">200</a>     <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="201" href="#201">201</a>         <strong class="jxr_keyword">return</strong> conversionPattern;
+<a class="jxr_linenumber" name="202" href="#202">202</a>     }
+<a class="jxr_linenumber" name="203" href="#203">203</a> 
+<a class="jxr_linenumber" name="204" href="#204">204</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="205" href="#205">205</a> <em class="jxr_javadoccomment">     * Create a pattern layout.</em>
+<a class="jxr_linenumber" name="206" href="#206">206</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="207" href="#207">207</a> <em class="jxr_javadoccomment">     * @param pattern</em>
+<a class="jxr_linenumber" name="208" href="#208">208</a> <em class="jxr_javadoccomment">     *            The pattern. If not specified, defaults to DEFAULT_CONVERSION_PATTERN.</em>
+<a class="jxr_linenumber" name="209" href="#209">209</a> <em class="jxr_javadoccomment">     * @param config</em>
+<a class="jxr_linenumber" name="210" href="#210">210</a> <em class="jxr_javadoccomment">     *            The Configuration. Some Converters require access to the Interpolator.</em>
+<a class="jxr_linenumber" name="211" href="#211">211</a> <em class="jxr_javadoccomment">     * @param replace</em>
+<a class="jxr_linenumber" name="212" href="#212">212</a> <em class="jxr_javadoccomment">     *            A Regex replacement String.</em>
+<a class="jxr_linenumber" name="213" href="#213">213</a> <em class="jxr_javadoccomment">     * @param charsetName</em>
+<a class="jxr_linenumber" name="214" href="#214">214</a> <em class="jxr_javadoccomment">     *            The character set.</em>
+<a class="jxr_linenumber" name="215" href="#215">215</a> <em class="jxr_javadoccomment">     * @param always</em>
+<a class="jxr_linenumber" name="216" href="#216">216</a> <em class="jxr_javadoccomment">     *            If {@code "true"} (default) exceptions are always written even if the pattern contains no exception</em>
+<a class="jxr_linenumber" name="217" href="#217">217</a> <em class="jxr_javadoccomment">     *            tokens.</em>
+<a class="jxr_linenumber" name="218" href="#218">218</a> <em class="jxr_javadoccomment">     * @param noConsoleNoAnsiStr</em>
+<a class="jxr_linenumber" name="219" href="#219">219</a> <em class="jxr_javadoccomment">     *            If {@code "true"} (default is false) and {@link System#console()} is null, do not output ANSI escape codes</em>
+<a class="jxr_linenumber" name="220" href="#220">220</a> <em class="jxr_javadoccomment">     * @return The PatternLayout.</em>
+<a class="jxr_linenumber" name="221" href="#221">221</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="222" href="#222">222</a>     @PluginFactory
+<a class="jxr_linenumber" name="223" href="#223">223</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternLayout</a> createLayout(
+<a class="jxr_linenumber" name="224" href="#224">224</a>             @PluginAttribute(<span class="jxr_string">"pattern"</span>) <strong class="jxr_keyword">final</strong> String pattern,
+<a class="jxr_linenumber" name="225" href="#225">225</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config,
+<a class="jxr_linenumber" name="226" href="#226">226</a>             @PluginElement(<span class="jxr_string">"Replace"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RegexReplacement.html">RegexReplacement</a> replace,
+<a class="jxr_linenumber" name="227" href="#227">227</a>             @PluginAttribute(<span class="jxr_string">"charset"</span>) <strong class="jxr_keyword">final</strong> String charsetName,
+<a class="jxr_linenumber" name="228" href="#228">228</a>             @PluginAttribute(<span class="jxr_string">"alwaysWriteExceptions"</span>) <strong class="jxr_keyword">final</strong> String always, 
+<a class="jxr_linenumber" name="229" href="#229">229</a>             @PluginAttribute(<span class="jxr_string">"noConsoleNoAnsi"</span>) <strong class="jxr_keyword">final</strong> String noConsoleNoAnsiStr) {
+<a class="jxr_linenumber" name="230" href="#230">230</a>         <strong class="jxr_keyword">final</strong> Charset charset = Charsets.getSupportedCharset(charsetName);
+<a class="jxr_linenumber" name="231" href="#231">231</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> alwaysWriteExceptions = Booleans.parseBoolean(always, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="232" href="#232">232</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> noConsoleNoAnsi = Booleans.parseBoolean(noConsoleNoAnsiStr, false);
+<a class="jxr_linenumber" name="233" href="#233">233</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternLayout</a>(config, replace, pattern == <strong class="jxr_keyword">null</strong> ? DEFAULT_CONVERSION_PATTERN : pattern, charset,
+<a class="jxr_linenumber" name="234" href="#234">234</a>                 alwaysWriteExceptions, noConsoleNoAnsi);
+<a class="jxr_linenumber" name="235" href="#235">235</a>     }
+<a class="jxr_linenumber" name="236" href="#236">236</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

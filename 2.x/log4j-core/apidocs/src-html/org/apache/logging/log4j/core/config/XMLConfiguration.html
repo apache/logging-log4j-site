@@ -1,406 +1,410 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    /*<a name="line.1"></a>
-<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
-<FONT color="green">003</FONT>     * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
-<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
-<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
-<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
-<FONT color="green">007</FONT>     * the License. You may obtain a copy of the License at<a name="line.7"></a>
-<FONT color="green">008</FONT>     *<a name="line.8"></a>
-<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
-<FONT color="green">010</FONT>     *<a name="line.10"></a>
-<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
-<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
-<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
-<FONT color="green">014</FONT>     * See the license for the specific language governing permissions and<a name="line.14"></a>
-<FONT color="green">015</FONT>     * limitations under the license.<a name="line.15"></a>
-<FONT color="green">016</FONT>     */<a name="line.16"></a>
-<FONT color="green">017</FONT>    package org.apache.logging.log4j.core.config;<a name="line.17"></a>
-<FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    import java.io.ByteArrayInputStream;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import java.io.ByteArrayOutputStream;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import java.io.File;<a name="line.21"></a>
-<FONT color="green">022</FONT>    import java.io.FileInputStream;<a name="line.22"></a>
-<FONT color="green">023</FONT>    import java.io.FileNotFoundException;<a name="line.23"></a>
-<FONT color="green">024</FONT>    import java.io.FileOutputStream;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import java.io.IOException;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import java.io.InputStream;<a name="line.26"></a>
-<FONT color="green">027</FONT>    import java.io.PrintStream;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import java.net.URI;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import java.net.URISyntaxException;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import java.nio.charset.Charset;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import java.util.ArrayList;<a name="line.31"></a>
-<FONT color="green">032</FONT>    import java.util.Iterator;<a name="line.32"></a>
-<FONT color="green">033</FONT>    import java.util.List;<a name="line.33"></a>
-<FONT color="green">034</FONT>    import java.util.Map;<a name="line.34"></a>
-<FONT color="green">035</FONT>    <a name="line.35"></a>
-<FONT color="green">036</FONT>    import javax.xml.XMLConstants;<a name="line.36"></a>
-<FONT color="green">037</FONT>    import javax.xml.parsers.DocumentBuilder;<a name="line.37"></a>
-<FONT color="green">038</FONT>    import javax.xml.parsers.DocumentBuilderFactory;<a name="line.38"></a>
-<FONT color="green">039</FONT>    import javax.xml.parsers.ParserConfigurationException;<a name="line.39"></a>
-<FONT color="green">040</FONT>    import javax.xml.transform.Source;<a name="line.40"></a>
-<FONT color="green">041</FONT>    import javax.xml.transform.stream.StreamSource;<a name="line.41"></a>
-<FONT color="green">042</FONT>    import javax.xml.validation.Schema;<a name="line.42"></a>
-<FONT color="green">043</FONT>    import javax.xml.validation.SchemaFactory;<a name="line.43"></a>
-<FONT color="green">044</FONT>    import javax.xml.validation.Validator;<a name="line.44"></a>
-<FONT color="green">045</FONT>    <a name="line.45"></a>
-<FONT color="green">046</FONT>    import org.apache.logging.log4j.Level;<a name="line.46"></a>
-<FONT color="green">047</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginManager;<a name="line.47"></a>
-<FONT color="green">048</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginType;<a name="line.48"></a>
-<FONT color="green">049</FONT>    import org.apache.logging.log4j.core.config.plugins.ResolverUtil;<a name="line.49"></a>
-<FONT color="green">050</FONT>    import org.apache.logging.log4j.core.helpers.FileUtils;<a name="line.50"></a>
-<FONT color="green">051</FONT>    import org.apache.logging.log4j.status.StatusConsoleListener;<a name="line.51"></a>
-<FONT color="green">052</FONT>    import org.apache.logging.log4j.status.StatusListener;<a name="line.52"></a>
-<FONT color="green">053</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.53"></a>
-<FONT color="green">054</FONT>    import org.w3c.dom.Attr;<a name="line.54"></a>
-<FONT color="green">055</FONT>    import org.w3c.dom.Document;<a name="line.55"></a>
-<FONT color="green">056</FONT>    import org.w3c.dom.Element;<a name="line.56"></a>
-<FONT color="green">057</FONT>    import org.w3c.dom.NamedNodeMap;<a name="line.57"></a>
-<FONT color="green">058</FONT>    import org.w3c.dom.NodeList;<a name="line.58"></a>
-<FONT color="green">059</FONT>    import org.w3c.dom.Text;<a name="line.59"></a>
-<FONT color="green">060</FONT>    import org.xml.sax.InputSource;<a name="line.60"></a>
-<FONT color="green">061</FONT>    import org.xml.sax.SAXException;<a name="line.61"></a>
-<FONT color="green">062</FONT>    <a name="line.62"></a>
-<FONT color="green">063</FONT>    /**<a name="line.63"></a>
-<FONT color="green">064</FONT>     * Creates a Node hierarchy from an XML file.<a name="line.64"></a>
-<FONT color="green">065</FONT>     */<a name="line.65"></a>
-<FONT color="green">066</FONT>    public class XMLConfiguration extends BaseConfiguration implements Reconfigurable {<a name="line.66"></a>
-<FONT color="green">067</FONT>    <a name="line.67"></a>
-<FONT color="green">068</FONT>        private static final String XINCLUDE_FIXUP_LANGUAGE = "http://apache.org/xml/features/xinclude/fixup-language";<a name="line.68"></a>
-<FONT color="green">069</FONT>    <a name="line.69"></a>
-<FONT color="green">070</FONT>        private static final String XINCLUDE_FIXUP_BASE_URIS = "http://apache.org/xml/features/xinclude/fixup-base-uris";<a name="line.70"></a>
-<FONT color="green">071</FONT>    <a name="line.71"></a>
-<FONT color="green">072</FONT>        private static final String[] VERBOSE_CLASSES = new String[] {ResolverUtil.class.getName()};<a name="line.72"></a>
-<FONT color="green">073</FONT>    <a name="line.73"></a>
-<FONT color="green">074</FONT>        private static final String LOG4J_XSD = "Log4j-config.xsd";<a name="line.74"></a>
-<FONT color="green">075</FONT>    <a name="line.75"></a>
-<FONT color="green">076</FONT>        private static final int BUF_SIZE = 16384;<a name="line.76"></a>
-<FONT color="green">077</FONT>    <a name="line.77"></a>
-<FONT color="green">078</FONT>        private final List&lt;Status&gt; status = new ArrayList&lt;Status&gt;();<a name="line.78"></a>
-<FONT color="green">079</FONT>    <a name="line.79"></a>
-<FONT color="green">080</FONT>        private Element rootElement;<a name="line.80"></a>
-<FONT color="green">081</FONT>    <a name="line.81"></a>
-<FONT color="green">082</FONT>        private boolean strict;<a name="line.82"></a>
-<FONT color="green">083</FONT>    <a name="line.83"></a>
-<FONT color="green">084</FONT>        private String schema;<a name="line.84"></a>
-<FONT color="green">085</FONT>    <a name="line.85"></a>
-<FONT color="green">086</FONT>        private final File configFile;<a name="line.86"></a>
-<FONT color="green">087</FONT>    <a name="line.87"></a>
-<FONT color="green">088</FONT>        /**<a name="line.88"></a>
-<FONT color="green">089</FONT>         * Creates a new DocumentBuilder suitable for parsing a configuration file.<a name="line.89"></a>
-<FONT color="green">090</FONT>         *<a name="line.90"></a>
-<FONT color="green">091</FONT>         * @return a new DocumentBuilder<a name="line.91"></a>
-<FONT color="green">092</FONT>         * @throws ParserConfigurationException<a name="line.92"></a>
-<FONT color="green">093</FONT>         */<a name="line.93"></a>
-<FONT color="green">094</FONT>        static DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {<a name="line.94"></a>
-<FONT color="green">095</FONT>            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();<a name="line.95"></a>
-<FONT color="green">096</FONT>            factory.setNamespaceAware(true);<a name="line.96"></a>
-<FONT color="green">097</FONT>            enableXInclude(factory);<a name="line.97"></a>
-<FONT color="green">098</FONT>            return factory.newDocumentBuilder();<a name="line.98"></a>
-<FONT color="green">099</FONT>        }<a name="line.99"></a>
-<FONT color="green">100</FONT>    <a name="line.100"></a>
-<FONT color="green">101</FONT>        /**<a name="line.101"></a>
-<FONT color="green">102</FONT>         * Enables XInclude for the given DocumentBuilderFactory<a name="line.102"></a>
-<FONT color="green">103</FONT>         *<a name="line.103"></a>
-<FONT color="green">104</FONT>         * @param factory a DocumentBuilderFactory<a name="line.104"></a>
-<FONT color="green">105</FONT>         */<a name="line.105"></a>
-<FONT color="green">106</FONT>        private static void enableXInclude(final DocumentBuilderFactory factory) {<a name="line.106"></a>
-<FONT color="green">107</FONT>            try {<a name="line.107"></a>
-<FONT color="green">108</FONT>                // Alternative: We set if a system property on the command line is set, for example:<a name="line.108"></a>
-<FONT color="green">109</FONT>                // -DLog4j.XInclude=true<a name="line.109"></a>
-<FONT color="green">110</FONT>                factory.setXIncludeAware(true);<a name="line.110"></a>
-<FONT color="green">111</FONT>            } catch (UnsupportedOperationException e) {<a name="line.111"></a>
-<FONT color="green">112</FONT>                LOGGER.warn("The DocumentBuilderFactory does not support XInclude: " + factory, e);<a name="line.112"></a>
-<FONT color="green">113</FONT>            } catch (AbstractMethodError err) {<a name="line.113"></a>
-<FONT color="green">114</FONT>                LOGGER.warn("The DocumentBuilderFactory is out of date and does not support XInclude: " + factory);<a name="line.114"></a>
-<FONT color="green">115</FONT>            }<a name="line.115"></a>
-<FONT color="green">116</FONT>            try {<a name="line.116"></a>
-<FONT color="green">117</FONT>                // Alternative: We could specify all features and values with system properties like:<a name="line.117"></a>
-<FONT color="green">118</FONT>                // -DLog4j.DocumentBuilderFactory.Feature="http://apache.org/xml/features/xinclude/fixup-base-uris true"<a name="line.118"></a>
-<FONT color="green">119</FONT>                factory.setFeature(XINCLUDE_FIXUP_BASE_URIS, true);<a name="line.119"></a>
-<FONT color="green">120</FONT>            } catch (ParserConfigurationException e) {<a name="line.120"></a>
-<FONT color="green">121</FONT>                LOGGER.warn("The DocumentBuilderFactory [" + factory + "] does not support the feature ["<a name="line.121"></a>
-<FONT color="green">122</FONT>                        + XINCLUDE_FIXUP_BASE_URIS + "]", e);<a name="line.122"></a>
-<FONT color="green">123</FONT>            } catch (AbstractMethodError err) {<a name="line.123"></a>
-<FONT color="green">124</FONT>                LOGGER.warn("The DocumentBuilderFactory is out of date and does not support setFeature: " + factory);<a name="line.124"></a>
-<FONT color="green">125</FONT>            }<a name="line.125"></a>
-<FONT color="green">126</FONT>            try {<a name="line.126"></a>
-<FONT color="green">127</FONT>                factory.setFeature(XINCLUDE_FIXUP_LANGUAGE, true);<a name="line.127"></a>
-<FONT color="green">128</FONT>            } catch (ParserConfigurationException e) {<a name="line.128"></a>
-<FONT color="green">129</FONT>                LOGGER.warn("The DocumentBuilderFactory [" + factory + "] does not support the feature ["<a name="line.129"></a>
-<FONT color="green">130</FONT>                        + XINCLUDE_FIXUP_LANGUAGE + "]", e);<a name="line.130"></a>
-<FONT color="green">131</FONT>            } catch (AbstractMethodError err) {<a name="line.131"></a>
-<FONT color="green">132</FONT>                LOGGER.warn("The DocumentBuilderFactory is out of date and does not support setFeature: " + factory);<a name="line.132"></a>
-<FONT color="green">133</FONT>            }<a name="line.133"></a>
-<FONT color="green">134</FONT>        }<a name="line.134"></a>
-<FONT color="green">135</FONT>    <a name="line.135"></a>
-<FONT color="green">136</FONT>        public XMLConfiguration(final ConfigurationFactory.ConfigurationSource configSource) {<a name="line.136"></a>
-<FONT color="green">137</FONT>            this.configFile = configSource.getFile();<a name="line.137"></a>
-<FONT color="green">138</FONT>            byte[] buffer = null;<a name="line.138"></a>
-<FONT color="green">139</FONT>    <a name="line.139"></a>
-<FONT color="green">140</FONT>            try {<a name="line.140"></a>
-<FONT color="green">141</FONT>                final List&lt;String&gt; messages = new ArrayList&lt;String&gt;();<a name="line.141"></a>
-<FONT color="green">142</FONT>                final InputStream configStream = configSource.getInputStream();<a name="line.142"></a>
-<FONT color="green">143</FONT>                buffer = toByteArray(configStream);<a name="line.143"></a>
-<FONT color="green">144</FONT>                configStream.close();<a name="line.144"></a>
-<FONT color="green">145</FONT>                final InputSource source = new InputSource(new ByteArrayInputStream(buffer));<a name="line.145"></a>
-<FONT color="green">146</FONT>                final Document document = newDocumentBuilder().parse(source);<a name="line.146"></a>
-<FONT color="green">147</FONT>                rootElement = document.getDocumentElement();<a name="line.147"></a>
-<FONT color="green">148</FONT>                final Map&lt;String, String&gt; attrs = processAttributes(rootNode, rootElement);<a name="line.148"></a>
-<FONT color="green">149</FONT>                Level status = getDefaultStatus();<a name="line.149"></a>
-<FONT color="green">150</FONT>                boolean verbose = false;<a name="line.150"></a>
-<FONT color="green">151</FONT>                PrintStream stream = System.out;<a name="line.151"></a>
-<FONT color="green">152</FONT>    <a name="line.152"></a>
-<FONT color="green">153</FONT>                for (final Map.Entry&lt;String, String&gt; entry : attrs.entrySet()) {<a name="line.153"></a>
-<FONT color="green">154</FONT>                    if ("status".equalsIgnoreCase(entry.getKey())) {<a name="line.154"></a>
-<FONT color="green">155</FONT>                        final Level stat = Level.toLevel(getStrSubstitutor().replace(entry.getValue()), null);<a name="line.155"></a>
-<FONT color="green">156</FONT>                        if (stat != null) {<a name="line.156"></a>
-<FONT color="green">157</FONT>                            status = stat;<a name="line.157"></a>
-<FONT color="green">158</FONT>                        } else {<a name="line.158"></a>
-<FONT color="green">159</FONT>                            messages.add("Invalid status specified: " + entry.getValue() + ". Defaulting to " + status);<a name="line.159"></a>
-<FONT color="green">160</FONT>                        }<a name="line.160"></a>
-<FONT color="green">161</FONT>                    } else if ("dest".equalsIgnoreCase(entry.getKey())) {<a name="line.161"></a>
-<FONT color="green">162</FONT>                        final String dest = getStrSubstitutor().replace(entry.getValue());<a name="line.162"></a>
-<FONT color="green">163</FONT>                        if (dest != null) {<a name="line.163"></a>
-<FONT color="green">164</FONT>                            if (dest.equalsIgnoreCase("err")) {<a name="line.164"></a>
-<FONT color="green">165</FONT>                                stream = System.err;<a name="line.165"></a>
-<FONT color="green">166</FONT>                            } else {<a name="line.166"></a>
-<FONT color="green">167</FONT>                                try {<a name="line.167"></a>
-<FONT color="green">168</FONT>                                    final File destFile = FileUtils.fileFromURI(new URI(dest));<a name="line.168"></a>
-<FONT color="green">169</FONT>                                    final String enc = Charset.defaultCharset().name();<a name="line.169"></a>
-<FONT color="green">170</FONT>                                    stream = new PrintStream(new FileOutputStream(destFile), true, enc);<a name="line.170"></a>
-<FONT color="green">171</FONT>                                } catch (final URISyntaxException use) {<a name="line.171"></a>
-<FONT color="green">172</FONT>                                    System.err.println("Unable to write to " + dest + ". Writing to stdout");<a name="line.172"></a>
-<FONT color="green">173</FONT>                                }<a name="line.173"></a>
-<FONT color="green">174</FONT>                            }<a name="line.174"></a>
-<FONT color="green">175</FONT>                        }<a name="line.175"></a>
-<FONT color="green">176</FONT>                    } else if ("shutdownHook".equalsIgnoreCase(entry.getKey())) {<a name="line.176"></a>
-<FONT color="green">177</FONT>                        String hook = getStrSubstitutor().replace(entry.getValue());<a name="line.177"></a>
-<FONT color="green">178</FONT>                        isShutdownHookEnabled = !hook.equalsIgnoreCase("disable");<a name="line.178"></a>
-<FONT color="green">179</FONT>                    } else if ("verbose".equalsIgnoreCase(entry.getKey())) {<a name="line.179"></a>
-<FONT color="green">180</FONT>                        verbose = Boolean.parseBoolean(getStrSubstitutor().replace(entry.getValue()));<a name="line.180"></a>
-<FONT color="green">181</FONT>                    } else if ("packages".equalsIgnoreCase(getStrSubstitutor().replace(entry.getKey()))) {<a name="line.181"></a>
-<FONT color="green">182</FONT>                        final String[] packages = entry.getValue().split(",");<a name="line.182"></a>
-<FONT color="green">183</FONT>                        for (final String p : packages) {<a name="line.183"></a>
-<FONT color="green">184</FONT>                            PluginManager.addPackage(p);<a name="line.184"></a>
-<FONT color="green">185</FONT>                        }<a name="line.185"></a>
-<FONT color="green">186</FONT>                    } else if ("name".equalsIgnoreCase(entry.getKey())) {<a name="line.186"></a>
-<FONT color="green">187</FONT>                        setName(getStrSubstitutor().replace(entry.getValue()));<a name="line.187"></a>
-<FONT color="green">188</FONT>                    } else if ("strict".equalsIgnoreCase(entry.getKey())) {<a name="line.188"></a>
-<FONT color="green">189</FONT>                        strict = Boolean.parseBoolean(getStrSubstitutor().replace(entry.getValue()));<a name="line.189"></a>
-<FONT color="green">190</FONT>                    } else if ("schema".equalsIgnoreCase(entry.getKey())) {<a name="line.190"></a>
-<FONT color="green">191</FONT>                        schema = getStrSubstitutor().replace(entry.getValue());<a name="line.191"></a>
-<FONT color="green">192</FONT>                    } else if ("monitorInterval".equalsIgnoreCase(entry.getKey())) {<a name="line.192"></a>
-<FONT color="green">193</FONT>                        final int interval = Integer.parseInt(getStrSubstitutor().replace(entry.getValue()));<a name="line.193"></a>
-<FONT color="green">194</FONT>                        if (interval &gt; 0 &amp;&amp; configFile != null) {<a name="line.194"></a>
-<FONT color="green">195</FONT>                            monitor = new FileConfigurationMonitor(this, configFile, listeners, interval);<a name="line.195"></a>
-<FONT color="green">196</FONT>                        }<a name="line.196"></a>
-<FONT color="green">197</FONT>                    } else if ("advertiser".equalsIgnoreCase(entry.getKey())) {<a name="line.197"></a>
-<FONT color="green">198</FONT>                        createAdvertiser(getStrSubstitutor().replace(entry.getValue()), configSource, buffer, "text/xml");<a name="line.198"></a>
-<FONT color="green">199</FONT>                    }<a name="line.199"></a>
-<FONT color="green">200</FONT>                }<a name="line.200"></a>
-<FONT color="green">201</FONT>                final Iterator&lt;StatusListener&gt; iter = ((StatusLogger) LOGGER).getListeners();<a name="line.201"></a>
-<FONT color="green">202</FONT>                boolean found = false;<a name="line.202"></a>
-<FONT color="green">203</FONT>                while (iter.hasNext()) {<a name="line.203"></a>
-<FONT color="green">204</FONT>                    final StatusListener listener = iter.next();<a name="line.204"></a>
-<FONT color="green">205</FONT>                    if (listener instanceof StatusConsoleListener) {<a name="line.205"></a>
-<FONT color="green">206</FONT>                        found = true;<a name="line.206"></a>
-<FONT color="green">207</FONT>                        ((StatusConsoleListener) listener).setLevel(status);<a name="line.207"></a>
-<FONT color="green">208</FONT>                        if (!verbose) {<a name="line.208"></a>
-<FONT color="green">209</FONT>                            ((StatusConsoleListener) listener).setFilters(VERBOSE_CLASSES);<a name="line.209"></a>
-<FONT color="green">210</FONT>                        }<a name="line.210"></a>
-<FONT color="green">211</FONT>                    }<a name="line.211"></a>
-<FONT color="green">212</FONT>                }<a name="line.212"></a>
-<FONT color="green">213</FONT>                if (!found &amp;&amp; status != Level.OFF) {<a name="line.213"></a>
-<FONT color="green">214</FONT>                    final StatusConsoleListener listener = new StatusConsoleListener(status, stream);<a name="line.214"></a>
-<FONT color="green">215</FONT>                    if (!verbose) {<a name="line.215"></a>
-<FONT color="green">216</FONT>                        listener.setFilters(VERBOSE_CLASSES);<a name="line.216"></a>
-<FONT color="green">217</FONT>                    }<a name="line.217"></a>
-<FONT color="green">218</FONT>                    ((StatusLogger) LOGGER).registerListener(listener);<a name="line.218"></a>
-<FONT color="green">219</FONT>                    for (final String msg : messages) {<a name="line.219"></a>
-<FONT color="green">220</FONT>                        LOGGER.error(msg);<a name="line.220"></a>
-<FONT color="green">221</FONT>                    }<a name="line.221"></a>
-<FONT color="green">222</FONT>                }<a name="line.222"></a>
-<FONT color="green">223</FONT>    <a name="line.223"></a>
-<FONT color="green">224</FONT>            } catch (final SAXException domEx) {<a name="line.224"></a>
-<FONT color="green">225</FONT>                LOGGER.error("Error parsing " + configSource.getLocation(), domEx);<a name="line.225"></a>
-<FONT color="green">226</FONT>            } catch (final IOException ioe) {<a name="line.226"></a>
-<FONT color="green">227</FONT>                LOGGER.error("Error parsing " + configSource.getLocation(), ioe);<a name="line.227"></a>
-<FONT color="green">228</FONT>            } catch (final ParserConfigurationException pex) {<a name="line.228"></a>
-<FONT color="green">229</FONT>                LOGGER.error("Error parsing " + configSource.getLocation(), pex);<a name="line.229"></a>
-<FONT color="green">230</FONT>            }<a name="line.230"></a>
-<FONT color="green">231</FONT>            if (strict &amp;&amp; schema != null &amp;&amp; buffer != null) {<a name="line.231"></a>
-<FONT color="green">232</FONT>                InputStream is = null;<a name="line.232"></a>
-<FONT color="green">233</FONT>                try {<a name="line.233"></a>
-<FONT color="green">234</FONT>                    is = getClass().getClassLoader().getResourceAsStream(schema);<a name="line.234"></a>
-<FONT color="green">235</FONT>                } catch (final Exception ex) {<a name="line.235"></a>
-<FONT color="green">236</FONT>                    LOGGER.error("Unable to access schema " + schema);<a name="line.236"></a>
-<FONT color="green">237</FONT>                }<a name="line.237"></a>
-<FONT color="green">238</FONT>                if (is != null) {<a name="line.238"></a>
-<FONT color="green">239</FONT>                    final Source src = new StreamSource(is, LOG4J_XSD);<a name="line.239"></a>
-<FONT color="green">240</FONT>                    final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);<a name="line.240"></a>
-<FONT color="green">241</FONT>                    Schema schema = null;<a name="line.241"></a>
-<FONT color="green">242</FONT>                    try {<a name="line.242"></a>
-<FONT color="green">243</FONT>                        schema = factory.newSchema(src);<a name="line.243"></a>
-<FONT color="green">244</FONT>                    } catch (final SAXException ex) {<a name="line.244"></a>
-<FONT color="green">245</FONT>                        LOGGER.error("Error parsing Log4j schema", ex);<a name="line.245"></a>
-<FONT color="green">246</FONT>                    }<a name="line.246"></a>
-<FONT color="green">247</FONT>                    if (schema != null) {<a name="line.247"></a>
-<FONT color="green">248</FONT>                        Validator validator = schema.newValidator();<a name="line.248"></a>
-<FONT color="green">249</FONT>                        try {<a name="line.249"></a>
-<FONT color="green">250</FONT>                            validator.validate(new StreamSource(new ByteArrayInputStream(buffer)));<a name="line.250"></a>
-<FONT color="green">251</FONT>                        } catch (final IOException ioe) {<a name="line.251"></a>
-<FONT color="green">252</FONT>                            LOGGER.error("Error reading configuration for validation", ioe);<a name="line.252"></a>
-<FONT color="green">253</FONT>                        } catch (final SAXException ex) {<a name="line.253"></a>
-<FONT color="green">254</FONT>                            LOGGER.error("Error validating configuration", ex);<a name="line.254"></a>
-<FONT color="green">255</FONT>                        }<a name="line.255"></a>
-<FONT color="green">256</FONT>                    }<a name="line.256"></a>
-<FONT color="green">257</FONT>                }<a name="line.257"></a>
-<FONT color="green">258</FONT>            }<a name="line.258"></a>
-<FONT color="green">259</FONT>    <a name="line.259"></a>
-<FONT color="green">260</FONT>            if (getName() == null) {<a name="line.260"></a>
-<FONT color="green">261</FONT>                setName(configSource.getLocation());<a name="line.261"></a>
-<FONT color="green">262</FONT>            }<a name="line.262"></a>
-<FONT color="green">263</FONT>        }<a name="line.263"></a>
-<FONT color="green">264</FONT>    <a name="line.264"></a>
-<FONT color="green">265</FONT>        @Override<a name="line.265"></a>
-<FONT color="green">266</FONT>        public void setup() {<a name="line.266"></a>
-<FONT color="green">267</FONT>            if (rootElement == null) {<a name="line.267"></a>
-<FONT color="green">268</FONT>                LOGGER.error("No logging configuration");<a name="line.268"></a>
-<FONT color="green">269</FONT>                return;<a name="line.269"></a>
-<FONT color="green">270</FONT>            }<a name="line.270"></a>
-<FONT color="green">271</FONT>            constructHierarchy(rootNode, rootElement);<a name="line.271"></a>
-<FONT color="green">272</FONT>            if (status.size() &gt; 0) {<a name="line.272"></a>
-<FONT color="green">273</FONT>                for (final Status s : status) {<a name="line.273"></a>
-<FONT color="green">274</FONT>                    LOGGER.error("Error processing element " + s.name + ": " + s.errorType);<a name="line.274"></a>
-<FONT color="green">275</FONT>                }<a name="line.275"></a>
-<FONT color="green">276</FONT>                return;<a name="line.276"></a>
-<FONT color="green">277</FONT>            }<a name="line.277"></a>
-<FONT color="green">278</FONT>            rootElement = null;<a name="line.278"></a>
-<FONT color="green">279</FONT>        }<a name="line.279"></a>
-<FONT color="green">280</FONT>    <a name="line.280"></a>
-<FONT color="green">281</FONT>        @Override<a name="line.281"></a>
-<FONT color="green">282</FONT>        public Configuration reconfigure() {<a name="line.282"></a>
-<FONT color="green">283</FONT>            if (configFile != null) {<a name="line.283"></a>
-<FONT color="green">284</FONT>                try {<a name="line.284"></a>
-<FONT color="green">285</FONT>                    final ConfigurationFactory.ConfigurationSource source =<a name="line.285"></a>
-<FONT color="green">286</FONT>                        new ConfigurationFactory.ConfigurationSource(new FileInputStream(configFile), configFile);<a name="line.286"></a>
-<FONT color="green">287</FONT>                    return new XMLConfiguration(source);<a name="line.287"></a>
-<FONT color="green">288</FONT>                } catch (final FileNotFoundException ex) {<a name="line.288"></a>
-<FONT color="green">289</FONT>                    LOGGER.error("Cannot locate file " + configFile, ex);<a name="line.289"></a>
-<FONT color="green">290</FONT>                }<a name="line.290"></a>
-<FONT color="green">291</FONT>            }<a name="line.291"></a>
-<FONT color="green">292</FONT>            return null;<a name="line.292"></a>
-<FONT color="green">293</FONT>        }<a name="line.293"></a>
-<FONT color="green">294</FONT>    <a name="line.294"></a>
-<FONT color="green">295</FONT>        private void constructHierarchy(final Node node, final Element element) {<a name="line.295"></a>
-<FONT color="green">296</FONT>            processAttributes(node, element);<a name="line.296"></a>
-<FONT color="green">297</FONT>            final StringBuilder buffer = new StringBuilder();<a name="line.297"></a>
-<FONT color="green">298</FONT>            final NodeList list = element.getChildNodes();<a name="line.298"></a>
-<FONT color="green">299</FONT>            final List&lt;Node&gt; children = node.getChildren();<a name="line.299"></a>
-<FONT color="green">300</FONT>            for (int i = 0; i &lt; list.getLength(); i++) {<a name="line.300"></a>
-<FONT color="green">301</FONT>                final org.w3c.dom.Node w3cNode = list.item(i);<a name="line.301"></a>
-<FONT color="green">302</FONT>                if (w3cNode instanceof Element) {<a name="line.302"></a>
-<FONT color="green">303</FONT>                    final Element child = (Element) w3cNode;<a name="line.303"></a>
-<FONT color="green">304</FONT>                    final String name = getType(child);<a name="line.304"></a>
-<FONT color="green">305</FONT>                    final PluginType&lt;?&gt; type = pluginManager.getPluginType(name);<a name="line.305"></a>
-<FONT color="green">306</FONT>                    final Node childNode = new Node(node, name, type);<a name="line.306"></a>
-<FONT color="green">307</FONT>                    constructHierarchy(childNode, child);<a name="line.307"></a>
-<FONT color="green">308</FONT>                    if (type == null) {<a name="line.308"></a>
-<FONT color="green">309</FONT>                        final String value = childNode.getValue();<a name="line.309"></a>
-<FONT color="green">310</FONT>                        if (!childNode.hasChildren() &amp;&amp; value != null) {<a name="line.310"></a>
-<FONT color="green">311</FONT>                            node.getAttributes().put(name, value);<a name="line.311"></a>
-<FONT color="green">312</FONT>                        } else {<a name="line.312"></a>
-<FONT color="green">313</FONT>                            status.add(new Status(name, element, ErrorType.CLASS_NOT_FOUND));<a name="line.313"></a>
-<FONT color="green">314</FONT>                        }<a name="line.314"></a>
-<FONT color="green">315</FONT>                    } else {<a name="line.315"></a>
-<FONT color="green">316</FONT>                        children.add(childNode);<a name="line.316"></a>
-<FONT color="green">317</FONT>                    }<a name="line.317"></a>
-<FONT color="green">318</FONT>                } else if (w3cNode instanceof Text) {<a name="line.318"></a>
-<FONT color="green">319</FONT>                    final Text data = (Text) w3cNode;<a name="line.319"></a>
-<FONT color="green">320</FONT>                    buffer.append(data.getData());<a name="line.320"></a>
-<FONT color="green">321</FONT>                }<a name="line.321"></a>
-<FONT color="green">322</FONT>            }<a name="line.322"></a>
-<FONT color="green">323</FONT>    <a name="line.323"></a>
-<FONT color="green">324</FONT>            final String text = buffer.toString().trim();<a name="line.324"></a>
-<FONT color="green">325</FONT>            if (text.length() &gt; 0 || (!node.hasChildren() &amp;&amp; !node.isRoot())) {<a name="line.325"></a>
-<FONT color="green">326</FONT>                node.setValue(text);<a name="line.326"></a>
-<FONT color="green">327</FONT>            }<a name="line.327"></a>
-<FONT color="green">328</FONT>        }<a name="line.328"></a>
-<FONT color="green">329</FONT>    <a name="line.329"></a>
-<FONT color="green">330</FONT>        private String getType(final Element element) {<a name="line.330"></a>
-<FONT color="green">331</FONT>            if (strict) {<a name="line.331"></a>
-<FONT color="green">332</FONT>                final NamedNodeMap attrs = element.getAttributes();<a name="line.332"></a>
-<FONT color="green">333</FONT>                for (int i = 0; i &lt; attrs.getLength(); ++i) {<a name="line.333"></a>
-<FONT color="green">334</FONT>                    final org.w3c.dom.Node w3cNode = attrs.item(i);<a name="line.334"></a>
-<FONT color="green">335</FONT>                    if (w3cNode instanceof Attr) {<a name="line.335"></a>
-<FONT color="green">336</FONT>                        final Attr attr = (Attr) w3cNode;<a name="line.336"></a>
-<FONT color="green">337</FONT>                        if (attr.getName().equalsIgnoreCase("type")) {<a name="line.337"></a>
-<FONT color="green">338</FONT>                            final String type = attr.getValue();<a name="line.338"></a>
-<FONT color="green">339</FONT>                            attrs.removeNamedItem(attr.getName());<a name="line.339"></a>
-<FONT color="green">340</FONT>                            return type;<a name="line.340"></a>
-<FONT color="green">341</FONT>                        }<a name="line.341"></a>
-<FONT color="green">342</FONT>                    }<a name="line.342"></a>
-<FONT color="green">343</FONT>                }<a name="line.343"></a>
-<FONT color="green">344</FONT>            }<a name="line.344"></a>
-<FONT color="green">345</FONT>            return element.getTagName();<a name="line.345"></a>
-<FONT color="green">346</FONT>        }<a name="line.346"></a>
-<FONT color="green">347</FONT>    <a name="line.347"></a>
-<FONT color="green">348</FONT>        private byte[] toByteArray(final InputStream is) throws IOException {<a name="line.348"></a>
-<FONT color="green">349</FONT>            final ByteArrayOutputStream buffer = new ByteArrayOutputStream();<a name="line.349"></a>
-<FONT color="green">350</FONT>    <a name="line.350"></a>
-<FONT color="green">351</FONT>            int nRead;<a name="line.351"></a>
-<FONT color="green">352</FONT>            final byte[] data = new byte[BUF_SIZE];<a name="line.352"></a>
-<FONT color="green">353</FONT>    <a name="line.353"></a>
-<FONT color="green">354</FONT>            while ((nRead = is.read(data, 0, data.length)) != -1) {<a name="line.354"></a>
-<FONT color="green">355</FONT>                buffer.write(data, 0, nRead);<a name="line.355"></a>
-<FONT color="green">356</FONT>            }<a name="line.356"></a>
-<FONT color="green">357</FONT>    <a name="line.357"></a>
-<FONT color="green">358</FONT>            return buffer.toByteArray();<a name="line.358"></a>
-<FONT color="green">359</FONT>        }<a name="line.359"></a>
-<FONT color="green">360</FONT>    <a name="line.360"></a>
-<FONT color="green">361</FONT>        private Map&lt;String, String&gt; processAttributes(final Node node, final Element element) {<a name="line.361"></a>
-<FONT color="green">362</FONT>            final NamedNodeMap attrs = element.getAttributes();<a name="line.362"></a>
-<FONT color="green">363</FONT>            final Map&lt;String, String&gt; attributes = node.getAttributes();<a name="line.363"></a>
-<FONT color="green">364</FONT>    <a name="line.364"></a>
-<FONT color="green">365</FONT>            for (int i = 0; i &lt; attrs.getLength(); ++i) {<a name="line.365"></a>
-<FONT color="green">366</FONT>                final org.w3c.dom.Node w3cNode = attrs.item(i);<a name="line.366"></a>
-<FONT color="green">367</FONT>                if (w3cNode instanceof Attr) {<a name="line.367"></a>
-<FONT color="green">368</FONT>                    final Attr attr = (Attr) w3cNode;<a name="line.368"></a>
-<FONT color="green">369</FONT>                    if (attr.getName().equals("xml:base")) {<a name="line.369"></a>
-<FONT color="green">370</FONT>                        continue;<a name="line.370"></a>
-<FONT color="green">371</FONT>                    }<a name="line.371"></a>
-<FONT color="green">372</FONT>                    attributes.put(attr.getName(), attr.getValue());<a name="line.372"></a>
-<FONT color="green">373</FONT>                }<a name="line.373"></a>
-<FONT color="green">374</FONT>            }<a name="line.374"></a>
-<FONT color="green">375</FONT>            return attributes;<a name="line.375"></a>
-<FONT color="green">376</FONT>        }<a name="line.376"></a>
-<FONT color="green">377</FONT>    <a name="line.377"></a>
-<FONT color="green">378</FONT>        /**<a name="line.378"></a>
-<FONT color="green">379</FONT>         * The error that occurred.<a name="line.379"></a>
-<FONT color="green">380</FONT>         */<a name="line.380"></a>
-<FONT color="green">381</FONT>        private enum ErrorType {<a name="line.381"></a>
-<FONT color="green">382</FONT>            CLASS_NOT_FOUND<a name="line.382"></a>
-<FONT color="green">383</FONT>        }<a name="line.383"></a>
-<FONT color="green">384</FONT>    <a name="line.384"></a>
-<FONT color="green">385</FONT>        /**<a name="line.385"></a>
-<FONT color="green">386</FONT>         * Status for recording errors.<a name="line.386"></a>
-<FONT color="green">387</FONT>         */<a name="line.387"></a>
-<FONT color="green">388</FONT>        private class Status {<a name="line.388"></a>
-<FONT color="green">389</FONT>            private final Element element;<a name="line.389"></a>
-<FONT color="green">390</FONT>            private final String name;<a name="line.390"></a>
-<FONT color="green">391</FONT>            private final ErrorType errorType;<a name="line.391"></a>
-<FONT color="green">392</FONT>    <a name="line.392"></a>
-<FONT color="green">393</FONT>            public Status(final String name, final Element element, final ErrorType errorType) {<a name="line.393"></a>
-<FONT color="green">394</FONT>                this.name = name;<a name="line.394"></a>
-<FONT color="green">395</FONT>                this.element = element;<a name="line.395"></a>
-<FONT color="green">396</FONT>                this.errorType = errorType;<a name="line.396"></a>
-<FONT color="green">397</FONT>            }<a name="line.397"></a>
-<FONT color="green">398</FONT>        }<a name="line.398"></a>
-<FONT color="green">399</FONT>    <a name="line.399"></a>
-<FONT color="green">400</FONT>    }<a name="line.400"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License. You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the license for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the license.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span>package org.apache.logging.log4j.core.config;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.io.ByteArrayInputStream;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.io.ByteArrayOutputStream;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.io.File;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.io.FileInputStream;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.io.FileNotFoundException;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.io.FileOutputStream;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.io.IOException;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.io.InputStream;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.io.PrintStream;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.net.URISyntaxException;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.nio.charset.Charset;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import java.util.ArrayList;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import java.util.Iterator;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import java.util.List;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import java.util.Map;<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>import javax.xml.XMLConstants;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import javax.xml.parsers.DocumentBuilder;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import javax.xml.parsers.DocumentBuilderFactory;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import javax.xml.parsers.ParserConfigurationException;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import javax.xml.transform.Source;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import javax.xml.transform.stream.StreamSource;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import javax.xml.validation.Schema;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import javax.xml.validation.SchemaFactory;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import javax.xml.validation.Validator;<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>import org.apache.logging.log4j.Level;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import org.apache.logging.log4j.core.config.plugins.PluginManager;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>import org.apache.logging.log4j.core.config.plugins.PluginType;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>import org.apache.logging.log4j.core.config.plugins.ResolverUtil;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>import org.apache.logging.log4j.core.helpers.FileUtils;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>import org.apache.logging.log4j.status.StatusConsoleListener;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>import org.apache.logging.log4j.status.StatusListener;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>import org.w3c.dom.Attr;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>import org.w3c.dom.Document;<a name="line.54"></a>
+<span class="sourceLineNo">055</span>import org.w3c.dom.Element;<a name="line.55"></a>
+<span class="sourceLineNo">056</span>import org.w3c.dom.NamedNodeMap;<a name="line.56"></a>
+<span class="sourceLineNo">057</span>import org.w3c.dom.NodeList;<a name="line.57"></a>
+<span class="sourceLineNo">058</span>import org.w3c.dom.Text;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>import org.xml.sax.InputSource;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>import org.xml.sax.SAXException;<a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span>/**<a name="line.62"></a>
+<span class="sourceLineNo">063</span> * Creates a Node hierarchy from an XML file.<a name="line.63"></a>
+<span class="sourceLineNo">064</span> */<a name="line.64"></a>
+<span class="sourceLineNo">065</span>public class XMLConfiguration extends BaseConfiguration implements Reconfigurable {<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>    private static final String XINCLUDE_FIXUP_LANGUAGE = "http://apache.org/xml/features/xinclude/fixup-language";<a name="line.67"></a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span>    private static final String XINCLUDE_FIXUP_BASE_URIS = "http://apache.org/xml/features/xinclude/fixup-base-uris";<a name="line.69"></a>
+<span class="sourceLineNo">070</span><a name="line.70"></a>
+<span class="sourceLineNo">071</span>    private static final String[] VERBOSE_CLASSES = new String[] {ResolverUtil.class.getName()};<a name="line.71"></a>
+<span class="sourceLineNo">072</span><a name="line.72"></a>
+<span class="sourceLineNo">073</span>    private static final String LOG4J_XSD = "Log4j-config.xsd";<a name="line.73"></a>
+<span class="sourceLineNo">074</span><a name="line.74"></a>
+<span class="sourceLineNo">075</span>    private static final int BUF_SIZE = 16384;<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>    private final List&lt;Status&gt; status = new ArrayList&lt;Status&gt;();<a name="line.77"></a>
+<span class="sourceLineNo">078</span><a name="line.78"></a>
+<span class="sourceLineNo">079</span>    private Element rootElement;<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>    private boolean strict;<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>    private String schema;<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>    private final File configFile;<a name="line.85"></a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span>    /**<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * Creates a new DocumentBuilder suitable for parsing a configuration file.<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     *<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     * @return a new DocumentBuilder<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     * @throws ParserConfigurationException<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     */<a name="line.92"></a>
+<span class="sourceLineNo">093</span>    static DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        factory.setNamespaceAware(true);<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        enableXInclude(factory);<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        return factory.newDocumentBuilder();<a name="line.97"></a>
+<span class="sourceLineNo">098</span>    }<a name="line.98"></a>
+<span class="sourceLineNo">099</span><a name="line.99"></a>
+<span class="sourceLineNo">100</span>    /**<a name="line.100"></a>
+<span class="sourceLineNo">101</span>     * Enables XInclude for the given DocumentBuilderFactory<a name="line.101"></a>
+<span class="sourceLineNo">102</span>     *<a name="line.102"></a>
+<span class="sourceLineNo">103</span>     * @param factory a DocumentBuilderFactory<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     */<a name="line.104"></a>
+<span class="sourceLineNo">105</span>    private static void enableXInclude(final DocumentBuilderFactory factory) {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        try {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>            // Alternative: We set if a system property on the command line is set, for example:<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            // -DLog4j.XInclude=true<a name="line.108"></a>
+<span class="sourceLineNo">109</span>            factory.setXIncludeAware(true);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        } catch (UnsupportedOperationException e) {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>            LOGGER.warn("The DocumentBuilderFactory does not support XInclude: " + factory, e);<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        } catch (AbstractMethodError err) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            LOGGER.warn("The DocumentBuilderFactory is out of date and does not support XInclude: " + factory);<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        try {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>            // Alternative: We could specify all features and values with system properties like:<a name="line.116"></a>
+<span class="sourceLineNo">117</span>            // -DLog4j.DocumentBuilderFactory.Feature="http://apache.org/xml/features/xinclude/fixup-base-uris true"<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            factory.setFeature(XINCLUDE_FIXUP_BASE_URIS, true);<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        } catch (ParserConfigurationException e) {<a name="line.119"></a>
+<span class="sourceLineNo">120</span>            LOGGER.warn("The DocumentBuilderFactory [" + factory + "] does not support the feature ["<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                    + XINCLUDE_FIXUP_BASE_URIS + "]", e);<a name="line.121"></a>
+<span class="sourceLineNo">122</span>        } catch (AbstractMethodError err) {<a name="line.122"></a>
+<span class="sourceLineNo">123</span>            LOGGER.warn("The DocumentBuilderFactory is out of date and does not support setFeature: " + factory);<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        }<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        try {<a name="line.125"></a>
+<span class="sourceLineNo">126</span>            factory.setFeature(XINCLUDE_FIXUP_LANGUAGE, true);<a name="line.126"></a>
+<span class="sourceLineNo">127</span>        } catch (ParserConfigurationException e) {<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            LOGGER.warn("The DocumentBuilderFactory [" + factory + "] does not support the feature ["<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                    + XINCLUDE_FIXUP_LANGUAGE + "]", e);<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        } catch (AbstractMethodError err) {<a name="line.130"></a>
+<span class="sourceLineNo">131</span>            LOGGER.warn("The DocumentBuilderFactory is out of date and does not support setFeature: " + factory);<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        }<a name="line.132"></a>
+<span class="sourceLineNo">133</span>    }<a name="line.133"></a>
+<span class="sourceLineNo">134</span><a name="line.134"></a>
+<span class="sourceLineNo">135</span>    public XMLConfiguration(final ConfigurationFactory.ConfigurationSource configSource) {<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        this.configFile = configSource.getFile();<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        byte[] buffer = null;<a name="line.137"></a>
+<span class="sourceLineNo">138</span><a name="line.138"></a>
+<span class="sourceLineNo">139</span>        try {<a name="line.139"></a>
+<span class="sourceLineNo">140</span>            final List&lt;String&gt; messages = new ArrayList&lt;String&gt;();<a name="line.140"></a>
+<span class="sourceLineNo">141</span>            final InputStream configStream = configSource.getInputStream();<a name="line.141"></a>
+<span class="sourceLineNo">142</span>            buffer = toByteArray(configStream);<a name="line.142"></a>
+<span class="sourceLineNo">143</span>            configStream.close();<a name="line.143"></a>
+<span class="sourceLineNo">144</span>            final InputSource source = new InputSource(new ByteArrayInputStream(buffer));<a name="line.144"></a>
+<span class="sourceLineNo">145</span>            final Document document = newDocumentBuilder().parse(source);<a name="line.145"></a>
+<span class="sourceLineNo">146</span>            rootElement = document.getDocumentElement();<a name="line.146"></a>
+<span class="sourceLineNo">147</span>            final Map&lt;String, String&gt; attrs = processAttributes(rootNode, rootElement);<a name="line.147"></a>
+<span class="sourceLineNo">148</span>            Level status = getDefaultStatus();<a name="line.148"></a>
+<span class="sourceLineNo">149</span>            boolean verbose = false;<a name="line.149"></a>
+<span class="sourceLineNo">150</span>            PrintStream stream = System.out;<a name="line.150"></a>
+<span class="sourceLineNo">151</span><a name="line.151"></a>
+<span class="sourceLineNo">152</span>            for (final Map.Entry&lt;String, String&gt; entry : attrs.entrySet()) {<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                if ("status".equalsIgnoreCase(entry.getKey())) {<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                    final Level stat = Level.toLevel(getStrSubstitutor().replace(entry.getValue()), null);<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                    if (stat != null) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                        status = stat;<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                    } else {<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                        messages.add("Invalid status specified: " + entry.getValue() + ". Defaulting to " + status);<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                    }<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                } else if ("dest".equalsIgnoreCase(entry.getKey())) {<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                    final String dest = getStrSubstitutor().replace(entry.getValue());<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                    if (dest != null) {<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                        if (dest.equalsIgnoreCase("err")) {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                            stream = System.err;<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                        } else {<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                            try {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                                final File destFile = FileUtils.fileFromURI(FileUtils.getCorrectedFilePathUri(dest));<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                                final String enc = Charset.defaultCharset().name();<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                                stream = new PrintStream(new FileOutputStream(destFile), true, enc);<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                            } catch (final URISyntaxException use) {<a name="line.170"></a>
+<span class="sourceLineNo">171</span>                                System.err.println("Unable to write to " + dest + ". Writing to stdout");<a name="line.171"></a>
+<span class="sourceLineNo">172</span>                            }<a name="line.172"></a>
+<span class="sourceLineNo">173</span>                        }<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                    }<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                } else if ("shutdownHook".equalsIgnoreCase(entry.getKey())) {<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                    String hook = getStrSubstitutor().replace(entry.getValue());<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                    isShutdownHookEnabled = !hook.equalsIgnoreCase("disable");<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                } else if ("verbose".equalsIgnoreCase(entry.getKey())) {<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                    verbose = Boolean.parseBoolean(getStrSubstitutor().replace(entry.getValue()));<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                } else if ("packages".equalsIgnoreCase(getStrSubstitutor().replace(entry.getKey()))) {<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                    final String[] packages = entry.getValue().split(",");<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                    for (final String p : packages) {<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                        PluginManager.addPackage(p);<a name="line.183"></a>
+<span class="sourceLineNo">184</span>                    }<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                } else if ("name".equalsIgnoreCase(entry.getKey())) {<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                    setName(getStrSubstitutor().replace(entry.getValue()));<a name="line.186"></a>
+<span class="sourceLineNo">187</span>                } else if ("strict".equalsIgnoreCase(entry.getKey())) {<a name="line.187"></a>
+<span class="sourceLineNo">188</span>                    strict = Boolean.parseBoolean(getStrSubstitutor().replace(entry.getValue()));<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                } else if ("schema".equalsIgnoreCase(entry.getKey())) {<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                    schema = getStrSubstitutor().replace(entry.getValue());<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                } else if ("monitorInterval".equalsIgnoreCase(entry.getKey())) {<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                    final int interval = Integer.parseInt(getStrSubstitutor().replace(entry.getValue()));<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                    if (interval &gt; 0 &amp;&amp; configFile != null) {<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                        monitor = new FileConfigurationMonitor(this, configFile, listeners, interval);<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                    }<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                } else if ("advertiser".equalsIgnoreCase(entry.getKey())) {<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                    createAdvertiser(getStrSubstitutor().replace(entry.getValue()), configSource, buffer, "text/xml");<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                }<a name="line.198"></a>
+<span class="sourceLineNo">199</span>            }<a name="line.199"></a>
+<span class="sourceLineNo">200</span>            final Iterator&lt;StatusListener&gt; iter = ((StatusLogger) LOGGER).getListeners();<a name="line.200"></a>
+<span class="sourceLineNo">201</span>            boolean found = false;<a name="line.201"></a>
+<span class="sourceLineNo">202</span>            while (iter.hasNext()) {<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                final StatusListener listener = iter.next();<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                if (listener instanceof StatusConsoleListener) {<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                    found = true;<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                    ((StatusConsoleListener) listener).setLevel(status);<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                    if (!verbose) {<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                        ((StatusConsoleListener) listener).setFilters(VERBOSE_CLASSES);<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                    }<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                }<a name="line.210"></a>
+<span class="sourceLineNo">211</span>            }<a name="line.211"></a>
+<span class="sourceLineNo">212</span>            if (!found &amp;&amp; status != Level.OFF) {<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                final StatusConsoleListener listener = new StatusConsoleListener(status, stream);<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                if (!verbose) {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                    listener.setFilters(VERBOSE_CLASSES);<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                }<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                ((StatusLogger) LOGGER).registerListener(listener);<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                for (final String msg : messages) {<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                    LOGGER.error(msg);<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                }<a name="line.220"></a>
+<span class="sourceLineNo">221</span>            }<a name="line.221"></a>
+<span class="sourceLineNo">222</span><a name="line.222"></a>
+<span class="sourceLineNo">223</span>        } catch (final SAXException domEx) {<a name="line.223"></a>
+<span class="sourceLineNo">224</span>            LOGGER.error("Error parsing " + configSource.getLocation(), domEx);<a name="line.224"></a>
+<span class="sourceLineNo">225</span>        } catch (final IOException ioe) {<a name="line.225"></a>
+<span class="sourceLineNo">226</span>            LOGGER.error("Error parsing " + configSource.getLocation(), ioe);<a name="line.226"></a>
+<span class="sourceLineNo">227</span>        } catch (final ParserConfigurationException pex) {<a name="line.227"></a>
+<span class="sourceLineNo">228</span>            LOGGER.error("Error parsing " + configSource.getLocation(), pex);<a name="line.228"></a>
+<span class="sourceLineNo">229</span>        }<a name="line.229"></a>
+<span class="sourceLineNo">230</span>        if (strict &amp;&amp; schema != null &amp;&amp; buffer != null) {<a name="line.230"></a>
+<span class="sourceLineNo">231</span>            InputStream is = null;<a name="line.231"></a>
+<span class="sourceLineNo">232</span>            try {<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                is = getClass().getClassLoader().getResourceAsStream(schema);<a name="line.233"></a>
+<span class="sourceLineNo">234</span>            } catch (final Exception ex) {<a name="line.234"></a>
+<span class="sourceLineNo">235</span>                LOGGER.error("Unable to access schema " + schema);<a name="line.235"></a>
+<span class="sourceLineNo">236</span>            }<a name="line.236"></a>
+<span class="sourceLineNo">237</span>            if (is != null) {<a name="line.237"></a>
+<span class="sourceLineNo">238</span>                final Source src = new StreamSource(is, LOG4J_XSD);<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);<a name="line.239"></a>
+<span class="sourceLineNo">240</span>                Schema schema = null;<a name="line.240"></a>
+<span class="sourceLineNo">241</span>                try {<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                    schema = factory.newSchema(src);<a name="line.242"></a>
+<span class="sourceLineNo">243</span>                } catch (final SAXException ex) {<a name="line.243"></a>
+<span class="sourceLineNo">244</span>                    LOGGER.error("Error parsing Log4j schema", ex);<a name="line.244"></a>
+<span class="sourceLineNo">245</span>                }<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                if (schema != null) {<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                    Validator validator = schema.newValidator();<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                    try {<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                        validator.validate(new StreamSource(new ByteArrayInputStream(buffer)));<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                    } catch (final IOException ioe) {<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                        LOGGER.error("Error reading configuration for validation", ioe);<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                    } catch (final SAXException ex) {<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                        LOGGER.error("Error validating configuration", ex);<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                    }<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                }<a name="line.255"></a>
+<span class="sourceLineNo">256</span>            }<a name="line.256"></a>
+<span class="sourceLineNo">257</span>        }<a name="line.257"></a>
+<span class="sourceLineNo">258</span><a name="line.258"></a>
+<span class="sourceLineNo">259</span>        if (getName() == null) {<a name="line.259"></a>
+<span class="sourceLineNo">260</span>            setName(configSource.getLocation());<a name="line.260"></a>
+<span class="sourceLineNo">261</span>        }<a name="line.261"></a>
+<span class="sourceLineNo">262</span>    }<a name="line.262"></a>
+<span class="sourceLineNo">263</span><a name="line.263"></a>
+<span class="sourceLineNo">264</span>    @Override<a name="line.264"></a>
+<span class="sourceLineNo">265</span>    public void setup() {<a name="line.265"></a>
+<span class="sourceLineNo">266</span>        if (rootElement == null) {<a name="line.266"></a>
+<span class="sourceLineNo">267</span>            LOGGER.error("No logging configuration");<a name="line.267"></a>
+<span class="sourceLineNo">268</span>            return;<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        }<a name="line.269"></a>
+<span class="sourceLineNo">270</span>        constructHierarchy(rootNode, rootElement);<a name="line.270"></a>
+<span class="sourceLineNo">271</span>        if (status.size() &gt; 0) {<a name="line.271"></a>
+<span class="sourceLineNo">272</span>            for (final Status s : status) {<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                LOGGER.error("Error processing element " + s.name + ": " + s.errorType);<a name="line.273"></a>
+<span class="sourceLineNo">274</span>            }<a name="line.274"></a>
+<span class="sourceLineNo">275</span>            return;<a name="line.275"></a>
+<span class="sourceLineNo">276</span>        }<a name="line.276"></a>
+<span class="sourceLineNo">277</span>        rootElement = null;<a name="line.277"></a>
+<span class="sourceLineNo">278</span>    }<a name="line.278"></a>
+<span class="sourceLineNo">279</span><a name="line.279"></a>
+<span class="sourceLineNo">280</span>    @Override<a name="line.280"></a>
+<span class="sourceLineNo">281</span>    public Configuration reconfigure() {<a name="line.281"></a>
+<span class="sourceLineNo">282</span>        if (configFile != null) {<a name="line.282"></a>
+<span class="sourceLineNo">283</span>            try {<a name="line.283"></a>
+<span class="sourceLineNo">284</span>                final ConfigurationFactory.ConfigurationSource source =<a name="line.284"></a>
+<span class="sourceLineNo">285</span>                    new ConfigurationFactory.ConfigurationSource(new FileInputStream(configFile), configFile);<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                return new XMLConfiguration(source);<a name="line.286"></a>
+<span class="sourceLineNo">287</span>            } catch (final FileNotFoundException ex) {<a name="line.287"></a>
+<span class="sourceLineNo">288</span>                LOGGER.error("Cannot locate file " + configFile, ex);<a name="line.288"></a>
+<span class="sourceLineNo">289</span>            }<a name="line.289"></a>
+<span class="sourceLineNo">290</span>        }<a name="line.290"></a>
+<span class="sourceLineNo">291</span>        return null;<a name="line.291"></a>
+<span class="sourceLineNo">292</span>    }<a name="line.292"></a>
+<span class="sourceLineNo">293</span><a name="line.293"></a>
+<span class="sourceLineNo">294</span>    private void constructHierarchy(final Node node, final Element element) {<a name="line.294"></a>
+<span class="sourceLineNo">295</span>        processAttributes(node, element);<a name="line.295"></a>
+<span class="sourceLineNo">296</span>        final StringBuilder buffer = new StringBuilder();<a name="line.296"></a>
+<span class="sourceLineNo">297</span>        final NodeList list = element.getChildNodes();<a name="line.297"></a>
+<span class="sourceLineNo">298</span>        final List&lt;Node&gt; children = node.getChildren();<a name="line.298"></a>
+<span class="sourceLineNo">299</span>        for (int i = 0; i &lt; list.getLength(); i++) {<a name="line.299"></a>
+<span class="sourceLineNo">300</span>            final org.w3c.dom.Node w3cNode = list.item(i);<a name="line.300"></a>
+<span class="sourceLineNo">301</span>            if (w3cNode instanceof Element) {<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                final Element child = (Element) w3cNode;<a name="line.302"></a>
+<span class="sourceLineNo">303</span>                final String name = getType(child);<a name="line.303"></a>
+<span class="sourceLineNo">304</span>                final PluginType&lt;?&gt; type = pluginManager.getPluginType(name);<a name="line.304"></a>
+<span class="sourceLineNo">305</span>                final Node childNode = new Node(node, name, type);<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                constructHierarchy(childNode, child);<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                if (type == null) {<a name="line.307"></a>
+<span class="sourceLineNo">308</span>                    final String value = childNode.getValue();<a name="line.308"></a>
+<span class="sourceLineNo">309</span>                    if (!childNode.hasChildren() &amp;&amp; value != null) {<a name="line.309"></a>
+<span class="sourceLineNo">310</span>                        node.getAttributes().put(name, value);<a name="line.310"></a>
+<span class="sourceLineNo">311</span>                    } else {<a name="line.311"></a>
+<span class="sourceLineNo">312</span>                        status.add(new Status(name, element, ErrorType.CLASS_NOT_FOUND));<a name="line.312"></a>
+<span class="sourceLineNo">313</span>                    }<a name="line.313"></a>
+<span class="sourceLineNo">314</span>                } else {<a name="line.314"></a>
+<span class="sourceLineNo">315</span>                    children.add(childNode);<a name="line.315"></a>
+<span class="sourceLineNo">316</span>                }<a name="line.316"></a>
+<span class="sourceLineNo">317</span>            } else if (w3cNode instanceof Text) {<a name="line.317"></a>
+<span class="sourceLineNo">318</span>                final Text data = (Text) w3cNode;<a name="line.318"></a>
+<span class="sourceLineNo">319</span>                buffer.append(data.getData());<a name="line.319"></a>
+<span class="sourceLineNo">320</span>            }<a name="line.320"></a>
+<span class="sourceLineNo">321</span>        }<a name="line.321"></a>
+<span class="sourceLineNo">322</span><a name="line.322"></a>
+<span class="sourceLineNo">323</span>        final String text = buffer.toString().trim();<a name="line.323"></a>
+<span class="sourceLineNo">324</span>        if (text.length() &gt; 0 || (!node.hasChildren() &amp;&amp; !node.isRoot())) {<a name="line.324"></a>
+<span class="sourceLineNo">325</span>            node.setValue(text);<a name="line.325"></a>
+<span class="sourceLineNo">326</span>        }<a name="line.326"></a>
+<span class="sourceLineNo">327</span>    }<a name="line.327"></a>
+<span class="sourceLineNo">328</span><a name="line.328"></a>
+<span class="sourceLineNo">329</span>    private String getType(final Element element) {<a name="line.329"></a>
+<span class="sourceLineNo">330</span>        if (strict) {<a name="line.330"></a>
+<span class="sourceLineNo">331</span>            final NamedNodeMap attrs = element.getAttributes();<a name="line.331"></a>
+<span class="sourceLineNo">332</span>            for (int i = 0; i &lt; attrs.getLength(); ++i) {<a name="line.332"></a>
+<span class="sourceLineNo">333</span>                final org.w3c.dom.Node w3cNode = attrs.item(i);<a name="line.333"></a>
+<span class="sourceLineNo">334</span>                if (w3cNode instanceof Attr) {<a name="line.334"></a>
+<span class="sourceLineNo">335</span>                    final Attr attr = (Attr) w3cNode;<a name="line.335"></a>
+<span class="sourceLineNo">336</span>                    if (attr.getName().equalsIgnoreCase("type")) {<a name="line.336"></a>
+<span class="sourceLineNo">337</span>                        final String type = attr.getValue();<a name="line.337"></a>
+<span class="sourceLineNo">338</span>                        attrs.removeNamedItem(attr.getName());<a name="line.338"></a>
+<span class="sourceLineNo">339</span>                        return type;<a name="line.339"></a>
+<span class="sourceLineNo">340</span>                    }<a name="line.340"></a>
+<span class="sourceLineNo">341</span>                }<a name="line.341"></a>
+<span class="sourceLineNo">342</span>            }<a name="line.342"></a>
+<span class="sourceLineNo">343</span>        }<a name="line.343"></a>
+<span class="sourceLineNo">344</span>        return element.getTagName();<a name="line.344"></a>
+<span class="sourceLineNo">345</span>    }<a name="line.345"></a>
+<span class="sourceLineNo">346</span><a name="line.346"></a>
+<span class="sourceLineNo">347</span>    private byte[] toByteArray(final InputStream is) throws IOException {<a name="line.347"></a>
+<span class="sourceLineNo">348</span>        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();<a name="line.348"></a>
+<span class="sourceLineNo">349</span><a name="line.349"></a>
+<span class="sourceLineNo">350</span>        int nRead;<a name="line.350"></a>
+<span class="sourceLineNo">351</span>        final byte[] data = new byte[BUF_SIZE];<a name="line.351"></a>
+<span class="sourceLineNo">352</span><a name="line.352"></a>
+<span class="sourceLineNo">353</span>        while ((nRead = is.read(data, 0, data.length)) != -1) {<a name="line.353"></a>
+<span class="sourceLineNo">354</span>            buffer.write(data, 0, nRead);<a name="line.354"></a>
+<span class="sourceLineNo">355</span>        }<a name="line.355"></a>
+<span class="sourceLineNo">356</span><a name="line.356"></a>
+<span class="sourceLineNo">357</span>        return buffer.toByteArray();<a name="line.357"></a>
+<span class="sourceLineNo">358</span>    }<a name="line.358"></a>
+<span class="sourceLineNo">359</span><a name="line.359"></a>
+<span class="sourceLineNo">360</span>    private Map&lt;String, String&gt; processAttributes(final Node node, final Element element) {<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        final NamedNodeMap attrs = element.getAttributes();<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        final Map&lt;String, String&gt; attributes = node.getAttributes();<a name="line.362"></a>
+<span class="sourceLineNo">363</span><a name="line.363"></a>
+<span class="sourceLineNo">364</span>        for (int i = 0; i &lt; attrs.getLength(); ++i) {<a name="line.364"></a>
+<span class="sourceLineNo">365</span>            final org.w3c.dom.Node w3cNode = attrs.item(i);<a name="line.365"></a>
+<span class="sourceLineNo">366</span>            if (w3cNode instanceof Attr) {<a name="line.366"></a>
+<span class="sourceLineNo">367</span>                final Attr attr = (Attr) w3cNode;<a name="line.367"></a>
+<span class="sourceLineNo">368</span>                if (attr.getName().equals("xml:base")) {<a name="line.368"></a>
+<span class="sourceLineNo">369</span>                    continue;<a name="line.369"></a>
+<span class="sourceLineNo">370</span>                }<a name="line.370"></a>
+<span class="sourceLineNo">371</span>                attributes.put(attr.getName(), attr.getValue());<a name="line.371"></a>
+<span class="sourceLineNo">372</span>            }<a name="line.372"></a>
+<span class="sourceLineNo">373</span>        }<a name="line.373"></a>
+<span class="sourceLineNo">374</span>        return attributes;<a name="line.374"></a>
+<span class="sourceLineNo">375</span>    }<a name="line.375"></a>
+<span class="sourceLineNo">376</span><a name="line.376"></a>
+<span class="sourceLineNo">377</span>    /**<a name="line.377"></a>
+<span class="sourceLineNo">378</span>     * The error that occurred.<a name="line.378"></a>
+<span class="sourceLineNo">379</span>     */<a name="line.379"></a>
+<span class="sourceLineNo">380</span>    private enum ErrorType {<a name="line.380"></a>
+<span class="sourceLineNo">381</span>        CLASS_NOT_FOUND<a name="line.381"></a>
+<span class="sourceLineNo">382</span>    }<a name="line.382"></a>
+<span class="sourceLineNo">383</span><a name="line.383"></a>
+<span class="sourceLineNo">384</span>    /**<a name="line.384"></a>
+<span class="sourceLineNo">385</span>     * Status for recording errors.<a name="line.385"></a>
+<span class="sourceLineNo">386</span>     */<a name="line.386"></a>
+<span class="sourceLineNo">387</span>    private class Status {<a name="line.387"></a>
+<span class="sourceLineNo">388</span>        private final Element element;<a name="line.388"></a>
+<span class="sourceLineNo">389</span>        private final String name;<a name="line.389"></a>
+<span class="sourceLineNo">390</span>        private final ErrorType errorType;<a name="line.390"></a>
+<span class="sourceLineNo">391</span><a name="line.391"></a>
+<span class="sourceLineNo">392</span>        public Status(final String name, final Element element, final ErrorType errorType) {<a name="line.392"></a>
+<span class="sourceLineNo">393</span>            this.name = name;<a name="line.393"></a>
+<span class="sourceLineNo">394</span>            this.element = element;<a name="line.394"></a>
+<span class="sourceLineNo">395</span>            this.errorType = errorType;<a name="line.395"></a>
+<span class="sourceLineNo">396</span>        }<a name="line.396"></a>
+<span class="sourceLineNo">397</span>    }<a name="line.397"></a>
+<span class="sourceLineNo">398</span><a name="line.398"></a>
+<span class="sourceLineNo">399</span>}<a name="line.399"></a>
 
 
 
@@ -461,6 +465,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>

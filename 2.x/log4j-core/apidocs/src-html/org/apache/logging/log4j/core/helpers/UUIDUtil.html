@@ -1,195 +1,200 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    /*<a name="line.1"></a>
-<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
-<FONT color="green">003</FONT>     * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
-<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
-<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
-<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
-<FONT color="green">007</FONT>     * the License. You may obtain a copy of the License at<a name="line.7"></a>
-<FONT color="green">008</FONT>     *<a name="line.8"></a>
-<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
-<FONT color="green">010</FONT>     *<a name="line.10"></a>
-<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
-<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
-<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
-<FONT color="green">014</FONT>     * See the license for the specific language governing permissions and<a name="line.14"></a>
-<FONT color="green">015</FONT>     * limitations under the license.<a name="line.15"></a>
-<FONT color="green">016</FONT>     */<a name="line.16"></a>
-<FONT color="green">017</FONT>    package org.apache.logging.log4j.core.helpers;<a name="line.17"></a>
-<FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    import java.lang.reflect.Method;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import java.net.InetAddress;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import java.net.NetworkInterface;<a name="line.21"></a>
-<FONT color="green">022</FONT>    import java.net.UnknownHostException;<a name="line.22"></a>
-<FONT color="green">023</FONT>    import java.nio.ByteBuffer;<a name="line.23"></a>
-<FONT color="green">024</FONT>    import java.security.SecureRandom;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import java.util.Enumeration;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import java.util.Random;<a name="line.26"></a>
-<FONT color="green">027</FONT>    import java.util.UUID;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import java.util.concurrent.atomic.AtomicInteger;<a name="line.28"></a>
-<FONT color="green">029</FONT>    <a name="line.29"></a>
-<FONT color="green">030</FONT>    import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.30"></a>
-<FONT color="green">031</FONT>    <a name="line.31"></a>
-<FONT color="green">032</FONT>    /**<a name="line.32"></a>
-<FONT color="green">033</FONT>     * Generates a unique ID. The generated UUID will be unique for approximately 8,925 years so long as<a name="line.33"></a>
-<FONT color="green">034</FONT>     * less than 10,000 IDs are generated per millisecond on the same device (as identified by its MAC address).<a name="line.34"></a>
-<FONT color="green">035</FONT>     */<a name="line.35"></a>
-<FONT color="green">036</FONT>    public final class UUIDUtil {<a name="line.36"></a>
-<FONT color="green">037</FONT>        /**<a name="line.37"></a>
-<FONT color="green">038</FONT>         * System property that may be used to seed the UUID generation with an integer value.<a name="line.38"></a>
-<FONT color="green">039</FONT>         */<a name="line.39"></a>
-<FONT color="green">040</FONT>        public static final String UUID_SEQUENCE = "org.apache.logging.log4j.uuidSequence";<a name="line.40"></a>
-<FONT color="green">041</FONT>    <a name="line.41"></a>
-<FONT color="green">042</FONT>        private static final String ASSIGNED_SEQUENCES = "org.apache.logging.log4j.assignedSequences";<a name="line.42"></a>
-<FONT color="green">043</FONT>    <a name="line.43"></a>
-<FONT color="green">044</FONT>        private static AtomicInteger count = new AtomicInteger(0);<a name="line.44"></a>
-<FONT color="green">045</FONT>    <a name="line.45"></a>
-<FONT color="green">046</FONT>        private static final long TYPE1 = 0x1000L;<a name="line.46"></a>
-<FONT color="green">047</FONT>    <a name="line.47"></a>
-<FONT color="green">048</FONT>        private static final byte VARIANT = (byte) 0x80;<a name="line.48"></a>
-<FONT color="green">049</FONT>    <a name="line.49"></a>
-<FONT color="green">050</FONT>        private static final int SEQUENCE_MASK = 0x3FFF;<a name="line.50"></a>
-<FONT color="green">051</FONT>    <a name="line.51"></a>
-<FONT color="green">052</FONT>        private static final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;<a name="line.52"></a>
-<FONT color="green">053</FONT>    <a name="line.53"></a>
-<FONT color="green">054</FONT>        private static long uuidSequence = PropertiesUtil.getProperties().getLongProperty(UUID_SEQUENCE, 0);<a name="line.54"></a>
-<FONT color="green">055</FONT>    <a name="line.55"></a>
-<FONT color="green">056</FONT>        private static long least;<a name="line.56"></a>
-<FONT color="green">057</FONT>    <a name="line.57"></a>
-<FONT color="green">058</FONT>        private static final long LOW_MASK = 0xffffffffL;<a name="line.58"></a>
-<FONT color="green">059</FONT>        private static final long MID_MASK = 0xffff00000000L;<a name="line.59"></a>
-<FONT color="green">060</FONT>        private static final long HIGH_MASK = 0xfff000000000000L;<a name="line.60"></a>
-<FONT color="green">061</FONT>        private static final int NODE_SIZE = 8;<a name="line.61"></a>
-<FONT color="green">062</FONT>        private static final int SHIFT_2 = 16;<a name="line.62"></a>
-<FONT color="green">063</FONT>        private static final int SHIFT_4 = 32;<a name="line.63"></a>
-<FONT color="green">064</FONT>        private static final int SHIFT_6 = 48;<a name="line.64"></a>
-<FONT color="green">065</FONT>        private static final int HUNDRED_NANOS_PER_MILLI = 10000;<a name="line.65"></a>
-<FONT color="green">066</FONT>    <a name="line.66"></a>
-<FONT color="green">067</FONT>        static {<a name="line.67"></a>
-<FONT color="green">068</FONT>            byte[] mac = null;<a name="line.68"></a>
-<FONT color="green">069</FONT>            try {<a name="line.69"></a>
-<FONT color="green">070</FONT>                final InetAddress address = InetAddress.getLocalHost();<a name="line.70"></a>
-<FONT color="green">071</FONT>                try {<a name="line.71"></a>
-<FONT color="green">072</FONT>                    NetworkInterface ni = NetworkInterface.getByInetAddress(address);<a name="line.72"></a>
-<FONT color="green">073</FONT>                    if (ni != null &amp;&amp; !ni.isLoopback() &amp;&amp; ni.isUp()) {<a name="line.73"></a>
-<FONT color="green">074</FONT>                        final Method method = ni.getClass().getMethod("getHardwareAddress");<a name="line.74"></a>
-<FONT color="green">075</FONT>                        if (method != null) {<a name="line.75"></a>
-<FONT color="green">076</FONT>                            mac = (byte[]) method.invoke(ni);<a name="line.76"></a>
-<FONT color="green">077</FONT>                        }<a name="line.77"></a>
-<FONT color="green">078</FONT>                    }<a name="line.78"></a>
-<FONT color="green">079</FONT>    <a name="line.79"></a>
-<FONT color="green">080</FONT>                    if (mac == null) {<a name="line.80"></a>
-<FONT color="green">081</FONT>                        final Enumeration&lt;NetworkInterface&gt; enumeration = NetworkInterface.getNetworkInterfaces();<a name="line.81"></a>
-<FONT color="green">082</FONT>                        while (enumeration.hasMoreElements() &amp;&amp; mac == null) {<a name="line.82"></a>
-<FONT color="green">083</FONT>                            ni = enumeration.nextElement();<a name="line.83"></a>
-<FONT color="green">084</FONT>                            if (ni != null &amp;&amp; ni.isUp() &amp;&amp; !ni.isLoopback()) {<a name="line.84"></a>
-<FONT color="green">085</FONT>                                final Method method = ni.getClass().getMethod("getHardwareAddress");<a name="line.85"></a>
-<FONT color="green">086</FONT>                                if (method != null) {<a name="line.86"></a>
-<FONT color="green">087</FONT>                                    mac = (byte[]) method.invoke(ni);<a name="line.87"></a>
-<FONT color="green">088</FONT>                                }<a name="line.88"></a>
-<FONT color="green">089</FONT>                            }<a name="line.89"></a>
-<FONT color="green">090</FONT>                        }<a name="line.90"></a>
-<FONT color="green">091</FONT>                    }<a name="line.91"></a>
-<FONT color="green">092</FONT>                } catch (final Exception ex) {<a name="line.92"></a>
-<FONT color="green">093</FONT>                    ex.printStackTrace();<a name="line.93"></a>
-<FONT color="green">094</FONT>                    // Ignore exception<a name="line.94"></a>
-<FONT color="green">095</FONT>                }<a name="line.95"></a>
-<FONT color="green">096</FONT>                if (mac == null || mac.length == 0) {<a name="line.96"></a>
-<FONT color="green">097</FONT>                    mac = address.getAddress();<a name="line.97"></a>
-<FONT color="green">098</FONT>                }<a name="line.98"></a>
-<FONT color="green">099</FONT>            } catch (final UnknownHostException e) {<a name="line.99"></a>
-<FONT color="green">100</FONT>                // Ignore exception<a name="line.100"></a>
-<FONT color="green">101</FONT>            }<a name="line.101"></a>
-<FONT color="green">102</FONT>            final Random randomGenerator = new SecureRandom();<a name="line.102"></a>
-<FONT color="green">103</FONT>            if (mac == null || mac.length == 0) {<a name="line.103"></a>
-<FONT color="green">104</FONT>                mac = new byte[6];<a name="line.104"></a>
-<FONT color="green">105</FONT>                randomGenerator.nextBytes(mac);<a name="line.105"></a>
-<FONT color="green">106</FONT>            }<a name="line.106"></a>
-<FONT color="green">107</FONT>            final int length = mac.length &gt;= 6 ? 6 : mac.length;<a name="line.107"></a>
-<FONT color="green">108</FONT>            final int index = mac.length &gt;= 6 ? mac.length - 6 : 0;<a name="line.108"></a>
-<FONT color="green">109</FONT>            final byte[] node = new byte[NODE_SIZE];<a name="line.109"></a>
-<FONT color="green">110</FONT>            node[0] = VARIANT;<a name="line.110"></a>
-<FONT color="green">111</FONT>            node[1] = 0;<a name="line.111"></a>
-<FONT color="green">112</FONT>            for (int i = 2; i &lt; NODE_SIZE; ++i) {<a name="line.112"></a>
-<FONT color="green">113</FONT>                node[i] = 0;<a name="line.113"></a>
-<FONT color="green">114</FONT>            }<a name="line.114"></a>
-<FONT color="green">115</FONT>            System.arraycopy(mac, index, node, index + 2, length);<a name="line.115"></a>
-<FONT color="green">116</FONT>            final ByteBuffer buf = ByteBuffer.wrap(node);<a name="line.116"></a>
-<FONT color="green">117</FONT>            long rand = uuidSequence;<a name="line.117"></a>
-<FONT color="green">118</FONT>            final Runtime runtime = Runtime.getRuntime();<a name="line.118"></a>
-<FONT color="green">119</FONT>            synchronized (runtime) {<a name="line.119"></a>
-<FONT color="green">120</FONT>                String assigned = PropertiesUtil.getProperties().getStringProperty(ASSIGNED_SEQUENCES);<a name="line.120"></a>
-<FONT color="green">121</FONT>                long[] sequences;<a name="line.121"></a>
-<FONT color="green">122</FONT>                if (assigned == null) {<a name="line.122"></a>
-<FONT color="green">123</FONT>                    sequences = new long[0];<a name="line.123"></a>
-<FONT color="green">124</FONT>                } else {<a name="line.124"></a>
-<FONT color="green">125</FONT>                    final String[] array = assigned.split(",");<a name="line.125"></a>
-<FONT color="green">126</FONT>                    sequences = new long[array.length];<a name="line.126"></a>
-<FONT color="green">127</FONT>                    int i = 0;<a name="line.127"></a>
-<FONT color="green">128</FONT>                    for (final String value : array) {<a name="line.128"></a>
-<FONT color="green">129</FONT>                        sequences[i] = Long.parseLong(value);<a name="line.129"></a>
-<FONT color="green">130</FONT>                        ++i;<a name="line.130"></a>
-<FONT color="green">131</FONT>                    }<a name="line.131"></a>
-<FONT color="green">132</FONT>                }<a name="line.132"></a>
-<FONT color="green">133</FONT>                if (rand == 0) {<a name="line.133"></a>
-<FONT color="green">134</FONT>                    rand = randomGenerator.nextLong();<a name="line.134"></a>
-<FONT color="green">135</FONT>                }<a name="line.135"></a>
-<FONT color="green">136</FONT>                rand &amp;= SEQUENCE_MASK;<a name="line.136"></a>
-<FONT color="green">137</FONT>                boolean duplicate;<a name="line.137"></a>
-<FONT color="green">138</FONT>                do {<a name="line.138"></a>
-<FONT color="green">139</FONT>                    duplicate = false;<a name="line.139"></a>
-<FONT color="green">140</FONT>                    for (final long sequence : sequences) {<a name="line.140"></a>
-<FONT color="green">141</FONT>                        if (sequence == rand) {<a name="line.141"></a>
-<FONT color="green">142</FONT>                            duplicate = true;<a name="line.142"></a>
-<FONT color="green">143</FONT>                            break;<a name="line.143"></a>
-<FONT color="green">144</FONT>                        }<a name="line.144"></a>
-<FONT color="green">145</FONT>                    }<a name="line.145"></a>
-<FONT color="green">146</FONT>                    if (duplicate) {<a name="line.146"></a>
-<FONT color="green">147</FONT>                        rand = (rand + 1) &amp; SEQUENCE_MASK;<a name="line.147"></a>
-<FONT color="green">148</FONT>                    }<a name="line.148"></a>
-<FONT color="green">149</FONT>                } while (duplicate);<a name="line.149"></a>
-<FONT color="green">150</FONT>                assigned = assigned == null ? Long.toString(rand) : assigned + "," + Long.toString(rand);<a name="line.150"></a>
-<FONT color="green">151</FONT>                System.setProperty(ASSIGNED_SEQUENCES, assigned);<a name="line.151"></a>
-<FONT color="green">152</FONT>            }<a name="line.152"></a>
-<FONT color="green">153</FONT>    <a name="line.153"></a>
-<FONT color="green">154</FONT>            least = buf.getLong() | rand &lt;&lt; SHIFT_6;<a name="line.154"></a>
-<FONT color="green">155</FONT>        }<a name="line.155"></a>
-<FONT color="green">156</FONT>    <a name="line.156"></a>
-<FONT color="green">157</FONT>    <a name="line.157"></a>
-<FONT color="green">158</FONT>        /* This class cannot be instantiated */<a name="line.158"></a>
-<FONT color="green">159</FONT>        private UUIDUtil() {<a name="line.159"></a>
-<FONT color="green">160</FONT>        }<a name="line.160"></a>
-<FONT color="green">161</FONT>    <a name="line.161"></a>
-<FONT color="green">162</FONT>        /**<a name="line.162"></a>
-<FONT color="green">163</FONT>         * Generates Type 1 UUID. The time contains the number of 100NS intervals that have occurred<a name="line.163"></a>
-<FONT color="green">164</FONT>         * since 00:00:00.00 UTC, 10 October 1582. Each UUID on a particular machine is unique to the 100NS interval<a name="line.164"></a>
-<FONT color="green">165</FONT>         * until they rollover around 3400 A.D.<a name="line.165"></a>
-<FONT color="green">166</FONT>         * &lt;ol&gt;<a name="line.166"></a>
-<FONT color="green">167</FONT>         * &lt;li&gt;Digits 1-12 are the lower 48 bits of the number of 100 ns increments since the start of the UUID<a name="line.167"></a>
-<FONT color="green">168</FONT>         * epoch.&lt;/li&gt;<a name="line.168"></a>
-<FONT color="green">169</FONT>         * &lt;li&gt;Digit 13 is the version (with a value of 1).&lt;/li&gt;<a name="line.169"></a>
-<FONT color="green">170</FONT>         * &lt;li&gt;Digits 14-16 are a sequence number that is incremented each time a UUID is generated.&lt;/li&gt;<a name="line.170"></a>
-<FONT color="green">171</FONT>         * &lt;li&gt;Digit 17 is the variant (with a value of binary 10) and 10 bits of the sequence number&lt;/li&gt;<a name="line.171"></a>
-<FONT color="green">172</FONT>         * &lt;li&gt;Digit 18 is final 16 bits of the sequence number.&lt;/li&gt;<a name="line.172"></a>
-<FONT color="green">173</FONT>         * &lt;li&gt;Digits 19-32 represent the system the application is running on.<a name="line.173"></a>
-<FONT color="green">174</FONT>         * &lt;/ol&gt;<a name="line.174"></a>
-<FONT color="green">175</FONT>         *<a name="line.175"></a>
-<FONT color="green">176</FONT>         * @return universally unique identifiers (UUID)<a name="line.176"></a>
-<FONT color="green">177</FONT>         */<a name="line.177"></a>
-<FONT color="green">178</FONT>        public static UUID getTimeBasedUUID() {<a name="line.178"></a>
-<FONT color="green">179</FONT>    <a name="line.179"></a>
-<FONT color="green">180</FONT>            final long time = ((System.currentTimeMillis() * HUNDRED_NANOS_PER_MILLI) +<a name="line.180"></a>
-<FONT color="green">181</FONT>                NUM_100NS_INTERVALS_SINCE_UUID_EPOCH) + (count.incrementAndGet() % HUNDRED_NANOS_PER_MILLI);<a name="line.181"></a>
-<FONT color="green">182</FONT>            final long timeLow = (time &amp; LOW_MASK) &lt;&lt; SHIFT_4;<a name="line.182"></a>
-<FONT color="green">183</FONT>            final long timeMid = (time &amp; MID_MASK) &gt;&gt; SHIFT_2;<a name="line.183"></a>
-<FONT color="green">184</FONT>            final long timeHi = (time &amp; HIGH_MASK) &gt;&gt; SHIFT_6;<a name="line.184"></a>
-<FONT color="green">185</FONT>            final long most = timeLow | timeMid | TYPE1 | timeHi;<a name="line.185"></a>
-<FONT color="green">186</FONT>            return new UUID(most, least);<a name="line.186"></a>
-<FONT color="green">187</FONT>        }<a name="line.187"></a>
-<FONT color="green">188</FONT>    }<a name="line.188"></a>
-<FONT color="green">189</FONT>    <a name="line.189"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License. You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the license for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the license.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span>package org.apache.logging.log4j.core.helpers;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.lang.reflect.Method;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.net.InetAddress;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.net.NetworkInterface;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.net.UnknownHostException;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.nio.ByteBuffer;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.security.SecureRandom;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.util.Enumeration;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.util.Random;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.util.UUID;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.concurrent.atomic.AtomicInteger;<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.30"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
+<span class="sourceLineNo">032</span>/**<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * Generates a unique ID. The generated UUID will be unique for approximately 8,925 years so long as<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * less than 10,000 IDs are generated per millisecond on the same device (as identified by its MAC address).<a name="line.34"></a>
+<span class="sourceLineNo">035</span> */<a name="line.35"></a>
+<span class="sourceLineNo">036</span>public final class UUIDUtil {<a name="line.36"></a>
+<span class="sourceLineNo">037</span>    /**<a name="line.37"></a>
+<span class="sourceLineNo">038</span>     * System property that may be used to seed the UUID generation with an integer value.<a name="line.38"></a>
+<span class="sourceLineNo">039</span>     */<a name="line.39"></a>
+<span class="sourceLineNo">040</span>    public static final String UUID_SEQUENCE = "org.apache.logging.log4j.uuidSequence";<a name="line.40"></a>
+<span class="sourceLineNo">041</span><a name="line.41"></a>
+<span class="sourceLineNo">042</span>    private static final String ASSIGNED_SEQUENCES = "org.apache.logging.log4j.assignedSequences";<a name="line.42"></a>
+<span class="sourceLineNo">043</span><a name="line.43"></a>
+<span class="sourceLineNo">044</span>    private static AtomicInteger count = new AtomicInteger(0);<a name="line.44"></a>
+<span class="sourceLineNo">045</span><a name="line.45"></a>
+<span class="sourceLineNo">046</span>    private static final long TYPE1 = 0x1000L;<a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span>    private static final byte VARIANT = (byte) 0x80;<a name="line.48"></a>
+<span class="sourceLineNo">049</span><a name="line.49"></a>
+<span class="sourceLineNo">050</span>    private static final int SEQUENCE_MASK = 0x3FFF;<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>    private static final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;<a name="line.52"></a>
+<span class="sourceLineNo">053</span><a name="line.53"></a>
+<span class="sourceLineNo">054</span>    private static long uuidSequence = PropertiesUtil.getProperties().getLongProperty(UUID_SEQUENCE, 0);<a name="line.54"></a>
+<span class="sourceLineNo">055</span><a name="line.55"></a>
+<span class="sourceLineNo">056</span>    private static long least;<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>    private static final long LOW_MASK = 0xffffffffL;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    private static final long MID_MASK = 0xffff00000000L;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    private static final long HIGH_MASK = 0xfff000000000000L;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    private static final int NODE_SIZE = 8;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    private static final int SHIFT_2 = 16;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    private static final int SHIFT_4 = 32;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    private static final int SHIFT_6 = 48;<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    private static final int HUNDRED_NANOS_PER_MILLI = 10000;<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>    static {<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        byte[] mac = null;<a name="line.68"></a>
+<span class="sourceLineNo">069</span>        try {<a name="line.69"></a>
+<span class="sourceLineNo">070</span>            final InetAddress address = InetAddress.getLocalHost();<a name="line.70"></a>
+<span class="sourceLineNo">071</span>            try {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                NetworkInterface ni = NetworkInterface.getByInetAddress(address);<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                if (ni != null &amp;&amp; !ni.isLoopback() &amp;&amp; ni.isUp()) {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                    final Method method = ni.getClass().getMethod("getHardwareAddress");<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                    if (method != null) {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                        mac = (byte[]) method.invoke(ni);<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                    }<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                }<a name="line.78"></a>
+<span class="sourceLineNo">079</span><a name="line.79"></a>
+<span class="sourceLineNo">080</span>                if (mac == null) {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                    final Enumeration&lt;NetworkInterface&gt; enumeration = NetworkInterface.getNetworkInterfaces();<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                    while (enumeration.hasMoreElements() &amp;&amp; mac == null) {<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                        ni = enumeration.nextElement();<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                        if (ni != null &amp;&amp; ni.isUp() &amp;&amp; !ni.isLoopback()) {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                            final Method method = ni.getClass().getMethod("getHardwareAddress");<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                            if (method != null) {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                                mac = (byte[]) method.invoke(ni);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                            }<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                        }<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                    }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                }<a name="line.91"></a>
+<span class="sourceLineNo">092</span>            } catch (final Exception ex) {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                ex.printStackTrace();<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                // Ignore exception<a name="line.94"></a>
+<span class="sourceLineNo">095</span>            }<a name="line.95"></a>
+<span class="sourceLineNo">096</span>            if (mac == null || mac.length == 0) {<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                mac = address.getAddress();<a name="line.97"></a>
+<span class="sourceLineNo">098</span>            }<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        } catch (final UnknownHostException e) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>            // Ignore exception<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        }<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        final Random randomGenerator = new SecureRandom();<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        if (mac == null || mac.length == 0) {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>            mac = new byte[6];<a name="line.104"></a>
+<span class="sourceLineNo">105</span>            randomGenerator.nextBytes(mac);<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        }<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        final int length = mac.length &gt;= 6 ? 6 : mac.length;<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        final int index = mac.length &gt;= 6 ? mac.length - 6 : 0;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        final byte[] node = new byte[NODE_SIZE];<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        node[0] = VARIANT;<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        node[1] = 0;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        for (int i = 2; i &lt; NODE_SIZE; ++i) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            node[i] = 0;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        System.arraycopy(mac, index, node, index + 2, length);<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        final ByteBuffer buf = ByteBuffer.wrap(node);<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        long rand = uuidSequence;<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        final Runtime runtime = Runtime.getRuntime();<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        synchronized (runtime) {<a name="line.119"></a>
+<span class="sourceLineNo">120</span>            String assigned = PropertiesUtil.getProperties().getStringProperty(ASSIGNED_SEQUENCES);<a name="line.120"></a>
+<span class="sourceLineNo">121</span>            long[] sequences;<a name="line.121"></a>
+<span class="sourceLineNo">122</span>            if (assigned == null) {<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                sequences = new long[0];<a name="line.123"></a>
+<span class="sourceLineNo">124</span>            } else {<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                final String[] array = assigned.split(",");<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                sequences = new long[array.length];<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                int i = 0;<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                for (final String value : array) {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                    sequences[i] = Long.parseLong(value);<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                    ++i;<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                }<a name="line.131"></a>
+<span class="sourceLineNo">132</span>            }<a name="line.132"></a>
+<span class="sourceLineNo">133</span>            if (rand == 0) {<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                rand = randomGenerator.nextLong();<a name="line.134"></a>
+<span class="sourceLineNo">135</span>            }<a name="line.135"></a>
+<span class="sourceLineNo">136</span>            rand &amp;= SEQUENCE_MASK;<a name="line.136"></a>
+<span class="sourceLineNo">137</span>            boolean duplicate;<a name="line.137"></a>
+<span class="sourceLineNo">138</span>            do {<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                duplicate = false;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                for (final long sequence : sequences) {<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                    if (sequence == rand) {<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                        duplicate = true;<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                        break;<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                    }<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                }<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                if (duplicate) {<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                    rand = (rand + 1) &amp; SEQUENCE_MASK;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                }<a name="line.148"></a>
+<span class="sourceLineNo">149</span>            } while (duplicate);<a name="line.149"></a>
+<span class="sourceLineNo">150</span>            assigned = assigned == null ? Long.toString(rand) : assigned + "," + Long.toString(rand);<a name="line.150"></a>
+<span class="sourceLineNo">151</span>            System.setProperty(ASSIGNED_SEQUENCES, assigned);<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        }<a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>        least = buf.getLong() | rand &lt;&lt; SHIFT_6;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>    }<a name="line.155"></a>
+<span class="sourceLineNo">156</span><a name="line.156"></a>
+<span class="sourceLineNo">157</span><a name="line.157"></a>
+<span class="sourceLineNo">158</span>    /* This class cannot be instantiated */<a name="line.158"></a>
+<span class="sourceLineNo">159</span>    private UUIDUtil() {<a name="line.159"></a>
+<span class="sourceLineNo">160</span>    }<a name="line.160"></a>
+<span class="sourceLineNo">161</span><a name="line.161"></a>
+<span class="sourceLineNo">162</span>    /**<a name="line.162"></a>
+<span class="sourceLineNo">163</span>     * Generates Type 1 UUID. The time contains the number of 100NS intervals that have occurred<a name="line.163"></a>
+<span class="sourceLineNo">164</span>     * since 00:00:00.00 UTC, 10 October 1582. Each UUID on a particular machine is unique to the 100NS interval<a name="line.164"></a>
+<span class="sourceLineNo">165</span>     * until they rollover around 3400 A.D.<a name="line.165"></a>
+<span class="sourceLineNo">166</span>     * &lt;ol&gt;<a name="line.166"></a>
+<span class="sourceLineNo">167</span>     * &lt;li&gt;Digits 1-12 are the lower 48 bits of the number of 100 ns increments since the start of the UUID<a name="line.167"></a>
+<span class="sourceLineNo">168</span>     * epoch.&lt;/li&gt;<a name="line.168"></a>
+<span class="sourceLineNo">169</span>     * &lt;li&gt;Digit 13 is the version (with a value of 1).&lt;/li&gt;<a name="line.169"></a>
+<span class="sourceLineNo">170</span>     * &lt;li&gt;Digits 14-16 are a sequence number that is incremented each time a UUID is generated.&lt;/li&gt;<a name="line.170"></a>
+<span class="sourceLineNo">171</span>     * &lt;li&gt;Digit 17 is the variant (with a value of binary 10) and 10 bits of the sequence number&lt;/li&gt;<a name="line.171"></a>
+<span class="sourceLineNo">172</span>     * &lt;li&gt;Digit 18 is final 16 bits of the sequence number.&lt;/li&gt;<a name="line.172"></a>
+<span class="sourceLineNo">173</span>     * &lt;li&gt;Digits 19-32 represent the system the application is running on.<a name="line.173"></a>
+<span class="sourceLineNo">174</span>     * &lt;/ol&gt;<a name="line.174"></a>
+<span class="sourceLineNo">175</span>     *<a name="line.175"></a>
+<span class="sourceLineNo">176</span>     * @return universally unique identifiers (UUID)<a name="line.176"></a>
+<span class="sourceLineNo">177</span>     */<a name="line.177"></a>
+<span class="sourceLineNo">178</span>    public static UUID getTimeBasedUUID() {<a name="line.178"></a>
+<span class="sourceLineNo">179</span><a name="line.179"></a>
+<span class="sourceLineNo">180</span>        final long time = ((System.currentTimeMillis() * HUNDRED_NANOS_PER_MILLI) +<a name="line.180"></a>
+<span class="sourceLineNo">181</span>            NUM_100NS_INTERVALS_SINCE_UUID_EPOCH) + (count.incrementAndGet() % HUNDRED_NANOS_PER_MILLI);<a name="line.181"></a>
+<span class="sourceLineNo">182</span>        final long timeLow = (time &amp; LOW_MASK) &lt;&lt; SHIFT_4;<a name="line.182"></a>
+<span class="sourceLineNo">183</span>        final long timeMid = (time &amp; MID_MASK) &gt;&gt; SHIFT_2;<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        final long timeHi = (time &amp; HIGH_MASK) &gt;&gt; SHIFT_6;<a name="line.184"></a>
+<span class="sourceLineNo">185</span>        final long most = timeLow | timeMid | TYPE1 | timeHi;<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        return new UUID(most, least);<a name="line.186"></a>
+<span class="sourceLineNo">187</span>    }<a name="line.187"></a>
+<span class="sourceLineNo">188</span>}<a name="line.188"></a>
+<span class="sourceLineNo">189</span><a name="line.189"></a>
 
 
 
@@ -250,6 +255,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>

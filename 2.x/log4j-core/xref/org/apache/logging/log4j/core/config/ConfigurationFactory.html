@@ -323,7 +323,7 @@
 <a class="jxr_linenumber" name="313" href="#313">313</a> 
 <a class="jxr_linenumber" name="314" href="#314">314</a>         <strong class="jxr_keyword">if</strong> (FileUtils.isFile(url)) {
 <a class="jxr_linenumber" name="315" href="#315">315</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="316" href="#316">316</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationFactory.html">ConfigurationSource</a>(is, FileUtils.fileFromURI((url.toURI())));
+<a class="jxr_linenumber" name="316" href="#316">316</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationFactory.html">ConfigurationSource</a>(is, FileUtils.fileFromURI(url.toURI()));
 <a class="jxr_linenumber" name="317" href="#317">317</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> URISyntaxException ex) {
 <a class="jxr_linenumber" name="318" href="#318">318</a>                 <em class="jxr_comment">// Just ignore the exception.</em>
 <a class="jxr_linenumber" name="319" href="#319">319</a>             }
@@ -381,7 +381,7 @@
 <a class="jxr_linenumber" name="371" href="#371">371</a>                 <strong class="jxr_keyword">if</strong> (config != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="372" href="#372">372</a>                     <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationFactory.html">ConfigurationSource</a> source = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="373" href="#373">373</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="374" href="#374">374</a>                         source = getInputFromURI(<strong class="jxr_keyword">new</strong> URI(config));
+<a class="jxr_linenumber" name="374" href="#374">374</a>                         source = getInputFromURI(FileUtils.getCorrectedFilePathUri(config));
 <a class="jxr_linenumber" name="375" href="#375">375</a>                     } <strong class="jxr_keyword">catch</strong> (Exception ex) {
 <a class="jxr_linenumber" name="376" href="#376">376</a>                         <em class="jxr_comment">// Ignore the error and try as a String.</em>
 <a class="jxr_linenumber" name="377" href="#377">377</a>                     }
@@ -473,7 +473,7 @@
 <a class="jxr_linenumber" name="463" href="#463">463</a>                     <strong class="jxr_keyword">final</strong> String[] types = factory.getSupportedTypes();
 <a class="jxr_linenumber" name="464" href="#464">464</a>                     <strong class="jxr_keyword">if</strong> (types != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="465" href="#465">465</a>                         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String type : types) {
-<a class="jxr_linenumber" name="466" href="#466">466</a>                             <strong class="jxr_keyword">if</strong> (type.equals(<span class="jxr_string">"*"</span>) || (config != <strong class="jxr_keyword">null</strong> &amp;&amp; config.endsWith(type))) {
+<a class="jxr_linenumber" name="466" href="#466">466</a>                             <strong class="jxr_keyword">if</strong> (type.equals(<span class="jxr_string">"*"</span>) || config != <strong class="jxr_keyword">null</strong> &amp;&amp; config.endsWith(type)) {
 <a class="jxr_linenumber" name="467" href="#467">467</a>                                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> c = factory.getConfiguration(source);
 <a class="jxr_linenumber" name="468" href="#468">468</a>                                 <strong class="jxr_keyword">if</strong> (c != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="469" href="#469">469</a>                                     <strong class="jxr_keyword">return</strong> c;
