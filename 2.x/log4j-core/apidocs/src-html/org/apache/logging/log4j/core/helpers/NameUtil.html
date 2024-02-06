@@ -19,22 +19,45 @@
 <FONT color="green">016</FONT>     */<a name="line.16"></a>
 <FONT color="green">017</FONT>    package org.apache.logging.log4j.core.helpers;<a name="line.17"></a>
 <FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    /**<a name="line.19"></a>
-<FONT color="green">020</FONT>     *<a name="line.20"></a>
-<FONT color="green">021</FONT>     */<a name="line.21"></a>
-<FONT color="green">022</FONT>    public final class NameUtil {<a name="line.22"></a>
-<FONT color="green">023</FONT>    <a name="line.23"></a>
-<FONT color="green">024</FONT>        private NameUtil() {<a name="line.24"></a>
-<FONT color="green">025</FONT>        }<a name="line.25"></a>
-<FONT color="green">026</FONT>    <a name="line.26"></a>
-<FONT color="green">027</FONT>        public static String getSubName(String name) {<a name="line.27"></a>
-<FONT color="green">028</FONT>            if (name.length() == 0) {<a name="line.28"></a>
-<FONT color="green">029</FONT>                return null;<a name="line.29"></a>
-<FONT color="green">030</FONT>            }<a name="line.30"></a>
-<FONT color="green">031</FONT>            int i = name.lastIndexOf('.');<a name="line.31"></a>
-<FONT color="green">032</FONT>            return i &gt; 0 ? name.substring(0, i) : "";<a name="line.32"></a>
-<FONT color="green">033</FONT>        }<a name="line.33"></a>
-<FONT color="green">034</FONT>    }<a name="line.34"></a>
+<FONT color="green">019</FONT>    import java.security.MessageDigest;<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>    /**<a name="line.21"></a>
+<FONT color="green">022</FONT>     *<a name="line.22"></a>
+<FONT color="green">023</FONT>     */<a name="line.23"></a>
+<FONT color="green">024</FONT>    public final class NameUtil {<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>        private static final int MASK = 0xff;<a name="line.26"></a>
+<FONT color="green">027</FONT>    <a name="line.27"></a>
+<FONT color="green">028</FONT>        private NameUtil() {<a name="line.28"></a>
+<FONT color="green">029</FONT>        }<a name="line.29"></a>
+<FONT color="green">030</FONT>    <a name="line.30"></a>
+<FONT color="green">031</FONT>        public static String getSubName(final String name) {<a name="line.31"></a>
+<FONT color="green">032</FONT>            if (name.length() == 0) {<a name="line.32"></a>
+<FONT color="green">033</FONT>                return null;<a name="line.33"></a>
+<FONT color="green">034</FONT>            }<a name="line.34"></a>
+<FONT color="green">035</FONT>            final int i = name.lastIndexOf('.');<a name="line.35"></a>
+<FONT color="green">036</FONT>            return i &gt; 0 ? name.substring(0, i) : "";<a name="line.36"></a>
+<FONT color="green">037</FONT>        }<a name="line.37"></a>
+<FONT color="green">038</FONT>    <a name="line.38"></a>
+<FONT color="green">039</FONT>        public static String md5(final String string) {<a name="line.39"></a>
+<FONT color="green">040</FONT>            try {<a name="line.40"></a>
+<FONT color="green">041</FONT>                final MessageDigest digest = MessageDigest.getInstance("MD5");<a name="line.41"></a>
+<FONT color="green">042</FONT>                digest.update(string.getBytes());<a name="line.42"></a>
+<FONT color="green">043</FONT>                final byte[] bytes = digest.digest();<a name="line.43"></a>
+<FONT color="green">044</FONT>                final StringBuilder md5 = new StringBuilder();<a name="line.44"></a>
+<FONT color="green">045</FONT>                for (final byte b : bytes) {<a name="line.45"></a>
+<FONT color="green">046</FONT>                    final String hex = Integer.toHexString(MASK &amp; b);<a name="line.46"></a>
+<FONT color="green">047</FONT>                    if (hex.length() == 1) {<a name="line.47"></a>
+<FONT color="green">048</FONT>                        md5.append('0');<a name="line.48"></a>
+<FONT color="green">049</FONT>                    }<a name="line.49"></a>
+<FONT color="green">050</FONT>                    md5.append(hex);<a name="line.50"></a>
+<FONT color="green">051</FONT>                }<a name="line.51"></a>
+<FONT color="green">052</FONT>                return md5.toString();<a name="line.52"></a>
+<FONT color="green">053</FONT>            } catch (final Exception ex) {<a name="line.53"></a>
+<FONT color="green">054</FONT>                return string;<a name="line.54"></a>
+<FONT color="green">055</FONT>            }<a name="line.55"></a>
+<FONT color="green">056</FONT>        }<a name="line.56"></a>
+<FONT color="green">057</FONT>    }<a name="line.57"></a>
 
 
 

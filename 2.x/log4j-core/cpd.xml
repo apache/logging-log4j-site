@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
-<duplication lines="24" tokens="208">
-<file line="84" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
-<file line="104" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
+<duplication lines="24" tokens="211">
+<file line="83" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
+<file line="103" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
 <codefragment>
 <![CDATA[
-            for (Map.Entry<String, String> entry : rootNode.getAttributes().entrySet()) {
+            for (final Map.Entry<String, String> entry : rootNode.getAttributes().entrySet()) {
                 if ("status".equalsIgnoreCase(entry.getKey())) {
                     status = Level.toLevel(getSubst().replace(entry.getValue()), null);
                     if (status == null) {
@@ -13,15 +13,15 @@
                         messages.add("Invalid status specified: " + entry.getValue() + ". Defaulting to ERROR");
                     }
                 } else if ("dest".equalsIgnoreCase(entry.getKey())) {
-                    String dest = entry.getValue();
+                    final String dest = entry.getValue();
                     if (dest != null) {
                         if (dest.equalsIgnoreCase("err")) {
                             stream = System.err;
                         } else {
                             try {
-                                File destFile = FileUtils.fileFromURI(new URI(dest));
+                                final File destFile = FileUtils.fileFromURI(new URI(dest));
                                 stream = new PrintStream(new FileOutputStream(destFile));
-                            } catch (URISyntaxException use) {
+                            } catch (final URISyntaxException use) {
                                 System.err.println("Unable to write to " + dest + ". Writing to stdout");
                             }
                         }
@@ -32,23 +32,23 @@
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="26" tokens="161">
-<file line="123" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/filter/MapFilter.java"/>
-<file line="107" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/filter/StructuredDataFilter.java"/>
-<file line="116" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/filter/ThreadContextMapFilter.java"/>
+<duplication lines="26" tokens="165">
+<file line="124" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/filter/MapFilter.java"/>
+<file line="109" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/filter/StructuredDataFilter.java"/>
+<file line="119" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/filter/ThreadContextMapFilter.java"/>
 <codefragment>
 <![CDATA[
             LOGGER.error("keys and values must be specified for the MapFilter");
             return null;
         }
-        Map<String, List<String>> map = new HashMap<String, List<String>>();
-        for (KeyValuePair pair : pairs) {
-            String key = pair.getKey();
+        final Map<String, List<String>> map = new HashMap<String, List<String>>();
+        for (final KeyValuePair pair : pairs) {
+            final String key = pair.getKey();
             if (key == null) {
                 LOGGER.error("A null key is not valid in MapFilter");
                 continue;
             }
-            String value = pair.getValue();
+            final String value = pair.getValue();
             if (value == null) {
                 LOGGER.error("A null value for key " + key + " is not allowed in MapFilter");
                 continue;
@@ -67,19 +67,70 @@
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="18" tokens="144">
-<file line="73" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java"/>
-<file line="74" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java"/>
+<duplication lines="43" tokens="157">
+<file line="108" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/net/JMSQueueManager.java"/>
+<file line="109" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/net/JMSTopicManager.java"/>
+<codefragment>
+<![CDATA[
+            super.send(object, info.session, info.sender);
+        } catch (final Exception ex) {
+            cleanup(true);
+            throw ex;
+        }
+    }
+
+    @Override
+    public void releaseSub() {
+        if (info != null) {
+            cleanup(false);
+        }
+    }
+
+    private void cleanup(final boolean quiet) {
+        try {
+            info.session.close();
+        } catch (final Exception e) {
+            if (!quiet) {
+                LOGGER.error("Error closing session for " + getName(), e);
+            }
+        }
+        try {
+            info.conn.close();
+        } catch (final Exception e) {
+            if (!quiet) {
+                LOGGER.error("Error closing connection for " + getName(), e);
+            }
+        }
+        info = null;
+    }
+
+    /**
+     * Data for the factory.
+     */
+    private static class FactoryData {
+        private final String factoryName;
+        private final String providerURL;
+        private final String urlPkgPrefixes;
+        private final String securityPrincipalName;
+        private final String securityCredentials;
+        private final String factoryBindingName;
+        private final String queueBindingName;
+]]>
+</codefragment>
+</duplication>
+<duplication lines="18" tokens="147">
+<file line="73" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java"/>
+<file line="74" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java"/>
 <codefragment>
 <![CDATA[
     public static ExtendedThrowablePatternConverter newInstance(final String[] options) {
         String type = null;
         String[] array = options;
         if (options != null && options.length == 1 && options[0].length() > 0) {
-            String[] opts = options[0].split(",", 2);
-            String first = opts[0].trim();
+            final String[] opts = options[0].split(",", 2);
+            final String first = opts[0].trim();
             String filter;
-            Scanner scanner = new Scanner(first);
+            final Scanner scanner = new Scanner(first);
             if (first.equalsIgnoreCase(FULL) || first.equalsIgnoreCase(SHORT) || scanner.hasNextInt()) {
                 type = first;
                 filter = opts[1].trim();
@@ -93,20 +144,51 @@
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="25" tokens="135">
-<file line="49" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java"/>
-<file line="50" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java"/>
+<duplication lines="23" tokens="139">
+<file line="201" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/layout/HTMLLayout.java"/>
+<file line="227" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/layout/XMLLayout.java"/>
+<codefragment>
+<![CDATA[
+    private void appendThrowableAsHTML(final Throwable throwable, final StringBuilder sbuf) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        try {
+            throwable.printStackTrace(pw);
+        } catch (final RuntimeException ex) {
+            // Ignore the exception.
+        }
+        pw.flush();
+        final LineNumberReader reader = new LineNumberReader(new StringReader(sw.toString()));
+        final ArrayList<String> lines = new ArrayList<String>();
+        try {
+          String line = reader.readLine();
+          while (line != null) {
+            lines.add(line);
+            line = reader.readLine();
+          }
+        } catch (final IOException ex) {
+            if (ex instanceof InterruptedIOException) {
+                Thread.currentThread().interrupt();
+            }
+            lines.add(ex.toString());
+        }
+]]>
+</codefragment>
+</duplication>
+<duplication lines="25" tokens="138">
+<file line="49" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java"/>
+<file line="50" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java"/>
 <codefragment>
 <![CDATA[
         super("ExtendedThrowable", "throwable", options);
         List<String> tempPackages = null;
         if (options != null && options.length > 1) {
             if (options[1].startsWith(FILTERS) && options[1].endsWith(")")) {
-                String filterStr = options[1].substring(FILTERS.length(), options[1].length() - 1);
-                String[] array = filterStr.split(",");
+                final String filterStr = options[1].substring(FILTERS.length(), options[1].length() - 1);
+                final String[] array = filterStr.split(",");
                 if (array.length > 0) {
                     tempPackages = new ArrayList<String>(array.length);
-                    for (String token : array) {
+                    for (final String token : array) {
                         tempPackages.add(token.trim());
                     }
                 }
@@ -126,40 +208,79 @@
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="23" tokens="133">
-<file line="192" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/layout/HTMLLayout.java"/>
-<file line="217" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/layout/XMLLayout.java"/>
+<duplication lines="20" tokens="136">
+<file line="105" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java"/>
+<file line="106" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java"/>
 <codefragment>
 <![CDATA[
-    private void appendThrowableAsHTML(Throwable throwable, StringBuilder sbuf) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        try {
-            throwable.printStackTrace(pw);
-        } catch (RuntimeException ex) {
-            // Ignore the exception.
-        }
-        pw.flush();
-        LineNumberReader reader = new LineNumberReader(new StringReader(sw.toString()));
-        ArrayList<String> lines = new ArrayList<String>();
-        try {
-          String line = reader.readLine();
-          while (line != null) {
-            lines.add(line);
-            line = reader.readLine();
-          }
-        } catch (IOException ex) {
-            if (ex instanceof InterruptedIOException) {
-                Thread.currentThread().interrupt();
+            final String trace = t.getExtendedStackTrace(packages);
+            final int len = toAppendTo.length();
+            if (len > 0 && !Character.isWhitespace(toAppendTo.charAt(len - 1))) {
+                toAppendTo.append(" ");
             }
-            lines.add(ex.toString());
+            if (lines != Integer.MAX_VALUE) {
+                final StringBuilder sb = new StringBuilder();
+                final String[] array = trace.split("\n");
+                final int limit = lines > array.length ? array.length : lines;
+                for (int i = 0; i < limit; ++i) {
+                    sb.append(array[i]).append("\n");
+                }
+                toAppendTo.append(sb.toString());
+
+            } else {
+                toAppendTo.append(trace);
+            }
         }
+    }
+}
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="40" tokens="123">
-<file line="57" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/GZCompressAction.java"/>
-<file line="58" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/ZipCompressAction.java"/>
+<duplication lines="33" tokens="131">
+<file line="88" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/filter/BurstFilter.java"/>
+<file line="56" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/filter/DynamicThresholdFilter.java"/>
+<file line="44" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/filter/ThresholdFilter.java"/>
+<codefragment>
+<![CDATA[
+    }
+
+    @Override
+    public Result filter(final Logger logger, final Level level, final Marker marker, final String msg,
+                         final Object... params) {
+        return filter(level);
+    }
+
+    @Override
+    public Result filter(final Logger logger, final Level level, final Marker marker, final Object msg,
+                         final Throwable t) {
+        return filter(level);
+    }
+
+    @Override
+    public Result filter(final Logger logger, final Level level, final Marker marker, final Message msg,
+                         final Throwable t) {
+        return filter(level);
+    }
+
+    @Override
+    public Result filter(final LogEvent event) {
+        return filter(event.getLevel());
+    }
+
+    /**
+     * Decide if we're going to log <code>event</code> based on whether the
+     * maximum burst of log statements has been exceeded.
+     *
+     * @param level The log level.
+     * @return The onMatch value if the filter passes, onMismatch otherwise.
+     */
+    private Result filter(final Level level) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="41" tokens="126">
+<file line="57" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/GZCompressAction.java"/>
+<file line="58" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/ZipCompressAction.java"/>
 <codefragment>
 <![CDATA[
     public GZCompressAction(final File source, final File destination, final boolean deleteSource) {
@@ -200,83 +321,18 @@
     public static boolean execute(final File source, final File destination, final boolean deleteSource)
         throws IOException {
         if (source.exists()) {
-            FileInputStream fis = new FileInputStream(source);
-            FileOutputStream fos = new FileOutputStream(destination);
+            final FileInputStream fis = new FileInputStream(source);
+            final FileOutputStream fos = new FileOutputStream(destination);
+            final GZIPOutputStream gzos = new GZIPOutputStream(fos);
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="19" tokens="116">
-<file line="105" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java"/>
-<file line="106" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java"/>
+<duplication lines="19" tokens="109">
+<file line="124" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
+<file line="147" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/log4j-2.0-beta4/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
 <codefragment>
 <![CDATA[
-            String trace = t.getExtendedStackTrace(packages);
-            int len = toAppendTo.length();
-            if (len > 0 && !Character.isWhitespace(toAppendTo.charAt(len - 1))) {
-                toAppendTo.append(" ");
-            }
-            if (lines > 0) {
-                StringBuilder sb = new StringBuilder();
-                String[] array = trace.split("\n");
-                for (int i = 0; i < lines; ++i) {
-                    sb.append(array[i]).append("\n");
-                }
-                toAppendTo.append(sb.toString());
-
-            } else {
-                toAppendTo.append(trace);
-            }
-        }
-    }
-}
-]]>
-</codefragment>
-</duplication>
-<duplication lines="30" tokens="115">
-<file line="88" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/filter/BurstFilter.java"/>
-<file line="57" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/filter/DynamicThresholdFilter.java"/>
-<file line="46" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/filter/ThresholdFilter.java"/>
-<codefragment>
-<![CDATA[
-    }
-
-    @Override
-    public Result filter(Logger logger, Level level, Marker marker, String msg, Object[] params) {
-        return filter(level);
-    }
-
-    @Override
-    public Result filter(Logger logger, Level level, Marker marker, Object msg, Throwable t) {
-        return filter(level);
-    }
-
-    @Override
-    public Result filter(Logger logger, Level level, Marker marker, Message msg, Throwable t) {
-        return filter(level);
-    }
-
-    @Override
-    public Result filter(LogEvent event) {
-        return filter(event.getLevel());
-    }
-
-    /**
-     * Decide if we're going to log <code>event</code> based on whether the
-     * maximum burst of log statements has been exceeded.
-     *
-     * @param level The log level.
-     * @return The onMatch value if the filter passes, onMismatch otherwise.
-     */
-    private Result filter(Level level) {
-]]>
-</codefragment>
-</duplication>
-<duplication lines="19" tokens="107">
-<file line="125" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
-<file line="148" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-beta3/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
-<codefragment>
-<![CDATA[
-                StatusListener listener = statusIter.next();
+                final StatusListener listener = statusIter.next();
                 if (listener instanceof StatusConsoleListener) {
                     found = true;
                     ((StatusConsoleListener) listener).setLevel(status);
@@ -286,12 +342,12 @@
                 }
             }
             if (!found && status != Level.OFF) {
-                StatusConsoleListener listener = new StatusConsoleListener(status, stream);
+                final StatusConsoleListener listener = new StatusConsoleListener(status, stream);
                 if (!verbose) {
                     listener.setFilters(VERBOSE_CLASSES);
                 }
                 ((StatusLogger) LOGGER).registerListener(listener);
-                for (String msg : messages) {
+                for (final String msg : messages) {
                     LOGGER.error(msg);
                 }
             }

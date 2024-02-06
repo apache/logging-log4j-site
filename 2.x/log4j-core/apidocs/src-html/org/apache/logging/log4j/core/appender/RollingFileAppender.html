@@ -42,121 +42,118 @@
 <FONT color="green">039</FONT>    <a name="line.39"></a>
 <FONT color="green">040</FONT>        private final String fileName;<a name="line.40"></a>
 <FONT color="green">041</FONT>        private final String filePattern;<a name="line.41"></a>
-<FONT color="green">042</FONT>        private final TriggeringPolicy policy;<a name="line.42"></a>
-<FONT color="green">043</FONT>        private final RolloverStrategy strategy;<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>        private RollingFileAppender(String name, Layout layout, TriggeringPolicy policy, RolloverStrategy strategy,<a name="line.45"></a>
-<FONT color="green">046</FONT>                                   Filter filter, RollingFileManager manager, String fileName, String filePattern,<a name="line.46"></a>
-<FONT color="green">047</FONT>                                   boolean handleException, boolean immediateFlush) {<a name="line.47"></a>
-<FONT color="green">048</FONT>            super(name, layout, filter, handleException, immediateFlush, manager);<a name="line.48"></a>
-<FONT color="green">049</FONT>            this.fileName = fileName;<a name="line.49"></a>
-<FONT color="green">050</FONT>            this.filePattern = filePattern;<a name="line.50"></a>
-<FONT color="green">051</FONT>            this.policy = policy;<a name="line.51"></a>
-<FONT color="green">052</FONT>            this.strategy = strategy;<a name="line.52"></a>
-<FONT color="green">053</FONT>            policy.initialize(manager);<a name="line.53"></a>
-<FONT color="green">054</FONT>        }<a name="line.54"></a>
-<FONT color="green">055</FONT>    <a name="line.55"></a>
-<FONT color="green">056</FONT>        /**<a name="line.56"></a>
-<FONT color="green">057</FONT>         * Write the log entry rolling over the file when required.<a name="line.57"></a>
-<FONT color="green">058</FONT>    <a name="line.58"></a>
-<FONT color="green">059</FONT>         * @param event The LogEvent.<a name="line.59"></a>
-<FONT color="green">060</FONT>         */<a name="line.60"></a>
-<FONT color="green">061</FONT>        @Override<a name="line.61"></a>
-<FONT color="green">062</FONT>        public void append(LogEvent event) {<a name="line.62"></a>
-<FONT color="green">063</FONT>            ((RollingFileManager) getManager()).checkRollover(event, policy, strategy);<a name="line.63"></a>
-<FONT color="green">064</FONT>            super.append(event);<a name="line.64"></a>
-<FONT color="green">065</FONT>        }<a name="line.65"></a>
-<FONT color="green">066</FONT>    <a name="line.66"></a>
-<FONT color="green">067</FONT>        /**<a name="line.67"></a>
-<FONT color="green">068</FONT>         * Returns the File name for the Appender.<a name="line.68"></a>
-<FONT color="green">069</FONT>         * @return The file name.<a name="line.69"></a>
-<FONT color="green">070</FONT>         */<a name="line.70"></a>
-<FONT color="green">071</FONT>        public String getFileName() {<a name="line.71"></a>
-<FONT color="green">072</FONT>            return fileName;<a name="line.72"></a>
-<FONT color="green">073</FONT>        }<a name="line.73"></a>
-<FONT color="green">074</FONT>    <a name="line.74"></a>
-<FONT color="green">075</FONT>        /**<a name="line.75"></a>
-<FONT color="green">076</FONT>         * Returns the file pattern used when rolling over.<a name="line.76"></a>
-<FONT color="green">077</FONT>         * @return The file pattern.<a name="line.77"></a>
-<FONT color="green">078</FONT>         */<a name="line.78"></a>
-<FONT color="green">079</FONT>        public String getFilePattern() {<a name="line.79"></a>
-<FONT color="green">080</FONT>            return filePattern;<a name="line.80"></a>
-<FONT color="green">081</FONT>        }<a name="line.81"></a>
-<FONT color="green">082</FONT>    <a name="line.82"></a>
-<FONT color="green">083</FONT>        /**<a name="line.83"></a>
-<FONT color="green">084</FONT>         * Create a RollingFileAppender.<a name="line.84"></a>
-<FONT color="green">085</FONT>         * @param fileName The name of the file that is actively written to. (required).<a name="line.85"></a>
-<FONT color="green">086</FONT>         * @param filePattern The pattern of the file name to use on rollover. (required).<a name="line.86"></a>
-<FONT color="green">087</FONT>         * @param append If true, events are appended to the file. If false, the file<a name="line.87"></a>
-<FONT color="green">088</FONT>         * is overwritten when opened. Defaults to "true"<a name="line.88"></a>
-<FONT color="green">089</FONT>         * @param name The name of the Appender (required).<a name="line.89"></a>
-<FONT color="green">090</FONT>         * @param bufferedIO When true, I/O will be buffered. Defaults to "true".<a name="line.90"></a>
-<FONT color="green">091</FONT>         * @param immediateFlush When true, events are immediately flushed. Defaults to "true".<a name="line.91"></a>
-<FONT color="green">092</FONT>         * @param policy The triggering policy. (required).<a name="line.92"></a>
-<FONT color="green">093</FONT>         * @param strategy The rollover strategy. Defaults to DefaultRolloverStrategy.<a name="line.93"></a>
-<FONT color="green">094</FONT>         * @param layout The layout to use (defaults to the default PatternLayout).<a name="line.94"></a>
-<FONT color="green">095</FONT>         * @param filter The Filter or null.<a name="line.95"></a>
-<FONT color="green">096</FONT>         * @param suppress "true" if exceptions should be hidden from the application, "false" otherwise.<a name="line.96"></a>
-<FONT color="green">097</FONT>         * The default is "true".<a name="line.97"></a>
-<FONT color="green">098</FONT>         * @param config The Configuration.<a name="line.98"></a>
-<FONT color="green">099</FONT>         * @return A RollingFileAppender.<a name="line.99"></a>
-<FONT color="green">100</FONT>         */<a name="line.100"></a>
-<FONT color="green">101</FONT>        @PluginFactory<a name="line.101"></a>
-<FONT color="green">102</FONT>        public static RollingFileAppender createAppender(@PluginAttr("fileName") String fileName,<a name="line.102"></a>
-<FONT color="green">103</FONT>                                                  @PluginAttr("filePattern") String filePattern,<a name="line.103"></a>
-<FONT color="green">104</FONT>                                                  @PluginAttr("append") String append,<a name="line.104"></a>
-<FONT color="green">105</FONT>                                                  @PluginAttr("name") String name,<a name="line.105"></a>
-<FONT color="green">106</FONT>                                                  @PluginAttr("bufferedIO") String bufferedIO,<a name="line.106"></a>
-<FONT color="green">107</FONT>                                                  @PluginAttr("immediateFlush") String immediateFlush,<a name="line.107"></a>
-<FONT color="green">108</FONT>                                                  @PluginElement("policy") TriggeringPolicy policy,<a name="line.108"></a>
-<FONT color="green">109</FONT>                                                  @PluginElement("strategy") RolloverStrategy strategy,<a name="line.109"></a>
-<FONT color="green">110</FONT>                                                  @PluginElement("layout") Layout layout,<a name="line.110"></a>
-<FONT color="green">111</FONT>                                                  @PluginElement("filter") Filter filter,<a name="line.111"></a>
-<FONT color="green">112</FONT>                                                  @PluginAttr("suppressExceptions") String suppress,<a name="line.112"></a>
-<FONT color="green">113</FONT>                                                  @PluginConfiguration Configuration config) {<a name="line.113"></a>
-<FONT color="green">114</FONT>    <a name="line.114"></a>
-<FONT color="green">115</FONT>            boolean isAppend = append == null ? true : Boolean.valueOf(append);<a name="line.115"></a>
-<FONT color="green">116</FONT>            boolean handleExceptions = suppress == null ? true : Boolean.valueOf(suppress);<a name="line.116"></a>
-<FONT color="green">117</FONT>            boolean isBuffered = bufferedIO == null ? true : Boolean.valueOf(bufferedIO);<a name="line.117"></a>
-<FONT color="green">118</FONT>            boolean isFlush = immediateFlush == null ? true : Boolean.valueOf(immediateFlush);<a name="line.118"></a>
-<FONT color="green">119</FONT>    <a name="line.119"></a>
-<FONT color="green">120</FONT>            if (name == null) {<a name="line.120"></a>
-<FONT color="green">121</FONT>                LOGGER.error("No name provided for FileAppender");<a name="line.121"></a>
-<FONT color="green">122</FONT>                return null;<a name="line.122"></a>
-<FONT color="green">123</FONT>            }<a name="line.123"></a>
-<FONT color="green">124</FONT>    <a name="line.124"></a>
-<FONT color="green">125</FONT>            if (fileName == null) {<a name="line.125"></a>
-<FONT color="green">126</FONT>                LOGGER.error("No filename was provided for FileAppender with name "  + name);<a name="line.126"></a>
-<FONT color="green">127</FONT>                return null;<a name="line.127"></a>
-<FONT color="green">128</FONT>            }<a name="line.128"></a>
-<FONT color="green">129</FONT>    <a name="line.129"></a>
-<FONT color="green">130</FONT>            if (filePattern == null) {<a name="line.130"></a>
-<FONT color="green">131</FONT>                LOGGER.error("No filename pattern provided for FileAppender with name "  + name);<a name="line.131"></a>
-<FONT color="green">132</FONT>                return null;<a name="line.132"></a>
-<FONT color="green">133</FONT>            }<a name="line.133"></a>
-<FONT color="green">134</FONT>    <a name="line.134"></a>
-<FONT color="green">135</FONT>            if (policy == null) {<a name="line.135"></a>
-<FONT color="green">136</FONT>                LOGGER.error("A TriggeringPolicy must be provided");<a name="line.136"></a>
-<FONT color="green">137</FONT>                return null;<a name="line.137"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>        private RollingFileAppender(final String name, final Layout layout, final Filter filter,<a name="line.44"></a>
+<FONT color="green">045</FONT>                                    final RollingFileManager manager, final String fileName,<a name="line.45"></a>
+<FONT color="green">046</FONT>                                    final String filePattern, final boolean handleException, final boolean immediateFlush) {<a name="line.46"></a>
+<FONT color="green">047</FONT>            super(name, layout, filter, handleException, immediateFlush, manager);<a name="line.47"></a>
+<FONT color="green">048</FONT>            this.fileName = fileName;<a name="line.48"></a>
+<FONT color="green">049</FONT>            this.filePattern = filePattern;<a name="line.49"></a>
+<FONT color="green">050</FONT>        }<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>        /**<a name="line.52"></a>
+<FONT color="green">053</FONT>         * Write the log entry rolling over the file when required.<a name="line.53"></a>
+<FONT color="green">054</FONT>    <a name="line.54"></a>
+<FONT color="green">055</FONT>         * @param event The LogEvent.<a name="line.55"></a>
+<FONT color="green">056</FONT>         */<a name="line.56"></a>
+<FONT color="green">057</FONT>        @Override<a name="line.57"></a>
+<FONT color="green">058</FONT>        public void append(final LogEvent event) {<a name="line.58"></a>
+<FONT color="green">059</FONT>            ((RollingFileManager) getManager()).checkRollover(event);<a name="line.59"></a>
+<FONT color="green">060</FONT>            super.append(event);<a name="line.60"></a>
+<FONT color="green">061</FONT>        }<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>        /**<a name="line.63"></a>
+<FONT color="green">064</FONT>         * Returns the File name for the Appender.<a name="line.64"></a>
+<FONT color="green">065</FONT>         * @return The file name.<a name="line.65"></a>
+<FONT color="green">066</FONT>         */<a name="line.66"></a>
+<FONT color="green">067</FONT>        public String getFileName() {<a name="line.67"></a>
+<FONT color="green">068</FONT>            return fileName;<a name="line.68"></a>
+<FONT color="green">069</FONT>        }<a name="line.69"></a>
+<FONT color="green">070</FONT>    <a name="line.70"></a>
+<FONT color="green">071</FONT>        /**<a name="line.71"></a>
+<FONT color="green">072</FONT>         * Returns the file pattern used when rolling over.<a name="line.72"></a>
+<FONT color="green">073</FONT>         * @return The file pattern.<a name="line.73"></a>
+<FONT color="green">074</FONT>         */<a name="line.74"></a>
+<FONT color="green">075</FONT>        public String getFilePattern() {<a name="line.75"></a>
+<FONT color="green">076</FONT>            return filePattern;<a name="line.76"></a>
+<FONT color="green">077</FONT>        }<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>        /**<a name="line.79"></a>
+<FONT color="green">080</FONT>         * Create a RollingFileAppender.<a name="line.80"></a>
+<FONT color="green">081</FONT>         * @param fileName The name of the file that is actively written to. (required).<a name="line.81"></a>
+<FONT color="green">082</FONT>         * @param filePattern The pattern of the file name to use on rollover. (required).<a name="line.82"></a>
+<FONT color="green">083</FONT>         * @param append If true, events are appended to the file. If false, the file<a name="line.83"></a>
+<FONT color="green">084</FONT>         * is overwritten when opened. Defaults to "true"<a name="line.84"></a>
+<FONT color="green">085</FONT>         * @param name The name of the Appender (required).<a name="line.85"></a>
+<FONT color="green">086</FONT>         * @param bufferedIO When true, I/O will be buffered. Defaults to "true".<a name="line.86"></a>
+<FONT color="green">087</FONT>         * @param immediateFlush When true, events are immediately flushed. Defaults to "true".<a name="line.87"></a>
+<FONT color="green">088</FONT>         * @param policy The triggering policy. (required).<a name="line.88"></a>
+<FONT color="green">089</FONT>         * @param strategy The rollover strategy. Defaults to DefaultRolloverStrategy.<a name="line.89"></a>
+<FONT color="green">090</FONT>         * @param layout The layout to use (defaults to the default PatternLayout).<a name="line.90"></a>
+<FONT color="green">091</FONT>         * @param filter The Filter or null.<a name="line.91"></a>
+<FONT color="green">092</FONT>         * @param suppress "true" if exceptions should be hidden from the application, "false" otherwise.<a name="line.92"></a>
+<FONT color="green">093</FONT>         * The default is "true".<a name="line.93"></a>
+<FONT color="green">094</FONT>         * @param config The Configuration.<a name="line.94"></a>
+<FONT color="green">095</FONT>         * @return A RollingFileAppender.<a name="line.95"></a>
+<FONT color="green">096</FONT>         */<a name="line.96"></a>
+<FONT color="green">097</FONT>        @PluginFactory<a name="line.97"></a>
+<FONT color="green">098</FONT>        public static RollingFileAppender createAppender(@PluginAttr("fileName") final String fileName,<a name="line.98"></a>
+<FONT color="green">099</FONT>                                                  @PluginAttr("filePattern") final String filePattern,<a name="line.99"></a>
+<FONT color="green">100</FONT>                                                  @PluginAttr("append") final String append,<a name="line.100"></a>
+<FONT color="green">101</FONT>                                                  @PluginAttr("name") final String name,<a name="line.101"></a>
+<FONT color="green">102</FONT>                                                  @PluginAttr("bufferedIO") final String bufferedIO,<a name="line.102"></a>
+<FONT color="green">103</FONT>                                                  @PluginAttr("immediateFlush") final String immediateFlush,<a name="line.103"></a>
+<FONT color="green">104</FONT>                                                  @PluginElement("policy") final TriggeringPolicy policy,<a name="line.104"></a>
+<FONT color="green">105</FONT>                                                  @PluginElement("strategy") RolloverStrategy strategy,<a name="line.105"></a>
+<FONT color="green">106</FONT>                                                  @PluginElement("layout") Layout layout,<a name="line.106"></a>
+<FONT color="green">107</FONT>                                                  @PluginElement("filter") final Filter filter,<a name="line.107"></a>
+<FONT color="green">108</FONT>                                                  @PluginAttr("suppressExceptions") final String suppress,<a name="line.108"></a>
+<FONT color="green">109</FONT>                                                  @PluginConfiguration final Configuration config) {<a name="line.109"></a>
+<FONT color="green">110</FONT>    <a name="line.110"></a>
+<FONT color="green">111</FONT>            final boolean isAppend = append == null ? true : Boolean.valueOf(append);<a name="line.111"></a>
+<FONT color="green">112</FONT>            final boolean handleExceptions = suppress == null ? true : Boolean.valueOf(suppress);<a name="line.112"></a>
+<FONT color="green">113</FONT>            final boolean isBuffered = bufferedIO == null ? true : Boolean.valueOf(bufferedIO);<a name="line.113"></a>
+<FONT color="green">114</FONT>            final boolean isFlush = immediateFlush == null ? true : Boolean.valueOf(immediateFlush);<a name="line.114"></a>
+<FONT color="green">115</FONT>    <a name="line.115"></a>
+<FONT color="green">116</FONT>            if (name == null) {<a name="line.116"></a>
+<FONT color="green">117</FONT>                LOGGER.error("No name provided for FileAppender");<a name="line.117"></a>
+<FONT color="green">118</FONT>                return null;<a name="line.118"></a>
+<FONT color="green">119</FONT>            }<a name="line.119"></a>
+<FONT color="green">120</FONT>    <a name="line.120"></a>
+<FONT color="green">121</FONT>            if (fileName == null) {<a name="line.121"></a>
+<FONT color="green">122</FONT>                LOGGER.error("No filename was provided for FileAppender with name "  + name);<a name="line.122"></a>
+<FONT color="green">123</FONT>                return null;<a name="line.123"></a>
+<FONT color="green">124</FONT>            }<a name="line.124"></a>
+<FONT color="green">125</FONT>    <a name="line.125"></a>
+<FONT color="green">126</FONT>            if (filePattern == null) {<a name="line.126"></a>
+<FONT color="green">127</FONT>                LOGGER.error("No filename pattern provided for FileAppender with name "  + name);<a name="line.127"></a>
+<FONT color="green">128</FONT>                return null;<a name="line.128"></a>
+<FONT color="green">129</FONT>            }<a name="line.129"></a>
+<FONT color="green">130</FONT>    <a name="line.130"></a>
+<FONT color="green">131</FONT>            if (policy == null) {<a name="line.131"></a>
+<FONT color="green">132</FONT>                LOGGER.error("A TriggeringPolicy must be provided");<a name="line.132"></a>
+<FONT color="green">133</FONT>                return null;<a name="line.133"></a>
+<FONT color="green">134</FONT>            }<a name="line.134"></a>
+<FONT color="green">135</FONT>    <a name="line.135"></a>
+<FONT color="green">136</FONT>            if (strategy == null) {<a name="line.136"></a>
+<FONT color="green">137</FONT>                strategy = DefaultRolloverStrategy.createStrategy(null, null, "true", config);<a name="line.137"></a>
 <FONT color="green">138</FONT>            }<a name="line.138"></a>
 <FONT color="green">139</FONT>    <a name="line.139"></a>
-<FONT color="green">140</FONT>            if (strategy == null) {<a name="line.140"></a>
-<FONT color="green">141</FONT>                strategy = DefaultRolloverStrategy.createStrategy(null, null, config);<a name="line.141"></a>
-<FONT color="green">142</FONT>            }<a name="line.142"></a>
-<FONT color="green">143</FONT>    <a name="line.143"></a>
-<FONT color="green">144</FONT>            RollingFileManager manager = RollingFileManager.getFileManager(fileName, filePattern, isAppend, isBuffered);<a name="line.144"></a>
-<FONT color="green">145</FONT>            if (manager == null) {<a name="line.145"></a>
-<FONT color="green">146</FONT>                return null;<a name="line.146"></a>
-<FONT color="green">147</FONT>            }<a name="line.147"></a>
-<FONT color="green">148</FONT>    <a name="line.148"></a>
-<FONT color="green">149</FONT>            if (layout == null) {<a name="line.149"></a>
-<FONT color="green">150</FONT>                layout = PatternLayout.createLayout(null, null, null, null);<a name="line.150"></a>
-<FONT color="green">151</FONT>            }<a name="line.151"></a>
-<FONT color="green">152</FONT>    <a name="line.152"></a>
-<FONT color="green">153</FONT>            return new RollingFileAppender(name, layout, policy, strategy, filter, manager, fileName, filePattern,<a name="line.153"></a>
-<FONT color="green">154</FONT>                handleExceptions, isFlush);<a name="line.154"></a>
-<FONT color="green">155</FONT>        }<a name="line.155"></a>
-<FONT color="green">156</FONT>    }<a name="line.156"></a>
+<FONT color="green">140</FONT>            final RollingFileManager manager = RollingFileManager.getFileManager(fileName, filePattern, isAppend,<a name="line.140"></a>
+<FONT color="green">141</FONT>                isBuffered, policy, strategy);<a name="line.141"></a>
+<FONT color="green">142</FONT>            if (manager == null) {<a name="line.142"></a>
+<FONT color="green">143</FONT>                return null;<a name="line.143"></a>
+<FONT color="green">144</FONT>            }<a name="line.144"></a>
+<FONT color="green">145</FONT>    <a name="line.145"></a>
+<FONT color="green">146</FONT>            if (layout == null) {<a name="line.146"></a>
+<FONT color="green">147</FONT>                layout = PatternLayout.createLayout(null, null, null, null);<a name="line.147"></a>
+<FONT color="green">148</FONT>            }<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>            return new RollingFileAppender(name, layout, filter, manager, fileName, filePattern,<a name="line.150"></a>
+<FONT color="green">151</FONT>                handleExceptions, isFlush);<a name="line.151"></a>
+<FONT color="green">152</FONT>        }<a name="line.152"></a>
+<FONT color="green">153</FONT>    }<a name="line.153"></a>
 
 
 

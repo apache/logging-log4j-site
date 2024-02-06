@@ -51,15 +51,15 @@
 <a class="jxr_linenumber" name="41" href="#41">41</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;LoggerContext, ConcurrentMap&lt;String, Logger&gt;&gt; contextMap =
 <a class="jxr_linenumber" name="42" href="#42">42</a>          <strong class="jxr_keyword">new</strong> WeakHashMap&lt;LoggerContext, ConcurrentMap&lt;String, Logger&gt;&gt;();
 <a class="jxr_linenumber" name="43" href="#43">43</a>  
-<a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">public</strong> Logger getLogger(String name) {
-<a class="jxr_linenumber" name="45" href="#45">45</a>          LoggerContext context = getContext();
-<a class="jxr_linenumber" name="46" href="#46">46</a>          ConcurrentMap&lt;String, Logger&gt; loggers = getLoggersMap(context);
+<a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">public</strong> Logger getLogger(<strong class="jxr_keyword">final</strong> String name) {
+<a class="jxr_linenumber" name="45" href="#45">45</a>          <strong class="jxr_keyword">final</strong> LoggerContext context = getContext();
+<a class="jxr_linenumber" name="46" href="#46">46</a>          <strong class="jxr_keyword">final</strong> ConcurrentMap&lt;String, Logger&gt; loggers = getLoggersMap(context);
 <a class="jxr_linenumber" name="47" href="#47">47</a>  
 <a class="jxr_linenumber" name="48" href="#48">48</a>          <strong class="jxr_keyword">if</strong> (loggers.containsKey(name)) {
 <a class="jxr_linenumber" name="49" href="#49">49</a>              <strong class="jxr_keyword">return</strong> loggers.get(name);
 <a class="jxr_linenumber" name="50" href="#50">50</a>          }
-<a class="jxr_linenumber" name="51" href="#51">51</a>          String key = Logger.ROOT_LOGGER_NAME.equals(name) ? LogManager.ROOT_LOGGER_NAME : name;
-<a class="jxr_linenumber" name="52" href="#52">52</a>          org.apache.logging.log4j.Logger logger = context.getLogger(key);
+<a class="jxr_linenumber" name="51" href="#51">51</a>          <strong class="jxr_keyword">final</strong> String key = Logger.ROOT_LOGGER_NAME.equals(name) ? LogManager.ROOT_LOGGER_NAME : name;
+<a class="jxr_linenumber" name="52" href="#52">52</a>          <strong class="jxr_keyword">final</strong> org.apache.logging.log4j.Logger logger = context.getLogger(key);
 <a class="jxr_linenumber" name="53" href="#53">53</a>          <strong class="jxr_keyword">if</strong> (logger instanceof AbstractLogger) {
 <a class="jxr_linenumber" name="54" href="#54">54</a>              loggers.putIfAbsent(name, <strong class="jxr_keyword">new</strong> <a href="../../../org/slf4j/impl/SLF4JLogger.html">SLF4JLogger</a>((AbstractLogger) logger, name));
 <a class="jxr_linenumber" name="55" href="#55">55</a>              <strong class="jxr_keyword">return</strong> loggers.get(name);
@@ -67,7 +67,7 @@
 <a class="jxr_linenumber" name="57" href="#57">57</a>          <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/apache/logging/slf4j/SLF4JLoggingException.html">SLF4JLoggingException</a>(<span class="jxr_string">"SLF4J Adapter requires base logging system to extend Log4J AbstractLogger"</span>);
 <a class="jxr_linenumber" name="58" href="#58">58</a>      }
 <a class="jxr_linenumber" name="59" href="#59">59</a>  
-<a class="jxr_linenumber" name="60" href="#60">60</a>      <strong class="jxr_keyword">private</strong> ConcurrentMap&lt;String, Logger&gt; getLoggersMap(LoggerContext context) {
+<a class="jxr_linenumber" name="60" href="#60">60</a>      <strong class="jxr_keyword">private</strong> ConcurrentMap&lt;String, Logger&gt; getLoggersMap(<strong class="jxr_keyword">final</strong> LoggerContext context) {
 <a class="jxr_linenumber" name="61" href="#61">61</a>          <strong class="jxr_keyword">synchronized</strong> (contextMap) {
 <a class="jxr_linenumber" name="62" href="#62">62</a>              ConcurrentMap&lt;String, Logger&gt; map = contextMap.get(context);
 <a class="jxr_linenumber" name="63" href="#63">63</a>              <strong class="jxr_keyword">if</strong> (map == <strong class="jxr_keyword">null</strong>) {
@@ -78,11 +78,11 @@
 <a class="jxr_linenumber" name="68" href="#68">68</a>          }
 <a class="jxr_linenumber" name="69" href="#69">69</a>      }
 <a class="jxr_linenumber" name="70" href="#70">70</a>      <strong class="jxr_keyword">private</strong> LoggerContext getContext() {
-<a class="jxr_linenumber" name="71" href="#71">71</a>          Throwable t = <strong class="jxr_keyword">new</strong> Throwable();
+<a class="jxr_linenumber" name="71" href="#71">71</a>          <strong class="jxr_keyword">final</strong> Throwable t = <strong class="jxr_keyword">new</strong> Throwable();
 <a class="jxr_linenumber" name="72" href="#72">72</a>          <strong class="jxr_keyword">boolean</strong> next = false;
 <a class="jxr_linenumber" name="73" href="#73">73</a>          <strong class="jxr_keyword">boolean</strong> pkg = false;
 <a class="jxr_linenumber" name="74" href="#74">74</a>          String fqcn = LoggerFactory.<strong class="jxr_keyword">class</strong>.getName();
-<a class="jxr_linenumber" name="75" href="#75">75</a>          <strong class="jxr_keyword">for</strong> (StackTraceElement element : t.getStackTrace()) {
+<a class="jxr_linenumber" name="75" href="#75">75</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> StackTraceElement element : t.getStackTrace()) {
 <a class="jxr_linenumber" name="76" href="#76">76</a>              <strong class="jxr_keyword">if</strong> (FQCN.equals(element.getClassName())) {
 <a class="jxr_linenumber" name="77" href="#77">77</a>                  next = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="78" href="#78">78</a>                  <strong class="jxr_keyword">continue</strong>;
@@ -109,11 +109,11 @@
 <a class="jxr_linenumber" name="99" href="#99">99</a>              <strong class="jxr_keyword">return</strong> getContext(FQCN, false);
 <a class="jxr_linenumber" name="100" href="#100">100</a>         }
 <a class="jxr_linenumber" name="101" href="#101">101</a> 
-<a class="jxr_linenumber" name="102" href="#102">102</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> LoggerContext getContext(String fqcn) {
+<a class="jxr_linenumber" name="102" href="#102">102</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> LoggerContext getContext(<strong class="jxr_keyword">final</strong> String fqcn) {
 <a class="jxr_linenumber" name="103" href="#103">103</a>             <strong class="jxr_keyword">return</strong> getContext(fqcn, false);
 <a class="jxr_linenumber" name="104" href="#104">104</a>         }
 <a class="jxr_linenumber" name="105" href="#105">105</a> 
-<a class="jxr_linenumber" name="106" href="#106">106</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> org.apache.logging.log4j.Logger getLogger(String name) {
+<a class="jxr_linenumber" name="106" href="#106">106</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> org.apache.logging.log4j.Logger getLogger(<strong class="jxr_keyword">final</strong> String name) {
 <a class="jxr_linenumber" name="107" href="#107">107</a>             <strong class="jxr_keyword">return</strong> getLogger(FQCN, name);
 <a class="jxr_linenumber" name="108" href="#108">108</a>         }
 <a class="jxr_linenumber" name="109" href="#109">109</a>     }

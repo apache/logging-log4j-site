@@ -26,24 +26,24 @@
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.core.pattern;
 <a class="jxr_linenumber" name="18" href="#18">18</a>  
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.text.DateFormat;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> java.text.FieldPosition;
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.text.NumberFormat;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.text.ParsePosition;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> java.util.TimeZone;
-<a class="jxr_linenumber" name="25" href="#25">25</a>  
-<a class="jxr_linenumber" name="26" href="#26">26</a>  
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment"> * CachedDateFormat optimizes the performance of a wrapped</em>
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment"> * DateFormat.  The implementation is not thread-safe.</em>
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment"> * If the millisecond pattern is not recognized,</em>
-<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment"> * the class will only use the cache if the</em>
-<a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment"> * same value is requested.</em>
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/CachedDateFormat.html">CachedDateFormat</a> <strong class="jxr_keyword">extends</strong> DateFormat {
-<a class="jxr_linenumber" name="35" href="#35">35</a>  
-<a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = -1253877934598423628L;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.helpers.Constants;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.text.DateFormat;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.text.FieldPosition;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.text.NumberFormat;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> java.text.ParsePosition;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> java.util.TimeZone;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  
+<a class="jxr_linenumber" name="28" href="#28">28</a>  
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment"> * CachedDateFormat optimizes the performance of a wrapped</em>
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment"> * DateFormat.  The implementation is not thread-safe.</em>
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment"> * If the millisecond pattern is not recognized,</em>
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment"> * the class will only use the cache if the</em>
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment"> * same value is requested.</em>
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/CachedDateFormat.html">CachedDateFormat</a> <strong class="jxr_keyword">extends</strong> DateFormat {
 <a class="jxr_linenumber" name="37" href="#37">37</a>  
 <a class="jxr_linenumber" name="38" href="#38">38</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     * Constant used to represent that there was no change</em>
@@ -57,42 +57,42 @@
 <a class="jxr_linenumber" name="47" href="#47">47</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="48" href="#48">48</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> UNRECOGNIZED_MILLISECONDS = -1;
 <a class="jxr_linenumber" name="49" href="#49">49</a>  
-<a class="jxr_linenumber" name="50" href="#50">50</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="51" href="#51">51</a>  <em class="jxr_javadoccomment">     * Supported digit set.  If the wrapped DateFormat uses</em>
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment">     * a different unit set, the millisecond pattern</em>
-<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">     * will not be recognized and duplicate requests</em>
-<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment">     * will use the cache.</em>
-<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DIGITS = <span class="jxr_string">"0123456789"</span>;
-<a class="jxr_linenumber" name="57" href="#57">57</a>  
-<a class="jxr_linenumber" name="58" href="#58">58</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="59" href="#59">59</a>  <em class="jxr_javadoccomment">     * First magic number used to detect the millisecond position.</em>
-<a class="jxr_linenumber" name="60" href="#60">60</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="61" href="#61">61</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> MAGIC1 = 654;
-<a class="jxr_linenumber" name="62" href="#62">62</a>  
-<a class="jxr_linenumber" name="63" href="#63">63</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="64" href="#64">64</a>  <em class="jxr_javadoccomment">     * Expected representation of first magic number.</em>
-<a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="66" href="#66">66</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MAGICSTRING1 = <span class="jxr_string">"654"</span>;
-<a class="jxr_linenumber" name="67" href="#67">67</a>  
-<a class="jxr_linenumber" name="68" href="#68">68</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="69" href="#69">69</a>  <em class="jxr_javadoccomment">     * Second magic number used to detect the millisecond position.</em>
-<a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="71" href="#71">71</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> MAGIC2 = 987;
-<a class="jxr_linenumber" name="72" href="#72">72</a>  
-<a class="jxr_linenumber" name="73" href="#73">73</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="74" href="#74">74</a>  <em class="jxr_javadoccomment">     * Expected representation of second magic number.</em>
-<a class="jxr_linenumber" name="75" href="#75">75</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="76" href="#76">76</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MAGICSTRING2 = <span class="jxr_string">"987"</span>;
-<a class="jxr_linenumber" name="77" href="#77">77</a>  
-<a class="jxr_linenumber" name="78" href="#78">78</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="79" href="#79">79</a>  <em class="jxr_javadoccomment">     * Expected representation of 0 milliseconds.</em>
-<a class="jxr_linenumber" name="80" href="#80">80</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="81" href="#81">81</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String ZERO_STRING = <span class="jxr_string">"000"</span>;
-<a class="jxr_linenumber" name="82" href="#82">82</a>  
-<a class="jxr_linenumber" name="83" href="#83">83</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> BUF_SIZE = 50;
+<a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = -1253877934598423628L;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  
+<a class="jxr_linenumber" name="52" href="#52">52</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">     * Supported digit set.  If the wrapped DateFormat uses</em>
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment">     * a different unit set, the millisecond pattern</em>
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment">     * will not be recognized and duplicate requests</em>
+<a class="jxr_linenumber" name="56" href="#56">56</a>  <em class="jxr_javadoccomment">     * will use the cache.</em>
+<a class="jxr_linenumber" name="57" href="#57">57</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="58" href="#58">58</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DIGITS = <span class="jxr_string">"0123456789"</span>;
+<a class="jxr_linenumber" name="59" href="#59">59</a>  
+<a class="jxr_linenumber" name="60" href="#60">60</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="61" href="#61">61</a>  <em class="jxr_javadoccomment">     * First magic number used to detect the millisecond position.</em>
+<a class="jxr_linenumber" name="62" href="#62">62</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="63" href="#63">63</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> MAGIC1 = 654;
+<a class="jxr_linenumber" name="64" href="#64">64</a>  
+<a class="jxr_linenumber" name="65" href="#65">65</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     * Expected representation of first magic number.</em>
+<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="68" href="#68">68</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MAGICSTRING1 = <span class="jxr_string">"654"</span>;
+<a class="jxr_linenumber" name="69" href="#69">69</a>  
+<a class="jxr_linenumber" name="70" href="#70">70</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="71" href="#71">71</a>  <em class="jxr_javadoccomment">     * Second magic number used to detect the millisecond position.</em>
+<a class="jxr_linenumber" name="72" href="#72">72</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> MAGIC2 = 987;
+<a class="jxr_linenumber" name="74" href="#74">74</a>  
+<a class="jxr_linenumber" name="75" href="#75">75</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="76" href="#76">76</a>  <em class="jxr_javadoccomment">     * Expected representation of second magic number.</em>
+<a class="jxr_linenumber" name="77" href="#77">77</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="78" href="#78">78</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MAGICSTRING2 = <span class="jxr_string">"987"</span>;
+<a class="jxr_linenumber" name="79" href="#79">79</a>  
+<a class="jxr_linenumber" name="80" href="#80">80</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="81" href="#81">81</a>  <em class="jxr_javadoccomment">     * Expected representation of 0 milliseconds.</em>
+<a class="jxr_linenumber" name="82" href="#82">82</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="83" href="#83">83</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String ZERO_STRING = <span class="jxr_string">"000"</span>;
 <a class="jxr_linenumber" name="84" href="#84">84</a>  
-<a class="jxr_linenumber" name="85" href="#85">85</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> MILLIS_IN_SECONDS = 1000;
+<a class="jxr_linenumber" name="85" href="#85">85</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> BUF_SIZE = 50;
 <a class="jxr_linenumber" name="86" href="#86">86</a>  
 <a class="jxr_linenumber" name="87" href="#87">87</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> DEFAULT_VALIDITY = 1000;
 <a class="jxr_linenumber" name="88" href="#88">88</a>  
@@ -121,7 +121,7 @@
 <a class="jxr_linenumber" name="111" href="#111">111</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="112" href="#112">112</a> <em class="jxr_javadoccomment">     * Cache of previous conversion.</em>
 <a class="jxr_linenumber" name="113" href="#113">113</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="114" href="#114">114</a>     <strong class="jxr_keyword">private</strong> StringBuffer cache = <strong class="jxr_keyword">new</strong> StringBuffer(BUF_SIZE);
+<a class="jxr_linenumber" name="114" href="#114">114</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> StringBuffer cache = <strong class="jxr_keyword">new</strong> StringBuffer(BUF_SIZE);
 <a class="jxr_linenumber" name="115" href="#115">115</a> 
 <a class="jxr_linenumber" name="116" href="#116">116</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="117" href="#117">117</a> <em class="jxr_javadoccomment">     * Maximum validity period for the cache.</em>
@@ -180,13 +180,13 @@
 <a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     *         field (likely RelativeTimeDateFormat)</em>
 <a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="172" href="#172">172</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> findMillisecondStart(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time, <strong class="jxr_keyword">final</strong> String formatted, <strong class="jxr_keyword">final</strong> DateFormat formatter) {
-<a class="jxr_linenumber" name="173" href="#173">173</a>         <strong class="jxr_keyword">long</strong> slotBegin = (time / MILLIS_IN_SECONDS) * MILLIS_IN_SECONDS;
+<a class="jxr_linenumber" name="173" href="#173">173</a>         <strong class="jxr_keyword">long</strong> slotBegin = (time / Constants.MILLIS_IN_SECONDS) * Constants.MILLIS_IN_SECONDS;
 <a class="jxr_linenumber" name="174" href="#174">174</a> 
 <a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">if</strong> (slotBegin &gt; time) {
-<a class="jxr_linenumber" name="176" href="#176">176</a>             slotBegin -= MILLIS_IN_SECONDS;
+<a class="jxr_linenumber" name="176" href="#176">176</a>             slotBegin -= Constants.MILLIS_IN_SECONDS;
 <a class="jxr_linenumber" name="177" href="#177">177</a>         }
 <a class="jxr_linenumber" name="178" href="#178">178</a> 
-<a class="jxr_linenumber" name="179" href="#179">179</a>         <strong class="jxr_keyword">int</strong> millis = (<strong class="jxr_keyword">int</strong>) (time - slotBegin);
+<a class="jxr_linenumber" name="179" href="#179">179</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> millis = (<strong class="jxr_keyword">int</strong>) (time - slotBegin);
 <a class="jxr_linenumber" name="180" href="#180">180</a> 
 <a class="jxr_linenumber" name="181" href="#181">181</a>         <strong class="jxr_keyword">int</strong> magic = MAGIC1;
 <a class="jxr_linenumber" name="182" href="#182">182</a>         String magicString = MAGICSTRING1;
@@ -196,7 +196,7 @@
 <a class="jxr_linenumber" name="186" href="#186">186</a>             magicString = MAGICSTRING2;
 <a class="jxr_linenumber" name="187" href="#187">187</a>         }
 <a class="jxr_linenumber" name="188" href="#188">188</a> 
-<a class="jxr_linenumber" name="189" href="#189">189</a>         String plusMagic = formatter.format(<strong class="jxr_keyword">new</strong> Date(slotBegin + magic));
+<a class="jxr_linenumber" name="189" href="#189">189</a>         <strong class="jxr_keyword">final</strong> String plusMagic = formatter.format(<strong class="jxr_keyword">new</strong> Date(slotBegin + magic));
 <a class="jxr_linenumber" name="190" href="#190">190</a> 
 <a class="jxr_linenumber" name="191" href="#191">191</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="192" href="#192">192</a> <em class="jxr_javadoccomment">         *   If the string lengths differ then</em>
@@ -210,10 +210,10 @@
 <a class="jxr_linenumber" name="200" href="#200">200</a>                 <strong class="jxr_keyword">if</strong> (formatted.charAt(i) != plusMagic.charAt(i)) {
 <a class="jxr_linenumber" name="201" href="#201">201</a>                     <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="202" href="#202">202</a>                     <em class="jxr_comment">//   determine the expected digits for the base time</em>
-<a class="jxr_linenumber" name="203" href="#203">203</a>                     StringBuffer formattedMillis = <strong class="jxr_keyword">new</strong> StringBuffer(<span class="jxr_string">"ABC"</span>);
+<a class="jxr_linenumber" name="203" href="#203">203</a>                     <strong class="jxr_keyword">final</strong> StringBuffer formattedMillis = <strong class="jxr_keyword">new</strong> StringBuffer(<span class="jxr_string">"ABC"</span>);
 <a class="jxr_linenumber" name="204" href="#204">204</a>                     millisecondFormat(millis, formattedMillis, 0);
 <a class="jxr_linenumber" name="205" href="#205">205</a> 
-<a class="jxr_linenumber" name="206" href="#206">206</a>                     String plusZero = formatter.format(<strong class="jxr_keyword">new</strong> Date(slotBegin));
+<a class="jxr_linenumber" name="206" href="#206">206</a>                     <strong class="jxr_keyword">final</strong> String plusZero = formatter.format(<strong class="jxr_keyword">new</strong> Date(slotBegin));
 <a class="jxr_linenumber" name="207" href="#207">207</a> 
 <a class="jxr_linenumber" name="208" href="#208">208</a>                     <em class="jxr_comment">//   If the next 3 characters match the magic</em>
 <a class="jxr_linenumber" name="209" href="#209">209</a>                     <em class="jxr_comment">//      string and the expected string</em>
@@ -245,7 +245,7 @@
 <a class="jxr_linenumber" name="235" href="#235">235</a> <em class="jxr_javadoccomment">     * @return the formatted time string.</em>
 <a class="jxr_linenumber" name="236" href="#236">236</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="237" href="#237">237</a>     @Override
-<a class="jxr_linenumber" name="238" href="#238">238</a>     <strong class="jxr_keyword">public</strong> StringBuffer format(Date date, StringBuffer sbuf, FieldPosition fieldPosition) {
+<a class="jxr_linenumber" name="238" href="#238">238</a>     <strong class="jxr_keyword">public</strong> StringBuffer format(<strong class="jxr_keyword">final</strong> Date date, <strong class="jxr_keyword">final</strong> StringBuffer sbuf, <strong class="jxr_keyword">final</strong> FieldPosition fieldPosition) {
 <a class="jxr_linenumber" name="239" href="#239">239</a>         format(date.getTime(), sbuf);
 <a class="jxr_linenumber" name="240" href="#240">240</a> 
 <a class="jxr_linenumber" name="241" href="#241">241</a>         <strong class="jxr_keyword">return</strong> sbuf;
@@ -258,7 +258,7 @@
 <a class="jxr_linenumber" name="248" href="#248">248</a> <em class="jxr_javadoccomment">     * @param buf the string buffer to write to.</em>
 <a class="jxr_linenumber" name="249" href="#249">249</a> <em class="jxr_javadoccomment">     * @return the formatted time string.</em>
 <a class="jxr_linenumber" name="250" href="#250">250</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="251" href="#251">251</a>     <strong class="jxr_keyword">public</strong> StringBuffer format(<strong class="jxr_keyword">long</strong> now, StringBuffer buf) {
+<a class="jxr_linenumber" name="251" href="#251">251</a>     <strong class="jxr_keyword">public</strong> StringBuffer format(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> now, <strong class="jxr_keyword">final</strong> StringBuffer buf) {
 <a class="jxr_linenumber" name="252" href="#252">252</a>         <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="253" href="#253">253</a>         <em class="jxr_comment">// If the current requested time is identical to the previously</em>
 <a class="jxr_linenumber" name="254" href="#254">254</a>         <em class="jxr_comment">//     requested time, then append the cache contents.</em>
@@ -302,10 +302,10 @@
 <a class="jxr_linenumber" name="292" href="#292">292</a>         cache.append(formatter.format(tmpDate));
 <a class="jxr_linenumber" name="293" href="#293">293</a>         buf.append(cache);
 <a class="jxr_linenumber" name="294" href="#294">294</a>         previousTime = now;
-<a class="jxr_linenumber" name="295" href="#295">295</a>         slotBegin = (previousTime / MILLIS_IN_SECONDS) * MILLIS_IN_SECONDS;
+<a class="jxr_linenumber" name="295" href="#295">295</a>         slotBegin = (previousTime / Constants.MILLIS_IN_SECONDS) * Constants.MILLIS_IN_SECONDS;
 <a class="jxr_linenumber" name="296" href="#296">296</a> 
 <a class="jxr_linenumber" name="297" href="#297">297</a>         <strong class="jxr_keyword">if</strong> (slotBegin &gt; previousTime) {
-<a class="jxr_linenumber" name="298" href="#298">298</a>             slotBegin -= MILLIS_IN_SECONDS;
+<a class="jxr_linenumber" name="298" href="#298">298</a>             slotBegin -= Constants.MILLIS_IN_SECONDS;
 <a class="jxr_linenumber" name="299" href="#299">299</a>         }
 <a class="jxr_linenumber" name="300" href="#300">300</a> 
 <a class="jxr_linenumber" name="301" href="#301">301</a>         <em class="jxr_comment">//</em>
@@ -359,7 +359,7 @@
 <a class="jxr_linenumber" name="349" href="#349">349</a> <em class="jxr_javadoccomment">     * @return parsed date, likely null.</em>
 <a class="jxr_linenumber" name="350" href="#350">350</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="351" href="#351">351</a>     @Override
-<a class="jxr_linenumber" name="352" href="#352">352</a>     <strong class="jxr_keyword">public</strong> Date parse(String s, ParsePosition pos) {
+<a class="jxr_linenumber" name="352" href="#352">352</a>     <strong class="jxr_keyword">public</strong> Date parse(<strong class="jxr_keyword">final</strong> String s, <strong class="jxr_keyword">final</strong> ParsePosition pos) {
 <a class="jxr_linenumber" name="353" href="#353">353</a>         <strong class="jxr_keyword">return</strong> formatter.parse(s, pos);
 <a class="jxr_linenumber" name="354" href="#354">354</a>     }
 <a class="jxr_linenumber" name="355" href="#355">355</a> 
@@ -387,7 +387,7 @@
 <a class="jxr_linenumber" name="377" href="#377">377</a>         <em class="jxr_comment">//      (for example, "HH:mm:ss,SSS SSS"), then set the expiration to</em>
 <a class="jxr_linenumber" name="378" href="#378">378</a>         <em class="jxr_comment">//      one millisecond which should only perform duplicate request caching.</em>
 <a class="jxr_linenumber" name="379" href="#379">379</a>         <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="380" href="#380">380</a>         <strong class="jxr_keyword">int</strong> firstS = pattern.indexOf('S');
+<a class="jxr_linenumber" name="380" href="#380">380</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> firstS = pattern.indexOf('S');
 <a class="jxr_linenumber" name="381" href="#381">381</a> 
 <a class="jxr_linenumber" name="382" href="#382">382</a>         <strong class="jxr_keyword">if</strong> ((firstS &gt;= 0) &amp;&amp; (firstS != pattern.lastIndexOf(<span class="jxr_string">"SSS"</span>))) {
 <a class="jxr_linenumber" name="383" href="#383">383</a>             <strong class="jxr_keyword">return</strong> 1;

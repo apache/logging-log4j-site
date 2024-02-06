@@ -51,17 +51,17 @@
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * Listener that receives the event.</em>
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     * @param message The received message.</em>
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> onMessage(javax.jms.Message message) {
+<a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> onMessage(<strong class="jxr_keyword">final</strong> javax.jms.Message message) {
 <a class="jxr_linenumber" name="45" href="#45">45</a>  
 <a class="jxr_linenumber" name="46" href="#46">46</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="47" href="#47">47</a>              <strong class="jxr_keyword">if</strong> (message instanceof ObjectMessage) {
-<a class="jxr_linenumber" name="48" href="#48">48</a>                  ObjectMessage objectMessage = (ObjectMessage) message;
+<a class="jxr_linenumber" name="48" href="#48">48</a>                  <strong class="jxr_keyword">final</strong> ObjectMessage objectMessage = (ObjectMessage) message;
 <a class="jxr_linenumber" name="49" href="#49">49</a>                  log((LogEvent) objectMessage.getObject());
 <a class="jxr_linenumber" name="50" href="#50">50</a>              } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="51" href="#51">51</a>                  logger.warn(<span class="jxr_string">"Received message is of type "</span> + message.getJMSType()
 <a class="jxr_linenumber" name="52" href="#52">52</a>                      + <span class="jxr_string">", was expecting ObjectMessage."</span>);
 <a class="jxr_linenumber" name="53" href="#53">53</a>              }
-<a class="jxr_linenumber" name="54" href="#54">54</a>          } <strong class="jxr_keyword">catch</strong> (JMSException jmse) {
+<a class="jxr_linenumber" name="54" href="#54">54</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> JMSException jmse) {
 <a class="jxr_linenumber" name="55" href="#55">55</a>              logger.error(<span class="jxr_string">"Exception thrown while processing incoming message."</span>,
 <a class="jxr_linenumber" name="56" href="#56">56</a>                  jmse);
 <a class="jxr_linenumber" name="57" href="#57">57</a>          }
@@ -74,10 +74,10 @@
 <a class="jxr_linenumber" name="64" href="#64">64</a>  <em class="jxr_javadoccomment">     * @return The object.</em>
 <a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment">     * @throws NamingException if an error occurs.</em>
 <a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="67" href="#67">67</a>      <strong class="jxr_keyword">protected</strong> Object lookup(Context ctx, String name) <strong class="jxr_keyword">throws</strong> NamingException {
+<a class="jxr_linenumber" name="67" href="#67">67</a>      <strong class="jxr_keyword">protected</strong> Object lookup(<strong class="jxr_keyword">final</strong> Context ctx, <strong class="jxr_keyword">final</strong> String name) <strong class="jxr_keyword">throws</strong> NamingException {
 <a class="jxr_linenumber" name="68" href="#68">68</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="69" href="#69">69</a>              <strong class="jxr_keyword">return</strong> ctx.lookup(name);
-<a class="jxr_linenumber" name="70" href="#70">70</a>          } <strong class="jxr_keyword">catch</strong> (NameNotFoundException e) {
+<a class="jxr_linenumber" name="70" href="#70">70</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NameNotFoundException e) {
 <a class="jxr_linenumber" name="71" href="#71">71</a>              logger.error(<span class="jxr_string">"Could not find name ["</span> + name + <span class="jxr_string">"]."</span>);
 <a class="jxr_linenumber" name="72" href="#72">72</a>              <strong class="jxr_keyword">throw</strong> e;
 <a class="jxr_linenumber" name="73" href="#73">73</a>          }

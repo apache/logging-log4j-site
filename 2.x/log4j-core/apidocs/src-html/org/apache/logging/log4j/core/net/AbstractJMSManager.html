@@ -43,7 +43,7 @@
 <FONT color="green">040</FONT>         * The Constructor.<a name="line.40"></a>
 <FONT color="green">041</FONT>         * @param name The name of the Appender.<a name="line.41"></a>
 <FONT color="green">042</FONT>         */<a name="line.42"></a>
-<FONT color="green">043</FONT>        public AbstractJMSManager(String name) {<a name="line.43"></a>
+<FONT color="green">043</FONT>        public AbstractJMSManager(final String name) {<a name="line.43"></a>
 <FONT color="green">044</FONT>            super(name);<a name="line.44"></a>
 <FONT color="green">045</FONT>        }<a name="line.45"></a>
 <FONT color="green">046</FONT>    <a name="line.46"></a>
@@ -58,100 +58,103 @@
 <FONT color="green">055</FONT>         * @return the InitialContext.<a name="line.55"></a>
 <FONT color="green">056</FONT>         * @throws NamingException if a naming error occurs.<a name="line.56"></a>
 <FONT color="green">057</FONT>         */<a name="line.57"></a>
-<FONT color="green">058</FONT>        protected static Context createContext(String factoryName, String providerURL, String urlPkgPrefixes,<a name="line.58"></a>
-<FONT color="green">059</FONT>                                               String securityPrincipalName, String securityCredentials)<a name="line.59"></a>
-<FONT color="green">060</FONT>            throws NamingException {<a name="line.60"></a>
-<FONT color="green">061</FONT>    <a name="line.61"></a>
-<FONT color="green">062</FONT>            Properties props = getEnvironment(factoryName, providerURL, urlPkgPrefixes, securityPrincipalName,<a name="line.62"></a>
-<FONT color="green">063</FONT>                                              securityCredentials);<a name="line.63"></a>
-<FONT color="green">064</FONT>            return new InitialContext(props);<a name="line.64"></a>
-<FONT color="green">065</FONT>        }<a name="line.65"></a>
-<FONT color="green">066</FONT>    <a name="line.66"></a>
-<FONT color="green">067</FONT>        /**<a name="line.67"></a>
-<FONT color="green">068</FONT>         * Looks up the name in the context.<a name="line.68"></a>
-<FONT color="green">069</FONT>         * @param ctx The Context.<a name="line.69"></a>
-<FONT color="green">070</FONT>         * @param name The name to locate.<a name="line.70"></a>
-<FONT color="green">071</FONT>         * @return The object to be located.<a name="line.71"></a>
-<FONT color="green">072</FONT>         * @throws NamingException If an error occurs locating the name.<a name="line.72"></a>
-<FONT color="green">073</FONT>         */<a name="line.73"></a>
-<FONT color="green">074</FONT>        protected static Object lookup(Context ctx, String name) throws NamingException {<a name="line.74"></a>
-<FONT color="green">075</FONT>            try {<a name="line.75"></a>
-<FONT color="green">076</FONT>                return ctx.lookup(name);<a name="line.76"></a>
-<FONT color="green">077</FONT>            } catch (NameNotFoundException e) {<a name="line.77"></a>
-<FONT color="green">078</FONT>                LOGGER.error("Could not find name [" + name + "].");<a name="line.78"></a>
-<FONT color="green">079</FONT>                throw e;<a name="line.79"></a>
-<FONT color="green">080</FONT>            }<a name="line.80"></a>
-<FONT color="green">081</FONT>        }<a name="line.81"></a>
-<FONT color="green">082</FONT>    <a name="line.82"></a>
-<FONT color="green">083</FONT>        /**<a name="line.83"></a>
-<FONT color="green">084</FONT>         * Sets up the properties to pass to the InitialContext.<a name="line.84"></a>
-<FONT color="green">085</FONT>         * @param factoryName The fully qualified class name of the InitialContextFactory.<a name="line.85"></a>
-<FONT color="green">086</FONT>         * @param providerURL The URL of the provider to use.<a name="line.86"></a>
-<FONT color="green">087</FONT>         * @param urlPkgPrefixes A colon-separated list of package prefixes for the class name of the factory class that<a name="line.87"></a>
-<FONT color="green">088</FONT>         * will create a URL context factory<a name="line.88"></a>
-<FONT color="green">089</FONT>         * @param securityPrincipalName The name of the identity of the Principal.<a name="line.89"></a>
-<FONT color="green">090</FONT>         * @param securityCredentials The security credentials of the Principal.<a name="line.90"></a>
-<FONT color="green">091</FONT>         * @return The Properties.<a name="line.91"></a>
-<FONT color="green">092</FONT>         */<a name="line.92"></a>
-<FONT color="green">093</FONT>        protected static Properties getEnvironment(String factoryName, String providerURL, String urlPkgPrefixes,<a name="line.93"></a>
-<FONT color="green">094</FONT>                                                   String securityPrincipalName, String securityCredentials) {<a name="line.94"></a>
-<FONT color="green">095</FONT>            Properties props = new Properties();<a name="line.95"></a>
-<FONT color="green">096</FONT>            if (factoryName != null) {<a name="line.96"></a>
-<FONT color="green">097</FONT>                props.put(Context.INITIAL_CONTEXT_FACTORY, factoryName);<a name="line.97"></a>
-<FONT color="green">098</FONT>                if (providerURL != null) {<a name="line.98"></a>
-<FONT color="green">099</FONT>                    props.put(Context.PROVIDER_URL, providerURL);<a name="line.99"></a>
-<FONT color="green">100</FONT>                } else {<a name="line.100"></a>
-<FONT color="green">101</FONT>                    LOGGER.warn("The InitalContext factory name has been provided without a ProviderURL. " +<a name="line.101"></a>
-<FONT color="green">102</FONT>                        "This is likely to cause problems");<a name="line.102"></a>
-<FONT color="green">103</FONT>                }<a name="line.103"></a>
-<FONT color="green">104</FONT>                if (urlPkgPrefixes != null) {<a name="line.104"></a>
-<FONT color="green">105</FONT>                    props.put(Context.URL_PKG_PREFIXES, urlPkgPrefixes);<a name="line.105"></a>
-<FONT color="green">106</FONT>                }<a name="line.106"></a>
-<FONT color="green">107</FONT>                if (securityPrincipalName != null) {<a name="line.107"></a>
-<FONT color="green">108</FONT>                    props.put(Context.SECURITY_PRINCIPAL, securityPrincipalName);<a name="line.108"></a>
-<FONT color="green">109</FONT>                    if (securityCredentials != null) {<a name="line.109"></a>
-<FONT color="green">110</FONT>                        props.put(Context.SECURITY_CREDENTIALS, securityCredentials);<a name="line.110"></a>
-<FONT color="green">111</FONT>                    } else {<a name="line.111"></a>
-<FONT color="green">112</FONT>                        LOGGER.warn("SecurityPrincipalName has been set without SecurityCredentials. " +<a name="line.112"></a>
-<FONT color="green">113</FONT>                            "This is likely to cause problems.");<a name="line.113"></a>
-<FONT color="green">114</FONT>                    }<a name="line.114"></a>
-<FONT color="green">115</FONT>                }<a name="line.115"></a>
-<FONT color="green">116</FONT>                return props;<a name="line.116"></a>
-<FONT color="green">117</FONT>            }<a name="line.117"></a>
-<FONT color="green">118</FONT>            return null;<a name="line.118"></a>
-<FONT color="green">119</FONT>        }<a name="line.119"></a>
-<FONT color="green">120</FONT>    <a name="line.120"></a>
-<FONT color="green">121</FONT>        /**<a name="line.121"></a>
-<FONT color="green">122</FONT>         * Send the message.<a name="line.122"></a>
-<FONT color="green">123</FONT>         * @param object The Object to sent.<a name="line.123"></a>
-<FONT color="green">124</FONT>         * @throws Exception if an error occurs.<a name="line.124"></a>
-<FONT color="green">125</FONT>         */<a name="line.125"></a>
-<FONT color="green">126</FONT>        public abstract void send(Serializable object) throws Exception;<a name="line.126"></a>
-<FONT color="green">127</FONT>    <a name="line.127"></a>
-<FONT color="green">128</FONT>        /**<a name="line.128"></a>
-<FONT color="green">129</FONT>         * Send the Object.<a name="line.129"></a>
-<FONT color="green">130</FONT>         * @param object The Object to send.<a name="line.130"></a>
-<FONT color="green">131</FONT>         * @param session The Session.<a name="line.131"></a>
-<FONT color="green">132</FONT>         * @param producer The MessageProducer.<a name="line.132"></a>
-<FONT color="green">133</FONT>         * @throws Exception if an error occurs.<a name="line.133"></a>
-<FONT color="green">134</FONT>         */<a name="line.134"></a>
-<FONT color="green">135</FONT>        public synchronized void send(Serializable object, Session session, MessageProducer producer) throws Exception {<a name="line.135"></a>
-<FONT color="green">136</FONT>            try {<a name="line.136"></a>
-<FONT color="green">137</FONT>                Message msg;<a name="line.137"></a>
-<FONT color="green">138</FONT>                if (object instanceof String) {<a name="line.138"></a>
-<FONT color="green">139</FONT>                    msg = session.createTextMessage();<a name="line.139"></a>
-<FONT color="green">140</FONT>                    ((TextMessage) msg).setText((String) object);<a name="line.140"></a>
-<FONT color="green">141</FONT>                } else {<a name="line.141"></a>
-<FONT color="green">142</FONT>                    msg = session.createObjectMessage();<a name="line.142"></a>
-<FONT color="green">143</FONT>                    ((ObjectMessage) msg).setObject(object);<a name="line.143"></a>
-<FONT color="green">144</FONT>                }<a name="line.144"></a>
-<FONT color="green">145</FONT>                producer.send(msg);<a name="line.145"></a>
-<FONT color="green">146</FONT>            } catch (JMSException ex) {<a name="line.146"></a>
-<FONT color="green">147</FONT>                LOGGER.error("Could not publish message via JMS " + getName());<a name="line.147"></a>
-<FONT color="green">148</FONT>                throw ex;<a name="line.148"></a>
-<FONT color="green">149</FONT>            }<a name="line.149"></a>
-<FONT color="green">150</FONT>        }<a name="line.150"></a>
-<FONT color="green">151</FONT>    }<a name="line.151"></a>
+<FONT color="green">058</FONT>        protected static Context createContext(final String factoryName, final String providerURL,<a name="line.58"></a>
+<FONT color="green">059</FONT>                                               final String urlPkgPrefixes, final String securityPrincipalName,<a name="line.59"></a>
+<FONT color="green">060</FONT>                                               final String securityCredentials)<a name="line.60"></a>
+<FONT color="green">061</FONT>            throws NamingException {<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>            final Properties props = getEnvironment(factoryName, providerURL, urlPkgPrefixes, securityPrincipalName,<a name="line.63"></a>
+<FONT color="green">064</FONT>                                              securityCredentials);<a name="line.64"></a>
+<FONT color="green">065</FONT>            return new InitialContext(props);<a name="line.65"></a>
+<FONT color="green">066</FONT>        }<a name="line.66"></a>
+<FONT color="green">067</FONT>    <a name="line.67"></a>
+<FONT color="green">068</FONT>        /**<a name="line.68"></a>
+<FONT color="green">069</FONT>         * Looks up the name in the context.<a name="line.69"></a>
+<FONT color="green">070</FONT>         * @param ctx The Context.<a name="line.70"></a>
+<FONT color="green">071</FONT>         * @param name The name to locate.<a name="line.71"></a>
+<FONT color="green">072</FONT>         * @return The object to be located.<a name="line.72"></a>
+<FONT color="green">073</FONT>         * @throws NamingException If an error occurs locating the name.<a name="line.73"></a>
+<FONT color="green">074</FONT>         */<a name="line.74"></a>
+<FONT color="green">075</FONT>        protected static Object lookup(final Context ctx, final String name) throws NamingException {<a name="line.75"></a>
+<FONT color="green">076</FONT>            try {<a name="line.76"></a>
+<FONT color="green">077</FONT>                return ctx.lookup(name);<a name="line.77"></a>
+<FONT color="green">078</FONT>            } catch (final NameNotFoundException e) {<a name="line.78"></a>
+<FONT color="green">079</FONT>                LOGGER.warn("Could not find name [" + name + "].");<a name="line.79"></a>
+<FONT color="green">080</FONT>                throw e;<a name="line.80"></a>
+<FONT color="green">081</FONT>            }<a name="line.81"></a>
+<FONT color="green">082</FONT>        }<a name="line.82"></a>
+<FONT color="green">083</FONT>    <a name="line.83"></a>
+<FONT color="green">084</FONT>        /**<a name="line.84"></a>
+<FONT color="green">085</FONT>         * Sets up the properties to pass to the InitialContext.<a name="line.85"></a>
+<FONT color="green">086</FONT>         * @param factoryName The fully qualified class name of the InitialContextFactory.<a name="line.86"></a>
+<FONT color="green">087</FONT>         * @param providerURL The URL of the provider to use.<a name="line.87"></a>
+<FONT color="green">088</FONT>         * @param urlPkgPrefixes A colon-separated list of package prefixes for the class name of the factory class that<a name="line.88"></a>
+<FONT color="green">089</FONT>         * will create a URL context factory<a name="line.89"></a>
+<FONT color="green">090</FONT>         * @param securityPrincipalName The name of the identity of the Principal.<a name="line.90"></a>
+<FONT color="green">091</FONT>         * @param securityCredentials The security credentials of the Principal.<a name="line.91"></a>
+<FONT color="green">092</FONT>         * @return The Properties.<a name="line.92"></a>
+<FONT color="green">093</FONT>         */<a name="line.93"></a>
+<FONT color="green">094</FONT>        protected static Properties getEnvironment(final String factoryName, final String providerURL,<a name="line.94"></a>
+<FONT color="green">095</FONT>                                                   final String urlPkgPrefixes, final String securityPrincipalName,<a name="line.95"></a>
+<FONT color="green">096</FONT>                                                   final String securityCredentials) {<a name="line.96"></a>
+<FONT color="green">097</FONT>            final Properties props = new Properties();<a name="line.97"></a>
+<FONT color="green">098</FONT>            if (factoryName != null) {<a name="line.98"></a>
+<FONT color="green">099</FONT>                props.put(Context.INITIAL_CONTEXT_FACTORY, factoryName);<a name="line.99"></a>
+<FONT color="green">100</FONT>                if (providerURL != null) {<a name="line.100"></a>
+<FONT color="green">101</FONT>                    props.put(Context.PROVIDER_URL, providerURL);<a name="line.101"></a>
+<FONT color="green">102</FONT>                } else {<a name="line.102"></a>
+<FONT color="green">103</FONT>                    LOGGER.warn("The InitalContext factory name has been provided without a ProviderURL. " +<a name="line.103"></a>
+<FONT color="green">104</FONT>                        "This is likely to cause problems");<a name="line.104"></a>
+<FONT color="green">105</FONT>                }<a name="line.105"></a>
+<FONT color="green">106</FONT>                if (urlPkgPrefixes != null) {<a name="line.106"></a>
+<FONT color="green">107</FONT>                    props.put(Context.URL_PKG_PREFIXES, urlPkgPrefixes);<a name="line.107"></a>
+<FONT color="green">108</FONT>                }<a name="line.108"></a>
+<FONT color="green">109</FONT>                if (securityPrincipalName != null) {<a name="line.109"></a>
+<FONT color="green">110</FONT>                    props.put(Context.SECURITY_PRINCIPAL, securityPrincipalName);<a name="line.110"></a>
+<FONT color="green">111</FONT>                    if (securityCredentials != null) {<a name="line.111"></a>
+<FONT color="green">112</FONT>                        props.put(Context.SECURITY_CREDENTIALS, securityCredentials);<a name="line.112"></a>
+<FONT color="green">113</FONT>                    } else {<a name="line.113"></a>
+<FONT color="green">114</FONT>                        LOGGER.warn("SecurityPrincipalName has been set without SecurityCredentials. " +<a name="line.114"></a>
+<FONT color="green">115</FONT>                            "This is likely to cause problems.");<a name="line.115"></a>
+<FONT color="green">116</FONT>                    }<a name="line.116"></a>
+<FONT color="green">117</FONT>                }<a name="line.117"></a>
+<FONT color="green">118</FONT>                return props;<a name="line.118"></a>
+<FONT color="green">119</FONT>            }<a name="line.119"></a>
+<FONT color="green">120</FONT>            return null;<a name="line.120"></a>
+<FONT color="green">121</FONT>        }<a name="line.121"></a>
+<FONT color="green">122</FONT>    <a name="line.122"></a>
+<FONT color="green">123</FONT>        /**<a name="line.123"></a>
+<FONT color="green">124</FONT>         * Send the message.<a name="line.124"></a>
+<FONT color="green">125</FONT>         * @param object The Object to sent.<a name="line.125"></a>
+<FONT color="green">126</FONT>         * @throws Exception if an error occurs.<a name="line.126"></a>
+<FONT color="green">127</FONT>         */<a name="line.127"></a>
+<FONT color="green">128</FONT>        public abstract void send(Serializable object) throws Exception;<a name="line.128"></a>
+<FONT color="green">129</FONT>    <a name="line.129"></a>
+<FONT color="green">130</FONT>        /**<a name="line.130"></a>
+<FONT color="green">131</FONT>         * Send the Object.<a name="line.131"></a>
+<FONT color="green">132</FONT>         * @param object The Object to send.<a name="line.132"></a>
+<FONT color="green">133</FONT>         * @param session The Session.<a name="line.133"></a>
+<FONT color="green">134</FONT>         * @param producer The MessageProducer.<a name="line.134"></a>
+<FONT color="green">135</FONT>         * @throws Exception if an error occurs.<a name="line.135"></a>
+<FONT color="green">136</FONT>         */<a name="line.136"></a>
+<FONT color="green">137</FONT>        public synchronized void send(final Serializable object, final Session session, final MessageProducer producer)<a name="line.137"></a>
+<FONT color="green">138</FONT>            throws Exception {<a name="line.138"></a>
+<FONT color="green">139</FONT>            try {<a name="line.139"></a>
+<FONT color="green">140</FONT>                Message msg;<a name="line.140"></a>
+<FONT color="green">141</FONT>                if (object instanceof String) {<a name="line.141"></a>
+<FONT color="green">142</FONT>                    msg = session.createTextMessage();<a name="line.142"></a>
+<FONT color="green">143</FONT>                    ((TextMessage) msg).setText((String) object);<a name="line.143"></a>
+<FONT color="green">144</FONT>                } else {<a name="line.144"></a>
+<FONT color="green">145</FONT>                    msg = session.createObjectMessage();<a name="line.145"></a>
+<FONT color="green">146</FONT>                    ((ObjectMessage) msg).setObject(object);<a name="line.146"></a>
+<FONT color="green">147</FONT>                }<a name="line.147"></a>
+<FONT color="green">148</FONT>                producer.send(msg);<a name="line.148"></a>
+<FONT color="green">149</FONT>            } catch (final JMSException ex) {<a name="line.149"></a>
+<FONT color="green">150</FONT>                LOGGER.error("Could not publish message via JMS " + getName());<a name="line.150"></a>
+<FONT color="green">151</FONT>                throw ex;<a name="line.151"></a>
+<FONT color="green">152</FONT>            }<a name="line.152"></a>
+<FONT color="green">153</FONT>        }<a name="line.153"></a>
+<FONT color="green">154</FONT>    }<a name="line.154"></a>
 
 
 

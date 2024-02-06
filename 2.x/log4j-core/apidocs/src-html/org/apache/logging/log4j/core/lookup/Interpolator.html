@@ -42,17 +42,17 @@
 <FONT color="green">039</FONT>    <a name="line.39"></a>
 <FONT color="green">040</FONT>        private final StrLookup defaultLookup;<a name="line.40"></a>
 <FONT color="green">041</FONT>    <a name="line.41"></a>
-<FONT color="green">042</FONT>        public Interpolator(StrLookup defaultLookup) {<a name="line.42"></a>
+<FONT color="green">042</FONT>        public Interpolator(final StrLookup defaultLookup) {<a name="line.42"></a>
 <FONT color="green">043</FONT>            this.defaultLookup = defaultLookup == null ? new MapLookup(new HashMap&lt;String, String&gt;()) : defaultLookup;<a name="line.43"></a>
-<FONT color="green">044</FONT>            PluginManager manager = new PluginManager("Lookup");<a name="line.44"></a>
+<FONT color="green">044</FONT>            final PluginManager manager = new PluginManager("Lookup");<a name="line.44"></a>
 <FONT color="green">045</FONT>            manager.collectPlugins();<a name="line.45"></a>
-<FONT color="green">046</FONT>            Map&lt;String, PluginType&gt; plugins = manager.getPlugins();<a name="line.46"></a>
+<FONT color="green">046</FONT>            final Map&lt;String, PluginType&gt; plugins = manager.getPlugins();<a name="line.46"></a>
 <FONT color="green">047</FONT>    <a name="line.47"></a>
-<FONT color="green">048</FONT>            for (Map.Entry&lt;String, PluginType&gt; entry : plugins.entrySet()) {<a name="line.48"></a>
-<FONT color="green">049</FONT>                Class&lt;StrLookup&gt; clazz = entry.getValue().getPluginClass();<a name="line.49"></a>
+<FONT color="green">048</FONT>            for (final Map.Entry&lt;String, PluginType&gt; entry : plugins.entrySet()) {<a name="line.48"></a>
+<FONT color="green">049</FONT>                final Class&lt;StrLookup&gt; clazz = entry.getValue().getPluginClass();<a name="line.49"></a>
 <FONT color="green">050</FONT>                try {<a name="line.50"></a>
 <FONT color="green">051</FONT>                    lookups.put(entry.getKey(), clazz.newInstance());<a name="line.51"></a>
-<FONT color="green">052</FONT>                } catch (Exception ex) {<a name="line.52"></a>
+<FONT color="green">052</FONT>                } catch (final Exception ex) {<a name="line.52"></a>
 <FONT color="green">053</FONT>                    LOGGER.error("Unable to create Lookup for " + entry.getKey(), ex);<a name="line.53"></a>
 <FONT color="green">054</FONT>                }<a name="line.54"></a>
 <FONT color="green">055</FONT>            }<a name="line.55"></a>
@@ -75,7 +75,7 @@
 <FONT color="green">072</FONT>         * @return the value of this variable or &lt;b&gt;null&lt;/b&gt; if it cannot be<a name="line.72"></a>
 <FONT color="green">073</FONT>         * resolved<a name="line.73"></a>
 <FONT color="green">074</FONT>         */<a name="line.74"></a>
-<FONT color="green">075</FONT>        public String lookup(String var) {<a name="line.75"></a>
+<FONT color="green">075</FONT>        public String lookup(final String var) {<a name="line.75"></a>
 <FONT color="green">076</FONT>            return lookup(null, var);<a name="line.76"></a>
 <FONT color="green">077</FONT>        }<a name="line.77"></a>
 <FONT color="green">078</FONT>    <a name="line.78"></a>
@@ -92,16 +92,16 @@
 <FONT color="green">089</FONT>         * @return the value of this variable or &lt;b&gt;null&lt;/b&gt; if it cannot be<a name="line.89"></a>
 <FONT color="green">090</FONT>         * resolved<a name="line.90"></a>
 <FONT color="green">091</FONT>         */<a name="line.91"></a>
-<FONT color="green">092</FONT>        public String lookup(LogEvent event, String var) {<a name="line.92"></a>
+<FONT color="green">092</FONT>        public String lookup(final LogEvent event, String var) {<a name="line.92"></a>
 <FONT color="green">093</FONT>            if (var == null) {<a name="line.93"></a>
 <FONT color="green">094</FONT>                return null;<a name="line.94"></a>
 <FONT color="green">095</FONT>            }<a name="line.95"></a>
 <FONT color="green">096</FONT>    <a name="line.96"></a>
-<FONT color="green">097</FONT>            int prefixPos = var.indexOf(PREFIX_SEPARATOR);<a name="line.97"></a>
+<FONT color="green">097</FONT>            final int prefixPos = var.indexOf(PREFIX_SEPARATOR);<a name="line.97"></a>
 <FONT color="green">098</FONT>            if (prefixPos &gt;= 0) {<a name="line.98"></a>
-<FONT color="green">099</FONT>                String prefix = var.substring(0, prefixPos);<a name="line.99"></a>
-<FONT color="green">100</FONT>                String name = var.substring(prefixPos + 1);<a name="line.100"></a>
-<FONT color="green">101</FONT>                StrLookup lookup = lookups.get(prefix);<a name="line.101"></a>
+<FONT color="green">099</FONT>                final String prefix = var.substring(0, prefixPos);<a name="line.99"></a>
+<FONT color="green">100</FONT>                final String name = var.substring(prefixPos + 1);<a name="line.100"></a>
+<FONT color="green">101</FONT>                final StrLookup lookup = lookups.get(prefix);<a name="line.101"></a>
 <FONT color="green">102</FONT>                String value = null;<a name="line.102"></a>
 <FONT color="green">103</FONT>                if (lookup != null) {<a name="line.103"></a>
 <FONT color="green">104</FONT>                    value = event == null ? lookup.lookup(name) : lookup.lookup(event, name);<a name="line.104"></a>
@@ -120,8 +120,8 @@
 <FONT color="green">117</FONT>    <a name="line.117"></a>
 <FONT color="green">118</FONT>        @Override<a name="line.118"></a>
 <FONT color="green">119</FONT>        public String toString() {<a name="line.119"></a>
-<FONT color="green">120</FONT>            StringBuilder sb = new StringBuilder();<a name="line.120"></a>
-<FONT color="green">121</FONT>            for (String name : lookups.keySet()) {<a name="line.121"></a>
+<FONT color="green">120</FONT>            final StringBuilder sb = new StringBuilder();<a name="line.120"></a>
+<FONT color="green">121</FONT>            for (final String name : lookups.keySet()) {<a name="line.121"></a>
 <FONT color="green">122</FONT>                if (sb.length() == 0) {<a name="line.122"></a>
 <FONT color="green">123</FONT>                    sb.append("{");<a name="line.123"></a>
 <FONT color="green">124</FONT>                } else {<a name="line.124"></a>

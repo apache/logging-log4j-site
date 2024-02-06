@@ -65,88 +65,88 @@
 <FONT color="green">062</FONT>         * @param port to listen on.<a name="line.62"></a>
 <FONT color="green">063</FONT>         * @throws IOException If an error occurs.<a name="line.63"></a>
 <FONT color="green">064</FONT>         */<a name="line.64"></a>
-<FONT color="green">065</FONT>        public SocketServer(int port) throws IOException {<a name="line.65"></a>
+<FONT color="green">065</FONT>        public SocketServer(final int port) throws IOException {<a name="line.65"></a>
 <FONT color="green">066</FONT>            server = new ServerSocket(port);<a name="line.66"></a>
 <FONT color="green">067</FONT>            if (logger == null) {<a name="line.67"></a>
 <FONT color="green">068</FONT>                logger = LogManager.getLogger(this);<a name="line.68"></a>
-<FONT color="green">069</FONT>                // TODO: Consider<a name="line.69"></a>
-<FONT color="green">070</FONT>                // logger = LogManager.getLogger(getClass().getName() + '.' + port);<a name="line.70"></a>
-<FONT color="green">071</FONT>            }<a name="line.71"></a>
-<FONT color="green">072</FONT>        }<a name="line.72"></a>
-<FONT color="green">073</FONT>         /**<a name="line.73"></a>
-<FONT color="green">074</FONT>         * Main startup for the server.<a name="line.74"></a>
-<FONT color="green">075</FONT>         * @param args The command line arguments.<a name="line.75"></a>
-<FONT color="green">076</FONT>         * @throws Exception if an error occurs.<a name="line.76"></a>
-<FONT color="green">077</FONT>         */<a name="line.77"></a>
-<FONT color="green">078</FONT>        public static void main(String[] args) throws Exception {<a name="line.78"></a>
-<FONT color="green">079</FONT>            if (args.length &lt; 1 || args.length &gt; 2) {<a name="line.79"></a>
-<FONT color="green">080</FONT>                System.err.println("Incorrect number of arguments");<a name="line.80"></a>
-<FONT color="green">081</FONT>                printUsage();<a name="line.81"></a>
-<FONT color="green">082</FONT>                return;<a name="line.82"></a>
-<FONT color="green">083</FONT>            }<a name="line.83"></a>
-<FONT color="green">084</FONT>            int port = Integer.parseInt(args[0]);<a name="line.84"></a>
-<FONT color="green">085</FONT>            if (port &lt;= 0 || port &gt;= MAX_PORT) {<a name="line.85"></a>
-<FONT color="green">086</FONT>                System.err.println("Invalid port number");<a name="line.86"></a>
-<FONT color="green">087</FONT>                printUsage();<a name="line.87"></a>
-<FONT color="green">088</FONT>                return;<a name="line.88"></a>
-<FONT color="green">089</FONT>            }<a name="line.89"></a>
-<FONT color="green">090</FONT>            if (args.length == 2 &amp;&amp; args[1].length() &gt; 0) {<a name="line.90"></a>
-<FONT color="green">091</FONT>                ConfigurationFactory.setConfigurationFactory(new ServerConfigurationFactory(args[1]));<a name="line.91"></a>
-<FONT color="green">092</FONT>            }<a name="line.92"></a>
-<FONT color="green">093</FONT>            logger = LogManager.getLogger(SocketServer.class.getName());<a name="line.93"></a>
-<FONT color="green">094</FONT>            SocketServer sserver = new SocketServer(port);<a name="line.94"></a>
-<FONT color="green">095</FONT>            Thread server = new Thread(sserver);<a name="line.95"></a>
-<FONT color="green">096</FONT>            server.start();<a name="line.96"></a>
-<FONT color="green">097</FONT>            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));<a name="line.97"></a>
-<FONT color="green">098</FONT>            while (true) {<a name="line.98"></a>
-<FONT color="green">099</FONT>                String line = reader.readLine();<a name="line.99"></a>
-<FONT color="green">100</FONT>                if (line.equalsIgnoreCase("Quit") || line.equalsIgnoreCase("Stop") || line.equalsIgnoreCase("Exit")) {<a name="line.100"></a>
-<FONT color="green">101</FONT>                    sserver.shutdown();<a name="line.101"></a>
-<FONT color="green">102</FONT>                    server.join();<a name="line.102"></a>
-<FONT color="green">103</FONT>                    break;<a name="line.103"></a>
-<FONT color="green">104</FONT>                }<a name="line.104"></a>
-<FONT color="green">105</FONT>            }<a name="line.105"></a>
-<FONT color="green">106</FONT>        }<a name="line.106"></a>
-<FONT color="green">107</FONT>    <a name="line.107"></a>
-<FONT color="green">108</FONT>        private static void printUsage() {<a name="line.108"></a>
-<FONT color="green">109</FONT>            System.out.println("Usage: ServerSocket port configFilePath");<a name="line.109"></a>
-<FONT color="green">110</FONT>        }<a name="line.110"></a>
-<FONT color="green">111</FONT>    <a name="line.111"></a>
-<FONT color="green">112</FONT>        /**<a name="line.112"></a>
-<FONT color="green">113</FONT>         * Shutdown the server.<a name="line.113"></a>
-<FONT color="green">114</FONT>         */<a name="line.114"></a>
-<FONT color="green">115</FONT>        public void shutdown() {<a name="line.115"></a>
-<FONT color="green">116</FONT>            this.isActive = false;<a name="line.116"></a>
-<FONT color="green">117</FONT>            Thread.currentThread().interrupt();<a name="line.117"></a>
-<FONT color="green">118</FONT>        }<a name="line.118"></a>
-<FONT color="green">119</FONT>    <a name="line.119"></a>
-<FONT color="green">120</FONT>        /**<a name="line.120"></a>
-<FONT color="green">121</FONT>         * Accept incoming events and processes them.<a name="line.121"></a>
-<FONT color="green">122</FONT>         */<a name="line.122"></a>
-<FONT color="green">123</FONT>        public void run() {<a name="line.123"></a>
-<FONT color="green">124</FONT>            while (isActive) {<a name="line.124"></a>
-<FONT color="green">125</FONT>                try {<a name="line.125"></a>
-<FONT color="green">126</FONT>                    // Accept incoming connections.<a name="line.126"></a>
-<FONT color="green">127</FONT>                    Socket clientSocket = server.accept();<a name="line.127"></a>
+<FONT color="green">069</FONT>                // logger = LogManager.getLogger(getClass().getName() + '.' + port);<a name="line.69"></a>
+<FONT color="green">070</FONT>            }<a name="line.70"></a>
+<FONT color="green">071</FONT>        }<a name="line.71"></a>
+<FONT color="green">072</FONT>         /**<a name="line.72"></a>
+<FONT color="green">073</FONT>         * Main startup for the server.<a name="line.73"></a>
+<FONT color="green">074</FONT>         * @param args The command line arguments.<a name="line.74"></a>
+<FONT color="green">075</FONT>         * @throws Exception if an error occurs.<a name="line.75"></a>
+<FONT color="green">076</FONT>         */<a name="line.76"></a>
+<FONT color="green">077</FONT>        public static void main(final String[] args) throws Exception {<a name="line.77"></a>
+<FONT color="green">078</FONT>            if (args.length &lt; 1 || args.length &gt; 2) {<a name="line.78"></a>
+<FONT color="green">079</FONT>                System.err.println("Incorrect number of arguments");<a name="line.79"></a>
+<FONT color="green">080</FONT>                printUsage();<a name="line.80"></a>
+<FONT color="green">081</FONT>                return;<a name="line.81"></a>
+<FONT color="green">082</FONT>            }<a name="line.82"></a>
+<FONT color="green">083</FONT>            final int port = Integer.parseInt(args[0]);<a name="line.83"></a>
+<FONT color="green">084</FONT>            if (port &lt;= 0 || port &gt;= MAX_PORT) {<a name="line.84"></a>
+<FONT color="green">085</FONT>                System.err.println("Invalid port number");<a name="line.85"></a>
+<FONT color="green">086</FONT>                printUsage();<a name="line.86"></a>
+<FONT color="green">087</FONT>                return;<a name="line.87"></a>
+<FONT color="green">088</FONT>            }<a name="line.88"></a>
+<FONT color="green">089</FONT>            if (args.length == 2 &amp;&amp; args[1].length() &gt; 0) {<a name="line.89"></a>
+<FONT color="green">090</FONT>                ConfigurationFactory.setConfigurationFactory(new ServerConfigurationFactory(args[1]));<a name="line.90"></a>
+<FONT color="green">091</FONT>            }<a name="line.91"></a>
+<FONT color="green">092</FONT>            logger = LogManager.getLogger(SocketServer.class.getName());<a name="line.92"></a>
+<FONT color="green">093</FONT>            final SocketServer sserver = new SocketServer(port);<a name="line.93"></a>
+<FONT color="green">094</FONT>            final Thread server = new Thread(sserver);<a name="line.94"></a>
+<FONT color="green">095</FONT>            server.start();<a name="line.95"></a>
+<FONT color="green">096</FONT>            final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));<a name="line.96"></a>
+<FONT color="green">097</FONT>            while (true) {<a name="line.97"></a>
+<FONT color="green">098</FONT>                final String line = reader.readLine();<a name="line.98"></a>
+<FONT color="green">099</FONT>                if (line.equalsIgnoreCase("Quit") || line.equalsIgnoreCase("Stop") || line.equalsIgnoreCase("Exit")) {<a name="line.99"></a>
+<FONT color="green">100</FONT>                    sserver.shutdown();<a name="line.100"></a>
+<FONT color="green">101</FONT>                    server.join();<a name="line.101"></a>
+<FONT color="green">102</FONT>                    break;<a name="line.102"></a>
+<FONT color="green">103</FONT>                }<a name="line.103"></a>
+<FONT color="green">104</FONT>            }<a name="line.104"></a>
+<FONT color="green">105</FONT>        }<a name="line.105"></a>
+<FONT color="green">106</FONT>    <a name="line.106"></a>
+<FONT color="green">107</FONT>        private static void printUsage() {<a name="line.107"></a>
+<FONT color="green">108</FONT>            System.out.println("Usage: ServerSocket port configFilePath");<a name="line.108"></a>
+<FONT color="green">109</FONT>        }<a name="line.109"></a>
+<FONT color="green">110</FONT>    <a name="line.110"></a>
+<FONT color="green">111</FONT>        /**<a name="line.111"></a>
+<FONT color="green">112</FONT>         * Shutdown the server.<a name="line.112"></a>
+<FONT color="green">113</FONT>         */<a name="line.113"></a>
+<FONT color="green">114</FONT>        public void shutdown() {<a name="line.114"></a>
+<FONT color="green">115</FONT>            this.isActive = false;<a name="line.115"></a>
+<FONT color="green">116</FONT>            Thread.currentThread().interrupt();<a name="line.116"></a>
+<FONT color="green">117</FONT>        }<a name="line.117"></a>
+<FONT color="green">118</FONT>    <a name="line.118"></a>
+<FONT color="green">119</FONT>        /**<a name="line.119"></a>
+<FONT color="green">120</FONT>         * Accept incoming events and processes them.<a name="line.120"></a>
+<FONT color="green">121</FONT>         */<a name="line.121"></a>
+<FONT color="green">122</FONT>        public void run() {<a name="line.122"></a>
+<FONT color="green">123</FONT>            while (isActive) {<a name="line.123"></a>
+<FONT color="green">124</FONT>                try {<a name="line.124"></a>
+<FONT color="green">125</FONT>                    // Accept incoming connections.<a name="line.125"></a>
+<FONT color="green">126</FONT>                    final Socket clientSocket = server.accept();<a name="line.126"></a>
+<FONT color="green">127</FONT>                    clientSocket.setSoLinger(true, 0);<a name="line.127"></a>
 <FONT color="green">128</FONT>    <a name="line.128"></a>
 <FONT color="green">129</FONT>                    // accept() will block until a client connects to the server.<a name="line.129"></a>
 <FONT color="green">130</FONT>                    // If execution reaches this point, then it means that a client<a name="line.130"></a>
 <FONT color="green">131</FONT>                    // socket has been accepted.<a name="line.131"></a>
 <FONT color="green">132</FONT>    <a name="line.132"></a>
-<FONT color="green">133</FONT>                    SocketHandler handler = new SocketHandler(clientSocket);<a name="line.133"></a>
+<FONT color="green">133</FONT>                    final SocketHandler handler = new SocketHandler(clientSocket);<a name="line.133"></a>
 <FONT color="green">134</FONT>                    handlers.put(handler.getId(), handler);<a name="line.134"></a>
 <FONT color="green">135</FONT>                    handler.start();<a name="line.135"></a>
-<FONT color="green">136</FONT>                } catch (IOException ioe) {<a name="line.136"></a>
+<FONT color="green">136</FONT>                } catch (final IOException ioe) {<a name="line.136"></a>
 <FONT color="green">137</FONT>                    System.out.println("Exception encountered on accept. Ignoring. Stack Trace :");<a name="line.137"></a>
 <FONT color="green">138</FONT>                    ioe.printStackTrace();<a name="line.138"></a>
 <FONT color="green">139</FONT>                }<a name="line.139"></a>
 <FONT color="green">140</FONT>            }<a name="line.140"></a>
-<FONT color="green">141</FONT>            for (Map.Entry&lt;Long, SocketHandler&gt; entry : handlers.entrySet()) {<a name="line.141"></a>
-<FONT color="green">142</FONT>                SocketHandler handler = entry.getValue();<a name="line.142"></a>
+<FONT color="green">141</FONT>            for (final Map.Entry&lt;Long, SocketHandler&gt; entry : handlers.entrySet()) {<a name="line.141"></a>
+<FONT color="green">142</FONT>                final SocketHandler handler = entry.getValue();<a name="line.142"></a>
 <FONT color="green">143</FONT>                handler.shutdown();<a name="line.143"></a>
 <FONT color="green">144</FONT>                try {<a name="line.144"></a>
 <FONT color="green">145</FONT>                    handler.join();<a name="line.145"></a>
-<FONT color="green">146</FONT>                } catch (InterruptedException ie) {<a name="line.146"></a>
+<FONT color="green">146</FONT>                } catch (final InterruptedException ie) {<a name="line.146"></a>
 <FONT color="green">147</FONT>                    // Ignore the exception<a name="line.147"></a>
 <FONT color="green">148</FONT>                }<a name="line.148"></a>
 <FONT color="green">149</FONT>            }<a name="line.149"></a>
@@ -160,7 +160,7 @@
 <FONT color="green">157</FONT>    <a name="line.157"></a>
 <FONT color="green">158</FONT>            private boolean shutdown = false;<a name="line.158"></a>
 <FONT color="green">159</FONT>    <a name="line.159"></a>
-<FONT color="green">160</FONT>            public SocketHandler(Socket socket) throws IOException {<a name="line.160"></a>
+<FONT color="green">160</FONT>            public SocketHandler(final Socket socket) throws IOException {<a name="line.160"></a>
 <FONT color="green">161</FONT>    <a name="line.161"></a>
 <FONT color="green">162</FONT>                ois = new ObjectInputStream(socket.getInputStream());<a name="line.162"></a>
 <FONT color="green">163</FONT>            }<a name="line.163"></a>
@@ -176,24 +176,24 @@
 <FONT color="green">173</FONT>                try {<a name="line.173"></a>
 <FONT color="green">174</FONT>                    try {<a name="line.174"></a>
 <FONT color="green">175</FONT>                        while (!shutdown) {<a name="line.175"></a>
-<FONT color="green">176</FONT>                            LogEvent event = (LogEvent) ois.readObject();<a name="line.176"></a>
+<FONT color="green">176</FONT>                            final LogEvent event = (LogEvent) ois.readObject();<a name="line.176"></a>
 <FONT color="green">177</FONT>                            if (event != null) {<a name="line.177"></a>
 <FONT color="green">178</FONT>                                log(event);<a name="line.178"></a>
 <FONT color="green">179</FONT>                            }<a name="line.179"></a>
 <FONT color="green">180</FONT>                        }<a name="line.180"></a>
-<FONT color="green">181</FONT>                    } catch (EOFException eof) {<a name="line.181"></a>
+<FONT color="green">181</FONT>                    } catch (final EOFException eof) {<a name="line.181"></a>
 <FONT color="green">182</FONT>                        closed = true;<a name="line.182"></a>
-<FONT color="green">183</FONT>                    } catch (OptionalDataException opt) {<a name="line.183"></a>
+<FONT color="green">183</FONT>                    } catch (final OptionalDataException opt) {<a name="line.183"></a>
 <FONT color="green">184</FONT>                        logger.error("OptionalDataException eof=" + opt.eof + " length=" + opt.length, opt);<a name="line.184"></a>
-<FONT color="green">185</FONT>                    } catch (ClassNotFoundException cnfe) {<a name="line.185"></a>
+<FONT color="green">185</FONT>                    } catch (final ClassNotFoundException cnfe) {<a name="line.185"></a>
 <FONT color="green">186</FONT>                        logger.error("Unable to locate LogEvent class", cnfe);<a name="line.186"></a>
-<FONT color="green">187</FONT>                    } catch (IOException ioe) {<a name="line.187"></a>
+<FONT color="green">187</FONT>                    } catch (final IOException ioe) {<a name="line.187"></a>
 <FONT color="green">188</FONT>                        logger.error("IOException encountered while reading from socket", ioe);<a name="line.188"></a>
 <FONT color="green">189</FONT>                    }<a name="line.189"></a>
 <FONT color="green">190</FONT>                    if (!closed) {<a name="line.190"></a>
 <FONT color="green">191</FONT>                        try {<a name="line.191"></a>
 <FONT color="green">192</FONT>                            ois.close();<a name="line.192"></a>
-<FONT color="green">193</FONT>                        } catch (Exception ex) {<a name="line.193"></a>
+<FONT color="green">193</FONT>                        } catch (final Exception ex) {<a name="line.193"></a>
 <FONT color="green">194</FONT>                            // Ignore the exception;<a name="line.194"></a>
 <FONT color="green">195</FONT>                        }<a name="line.195"></a>
 <FONT color="green">196</FONT>                    }<a name="line.196"></a>
@@ -210,29 +210,29 @@
 <FONT color="green">207</FONT>    <a name="line.207"></a>
 <FONT color="green">208</FONT>            private final String path;<a name="line.208"></a>
 <FONT color="green">209</FONT>    <a name="line.209"></a>
-<FONT color="green">210</FONT>            public ServerConfigurationFactory(String path) {<a name="line.210"></a>
+<FONT color="green">210</FONT>            public ServerConfigurationFactory(final String path) {<a name="line.210"></a>
 <FONT color="green">211</FONT>                this.path = path;<a name="line.211"></a>
 <FONT color="green">212</FONT>            }<a name="line.212"></a>
 <FONT color="green">213</FONT>    <a name="line.213"></a>
 <FONT color="green">214</FONT>            @Override<a name="line.214"></a>
-<FONT color="green">215</FONT>            public Configuration getConfiguration(String name, URI configLocation) {<a name="line.215"></a>
+<FONT color="green">215</FONT>            public Configuration getConfiguration(final String name, final URI configLocation) {<a name="line.215"></a>
 <FONT color="green">216</FONT>                if (path != null &amp;&amp; path.length() &gt; 0) {<a name="line.216"></a>
 <FONT color="green">217</FONT>                    File file = null;<a name="line.217"></a>
 <FONT color="green">218</FONT>                    ConfigurationSource source = null;<a name="line.218"></a>
 <FONT color="green">219</FONT>                    try {<a name="line.219"></a>
 <FONT color="green">220</FONT>                        file = new File(path);<a name="line.220"></a>
-<FONT color="green">221</FONT>                        FileInputStream is = new FileInputStream(file);<a name="line.221"></a>
+<FONT color="green">221</FONT>                        final FileInputStream is = new FileInputStream(file);<a name="line.221"></a>
 <FONT color="green">222</FONT>                        source = new ConfigurationSource(is, file);<a name="line.222"></a>
-<FONT color="green">223</FONT>                    } catch (FileNotFoundException ex) {<a name="line.223"></a>
+<FONT color="green">223</FONT>                    } catch (final FileNotFoundException ex) {<a name="line.223"></a>
 <FONT color="green">224</FONT>                        // Ignore this error<a name="line.224"></a>
 <FONT color="green">225</FONT>                    }<a name="line.225"></a>
 <FONT color="green">226</FONT>                    if (source == null) {<a name="line.226"></a>
 <FONT color="green">227</FONT>                        try {<a name="line.227"></a>
-<FONT color="green">228</FONT>                            URL url = new URL(path);<a name="line.228"></a>
+<FONT color="green">228</FONT>                            final URL url = new URL(path);<a name="line.228"></a>
 <FONT color="green">229</FONT>                            source = new ConfigurationSource(url.openStream(), path);<a name="line.229"></a>
-<FONT color="green">230</FONT>                        } catch (MalformedURLException mue) {<a name="line.230"></a>
+<FONT color="green">230</FONT>                        } catch (final MalformedURLException mue) {<a name="line.230"></a>
 <FONT color="green">231</FONT>                            // Ignore this error<a name="line.231"></a>
-<FONT color="green">232</FONT>                        } catch (IOException ioe) {<a name="line.232"></a>
+<FONT color="green">232</FONT>                        } catch (final IOException ioe) {<a name="line.232"></a>
 <FONT color="green">233</FONT>                            // Ignore this error<a name="line.233"></a>
 <FONT color="green">234</FONT>                        }<a name="line.234"></a>
 <FONT color="green">235</FONT>                    }<a name="line.235"></a>
@@ -241,7 +241,7 @@
 <FONT color="green">238</FONT>                        if (source != null) {<a name="line.238"></a>
 <FONT color="green">239</FONT>                            return new XMLConfiguration(source);<a name="line.239"></a>
 <FONT color="green">240</FONT>                        }<a name="line.240"></a>
-<FONT color="green">241</FONT>                    } catch (Exception ex) {<a name="line.241"></a>
+<FONT color="green">241</FONT>                    } catch (final Exception ex) {<a name="line.241"></a>
 <FONT color="green">242</FONT>                        // Ignore this error.<a name="line.242"></a>
 <FONT color="green">243</FONT>                    }<a name="line.243"></a>
 <FONT color="green">244</FONT>                    System.err.println("Unable to process configuration at " + path + ", using default.");<a name="line.244"></a>

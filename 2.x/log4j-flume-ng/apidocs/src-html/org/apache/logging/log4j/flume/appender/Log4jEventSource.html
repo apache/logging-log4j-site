@@ -31,9 +31,9 @@
 <FONT color="green">028</FONT>     */<a name="line.28"></a>
 <FONT color="green">029</FONT>    public class Log4jEventSource extends AbstractSource implements EventDrivenSource {<a name="line.29"></a>
 <FONT color="green">030</FONT>    <a name="line.30"></a>
-<FONT color="green">031</FONT>        private SourceCounter sourceCounter = new SourceCounter("log4j");<a name="line.31"></a>
+<FONT color="green">031</FONT>        private static final Logger LOGGER = LoggerFactory.getLogger(Log4jEventSource.class);<a name="line.31"></a>
 <FONT color="green">032</FONT>    <a name="line.32"></a>
-<FONT color="green">033</FONT>        private static final Logger logger = LoggerFactory.getLogger(Log4jEventSource.class);<a name="line.33"></a>
+<FONT color="green">033</FONT>        private final SourceCounter sourceCounter = new SourceCounter("log4j");<a name="line.33"></a>
 <FONT color="green">034</FONT>    <a name="line.34"></a>
 <FONT color="green">035</FONT>        public Log4jEventSource() {<a name="line.35"></a>
 <FONT color="green">036</FONT>            setName("Log4jEvent");<a name="line.36"></a>
@@ -43,24 +43,24 @@
 <FONT color="green">040</FONT>        public synchronized void start() {<a name="line.40"></a>
 <FONT color="green">041</FONT>            super.start();<a name="line.41"></a>
 <FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>            logger.info("Log4j Source started");<a name="line.43"></a>
+<FONT color="green">043</FONT>            LOGGER.info("Log4j Source started");<a name="line.43"></a>
 <FONT color="green">044</FONT>        }<a name="line.44"></a>
 <FONT color="green">045</FONT>    <a name="line.45"></a>
 <FONT color="green">046</FONT>        @Override<a name="line.46"></a>
 <FONT color="green">047</FONT>        public synchronized void stop() {<a name="line.47"></a>
 <FONT color="green">048</FONT>            super.stop();<a name="line.48"></a>
 <FONT color="green">049</FONT>    <a name="line.49"></a>
-<FONT color="green">050</FONT>            logger.info("Log4j Source stopped. Metrics {}", sourceCounter);<a name="line.50"></a>
+<FONT color="green">050</FONT>            LOGGER.info("Log4j Source stopped. Metrics {}", sourceCounter);<a name="line.50"></a>
 <FONT color="green">051</FONT>        }<a name="line.51"></a>
 <FONT color="green">052</FONT>    <a name="line.52"></a>
 <FONT color="green">053</FONT>    <a name="line.53"></a>
-<FONT color="green">054</FONT>        public void send(FlumeEvent event) {<a name="line.54"></a>
+<FONT color="green">054</FONT>        public void send(final FlumeEvent event) {<a name="line.54"></a>
 <FONT color="green">055</FONT>            sourceCounter.incrementAppendReceivedCount();<a name="line.55"></a>
 <FONT color="green">056</FONT>            sourceCounter.incrementEventReceivedCount();<a name="line.56"></a>
 <FONT color="green">057</FONT>            try {<a name="line.57"></a>
 <FONT color="green">058</FONT>                getChannelProcessor().processEvent(event);<a name="line.58"></a>
-<FONT color="green">059</FONT>            } catch (ChannelException ex) {<a name="line.59"></a>
-<FONT color="green">060</FONT>                logger.warn("Unabled to process event {}" + event, ex);<a name="line.60"></a>
+<FONT color="green">059</FONT>            } catch (final ChannelException ex) {<a name="line.59"></a>
+<FONT color="green">060</FONT>                LOGGER.warn("Unabled to process event {}" + event, ex);<a name="line.60"></a>
 <FONT color="green">061</FONT>                throw ex;<a name="line.61"></a>
 <FONT color="green">062</FONT>            }<a name="line.62"></a>
 <FONT color="green">063</FONT>            sourceCounter.incrementAppendAcceptedCount();<a name="line.63"></a>

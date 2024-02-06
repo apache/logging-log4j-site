@@ -54,11 +54,11 @@
 <FONT color="green">051</FONT>            List&lt;String&gt; tempPackages = null;<a name="line.51"></a>
 <FONT color="green">052</FONT>            if (options != null &amp;&amp; options.length &gt; 1) {<a name="line.52"></a>
 <FONT color="green">053</FONT>                if (options[1].startsWith(FILTERS) &amp;&amp; options[1].endsWith(")")) {<a name="line.53"></a>
-<FONT color="green">054</FONT>                    String filterStr = options[1].substring(FILTERS.length(), options[1].length() - 1);<a name="line.54"></a>
-<FONT color="green">055</FONT>                    String[] array = filterStr.split(",");<a name="line.55"></a>
+<FONT color="green">054</FONT>                    final String filterStr = options[1].substring(FILTERS.length(), options[1].length() - 1);<a name="line.54"></a>
+<FONT color="green">055</FONT>                    final String[] array = filterStr.split(",");<a name="line.55"></a>
 <FONT color="green">056</FONT>                    if (array.length &gt; 0) {<a name="line.56"></a>
 <FONT color="green">057</FONT>                        tempPackages = new ArrayList&lt;String&gt;(array.length);<a name="line.57"></a>
-<FONT color="green">058</FONT>                        for (String token : array) {<a name="line.58"></a>
+<FONT color="green">058</FONT>                        for (final String token : array) {<a name="line.58"></a>
 <FONT color="green">059</FONT>                            tempPackages.add(token.trim());<a name="line.59"></a>
 <FONT color="green">060</FONT>                        }<a name="line.60"></a>
 <FONT color="green">061</FONT>                    }<a name="line.61"></a>
@@ -78,10 +78,10 @@
 <FONT color="green">075</FONT>            String type = null;<a name="line.75"></a>
 <FONT color="green">076</FONT>            String[] array = options;<a name="line.76"></a>
 <FONT color="green">077</FONT>            if (options != null &amp;&amp; options.length == 1 &amp;&amp; options[0].length() &gt; 0) {<a name="line.77"></a>
-<FONT color="green">078</FONT>                String[] opts = options[0].split(",", 2);<a name="line.78"></a>
-<FONT color="green">079</FONT>                String first = opts[0].trim();<a name="line.79"></a>
+<FONT color="green">078</FONT>                final String[] opts = options[0].split(",", 2);<a name="line.78"></a>
+<FONT color="green">079</FONT>                final String first = opts[0].trim();<a name="line.79"></a>
 <FONT color="green">080</FONT>                String filter;<a name="line.80"></a>
-<FONT color="green">081</FONT>                Scanner scanner = new Scanner(first);<a name="line.81"></a>
+<FONT color="green">081</FONT>                final Scanner scanner = new Scanner(first);<a name="line.81"></a>
 <FONT color="green">082</FONT>                if (first.equalsIgnoreCase(FULL) || first.equalsIgnoreCase(SHORT) || scanner.hasNextInt()) {<a name="line.82"></a>
 <FONT color="green">083</FONT>                    type = first;<a name="line.83"></a>
 <FONT color="green">084</FONT>                    filter = opts[1].trim();<a name="line.84"></a>
@@ -99,32 +99,33 @@
 <FONT color="green">096</FONT>         */<a name="line.96"></a>
 <FONT color="green">097</FONT>        @Override<a name="line.97"></a>
 <FONT color="green">098</FONT>        public void format(final LogEvent event, final StringBuilder toAppendTo) {<a name="line.98"></a>
-<FONT color="green">099</FONT>            Throwable throwable = event.getThrown();<a name="line.99"></a>
-<FONT color="green">100</FONT>            if (throwable != null) {<a name="line.100"></a>
+<FONT color="green">099</FONT>            final Throwable throwable = event.getThrown();<a name="line.99"></a>
+<FONT color="green">100</FONT>            if (throwable != null &amp;&amp; lines &gt; 0) {<a name="line.100"></a>
 <FONT color="green">101</FONT>                if (!(throwable instanceof ThrowableProxy)) {<a name="line.101"></a>
 <FONT color="green">102</FONT>                    super.format(event, toAppendTo);<a name="line.102"></a>
 <FONT color="green">103</FONT>                    return;<a name="line.103"></a>
 <FONT color="green">104</FONT>                }<a name="line.104"></a>
-<FONT color="green">105</FONT>                ThrowableProxy t = (ThrowableProxy) throwable;<a name="line.105"></a>
-<FONT color="green">106</FONT>                String trace = t.getRootCauseStackTrace(packages);<a name="line.106"></a>
-<FONT color="green">107</FONT>                int len = toAppendTo.length();<a name="line.107"></a>
+<FONT color="green">105</FONT>                final ThrowableProxy t = (ThrowableProxy) throwable;<a name="line.105"></a>
+<FONT color="green">106</FONT>                final String trace = t.getRootCauseStackTrace(packages);<a name="line.106"></a>
+<FONT color="green">107</FONT>                final int len = toAppendTo.length();<a name="line.107"></a>
 <FONT color="green">108</FONT>                if (len &gt; 0 &amp;&amp; !Character.isWhitespace(toAppendTo.charAt(len - 1))) {<a name="line.108"></a>
 <FONT color="green">109</FONT>                    toAppendTo.append(" ");<a name="line.109"></a>
 <FONT color="green">110</FONT>                }<a name="line.110"></a>
-<FONT color="green">111</FONT>                if (lines &gt; 0) {<a name="line.111"></a>
-<FONT color="green">112</FONT>                    StringBuilder sb = new StringBuilder();<a name="line.112"></a>
-<FONT color="green">113</FONT>                    String[] array = trace.split("\n");<a name="line.113"></a>
-<FONT color="green">114</FONT>                    for (int i = 0; i &lt; lines; ++i) {<a name="line.114"></a>
-<FONT color="green">115</FONT>                        sb.append(array[i]).append("\n");<a name="line.115"></a>
-<FONT color="green">116</FONT>                    }<a name="line.116"></a>
-<FONT color="green">117</FONT>                    toAppendTo.append(sb.toString());<a name="line.117"></a>
-<FONT color="green">118</FONT>    <a name="line.118"></a>
-<FONT color="green">119</FONT>                } else {<a name="line.119"></a>
-<FONT color="green">120</FONT>                    toAppendTo.append(trace);<a name="line.120"></a>
-<FONT color="green">121</FONT>                }<a name="line.121"></a>
-<FONT color="green">122</FONT>            }<a name="line.122"></a>
-<FONT color="green">123</FONT>        }<a name="line.123"></a>
-<FONT color="green">124</FONT>    }<a name="line.124"></a>
+<FONT color="green">111</FONT>                if (lines != Integer.MAX_VALUE) {<a name="line.111"></a>
+<FONT color="green">112</FONT>                    final StringBuilder sb = new StringBuilder();<a name="line.112"></a>
+<FONT color="green">113</FONT>                    final String[] array = trace.split("\n");<a name="line.113"></a>
+<FONT color="green">114</FONT>                    final int limit = lines &gt; array.length ? array.length : lines;<a name="line.114"></a>
+<FONT color="green">115</FONT>                    for (int i = 0; i &lt; limit; ++i) {<a name="line.115"></a>
+<FONT color="green">116</FONT>                        sb.append(array[i]).append("\n");<a name="line.116"></a>
+<FONT color="green">117</FONT>                    }<a name="line.117"></a>
+<FONT color="green">118</FONT>                    toAppendTo.append(sb.toString());<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>                } else {<a name="line.120"></a>
+<FONT color="green">121</FONT>                    toAppendTo.append(trace);<a name="line.121"></a>
+<FONT color="green">122</FONT>                }<a name="line.122"></a>
+<FONT color="green">123</FONT>            }<a name="line.123"></a>
+<FONT color="green">124</FONT>        }<a name="line.124"></a>
+<FONT color="green">125</FONT>    }<a name="line.125"></a>
 
 
 

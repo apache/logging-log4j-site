@@ -48,7 +48,7 @@
 <FONT color="green">045</FONT>         * @param name the node's name.<a name="line.45"></a>
 <FONT color="green">046</FONT>         * @param type The Plugin Type associated with the node.<a name="line.46"></a>
 <FONT color="green">047</FONT>         */<a name="line.47"></a>
-<FONT color="green">048</FONT>        public Node(Node parent, String name, PluginType type) {<a name="line.48"></a>
+<FONT color="green">048</FONT>        public Node(final Node parent, final String name, final PluginType type) {<a name="line.48"></a>
 <FONT color="green">049</FONT>            this.parent = parent;<a name="line.49"></a>
 <FONT color="green">050</FONT>            this.name = name;<a name="line.50"></a>
 <FONT color="green">051</FONT>            this.type = type;<a name="line.51"></a>
@@ -60,59 +60,71 @@
 <FONT color="green">057</FONT>            this.type = null;<a name="line.57"></a>
 <FONT color="green">058</FONT>        }<a name="line.58"></a>
 <FONT color="green">059</FONT>    <a name="line.59"></a>
-<FONT color="green">060</FONT>        public Map&lt;String, String&gt; getAttributes() {<a name="line.60"></a>
-<FONT color="green">061</FONT>            return attributes;<a name="line.61"></a>
-<FONT color="green">062</FONT>        }<a name="line.62"></a>
-<FONT color="green">063</FONT>    <a name="line.63"></a>
-<FONT color="green">064</FONT>        public List&lt;Node&gt; getChildren() {<a name="line.64"></a>
-<FONT color="green">065</FONT>            return children;<a name="line.65"></a>
-<FONT color="green">066</FONT>        }<a name="line.66"></a>
-<FONT color="green">067</FONT>    <a name="line.67"></a>
-<FONT color="green">068</FONT>        public boolean hasChildren() {<a name="line.68"></a>
-<FONT color="green">069</FONT>            return children.size() &gt; 0;<a name="line.69"></a>
+<FONT color="green">060</FONT>        public Node(final Node node) {<a name="line.60"></a>
+<FONT color="green">061</FONT>            this.parent = node.parent;<a name="line.61"></a>
+<FONT color="green">062</FONT>            this.name = node.name;<a name="line.62"></a>
+<FONT color="green">063</FONT>            this.type = node.type;<a name="line.63"></a>
+<FONT color="green">064</FONT>            this.attributes.putAll(node.getAttributes());<a name="line.64"></a>
+<FONT color="green">065</FONT>            this.value = node.getValue();<a name="line.65"></a>
+<FONT color="green">066</FONT>            for (final Node child : node.getChildren()) {<a name="line.66"></a>
+<FONT color="green">067</FONT>                this.children.add(new Node(child));<a name="line.67"></a>
+<FONT color="green">068</FONT>            }<a name="line.68"></a>
+<FONT color="green">069</FONT>            this.object = node.object;<a name="line.69"></a>
 <FONT color="green">070</FONT>        }<a name="line.70"></a>
 <FONT color="green">071</FONT>    <a name="line.71"></a>
-<FONT color="green">072</FONT>        public String getValue() {<a name="line.72"></a>
-<FONT color="green">073</FONT>            return value;<a name="line.73"></a>
+<FONT color="green">072</FONT>        public Map&lt;String, String&gt; getAttributes() {<a name="line.72"></a>
+<FONT color="green">073</FONT>            return attributes;<a name="line.73"></a>
 <FONT color="green">074</FONT>        }<a name="line.74"></a>
 <FONT color="green">075</FONT>    <a name="line.75"></a>
-<FONT color="green">076</FONT>        public void setValue(String value) {<a name="line.76"></a>
-<FONT color="green">077</FONT>            this.value = value;<a name="line.77"></a>
+<FONT color="green">076</FONT>        public List&lt;Node&gt; getChildren() {<a name="line.76"></a>
+<FONT color="green">077</FONT>            return children;<a name="line.77"></a>
 <FONT color="green">078</FONT>        }<a name="line.78"></a>
 <FONT color="green">079</FONT>    <a name="line.79"></a>
-<FONT color="green">080</FONT>        public Node getParent() {<a name="line.80"></a>
-<FONT color="green">081</FONT>            return parent;<a name="line.81"></a>
+<FONT color="green">080</FONT>        public boolean hasChildren() {<a name="line.80"></a>
+<FONT color="green">081</FONT>            return children.size() &gt; 0;<a name="line.81"></a>
 <FONT color="green">082</FONT>        }<a name="line.82"></a>
 <FONT color="green">083</FONT>    <a name="line.83"></a>
-<FONT color="green">084</FONT>        public String getName() {<a name="line.84"></a>
-<FONT color="green">085</FONT>            return name;<a name="line.85"></a>
+<FONT color="green">084</FONT>        public String getValue() {<a name="line.84"></a>
+<FONT color="green">085</FONT>            return value;<a name="line.85"></a>
 <FONT color="green">086</FONT>        }<a name="line.86"></a>
 <FONT color="green">087</FONT>    <a name="line.87"></a>
-<FONT color="green">088</FONT>        public boolean isRoot() {<a name="line.88"></a>
-<FONT color="green">089</FONT>            return parent == null;<a name="line.89"></a>
+<FONT color="green">088</FONT>        public void setValue(final String value) {<a name="line.88"></a>
+<FONT color="green">089</FONT>            this.value = value;<a name="line.89"></a>
 <FONT color="green">090</FONT>        }<a name="line.90"></a>
 <FONT color="green">091</FONT>    <a name="line.91"></a>
-<FONT color="green">092</FONT>        public void setObject(Object obj) {<a name="line.92"></a>
-<FONT color="green">093</FONT>            object = obj;<a name="line.93"></a>
+<FONT color="green">092</FONT>        public Node getParent() {<a name="line.92"></a>
+<FONT color="green">093</FONT>            return parent;<a name="line.93"></a>
 <FONT color="green">094</FONT>        }<a name="line.94"></a>
 <FONT color="green">095</FONT>    <a name="line.95"></a>
-<FONT color="green">096</FONT>        public Object getObject() {<a name="line.96"></a>
-<FONT color="green">097</FONT>            return object;<a name="line.97"></a>
+<FONT color="green">096</FONT>        public String getName() {<a name="line.96"></a>
+<FONT color="green">097</FONT>            return name;<a name="line.97"></a>
 <FONT color="green">098</FONT>        }<a name="line.98"></a>
 <FONT color="green">099</FONT>    <a name="line.99"></a>
-<FONT color="green">100</FONT>        public PluginType getType() {<a name="line.100"></a>
-<FONT color="green">101</FONT>            return type;<a name="line.101"></a>
+<FONT color="green">100</FONT>        public boolean isRoot() {<a name="line.100"></a>
+<FONT color="green">101</FONT>            return parent == null;<a name="line.101"></a>
 <FONT color="green">102</FONT>        }<a name="line.102"></a>
 <FONT color="green">103</FONT>    <a name="line.103"></a>
-<FONT color="green">104</FONT>        @Override<a name="line.104"></a>
-<FONT color="green">105</FONT>        public String toString() {<a name="line.105"></a>
-<FONT color="green">106</FONT>            if (object == null) {<a name="line.106"></a>
-<FONT color="green">107</FONT>                return "null";<a name="line.107"></a>
-<FONT color="green">108</FONT>            }<a name="line.108"></a>
-<FONT color="green">109</FONT>            return type.isObjectPrintable() ? object.toString() :<a name="line.109"></a>
-<FONT color="green">110</FONT>                type.getPluginClass().getName() + " with name " + name;<a name="line.110"></a>
-<FONT color="green">111</FONT>        }<a name="line.111"></a>
-<FONT color="green">112</FONT>    }<a name="line.112"></a>
+<FONT color="green">104</FONT>        public void setObject(final Object obj) {<a name="line.104"></a>
+<FONT color="green">105</FONT>            object = obj;<a name="line.105"></a>
+<FONT color="green">106</FONT>        }<a name="line.106"></a>
+<FONT color="green">107</FONT>    <a name="line.107"></a>
+<FONT color="green">108</FONT>        public Object getObject() {<a name="line.108"></a>
+<FONT color="green">109</FONT>            return object;<a name="line.109"></a>
+<FONT color="green">110</FONT>        }<a name="line.110"></a>
+<FONT color="green">111</FONT>    <a name="line.111"></a>
+<FONT color="green">112</FONT>        public PluginType getType() {<a name="line.112"></a>
+<FONT color="green">113</FONT>            return type;<a name="line.113"></a>
+<FONT color="green">114</FONT>        }<a name="line.114"></a>
+<FONT color="green">115</FONT>    <a name="line.115"></a>
+<FONT color="green">116</FONT>        @Override<a name="line.116"></a>
+<FONT color="green">117</FONT>        public String toString() {<a name="line.117"></a>
+<FONT color="green">118</FONT>            if (object == null) {<a name="line.118"></a>
+<FONT color="green">119</FONT>                return "null";<a name="line.119"></a>
+<FONT color="green">120</FONT>            }<a name="line.120"></a>
+<FONT color="green">121</FONT>            return type.isObjectPrintable() ? object.toString() :<a name="line.121"></a>
+<FONT color="green">122</FONT>                type.getPluginClass().getName() + " with name " + name;<a name="line.122"></a>
+<FONT color="green">123</FONT>        }<a name="line.123"></a>
+<FONT color="green">124</FONT>    }<a name="line.124"></a>
 
 
 

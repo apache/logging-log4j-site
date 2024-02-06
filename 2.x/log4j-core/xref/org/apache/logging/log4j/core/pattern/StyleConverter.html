@@ -45,11 +45,11 @@
 <a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String style;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  
 <a class="jxr_linenumber" name="37" href="#37">37</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">     * Construct the converter.</em>
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">     * Constructs the converter.</em>
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     * @param formatters The PatternFormatters to generate the text to manipulate.</em>
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">     * @param styling The styling that should encapsulate the pattern.</em>
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="42" href="#42">42</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/StyleConverter.html">StyleConverter</a>(List&lt;PatternFormatter&gt; formatters, String styling) {
+<a class="jxr_linenumber" name="42" href="#42">42</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/StyleConverter.html">StyleConverter</a>(<strong class="jxr_keyword">final</strong> List&lt;PatternFormatter&gt; formatters, <strong class="jxr_keyword">final</strong> String styling) {
 <a class="jxr_linenumber" name="43" href="#43">43</a>          <strong class="jxr_keyword">super</strong>(<span class="jxr_string">"style"</span>, <span class="jxr_string">"style"</span>);
 <a class="jxr_linenumber" name="44" href="#44">44</a>          <strong class="jxr_keyword">this</strong>.formatters = formatters;
 <a class="jxr_linenumber" name="45" href="#45">45</a>          <strong class="jxr_keyword">this</strong>.style = styling;
@@ -63,7 +63,7 @@
 <a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">     *                only the first line of the throwable will be formatted.</em>
 <a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment">     * @return instance of class.</em>
 <a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/StyleConverter.html">StyleConverter</a> newInstance(<a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, <strong class="jxr_keyword">final</strong> String[] options) {
+<a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/StyleConverter.html">StyleConverter</a> newInstance(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, <strong class="jxr_keyword">final</strong> String[] options) {
 <a class="jxr_linenumber" name="57" href="#57">57</a>          <strong class="jxr_keyword">if</strong> (options.length &lt; 1) {
 <a class="jxr_linenumber" name="58" href="#58">58</a>              LOGGER.error(<span class="jxr_string">"Incorrect number of options on style. Expected at least 1, received "</span> + options.length);
 <a class="jxr_linenumber" name="59" href="#59">59</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
@@ -77,9 +77,9 @@
 <a class="jxr_linenumber" name="67" href="#67">67</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="68" href="#68">68</a>          }
 <a class="jxr_linenumber" name="69" href="#69">69</a>  
-<a class="jxr_linenumber" name="70" href="#70">70</a>          <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> parser = PatternLayout.createPatternParser(config);
-<a class="jxr_linenumber" name="71" href="#71">71</a>          List&lt;PatternFormatter&gt; formatters = parser.parse(options[0]);
-<a class="jxr_linenumber" name="72" href="#72">72</a>          String style = AnsiEscape.createSequence(options[1].split(<span class="jxr_string">","</span>));
+<a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> parser = PatternLayout.createPatternParser(config);
+<a class="jxr_linenumber" name="71" href="#71">71</a>          <strong class="jxr_keyword">final</strong> List&lt;PatternFormatter&gt; formatters = parser.parse(options[0]);
+<a class="jxr_linenumber" name="72" href="#72">72</a>          <strong class="jxr_keyword">final</strong> String style = AnsiEscape.createSequence(options[1].split(<span class="jxr_string">"&#92;&#92;s*,&#92;&#92;s*"</span>));
 <a class="jxr_linenumber" name="73" href="#73">73</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/StyleConverter.html">StyleConverter</a>(formatters, style);
 <a class="jxr_linenumber" name="74" href="#74">74</a>      }
 <a class="jxr_linenumber" name="75" href="#75">75</a>  
@@ -89,8 +89,8 @@
 <a class="jxr_linenumber" name="79" href="#79">79</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="80" href="#80">80</a>      @Override
 <a class="jxr_linenumber" name="81" href="#81">81</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> format(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event, <strong class="jxr_keyword">final</strong> StringBuilder toAppendTo) {
-<a class="jxr_linenumber" name="82" href="#82">82</a>          StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="83" href="#83">83</a>          <strong class="jxr_keyword">for</strong> (PatternFormatter formatter : formatters) {
+<a class="jxr_linenumber" name="82" href="#82">82</a>          <strong class="jxr_keyword">final</strong> StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="83" href="#83">83</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> PatternFormatter formatter : formatters) {
 <a class="jxr_linenumber" name="84" href="#84">84</a>              formatter.format(event, buf);
 <a class="jxr_linenumber" name="85" href="#85">85</a>          }
 <a class="jxr_linenumber" name="86" href="#86">86</a>  

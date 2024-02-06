@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="44" href="#44">44</a>          <strong class="jxr_keyword">if</strong> (pattern.length() &gt; 0) {
 <a class="jxr_linenumber" name="45" href="#45">45</a>              <em class="jxr_comment">//  if pattern is just spaces and numbers then</em>
 <a class="jxr_linenumber" name="46" href="#46">46</a>              <em class="jxr_comment">//     use MaxElementAbbreviator</em>
-<a class="jxr_linenumber" name="47" href="#47">47</a>              String trimmed = pattern.trim();
+<a class="jxr_linenumber" name="47" href="#47">47</a>              <strong class="jxr_keyword">final</strong> String trimmed = pattern.trim();
 <a class="jxr_linenumber" name="48" href="#48">48</a>  
 <a class="jxr_linenumber" name="49" href="#49">49</a>              <strong class="jxr_keyword">if</strong> (trimmed.length() == 0) {
 <a class="jxr_linenumber" name="50" href="#50">50</a>                  <strong class="jxr_keyword">return</strong> DEFAULT;
@@ -62,8 +62,8 @@
 <a class="jxr_linenumber" name="52" href="#52">52</a>  
 <a class="jxr_linenumber" name="53" href="#53">53</a>              <strong class="jxr_keyword">int</strong> i = 0;
 <a class="jxr_linenumber" name="54" href="#54">54</a>  
-<a class="jxr_linenumber" name="55" href="#55">55</a>              <strong class="jxr_keyword">while</strong> ((i &lt; trimmed.length()) &amp;&amp; (trimmed.charAt(i) &gt;= '0')
-<a class="jxr_linenumber" name="56" href="#56">56</a>                      &amp;&amp; (trimmed.charAt(i) &lt;= '9')) {
+<a class="jxr_linenumber" name="55" href="#55">55</a>              <strong class="jxr_keyword">while</strong> (i &lt; trimmed.length() &amp;&amp; trimmed.charAt(i) &gt;= '0'
+<a class="jxr_linenumber" name="56" href="#56">56</a>                      &amp;&amp; trimmed.charAt(i) &lt;= '9') {
 <a class="jxr_linenumber" name="57" href="#57">57</a>                  i++;
 <a class="jxr_linenumber" name="58" href="#58">58</a>              }
 <a class="jxr_linenumber" name="59" href="#59">59</a>  
@@ -74,19 +74,19 @@
 <a class="jxr_linenumber" name="64" href="#64">64</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">MaxElementAbbreviator</a>(Integer.parseInt(trimmed));
 <a class="jxr_linenumber" name="65" href="#65">65</a>              }
 <a class="jxr_linenumber" name="66" href="#66">66</a>  
-<a class="jxr_linenumber" name="67" href="#67">67</a>              ArrayList&lt;PatternAbbreviatorFragment&gt; fragments = <strong class="jxr_keyword">new</strong> ArrayList&lt;PatternAbbreviatorFragment&gt;(5);
+<a class="jxr_linenumber" name="67" href="#67">67</a>              <strong class="jxr_keyword">final</strong> ArrayList&lt;PatternAbbreviatorFragment&gt; fragments = <strong class="jxr_keyword">new</strong> ArrayList&lt;PatternAbbreviatorFragment&gt;(5);
 <a class="jxr_linenumber" name="68" href="#68">68</a>              <strong class="jxr_keyword">char</strong> ellipsis;
 <a class="jxr_linenumber" name="69" href="#69">69</a>              <strong class="jxr_keyword">int</strong> charCount;
 <a class="jxr_linenumber" name="70" href="#70">70</a>              <strong class="jxr_keyword">int</strong> pos = 0;
 <a class="jxr_linenumber" name="71" href="#71">71</a>  
-<a class="jxr_linenumber" name="72" href="#72">72</a>              <strong class="jxr_keyword">while</strong> ((pos &lt; trimmed.length()) &amp;&amp; (pos &gt;= 0)) {
+<a class="jxr_linenumber" name="72" href="#72">72</a>              <strong class="jxr_keyword">while</strong> (pos &lt; trimmed.length() &amp;&amp; pos &gt;= 0) {
 <a class="jxr_linenumber" name="73" href="#73">73</a>                  <strong class="jxr_keyword">int</strong> ellipsisPos = pos;
 <a class="jxr_linenumber" name="74" href="#74">74</a>  
 <a class="jxr_linenumber" name="75" href="#75">75</a>                  <strong class="jxr_keyword">if</strong> (trimmed.charAt(pos) == '*') {
 <a class="jxr_linenumber" name="76" href="#76">76</a>                      charCount = Integer.MAX_VALUE;
 <a class="jxr_linenumber" name="77" href="#77">77</a>                      ellipsisPos++;
 <a class="jxr_linenumber" name="78" href="#78">78</a>                  } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="79" href="#79">79</a>                      <strong class="jxr_keyword">if</strong> ((trimmed.charAt(pos) &gt;= '0') &amp;&amp; (trimmed.charAt(pos) &lt;= '9')) {
+<a class="jxr_linenumber" name="79" href="#79">79</a>                      <strong class="jxr_keyword">if</strong> (trimmed.charAt(pos) &gt;= '0' &amp;&amp; trimmed.charAt(pos) &lt;= '9') {
 <a class="jxr_linenumber" name="80" href="#80">80</a>                          charCount = trimmed.charAt(pos) - '0';
 <a class="jxr_linenumber" name="81" href="#81">81</a>                          ellipsisPos++;
 <a class="jxr_linenumber" name="82" href="#82">82</a>                      } <strong class="jxr_keyword">else</strong> {
@@ -241,7 +241,7 @@
 <a class="jxr_linenumber" name="231" href="#231">231</a>             <strong class="jxr_keyword">int</strong> nextDot = buf.toString().indexOf('.', startPos);
 <a class="jxr_linenumber" name="232" href="#232">232</a> 
 <a class="jxr_linenumber" name="233" href="#233">233</a>             <strong class="jxr_keyword">if</strong> (nextDot != -1) {
-<a class="jxr_linenumber" name="234" href="#234">234</a>                 <strong class="jxr_keyword">if</strong> ((nextDot - startPos) &gt; charCount) {
+<a class="jxr_linenumber" name="234" href="#234">234</a>                 <strong class="jxr_keyword">if</strong> (nextDot - startPos &gt; charCount) {
 <a class="jxr_linenumber" name="235" href="#235">235</a>                     buf.delete(startPos + charCount, nextDot);
 <a class="jxr_linenumber" name="236" href="#236">236</a>                     nextDot = startPos + charCount;
 <a class="jxr_linenumber" name="237" href="#237">237</a> 
@@ -272,7 +272,7 @@
 <a class="jxr_linenumber" name="262" href="#262">262</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">         * @param fragments element abbreviation patterns.</em>
 <a class="jxr_linenumber" name="264" href="#264">264</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="265" href="#265">265</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">PatternAbbreviator</a>(List&lt;PatternAbbreviatorFragment&gt; fragments) {
+<a class="jxr_linenumber" name="265" href="#265">265</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">PatternAbbreviator</a>(<strong class="jxr_keyword">final</strong> List&lt;PatternAbbreviatorFragment&gt; fragments) {
 <a class="jxr_linenumber" name="266" href="#266">266</a>             <strong class="jxr_keyword">if</strong> (fragments.size() == 0) {
 <a class="jxr_linenumber" name="267" href="#267">267</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(
 <a class="jxr_linenumber" name="268" href="#268">268</a>                     <span class="jxr_string">"fragments must have at least one element"</span>);
@@ -293,9 +293,9 @@
 <a class="jxr_linenumber" name="283" href="#283">283</a>             <em class="jxr_comment">//  all non-terminal patterns are executed once</em>
 <a class="jxr_linenumber" name="284" href="#284">284</a>             <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="285" href="#285">285</a>             <strong class="jxr_keyword">int</strong> pos = 0;
-<a class="jxr_linenumber" name="286" href="#286">286</a>             StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder(buf);
+<a class="jxr_linenumber" name="286" href="#286">286</a>             <strong class="jxr_keyword">final</strong> StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder(buf);
 <a class="jxr_linenumber" name="287" href="#287">287</a> 
-<a class="jxr_linenumber" name="288" href="#288">288</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; (i &lt; (fragments.length - 1)) &amp;&amp; (pos &lt; buf.length());
+<a class="jxr_linenumber" name="288" href="#288">288</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; fragments.length - 1 &amp;&amp; pos &lt; buf.length();
 <a class="jxr_linenumber" name="289" href="#289">289</a>                  i++) {
 <a class="jxr_linenumber" name="290" href="#290">290</a>                 pos = fragments[i].abbreviate(sb, pos);
 <a class="jxr_linenumber" name="291" href="#291">291</a>             }
@@ -303,9 +303,9 @@
 <a class="jxr_linenumber" name="293" href="#293">293</a>             <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="294" href="#294">294</a>             <em class="jxr_comment">//   last pattern in executed repeatedly</em>
 <a class="jxr_linenumber" name="295" href="#295">295</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="296" href="#296">296</a>             <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">PatternAbbreviatorFragment</a> terminalFragment = fragments[fragments.length - 1];
+<a class="jxr_linenumber" name="296" href="#296">296</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">PatternAbbreviatorFragment</a> terminalFragment = fragments[fragments.length - 1];
 <a class="jxr_linenumber" name="297" href="#297">297</a> 
-<a class="jxr_linenumber" name="298" href="#298">298</a>             <strong class="jxr_keyword">while</strong> ((pos &lt; buf.length()) &amp;&amp; (pos &gt;= 0)) {
+<a class="jxr_linenumber" name="298" href="#298">298</a>             <strong class="jxr_keyword">while</strong> (pos &lt; buf.length() &amp;&amp; pos &gt;= 0) {
 <a class="jxr_linenumber" name="299" href="#299">299</a>                 pos = terminalFragment.abbreviate(sb, pos);
 <a class="jxr_linenumber" name="300" href="#300">300</a>             }
 <a class="jxr_linenumber" name="301" href="#301">301</a>             <strong class="jxr_keyword">return</strong> sb.toString();
