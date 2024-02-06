@@ -28,7 +28,7 @@
 <FONT color="green">025</FONT>    import org.apache.logging.log4j.core.LogEvent;<a name="line.25"></a>
 <FONT color="green">026</FONT>    import org.apache.logging.log4j.core.Logger;<a name="line.26"></a>
 <FONT color="green">027</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttr;<a name="line.28"></a>
+<FONT color="green">028</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.28"></a>
 <FONT color="green">029</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginElement;<a name="line.29"></a>
 <FONT color="green">030</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.30"></a>
 <FONT color="green">031</FONT>    import org.apache.logging.log4j.core.helpers.KeyValuePair;<a name="line.31"></a>
@@ -128,21 +128,22 @@
 <FONT color="green">125</FONT>         * @return The DynamicThresholdFilter.<a name="line.125"></a>
 <FONT color="green">126</FONT>         */<a name="line.126"></a>
 <FONT color="green">127</FONT>        @PluginFactory<a name="line.127"></a>
-<FONT color="green">128</FONT>        public static DynamicThresholdFilter createFilter(@PluginAttr("key") final String key,<a name="line.128"></a>
-<FONT color="green">129</FONT>                                                          @PluginElement("pairs") final KeyValuePair[] pairs,<a name="line.129"></a>
-<FONT color="green">130</FONT>                                                          @PluginAttr("defaultThreshold") final String levelName,<a name="line.130"></a>
-<FONT color="green">131</FONT>                                                          @PluginAttr("onmatch") final String match,<a name="line.131"></a>
-<FONT color="green">132</FONT>                                                          @PluginAttr("onmismatch") final String mismatch) {<a name="line.132"></a>
-<FONT color="green">133</FONT>            final Result onMatch = Result.toResult(match);<a name="line.133"></a>
-<FONT color="green">134</FONT>            final Result onMismatch = Result.toResult(mismatch);<a name="line.134"></a>
-<FONT color="green">135</FONT>            final Map&lt;String, Level&gt; map = new HashMap&lt;String, Level&gt;();<a name="line.135"></a>
-<FONT color="green">136</FONT>            for (final KeyValuePair pair : pairs) {<a name="line.136"></a>
-<FONT color="green">137</FONT>                map.put(pair.getKey(), Level.toLevel(pair.getValue()));<a name="line.137"></a>
-<FONT color="green">138</FONT>            }<a name="line.138"></a>
-<FONT color="green">139</FONT>            final Level level = Level.toLevel(levelName, Level.ERROR);<a name="line.139"></a>
-<FONT color="green">140</FONT>            return new DynamicThresholdFilter(key, map, level, onMatch, onMismatch);<a name="line.140"></a>
-<FONT color="green">141</FONT>        }<a name="line.141"></a>
-<FONT color="green">142</FONT>    }<a name="line.142"></a>
+<FONT color="green">128</FONT>        public static DynamicThresholdFilter createFilter(<a name="line.128"></a>
+<FONT color="green">129</FONT>                @PluginAttribute("key") final String key,<a name="line.129"></a>
+<FONT color="green">130</FONT>                @PluginElement("Pairs") final KeyValuePair[] pairs,<a name="line.130"></a>
+<FONT color="green">131</FONT>                @PluginAttribute("defaultThreshold") final String levelName,<a name="line.131"></a>
+<FONT color="green">132</FONT>                @PluginAttribute("onMatch") final String match,<a name="line.132"></a>
+<FONT color="green">133</FONT>                @PluginAttribute("onMismatch") final String mismatch) {<a name="line.133"></a>
+<FONT color="green">134</FONT>            final Result onMatch = Result.toResult(match);<a name="line.134"></a>
+<FONT color="green">135</FONT>            final Result onMismatch = Result.toResult(mismatch);<a name="line.135"></a>
+<FONT color="green">136</FONT>            final Map&lt;String, Level&gt; map = new HashMap&lt;String, Level&gt;();<a name="line.136"></a>
+<FONT color="green">137</FONT>            for (final KeyValuePair pair : pairs) {<a name="line.137"></a>
+<FONT color="green">138</FONT>                map.put(pair.getKey(), Level.toLevel(pair.getValue()));<a name="line.138"></a>
+<FONT color="green">139</FONT>            }<a name="line.139"></a>
+<FONT color="green">140</FONT>            final Level level = Level.toLevel(levelName, Level.ERROR);<a name="line.140"></a>
+<FONT color="green">141</FONT>            return new DynamicThresholdFilter(key, map, level, onMatch, onMismatch);<a name="line.141"></a>
+<FONT color="green">142</FONT>        }<a name="line.142"></a>
+<FONT color="green">143</FONT>    }<a name="line.143"></a>
 
 
 

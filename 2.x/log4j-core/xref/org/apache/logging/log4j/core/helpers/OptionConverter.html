@@ -144,7 +144,7 @@
 <a class="jxr_linenumber" name="134" href="#134">134</a>         <strong class="jxr_keyword">if</strong> (value != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="135" href="#135">135</a>             <strong class="jxr_keyword">final</strong> String s = value.trim();
 <a class="jxr_linenumber" name="136" href="#136">136</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="137" href="#137">137</a>                 <strong class="jxr_keyword">return</strong> Integer.valueOf(s);
+<a class="jxr_linenumber" name="137" href="#137">137</a>                 <strong class="jxr_keyword">return</strong> Integer.parseInt(s);
 <a class="jxr_linenumber" name="138" href="#138">138</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NumberFormatException e) {
 <a class="jxr_linenumber" name="139" href="#139">139</a>                 LOGGER.error(<span class="jxr_string">"["</span> + s + <span class="jxr_string">"] is not in proper int form."</span>);
 <a class="jxr_linenumber" name="140" href="#140">140</a>                 e.printStackTrace();
@@ -164,25 +164,25 @@
 <a class="jxr_linenumber" name="154" href="#154">154</a>             <strong class="jxr_keyword">return</strong> defaultValue;
 <a class="jxr_linenumber" name="155" href="#155">155</a>         }
 <a class="jxr_linenumber" name="156" href="#156">156</a> 
-<a class="jxr_linenumber" name="157" href="#157">157</a>         String s = value.trim().toUpperCase(Locale.ENGLISH);
+<a class="jxr_linenumber" name="157" href="#157">157</a>         String str = value.trim().toUpperCase(Locale.ENGLISH);
 <a class="jxr_linenumber" name="158" href="#158">158</a>         <strong class="jxr_keyword">long</strong> multiplier = 1;
 <a class="jxr_linenumber" name="159" href="#159">159</a>         <strong class="jxr_keyword">int</strong> index;
 <a class="jxr_linenumber" name="160" href="#160">160</a> 
-<a class="jxr_linenumber" name="161" href="#161">161</a>         <strong class="jxr_keyword">if</strong> ((index = s.indexOf(<span class="jxr_string">"KB"</span>)) != -1) {
+<a class="jxr_linenumber" name="161" href="#161">161</a>         <strong class="jxr_keyword">if</strong> ((index = str.indexOf(<span class="jxr_string">"KB"</span>)) != -1) {
 <a class="jxr_linenumber" name="162" href="#162">162</a>             multiplier = ONE_K;
-<a class="jxr_linenumber" name="163" href="#163">163</a>             s = s.substring(0, index);
-<a class="jxr_linenumber" name="164" href="#164">164</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> ((index = s.indexOf(<span class="jxr_string">"MB"</span>)) != -1) {
+<a class="jxr_linenumber" name="163" href="#163">163</a>             str = str.substring(0, index);
+<a class="jxr_linenumber" name="164" href="#164">164</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> ((index = str.indexOf(<span class="jxr_string">"MB"</span>)) != -1) {
 <a class="jxr_linenumber" name="165" href="#165">165</a>             multiplier = ONE_K * ONE_K;
-<a class="jxr_linenumber" name="166" href="#166">166</a>             s = s.substring(0, index);
-<a class="jxr_linenumber" name="167" href="#167">167</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> ((index = s.indexOf(<span class="jxr_string">"GB"</span>)) != -1) {
+<a class="jxr_linenumber" name="166" href="#166">166</a>             str = str.substring(0, index);
+<a class="jxr_linenumber" name="167" href="#167">167</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> ((index = str.indexOf(<span class="jxr_string">"GB"</span>)) != -1) {
 <a class="jxr_linenumber" name="168" href="#168">168</a>             multiplier = ONE_K * ONE_K * ONE_K;
-<a class="jxr_linenumber" name="169" href="#169">169</a>             s = s.substring(0, index);
+<a class="jxr_linenumber" name="169" href="#169">169</a>             str = str.substring(0, index);
 <a class="jxr_linenumber" name="170" href="#170">170</a>         }
-<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">if</strong> (s != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">if</strong> (str != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="172" href="#172">172</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="173" href="#173">173</a>                 <strong class="jxr_keyword">return</strong> Long.valueOf(s) * multiplier;
+<a class="jxr_linenumber" name="173" href="#173">173</a>                 <strong class="jxr_keyword">return</strong> Long.parseLong(str) * multiplier;
 <a class="jxr_linenumber" name="174" href="#174">174</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NumberFormatException e) {
-<a class="jxr_linenumber" name="175" href="#175">175</a>                 LOGGER.error(<span class="jxr_string">"["</span> + s + <span class="jxr_string">"] is not in proper int form."</span>);
+<a class="jxr_linenumber" name="175" href="#175">175</a>                 LOGGER.error(<span class="jxr_string">"["</span> + str + <span class="jxr_string">"] is not in proper int form."</span>);
 <a class="jxr_linenumber" name="176" href="#176">176</a>                 LOGGER.error(<span class="jxr_string">"["</span> + value + <span class="jxr_string">"] not in expected format."</span>, e);
 <a class="jxr_linenumber" name="177" href="#177">177</a>             }
 <a class="jxr_linenumber" name="178" href="#178">178</a>         }
@@ -302,42 +302,40 @@
 <a class="jxr_linenumber" name="292" href="#292">292</a>                 <em class="jxr_comment">// no more variables</em>
 <a class="jxr_linenumber" name="293" href="#293">293</a>                 <strong class="jxr_keyword">if</strong> (i == 0) { <em class="jxr_comment">// this is a simple string</em>
 <a class="jxr_linenumber" name="294" href="#294">294</a>                     <strong class="jxr_keyword">return</strong> val;
-<a class="jxr_linenumber" name="295" href="#295">295</a>                 } <strong class="jxr_keyword">else</strong> { <em class="jxr_comment">// add the tail string which contails no variables and return the result.</em>
-<a class="jxr_linenumber" name="296" href="#296">296</a>                     sbuf.append(val.substring(i, val.length()));
-<a class="jxr_linenumber" name="297" href="#297">297</a>                     <strong class="jxr_keyword">return</strong> sbuf.toString();
-<a class="jxr_linenumber" name="298" href="#298">298</a>                 }
-<a class="jxr_linenumber" name="299" href="#299">299</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="300" href="#300">300</a>                 sbuf.append(val.substring(i, j));
-<a class="jxr_linenumber" name="301" href="#301">301</a>                 k = val.indexOf(DELIM_STOP, j);
-<a class="jxr_linenumber" name="302" href="#302">302</a>                 <strong class="jxr_keyword">if</strong> (k == -1) {
-<a class="jxr_linenumber" name="303" href="#303">303</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException('&quot;' + val +
-<a class="jxr_linenumber" name="304" href="#304">304</a>                         <span class="jxr_string">"\&quot; has no closing brace. Opening brace at position "</span> + j
-<a class="jxr_linenumber" name="305" href="#305">305</a>                         + '.');
-<a class="jxr_linenumber" name="306" href="#306">306</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="307" href="#307">307</a>                     j += DELIM_START_LEN;
-<a class="jxr_linenumber" name="308" href="#308">308</a>                     <strong class="jxr_keyword">final</strong> String key = val.substring(j, k);
-<a class="jxr_linenumber" name="309" href="#309">309</a>                     <em class="jxr_comment">// first try in System properties</em>
-<a class="jxr_linenumber" name="310" href="#310">310</a>                     String replacement = PropertiesUtil.getProperties().getStringProperty(key, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="311" href="#311">311</a>                     <em class="jxr_comment">// then try props parameter</em>
-<a class="jxr_linenumber" name="312" href="#312">312</a>                     <strong class="jxr_keyword">if</strong> (replacement == <strong class="jxr_keyword">null</strong> &amp;&amp; props != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="313" href="#313">313</a>                         replacement = props.getProperty(key);
-<a class="jxr_linenumber" name="314" href="#314">314</a>                     }
+<a class="jxr_linenumber" name="295" href="#295">295</a>                 }
+<a class="jxr_linenumber" name="296" href="#296">296</a>                 <em class="jxr_comment">// add the tail string which contails no variables and return the result.</em>
+<a class="jxr_linenumber" name="297" href="#297">297</a>                 sbuf.append(val.substring(i, val.length()));
+<a class="jxr_linenumber" name="298" href="#298">298</a>                 <strong class="jxr_keyword">return</strong> sbuf.toString();
+<a class="jxr_linenumber" name="299" href="#299">299</a>             }
+<a class="jxr_linenumber" name="300" href="#300">300</a>             sbuf.append(val.substring(i, j));
+<a class="jxr_linenumber" name="301" href="#301">301</a>             k = val.indexOf(DELIM_STOP, j);
+<a class="jxr_linenumber" name="302" href="#302">302</a>             <strong class="jxr_keyword">if</strong> (k == -1) {
+<a class="jxr_linenumber" name="303" href="#303">303</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException('&quot;' + val +
+<a class="jxr_linenumber" name="304" href="#304">304</a>                     <span class="jxr_string">"\&quot; has no closing brace. Opening brace at position "</span> + j
+<a class="jxr_linenumber" name="305" href="#305">305</a>                     + '.');
+<a class="jxr_linenumber" name="306" href="#306">306</a>             }
+<a class="jxr_linenumber" name="307" href="#307">307</a>             j += DELIM_START_LEN;
+<a class="jxr_linenumber" name="308" href="#308">308</a>             <strong class="jxr_keyword">final</strong> String key = val.substring(j, k);
+<a class="jxr_linenumber" name="309" href="#309">309</a>             <em class="jxr_comment">// first try in System properties</em>
+<a class="jxr_linenumber" name="310" href="#310">310</a>             String replacement = PropertiesUtil.getProperties().getStringProperty(key, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="311" href="#311">311</a>             <em class="jxr_comment">// then try props parameter</em>
+<a class="jxr_linenumber" name="312" href="#312">312</a>             <strong class="jxr_keyword">if</strong> (replacement == <strong class="jxr_keyword">null</strong> &amp;&amp; props != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="313" href="#313">313</a>                 replacement = props.getProperty(key);
+<a class="jxr_linenumber" name="314" href="#314">314</a>             }
 <a class="jxr_linenumber" name="315" href="#315">315</a> 
-<a class="jxr_linenumber" name="316" href="#316">316</a>                     <strong class="jxr_keyword">if</strong> (replacement != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="317" href="#317">317</a>                         <em class="jxr_comment">// Do variable substitution on the replacement string</em>
-<a class="jxr_linenumber" name="318" href="#318">318</a>                         <em class="jxr_comment">// such that we can solve "Hello ${x2}" as "Hello p1"</em>
-<a class="jxr_linenumber" name="319" href="#319">319</a>                         <em class="jxr_comment">// the where the properties are</em>
-<a class="jxr_linenumber" name="320" href="#320">320</a>                         <em class="jxr_comment">// x1=p1</em>
-<a class="jxr_linenumber" name="321" href="#321">321</a>                         <em class="jxr_comment">// x2=${x1}</em>
-<a class="jxr_linenumber" name="322" href="#322">322</a>                         <strong class="jxr_keyword">final</strong> String recursiveReplacement = substVars(replacement, props);
-<a class="jxr_linenumber" name="323" href="#323">323</a>                         sbuf.append(recursiveReplacement);
-<a class="jxr_linenumber" name="324" href="#324">324</a>                     }
-<a class="jxr_linenumber" name="325" href="#325">325</a>                     i = k + DELIM_STOP_LEN;
-<a class="jxr_linenumber" name="326" href="#326">326</a>                 }
-<a class="jxr_linenumber" name="327" href="#327">327</a>             }
-<a class="jxr_linenumber" name="328" href="#328">328</a>         }
-<a class="jxr_linenumber" name="329" href="#329">329</a>     }
-<a class="jxr_linenumber" name="330" href="#330">330</a> }
+<a class="jxr_linenumber" name="316" href="#316">316</a>             <strong class="jxr_keyword">if</strong> (replacement != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="317" href="#317">317</a>                 <em class="jxr_comment">// Do variable substitution on the replacement string</em>
+<a class="jxr_linenumber" name="318" href="#318">318</a>                 <em class="jxr_comment">// such that we can solve "Hello ${x2}" as "Hello p1"</em>
+<a class="jxr_linenumber" name="319" href="#319">319</a>                 <em class="jxr_comment">// the where the properties are</em>
+<a class="jxr_linenumber" name="320" href="#320">320</a>                 <em class="jxr_comment">// x1=p1</em>
+<a class="jxr_linenumber" name="321" href="#321">321</a>                 <em class="jxr_comment">// x2=${x1}</em>
+<a class="jxr_linenumber" name="322" href="#322">322</a>                 <strong class="jxr_keyword">final</strong> String recursiveReplacement = substVars(replacement, props);
+<a class="jxr_linenumber" name="323" href="#323">323</a>                 sbuf.append(recursiveReplacement);
+<a class="jxr_linenumber" name="324" href="#324">324</a>             }
+<a class="jxr_linenumber" name="325" href="#325">325</a>             i = k + DELIM_STOP_LEN;
+<a class="jxr_linenumber" name="326" href="#326">326</a>         }
+<a class="jxr_linenumber" name="327" href="#327">327</a>     }
+<a class="jxr_linenumber" name="328" href="#328">328</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

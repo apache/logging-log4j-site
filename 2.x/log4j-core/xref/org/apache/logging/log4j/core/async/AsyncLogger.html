@@ -74,8 +74,8 @@
 <a class="jxr_linenumber" name="64" href="#64">64</a>  <em class="jxr_javadoccomment"> * your log4j.xml configuration will produce either a "?" character or no output</em>
 <a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment"> * at all.</em>
 <a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;</em>
-<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment"> * For best performance, use AsyncLogger with the FastFileAppender or</em>
-<a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_javadoccomment"> * FastRollingFileAppender, with immediateFlush=false. These appenders have</em>
+<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment"> * For best performance, use AsyncLogger with the RandomAccessFileAppender or</em>
+<a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_javadoccomment"> * RollingRandomAccessFileAppender, with immediateFlush=false. These appenders have</em>
 <a class="jxr_linenumber" name="69" href="#69">69</a>  <em class="jxr_javadoccomment"> * built-in support for the batching mechanism used by the Disruptor library,</em>
 <a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_javadoccomment"> * and they will flush to disk at the end of each batch. This means that even</em>
 <a class="jxr_linenumber" name="71" href="#71">71</a>  <em class="jxr_javadoccomment"> * with immediateFlush=false, there will never be any items left in the buffer;</em>
@@ -175,7 +175,7 @@
 <a class="jxr_linenumber" name="165" href="#165">165</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     * Constructs an {@code AsyncLogger} with the specified context, name and</em>
 <a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     * message factory.</em>
-<a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     * @param context context of this logger</em>
 <a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     * @param name name of this logger</em>
 <a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     * @param messageFactory message factory of this logger</em>
@@ -240,13 +240,13 @@
 <a class="jxr_linenumber" name="230" href="#230">230</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="231" href="#231">231</a> <em class="jxr_javadoccomment">     * This method is called by the EventHandler that processes the</em>
 <a class="jxr_linenumber" name="232" href="#232">232</a> <em class="jxr_javadoccomment">     * RingBufferLogEvent in a separate thread.</em>
-<a class="jxr_linenumber" name="233" href="#233">233</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="233" href="#233">233</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="234" href="#234">234</a> <em class="jxr_javadoccomment">     * @param event the event to log</em>
 <a class="jxr_linenumber" name="235" href="#235">235</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="236" href="#236">236</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> actualAsyncLog(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEvent.html">RingBufferLogEvent</a> event) {
 <a class="jxr_linenumber" name="237" href="#237">237</a>         <strong class="jxr_keyword">final</strong> Map&lt;Property, Boolean&gt; properties = config.loggerConfig.getProperties();
 <a class="jxr_linenumber" name="238" href="#238">238</a>         event.mergePropertiesIntoContextMap(properties,
-<a class="jxr_linenumber" name="239" href="#239">239</a>                 config.config.getSubst());
+<a class="jxr_linenumber" name="239" href="#239">239</a>                 config.config.getStrSubstitutor());
 <a class="jxr_linenumber" name="240" href="#240">240</a>         config.logEvent(event);
 <a class="jxr_linenumber" name="241" href="#241">241</a>     }
 <a class="jxr_linenumber" name="242" href="#242">242</a> 

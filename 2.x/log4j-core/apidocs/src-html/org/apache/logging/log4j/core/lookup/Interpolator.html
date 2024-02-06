@@ -46,11 +46,11 @@
 <FONT color="green">043</FONT>            this.defaultLookup = defaultLookup == null ? new MapLookup(new HashMap&lt;String, String&gt;()) : defaultLookup;<a name="line.43"></a>
 <FONT color="green">044</FONT>            final PluginManager manager = new PluginManager("Lookup");<a name="line.44"></a>
 <FONT color="green">045</FONT>            manager.collectPlugins();<a name="line.45"></a>
-<FONT color="green">046</FONT>            final Map&lt;String, PluginType&gt; plugins = manager.getPlugins();<a name="line.46"></a>
+<FONT color="green">046</FONT>            final Map&lt;String, PluginType&lt;?&gt;&gt; plugins = manager.getPlugins();<a name="line.46"></a>
 <FONT color="green">047</FONT>    <a name="line.47"></a>
-<FONT color="green">048</FONT>            for (final Map.Entry&lt;String, PluginType&gt; entry : plugins.entrySet()) {<a name="line.48"></a>
+<FONT color="green">048</FONT>            for (final Map.Entry&lt;String, PluginType&lt;?&gt;&gt; entry : plugins.entrySet()) {<a name="line.48"></a>
 <FONT color="green">049</FONT>                @SuppressWarnings("unchecked")<a name="line.49"></a>
-<FONT color="green">050</FONT>                final Class&lt;StrLookup&gt; clazz = entry.getValue().getPluginClass();<a name="line.50"></a>
+<FONT color="green">050</FONT>                final Class&lt;? extends StrLookup&gt; clazz = (Class&lt;? extends StrLookup&gt;) entry.getValue().getPluginClass();<a name="line.50"></a>
 <FONT color="green">051</FONT>                try {<a name="line.51"></a>
 <FONT color="green">052</FONT>                    lookups.put(entry.getKey(), clazz.newInstance());<a name="line.52"></a>
 <FONT color="green">053</FONT>                } catch (final Exception ex) {<a name="line.53"></a>
@@ -66,83 +66,93 @@
 <FONT color="green">063</FONT>            this.defaultLookup = new MapLookup(new HashMap&lt;String, String&gt;());<a name="line.63"></a>
 <FONT color="green">064</FONT>            lookups.put("sys", new SystemPropertiesLookup());<a name="line.64"></a>
 <FONT color="green">065</FONT>            lookups.put("env", new EnvironmentLookup());<a name="line.65"></a>
-<FONT color="green">066</FONT>        }<a name="line.66"></a>
-<FONT color="green">067</FONT>    <a name="line.67"></a>
-<FONT color="green">068</FONT>         /**<a name="line.68"></a>
-<FONT color="green">069</FONT>         * Resolves the specified variable. This implementation will try to extract<a name="line.69"></a>
-<FONT color="green">070</FONT>         * a variable prefix from the given variable name (the first colon (':') is<a name="line.70"></a>
-<FONT color="green">071</FONT>         * used as prefix separator). It then passes the name of the variable with<a name="line.71"></a>
-<FONT color="green">072</FONT>         * the prefix stripped to the lookup object registered for this prefix. If<a name="line.72"></a>
-<FONT color="green">073</FONT>         * no prefix can be found or if the associated lookup object cannot resolve<a name="line.73"></a>
-<FONT color="green">074</FONT>         * this variable, the default lookup object will be used.<a name="line.74"></a>
-<FONT color="green">075</FONT>         *<a name="line.75"></a>
-<FONT color="green">076</FONT>         * @param var the name of the variable whose value is to be looked up<a name="line.76"></a>
-<FONT color="green">077</FONT>         * @return the value of this variable or &lt;b&gt;null&lt;/b&gt; if it cannot be<a name="line.77"></a>
-<FONT color="green">078</FONT>         * resolved<a name="line.78"></a>
-<FONT color="green">079</FONT>         */<a name="line.79"></a>
-<FONT color="green">080</FONT>        @Override<a name="line.80"></a>
-<FONT color="green">081</FONT>        public String lookup(final String var) {<a name="line.81"></a>
-<FONT color="green">082</FONT>            return lookup(null, var);<a name="line.82"></a>
-<FONT color="green">083</FONT>        }<a name="line.83"></a>
-<FONT color="green">084</FONT>    <a name="line.84"></a>
-<FONT color="green">085</FONT>        /**<a name="line.85"></a>
-<FONT color="green">086</FONT>         * Resolves the specified variable. This implementation will try to extract<a name="line.86"></a>
-<FONT color="green">087</FONT>         * a variable prefix from the given variable name (the first colon (':') is<a name="line.87"></a>
-<FONT color="green">088</FONT>         * used as prefix separator). It then passes the name of the variable with<a name="line.88"></a>
-<FONT color="green">089</FONT>         * the prefix stripped to the lookup object registered for this prefix. If<a name="line.89"></a>
-<FONT color="green">090</FONT>         * no prefix can be found or if the associated lookup object cannot resolve<a name="line.90"></a>
-<FONT color="green">091</FONT>         * this variable, the default lookup object will be used.<a name="line.91"></a>
-<FONT color="green">092</FONT>         *<a name="line.92"></a>
-<FONT color="green">093</FONT>         * @param event The current LogEvent or null.<a name="line.93"></a>
-<FONT color="green">094</FONT>         * @param var the name of the variable whose value is to be looked up<a name="line.94"></a>
-<FONT color="green">095</FONT>         * @return the value of this variable or &lt;b&gt;null&lt;/b&gt; if it cannot be<a name="line.95"></a>
-<FONT color="green">096</FONT>         * resolved<a name="line.96"></a>
-<FONT color="green">097</FONT>         */<a name="line.97"></a>
-<FONT color="green">098</FONT>        @Override<a name="line.98"></a>
-<FONT color="green">099</FONT>        public String lookup(final LogEvent event, String var) {<a name="line.99"></a>
-<FONT color="green">100</FONT>            if (var == null) {<a name="line.100"></a>
-<FONT color="green">101</FONT>                return null;<a name="line.101"></a>
-<FONT color="green">102</FONT>            }<a name="line.102"></a>
-<FONT color="green">103</FONT>    <a name="line.103"></a>
-<FONT color="green">104</FONT>            final int prefixPos = var.indexOf(PREFIX_SEPARATOR);<a name="line.104"></a>
-<FONT color="green">105</FONT>            if (prefixPos &gt;= 0) {<a name="line.105"></a>
-<FONT color="green">106</FONT>                final String prefix = var.substring(0, prefixPos);<a name="line.106"></a>
-<FONT color="green">107</FONT>                final String name = var.substring(prefixPos + 1);<a name="line.107"></a>
-<FONT color="green">108</FONT>                final StrLookup lookup = lookups.get(prefix);<a name="line.108"></a>
-<FONT color="green">109</FONT>                String value = null;<a name="line.109"></a>
-<FONT color="green">110</FONT>                if (lookup != null) {<a name="line.110"></a>
-<FONT color="green">111</FONT>                    value = event == null ? lookup.lookup(name) : lookup.lookup(event, name);<a name="line.111"></a>
-<FONT color="green">112</FONT>                }<a name="line.112"></a>
+<FONT color="green">066</FONT>            lookups.put("jndi", new JndiLookup());<a name="line.66"></a>
+<FONT color="green">067</FONT>            try {<a name="line.67"></a>
+<FONT color="green">068</FONT>                if (Class.forName("javax.servlet.ServletContext") != null) {<a name="line.68"></a>
+<FONT color="green">069</FONT>                    lookups.put("web", new WebLookup());<a name="line.69"></a>
+<FONT color="green">070</FONT>                }<a name="line.70"></a>
+<FONT color="green">071</FONT>            } catch (ClassNotFoundException ex) {<a name="line.71"></a>
+<FONT color="green">072</FONT>                LOGGER.debug("ServletContext not present - WebLookup not added");<a name="line.72"></a>
+<FONT color="green">073</FONT>            } catch (Exception ex) {<a name="line.73"></a>
+<FONT color="green">074</FONT>                LOGGER.error("Unable to locate ServletContext", ex);<a name="line.74"></a>
+<FONT color="green">075</FONT>            }<a name="line.75"></a>
+<FONT color="green">076</FONT>        }<a name="line.76"></a>
+<FONT color="green">077</FONT>    <a name="line.77"></a>
+<FONT color="green">078</FONT>         /**<a name="line.78"></a>
+<FONT color="green">079</FONT>         * Resolves the specified variable. This implementation will try to extract<a name="line.79"></a>
+<FONT color="green">080</FONT>         * a variable prefix from the given variable name (the first colon (':') is<a name="line.80"></a>
+<FONT color="green">081</FONT>         * used as prefix separator). It then passes the name of the variable with<a name="line.81"></a>
+<FONT color="green">082</FONT>         * the prefix stripped to the lookup object registered for this prefix. If<a name="line.82"></a>
+<FONT color="green">083</FONT>         * no prefix can be found or if the associated lookup object cannot resolve<a name="line.83"></a>
+<FONT color="green">084</FONT>         * this variable, the default lookup object will be used.<a name="line.84"></a>
+<FONT color="green">085</FONT>         *<a name="line.85"></a>
+<FONT color="green">086</FONT>         * @param var the name of the variable whose value is to be looked up<a name="line.86"></a>
+<FONT color="green">087</FONT>         * @return the value of this variable or &lt;b&gt;null&lt;/b&gt; if it cannot be<a name="line.87"></a>
+<FONT color="green">088</FONT>         * resolved<a name="line.88"></a>
+<FONT color="green">089</FONT>         */<a name="line.89"></a>
+<FONT color="green">090</FONT>        @Override<a name="line.90"></a>
+<FONT color="green">091</FONT>        public String lookup(final String var) {<a name="line.91"></a>
+<FONT color="green">092</FONT>            return lookup(null, var);<a name="line.92"></a>
+<FONT color="green">093</FONT>        }<a name="line.93"></a>
+<FONT color="green">094</FONT>    <a name="line.94"></a>
+<FONT color="green">095</FONT>        /**<a name="line.95"></a>
+<FONT color="green">096</FONT>         * Resolves the specified variable. This implementation will try to extract<a name="line.96"></a>
+<FONT color="green">097</FONT>         * a variable prefix from the given variable name (the first colon (':') is<a name="line.97"></a>
+<FONT color="green">098</FONT>         * used as prefix separator). It then passes the name of the variable with<a name="line.98"></a>
+<FONT color="green">099</FONT>         * the prefix stripped to the lookup object registered for this prefix. If<a name="line.99"></a>
+<FONT color="green">100</FONT>         * no prefix can be found or if the associated lookup object cannot resolve<a name="line.100"></a>
+<FONT color="green">101</FONT>         * this variable, the default lookup object will be used.<a name="line.101"></a>
+<FONT color="green">102</FONT>         *<a name="line.102"></a>
+<FONT color="green">103</FONT>         * @param event The current LogEvent or null.<a name="line.103"></a>
+<FONT color="green">104</FONT>         * @param var the name of the variable whose value is to be looked up<a name="line.104"></a>
+<FONT color="green">105</FONT>         * @return the value of this variable or &lt;b&gt;null&lt;/b&gt; if it cannot be<a name="line.105"></a>
+<FONT color="green">106</FONT>         * resolved<a name="line.106"></a>
+<FONT color="green">107</FONT>         */<a name="line.107"></a>
+<FONT color="green">108</FONT>        @Override<a name="line.108"></a>
+<FONT color="green">109</FONT>        public String lookup(final LogEvent event, String var) {<a name="line.109"></a>
+<FONT color="green">110</FONT>            if (var == null) {<a name="line.110"></a>
+<FONT color="green">111</FONT>                return null;<a name="line.111"></a>
+<FONT color="green">112</FONT>            }<a name="line.112"></a>
 <FONT color="green">113</FONT>    <a name="line.113"></a>
-<FONT color="green">114</FONT>                if (value != null) {<a name="line.114"></a>
-<FONT color="green">115</FONT>                    return value;<a name="line.115"></a>
-<FONT color="green">116</FONT>                }<a name="line.116"></a>
-<FONT color="green">117</FONT>                var = var.substring(prefixPos + 1);<a name="line.117"></a>
-<FONT color="green">118</FONT>            }<a name="line.118"></a>
-<FONT color="green">119</FONT>            if (defaultLookup != null) {<a name="line.119"></a>
-<FONT color="green">120</FONT>                return event == null ? defaultLookup.lookup(var) : defaultLookup.lookup(event, var);<a name="line.120"></a>
-<FONT color="green">121</FONT>            }<a name="line.121"></a>
-<FONT color="green">122</FONT>            return null;<a name="line.122"></a>
-<FONT color="green">123</FONT>        }<a name="line.123"></a>
-<FONT color="green">124</FONT>    <a name="line.124"></a>
-<FONT color="green">125</FONT>        @Override<a name="line.125"></a>
-<FONT color="green">126</FONT>        public String toString() {<a name="line.126"></a>
-<FONT color="green">127</FONT>            final StringBuilder sb = new StringBuilder();<a name="line.127"></a>
-<FONT color="green">128</FONT>            for (final String name : lookups.keySet()) {<a name="line.128"></a>
-<FONT color="green">129</FONT>                if (sb.length() == 0) {<a name="line.129"></a>
-<FONT color="green">130</FONT>                    sb.append("{");<a name="line.130"></a>
-<FONT color="green">131</FONT>                } else {<a name="line.131"></a>
-<FONT color="green">132</FONT>                    sb.append(", ");<a name="line.132"></a>
-<FONT color="green">133</FONT>                }<a name="line.133"></a>
+<FONT color="green">114</FONT>            final int prefixPos = var.indexOf(PREFIX_SEPARATOR);<a name="line.114"></a>
+<FONT color="green">115</FONT>            if (prefixPos &gt;= 0) {<a name="line.115"></a>
+<FONT color="green">116</FONT>                final String prefix = var.substring(0, prefixPos);<a name="line.116"></a>
+<FONT color="green">117</FONT>                final String name = var.substring(prefixPos + 1);<a name="line.117"></a>
+<FONT color="green">118</FONT>                final StrLookup lookup = lookups.get(prefix);<a name="line.118"></a>
+<FONT color="green">119</FONT>                String value = null;<a name="line.119"></a>
+<FONT color="green">120</FONT>                if (lookup != null) {<a name="line.120"></a>
+<FONT color="green">121</FONT>                    value = event == null ? lookup.lookup(name) : lookup.lookup(event, name);<a name="line.121"></a>
+<FONT color="green">122</FONT>                }<a name="line.122"></a>
+<FONT color="green">123</FONT>    <a name="line.123"></a>
+<FONT color="green">124</FONT>                if (value != null) {<a name="line.124"></a>
+<FONT color="green">125</FONT>                    return value;<a name="line.125"></a>
+<FONT color="green">126</FONT>                }<a name="line.126"></a>
+<FONT color="green">127</FONT>                var = var.substring(prefixPos + 1);<a name="line.127"></a>
+<FONT color="green">128</FONT>            }<a name="line.128"></a>
+<FONT color="green">129</FONT>            if (defaultLookup != null) {<a name="line.129"></a>
+<FONT color="green">130</FONT>                return event == null ? defaultLookup.lookup(var) : defaultLookup.lookup(event, var);<a name="line.130"></a>
+<FONT color="green">131</FONT>            }<a name="line.131"></a>
+<FONT color="green">132</FONT>            return null;<a name="line.132"></a>
+<FONT color="green">133</FONT>        }<a name="line.133"></a>
 <FONT color="green">134</FONT>    <a name="line.134"></a>
-<FONT color="green">135</FONT>                sb.append(name);<a name="line.135"></a>
-<FONT color="green">136</FONT>            }<a name="line.136"></a>
-<FONT color="green">137</FONT>            if (sb.length() &gt; 0) {<a name="line.137"></a>
-<FONT color="green">138</FONT>                sb.append("}");<a name="line.138"></a>
-<FONT color="green">139</FONT>            }<a name="line.139"></a>
-<FONT color="green">140</FONT>            return sb.toString();<a name="line.140"></a>
-<FONT color="green">141</FONT>        }<a name="line.141"></a>
-<FONT color="green">142</FONT>    }<a name="line.142"></a>
+<FONT color="green">135</FONT>        @Override<a name="line.135"></a>
+<FONT color="green">136</FONT>        public String toString() {<a name="line.136"></a>
+<FONT color="green">137</FONT>            final StringBuilder sb = new StringBuilder();<a name="line.137"></a>
+<FONT color="green">138</FONT>            for (final String name : lookups.keySet()) {<a name="line.138"></a>
+<FONT color="green">139</FONT>                if (sb.length() == 0) {<a name="line.139"></a>
+<FONT color="green">140</FONT>                    sb.append("{");<a name="line.140"></a>
+<FONT color="green">141</FONT>                } else {<a name="line.141"></a>
+<FONT color="green">142</FONT>                    sb.append(", ");<a name="line.142"></a>
+<FONT color="green">143</FONT>                }<a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>                sb.append(name);<a name="line.145"></a>
+<FONT color="green">146</FONT>            }<a name="line.146"></a>
+<FONT color="green">147</FONT>            if (sb.length() &gt; 0) {<a name="line.147"></a>
+<FONT color="green">148</FONT>                sb.append("}");<a name="line.148"></a>
+<FONT color="green">149</FONT>            }<a name="line.149"></a>
+<FONT color="green">150</FONT>            return sb.toString();<a name="line.150"></a>
+<FONT color="green">151</FONT>        }<a name="line.151"></a>
+<FONT color="green">152</FONT>    }<a name="line.152"></a>
 
 
 

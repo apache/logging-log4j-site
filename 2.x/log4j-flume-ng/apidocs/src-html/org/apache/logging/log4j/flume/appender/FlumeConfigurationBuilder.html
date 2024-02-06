@@ -263,33 +263,32 @@
 <FONT color="green">260</FONT>                            if (sinkUser != null) {<a name="line.260"></a>
 <FONT color="green">261</FONT>                                throw new ConfigurationException(String.format(<a name="line.261"></a>
 <FONT color="green">262</FONT>                                    "Sink %s of group %s already in use by group %s", sink, groupName, sinkUser));<a name="line.262"></a>
-<FONT color="green">263</FONT>                            } else {<a name="line.263"></a>
-<FONT color="green">264</FONT>                                throw new ConfigurationException(String.format(<a name="line.264"></a>
+<FONT color="green">263</FONT>                            }<a name="line.263"></a>
+<FONT color="green">264</FONT>                            throw new ConfigurationException(String.format(<a name="line.264"></a>
 <FONT color="green">265</FONT>                                    "Sink %s of group %s does not exist or is not properly configured", sink,<a name="line.265"></a>
 <FONT color="green">266</FONT>                                    groupName));<a name="line.266"></a>
-<FONT color="green">267</FONT>                            }<a name="line.267"></a>
-<FONT color="green">268</FONT>                        }<a name="line.268"></a>
-<FONT color="green">269</FONT>                        groupSinks.add(s);<a name="line.269"></a>
-<FONT color="green">270</FONT>                        usedSinks.put(sink, groupName);<a name="line.270"></a>
-<FONT color="green">271</FONT>                    }<a name="line.271"></a>
-<FONT color="green">272</FONT>                    final SinkGroup group = new SinkGroup(groupSinks);<a name="line.272"></a>
-<FONT color="green">273</FONT>                    Configurables.configure(group, groupConf);<a name="line.273"></a>
-<FONT color="green">274</FONT>                    conf.getSinkRunners().put(comp.getComponentName(), new SinkRunner(group.getProcessor()));<a name="line.274"></a>
-<FONT color="green">275</FONT>                }<a name="line.275"></a>
-<FONT color="green">276</FONT>            }<a name="line.276"></a>
-<FONT color="green">277</FONT>            // add any unassigned sinks to solo collectors<a name="line.277"></a>
-<FONT color="green">278</FONT>            for (final Map.Entry&lt;String, Sink&gt; entry : sinks.entrySet()) {<a name="line.278"></a>
-<FONT color="green">279</FONT>                if (!usedSinks.containsValue(entry.getKey())) {<a name="line.279"></a>
-<FONT color="green">280</FONT>                    final SinkProcessor pr = new DefaultSinkProcessor();<a name="line.280"></a>
-<FONT color="green">281</FONT>                    final List&lt;Sink&gt; sinkMap = new ArrayList&lt;Sink&gt;();<a name="line.281"></a>
-<FONT color="green">282</FONT>                    sinkMap.add(entry.getValue());<a name="line.282"></a>
-<FONT color="green">283</FONT>                    pr.setSinks(sinkMap);<a name="line.283"></a>
-<FONT color="green">284</FONT>                    Configurables.configure(pr, new Context());<a name="line.284"></a>
-<FONT color="green">285</FONT>                    conf.getSinkRunners().put(entry.getKey(), new SinkRunner(pr));<a name="line.285"></a>
-<FONT color="green">286</FONT>                }<a name="line.286"></a>
-<FONT color="green">287</FONT>            }<a name="line.287"></a>
-<FONT color="green">288</FONT>        }<a name="line.288"></a>
-<FONT color="green">289</FONT>    }<a name="line.289"></a>
+<FONT color="green">267</FONT>                        }<a name="line.267"></a>
+<FONT color="green">268</FONT>                        groupSinks.add(s);<a name="line.268"></a>
+<FONT color="green">269</FONT>                        usedSinks.put(sink, groupName);<a name="line.269"></a>
+<FONT color="green">270</FONT>                    }<a name="line.270"></a>
+<FONT color="green">271</FONT>                    final SinkGroup group = new SinkGroup(groupSinks);<a name="line.271"></a>
+<FONT color="green">272</FONT>                    Configurables.configure(group, groupConf);<a name="line.272"></a>
+<FONT color="green">273</FONT>                    conf.getSinkRunners().put(comp.getComponentName(), new SinkRunner(group.getProcessor()));<a name="line.273"></a>
+<FONT color="green">274</FONT>                }<a name="line.274"></a>
+<FONT color="green">275</FONT>            }<a name="line.275"></a>
+<FONT color="green">276</FONT>            // add any unassigned sinks to solo collectors<a name="line.276"></a>
+<FONT color="green">277</FONT>            for (final Map.Entry&lt;String, Sink&gt; entry : sinks.entrySet()) {<a name="line.277"></a>
+<FONT color="green">278</FONT>                if (!usedSinks.containsValue(entry.getKey())) {<a name="line.278"></a>
+<FONT color="green">279</FONT>                    final SinkProcessor pr = new DefaultSinkProcessor();<a name="line.279"></a>
+<FONT color="green">280</FONT>                    final List&lt;Sink&gt; sinkMap = new ArrayList&lt;Sink&gt;();<a name="line.280"></a>
+<FONT color="green">281</FONT>                    sinkMap.add(entry.getValue());<a name="line.281"></a>
+<FONT color="green">282</FONT>                    pr.setSinks(sinkMap);<a name="line.282"></a>
+<FONT color="green">283</FONT>                    Configurables.configure(pr, new Context());<a name="line.283"></a>
+<FONT color="green">284</FONT>                    conf.getSinkRunners().put(entry.getKey(), new SinkRunner(pr));<a name="line.284"></a>
+<FONT color="green">285</FONT>                }<a name="line.285"></a>
+<FONT color="green">286</FONT>            }<a name="line.286"></a>
+<FONT color="green">287</FONT>        }<a name="line.287"></a>
+<FONT color="green">288</FONT>    }<a name="line.288"></a>
 
 
 

@@ -52,9 +52,9 @@
 <FONT color="green">049</FONT>        private PropertiesRewritePolicy(final Configuration config, final List&lt;Property&gt; props) {<a name="line.49"></a>
 <FONT color="green">050</FONT>            this.config = config;<a name="line.50"></a>
 <FONT color="green">051</FONT>            this.properties = new HashMap&lt;Property, Boolean&gt;(props.size());<a name="line.51"></a>
-<FONT color="green">052</FONT>            for (final Property prop : props) {<a name="line.52"></a>
-<FONT color="green">053</FONT>                final boolean interpolate = prop.getValue().contains("${");<a name="line.53"></a>
-<FONT color="green">054</FONT>                properties.put(prop, interpolate);<a name="line.54"></a>
+<FONT color="green">052</FONT>            for (final Property property : props) {<a name="line.52"></a>
+<FONT color="green">053</FONT>                final Boolean interpolate = Boolean.valueOf(property.getValue().contains("${"));<a name="line.53"></a>
+<FONT color="green">054</FONT>                properties.put(property, interpolate);<a name="line.54"></a>
 <FONT color="green">055</FONT>            }<a name="line.55"></a>
 <FONT color="green">056</FONT>        }<a name="line.56"></a>
 <FONT color="green">057</FONT>    <a name="line.57"></a>
@@ -69,8 +69,8 @@
 <FONT color="green">066</FONT>            final Map&lt;String, String&gt; props = new HashMap&lt;String, String&gt;(source.getContextMap());<a name="line.66"></a>
 <FONT color="green">067</FONT>            for (final Map.Entry&lt;Property, Boolean&gt; entry : properties.entrySet()) {<a name="line.67"></a>
 <FONT color="green">068</FONT>                final Property prop = entry.getKey();<a name="line.68"></a>
-<FONT color="green">069</FONT>                props.put(prop.getName(), entry.getValue() ?<a name="line.69"></a>
-<FONT color="green">070</FONT>                    config.getSubst().replace(prop.getValue()) : prop.getValue());<a name="line.70"></a>
+<FONT color="green">069</FONT>                props.put(prop.getName(), entry.getValue().booleanValue() ?<a name="line.69"></a>
+<FONT color="green">070</FONT>                    config.getStrSubstitutor().replace(prop.getValue()) : prop.getValue());<a name="line.70"></a>
 <FONT color="green">071</FONT>            }<a name="line.71"></a>
 <FONT color="green">072</FONT>    <a name="line.72"></a>
 <FONT color="green">073</FONT>            return new Log4jLogEvent(source.getLoggerName(), source.getMarker(), source.getFQCN(), source.getLevel(),<a name="line.73"></a>
@@ -103,7 +103,7 @@
 <FONT color="green">100</FONT>         */<a name="line.100"></a>
 <FONT color="green">101</FONT>        @PluginFactory<a name="line.101"></a>
 <FONT color="green">102</FONT>        public static PropertiesRewritePolicy createPolicy(@PluginConfiguration final Configuration config,<a name="line.102"></a>
-<FONT color="green">103</FONT>                                                    @PluginElement("properties") final Property[] props) {<a name="line.103"></a>
+<FONT color="green">103</FONT>                                                    @PluginElement("Properties") final Property[] props) {<a name="line.103"></a>
 <FONT color="green">104</FONT>            if (props == null || props.length == 0) {<a name="line.104"></a>
 <FONT color="green">105</FONT>                LOGGER.error("Properties must be specified for the PropertiesRewritePolicy");<a name="line.105"></a>
 <FONT color="green">106</FONT>                return null;<a name="line.106"></a>

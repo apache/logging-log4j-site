@@ -68,17 +68,17 @@
 <a class="jxr_linenumber" name="58" href="#58">58</a>  
 <a class="jxr_linenumber" name="59" href="#59">59</a>          <strong class="jxr_keyword">if</strong> (enumResources != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="60" href="#60">60</a>              <strong class="jxr_keyword">while</strong> (enumResources.hasMoreElements()) {
-<a class="jxr_linenumber" name="61" href="#61">61</a>                  <strong class="jxr_keyword">final</strong> Properties props = <strong class="jxr_keyword">new</strong> Properties();
-<a class="jxr_linenumber" name="62" href="#62">62</a>                  <strong class="jxr_keyword">final</strong> URL url = enumResources.nextElement();
+<a class="jxr_linenumber" name="61" href="#61">61</a>                  <strong class="jxr_keyword">final</strong> URL url = enumResources.nextElement();
+<a class="jxr_linenumber" name="62" href="#62">62</a>                  Properties props;
 <a class="jxr_linenumber" name="63" href="#63">63</a>                  <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="64" href="#64">64</a>                      props.load(url.openStream());
-<a class="jxr_linenumber" name="65" href="#65">65</a>                  } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioe) {
-<a class="jxr_linenumber" name="66" href="#66">66</a>                      LOGGER.error(<span class="jxr_string">"Unable to read "</span> + url.toString(), ioe);
-<a class="jxr_linenumber" name="67" href="#67">67</a>                  }
-<a class="jxr_linenumber" name="68" href="#68">68</a>                  <strong class="jxr_keyword">if</strong> (!validVersion(props.getProperty(API_VERSION))) {
-<a class="jxr_linenumber" name="69" href="#69">69</a>                      <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="70" href="#70">70</a>                  }
-<a class="jxr_linenumber" name="71" href="#71">71</a>                  PROVIDERS.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/spi/Provider.html">Provider</a>(props, url));
+<a class="jxr_linenumber" name="64" href="#64">64</a>                      props = PropertiesUtil.loadClose(url.openStream(), url);
+<a class="jxr_linenumber" name="65" href="#65">65</a>                      <strong class="jxr_keyword">if</strong> (!validVersion(props.getProperty(API_VERSION))) {
+<a class="jxr_linenumber" name="66" href="#66">66</a>                          <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="67" href="#67">67</a>                      }
+<a class="jxr_linenumber" name="68" href="#68">68</a>                      PROVIDERS.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/spi/Provider.html">Provider</a>(props, url));
+<a class="jxr_linenumber" name="69" href="#69">69</a>                  } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioe) {
+<a class="jxr_linenumber" name="70" href="#70">70</a>                      LOGGER.error(<span class="jxr_string">"Unable to open "</span> + url.toString(), ioe);
+<a class="jxr_linenumber" name="71" href="#71">71</a>                  }
 <a class="jxr_linenumber" name="72" href="#72">72</a>              }
 <a class="jxr_linenumber" name="73" href="#73">73</a>          }
 <a class="jxr_linenumber" name="74" href="#74">74</a>      }

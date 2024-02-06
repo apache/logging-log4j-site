@@ -21,7 +21,7 @@
 <FONT color="green">018</FONT>    <a name="line.18"></a>
 <FONT color="green">019</FONT>    import org.apache.logging.log4j.core.LogEvent;<a name="line.19"></a>
 <FONT color="green">020</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttr;<a name="line.21"></a>
+<FONT color="green">021</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.21"></a>
 <FONT color="green">022</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.22"></a>
 <FONT color="green">023</FONT>    import org.apache.logging.log4j.core.helpers.Integers;<a name="line.23"></a>
 <FONT color="green">024</FONT>    <a name="line.24"></a>
@@ -49,7 +49,7 @@
 <FONT color="green">046</FONT>        @Override<a name="line.46"></a>
 <FONT color="green">047</FONT>        public void initialize(final RollingFileManager manager) {<a name="line.47"></a>
 <FONT color="green">048</FONT>            this.manager = manager;<a name="line.48"></a>
-<FONT color="green">049</FONT>            nextRollover = manager.getProcessor().getNextTime(manager.getFileTime(), interval, modulate);<a name="line.49"></a>
+<FONT color="green">049</FONT>            nextRollover = manager.getPatternProcessor().getNextTime(manager.getFileTime(), interval, modulate);<a name="line.49"></a>
 <FONT color="green">050</FONT>        }<a name="line.50"></a>
 <FONT color="green">051</FONT>    <a name="line.51"></a>
 <FONT color="green">052</FONT>        /**<a name="line.52"></a>
@@ -64,7 +64,7 @@
 <FONT color="green">061</FONT>            }<a name="line.61"></a>
 <FONT color="green">062</FONT>            final long now = System.currentTimeMillis();<a name="line.62"></a>
 <FONT color="green">063</FONT>            if (now &gt; nextRollover) {<a name="line.63"></a>
-<FONT color="green">064</FONT>                nextRollover = manager.getProcessor().getNextTime(now, interval, modulate);<a name="line.64"></a>
+<FONT color="green">064</FONT>                nextRollover = manager.getPatternProcessor().getNextTime(now, interval, modulate);<a name="line.64"></a>
 <FONT color="green">065</FONT>                return true;<a name="line.65"></a>
 <FONT color="green">066</FONT>            }<a name="line.66"></a>
 <FONT color="green">067</FONT>            return false;<a name="line.67"></a>
@@ -82,13 +82,14 @@
 <FONT color="green">079</FONT>         * @return a TimeBasedTriggeringPolicy.<a name="line.79"></a>
 <FONT color="green">080</FONT>         */<a name="line.80"></a>
 <FONT color="green">081</FONT>        @PluginFactory<a name="line.81"></a>
-<FONT color="green">082</FONT>        public static TimeBasedTriggeringPolicy createPolicy(@PluginAttr("interval") final String interval,<a name="line.82"></a>
-<FONT color="green">083</FONT>                                                             @PluginAttr("modulate") final String modulate) {<a name="line.83"></a>
-<FONT color="green">084</FONT>            final int increment = Integers.parseInt(interval, 1);<a name="line.84"></a>
-<FONT color="green">085</FONT>            final boolean mod = Boolean.parseBoolean(modulate);<a name="line.85"></a>
-<FONT color="green">086</FONT>            return new TimeBasedTriggeringPolicy(increment, mod);<a name="line.86"></a>
-<FONT color="green">087</FONT>        }<a name="line.87"></a>
-<FONT color="green">088</FONT>    }<a name="line.88"></a>
+<FONT color="green">082</FONT>        public static TimeBasedTriggeringPolicy createPolicy(<a name="line.82"></a>
+<FONT color="green">083</FONT>                @PluginAttribute("interval") final String interval,<a name="line.83"></a>
+<FONT color="green">084</FONT>                @PluginAttribute("modulate") final String modulate) {<a name="line.84"></a>
+<FONT color="green">085</FONT>            final int increment = Integers.parseInt(interval, 1);<a name="line.85"></a>
+<FONT color="green">086</FONT>            final boolean mod = Boolean.parseBoolean(modulate);<a name="line.86"></a>
+<FONT color="green">087</FONT>            return new TimeBasedTriggeringPolicy(increment, mod);<a name="line.87"></a>
+<FONT color="green">088</FONT>        }<a name="line.88"></a>
+<FONT color="green">089</FONT>    }<a name="line.89"></a>
 
 
 

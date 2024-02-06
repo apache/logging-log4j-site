@@ -28,194 +28,181 @@
 <FONT color="green">025</FONT>    import java.util.List;<a name="line.25"></a>
 <FONT color="green">026</FONT>    <a name="line.26"></a>
 <FONT color="green">027</FONT>    import org.apache.logging.log4j.core.LogEvent;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import org.apache.logging.log4j.core.appender.ManagerFactory;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import org.apache.logging.log4j.core.appender.db.AbstractDatabaseManager;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import org.apache.logging.log4j.core.layout.PatternLayout;<a name="line.30"></a>
-<FONT color="green">031</FONT>    <a name="line.31"></a>
-<FONT color="green">032</FONT>    /**<a name="line.32"></a>
-<FONT color="green">033</FONT>     * An {@link AbstractDatabaseManager} implementation for relational databases accessed via JDBC.<a name="line.33"></a>
-<FONT color="green">034</FONT>     */<a name="line.34"></a>
-<FONT color="green">035</FONT>    public final class JDBCDatabaseManager extends AbstractDatabaseManager {<a name="line.35"></a>
-<FONT color="green">036</FONT>        private static final JDBCDatabaseManagerFactory FACTORY = new JDBCDatabaseManagerFactory();<a name="line.36"></a>
-<FONT color="green">037</FONT>    <a name="line.37"></a>
-<FONT color="green">038</FONT>        private final List&lt;Column&gt; columns;<a name="line.38"></a>
-<FONT color="green">039</FONT>        private final ConnectionSource connectionSource;<a name="line.39"></a>
-<FONT color="green">040</FONT>        private final String sqlStatement;<a name="line.40"></a>
-<FONT color="green">041</FONT>    <a name="line.41"></a>
-<FONT color="green">042</FONT>        private Connection connection;<a name="line.42"></a>
-<FONT color="green">043</FONT>        private PreparedStatement statement;<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>        private JDBCDatabaseManager(final String name, final int bufferSize, final ConnectionSource connectionSource,<a name="line.45"></a>
-<FONT color="green">046</FONT>                                    final String sqlStatement, final List&lt;Column&gt; columns) {<a name="line.46"></a>
-<FONT color="green">047</FONT>            super(name, bufferSize);<a name="line.47"></a>
-<FONT color="green">048</FONT>            this.connectionSource = connectionSource;<a name="line.48"></a>
-<FONT color="green">049</FONT>            this.sqlStatement = sqlStatement;<a name="line.49"></a>
-<FONT color="green">050</FONT>            this.columns = columns;<a name="line.50"></a>
-<FONT color="green">051</FONT>        }<a name="line.51"></a>
-<FONT color="green">052</FONT>    <a name="line.52"></a>
-<FONT color="green">053</FONT>        @Override<a name="line.53"></a>
-<FONT color="green">054</FONT>        protected void connectInternal() {<a name="line.54"></a>
-<FONT color="green">055</FONT>            try {<a name="line.55"></a>
-<FONT color="green">056</FONT>                this.connection = this.connectionSource.getConnection();<a name="line.56"></a>
-<FONT color="green">057</FONT>                this.statement = this.connection.prepareStatement(this.sqlStatement);<a name="line.57"></a>
-<FONT color="green">058</FONT>            } catch (final SQLException e) {<a name="line.58"></a>
-<FONT color="green">059</FONT>                LOGGER.error("Failed to connect to relational database using JDBC connection source [{}] in manager [{}].",<a name="line.59"></a>
-<FONT color="green">060</FONT>                        this.connectionSource, this.getName(), e);<a name="line.60"></a>
-<FONT color="green">061</FONT>            }<a name="line.61"></a>
-<FONT color="green">062</FONT>        }<a name="line.62"></a>
-<FONT color="green">063</FONT>    <a name="line.63"></a>
-<FONT color="green">064</FONT>        @Override<a name="line.64"></a>
-<FONT color="green">065</FONT>        protected void disconnectInternal() {<a name="line.65"></a>
-<FONT color="green">066</FONT>            try {<a name="line.66"></a>
-<FONT color="green">067</FONT>                if (this.statement != null &amp;&amp; !this.statement.isClosed()) {<a name="line.67"></a>
-<FONT color="green">068</FONT>                    this.statement.close();<a name="line.68"></a>
-<FONT color="green">069</FONT>                }<a name="line.69"></a>
-<FONT color="green">070</FONT>            } catch (final SQLException e) {<a name="line.70"></a>
-<FONT color="green">071</FONT>                LOGGER.warn("Error while closing prepared statement in database manager [{}].", this.getName(), e);<a name="line.71"></a>
-<FONT color="green">072</FONT>            }<a name="line.72"></a>
-<FONT color="green">073</FONT>    <a name="line.73"></a>
-<FONT color="green">074</FONT>            try {<a name="line.74"></a>
-<FONT color="green">075</FONT>                if (this.connection != null &amp;&amp; !this.connection.isClosed()) {<a name="line.75"></a>
-<FONT color="green">076</FONT>                    this.connection.close();<a name="line.76"></a>
+<FONT color="green">028</FONT>    import org.apache.logging.log4j.core.appender.AppenderLoggingException;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.apache.logging.log4j.core.appender.ManagerFactory;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.apache.logging.log4j.core.appender.db.AbstractDatabaseManager;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.apache.logging.log4j.core.helpers.Closer;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.apache.logging.log4j.core.layout.PatternLayout;<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>    /**<a name="line.34"></a>
+<FONT color="green">035</FONT>     * An {@link AbstractDatabaseManager} implementation for relational databases accessed via JDBC.<a name="line.35"></a>
+<FONT color="green">036</FONT>     */<a name="line.36"></a>
+<FONT color="green">037</FONT>    public final class JDBCDatabaseManager extends AbstractDatabaseManager {<a name="line.37"></a>
+<FONT color="green">038</FONT>        private static final JDBCDatabaseManagerFactory FACTORY = new JDBCDatabaseManagerFactory();<a name="line.38"></a>
+<FONT color="green">039</FONT>    <a name="line.39"></a>
+<FONT color="green">040</FONT>        private final List&lt;Column&gt; columns;<a name="line.40"></a>
+<FONT color="green">041</FONT>        private final ConnectionSource connectionSource;<a name="line.41"></a>
+<FONT color="green">042</FONT>        private final String sqlStatement;<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>        private Connection connection;<a name="line.44"></a>
+<FONT color="green">045</FONT>        private PreparedStatement statement;<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>        private JDBCDatabaseManager(final String name, final int bufferSize, final ConnectionSource connectionSource,<a name="line.47"></a>
+<FONT color="green">048</FONT>                                    final String sqlStatement, final List&lt;Column&gt; columns) {<a name="line.48"></a>
+<FONT color="green">049</FONT>            super(name, bufferSize);<a name="line.49"></a>
+<FONT color="green">050</FONT>            this.connectionSource = connectionSource;<a name="line.50"></a>
+<FONT color="green">051</FONT>            this.sqlStatement = sqlStatement;<a name="line.51"></a>
+<FONT color="green">052</FONT>            this.columns = columns;<a name="line.52"></a>
+<FONT color="green">053</FONT>        }<a name="line.53"></a>
+<FONT color="green">054</FONT>    <a name="line.54"></a>
+<FONT color="green">055</FONT>        @Override<a name="line.55"></a>
+<FONT color="green">056</FONT>        protected void connectInternal() throws SQLException {<a name="line.56"></a>
+<FONT color="green">057</FONT>            this.connection = this.connectionSource.getConnection();<a name="line.57"></a>
+<FONT color="green">058</FONT>            this.statement = this.connection.prepareStatement(this.sqlStatement);<a name="line.58"></a>
+<FONT color="green">059</FONT>        }<a name="line.59"></a>
+<FONT color="green">060</FONT>    <a name="line.60"></a>
+<FONT color="green">061</FONT>        @Override<a name="line.61"></a>
+<FONT color="green">062</FONT>        protected void disconnectInternal() throws SQLException {<a name="line.62"></a>
+<FONT color="green">063</FONT>            try {<a name="line.63"></a>
+<FONT color="green">064</FONT>                Closer.close(this.statement);<a name="line.64"></a>
+<FONT color="green">065</FONT>            } finally {<a name="line.65"></a>
+<FONT color="green">066</FONT>                Closer.close(this.connection);<a name="line.66"></a>
+<FONT color="green">067</FONT>            }<a name="line.67"></a>
+<FONT color="green">068</FONT>        }<a name="line.68"></a>
+<FONT color="green">069</FONT>    <a name="line.69"></a>
+<FONT color="green">070</FONT>        @Override<a name="line.70"></a>
+<FONT color="green">071</FONT>        protected void writeInternal(final LogEvent event) {<a name="line.71"></a>
+<FONT color="green">072</FONT>            StringReader reader = null;<a name="line.72"></a>
+<FONT color="green">073</FONT>            try {<a name="line.73"></a>
+<FONT color="green">074</FONT>                if (!this.isConnected() || this.connection == null || this.connection.isClosed()) {<a name="line.74"></a>
+<FONT color="green">075</FONT>                    throw new AppenderLoggingException(<a name="line.75"></a>
+<FONT color="green">076</FONT>                            "Cannot write logging event; JDBC manager not connected to the database.");<a name="line.76"></a>
 <FONT color="green">077</FONT>                }<a name="line.77"></a>
-<FONT color="green">078</FONT>            } catch (final SQLException e) {<a name="line.78"></a>
-<FONT color="green">079</FONT>                LOGGER.warn("Error while disconnecting from relational database in manager [{}].", this.getName(), e);<a name="line.79"></a>
-<FONT color="green">080</FONT>            }<a name="line.80"></a>
-<FONT color="green">081</FONT>        }<a name="line.81"></a>
-<FONT color="green">082</FONT>    <a name="line.82"></a>
-<FONT color="green">083</FONT>        @Override<a name="line.83"></a>
-<FONT color="green">084</FONT>        protected void writeInternal(final LogEvent event) {<a name="line.84"></a>
-<FONT color="green">085</FONT>            StringReader reader = null;<a name="line.85"></a>
-<FONT color="green">086</FONT>            try {<a name="line.86"></a>
-<FONT color="green">087</FONT>                if (!this.isConnected() || this.connection == null || this.connection.isClosed()) {<a name="line.87"></a>
-<FONT color="green">088</FONT>                    LOGGER.error("Cannot write logging event; manager [{}] not connected to the database.", this.getName());<a name="line.88"></a>
-<FONT color="green">089</FONT>                    return;<a name="line.89"></a>
-<FONT color="green">090</FONT>                }<a name="line.90"></a>
-<FONT color="green">091</FONT>    <a name="line.91"></a>
-<FONT color="green">092</FONT>                int i = 1;<a name="line.92"></a>
-<FONT color="green">093</FONT>                for (final Column column : this.columns) {<a name="line.93"></a>
-<FONT color="green">094</FONT>                    if (column.isEventTimestamp) {<a name="line.94"></a>
-<FONT color="green">095</FONT>                        this.statement.setTimestamp(i++, new Timestamp(event.getMillis()));<a name="line.95"></a>
-<FONT color="green">096</FONT>                    } else {<a name="line.96"></a>
-<FONT color="green">097</FONT>                        if (column.isClob) {<a name="line.97"></a>
-<FONT color="green">098</FONT>                            reader = new StringReader(column.layout.toSerializable(event));<a name="line.98"></a>
-<FONT color="green">099</FONT>                            if (column.isUnicode) {<a name="line.99"></a>
-<FONT color="green">100</FONT>                                this.statement.setNClob(i++, reader);<a name="line.100"></a>
-<FONT color="green">101</FONT>                            } else {<a name="line.101"></a>
-<FONT color="green">102</FONT>                                this.statement.setClob(i++, reader);<a name="line.102"></a>
-<FONT color="green">103</FONT>                            }<a name="line.103"></a>
-<FONT color="green">104</FONT>                        } else {<a name="line.104"></a>
-<FONT color="green">105</FONT>                            if (column.isUnicode) {<a name="line.105"></a>
-<FONT color="green">106</FONT>                                this.statement.setNString(i++, column.layout.toSerializable(event));<a name="line.106"></a>
-<FONT color="green">107</FONT>                            } else {<a name="line.107"></a>
-<FONT color="green">108</FONT>                                this.statement.setString(i++, column.layout.toSerializable(event));<a name="line.108"></a>
-<FONT color="green">109</FONT>                            }<a name="line.109"></a>
-<FONT color="green">110</FONT>                        }<a name="line.110"></a>
-<FONT color="green">111</FONT>                    }<a name="line.111"></a>
-<FONT color="green">112</FONT>                }<a name="line.112"></a>
-<FONT color="green">113</FONT>    <a name="line.113"></a>
-<FONT color="green">114</FONT>                if (this.statement.executeUpdate() == 0) {<a name="line.114"></a>
-<FONT color="green">115</FONT>                    LOGGER.warn("No records inserted in database table for log event in manager [{}].", this.getName());<a name="line.115"></a>
-<FONT color="green">116</FONT>                }<a name="line.116"></a>
-<FONT color="green">117</FONT>            } catch (final SQLException e) {<a name="line.117"></a>
-<FONT color="green">118</FONT>                LOGGER.error("Failed to insert record for log event in manager [{}].", this.getName(), e);<a name="line.118"></a>
-<FONT color="green">119</FONT>            } finally {<a name="line.119"></a>
-<FONT color="green">120</FONT>                if (reader != null) {<a name="line.120"></a>
-<FONT color="green">121</FONT>                    reader.close();<a name="line.121"></a>
-<FONT color="green">122</FONT>                }<a name="line.122"></a>
-<FONT color="green">123</FONT>            }<a name="line.123"></a>
-<FONT color="green">124</FONT>        }<a name="line.124"></a>
-<FONT color="green">125</FONT>    <a name="line.125"></a>
-<FONT color="green">126</FONT>        /**<a name="line.126"></a>
-<FONT color="green">127</FONT>         * Creates a JDBC manager for use within the {@link JDBCAppender}, or returns a suitable one if it already exists.<a name="line.127"></a>
-<FONT color="green">128</FONT>         *<a name="line.128"></a>
-<FONT color="green">129</FONT>         * @param name The name of the manager, which should include connection details and hashed passwords where possible.<a name="line.129"></a>
-<FONT color="green">130</FONT>         * @param bufferSize The size of the log event buffer.<a name="line.130"></a>
-<FONT color="green">131</FONT>         * @param connectionSource The source for connections to the database.<a name="line.131"></a>
-<FONT color="green">132</FONT>         * @param tableName The name of the database table to insert log events into.<a name="line.132"></a>
-<FONT color="green">133</FONT>         * @param columnConfigs Configuration information about the log table columns.<a name="line.133"></a>
-<FONT color="green">134</FONT>         * @return a new or existing JDBC manager as applicable.<a name="line.134"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>                int i = 1;<a name="line.79"></a>
+<FONT color="green">080</FONT>                for (final Column column : this.columns) {<a name="line.80"></a>
+<FONT color="green">081</FONT>                    if (column.isEventTimestamp) {<a name="line.81"></a>
+<FONT color="green">082</FONT>                        this.statement.setTimestamp(i++, new Timestamp(event.getMillis()));<a name="line.82"></a>
+<FONT color="green">083</FONT>                    } else {<a name="line.83"></a>
+<FONT color="green">084</FONT>                        if (column.isClob) {<a name="line.84"></a>
+<FONT color="green">085</FONT>                            reader = new StringReader(column.layout.toSerializable(event));<a name="line.85"></a>
+<FONT color="green">086</FONT>                            if (column.isUnicode) {<a name="line.86"></a>
+<FONT color="green">087</FONT>                                this.statement.setNClob(i++, reader);<a name="line.87"></a>
+<FONT color="green">088</FONT>                            } else {<a name="line.88"></a>
+<FONT color="green">089</FONT>                                this.statement.setClob(i++, reader);<a name="line.89"></a>
+<FONT color="green">090</FONT>                            }<a name="line.90"></a>
+<FONT color="green">091</FONT>                        } else {<a name="line.91"></a>
+<FONT color="green">092</FONT>                            if (column.isUnicode) {<a name="line.92"></a>
+<FONT color="green">093</FONT>                                this.statement.setNString(i++, column.layout.toSerializable(event));<a name="line.93"></a>
+<FONT color="green">094</FONT>                            } else {<a name="line.94"></a>
+<FONT color="green">095</FONT>                                this.statement.setString(i++, column.layout.toSerializable(event));<a name="line.95"></a>
+<FONT color="green">096</FONT>                            }<a name="line.96"></a>
+<FONT color="green">097</FONT>                        }<a name="line.97"></a>
+<FONT color="green">098</FONT>                    }<a name="line.98"></a>
+<FONT color="green">099</FONT>                }<a name="line.99"></a>
+<FONT color="green">100</FONT>    <a name="line.100"></a>
+<FONT color="green">101</FONT>                if (this.statement.executeUpdate() == 0) {<a name="line.101"></a>
+<FONT color="green">102</FONT>                    throw new AppenderLoggingException(<a name="line.102"></a>
+<FONT color="green">103</FONT>                            "No records inserted in database table for log event in JDBC manager.");<a name="line.103"></a>
+<FONT color="green">104</FONT>                }<a name="line.104"></a>
+<FONT color="green">105</FONT>            } catch (final SQLException e) {<a name="line.105"></a>
+<FONT color="green">106</FONT>                throw new AppenderLoggingException("Failed to insert record for log event in JDBC manager: " +<a name="line.106"></a>
+<FONT color="green">107</FONT>                        e.getMessage(), e);<a name="line.107"></a>
+<FONT color="green">108</FONT>            } finally {<a name="line.108"></a>
+<FONT color="green">109</FONT>                Closer.closeSilent(reader);<a name="line.109"></a>
+<FONT color="green">110</FONT>            }<a name="line.110"></a>
+<FONT color="green">111</FONT>        }<a name="line.111"></a>
+<FONT color="green">112</FONT>    <a name="line.112"></a>
+<FONT color="green">113</FONT>        /**<a name="line.113"></a>
+<FONT color="green">114</FONT>         * Creates a JDBC manager for use within the {@link JDBCAppender}, or returns a suitable one if it already exists.<a name="line.114"></a>
+<FONT color="green">115</FONT>         *<a name="line.115"></a>
+<FONT color="green">116</FONT>         * @param name The name of the manager, which should include connection details and hashed passwords where possible.<a name="line.116"></a>
+<FONT color="green">117</FONT>         * @param bufferSize The size of the log event buffer.<a name="line.117"></a>
+<FONT color="green">118</FONT>         * @param connectionSource The source for connections to the database.<a name="line.118"></a>
+<FONT color="green">119</FONT>         * @param tableName The name of the database table to insert log events into.<a name="line.119"></a>
+<FONT color="green">120</FONT>         * @param columnConfigs Configuration information about the log table columns.<a name="line.120"></a>
+<FONT color="green">121</FONT>         * @return a new or existing JDBC manager as applicable.<a name="line.121"></a>
+<FONT color="green">122</FONT>         */<a name="line.122"></a>
+<FONT color="green">123</FONT>        public static JDBCDatabaseManager getJDBCDatabaseManager(final String name, final int bufferSize,<a name="line.123"></a>
+<FONT color="green">124</FONT>                                                                 final ConnectionSource connectionSource,<a name="line.124"></a>
+<FONT color="green">125</FONT>                                                                 final String tableName,<a name="line.125"></a>
+<FONT color="green">126</FONT>                                                                 final ColumnConfig[] columnConfigs) {<a name="line.126"></a>
+<FONT color="green">127</FONT>    <a name="line.127"></a>
+<FONT color="green">128</FONT>            return AbstractDatabaseManager.getManager(<a name="line.128"></a>
+<FONT color="green">129</FONT>                    name, new FactoryData(bufferSize, connectionSource, tableName, columnConfigs), FACTORY<a name="line.129"></a>
+<FONT color="green">130</FONT>            );<a name="line.130"></a>
+<FONT color="green">131</FONT>        }<a name="line.131"></a>
+<FONT color="green">132</FONT>    <a name="line.132"></a>
+<FONT color="green">133</FONT>        /**<a name="line.133"></a>
+<FONT color="green">134</FONT>         * Encapsulates data that {@link JDBCDatabaseManagerFactory} uses to create managers.<a name="line.134"></a>
 <FONT color="green">135</FONT>         */<a name="line.135"></a>
-<FONT color="green">136</FONT>        public static JDBCDatabaseManager getJDBCDatabaseManager(final String name, final int bufferSize,<a name="line.136"></a>
-<FONT color="green">137</FONT>                                                                 final ConnectionSource connectionSource,<a name="line.137"></a>
-<FONT color="green">138</FONT>                                                                 final String tableName,<a name="line.138"></a>
-<FONT color="green">139</FONT>                                                                 final ColumnConfig[] columnConfigs) {<a name="line.139"></a>
+<FONT color="green">136</FONT>        private static final class FactoryData extends AbstractDatabaseManager.AbstractFactoryData {<a name="line.136"></a>
+<FONT color="green">137</FONT>            private final ColumnConfig[] columnConfigs;<a name="line.137"></a>
+<FONT color="green">138</FONT>            private final ConnectionSource connectionSource;<a name="line.138"></a>
+<FONT color="green">139</FONT>            private final String tableName;<a name="line.139"></a>
 <FONT color="green">140</FONT>    <a name="line.140"></a>
-<FONT color="green">141</FONT>            return AbstractDatabaseManager.getManager(<a name="line.141"></a>
-<FONT color="green">142</FONT>                    name, new FactoryData(bufferSize, connectionSource, tableName, columnConfigs), FACTORY<a name="line.142"></a>
-<FONT color="green">143</FONT>            );<a name="line.143"></a>
-<FONT color="green">144</FONT>        }<a name="line.144"></a>
-<FONT color="green">145</FONT>    <a name="line.145"></a>
-<FONT color="green">146</FONT>        /**<a name="line.146"></a>
-<FONT color="green">147</FONT>         * Encapsulates data that {@link JDBCDatabaseManagerFactory} uses to create managers.<a name="line.147"></a>
-<FONT color="green">148</FONT>         */<a name="line.148"></a>
-<FONT color="green">149</FONT>        private static final class FactoryData extends AbstractDatabaseManager.AbstractFactoryData {<a name="line.149"></a>
-<FONT color="green">150</FONT>            private final ColumnConfig[] columnConfigs;<a name="line.150"></a>
-<FONT color="green">151</FONT>            private final ConnectionSource connectionSource;<a name="line.151"></a>
-<FONT color="green">152</FONT>            private final String tableName;<a name="line.152"></a>
-<FONT color="green">153</FONT>    <a name="line.153"></a>
-<FONT color="green">154</FONT>            protected FactoryData(final int bufferSize, final ConnectionSource connectionSource, final String tableName,<a name="line.154"></a>
-<FONT color="green">155</FONT>                                  final ColumnConfig[] columnConfigs) {<a name="line.155"></a>
-<FONT color="green">156</FONT>                super(bufferSize);<a name="line.156"></a>
-<FONT color="green">157</FONT>                this.connectionSource = connectionSource;<a name="line.157"></a>
-<FONT color="green">158</FONT>                this.tableName = tableName;<a name="line.158"></a>
-<FONT color="green">159</FONT>                this.columnConfigs = columnConfigs;<a name="line.159"></a>
-<FONT color="green">160</FONT>            }<a name="line.160"></a>
-<FONT color="green">161</FONT>        }<a name="line.161"></a>
-<FONT color="green">162</FONT>    <a name="line.162"></a>
-<FONT color="green">163</FONT>        /**<a name="line.163"></a>
-<FONT color="green">164</FONT>         * Creates managers.<a name="line.164"></a>
-<FONT color="green">165</FONT>         */<a name="line.165"></a>
-<FONT color="green">166</FONT>        private static final class JDBCDatabaseManagerFactory implements ManagerFactory&lt;JDBCDatabaseManager, FactoryData&gt; {<a name="line.166"></a>
-<FONT color="green">167</FONT>            @Override<a name="line.167"></a>
-<FONT color="green">168</FONT>            public JDBCDatabaseManager createManager(final String name, final FactoryData data) {<a name="line.168"></a>
-<FONT color="green">169</FONT>                final StringBuilder columnPart = new StringBuilder();<a name="line.169"></a>
-<FONT color="green">170</FONT>                final StringBuilder valuePart = new StringBuilder();<a name="line.170"></a>
-<FONT color="green">171</FONT>                final List&lt;Column&gt; columns = new ArrayList&lt;Column&gt;();<a name="line.171"></a>
-<FONT color="green">172</FONT>                int i = 0;<a name="line.172"></a>
-<FONT color="green">173</FONT>                for (final ColumnConfig config : data.columnConfigs) {<a name="line.173"></a>
-<FONT color="green">174</FONT>                    if (i++ &gt; 0) {<a name="line.174"></a>
-<FONT color="green">175</FONT>                        columnPart.append(',');<a name="line.175"></a>
-<FONT color="green">176</FONT>                        valuePart.append(',');<a name="line.176"></a>
-<FONT color="green">177</FONT>                    }<a name="line.177"></a>
-<FONT color="green">178</FONT>    <a name="line.178"></a>
-<FONT color="green">179</FONT>                    columnPart.append(config.getColumnName());<a name="line.179"></a>
+<FONT color="green">141</FONT>            protected FactoryData(final int bufferSize, final ConnectionSource connectionSource, final String tableName,<a name="line.141"></a>
+<FONT color="green">142</FONT>                                  final ColumnConfig[] columnConfigs) {<a name="line.142"></a>
+<FONT color="green">143</FONT>                super(bufferSize);<a name="line.143"></a>
+<FONT color="green">144</FONT>                this.connectionSource = connectionSource;<a name="line.144"></a>
+<FONT color="green">145</FONT>                this.tableName = tableName;<a name="line.145"></a>
+<FONT color="green">146</FONT>                this.columnConfigs = columnConfigs;<a name="line.146"></a>
+<FONT color="green">147</FONT>            }<a name="line.147"></a>
+<FONT color="green">148</FONT>        }<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>        /**<a name="line.150"></a>
+<FONT color="green">151</FONT>         * Creates managers.<a name="line.151"></a>
+<FONT color="green">152</FONT>         */<a name="line.152"></a>
+<FONT color="green">153</FONT>        private static final class JDBCDatabaseManagerFactory implements ManagerFactory&lt;JDBCDatabaseManager, FactoryData&gt; {<a name="line.153"></a>
+<FONT color="green">154</FONT>            @Override<a name="line.154"></a>
+<FONT color="green">155</FONT>            public JDBCDatabaseManager createManager(final String name, final FactoryData data) {<a name="line.155"></a>
+<FONT color="green">156</FONT>                final StringBuilder columnPart = new StringBuilder();<a name="line.156"></a>
+<FONT color="green">157</FONT>                final StringBuilder valuePart = new StringBuilder();<a name="line.157"></a>
+<FONT color="green">158</FONT>                final List&lt;Column&gt; columns = new ArrayList&lt;Column&gt;();<a name="line.158"></a>
+<FONT color="green">159</FONT>                int i = 0;<a name="line.159"></a>
+<FONT color="green">160</FONT>                for (final ColumnConfig config : data.columnConfigs) {<a name="line.160"></a>
+<FONT color="green">161</FONT>                    if (i++ &gt; 0) {<a name="line.161"></a>
+<FONT color="green">162</FONT>                        columnPart.append(',');<a name="line.162"></a>
+<FONT color="green">163</FONT>                        valuePart.append(',');<a name="line.163"></a>
+<FONT color="green">164</FONT>                    }<a name="line.164"></a>
+<FONT color="green">165</FONT>    <a name="line.165"></a>
+<FONT color="green">166</FONT>                    columnPart.append(config.getColumnName());<a name="line.166"></a>
+<FONT color="green">167</FONT>    <a name="line.167"></a>
+<FONT color="green">168</FONT>                    if (config.getLiteralValue() != null) {<a name="line.168"></a>
+<FONT color="green">169</FONT>                        valuePart.append(config.getLiteralValue());<a name="line.169"></a>
+<FONT color="green">170</FONT>                    } else {<a name="line.170"></a>
+<FONT color="green">171</FONT>                        columns.add(new Column(<a name="line.171"></a>
+<FONT color="green">172</FONT>                                config.getLayout(), config.isEventTimestamp(), config.isUnicode(), config.isClob()<a name="line.172"></a>
+<FONT color="green">173</FONT>                        ));<a name="line.173"></a>
+<FONT color="green">174</FONT>                        valuePart.append('?');<a name="line.174"></a>
+<FONT color="green">175</FONT>                    }<a name="line.175"></a>
+<FONT color="green">176</FONT>                }<a name="line.176"></a>
+<FONT color="green">177</FONT>    <a name="line.177"></a>
+<FONT color="green">178</FONT>                final String sqlStatement = "INSERT INTO " + data.tableName + " (" + columnPart + ") VALUES (" +<a name="line.178"></a>
+<FONT color="green">179</FONT>                        valuePart + ")";<a name="line.179"></a>
 <FONT color="green">180</FONT>    <a name="line.180"></a>
-<FONT color="green">181</FONT>                    if (config.getLiteralValue() != null) {<a name="line.181"></a>
-<FONT color="green">182</FONT>                        valuePart.append(config.getLiteralValue());<a name="line.182"></a>
-<FONT color="green">183</FONT>                    } else {<a name="line.183"></a>
-<FONT color="green">184</FONT>                        columns.add(new Column(<a name="line.184"></a>
-<FONT color="green">185</FONT>                                config.getLayout(), config.isEventTimestamp(), config.isUnicode(), config.isClob()<a name="line.185"></a>
-<FONT color="green">186</FONT>                        ));<a name="line.186"></a>
-<FONT color="green">187</FONT>                        valuePart.append('?');<a name="line.187"></a>
-<FONT color="green">188</FONT>                    }<a name="line.188"></a>
-<FONT color="green">189</FONT>                }<a name="line.189"></a>
-<FONT color="green">190</FONT>    <a name="line.190"></a>
-<FONT color="green">191</FONT>                final String sqlStatement = "INSERT INTO " + data.tableName + " (" + columnPart + ") VALUES (" +<a name="line.191"></a>
-<FONT color="green">192</FONT>                        valuePart + ")";<a name="line.192"></a>
+<FONT color="green">181</FONT>                return new JDBCDatabaseManager(name, data.getBufferSize(), data.connectionSource, sqlStatement, columns);<a name="line.181"></a>
+<FONT color="green">182</FONT>            }<a name="line.182"></a>
+<FONT color="green">183</FONT>        }<a name="line.183"></a>
+<FONT color="green">184</FONT>    <a name="line.184"></a>
+<FONT color="green">185</FONT>        /**<a name="line.185"></a>
+<FONT color="green">186</FONT>         * Encapsulates information about a database column and how to persist data to it.<a name="line.186"></a>
+<FONT color="green">187</FONT>         */<a name="line.187"></a>
+<FONT color="green">188</FONT>        private static final class Column {<a name="line.188"></a>
+<FONT color="green">189</FONT>            private final PatternLayout layout;<a name="line.189"></a>
+<FONT color="green">190</FONT>            private final boolean isEventTimestamp;<a name="line.190"></a>
+<FONT color="green">191</FONT>            private final boolean isUnicode;<a name="line.191"></a>
+<FONT color="green">192</FONT>            private final boolean isClob;<a name="line.192"></a>
 <FONT color="green">193</FONT>    <a name="line.193"></a>
-<FONT color="green">194</FONT>                return new JDBCDatabaseManager(name, data.getBufferSize(), data.connectionSource, sqlStatement, columns);<a name="line.194"></a>
-<FONT color="green">195</FONT>            }<a name="line.195"></a>
-<FONT color="green">196</FONT>        }<a name="line.196"></a>
-<FONT color="green">197</FONT>    <a name="line.197"></a>
-<FONT color="green">198</FONT>        /**<a name="line.198"></a>
-<FONT color="green">199</FONT>         * Encapsulates information about a database column and how to persist data to it.<a name="line.199"></a>
-<FONT color="green">200</FONT>         */<a name="line.200"></a>
-<FONT color="green">201</FONT>        private static final class Column {<a name="line.201"></a>
-<FONT color="green">202</FONT>            private final PatternLayout layout;<a name="line.202"></a>
-<FONT color="green">203</FONT>            private final boolean isEventTimestamp;<a name="line.203"></a>
-<FONT color="green">204</FONT>            private final boolean isUnicode;<a name="line.204"></a>
-<FONT color="green">205</FONT>            private final boolean isClob;<a name="line.205"></a>
-<FONT color="green">206</FONT>    <a name="line.206"></a>
-<FONT color="green">207</FONT>            private Column(final PatternLayout layout, final boolean isEventDate, final boolean isUnicode,<a name="line.207"></a>
-<FONT color="green">208</FONT>                           final boolean isClob) {<a name="line.208"></a>
-<FONT color="green">209</FONT>                this.layout = layout;<a name="line.209"></a>
-<FONT color="green">210</FONT>                this.isEventTimestamp = isEventDate;<a name="line.210"></a>
-<FONT color="green">211</FONT>                this.isUnicode = isUnicode;<a name="line.211"></a>
-<FONT color="green">212</FONT>                this.isClob = isClob;<a name="line.212"></a>
-<FONT color="green">213</FONT>            }<a name="line.213"></a>
-<FONT color="green">214</FONT>        }<a name="line.214"></a>
-<FONT color="green">215</FONT>    }<a name="line.215"></a>
+<FONT color="green">194</FONT>            private Column(final PatternLayout layout, final boolean isEventDate, final boolean isUnicode,<a name="line.194"></a>
+<FONT color="green">195</FONT>                           final boolean isClob) {<a name="line.195"></a>
+<FONT color="green">196</FONT>                this.layout = layout;<a name="line.196"></a>
+<FONT color="green">197</FONT>                this.isEventTimestamp = isEventDate;<a name="line.197"></a>
+<FONT color="green">198</FONT>                this.isUnicode = isUnicode;<a name="line.198"></a>
+<FONT color="green">199</FONT>                this.isClob = isClob;<a name="line.199"></a>
+<FONT color="green">200</FONT>            }<a name="line.200"></a>
+<FONT color="green">201</FONT>        }<a name="line.201"></a>
+<FONT color="green">202</FONT>    }<a name="line.202"></a>
 
 
 

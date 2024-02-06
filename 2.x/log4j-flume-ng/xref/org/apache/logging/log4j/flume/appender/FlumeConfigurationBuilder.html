@@ -270,33 +270,32 @@
 <a class="jxr_linenumber" name="260" href="#260">260</a>                         <strong class="jxr_keyword">if</strong> (sinkUser != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="261" href="#261">261</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> ConfigurationException(String.format(
 <a class="jxr_linenumber" name="262" href="#262">262</a>                                 <span class="jxr_string">"Sink %s of group %s already in use by group %s"</span>, sink, groupName, sinkUser));
-<a class="jxr_linenumber" name="263" href="#263">263</a>                         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="264" href="#264">264</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> ConfigurationException(String.format(
+<a class="jxr_linenumber" name="263" href="#263">263</a>                         }
+<a class="jxr_linenumber" name="264" href="#264">264</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> ConfigurationException(String.format(
 <a class="jxr_linenumber" name="265" href="#265">265</a>                                 <span class="jxr_string">"Sink %s of group %s does not exist or is not properly configured"</span>, sink,
 <a class="jxr_linenumber" name="266" href="#266">266</a>                                 groupName));
-<a class="jxr_linenumber" name="267" href="#267">267</a>                         }
-<a class="jxr_linenumber" name="268" href="#268">268</a>                     }
-<a class="jxr_linenumber" name="269" href="#269">269</a>                     groupSinks.add(s);
-<a class="jxr_linenumber" name="270" href="#270">270</a>                     usedSinks.put(sink, groupName);
-<a class="jxr_linenumber" name="271" href="#271">271</a>                 }
-<a class="jxr_linenumber" name="272" href="#272">272</a>                 <strong class="jxr_keyword">final</strong> SinkGroup group = <strong class="jxr_keyword">new</strong> SinkGroup(groupSinks);
-<a class="jxr_linenumber" name="273" href="#273">273</a>                 Configurables.configure(group, groupConf);
-<a class="jxr_linenumber" name="274" href="#274">274</a>                 conf.getSinkRunners().put(comp.getComponentName(), <strong class="jxr_keyword">new</strong> SinkRunner(group.getProcessor()));
-<a class="jxr_linenumber" name="275" href="#275">275</a>             }
-<a class="jxr_linenumber" name="276" href="#276">276</a>         }
-<a class="jxr_linenumber" name="277" href="#277">277</a>         <em class="jxr_comment">// add any unassigned sinks to solo collectors</em>
-<a class="jxr_linenumber" name="278" href="#278">278</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, Sink&gt; entry : sinks.entrySet()) {
-<a class="jxr_linenumber" name="279" href="#279">279</a>             <strong class="jxr_keyword">if</strong> (!usedSinks.containsValue(entry.getKey())) {
-<a class="jxr_linenumber" name="280" href="#280">280</a>                 <strong class="jxr_keyword">final</strong> SinkProcessor pr = <strong class="jxr_keyword">new</strong> DefaultSinkProcessor();
-<a class="jxr_linenumber" name="281" href="#281">281</a>                 <strong class="jxr_keyword">final</strong> List&lt;Sink&gt; sinkMap = <strong class="jxr_keyword">new</strong> ArrayList&lt;Sink&gt;();
-<a class="jxr_linenumber" name="282" href="#282">282</a>                 sinkMap.add(entry.getValue());
-<a class="jxr_linenumber" name="283" href="#283">283</a>                 pr.setSinks(sinkMap);
-<a class="jxr_linenumber" name="284" href="#284">284</a>                 Configurables.configure(pr, <strong class="jxr_keyword">new</strong> Context());
-<a class="jxr_linenumber" name="285" href="#285">285</a>                 conf.getSinkRunners().put(entry.getKey(), <strong class="jxr_keyword">new</strong> SinkRunner(pr));
-<a class="jxr_linenumber" name="286" href="#286">286</a>             }
-<a class="jxr_linenumber" name="287" href="#287">287</a>         }
-<a class="jxr_linenumber" name="288" href="#288">288</a>     }
-<a class="jxr_linenumber" name="289" href="#289">289</a> }
+<a class="jxr_linenumber" name="267" href="#267">267</a>                     }
+<a class="jxr_linenumber" name="268" href="#268">268</a>                     groupSinks.add(s);
+<a class="jxr_linenumber" name="269" href="#269">269</a>                     usedSinks.put(sink, groupName);
+<a class="jxr_linenumber" name="270" href="#270">270</a>                 }
+<a class="jxr_linenumber" name="271" href="#271">271</a>                 <strong class="jxr_keyword">final</strong> SinkGroup group = <strong class="jxr_keyword">new</strong> SinkGroup(groupSinks);
+<a class="jxr_linenumber" name="272" href="#272">272</a>                 Configurables.configure(group, groupConf);
+<a class="jxr_linenumber" name="273" href="#273">273</a>                 conf.getSinkRunners().put(comp.getComponentName(), <strong class="jxr_keyword">new</strong> SinkRunner(group.getProcessor()));
+<a class="jxr_linenumber" name="274" href="#274">274</a>             }
+<a class="jxr_linenumber" name="275" href="#275">275</a>         }
+<a class="jxr_linenumber" name="276" href="#276">276</a>         <em class="jxr_comment">// add any unassigned sinks to solo collectors</em>
+<a class="jxr_linenumber" name="277" href="#277">277</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, Sink&gt; entry : sinks.entrySet()) {
+<a class="jxr_linenumber" name="278" href="#278">278</a>             <strong class="jxr_keyword">if</strong> (!usedSinks.containsValue(entry.getKey())) {
+<a class="jxr_linenumber" name="279" href="#279">279</a>                 <strong class="jxr_keyword">final</strong> SinkProcessor pr = <strong class="jxr_keyword">new</strong> DefaultSinkProcessor();
+<a class="jxr_linenumber" name="280" href="#280">280</a>                 <strong class="jxr_keyword">final</strong> List&lt;Sink&gt; sinkMap = <strong class="jxr_keyword">new</strong> ArrayList&lt;Sink&gt;();
+<a class="jxr_linenumber" name="281" href="#281">281</a>                 sinkMap.add(entry.getValue());
+<a class="jxr_linenumber" name="282" href="#282">282</a>                 pr.setSinks(sinkMap);
+<a class="jxr_linenumber" name="283" href="#283">283</a>                 Configurables.configure(pr, <strong class="jxr_keyword">new</strong> Context());
+<a class="jxr_linenumber" name="284" href="#284">284</a>                 conf.getSinkRunners().put(entry.getKey(), <strong class="jxr_keyword">new</strong> SinkRunner(pr));
+<a class="jxr_linenumber" name="285" href="#285">285</a>             }
+<a class="jxr_linenumber" name="286" href="#286">286</a>         }
+<a class="jxr_linenumber" name="287" href="#287">287</a>     }
+<a class="jxr_linenumber" name="288" href="#288">288</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

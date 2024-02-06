@@ -31,7 +31,7 @@
 <FONT color="green">028</FONT>    import org.apache.logging.log4j.core.LogEvent;<a name="line.28"></a>
 <FONT color="green">029</FONT>    import org.apache.logging.log4j.core.Logger;<a name="line.29"></a>
 <FONT color="green">030</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttr;<a name="line.31"></a>
+<FONT color="green">031</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.31"></a>
 <FONT color="green">032</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.32"></a>
 <FONT color="green">033</FONT>    import org.apache.logging.log4j.message.Message;<a name="line.33"></a>
 <FONT color="green">034</FONT>    <a name="line.34"></a>
@@ -227,22 +227,23 @@
 <FONT color="green">224</FONT>         * @return A BurstFilter.<a name="line.224"></a>
 <FONT color="green">225</FONT>         */<a name="line.225"></a>
 <FONT color="green">226</FONT>        @PluginFactory<a name="line.226"></a>
-<FONT color="green">227</FONT>        public static BurstFilter createFilter(@PluginAttr("level") final String levelName,<a name="line.227"></a>
-<FONT color="green">228</FONT>                                               @PluginAttr("rate") final String rate,<a name="line.228"></a>
-<FONT color="green">229</FONT>                                               @PluginAttr("maxBurst") final String maxBurst,<a name="line.229"></a>
-<FONT color="green">230</FONT>                                               @PluginAttr("onmatch") final String match,<a name="line.230"></a>
-<FONT color="green">231</FONT>                                               @PluginAttr("onmismatch") final String mismatch) {<a name="line.231"></a>
-<FONT color="green">232</FONT>            final Result onMatch = Result.toResult(match, Result.NEUTRAL);<a name="line.232"></a>
-<FONT color="green">233</FONT>            final Result onMismatch = Result.toResult(mismatch, Result.DENY);<a name="line.233"></a>
-<FONT color="green">234</FONT>            final Level level = Level.toLevel(levelName, Level.WARN);<a name="line.234"></a>
-<FONT color="green">235</FONT>            float eventRate = rate == null ? DEFAULT_RATE : Float.parseFloat(rate);<a name="line.235"></a>
-<FONT color="green">236</FONT>            if (eventRate &lt;= 0) {<a name="line.236"></a>
-<FONT color="green">237</FONT>                eventRate = DEFAULT_RATE;<a name="line.237"></a>
-<FONT color="green">238</FONT>            }<a name="line.238"></a>
-<FONT color="green">239</FONT>            final long max = maxBurst == null ? (long) (eventRate * DEFAULT_RATE_MULTIPLE) : Long.parseLong(maxBurst);<a name="line.239"></a>
-<FONT color="green">240</FONT>            return new BurstFilter(level, eventRate, max, onMatch, onMismatch);<a name="line.240"></a>
-<FONT color="green">241</FONT>        }<a name="line.241"></a>
-<FONT color="green">242</FONT>    }<a name="line.242"></a>
+<FONT color="green">227</FONT>        public static BurstFilter createFilter(<a name="line.227"></a>
+<FONT color="green">228</FONT>                @PluginAttribute("level") final String levelName,<a name="line.228"></a>
+<FONT color="green">229</FONT>                @PluginAttribute("rate") final String rate,<a name="line.229"></a>
+<FONT color="green">230</FONT>                @PluginAttribute("maxBurst") final String maxBurst,<a name="line.230"></a>
+<FONT color="green">231</FONT>                @PluginAttribute("onMatch") final String match,<a name="line.231"></a>
+<FONT color="green">232</FONT>                @PluginAttribute("onMismatch") final String mismatch) {<a name="line.232"></a>
+<FONT color="green">233</FONT>            final Result onMatch = Result.toResult(match, Result.NEUTRAL);<a name="line.233"></a>
+<FONT color="green">234</FONT>            final Result onMismatch = Result.toResult(mismatch, Result.DENY);<a name="line.234"></a>
+<FONT color="green">235</FONT>            final Level level = Level.toLevel(levelName, Level.WARN);<a name="line.235"></a>
+<FONT color="green">236</FONT>            float eventRate = rate == null ? DEFAULT_RATE : Float.parseFloat(rate);<a name="line.236"></a>
+<FONT color="green">237</FONT>            if (eventRate &lt;= 0) {<a name="line.237"></a>
+<FONT color="green">238</FONT>                eventRate = DEFAULT_RATE;<a name="line.238"></a>
+<FONT color="green">239</FONT>            }<a name="line.239"></a>
+<FONT color="green">240</FONT>            final long max = maxBurst == null ? (long) (eventRate * DEFAULT_RATE_MULTIPLE) : Long.parseLong(maxBurst);<a name="line.240"></a>
+<FONT color="green">241</FONT>            return new BurstFilter(level, eventRate, max, onMatch, onMismatch);<a name="line.241"></a>
+<FONT color="green">242</FONT>        }<a name="line.242"></a>
+<FONT color="green">243</FONT>    }<a name="line.243"></a>
 
 
 

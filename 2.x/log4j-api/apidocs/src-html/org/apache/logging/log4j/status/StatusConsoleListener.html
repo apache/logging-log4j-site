@@ -78,38 +78,47 @@
 <FONT color="green">075</FONT>        }<a name="line.75"></a>
 <FONT color="green">076</FONT>    <a name="line.76"></a>
 <FONT color="green">077</FONT>        /**<a name="line.77"></a>
-<FONT color="green">078</FONT>         * Writes status messages to the console.<a name="line.78"></a>
-<FONT color="green">079</FONT>         * @param data The StatusData.<a name="line.79"></a>
+<FONT color="green">078</FONT>         * Return the Log Level for which the Listener should receive events.<a name="line.78"></a>
+<FONT color="green">079</FONT>         * @return the Log Level.<a name="line.79"></a>
 <FONT color="green">080</FONT>         */<a name="line.80"></a>
 <FONT color="green">081</FONT>        @Override<a name="line.81"></a>
-<FONT color="green">082</FONT>        public void log(final StatusData data) {<a name="line.82"></a>
-<FONT color="green">083</FONT>            if (data.getLevel().isAtLeastAsSpecificAs(level) &amp;&amp; !filtered(data)) {<a name="line.83"></a>
-<FONT color="green">084</FONT>                stream.println(data.getFormattedStatus());<a name="line.84"></a>
-<FONT color="green">085</FONT>            }<a name="line.85"></a>
-<FONT color="green">086</FONT>        }<a name="line.86"></a>
-<FONT color="green">087</FONT>    <a name="line.87"></a>
-<FONT color="green">088</FONT>        /**<a name="line.88"></a>
-<FONT color="green">089</FONT>         * Adds package name filters to exclude.<a name="line.89"></a>
-<FONT color="green">090</FONT>         * @param filters An array of package names to exclude.<a name="line.90"></a>
-<FONT color="green">091</FONT>         */<a name="line.91"></a>
-<FONT color="green">092</FONT>        public void setFilters(final String... filters) {<a name="line.92"></a>
-<FONT color="green">093</FONT>            this.filters = filters;<a name="line.93"></a>
-<FONT color="green">094</FONT>        }<a name="line.94"></a>
-<FONT color="green">095</FONT>    <a name="line.95"></a>
-<FONT color="green">096</FONT>        private boolean filtered(final StatusData data) {<a name="line.96"></a>
-<FONT color="green">097</FONT>            if (filters == null) {<a name="line.97"></a>
-<FONT color="green">098</FONT>                return false;<a name="line.98"></a>
-<FONT color="green">099</FONT>            }<a name="line.99"></a>
-<FONT color="green">100</FONT>            final String caller = data.getStackTraceElement().getClassName();<a name="line.100"></a>
-<FONT color="green">101</FONT>            for (final String filter : filters) {<a name="line.101"></a>
-<FONT color="green">102</FONT>                if (caller.startsWith(filter)) {<a name="line.102"></a>
-<FONT color="green">103</FONT>                    return true;<a name="line.103"></a>
-<FONT color="green">104</FONT>                }<a name="line.104"></a>
-<FONT color="green">105</FONT>            }<a name="line.105"></a>
-<FONT color="green">106</FONT>            return false;<a name="line.106"></a>
-<FONT color="green">107</FONT>        }<a name="line.107"></a>
-<FONT color="green">108</FONT>    <a name="line.108"></a>
-<FONT color="green">109</FONT>    }<a name="line.109"></a>
+<FONT color="green">082</FONT>        public Level getStatusLevel() {<a name="line.82"></a>
+<FONT color="green">083</FONT>            return this.level;<a name="line.83"></a>
+<FONT color="green">084</FONT>        }<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>        /**<a name="line.86"></a>
+<FONT color="green">087</FONT>         * Writes status messages to the console.<a name="line.87"></a>
+<FONT color="green">088</FONT>         * @param data The StatusData.<a name="line.88"></a>
+<FONT color="green">089</FONT>         */<a name="line.89"></a>
+<FONT color="green">090</FONT>        @Override<a name="line.90"></a>
+<FONT color="green">091</FONT>        public void log(final StatusData data) {<a name="line.91"></a>
+<FONT color="green">092</FONT>            if (!filtered(data)) {<a name="line.92"></a>
+<FONT color="green">093</FONT>                stream.println(data.getFormattedStatus());<a name="line.93"></a>
+<FONT color="green">094</FONT>            }<a name="line.94"></a>
+<FONT color="green">095</FONT>        }<a name="line.95"></a>
+<FONT color="green">096</FONT>    <a name="line.96"></a>
+<FONT color="green">097</FONT>        /**<a name="line.97"></a>
+<FONT color="green">098</FONT>         * Adds package name filters to exclude.<a name="line.98"></a>
+<FONT color="green">099</FONT>         * @param filters An array of package names to exclude.<a name="line.99"></a>
+<FONT color="green">100</FONT>         */<a name="line.100"></a>
+<FONT color="green">101</FONT>        public void setFilters(final String... filters) {<a name="line.101"></a>
+<FONT color="green">102</FONT>            this.filters = filters;<a name="line.102"></a>
+<FONT color="green">103</FONT>        }<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>        private boolean filtered(final StatusData data) {<a name="line.105"></a>
+<FONT color="green">106</FONT>            if (filters == null) {<a name="line.106"></a>
+<FONT color="green">107</FONT>                return false;<a name="line.107"></a>
+<FONT color="green">108</FONT>            }<a name="line.108"></a>
+<FONT color="green">109</FONT>            final String caller = data.getStackTraceElement().getClassName();<a name="line.109"></a>
+<FONT color="green">110</FONT>            for (final String filter : filters) {<a name="line.110"></a>
+<FONT color="green">111</FONT>                if (caller.startsWith(filter)) {<a name="line.111"></a>
+<FONT color="green">112</FONT>                    return true;<a name="line.112"></a>
+<FONT color="green">113</FONT>                }<a name="line.113"></a>
+<FONT color="green">114</FONT>            }<a name="line.114"></a>
+<FONT color="green">115</FONT>            return false;<a name="line.115"></a>
+<FONT color="green">116</FONT>        }<a name="line.116"></a>
+<FONT color="green">117</FONT>    <a name="line.117"></a>
+<FONT color="green">118</FONT>    }<a name="line.118"></a>
 
 
 

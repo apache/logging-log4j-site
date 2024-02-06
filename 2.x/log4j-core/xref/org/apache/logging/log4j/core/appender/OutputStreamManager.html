@@ -42,7 +42,7 @@
 <a class="jxr_linenumber" name="32" href="#32">32</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> byte[] footer;
 <a class="jxr_linenumber" name="33" href="#33">33</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> byte[] header;
 <a class="jxr_linenumber" name="34" href="#34">34</a>  
-<a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/OutputStreamManager.html">OutputStreamManager</a>(<strong class="jxr_keyword">final</strong> OutputStream os, <strong class="jxr_keyword">final</strong> String streamName, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Layout.html">Layout</a> layout) {
+<a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/OutputStreamManager.html">OutputStreamManager</a>(<strong class="jxr_keyword">final</strong> OutputStream os, <strong class="jxr_keyword">final</strong> String streamName, <strong class="jxr_keyword">final</strong> Layout&lt;?&gt; layout) {
 <a class="jxr_linenumber" name="36" href="#36">36</a>          <strong class="jxr_keyword">super</strong>(streamName);
 <a class="jxr_linenumber" name="37" href="#37">37</a>          <strong class="jxr_keyword">this</strong>.os = os;
 <a class="jxr_linenumber" name="38" href="#38">38</a>          <strong class="jxr_keyword">if</strong> (layout != <strong class="jxr_keyword">null</strong>) {
@@ -117,7 +117,7 @@
 <a class="jxr_linenumber" name="107" href="#107">107</a> <em class="jxr_javadoccomment">     * @param bytes The serialized Log event.</em>
 <a class="jxr_linenumber" name="108" href="#108">108</a> <em class="jxr_javadoccomment">     * @param offset The offset into the byte array.</em>
 <a class="jxr_linenumber" name="109" href="#109">109</a> <em class="jxr_javadoccomment">     * @param length The number of bytes to write.</em>
-<a class="jxr_linenumber" name="110" href="#110">110</a> <em class="jxr_javadoccomment">     * @throws AppenderRuntimeException if an error occurs.</em>
+<a class="jxr_linenumber" name="110" href="#110">110</a> <em class="jxr_javadoccomment">     * @throws AppenderLoggingException if an error occurs.</em>
 <a class="jxr_linenumber" name="111" href="#111">111</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="112" href="#112">112</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">void</strong> write(<strong class="jxr_keyword">final</strong> byte[] bytes, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> offset, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> length)  {
 <a class="jxr_linenumber" name="113" href="#113">113</a>         <em class="jxr_comment">//System.out.println("write " + count);</em>
@@ -125,7 +125,7 @@
 <a class="jxr_linenumber" name="115" href="#115">115</a>             os.write(bytes, offset, length);
 <a class="jxr_linenumber" name="116" href="#116">116</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
 <a class="jxr_linenumber" name="117" href="#117">117</a>             <strong class="jxr_keyword">final</strong> String msg = <span class="jxr_string">"Error writing to stream "</span> + getName();
-<a class="jxr_linenumber" name="118" href="#118">118</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AppenderRuntimeException.html">AppenderRuntimeException</a>(msg, ex);
+<a class="jxr_linenumber" name="118" href="#118">118</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AppenderLoggingException.html">AppenderLoggingException</a>(msg, ex);
 <a class="jxr_linenumber" name="119" href="#119">119</a>         }
 <a class="jxr_linenumber" name="120" href="#120">120</a>     }
 <a class="jxr_linenumber" name="121" href="#121">121</a> 
@@ -133,13 +133,13 @@
 <a class="jxr_linenumber" name="123" href="#123">123</a> <em class="jxr_javadoccomment">     * Some output streams synchronize writes while others do not. Synchronizing here insures that</em>
 <a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_javadoccomment">     * log events won't be intertwined.</em>
 <a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">     * @param bytes The serialized Log event.</em>
-<a class="jxr_linenumber" name="126" href="#126">126</a> <em class="jxr_javadoccomment">     * @throws AppenderRuntimeException if an error occurs.</em>
+<a class="jxr_linenumber" name="126" href="#126">126</a> <em class="jxr_javadoccomment">     * @throws AppenderLoggingException if an error occurs.</em>
 <a class="jxr_linenumber" name="127" href="#127">127</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="128" href="#128">128</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> write(<strong class="jxr_keyword">final</strong> byte[] bytes)  {
 <a class="jxr_linenumber" name="129" href="#129">129</a>         write(bytes, 0, bytes.length);
 <a class="jxr_linenumber" name="130" href="#130">130</a>     }
 <a class="jxr_linenumber" name="131" href="#131">131</a> 
-<a class="jxr_linenumber" name="132" href="#132">132</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> close() {
+<a class="jxr_linenumber" name="132" href="#132">132</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">void</strong> close() {
 <a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">final</strong> OutputStream stream = os; <em class="jxr_comment">// access volatile field only once per method</em>
 <a class="jxr_linenumber" name="134" href="#134">134</a>         <strong class="jxr_keyword">if</strong> (stream == System.out || stream == System.err) {
 <a class="jxr_linenumber" name="135" href="#135">135</a>             <strong class="jxr_keyword">return</strong>;
@@ -154,12 +154,12 @@
 <a class="jxr_linenumber" name="144" href="#144">144</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="145" href="#145">145</a> <em class="jxr_javadoccomment">     * Flush any buffers.</em>
 <a class="jxr_linenumber" name="146" href="#146">146</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="147" href="#147">147</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> flush() {
+<a class="jxr_linenumber" name="147" href="#147">147</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">void</strong> flush() {
 <a class="jxr_linenumber" name="148" href="#148">148</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="149" href="#149">149</a>             os.flush();
 <a class="jxr_linenumber" name="150" href="#150">150</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
 <a class="jxr_linenumber" name="151" href="#151">151</a>             <strong class="jxr_keyword">final</strong> String msg = <span class="jxr_string">"Error flushing stream "</span> + getName();
-<a class="jxr_linenumber" name="152" href="#152">152</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AppenderRuntimeException.html">AppenderRuntimeException</a>(msg, ex);
+<a class="jxr_linenumber" name="152" href="#152">152</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AppenderLoggingException.html">AppenderLoggingException</a>(msg, ex);
 <a class="jxr_linenumber" name="153" href="#153">153</a>         }
 <a class="jxr_linenumber" name="154" href="#154">154</a>     }
 <a class="jxr_linenumber" name="155" href="#155">155</a> }

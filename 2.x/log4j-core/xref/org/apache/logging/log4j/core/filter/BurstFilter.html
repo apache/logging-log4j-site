@@ -38,7 +38,7 @@
 <a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.LogEvent;
 <a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.Logger;
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.Plugin;
-<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginAttr;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginFactory;
 <a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.message.Message;
 <a class="jxr_linenumber" name="34" href="#34">34</a>  
@@ -234,22 +234,23 @@
 <a class="jxr_linenumber" name="224" href="#224">224</a> <em class="jxr_javadoccomment">     * @return A BurstFilter.</em>
 <a class="jxr_linenumber" name="225" href="#225">225</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="226" href="#226">226</a>     @PluginFactory
-<a class="jxr_linenumber" name="227" href="#227">227</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/BurstFilter.html">BurstFilter</a> createFilter(@PluginAttr(<span class="jxr_string">"level"</span>) <strong class="jxr_keyword">final</strong> String levelName,
-<a class="jxr_linenumber" name="228" href="#228">228</a>                                            @PluginAttr(<span class="jxr_string">"rate"</span>) <strong class="jxr_keyword">final</strong> String rate,
-<a class="jxr_linenumber" name="229" href="#229">229</a>                                            @PluginAttr(<span class="jxr_string">"maxBurst"</span>) <strong class="jxr_keyword">final</strong> String maxBurst,
-<a class="jxr_linenumber" name="230" href="#230">230</a>                                            @PluginAttr(<span class="jxr_string">"onmatch"</span>) <strong class="jxr_keyword">final</strong> String match,
-<a class="jxr_linenumber" name="231" href="#231">231</a>                                            @PluginAttr(<span class="jxr_string">"onmismatch"</span>) <strong class="jxr_keyword">final</strong> String mismatch) {
-<a class="jxr_linenumber" name="232" href="#232">232</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> onMatch = Result.toResult(match, Result.NEUTRAL);
-<a class="jxr_linenumber" name="233" href="#233">233</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> onMismatch = Result.toResult(mismatch, Result.DENY);
-<a class="jxr_linenumber" name="234" href="#234">234</a>         <strong class="jxr_keyword">final</strong> Level level = Level.toLevel(levelName, Level.WARN);
-<a class="jxr_linenumber" name="235" href="#235">235</a>         <strong class="jxr_keyword">float</strong> eventRate = rate == <strong class="jxr_keyword">null</strong> ? DEFAULT_RATE : Float.parseFloat(rate);
-<a class="jxr_linenumber" name="236" href="#236">236</a>         <strong class="jxr_keyword">if</strong> (eventRate &lt;= 0) {
-<a class="jxr_linenumber" name="237" href="#237">237</a>             eventRate = DEFAULT_RATE;
-<a class="jxr_linenumber" name="238" href="#238">238</a>         }
-<a class="jxr_linenumber" name="239" href="#239">239</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> max = maxBurst == <strong class="jxr_keyword">null</strong> ? (<strong class="jxr_keyword">long</strong>) (eventRate * DEFAULT_RATE_MULTIPLE) : Long.parseLong(maxBurst);
-<a class="jxr_linenumber" name="240" href="#240">240</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/BurstFilter.html">BurstFilter</a>(level, eventRate, max, onMatch, onMismatch);
-<a class="jxr_linenumber" name="241" href="#241">241</a>     }
-<a class="jxr_linenumber" name="242" href="#242">242</a> }
+<a class="jxr_linenumber" name="227" href="#227">227</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/BurstFilter.html">BurstFilter</a> createFilter(
+<a class="jxr_linenumber" name="228" href="#228">228</a>             @PluginAttribute(<span class="jxr_string">"level"</span>) <strong class="jxr_keyword">final</strong> String levelName,
+<a class="jxr_linenumber" name="229" href="#229">229</a>             @PluginAttribute(<span class="jxr_string">"rate"</span>) <strong class="jxr_keyword">final</strong> String rate,
+<a class="jxr_linenumber" name="230" href="#230">230</a>             @PluginAttribute(<span class="jxr_string">"maxBurst"</span>) <strong class="jxr_keyword">final</strong> String maxBurst,
+<a class="jxr_linenumber" name="231" href="#231">231</a>             @PluginAttribute(<span class="jxr_string">"onMatch"</span>) <strong class="jxr_keyword">final</strong> String match,
+<a class="jxr_linenumber" name="232" href="#232">232</a>             @PluginAttribute(<span class="jxr_string">"onMismatch"</span>) <strong class="jxr_keyword">final</strong> String mismatch) {
+<a class="jxr_linenumber" name="233" href="#233">233</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> onMatch = Result.toResult(match, Result.NEUTRAL);
+<a class="jxr_linenumber" name="234" href="#234">234</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> onMismatch = Result.toResult(mismatch, Result.DENY);
+<a class="jxr_linenumber" name="235" href="#235">235</a>         <strong class="jxr_keyword">final</strong> Level level = Level.toLevel(levelName, Level.WARN);
+<a class="jxr_linenumber" name="236" href="#236">236</a>         <strong class="jxr_keyword">float</strong> eventRate = rate == <strong class="jxr_keyword">null</strong> ? DEFAULT_RATE : Float.parseFloat(rate);
+<a class="jxr_linenumber" name="237" href="#237">237</a>         <strong class="jxr_keyword">if</strong> (eventRate &lt;= 0) {
+<a class="jxr_linenumber" name="238" href="#238">238</a>             eventRate = DEFAULT_RATE;
+<a class="jxr_linenumber" name="239" href="#239">239</a>         }
+<a class="jxr_linenumber" name="240" href="#240">240</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> max = maxBurst == <strong class="jxr_keyword">null</strong> ? (<strong class="jxr_keyword">long</strong>) (eventRate * DEFAULT_RATE_MULTIPLE) : Long.parseLong(maxBurst);
+<a class="jxr_linenumber" name="241" href="#241">241</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/BurstFilter.html">BurstFilter</a>(level, eventRate, max, onMatch, onMismatch);
+<a class="jxr_linenumber" name="242" href="#242">242</a>     }
+<a class="jxr_linenumber" name="243" href="#243">243</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

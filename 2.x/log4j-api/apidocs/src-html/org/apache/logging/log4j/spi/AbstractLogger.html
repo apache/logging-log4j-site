@@ -1458,497 +1458,499 @@
 <FONT color="green">1455</FONT>         * @param format The format String.<a name="line.1455"></a>
 <FONT color="green">1456</FONT>         * @param params Arguments specified by the format.<a name="line.1456"></a>
 <FONT color="green">1457</FONT>         */<a name="line.1457"></a>
-<FONT color="green">1458</FONT>        public void printf(Level level, String format, Object... params) {<a name="line.1458"></a>
-<FONT color="green">1459</FONT>            if (isEnabled(level, null, format, params)) {<a name="line.1459"></a>
-<FONT color="green">1460</FONT>                Message msg = new StringFormattedMessage(format, params);<a name="line.1460"></a>
-<FONT color="green">1461</FONT>                log(null, FQCN, level, msg, msg.getThrowable());<a name="line.1461"></a>
-<FONT color="green">1462</FONT>            }<a name="line.1462"></a>
-<FONT color="green">1463</FONT>        }<a name="line.1463"></a>
-<FONT color="green">1464</FONT>    <a name="line.1464"></a>
-<FONT color="green">1465</FONT>        /**<a name="line.1465"></a>
-<FONT color="green">1466</FONT>         * Logs a formatted message using the specified format string and arguments.<a name="line.1466"></a>
-<FONT color="green">1467</FONT>         * @param level The logging Level.<a name="line.1467"></a>
-<FONT color="green">1468</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1468"></a>
-<FONT color="green">1469</FONT>         * @param format The format String.<a name="line.1469"></a>
-<FONT color="green">1470</FONT>         * @param params Arguments specified by the format.<a name="line.1470"></a>
-<FONT color="green">1471</FONT>         */<a name="line.1471"></a>
-<FONT color="green">1472</FONT>        public void printf(Level level, Marker marker, String format, Object... params) {<a name="line.1472"></a>
-<FONT color="green">1473</FONT>            if (isEnabled(level, marker, format, params)) {<a name="line.1473"></a>
-<FONT color="green">1474</FONT>                Message msg = new StringFormattedMessage(format, params);<a name="line.1474"></a>
-<FONT color="green">1475</FONT>                log(marker, FQCN, level, msg, msg.getThrowable());<a name="line.1475"></a>
-<FONT color="green">1476</FONT>            }<a name="line.1476"></a>
-<FONT color="green">1477</FONT>        }<a name="line.1477"></a>
-<FONT color="green">1478</FONT>    <a name="line.1478"></a>
-<FONT color="green">1479</FONT>        /**<a name="line.1479"></a>
-<FONT color="green">1480</FONT>         * Logs a message with location information.<a name="line.1480"></a>
-<FONT color="green">1481</FONT>         *<a name="line.1481"></a>
-<FONT color="green">1482</FONT>         * @param marker The Marker<a name="line.1482"></a>
-<FONT color="green">1483</FONT>         * @param fqcn   The fully qualified class name of the &lt;b&gt;caller&lt;/b&gt;<a name="line.1483"></a>
-<FONT color="green">1484</FONT>         * @param level  The logging level<a name="line.1484"></a>
-<FONT color="green">1485</FONT>         * @param data   The Message.<a name="line.1485"></a>
-<FONT color="green">1486</FONT>         * @param t      A Throwable or null.<a name="line.1486"></a>
-<FONT color="green">1487</FONT>         */<a name="line.1487"></a>
-<FONT color="green">1488</FONT>        public abstract void log(Marker marker, String fqcn, Level level, Message data, Throwable t);<a name="line.1488"></a>
-<FONT color="green">1489</FONT>    <a name="line.1489"></a>
-<FONT color="green">1490</FONT>        /**<a name="line.1490"></a>
-<FONT color="green">1491</FONT>         * Logs a Throwable to be thrown.<a name="line.1491"></a>
-<FONT color="green">1492</FONT>         *<a name="line.1492"></a>
-<FONT color="green">1493</FONT>         * @param &lt;T&gt; the type of the Throwable.<a name="line.1493"></a>
-<FONT color="green">1494</FONT>         * @param level The logging Level.<a name="line.1494"></a>
-<FONT color="green">1495</FONT>         * @param t     The Throwable.<a name="line.1495"></a>
-<FONT color="green">1496</FONT>         * @return the Throwable.<a name="line.1496"></a>
-<FONT color="green">1497</FONT>         */<a name="line.1497"></a>
-<FONT color="green">1498</FONT>        @Override<a name="line.1498"></a>
-<FONT color="green">1499</FONT>        public &lt;T extends Throwable&gt; T throwing(final Level level, final T t) {<a name="line.1499"></a>
-<FONT color="green">1500</FONT>            return throwing(FQCN, level, t);<a name="line.1500"></a>
-<FONT color="green">1501</FONT>        }<a name="line.1501"></a>
-<FONT color="green">1502</FONT>    <a name="line.1502"></a>
-<FONT color="green">1503</FONT>        /**<a name="line.1503"></a>
-<FONT color="green">1504</FONT>         * Logs a Throwable to be thrown.<a name="line.1504"></a>
-<FONT color="green">1505</FONT>         *<a name="line.1505"></a>
-<FONT color="green">1506</FONT>         * @param &lt;T&gt; the type of the Throwable.<a name="line.1506"></a>
-<FONT color="green">1507</FONT>         * @param t The Throwable.<a name="line.1507"></a>
-<FONT color="green">1508</FONT>         * @return the Throwable.<a name="line.1508"></a>
-<FONT color="green">1509</FONT>         */<a name="line.1509"></a>
-<FONT color="green">1510</FONT>        @Override<a name="line.1510"></a>
-<FONT color="green">1511</FONT>        public &lt;T extends Throwable&gt; T throwing(final T t) {<a name="line.1511"></a>
-<FONT color="green">1512</FONT>            return throwing(FQCN, Level.ERROR, t);<a name="line.1512"></a>
-<FONT color="green">1513</FONT>        }<a name="line.1513"></a>
-<FONT color="green">1514</FONT>    <a name="line.1514"></a>
-<FONT color="green">1515</FONT>        /**<a name="line.1515"></a>
-<FONT color="green">1516</FONT>         * Logs a Throwable to be thrown with location information.<a name="line.1516"></a>
-<FONT color="green">1517</FONT>         *<a name="line.1517"></a>
-<FONT color="green">1518</FONT>         * @param fqcn The fully qualified class name of the &lt;b&gt;caller&lt;/b&gt;.<a name="line.1518"></a>
-<FONT color="green">1519</FONT>         * @param &lt;T&gt; the type of the Throwable.<a name="line.1519"></a>
-<FONT color="green">1520</FONT>         * @param level The logging Level.<a name="line.1520"></a>
-<FONT color="green">1521</FONT>         * @param t The Throwable.<a name="line.1521"></a>
-<FONT color="green">1522</FONT>         * @return the Throwable.<a name="line.1522"></a>
-<FONT color="green">1523</FONT>         */<a name="line.1523"></a>
-<FONT color="green">1524</FONT>        protected &lt;T extends Throwable&gt; T throwing(final String fqcn, final Level level, final T t) {<a name="line.1524"></a>
-<FONT color="green">1525</FONT>            if (isEnabled(level, THROWING_MARKER, (Object) null, null)) {<a name="line.1525"></a>
-<FONT color="green">1526</FONT>                log(THROWING_MARKER, fqcn, level, messageFactory.newMessage(THROWING), t);<a name="line.1526"></a>
-<FONT color="green">1527</FONT>            }<a name="line.1527"></a>
-<FONT color="green">1528</FONT>            return t;<a name="line.1528"></a>
-<FONT color="green">1529</FONT>        }<a name="line.1529"></a>
-<FONT color="green">1530</FONT>    <a name="line.1530"></a>
-<FONT color="green">1531</FONT>        private Message toExitMsg(final Object result) {<a name="line.1531"></a>
-<FONT color="green">1532</FONT>            if (result == null) {<a name="line.1532"></a>
-<FONT color="green">1533</FONT>                return messageFactory.newMessage("exit");<a name="line.1533"></a>
-<FONT color="green">1534</FONT>            }<a name="line.1534"></a>
-<FONT color="green">1535</FONT>            return messageFactory.newMessage("exit with(" + result + ")");<a name="line.1535"></a>
-<FONT color="green">1536</FONT>        }<a name="line.1536"></a>
-<FONT color="green">1537</FONT>    <a name="line.1537"></a>
-<FONT color="green">1538</FONT>        /**<a name="line.1538"></a>
-<FONT color="green">1539</FONT>         * Returns a String representation of this instance in the form {@code "name"}.<a name="line.1539"></a>
-<FONT color="green">1540</FONT>         * @return A String describing this Logger instance.<a name="line.1540"></a>
-<FONT color="green">1541</FONT>         */<a name="line.1541"></a>
-<FONT color="green">1542</FONT>        @Override<a name="line.1542"></a>
-<FONT color="green">1543</FONT>        public String toString() {<a name="line.1543"></a>
-<FONT color="green">1544</FONT>            return name;<a name="line.1544"></a>
-<FONT color="green">1545</FONT>        }<a name="line.1545"></a>
-<FONT color="green">1546</FONT>    <a name="line.1546"></a>
-<FONT color="green">1547</FONT>        /**<a name="line.1547"></a>
-<FONT color="green">1548</FONT>         * Logs a message with the specific Marker at the TRACE level.<a name="line.1548"></a>
-<FONT color="green">1549</FONT>         *<a name="line.1549"></a>
-<FONT color="green">1550</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1550"></a>
-<FONT color="green">1551</FONT>         * @param msg    the message string to be logged<a name="line.1551"></a>
-<FONT color="green">1552</FONT>         */<a name="line.1552"></a>
-<FONT color="green">1553</FONT>        @Override<a name="line.1553"></a>
-<FONT color="green">1554</FONT>        public void trace(final Marker marker, final Message msg) {<a name="line.1554"></a>
-<FONT color="green">1555</FONT>            if (isEnabled(Level.TRACE, marker, msg, null)) {<a name="line.1555"></a>
-<FONT color="green">1556</FONT>                log(marker, FQCN, Level.TRACE, msg, null);<a name="line.1556"></a>
-<FONT color="green">1557</FONT>            }<a name="line.1557"></a>
-<FONT color="green">1558</FONT>        }<a name="line.1558"></a>
-<FONT color="green">1559</FONT>    <a name="line.1559"></a>
-<FONT color="green">1560</FONT>    <a name="line.1560"></a>
-<FONT color="green">1561</FONT>        /**<a name="line.1561"></a>
-<FONT color="green">1562</FONT>         * Logs a message with the specific Marker at the TRACE level.<a name="line.1562"></a>
-<FONT color="green">1563</FONT>         *<a name="line.1563"></a>
-<FONT color="green">1564</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1564"></a>
-<FONT color="green">1565</FONT>         * @param msg    the message string to be logged<a name="line.1565"></a>
-<FONT color="green">1566</FONT>         * @param t      A Throwable or null.<a name="line.1566"></a>
-<FONT color="green">1567</FONT>         */<a name="line.1567"></a>
-<FONT color="green">1568</FONT>        @Override<a name="line.1568"></a>
-<FONT color="green">1569</FONT>        public void trace(final Marker marker, final Message msg, final Throwable t) {<a name="line.1569"></a>
-<FONT color="green">1570</FONT>            if (isEnabled(Level.TRACE, marker, msg, t)) {<a name="line.1570"></a>
-<FONT color="green">1571</FONT>                log(marker, FQCN, Level.TRACE, msg, t);<a name="line.1571"></a>
-<FONT color="green">1572</FONT>            }<a name="line.1572"></a>
-<FONT color="green">1573</FONT>        }<a name="line.1573"></a>
-<FONT color="green">1574</FONT>    <a name="line.1574"></a>
-<FONT color="green">1575</FONT>        /**<a name="line.1575"></a>
-<FONT color="green">1576</FONT>         * Logs a message object with the {@link Level#TRACE TRACE} level.<a name="line.1576"></a>
-<FONT color="green">1577</FONT>         *<a name="line.1577"></a>
-<FONT color="green">1578</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1578"></a>
-<FONT color="green">1579</FONT>         * @param message the message object to log.<a name="line.1579"></a>
-<FONT color="green">1580</FONT>         */<a name="line.1580"></a>
-<FONT color="green">1581</FONT>        @Override<a name="line.1581"></a>
-<FONT color="green">1582</FONT>        public void trace(final Marker marker, final Object message) {<a name="line.1582"></a>
-<FONT color="green">1583</FONT>            if (isEnabled(Level.TRACE, marker, message, null)) {<a name="line.1583"></a>
-<FONT color="green">1584</FONT>                log(marker, FQCN, Level.TRACE, messageFactory.newMessage(message), null);<a name="line.1584"></a>
-<FONT color="green">1585</FONT>            }<a name="line.1585"></a>
-<FONT color="green">1586</FONT>        }<a name="line.1586"></a>
-<FONT color="green">1587</FONT>    <a name="line.1587"></a>
-<FONT color="green">1588</FONT>        /**<a name="line.1588"></a>
-<FONT color="green">1589</FONT>         * Logs a message at the {@link Level#TRACE TRACE} level including the<a name="line.1589"></a>
-<FONT color="green">1590</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1590"></a>
-<FONT color="green">1591</FONT>         * &lt;p/&gt;<a name="line.1591"></a>
-<FONT color="green">1592</FONT>         * &lt;p&gt;<a name="line.1592"></a>
-<FONT color="green">1593</FONT>         * See {@link #debug(String)} form for more detailed information.<a name="line.1593"></a>
-<FONT color="green">1594</FONT>         * &lt;/p&gt;<a name="line.1594"></a>
-<FONT color="green">1595</FONT>         *<a name="line.1595"></a>
-<FONT color="green">1596</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1596"></a>
-<FONT color="green">1597</FONT>         * @param message the message object to log.<a name="line.1597"></a>
-<FONT color="green">1598</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1598"></a>
-<FONT color="green">1599</FONT>         */<a name="line.1599"></a>
-<FONT color="green">1600</FONT>        @Override<a name="line.1600"></a>
-<FONT color="green">1601</FONT>        public void trace(final Marker marker, final Object message, final Throwable t) {<a name="line.1601"></a>
-<FONT color="green">1602</FONT>            if (isEnabled(Level.TRACE, marker, message, t)) {<a name="line.1602"></a>
-<FONT color="green">1603</FONT>                log(marker, FQCN, Level.TRACE, messageFactory.newMessage(message), t);<a name="line.1603"></a>
-<FONT color="green">1604</FONT>            }<a name="line.1604"></a>
-<FONT color="green">1605</FONT>        }<a name="line.1605"></a>
-<FONT color="green">1606</FONT>    <a name="line.1606"></a>
-<FONT color="green">1607</FONT>        /**<a name="line.1607"></a>
-<FONT color="green">1608</FONT>         * Logs a message object with the {@link Level#TRACE TRACE} level.<a name="line.1608"></a>
-<FONT color="green">1609</FONT>         *<a name="line.1609"></a>
-<FONT color="green">1610</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1610"></a>
-<FONT color="green">1611</FONT>         * @param message the message object to log.<a name="line.1611"></a>
-<FONT color="green">1612</FONT>         */<a name="line.1612"></a>
-<FONT color="green">1613</FONT>        @Override<a name="line.1613"></a>
-<FONT color="green">1614</FONT>        public void trace(final Marker marker, final String message) {<a name="line.1614"></a>
-<FONT color="green">1615</FONT>            if (isEnabled(Level.TRACE, marker, message)) {<a name="line.1615"></a>
-<FONT color="green">1616</FONT>                log(marker, FQCN, Level.TRACE, messageFactory.newMessage(message), null);<a name="line.1616"></a>
-<FONT color="green">1617</FONT>            }<a name="line.1617"></a>
-<FONT color="green">1618</FONT>        }<a name="line.1618"></a>
-<FONT color="green">1619</FONT>    <a name="line.1619"></a>
-<FONT color="green">1620</FONT>        /**<a name="line.1620"></a>
-<FONT color="green">1621</FONT>         * Logs a message with parameters at the {@link Level#TRACE TRACE} level.<a name="line.1621"></a>
-<FONT color="green">1622</FONT>         *<a name="line.1622"></a>
-<FONT color="green">1623</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1623"></a>
-<FONT color="green">1624</FONT>         * @param message the message to log.<a name="line.1624"></a>
-<FONT color="green">1625</FONT>         * @param params  parameters to the message.<a name="line.1625"></a>
-<FONT color="green">1626</FONT>         */<a name="line.1626"></a>
-<FONT color="green">1627</FONT>        @Override<a name="line.1627"></a>
-<FONT color="green">1628</FONT>        public void trace(final Marker marker, final String message, final Object... params) {<a name="line.1628"></a>
-<FONT color="green">1629</FONT>            if (isEnabled(Level.TRACE, marker, message, params)) {<a name="line.1629"></a>
-<FONT color="green">1630</FONT>                final Message msg = messageFactory.newMessage(message, params);<a name="line.1630"></a>
-<FONT color="green">1631</FONT>                log(marker, FQCN, Level.TRACE, msg, msg.getThrowable());<a name="line.1631"></a>
-<FONT color="green">1632</FONT>            }<a name="line.1632"></a>
-<FONT color="green">1633</FONT>        }<a name="line.1633"></a>
-<FONT color="green">1634</FONT>    <a name="line.1634"></a>
-<FONT color="green">1635</FONT>        /**<a name="line.1635"></a>
-<FONT color="green">1636</FONT>         * Logs a message at the {@link Level#TRACE TRACE} level including the<a name="line.1636"></a>
-<FONT color="green">1637</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1637"></a>
-<FONT color="green">1638</FONT>         * &lt;p/&gt;<a name="line.1638"></a>
-<FONT color="green">1639</FONT>         * &lt;p&gt;<a name="line.1639"></a>
-<FONT color="green">1640</FONT>         * See {@link #debug(String)} form for more detailed information.<a name="line.1640"></a>
-<FONT color="green">1641</FONT>         * &lt;/p&gt;<a name="line.1641"></a>
-<FONT color="green">1642</FONT>         *<a name="line.1642"></a>
-<FONT color="green">1643</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1643"></a>
-<FONT color="green">1644</FONT>         * @param message the message object to log.<a name="line.1644"></a>
-<FONT color="green">1645</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1645"></a>
-<FONT color="green">1646</FONT>         */<a name="line.1646"></a>
-<FONT color="green">1647</FONT>        @Override<a name="line.1647"></a>
-<FONT color="green">1648</FONT>        public void trace(final Marker marker, final String message, final Throwable t) {<a name="line.1648"></a>
-<FONT color="green">1649</FONT>            if (isEnabled(Level.TRACE, marker, message, t)) {<a name="line.1649"></a>
-<FONT color="green">1650</FONT>                log(marker, FQCN, Level.TRACE, messageFactory.newMessage(message), t);<a name="line.1650"></a>
-<FONT color="green">1651</FONT>            }<a name="line.1651"></a>
-<FONT color="green">1652</FONT>        }<a name="line.1652"></a>
-<FONT color="green">1653</FONT>    <a name="line.1653"></a>
-<FONT color="green">1654</FONT>        /**<a name="line.1654"></a>
-<FONT color="green">1655</FONT>         * Logs a message with the specific Marker at the TRACE level.<a name="line.1655"></a>
-<FONT color="green">1656</FONT>         *<a name="line.1656"></a>
-<FONT color="green">1657</FONT>         * @param msg the message string to be logged<a name="line.1657"></a>
-<FONT color="green">1658</FONT>         */<a name="line.1658"></a>
-<FONT color="green">1659</FONT>        @Override<a name="line.1659"></a>
-<FONT color="green">1660</FONT>        public void trace(final Message msg) {<a name="line.1660"></a>
-<FONT color="green">1661</FONT>            if (isEnabled(Level.TRACE, null, msg, null)) {<a name="line.1661"></a>
-<FONT color="green">1662</FONT>                log(null, FQCN, Level.TRACE, msg, null);<a name="line.1662"></a>
-<FONT color="green">1663</FONT>            }<a name="line.1663"></a>
-<FONT color="green">1664</FONT>        }<a name="line.1664"></a>
-<FONT color="green">1665</FONT>    <a name="line.1665"></a>
-<FONT color="green">1666</FONT>        /**<a name="line.1666"></a>
-<FONT color="green">1667</FONT>         * Logs a message with the specific Marker at the TRACE level.<a name="line.1667"></a>
-<FONT color="green">1668</FONT>         *<a name="line.1668"></a>
-<FONT color="green">1669</FONT>         * @param msg the message string to be logged<a name="line.1669"></a>
-<FONT color="green">1670</FONT>         * @param t   A Throwable or null.<a name="line.1670"></a>
-<FONT color="green">1671</FONT>         */<a name="line.1671"></a>
-<FONT color="green">1672</FONT>        @Override<a name="line.1672"></a>
-<FONT color="green">1673</FONT>        public void trace(final Message msg, final Throwable t) {<a name="line.1673"></a>
-<FONT color="green">1674</FONT>            if (isEnabled(Level.TRACE, null, msg, t)) {<a name="line.1674"></a>
-<FONT color="green">1675</FONT>                log(null, FQCN, Level.TRACE, msg, t);<a name="line.1675"></a>
-<FONT color="green">1676</FONT>            }<a name="line.1676"></a>
-<FONT color="green">1677</FONT>        }<a name="line.1677"></a>
-<FONT color="green">1678</FONT>    <a name="line.1678"></a>
-<FONT color="green">1679</FONT>        /**<a name="line.1679"></a>
-<FONT color="green">1680</FONT>         * Logs a message object with the {@link Level#TRACE TRACE} level.<a name="line.1680"></a>
-<FONT color="green">1681</FONT>         *<a name="line.1681"></a>
-<FONT color="green">1682</FONT>         * @param message the message object to log.<a name="line.1682"></a>
-<FONT color="green">1683</FONT>         */<a name="line.1683"></a>
-<FONT color="green">1684</FONT>        @Override<a name="line.1684"></a>
-<FONT color="green">1685</FONT>        public void trace(final Object message) {<a name="line.1685"></a>
-<FONT color="green">1686</FONT>            if (isEnabled(Level.TRACE, null, message, null)) {<a name="line.1686"></a>
-<FONT color="green">1687</FONT>                log(null, FQCN, Level.TRACE, messageFactory.newMessage(message), null);<a name="line.1687"></a>
-<FONT color="green">1688</FONT>            }<a name="line.1688"></a>
-<FONT color="green">1689</FONT>        }<a name="line.1689"></a>
-<FONT color="green">1690</FONT>    <a name="line.1690"></a>
-<FONT color="green">1691</FONT>        /**<a name="line.1691"></a>
-<FONT color="green">1692</FONT>         * Logs a message at the {@link Level#TRACE TRACE} level including the<a name="line.1692"></a>
-<FONT color="green">1693</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1693"></a>
-<FONT color="green">1694</FONT>         * &lt;p/&gt;<a name="line.1694"></a>
-<FONT color="green">1695</FONT>         * &lt;p&gt;<a name="line.1695"></a>
-<FONT color="green">1696</FONT>         * See {@link #debug(String)} form for more detailed information.<a name="line.1696"></a>
-<FONT color="green">1697</FONT>         * &lt;/p&gt;<a name="line.1697"></a>
-<FONT color="green">1698</FONT>         *<a name="line.1698"></a>
-<FONT color="green">1699</FONT>         * @param message the message object to log.<a name="line.1699"></a>
-<FONT color="green">1700</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1700"></a>
-<FONT color="green">1701</FONT>         */<a name="line.1701"></a>
-<FONT color="green">1702</FONT>        @Override<a name="line.1702"></a>
-<FONT color="green">1703</FONT>        public void trace(final Object message, final Throwable t) {<a name="line.1703"></a>
-<FONT color="green">1704</FONT>            if (isEnabled(Level.TRACE, null, message, t)) {<a name="line.1704"></a>
-<FONT color="green">1705</FONT>                log(null, FQCN, Level.TRACE, messageFactory.newMessage(message), t);<a name="line.1705"></a>
-<FONT color="green">1706</FONT>            }<a name="line.1706"></a>
-<FONT color="green">1707</FONT>        }<a name="line.1707"></a>
-<FONT color="green">1708</FONT>    <a name="line.1708"></a>
-<FONT color="green">1709</FONT>        /**<a name="line.1709"></a>
-<FONT color="green">1710</FONT>         * Logs a message object with the {@link Level#TRACE TRACE} level.<a name="line.1710"></a>
-<FONT color="green">1711</FONT>         *<a name="line.1711"></a>
-<FONT color="green">1712</FONT>         * @param message the message object to log.<a name="line.1712"></a>
-<FONT color="green">1713</FONT>         */<a name="line.1713"></a>
-<FONT color="green">1714</FONT>        @Override<a name="line.1714"></a>
-<FONT color="green">1715</FONT>        public void trace(final String message) {<a name="line.1715"></a>
-<FONT color="green">1716</FONT>            if (isEnabled(Level.TRACE, null, message)) {<a name="line.1716"></a>
-<FONT color="green">1717</FONT>                log(null, FQCN, Level.TRACE, messageFactory.newMessage(message), null);<a name="line.1717"></a>
-<FONT color="green">1718</FONT>            }<a name="line.1718"></a>
-<FONT color="green">1719</FONT>        }<a name="line.1719"></a>
-<FONT color="green">1720</FONT>    <a name="line.1720"></a>
-<FONT color="green">1721</FONT>        /**<a name="line.1721"></a>
-<FONT color="green">1722</FONT>         * Logs a message with parameters at the {@link Level#TRACE TRACE} level.<a name="line.1722"></a>
-<FONT color="green">1723</FONT>         *<a name="line.1723"></a>
-<FONT color="green">1724</FONT>         * @param message the message to log.<a name="line.1724"></a>
-<FONT color="green">1725</FONT>         * @param params  parameters to the message.<a name="line.1725"></a>
-<FONT color="green">1726</FONT>         */<a name="line.1726"></a>
-<FONT color="green">1727</FONT>        @Override<a name="line.1727"></a>
-<FONT color="green">1728</FONT>        public void trace(final String message, final Object... params) {<a name="line.1728"></a>
-<FONT color="green">1729</FONT>            if (isEnabled(Level.TRACE, null, message, params)) {<a name="line.1729"></a>
-<FONT color="green">1730</FONT>                final Message msg = messageFactory.newMessage(message, params);<a name="line.1730"></a>
-<FONT color="green">1731</FONT>                log(null, FQCN, Level.TRACE, msg, msg.getThrowable());<a name="line.1731"></a>
-<FONT color="green">1732</FONT>            }<a name="line.1732"></a>
-<FONT color="green">1733</FONT>        }<a name="line.1733"></a>
-<FONT color="green">1734</FONT>    <a name="line.1734"></a>
-<FONT color="green">1735</FONT>        /**<a name="line.1735"></a>
-<FONT color="green">1736</FONT>         * Logs a message at the {@link Level#TRACE TRACE} level including the<a name="line.1736"></a>
-<FONT color="green">1737</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1737"></a>
-<FONT color="green">1738</FONT>         * &lt;p/&gt;<a name="line.1738"></a>
-<FONT color="green">1739</FONT>         * &lt;p&gt;<a name="line.1739"></a>
-<FONT color="green">1740</FONT>         * See {@link #debug(String)} form for more detailed information.<a name="line.1740"></a>
-<FONT color="green">1741</FONT>         * &lt;/p&gt;<a name="line.1741"></a>
-<FONT color="green">1742</FONT>         *<a name="line.1742"></a>
-<FONT color="green">1743</FONT>         * @param message the message object to log.<a name="line.1743"></a>
-<FONT color="green">1744</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1744"></a>
-<FONT color="green">1745</FONT>         */<a name="line.1745"></a>
-<FONT color="green">1746</FONT>        @Override<a name="line.1746"></a>
-<FONT color="green">1747</FONT>        public void trace(final String message, final Throwable t) {<a name="line.1747"></a>
-<FONT color="green">1748</FONT>            if (isEnabled(Level.TRACE, null, message, t)) {<a name="line.1748"></a>
-<FONT color="green">1749</FONT>                log(null, FQCN, Level.TRACE, messageFactory.newMessage(message), t);<a name="line.1749"></a>
-<FONT color="green">1750</FONT>            }<a name="line.1750"></a>
-<FONT color="green">1751</FONT>        }<a name="line.1751"></a>
-<FONT color="green">1752</FONT>    <a name="line.1752"></a>
-<FONT color="green">1753</FONT>        /**<a name="line.1753"></a>
-<FONT color="green">1754</FONT>         * Logs a message with the specific Marker at the WARN level.<a name="line.1754"></a>
-<FONT color="green">1755</FONT>         *<a name="line.1755"></a>
-<FONT color="green">1756</FONT>         * @param marker the marker data specific to this log statement<a name="line.1756"></a>
-<FONT color="green">1757</FONT>         * @param msg    the message string to be logged<a name="line.1757"></a>
-<FONT color="green">1758</FONT>         */<a name="line.1758"></a>
-<FONT color="green">1759</FONT>        @Override<a name="line.1759"></a>
-<FONT color="green">1760</FONT>        public void warn(final Marker marker, final Message msg) {<a name="line.1760"></a>
-<FONT color="green">1761</FONT>            if (isEnabled(Level.WARN, marker, msg, null)) {<a name="line.1761"></a>
-<FONT color="green">1762</FONT>                log(marker, FQCN, Level.WARN, msg, null);<a name="line.1762"></a>
-<FONT color="green">1763</FONT>            }<a name="line.1763"></a>
-<FONT color="green">1764</FONT>        }<a name="line.1764"></a>
-<FONT color="green">1765</FONT>    <a name="line.1765"></a>
-<FONT color="green">1766</FONT>        /**<a name="line.1766"></a>
-<FONT color="green">1767</FONT>         * Logs a message with the specific Marker at the WARN level.<a name="line.1767"></a>
-<FONT color="green">1768</FONT>         *<a name="line.1768"></a>
-<FONT color="green">1769</FONT>         * @param marker the marker data specific to this log statement<a name="line.1769"></a>
-<FONT color="green">1770</FONT>         * @param msg    the message string to be logged<a name="line.1770"></a>
-<FONT color="green">1771</FONT>         * @param t      A Throwable or null.<a name="line.1771"></a>
-<FONT color="green">1772</FONT>         */<a name="line.1772"></a>
-<FONT color="green">1773</FONT>        @Override<a name="line.1773"></a>
-<FONT color="green">1774</FONT>        public void warn(final Marker marker, final Message msg, final Throwable t) {<a name="line.1774"></a>
-<FONT color="green">1775</FONT>            if (isEnabled(Level.WARN, marker, msg, t)) {<a name="line.1775"></a>
-<FONT color="green">1776</FONT>                log(marker, FQCN, Level.WARN, msg, t);<a name="line.1776"></a>
-<FONT color="green">1777</FONT>            }<a name="line.1777"></a>
-<FONT color="green">1778</FONT>        }<a name="line.1778"></a>
-<FONT color="green">1779</FONT>    <a name="line.1779"></a>
-<FONT color="green">1780</FONT>        /**<a name="line.1780"></a>
-<FONT color="green">1781</FONT>         * Logs a message object with the {@link Level#WARN WARN} level.<a name="line.1781"></a>
-<FONT color="green">1782</FONT>         *<a name="line.1782"></a>
-<FONT color="green">1783</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1783"></a>
-<FONT color="green">1784</FONT>         * @param message the message object to log.<a name="line.1784"></a>
-<FONT color="green">1785</FONT>         */<a name="line.1785"></a>
-<FONT color="green">1786</FONT>        @Override<a name="line.1786"></a>
-<FONT color="green">1787</FONT>        public void warn(final Marker marker, final Object message) {<a name="line.1787"></a>
-<FONT color="green">1788</FONT>            if (isEnabled(Level.WARN, marker, message, null)) {<a name="line.1788"></a>
-<FONT color="green">1789</FONT>                log(marker, FQCN, Level.WARN, messageFactory.newMessage(message), null);<a name="line.1789"></a>
-<FONT color="green">1790</FONT>            }<a name="line.1790"></a>
-<FONT color="green">1791</FONT>        }<a name="line.1791"></a>
-<FONT color="green">1792</FONT>    <a name="line.1792"></a>
-<FONT color="green">1793</FONT>        /*<a name="line.1793"></a>
-<FONT color="green">1794</FONT>         * Instead of one single method with Object... declared the following methods explicitly specify<a name="line.1794"></a>
-<FONT color="green">1795</FONT>         * parameters because they perform dramatically better than having the JVM convert them to an<a name="line.1795"></a>
-<FONT color="green">1796</FONT>         * array.<a name="line.1796"></a>
-<FONT color="green">1797</FONT>         */<a name="line.1797"></a>
-<FONT color="green">1798</FONT>    <a name="line.1798"></a>
-<FONT color="green">1799</FONT>        /**<a name="line.1799"></a>
-<FONT color="green">1800</FONT>         * Logs a message at the {@link Level#WARN WARN} level including the<a name="line.1800"></a>
-<FONT color="green">1801</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1801"></a>
-<FONT color="green">1802</FONT>         *<a name="line.1802"></a>
-<FONT color="green">1803</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1803"></a>
-<FONT color="green">1804</FONT>         * @param message the message object to log.<a name="line.1804"></a>
-<FONT color="green">1805</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1805"></a>
-<FONT color="green">1806</FONT>         */<a name="line.1806"></a>
-<FONT color="green">1807</FONT>        @Override<a name="line.1807"></a>
-<FONT color="green">1808</FONT>        public void warn(final Marker marker, final Object message, final Throwable t) {<a name="line.1808"></a>
-<FONT color="green">1809</FONT>            if (isEnabled(Level.WARN, marker, message, t)) {<a name="line.1809"></a>
-<FONT color="green">1810</FONT>                log(marker, FQCN, Level.WARN, messageFactory.newMessage(message), t);<a name="line.1810"></a>
-<FONT color="green">1811</FONT>            }<a name="line.1811"></a>
-<FONT color="green">1812</FONT>        }<a name="line.1812"></a>
-<FONT color="green">1813</FONT>    <a name="line.1813"></a>
-<FONT color="green">1814</FONT>        /**<a name="line.1814"></a>
-<FONT color="green">1815</FONT>         * Logs a message object with the {@link Level#WARN WARN} level.<a name="line.1815"></a>
-<FONT color="green">1816</FONT>         *<a name="line.1816"></a>
-<FONT color="green">1817</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1817"></a>
-<FONT color="green">1818</FONT>         * @param message the message object to log.<a name="line.1818"></a>
-<FONT color="green">1819</FONT>         */<a name="line.1819"></a>
-<FONT color="green">1820</FONT>        @Override<a name="line.1820"></a>
-<FONT color="green">1821</FONT>        public void warn(final Marker marker, final String message) {<a name="line.1821"></a>
-<FONT color="green">1822</FONT>            if (isEnabled(Level.WARN, marker, message)) {<a name="line.1822"></a>
-<FONT color="green">1823</FONT>                log(marker, FQCN, Level.WARN, messageFactory.newMessage(message), null);<a name="line.1823"></a>
-<FONT color="green">1824</FONT>            }<a name="line.1824"></a>
-<FONT color="green">1825</FONT>        }<a name="line.1825"></a>
-<FONT color="green">1826</FONT>    <a name="line.1826"></a>
-<FONT color="green">1827</FONT>        /**<a name="line.1827"></a>
-<FONT color="green">1828</FONT>         * Logs a message with parameters at the {@link Level#WARN WARN} level.<a name="line.1828"></a>
-<FONT color="green">1829</FONT>         *<a name="line.1829"></a>
-<FONT color="green">1830</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1830"></a>
-<FONT color="green">1831</FONT>         * @param message the message to log.<a name="line.1831"></a>
-<FONT color="green">1832</FONT>         * @param params  parameters to the message.<a name="line.1832"></a>
-<FONT color="green">1833</FONT>         */<a name="line.1833"></a>
-<FONT color="green">1834</FONT>        @Override<a name="line.1834"></a>
-<FONT color="green">1835</FONT>        public void warn(final Marker marker, final String message, final Object... params) {<a name="line.1835"></a>
-<FONT color="green">1836</FONT>            if (isEnabled(Level.WARN, marker, message, params)) {<a name="line.1836"></a>
-<FONT color="green">1837</FONT>                final Message msg = messageFactory.newMessage(message, params);<a name="line.1837"></a>
-<FONT color="green">1838</FONT>                log(marker, FQCN, Level.WARN, msg, msg.getThrowable());<a name="line.1838"></a>
-<FONT color="green">1839</FONT>            }<a name="line.1839"></a>
-<FONT color="green">1840</FONT>        }<a name="line.1840"></a>
-<FONT color="green">1841</FONT>    <a name="line.1841"></a>
-<FONT color="green">1842</FONT>        /**<a name="line.1842"></a>
-<FONT color="green">1843</FONT>         * Logs a message at the {@link Level#WARN WARN} level including the<a name="line.1843"></a>
-<FONT color="green">1844</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1844"></a>
-<FONT color="green">1845</FONT>         *<a name="line.1845"></a>
-<FONT color="green">1846</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1846"></a>
-<FONT color="green">1847</FONT>         * @param message the message object to log.<a name="line.1847"></a>
-<FONT color="green">1848</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1848"></a>
-<FONT color="green">1849</FONT>         */<a name="line.1849"></a>
-<FONT color="green">1850</FONT>        @Override<a name="line.1850"></a>
-<FONT color="green">1851</FONT>        public void warn(final Marker marker, final String message, final Throwable t) {<a name="line.1851"></a>
-<FONT color="green">1852</FONT>            if (isEnabled(Level.WARN, marker, message, t)) {<a name="line.1852"></a>
-<FONT color="green">1853</FONT>                log(marker, FQCN, Level.WARN, messageFactory.newMessage(message), t);<a name="line.1853"></a>
-<FONT color="green">1854</FONT>            }<a name="line.1854"></a>
-<FONT color="green">1855</FONT>        }<a name="line.1855"></a>
-<FONT color="green">1856</FONT>    <a name="line.1856"></a>
-<FONT color="green">1857</FONT>        /**<a name="line.1857"></a>
-<FONT color="green">1858</FONT>         * Logs a message with the specific Marker at the WARN level.<a name="line.1858"></a>
-<FONT color="green">1859</FONT>         *<a name="line.1859"></a>
-<FONT color="green">1860</FONT>         * @param msg the message string to be logged<a name="line.1860"></a>
-<FONT color="green">1861</FONT>         */<a name="line.1861"></a>
-<FONT color="green">1862</FONT>        @Override<a name="line.1862"></a>
-<FONT color="green">1863</FONT>        public void warn(final Message msg) {<a name="line.1863"></a>
-<FONT color="green">1864</FONT>            if (isEnabled(Level.WARN, null, msg, null)) {<a name="line.1864"></a>
-<FONT color="green">1865</FONT>                log(null, FQCN, Level.WARN, msg, null);<a name="line.1865"></a>
-<FONT color="green">1866</FONT>            }<a name="line.1866"></a>
-<FONT color="green">1867</FONT>        }<a name="line.1867"></a>
-<FONT color="green">1868</FONT>    <a name="line.1868"></a>
-<FONT color="green">1869</FONT>        /**<a name="line.1869"></a>
-<FONT color="green">1870</FONT>         * Logs a message with the specific Marker at the WARN level.<a name="line.1870"></a>
-<FONT color="green">1871</FONT>         *<a name="line.1871"></a>
-<FONT color="green">1872</FONT>         * @param msg the message string to be logged<a name="line.1872"></a>
-<FONT color="green">1873</FONT>         * @param t   A Throwable or null.<a name="line.1873"></a>
-<FONT color="green">1874</FONT>         */<a name="line.1874"></a>
-<FONT color="green">1875</FONT>        @Override<a name="line.1875"></a>
-<FONT color="green">1876</FONT>        public void warn(final Message msg, final Throwable t) {<a name="line.1876"></a>
-<FONT color="green">1877</FONT>            if (isEnabled(Level.WARN, null, msg, t)) {<a name="line.1877"></a>
-<FONT color="green">1878</FONT>                log(null, FQCN, Level.WARN, msg, t);<a name="line.1878"></a>
-<FONT color="green">1879</FONT>            }<a name="line.1879"></a>
-<FONT color="green">1880</FONT>        }<a name="line.1880"></a>
-<FONT color="green">1881</FONT>    <a name="line.1881"></a>
-<FONT color="green">1882</FONT>        /**<a name="line.1882"></a>
-<FONT color="green">1883</FONT>         * Logs a message object with the {@link Level#WARN WARN} level.<a name="line.1883"></a>
-<FONT color="green">1884</FONT>         *<a name="line.1884"></a>
-<FONT color="green">1885</FONT>         * @param message the message object to log.<a name="line.1885"></a>
-<FONT color="green">1886</FONT>         */<a name="line.1886"></a>
-<FONT color="green">1887</FONT>        @Override<a name="line.1887"></a>
-<FONT color="green">1888</FONT>        public void warn(final Object message) {<a name="line.1888"></a>
-<FONT color="green">1889</FONT>            if (isEnabled(Level.WARN, null, message, null)) {<a name="line.1889"></a>
-<FONT color="green">1890</FONT>                log(null, FQCN, Level.WARN, messageFactory.newMessage(message), null);<a name="line.1890"></a>
-<FONT color="green">1891</FONT>            }<a name="line.1891"></a>
-<FONT color="green">1892</FONT>        }<a name="line.1892"></a>
-<FONT color="green">1893</FONT>    <a name="line.1893"></a>
-<FONT color="green">1894</FONT>        /**<a name="line.1894"></a>
-<FONT color="green">1895</FONT>         * Logs a message at the {@link Level#WARN WARN} level including the<a name="line.1895"></a>
-<FONT color="green">1896</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1896"></a>
-<FONT color="green">1897</FONT>         *<a name="line.1897"></a>
-<FONT color="green">1898</FONT>         * @param message the message object to log.<a name="line.1898"></a>
-<FONT color="green">1899</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1899"></a>
-<FONT color="green">1900</FONT>         */<a name="line.1900"></a>
-<FONT color="green">1901</FONT>        @Override<a name="line.1901"></a>
-<FONT color="green">1902</FONT>        public void warn(final Object message, final Throwable t) {<a name="line.1902"></a>
-<FONT color="green">1903</FONT>            if (isEnabled(Level.WARN, null, message, t)) {<a name="line.1903"></a>
-<FONT color="green">1904</FONT>                log(null, FQCN, Level.WARN, messageFactory.newMessage(message), t);<a name="line.1904"></a>
-<FONT color="green">1905</FONT>            }<a name="line.1905"></a>
-<FONT color="green">1906</FONT>        }<a name="line.1906"></a>
-<FONT color="green">1907</FONT>    <a name="line.1907"></a>
-<FONT color="green">1908</FONT>        /**<a name="line.1908"></a>
-<FONT color="green">1909</FONT>         * Logs a message object with the {@link Level#WARN WARN} level.<a name="line.1909"></a>
-<FONT color="green">1910</FONT>         *<a name="line.1910"></a>
-<FONT color="green">1911</FONT>         * @param message the message object to log.<a name="line.1911"></a>
-<FONT color="green">1912</FONT>         */<a name="line.1912"></a>
-<FONT color="green">1913</FONT>        @Override<a name="line.1913"></a>
-<FONT color="green">1914</FONT>        public void warn(final String message) {<a name="line.1914"></a>
-<FONT color="green">1915</FONT>            if (isEnabled(Level.WARN, null, message)) {<a name="line.1915"></a>
-<FONT color="green">1916</FONT>                log(null, FQCN, Level.WARN, messageFactory.newMessage(message), null);<a name="line.1916"></a>
-<FONT color="green">1917</FONT>            }<a name="line.1917"></a>
-<FONT color="green">1918</FONT>        }<a name="line.1918"></a>
-<FONT color="green">1919</FONT>    <a name="line.1919"></a>
-<FONT color="green">1920</FONT>        /**<a name="line.1920"></a>
-<FONT color="green">1921</FONT>         * Logs a message with parameters at the {@link Level#WARN WARN} level.<a name="line.1921"></a>
-<FONT color="green">1922</FONT>         *<a name="line.1922"></a>
-<FONT color="green">1923</FONT>         * @param message the message to log.<a name="line.1923"></a>
-<FONT color="green">1924</FONT>         * @param params  parameters to the message.<a name="line.1924"></a>
-<FONT color="green">1925</FONT>         */<a name="line.1925"></a>
-<FONT color="green">1926</FONT>        @Override<a name="line.1926"></a>
-<FONT color="green">1927</FONT>        public void warn(final String message, final Object... params) {<a name="line.1927"></a>
-<FONT color="green">1928</FONT>            if (isEnabled(Level.WARN, null, message, params)) {<a name="line.1928"></a>
-<FONT color="green">1929</FONT>                final Message msg = messageFactory.newMessage(message, params);<a name="line.1929"></a>
-<FONT color="green">1930</FONT>                log(null, FQCN, Level.WARN, msg, msg.getThrowable());<a name="line.1930"></a>
-<FONT color="green">1931</FONT>            }<a name="line.1931"></a>
-<FONT color="green">1932</FONT>        }<a name="line.1932"></a>
-<FONT color="green">1933</FONT>    <a name="line.1933"></a>
-<FONT color="green">1934</FONT>        /**<a name="line.1934"></a>
-<FONT color="green">1935</FONT>         * Logs a message at the {@link Level#WARN WARN} level including the<a name="line.1935"></a>
-<FONT color="green">1936</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1936"></a>
-<FONT color="green">1937</FONT>         *<a name="line.1937"></a>
-<FONT color="green">1938</FONT>         * @param message the message object to log.<a name="line.1938"></a>
-<FONT color="green">1939</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1939"></a>
-<FONT color="green">1940</FONT>         */<a name="line.1940"></a>
-<FONT color="green">1941</FONT>        @Override<a name="line.1941"></a>
-<FONT color="green">1942</FONT>        public void warn(final String message, final Throwable t) {<a name="line.1942"></a>
-<FONT color="green">1943</FONT>            if (isEnabled(Level.WARN, null, message, t)) {<a name="line.1943"></a>
-<FONT color="green">1944</FONT>                log(null, FQCN, Level.WARN, messageFactory.newMessage(message), t);<a name="line.1944"></a>
-<FONT color="green">1945</FONT>            }<a name="line.1945"></a>
-<FONT color="green">1946</FONT>        }<a name="line.1946"></a>
-<FONT color="green">1947</FONT>    <a name="line.1947"></a>
-<FONT color="green">1948</FONT>    }<a name="line.1948"></a>
+<FONT color="green">1458</FONT>        @Override<a name="line.1458"></a>
+<FONT color="green">1459</FONT>        public void printf(Level level, String format, Object... params) {<a name="line.1459"></a>
+<FONT color="green">1460</FONT>            if (isEnabled(level, null, format, params)) {<a name="line.1460"></a>
+<FONT color="green">1461</FONT>                Message msg = new StringFormattedMessage(format, params);<a name="line.1461"></a>
+<FONT color="green">1462</FONT>                log(null, FQCN, level, msg, msg.getThrowable());<a name="line.1462"></a>
+<FONT color="green">1463</FONT>            }<a name="line.1463"></a>
+<FONT color="green">1464</FONT>        }<a name="line.1464"></a>
+<FONT color="green">1465</FONT>    <a name="line.1465"></a>
+<FONT color="green">1466</FONT>        /**<a name="line.1466"></a>
+<FONT color="green">1467</FONT>         * Logs a formatted message using the specified format string and arguments.<a name="line.1467"></a>
+<FONT color="green">1468</FONT>         * @param level The logging Level.<a name="line.1468"></a>
+<FONT color="green">1469</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1469"></a>
+<FONT color="green">1470</FONT>         * @param format The format String.<a name="line.1470"></a>
+<FONT color="green">1471</FONT>         * @param params Arguments specified by the format.<a name="line.1471"></a>
+<FONT color="green">1472</FONT>         */<a name="line.1472"></a>
+<FONT color="green">1473</FONT>        @Override<a name="line.1473"></a>
+<FONT color="green">1474</FONT>        public void printf(Level level, Marker marker, String format, Object... params) {<a name="line.1474"></a>
+<FONT color="green">1475</FONT>            if (isEnabled(level, marker, format, params)) {<a name="line.1475"></a>
+<FONT color="green">1476</FONT>                Message msg = new StringFormattedMessage(format, params);<a name="line.1476"></a>
+<FONT color="green">1477</FONT>                log(marker, FQCN, level, msg, msg.getThrowable());<a name="line.1477"></a>
+<FONT color="green">1478</FONT>            }<a name="line.1478"></a>
+<FONT color="green">1479</FONT>        }<a name="line.1479"></a>
+<FONT color="green">1480</FONT>    <a name="line.1480"></a>
+<FONT color="green">1481</FONT>        /**<a name="line.1481"></a>
+<FONT color="green">1482</FONT>         * Logs a message with location information.<a name="line.1482"></a>
+<FONT color="green">1483</FONT>         *<a name="line.1483"></a>
+<FONT color="green">1484</FONT>         * @param marker The Marker<a name="line.1484"></a>
+<FONT color="green">1485</FONT>         * @param fqcn   The fully qualified class name of the &lt;b&gt;caller&lt;/b&gt;<a name="line.1485"></a>
+<FONT color="green">1486</FONT>         * @param level  The logging level<a name="line.1486"></a>
+<FONT color="green">1487</FONT>         * @param data   The Message.<a name="line.1487"></a>
+<FONT color="green">1488</FONT>         * @param t      A Throwable or null.<a name="line.1488"></a>
+<FONT color="green">1489</FONT>         */<a name="line.1489"></a>
+<FONT color="green">1490</FONT>        public abstract void log(Marker marker, String fqcn, Level level, Message data, Throwable t);<a name="line.1490"></a>
+<FONT color="green">1491</FONT>    <a name="line.1491"></a>
+<FONT color="green">1492</FONT>        /**<a name="line.1492"></a>
+<FONT color="green">1493</FONT>         * Logs a Throwable to be thrown.<a name="line.1493"></a>
+<FONT color="green">1494</FONT>         *<a name="line.1494"></a>
+<FONT color="green">1495</FONT>         * @param &lt;T&gt; the type of the Throwable.<a name="line.1495"></a>
+<FONT color="green">1496</FONT>         * @param level The logging Level.<a name="line.1496"></a>
+<FONT color="green">1497</FONT>         * @param t     The Throwable.<a name="line.1497"></a>
+<FONT color="green">1498</FONT>         * @return the Throwable.<a name="line.1498"></a>
+<FONT color="green">1499</FONT>         */<a name="line.1499"></a>
+<FONT color="green">1500</FONT>        @Override<a name="line.1500"></a>
+<FONT color="green">1501</FONT>        public &lt;T extends Throwable&gt; T throwing(final Level level, final T t) {<a name="line.1501"></a>
+<FONT color="green">1502</FONT>            return throwing(FQCN, level, t);<a name="line.1502"></a>
+<FONT color="green">1503</FONT>        }<a name="line.1503"></a>
+<FONT color="green">1504</FONT>    <a name="line.1504"></a>
+<FONT color="green">1505</FONT>        /**<a name="line.1505"></a>
+<FONT color="green">1506</FONT>         * Logs a Throwable to be thrown.<a name="line.1506"></a>
+<FONT color="green">1507</FONT>         *<a name="line.1507"></a>
+<FONT color="green">1508</FONT>         * @param &lt;T&gt; the type of the Throwable.<a name="line.1508"></a>
+<FONT color="green">1509</FONT>         * @param t The Throwable.<a name="line.1509"></a>
+<FONT color="green">1510</FONT>         * @return the Throwable.<a name="line.1510"></a>
+<FONT color="green">1511</FONT>         */<a name="line.1511"></a>
+<FONT color="green">1512</FONT>        @Override<a name="line.1512"></a>
+<FONT color="green">1513</FONT>        public &lt;T extends Throwable&gt; T throwing(final T t) {<a name="line.1513"></a>
+<FONT color="green">1514</FONT>            return throwing(FQCN, Level.ERROR, t);<a name="line.1514"></a>
+<FONT color="green">1515</FONT>        }<a name="line.1515"></a>
+<FONT color="green">1516</FONT>    <a name="line.1516"></a>
+<FONT color="green">1517</FONT>        /**<a name="line.1517"></a>
+<FONT color="green">1518</FONT>         * Logs a Throwable to be thrown with location information.<a name="line.1518"></a>
+<FONT color="green">1519</FONT>         *<a name="line.1519"></a>
+<FONT color="green">1520</FONT>         * @param fqcn The fully qualified class name of the &lt;b&gt;caller&lt;/b&gt;.<a name="line.1520"></a>
+<FONT color="green">1521</FONT>         * @param &lt;T&gt; the type of the Throwable.<a name="line.1521"></a>
+<FONT color="green">1522</FONT>         * @param level The logging Level.<a name="line.1522"></a>
+<FONT color="green">1523</FONT>         * @param t The Throwable.<a name="line.1523"></a>
+<FONT color="green">1524</FONT>         * @return the Throwable.<a name="line.1524"></a>
+<FONT color="green">1525</FONT>         */<a name="line.1525"></a>
+<FONT color="green">1526</FONT>        protected &lt;T extends Throwable&gt; T throwing(final String fqcn, final Level level, final T t) {<a name="line.1526"></a>
+<FONT color="green">1527</FONT>            if (isEnabled(level, THROWING_MARKER, (Object) null, null)) {<a name="line.1527"></a>
+<FONT color="green">1528</FONT>                log(THROWING_MARKER, fqcn, level, messageFactory.newMessage(THROWING), t);<a name="line.1528"></a>
+<FONT color="green">1529</FONT>            }<a name="line.1529"></a>
+<FONT color="green">1530</FONT>            return t;<a name="line.1530"></a>
+<FONT color="green">1531</FONT>        }<a name="line.1531"></a>
+<FONT color="green">1532</FONT>    <a name="line.1532"></a>
+<FONT color="green">1533</FONT>        private Message toExitMsg(final Object result) {<a name="line.1533"></a>
+<FONT color="green">1534</FONT>            if (result == null) {<a name="line.1534"></a>
+<FONT color="green">1535</FONT>                return messageFactory.newMessage("exit");<a name="line.1535"></a>
+<FONT color="green">1536</FONT>            }<a name="line.1536"></a>
+<FONT color="green">1537</FONT>            return messageFactory.newMessage("exit with(" + result + ")");<a name="line.1537"></a>
+<FONT color="green">1538</FONT>        }<a name="line.1538"></a>
+<FONT color="green">1539</FONT>    <a name="line.1539"></a>
+<FONT color="green">1540</FONT>        /**<a name="line.1540"></a>
+<FONT color="green">1541</FONT>         * Returns a String representation of this instance in the form {@code "name"}.<a name="line.1541"></a>
+<FONT color="green">1542</FONT>         * @return A String describing this Logger instance.<a name="line.1542"></a>
+<FONT color="green">1543</FONT>         */<a name="line.1543"></a>
+<FONT color="green">1544</FONT>        @Override<a name="line.1544"></a>
+<FONT color="green">1545</FONT>        public String toString() {<a name="line.1545"></a>
+<FONT color="green">1546</FONT>            return name;<a name="line.1546"></a>
+<FONT color="green">1547</FONT>        }<a name="line.1547"></a>
+<FONT color="green">1548</FONT>    <a name="line.1548"></a>
+<FONT color="green">1549</FONT>        /**<a name="line.1549"></a>
+<FONT color="green">1550</FONT>         * Logs a message with the specific Marker at the TRACE level.<a name="line.1550"></a>
+<FONT color="green">1551</FONT>         *<a name="line.1551"></a>
+<FONT color="green">1552</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1552"></a>
+<FONT color="green">1553</FONT>         * @param msg    the message string to be logged<a name="line.1553"></a>
+<FONT color="green">1554</FONT>         */<a name="line.1554"></a>
+<FONT color="green">1555</FONT>        @Override<a name="line.1555"></a>
+<FONT color="green">1556</FONT>        public void trace(final Marker marker, final Message msg) {<a name="line.1556"></a>
+<FONT color="green">1557</FONT>            if (isEnabled(Level.TRACE, marker, msg, null)) {<a name="line.1557"></a>
+<FONT color="green">1558</FONT>                log(marker, FQCN, Level.TRACE, msg, null);<a name="line.1558"></a>
+<FONT color="green">1559</FONT>            }<a name="line.1559"></a>
+<FONT color="green">1560</FONT>        }<a name="line.1560"></a>
+<FONT color="green">1561</FONT>    <a name="line.1561"></a>
+<FONT color="green">1562</FONT>    <a name="line.1562"></a>
+<FONT color="green">1563</FONT>        /**<a name="line.1563"></a>
+<FONT color="green">1564</FONT>         * Logs a message with the specific Marker at the TRACE level.<a name="line.1564"></a>
+<FONT color="green">1565</FONT>         *<a name="line.1565"></a>
+<FONT color="green">1566</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1566"></a>
+<FONT color="green">1567</FONT>         * @param msg    the message string to be logged<a name="line.1567"></a>
+<FONT color="green">1568</FONT>         * @param t      A Throwable or null.<a name="line.1568"></a>
+<FONT color="green">1569</FONT>         */<a name="line.1569"></a>
+<FONT color="green">1570</FONT>        @Override<a name="line.1570"></a>
+<FONT color="green">1571</FONT>        public void trace(final Marker marker, final Message msg, final Throwable t) {<a name="line.1571"></a>
+<FONT color="green">1572</FONT>            if (isEnabled(Level.TRACE, marker, msg, t)) {<a name="line.1572"></a>
+<FONT color="green">1573</FONT>                log(marker, FQCN, Level.TRACE, msg, t);<a name="line.1573"></a>
+<FONT color="green">1574</FONT>            }<a name="line.1574"></a>
+<FONT color="green">1575</FONT>        }<a name="line.1575"></a>
+<FONT color="green">1576</FONT>    <a name="line.1576"></a>
+<FONT color="green">1577</FONT>        /**<a name="line.1577"></a>
+<FONT color="green">1578</FONT>         * Logs a message object with the {@link Level#TRACE TRACE} level.<a name="line.1578"></a>
+<FONT color="green">1579</FONT>         *<a name="line.1579"></a>
+<FONT color="green">1580</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1580"></a>
+<FONT color="green">1581</FONT>         * @param message the message object to log.<a name="line.1581"></a>
+<FONT color="green">1582</FONT>         */<a name="line.1582"></a>
+<FONT color="green">1583</FONT>        @Override<a name="line.1583"></a>
+<FONT color="green">1584</FONT>        public void trace(final Marker marker, final Object message) {<a name="line.1584"></a>
+<FONT color="green">1585</FONT>            if (isEnabled(Level.TRACE, marker, message, null)) {<a name="line.1585"></a>
+<FONT color="green">1586</FONT>                log(marker, FQCN, Level.TRACE, messageFactory.newMessage(message), null);<a name="line.1586"></a>
+<FONT color="green">1587</FONT>            }<a name="line.1587"></a>
+<FONT color="green">1588</FONT>        }<a name="line.1588"></a>
+<FONT color="green">1589</FONT>    <a name="line.1589"></a>
+<FONT color="green">1590</FONT>        /**<a name="line.1590"></a>
+<FONT color="green">1591</FONT>         * Logs a message at the {@link Level#TRACE TRACE} level including the<a name="line.1591"></a>
+<FONT color="green">1592</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1592"></a>
+<FONT color="green">1593</FONT>         * &lt;p/&gt;<a name="line.1593"></a>
+<FONT color="green">1594</FONT>         * &lt;p&gt;<a name="line.1594"></a>
+<FONT color="green">1595</FONT>         * See {@link #debug(String)} form for more detailed information.<a name="line.1595"></a>
+<FONT color="green">1596</FONT>         * &lt;/p&gt;<a name="line.1596"></a>
+<FONT color="green">1597</FONT>         *<a name="line.1597"></a>
+<FONT color="green">1598</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1598"></a>
+<FONT color="green">1599</FONT>         * @param message the message object to log.<a name="line.1599"></a>
+<FONT color="green">1600</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1600"></a>
+<FONT color="green">1601</FONT>         */<a name="line.1601"></a>
+<FONT color="green">1602</FONT>        @Override<a name="line.1602"></a>
+<FONT color="green">1603</FONT>        public void trace(final Marker marker, final Object message, final Throwable t) {<a name="line.1603"></a>
+<FONT color="green">1604</FONT>            if (isEnabled(Level.TRACE, marker, message, t)) {<a name="line.1604"></a>
+<FONT color="green">1605</FONT>                log(marker, FQCN, Level.TRACE, messageFactory.newMessage(message), t);<a name="line.1605"></a>
+<FONT color="green">1606</FONT>            }<a name="line.1606"></a>
+<FONT color="green">1607</FONT>        }<a name="line.1607"></a>
+<FONT color="green">1608</FONT>    <a name="line.1608"></a>
+<FONT color="green">1609</FONT>        /**<a name="line.1609"></a>
+<FONT color="green">1610</FONT>         * Logs a message object with the {@link Level#TRACE TRACE} level.<a name="line.1610"></a>
+<FONT color="green">1611</FONT>         *<a name="line.1611"></a>
+<FONT color="green">1612</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1612"></a>
+<FONT color="green">1613</FONT>         * @param message the message object to log.<a name="line.1613"></a>
+<FONT color="green">1614</FONT>         */<a name="line.1614"></a>
+<FONT color="green">1615</FONT>        @Override<a name="line.1615"></a>
+<FONT color="green">1616</FONT>        public void trace(final Marker marker, final String message) {<a name="line.1616"></a>
+<FONT color="green">1617</FONT>            if (isEnabled(Level.TRACE, marker, message)) {<a name="line.1617"></a>
+<FONT color="green">1618</FONT>                log(marker, FQCN, Level.TRACE, messageFactory.newMessage(message), null);<a name="line.1618"></a>
+<FONT color="green">1619</FONT>            }<a name="line.1619"></a>
+<FONT color="green">1620</FONT>        }<a name="line.1620"></a>
+<FONT color="green">1621</FONT>    <a name="line.1621"></a>
+<FONT color="green">1622</FONT>        /**<a name="line.1622"></a>
+<FONT color="green">1623</FONT>         * Logs a message with parameters at the {@link Level#TRACE TRACE} level.<a name="line.1623"></a>
+<FONT color="green">1624</FONT>         *<a name="line.1624"></a>
+<FONT color="green">1625</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1625"></a>
+<FONT color="green">1626</FONT>         * @param message the message to log.<a name="line.1626"></a>
+<FONT color="green">1627</FONT>         * @param params  parameters to the message.<a name="line.1627"></a>
+<FONT color="green">1628</FONT>         */<a name="line.1628"></a>
+<FONT color="green">1629</FONT>        @Override<a name="line.1629"></a>
+<FONT color="green">1630</FONT>        public void trace(final Marker marker, final String message, final Object... params) {<a name="line.1630"></a>
+<FONT color="green">1631</FONT>            if (isEnabled(Level.TRACE, marker, message, params)) {<a name="line.1631"></a>
+<FONT color="green">1632</FONT>                final Message msg = messageFactory.newMessage(message, params);<a name="line.1632"></a>
+<FONT color="green">1633</FONT>                log(marker, FQCN, Level.TRACE, msg, msg.getThrowable());<a name="line.1633"></a>
+<FONT color="green">1634</FONT>            }<a name="line.1634"></a>
+<FONT color="green">1635</FONT>        }<a name="line.1635"></a>
+<FONT color="green">1636</FONT>    <a name="line.1636"></a>
+<FONT color="green">1637</FONT>        /**<a name="line.1637"></a>
+<FONT color="green">1638</FONT>         * Logs a message at the {@link Level#TRACE TRACE} level including the<a name="line.1638"></a>
+<FONT color="green">1639</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1639"></a>
+<FONT color="green">1640</FONT>         * &lt;p/&gt;<a name="line.1640"></a>
+<FONT color="green">1641</FONT>         * &lt;p&gt;<a name="line.1641"></a>
+<FONT color="green">1642</FONT>         * See {@link #debug(String)} form for more detailed information.<a name="line.1642"></a>
+<FONT color="green">1643</FONT>         * &lt;/p&gt;<a name="line.1643"></a>
+<FONT color="green">1644</FONT>         *<a name="line.1644"></a>
+<FONT color="green">1645</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1645"></a>
+<FONT color="green">1646</FONT>         * @param message the message object to log.<a name="line.1646"></a>
+<FONT color="green">1647</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1647"></a>
+<FONT color="green">1648</FONT>         */<a name="line.1648"></a>
+<FONT color="green">1649</FONT>        @Override<a name="line.1649"></a>
+<FONT color="green">1650</FONT>        public void trace(final Marker marker, final String message, final Throwable t) {<a name="line.1650"></a>
+<FONT color="green">1651</FONT>            if (isEnabled(Level.TRACE, marker, message, t)) {<a name="line.1651"></a>
+<FONT color="green">1652</FONT>                log(marker, FQCN, Level.TRACE, messageFactory.newMessage(message), t);<a name="line.1652"></a>
+<FONT color="green">1653</FONT>            }<a name="line.1653"></a>
+<FONT color="green">1654</FONT>        }<a name="line.1654"></a>
+<FONT color="green">1655</FONT>    <a name="line.1655"></a>
+<FONT color="green">1656</FONT>        /**<a name="line.1656"></a>
+<FONT color="green">1657</FONT>         * Logs a message with the specific Marker at the TRACE level.<a name="line.1657"></a>
+<FONT color="green">1658</FONT>         *<a name="line.1658"></a>
+<FONT color="green">1659</FONT>         * @param msg the message string to be logged<a name="line.1659"></a>
+<FONT color="green">1660</FONT>         */<a name="line.1660"></a>
+<FONT color="green">1661</FONT>        @Override<a name="line.1661"></a>
+<FONT color="green">1662</FONT>        public void trace(final Message msg) {<a name="line.1662"></a>
+<FONT color="green">1663</FONT>            if (isEnabled(Level.TRACE, null, msg, null)) {<a name="line.1663"></a>
+<FONT color="green">1664</FONT>                log(null, FQCN, Level.TRACE, msg, null);<a name="line.1664"></a>
+<FONT color="green">1665</FONT>            }<a name="line.1665"></a>
+<FONT color="green">1666</FONT>        }<a name="line.1666"></a>
+<FONT color="green">1667</FONT>    <a name="line.1667"></a>
+<FONT color="green">1668</FONT>        /**<a name="line.1668"></a>
+<FONT color="green">1669</FONT>         * Logs a message with the specific Marker at the TRACE level.<a name="line.1669"></a>
+<FONT color="green">1670</FONT>         *<a name="line.1670"></a>
+<FONT color="green">1671</FONT>         * @param msg the message string to be logged<a name="line.1671"></a>
+<FONT color="green">1672</FONT>         * @param t   A Throwable or null.<a name="line.1672"></a>
+<FONT color="green">1673</FONT>         */<a name="line.1673"></a>
+<FONT color="green">1674</FONT>        @Override<a name="line.1674"></a>
+<FONT color="green">1675</FONT>        public void trace(final Message msg, final Throwable t) {<a name="line.1675"></a>
+<FONT color="green">1676</FONT>            if (isEnabled(Level.TRACE, null, msg, t)) {<a name="line.1676"></a>
+<FONT color="green">1677</FONT>                log(null, FQCN, Level.TRACE, msg, t);<a name="line.1677"></a>
+<FONT color="green">1678</FONT>            }<a name="line.1678"></a>
+<FONT color="green">1679</FONT>        }<a name="line.1679"></a>
+<FONT color="green">1680</FONT>    <a name="line.1680"></a>
+<FONT color="green">1681</FONT>        /**<a name="line.1681"></a>
+<FONT color="green">1682</FONT>         * Logs a message object with the {@link Level#TRACE TRACE} level.<a name="line.1682"></a>
+<FONT color="green">1683</FONT>         *<a name="line.1683"></a>
+<FONT color="green">1684</FONT>         * @param message the message object to log.<a name="line.1684"></a>
+<FONT color="green">1685</FONT>         */<a name="line.1685"></a>
+<FONT color="green">1686</FONT>        @Override<a name="line.1686"></a>
+<FONT color="green">1687</FONT>        public void trace(final Object message) {<a name="line.1687"></a>
+<FONT color="green">1688</FONT>            if (isEnabled(Level.TRACE, null, message, null)) {<a name="line.1688"></a>
+<FONT color="green">1689</FONT>                log(null, FQCN, Level.TRACE, messageFactory.newMessage(message), null);<a name="line.1689"></a>
+<FONT color="green">1690</FONT>            }<a name="line.1690"></a>
+<FONT color="green">1691</FONT>        }<a name="line.1691"></a>
+<FONT color="green">1692</FONT>    <a name="line.1692"></a>
+<FONT color="green">1693</FONT>        /**<a name="line.1693"></a>
+<FONT color="green">1694</FONT>         * Logs a message at the {@link Level#TRACE TRACE} level including the<a name="line.1694"></a>
+<FONT color="green">1695</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1695"></a>
+<FONT color="green">1696</FONT>         * &lt;p/&gt;<a name="line.1696"></a>
+<FONT color="green">1697</FONT>         * &lt;p&gt;<a name="line.1697"></a>
+<FONT color="green">1698</FONT>         * See {@link #debug(String)} form for more detailed information.<a name="line.1698"></a>
+<FONT color="green">1699</FONT>         * &lt;/p&gt;<a name="line.1699"></a>
+<FONT color="green">1700</FONT>         *<a name="line.1700"></a>
+<FONT color="green">1701</FONT>         * @param message the message object to log.<a name="line.1701"></a>
+<FONT color="green">1702</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1702"></a>
+<FONT color="green">1703</FONT>         */<a name="line.1703"></a>
+<FONT color="green">1704</FONT>        @Override<a name="line.1704"></a>
+<FONT color="green">1705</FONT>        public void trace(final Object message, final Throwable t) {<a name="line.1705"></a>
+<FONT color="green">1706</FONT>            if (isEnabled(Level.TRACE, null, message, t)) {<a name="line.1706"></a>
+<FONT color="green">1707</FONT>                log(null, FQCN, Level.TRACE, messageFactory.newMessage(message), t);<a name="line.1707"></a>
+<FONT color="green">1708</FONT>            }<a name="line.1708"></a>
+<FONT color="green">1709</FONT>        }<a name="line.1709"></a>
+<FONT color="green">1710</FONT>    <a name="line.1710"></a>
+<FONT color="green">1711</FONT>        /**<a name="line.1711"></a>
+<FONT color="green">1712</FONT>         * Logs a message object with the {@link Level#TRACE TRACE} level.<a name="line.1712"></a>
+<FONT color="green">1713</FONT>         *<a name="line.1713"></a>
+<FONT color="green">1714</FONT>         * @param message the message object to log.<a name="line.1714"></a>
+<FONT color="green">1715</FONT>         */<a name="line.1715"></a>
+<FONT color="green">1716</FONT>        @Override<a name="line.1716"></a>
+<FONT color="green">1717</FONT>        public void trace(final String message) {<a name="line.1717"></a>
+<FONT color="green">1718</FONT>            if (isEnabled(Level.TRACE, null, message)) {<a name="line.1718"></a>
+<FONT color="green">1719</FONT>                log(null, FQCN, Level.TRACE, messageFactory.newMessage(message), null);<a name="line.1719"></a>
+<FONT color="green">1720</FONT>            }<a name="line.1720"></a>
+<FONT color="green">1721</FONT>        }<a name="line.1721"></a>
+<FONT color="green">1722</FONT>    <a name="line.1722"></a>
+<FONT color="green">1723</FONT>        /**<a name="line.1723"></a>
+<FONT color="green">1724</FONT>         * Logs a message with parameters at the {@link Level#TRACE TRACE} level.<a name="line.1724"></a>
+<FONT color="green">1725</FONT>         *<a name="line.1725"></a>
+<FONT color="green">1726</FONT>         * @param message the message to log.<a name="line.1726"></a>
+<FONT color="green">1727</FONT>         * @param params  parameters to the message.<a name="line.1727"></a>
+<FONT color="green">1728</FONT>         */<a name="line.1728"></a>
+<FONT color="green">1729</FONT>        @Override<a name="line.1729"></a>
+<FONT color="green">1730</FONT>        public void trace(final String message, final Object... params) {<a name="line.1730"></a>
+<FONT color="green">1731</FONT>            if (isEnabled(Level.TRACE, null, message, params)) {<a name="line.1731"></a>
+<FONT color="green">1732</FONT>                final Message msg = messageFactory.newMessage(message, params);<a name="line.1732"></a>
+<FONT color="green">1733</FONT>                log(null, FQCN, Level.TRACE, msg, msg.getThrowable());<a name="line.1733"></a>
+<FONT color="green">1734</FONT>            }<a name="line.1734"></a>
+<FONT color="green">1735</FONT>        }<a name="line.1735"></a>
+<FONT color="green">1736</FONT>    <a name="line.1736"></a>
+<FONT color="green">1737</FONT>        /**<a name="line.1737"></a>
+<FONT color="green">1738</FONT>         * Logs a message at the {@link Level#TRACE TRACE} level including the<a name="line.1738"></a>
+<FONT color="green">1739</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1739"></a>
+<FONT color="green">1740</FONT>         * &lt;p/&gt;<a name="line.1740"></a>
+<FONT color="green">1741</FONT>         * &lt;p&gt;<a name="line.1741"></a>
+<FONT color="green">1742</FONT>         * See {@link #debug(String)} form for more detailed information.<a name="line.1742"></a>
+<FONT color="green">1743</FONT>         * &lt;/p&gt;<a name="line.1743"></a>
+<FONT color="green">1744</FONT>         *<a name="line.1744"></a>
+<FONT color="green">1745</FONT>         * @param message the message object to log.<a name="line.1745"></a>
+<FONT color="green">1746</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1746"></a>
+<FONT color="green">1747</FONT>         */<a name="line.1747"></a>
+<FONT color="green">1748</FONT>        @Override<a name="line.1748"></a>
+<FONT color="green">1749</FONT>        public void trace(final String message, final Throwable t) {<a name="line.1749"></a>
+<FONT color="green">1750</FONT>            if (isEnabled(Level.TRACE, null, message, t)) {<a name="line.1750"></a>
+<FONT color="green">1751</FONT>                log(null, FQCN, Level.TRACE, messageFactory.newMessage(message), t);<a name="line.1751"></a>
+<FONT color="green">1752</FONT>            }<a name="line.1752"></a>
+<FONT color="green">1753</FONT>        }<a name="line.1753"></a>
+<FONT color="green">1754</FONT>    <a name="line.1754"></a>
+<FONT color="green">1755</FONT>        /**<a name="line.1755"></a>
+<FONT color="green">1756</FONT>         * Logs a message with the specific Marker at the WARN level.<a name="line.1756"></a>
+<FONT color="green">1757</FONT>         *<a name="line.1757"></a>
+<FONT color="green">1758</FONT>         * @param marker the marker data specific to this log statement<a name="line.1758"></a>
+<FONT color="green">1759</FONT>         * @param msg    the message string to be logged<a name="line.1759"></a>
+<FONT color="green">1760</FONT>         */<a name="line.1760"></a>
+<FONT color="green">1761</FONT>        @Override<a name="line.1761"></a>
+<FONT color="green">1762</FONT>        public void warn(final Marker marker, final Message msg) {<a name="line.1762"></a>
+<FONT color="green">1763</FONT>            if (isEnabled(Level.WARN, marker, msg, null)) {<a name="line.1763"></a>
+<FONT color="green">1764</FONT>                log(marker, FQCN, Level.WARN, msg, null);<a name="line.1764"></a>
+<FONT color="green">1765</FONT>            }<a name="line.1765"></a>
+<FONT color="green">1766</FONT>        }<a name="line.1766"></a>
+<FONT color="green">1767</FONT>    <a name="line.1767"></a>
+<FONT color="green">1768</FONT>        /**<a name="line.1768"></a>
+<FONT color="green">1769</FONT>         * Logs a message with the specific Marker at the WARN level.<a name="line.1769"></a>
+<FONT color="green">1770</FONT>         *<a name="line.1770"></a>
+<FONT color="green">1771</FONT>         * @param marker the marker data specific to this log statement<a name="line.1771"></a>
+<FONT color="green">1772</FONT>         * @param msg    the message string to be logged<a name="line.1772"></a>
+<FONT color="green">1773</FONT>         * @param t      A Throwable or null.<a name="line.1773"></a>
+<FONT color="green">1774</FONT>         */<a name="line.1774"></a>
+<FONT color="green">1775</FONT>        @Override<a name="line.1775"></a>
+<FONT color="green">1776</FONT>        public void warn(final Marker marker, final Message msg, final Throwable t) {<a name="line.1776"></a>
+<FONT color="green">1777</FONT>            if (isEnabled(Level.WARN, marker, msg, t)) {<a name="line.1777"></a>
+<FONT color="green">1778</FONT>                log(marker, FQCN, Level.WARN, msg, t);<a name="line.1778"></a>
+<FONT color="green">1779</FONT>            }<a name="line.1779"></a>
+<FONT color="green">1780</FONT>        }<a name="line.1780"></a>
+<FONT color="green">1781</FONT>    <a name="line.1781"></a>
+<FONT color="green">1782</FONT>        /**<a name="line.1782"></a>
+<FONT color="green">1783</FONT>         * Logs a message object with the {@link Level#WARN WARN} level.<a name="line.1783"></a>
+<FONT color="green">1784</FONT>         *<a name="line.1784"></a>
+<FONT color="green">1785</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1785"></a>
+<FONT color="green">1786</FONT>         * @param message the message object to log.<a name="line.1786"></a>
+<FONT color="green">1787</FONT>         */<a name="line.1787"></a>
+<FONT color="green">1788</FONT>        @Override<a name="line.1788"></a>
+<FONT color="green">1789</FONT>        public void warn(final Marker marker, final Object message) {<a name="line.1789"></a>
+<FONT color="green">1790</FONT>            if (isEnabled(Level.WARN, marker, message, null)) {<a name="line.1790"></a>
+<FONT color="green">1791</FONT>                log(marker, FQCN, Level.WARN, messageFactory.newMessage(message), null);<a name="line.1791"></a>
+<FONT color="green">1792</FONT>            }<a name="line.1792"></a>
+<FONT color="green">1793</FONT>        }<a name="line.1793"></a>
+<FONT color="green">1794</FONT>    <a name="line.1794"></a>
+<FONT color="green">1795</FONT>        /*<a name="line.1795"></a>
+<FONT color="green">1796</FONT>         * Instead of one single method with Object... declared the following methods explicitly specify<a name="line.1796"></a>
+<FONT color="green">1797</FONT>         * parameters because they perform dramatically better than having the JVM convert them to an<a name="line.1797"></a>
+<FONT color="green">1798</FONT>         * array.<a name="line.1798"></a>
+<FONT color="green">1799</FONT>         */<a name="line.1799"></a>
+<FONT color="green">1800</FONT>    <a name="line.1800"></a>
+<FONT color="green">1801</FONT>        /**<a name="line.1801"></a>
+<FONT color="green">1802</FONT>         * Logs a message at the {@link Level#WARN WARN} level including the<a name="line.1802"></a>
+<FONT color="green">1803</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1803"></a>
+<FONT color="green">1804</FONT>         *<a name="line.1804"></a>
+<FONT color="green">1805</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1805"></a>
+<FONT color="green">1806</FONT>         * @param message the message object to log.<a name="line.1806"></a>
+<FONT color="green">1807</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1807"></a>
+<FONT color="green">1808</FONT>         */<a name="line.1808"></a>
+<FONT color="green">1809</FONT>        @Override<a name="line.1809"></a>
+<FONT color="green">1810</FONT>        public void warn(final Marker marker, final Object message, final Throwable t) {<a name="line.1810"></a>
+<FONT color="green">1811</FONT>            if (isEnabled(Level.WARN, marker, message, t)) {<a name="line.1811"></a>
+<FONT color="green">1812</FONT>                log(marker, FQCN, Level.WARN, messageFactory.newMessage(message), t);<a name="line.1812"></a>
+<FONT color="green">1813</FONT>            }<a name="line.1813"></a>
+<FONT color="green">1814</FONT>        }<a name="line.1814"></a>
+<FONT color="green">1815</FONT>    <a name="line.1815"></a>
+<FONT color="green">1816</FONT>        /**<a name="line.1816"></a>
+<FONT color="green">1817</FONT>         * Logs a message object with the {@link Level#WARN WARN} level.<a name="line.1817"></a>
+<FONT color="green">1818</FONT>         *<a name="line.1818"></a>
+<FONT color="green">1819</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1819"></a>
+<FONT color="green">1820</FONT>         * @param message the message object to log.<a name="line.1820"></a>
+<FONT color="green">1821</FONT>         */<a name="line.1821"></a>
+<FONT color="green">1822</FONT>        @Override<a name="line.1822"></a>
+<FONT color="green">1823</FONT>        public void warn(final Marker marker, final String message) {<a name="line.1823"></a>
+<FONT color="green">1824</FONT>            if (isEnabled(Level.WARN, marker, message)) {<a name="line.1824"></a>
+<FONT color="green">1825</FONT>                log(marker, FQCN, Level.WARN, messageFactory.newMessage(message), null);<a name="line.1825"></a>
+<FONT color="green">1826</FONT>            }<a name="line.1826"></a>
+<FONT color="green">1827</FONT>        }<a name="line.1827"></a>
+<FONT color="green">1828</FONT>    <a name="line.1828"></a>
+<FONT color="green">1829</FONT>        /**<a name="line.1829"></a>
+<FONT color="green">1830</FONT>         * Logs a message with parameters at the {@link Level#WARN WARN} level.<a name="line.1830"></a>
+<FONT color="green">1831</FONT>         *<a name="line.1831"></a>
+<FONT color="green">1832</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1832"></a>
+<FONT color="green">1833</FONT>         * @param message the message to log.<a name="line.1833"></a>
+<FONT color="green">1834</FONT>         * @param params  parameters to the message.<a name="line.1834"></a>
+<FONT color="green">1835</FONT>         */<a name="line.1835"></a>
+<FONT color="green">1836</FONT>        @Override<a name="line.1836"></a>
+<FONT color="green">1837</FONT>        public void warn(final Marker marker, final String message, final Object... params) {<a name="line.1837"></a>
+<FONT color="green">1838</FONT>            if (isEnabled(Level.WARN, marker, message, params)) {<a name="line.1838"></a>
+<FONT color="green">1839</FONT>                final Message msg = messageFactory.newMessage(message, params);<a name="line.1839"></a>
+<FONT color="green">1840</FONT>                log(marker, FQCN, Level.WARN, msg, msg.getThrowable());<a name="line.1840"></a>
+<FONT color="green">1841</FONT>            }<a name="line.1841"></a>
+<FONT color="green">1842</FONT>        }<a name="line.1842"></a>
+<FONT color="green">1843</FONT>    <a name="line.1843"></a>
+<FONT color="green">1844</FONT>        /**<a name="line.1844"></a>
+<FONT color="green">1845</FONT>         * Logs a message at the {@link Level#WARN WARN} level including the<a name="line.1845"></a>
+<FONT color="green">1846</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1846"></a>
+<FONT color="green">1847</FONT>         *<a name="line.1847"></a>
+<FONT color="green">1848</FONT>         * @param marker the marker data specific to this log statement.<a name="line.1848"></a>
+<FONT color="green">1849</FONT>         * @param message the message object to log.<a name="line.1849"></a>
+<FONT color="green">1850</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1850"></a>
+<FONT color="green">1851</FONT>         */<a name="line.1851"></a>
+<FONT color="green">1852</FONT>        @Override<a name="line.1852"></a>
+<FONT color="green">1853</FONT>        public void warn(final Marker marker, final String message, final Throwable t) {<a name="line.1853"></a>
+<FONT color="green">1854</FONT>            if (isEnabled(Level.WARN, marker, message, t)) {<a name="line.1854"></a>
+<FONT color="green">1855</FONT>                log(marker, FQCN, Level.WARN, messageFactory.newMessage(message), t);<a name="line.1855"></a>
+<FONT color="green">1856</FONT>            }<a name="line.1856"></a>
+<FONT color="green">1857</FONT>        }<a name="line.1857"></a>
+<FONT color="green">1858</FONT>    <a name="line.1858"></a>
+<FONT color="green">1859</FONT>        /**<a name="line.1859"></a>
+<FONT color="green">1860</FONT>         * Logs a message with the specific Marker at the WARN level.<a name="line.1860"></a>
+<FONT color="green">1861</FONT>         *<a name="line.1861"></a>
+<FONT color="green">1862</FONT>         * @param msg the message string to be logged<a name="line.1862"></a>
+<FONT color="green">1863</FONT>         */<a name="line.1863"></a>
+<FONT color="green">1864</FONT>        @Override<a name="line.1864"></a>
+<FONT color="green">1865</FONT>        public void warn(final Message msg) {<a name="line.1865"></a>
+<FONT color="green">1866</FONT>            if (isEnabled(Level.WARN, null, msg, null)) {<a name="line.1866"></a>
+<FONT color="green">1867</FONT>                log(null, FQCN, Level.WARN, msg, null);<a name="line.1867"></a>
+<FONT color="green">1868</FONT>            }<a name="line.1868"></a>
+<FONT color="green">1869</FONT>        }<a name="line.1869"></a>
+<FONT color="green">1870</FONT>    <a name="line.1870"></a>
+<FONT color="green">1871</FONT>        /**<a name="line.1871"></a>
+<FONT color="green">1872</FONT>         * Logs a message with the specific Marker at the WARN level.<a name="line.1872"></a>
+<FONT color="green">1873</FONT>         *<a name="line.1873"></a>
+<FONT color="green">1874</FONT>         * @param msg the message string to be logged<a name="line.1874"></a>
+<FONT color="green">1875</FONT>         * @param t   A Throwable or null.<a name="line.1875"></a>
+<FONT color="green">1876</FONT>         */<a name="line.1876"></a>
+<FONT color="green">1877</FONT>        @Override<a name="line.1877"></a>
+<FONT color="green">1878</FONT>        public void warn(final Message msg, final Throwable t) {<a name="line.1878"></a>
+<FONT color="green">1879</FONT>            if (isEnabled(Level.WARN, null, msg, t)) {<a name="line.1879"></a>
+<FONT color="green">1880</FONT>                log(null, FQCN, Level.WARN, msg, t);<a name="line.1880"></a>
+<FONT color="green">1881</FONT>            }<a name="line.1881"></a>
+<FONT color="green">1882</FONT>        }<a name="line.1882"></a>
+<FONT color="green">1883</FONT>    <a name="line.1883"></a>
+<FONT color="green">1884</FONT>        /**<a name="line.1884"></a>
+<FONT color="green">1885</FONT>         * Logs a message object with the {@link Level#WARN WARN} level.<a name="line.1885"></a>
+<FONT color="green">1886</FONT>         *<a name="line.1886"></a>
+<FONT color="green">1887</FONT>         * @param message the message object to log.<a name="line.1887"></a>
+<FONT color="green">1888</FONT>         */<a name="line.1888"></a>
+<FONT color="green">1889</FONT>        @Override<a name="line.1889"></a>
+<FONT color="green">1890</FONT>        public void warn(final Object message) {<a name="line.1890"></a>
+<FONT color="green">1891</FONT>            if (isEnabled(Level.WARN, null, message, null)) {<a name="line.1891"></a>
+<FONT color="green">1892</FONT>                log(null, FQCN, Level.WARN, messageFactory.newMessage(message), null);<a name="line.1892"></a>
+<FONT color="green">1893</FONT>            }<a name="line.1893"></a>
+<FONT color="green">1894</FONT>        }<a name="line.1894"></a>
+<FONT color="green">1895</FONT>    <a name="line.1895"></a>
+<FONT color="green">1896</FONT>        /**<a name="line.1896"></a>
+<FONT color="green">1897</FONT>         * Logs a message at the {@link Level#WARN WARN} level including the<a name="line.1897"></a>
+<FONT color="green">1898</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1898"></a>
+<FONT color="green">1899</FONT>         *<a name="line.1899"></a>
+<FONT color="green">1900</FONT>         * @param message the message object to log.<a name="line.1900"></a>
+<FONT color="green">1901</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1901"></a>
+<FONT color="green">1902</FONT>         */<a name="line.1902"></a>
+<FONT color="green">1903</FONT>        @Override<a name="line.1903"></a>
+<FONT color="green">1904</FONT>        public void warn(final Object message, final Throwable t) {<a name="line.1904"></a>
+<FONT color="green">1905</FONT>            if (isEnabled(Level.WARN, null, message, t)) {<a name="line.1905"></a>
+<FONT color="green">1906</FONT>                log(null, FQCN, Level.WARN, messageFactory.newMessage(message), t);<a name="line.1906"></a>
+<FONT color="green">1907</FONT>            }<a name="line.1907"></a>
+<FONT color="green">1908</FONT>        }<a name="line.1908"></a>
+<FONT color="green">1909</FONT>    <a name="line.1909"></a>
+<FONT color="green">1910</FONT>        /**<a name="line.1910"></a>
+<FONT color="green">1911</FONT>         * Logs a message object with the {@link Level#WARN WARN} level.<a name="line.1911"></a>
+<FONT color="green">1912</FONT>         *<a name="line.1912"></a>
+<FONT color="green">1913</FONT>         * @param message the message object to log.<a name="line.1913"></a>
+<FONT color="green">1914</FONT>         */<a name="line.1914"></a>
+<FONT color="green">1915</FONT>        @Override<a name="line.1915"></a>
+<FONT color="green">1916</FONT>        public void warn(final String message) {<a name="line.1916"></a>
+<FONT color="green">1917</FONT>            if (isEnabled(Level.WARN, null, message)) {<a name="line.1917"></a>
+<FONT color="green">1918</FONT>                log(null, FQCN, Level.WARN, messageFactory.newMessage(message), null);<a name="line.1918"></a>
+<FONT color="green">1919</FONT>            }<a name="line.1919"></a>
+<FONT color="green">1920</FONT>        }<a name="line.1920"></a>
+<FONT color="green">1921</FONT>    <a name="line.1921"></a>
+<FONT color="green">1922</FONT>        /**<a name="line.1922"></a>
+<FONT color="green">1923</FONT>         * Logs a message with parameters at the {@link Level#WARN WARN} level.<a name="line.1923"></a>
+<FONT color="green">1924</FONT>         *<a name="line.1924"></a>
+<FONT color="green">1925</FONT>         * @param message the message to log.<a name="line.1925"></a>
+<FONT color="green">1926</FONT>         * @param params  parameters to the message.<a name="line.1926"></a>
+<FONT color="green">1927</FONT>         */<a name="line.1927"></a>
+<FONT color="green">1928</FONT>        @Override<a name="line.1928"></a>
+<FONT color="green">1929</FONT>        public void warn(final String message, final Object... params) {<a name="line.1929"></a>
+<FONT color="green">1930</FONT>            if (isEnabled(Level.WARN, null, message, params)) {<a name="line.1930"></a>
+<FONT color="green">1931</FONT>                final Message msg = messageFactory.newMessage(message, params);<a name="line.1931"></a>
+<FONT color="green">1932</FONT>                log(null, FQCN, Level.WARN, msg, msg.getThrowable());<a name="line.1932"></a>
+<FONT color="green">1933</FONT>            }<a name="line.1933"></a>
+<FONT color="green">1934</FONT>        }<a name="line.1934"></a>
+<FONT color="green">1935</FONT>    <a name="line.1935"></a>
+<FONT color="green">1936</FONT>        /**<a name="line.1936"></a>
+<FONT color="green">1937</FONT>         * Logs a message at the {@link Level#WARN WARN} level including the<a name="line.1937"></a>
+<FONT color="green">1938</FONT>         * stack trace of the {@link Throwable} &lt;code&gt;t&lt;/code&gt; passed as parameter.<a name="line.1938"></a>
+<FONT color="green">1939</FONT>         *<a name="line.1939"></a>
+<FONT color="green">1940</FONT>         * @param message the message object to log.<a name="line.1940"></a>
+<FONT color="green">1941</FONT>         * @param t       the exception to log, including its stack trace.<a name="line.1941"></a>
+<FONT color="green">1942</FONT>         */<a name="line.1942"></a>
+<FONT color="green">1943</FONT>        @Override<a name="line.1943"></a>
+<FONT color="green">1944</FONT>        public void warn(final String message, final Throwable t) {<a name="line.1944"></a>
+<FONT color="green">1945</FONT>            if (isEnabled(Level.WARN, null, message, t)) {<a name="line.1945"></a>
+<FONT color="green">1946</FONT>                log(null, FQCN, Level.WARN, messageFactory.newMessage(message), t);<a name="line.1946"></a>
+<FONT color="green">1947</FONT>            }<a name="line.1947"></a>
+<FONT color="green">1948</FONT>        }<a name="line.1948"></a>
+<FONT color="green">1949</FONT>    <a name="line.1949"></a>
+<FONT color="green">1950</FONT>    }<a name="line.1950"></a>
 
 
 

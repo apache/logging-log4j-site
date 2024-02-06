@@ -28,7 +28,7 @@
 <FONT color="green">025</FONT>    import org.apache.logging.log4j.core.appender.AbstractAppender;<a name="line.25"></a>
 <FONT color="green">026</FONT>    import org.apache.logging.log4j.core.config.Property;<a name="line.26"></a>
 <FONT color="green">027</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttr;<a name="line.28"></a>
+<FONT color="green">028</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.28"></a>
 <FONT color="green">029</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginElement;<a name="line.29"></a>
 <FONT color="green">030</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.30"></a>
 <FONT color="green">031</FONT>    import org.apache.logging.log4j.core.helpers.Booleans;<a name="line.31"></a>
@@ -37,237 +37,238 @@
 <FONT color="green">034</FONT>    <a name="line.34"></a>
 <FONT color="green">035</FONT>    /**<a name="line.35"></a>
 <FONT color="green">036</FONT>     * An Appender that uses the Avro protocol to route events to Flume.<a name="line.36"></a>
-<FONT color="green">037</FONT>     * @param &lt;T&gt; The {@link Layout}'s {@link Serializable} type.<a name="line.37"></a>
-<FONT color="green">038</FONT>     */<a name="line.38"></a>
-<FONT color="green">039</FONT>    @Plugin(name = "Flume", category = "Core", elementType = "appender", printObject = true)<a name="line.39"></a>
-<FONT color="green">040</FONT>    public final class FlumeAppender&lt;T extends Serializable&gt; extends AbstractAppender&lt;T&gt; implements FlumeEventFactory {<a name="line.40"></a>
-<FONT color="green">041</FONT>    <a name="line.41"></a>
-<FONT color="green">042</FONT>        private static final String[] EXCLUDED_PACKAGES = {"org.apache.flume", "org.apache.avro"};<a name="line.42"></a>
-<FONT color="green">043</FONT>        private static final int DEFAULT_MAX_DELAY = 60000;<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>        private final AbstractFlumeManager manager;<a name="line.45"></a>
-<FONT color="green">046</FONT>    <a name="line.46"></a>
-<FONT color="green">047</FONT>        private final String mdcIncludes;<a name="line.47"></a>
-<FONT color="green">048</FONT>        private final String mdcExcludes;<a name="line.48"></a>
-<FONT color="green">049</FONT>        private final String mdcRequired;<a name="line.49"></a>
-<FONT color="green">050</FONT>    <a name="line.50"></a>
-<FONT color="green">051</FONT>        private final String eventPrefix;<a name="line.51"></a>
-<FONT color="green">052</FONT>    <a name="line.52"></a>
-<FONT color="green">053</FONT>        private final String mdcPrefix;<a name="line.53"></a>
-<FONT color="green">054</FONT>    <a name="line.54"></a>
-<FONT color="green">055</FONT>        private final boolean compressBody;<a name="line.55"></a>
-<FONT color="green">056</FONT>    <a name="line.56"></a>
-<FONT color="green">057</FONT>        private final FlumeEventFactory factory;<a name="line.57"></a>
-<FONT color="green">058</FONT>    <a name="line.58"></a>
-<FONT color="green">059</FONT>        /**<a name="line.59"></a>
-<FONT color="green">060</FONT>         * Which Manager will be used by the appender instance.<a name="line.60"></a>
-<FONT color="green">061</FONT>         */<a name="line.61"></a>
-<FONT color="green">062</FONT>        private enum ManagerType {<a name="line.62"></a>
-<FONT color="green">063</FONT>            AVRO, EMBEDDED, PERSISTENT;<a name="line.63"></a>
-<FONT color="green">064</FONT>    <a name="line.64"></a>
-<FONT color="green">065</FONT>            public static ManagerType getType(final String type) {<a name="line.65"></a>
-<FONT color="green">066</FONT>                return valueOf(type.toUpperCase(Locale.US));<a name="line.66"></a>
-<FONT color="green">067</FONT>            }<a name="line.67"></a>
-<FONT color="green">068</FONT>        }<a name="line.68"></a>
-<FONT color="green">069</FONT>    <a name="line.69"></a>
-<FONT color="green">070</FONT>        private FlumeAppender(final String name, final Filter filter, final Layout&lt;T&gt; layout, final boolean handleException,<a name="line.70"></a>
-<FONT color="green">071</FONT>                              final String includes, final String excludes, final String required, final String mdcPrefix,<a name="line.71"></a>
-<FONT color="green">072</FONT>                              final String eventPrefix, final boolean compress,<a name="line.72"></a>
-<FONT color="green">073</FONT>                              final FlumeEventFactory factory, final AbstractFlumeManager manager) {<a name="line.73"></a>
-<FONT color="green">074</FONT>            super(name, filter, layout, handleException);<a name="line.74"></a>
-<FONT color="green">075</FONT>            this.manager = manager;<a name="line.75"></a>
-<FONT color="green">076</FONT>            this.mdcIncludes = includes;<a name="line.76"></a>
-<FONT color="green">077</FONT>            this.mdcExcludes = excludes;<a name="line.77"></a>
-<FONT color="green">078</FONT>            this.mdcRequired = required;<a name="line.78"></a>
-<FONT color="green">079</FONT>            this.eventPrefix = eventPrefix;<a name="line.79"></a>
-<FONT color="green">080</FONT>            this.mdcPrefix = mdcPrefix;<a name="line.80"></a>
-<FONT color="green">081</FONT>            this.compressBody = compress;<a name="line.81"></a>
-<FONT color="green">082</FONT>            this.factory = factory == null ? this : factory;<a name="line.82"></a>
-<FONT color="green">083</FONT>        }<a name="line.83"></a>
-<FONT color="green">084</FONT>    <a name="line.84"></a>
-<FONT color="green">085</FONT>        /**<a name="line.85"></a>
-<FONT color="green">086</FONT>         * Publish the event.<a name="line.86"></a>
-<FONT color="green">087</FONT>         * @param event The LogEvent.<a name="line.87"></a>
-<FONT color="green">088</FONT>         */<a name="line.88"></a>
-<FONT color="green">089</FONT>        @Override<a name="line.89"></a>
-<FONT color="green">090</FONT>        public void append(final LogEvent event) {<a name="line.90"></a>
-<FONT color="green">091</FONT>            final String name = event.getLoggerName();<a name="line.91"></a>
-<FONT color="green">092</FONT>            if (name != null) {<a name="line.92"></a>
-<FONT color="green">093</FONT>                for (final String pkg : EXCLUDED_PACKAGES) {<a name="line.93"></a>
-<FONT color="green">094</FONT>                    if (name.startsWith(pkg)) {<a name="line.94"></a>
-<FONT color="green">095</FONT>                        return;<a name="line.95"></a>
-<FONT color="green">096</FONT>                    }<a name="line.96"></a>
-<FONT color="green">097</FONT>                }<a name="line.97"></a>
-<FONT color="green">098</FONT>            }<a name="line.98"></a>
-<FONT color="green">099</FONT>            final FlumeEvent flumeEvent = factory.createEvent(event, mdcIncludes, mdcExcludes, mdcRequired, mdcPrefix,<a name="line.99"></a>
-<FONT color="green">100</FONT>                eventPrefix, compressBody);<a name="line.100"></a>
-<FONT color="green">101</FONT>            flumeEvent.setBody(getLayout().toByteArray(flumeEvent));<a name="line.101"></a>
-<FONT color="green">102</FONT>            manager.send(flumeEvent);<a name="line.102"></a>
-<FONT color="green">103</FONT>        }<a name="line.103"></a>
-<FONT color="green">104</FONT>    <a name="line.104"></a>
-<FONT color="green">105</FONT>        @Override<a name="line.105"></a>
-<FONT color="green">106</FONT>        public void stop() {<a name="line.106"></a>
-<FONT color="green">107</FONT>            super.stop();<a name="line.107"></a>
-<FONT color="green">108</FONT>            manager.release();<a name="line.108"></a>
-<FONT color="green">109</FONT>        }<a name="line.109"></a>
-<FONT color="green">110</FONT>    <a name="line.110"></a>
-<FONT color="green">111</FONT>        /**<a name="line.111"></a>
-<FONT color="green">112</FONT>         * Create a Flume event.<a name="line.112"></a>
-<FONT color="green">113</FONT>         * @param event The Log4j LogEvent.<a name="line.113"></a>
-<FONT color="green">114</FONT>         * @param includes comma separated list of mdc elements to include.<a name="line.114"></a>
-<FONT color="green">115</FONT>         * @param excludes comma separated list of mdc elements to exclude.<a name="line.115"></a>
-<FONT color="green">116</FONT>         * @param required comma separated list of mdc elements that must be present with a value.<a name="line.116"></a>
-<FONT color="green">117</FONT>         * @param mdcPrefix The prefix to add to MDC key names.<a name="line.117"></a>
-<FONT color="green">118</FONT>         * @param eventPrefix The prefix to add to event fields.<a name="line.118"></a>
-<FONT color="green">119</FONT>         * @param compress If true the body will be compressed.<a name="line.119"></a>
-<FONT color="green">120</FONT>         * @return A Flume Event.<a name="line.120"></a>
-<FONT color="green">121</FONT>         */<a name="line.121"></a>
-<FONT color="green">122</FONT>        @Override<a name="line.122"></a>
-<FONT color="green">123</FONT>        public FlumeEvent createEvent(final LogEvent event, final String includes, final String excludes,<a name="line.123"></a>
-<FONT color="green">124</FONT>                                      final String required, final String mdcPrefix, final String eventPrefix,<a name="line.124"></a>
-<FONT color="green">125</FONT>                                      final boolean compress) {<a name="line.125"></a>
-<FONT color="green">126</FONT>            return new FlumeEvent(event, mdcIncludes, mdcExcludes, mdcRequired, mdcPrefix,<a name="line.126"></a>
-<FONT color="green">127</FONT>                eventPrefix, compressBody);<a name="line.127"></a>
-<FONT color="green">128</FONT>        }<a name="line.128"></a>
-<FONT color="green">129</FONT>    <a name="line.129"></a>
-<FONT color="green">130</FONT>        /**<a name="line.130"></a>
-<FONT color="green">131</FONT>         * Create a Flume Avro Appender.<a name="line.131"></a>
-<FONT color="green">132</FONT>         * @param agents An array of Agents.<a name="line.132"></a>
-<FONT color="green">133</FONT>         * @param properties Properties to pass to the embedded agent.<a name="line.133"></a>
-<FONT color="green">134</FONT>         * @param embedded true if the embedded agent manager should be used. otherwise the Avro manager will be used.<a name="line.134"></a>
-<FONT color="green">135</FONT>         * &lt;b&gt;Note: &lt;/b&gt;&lt;i&gt;The embedded attribute is deprecated in favor of specifying the type attribute.&lt;/i&gt;<a name="line.135"></a>
-<FONT color="green">136</FONT>         * @param type Avro (default), Embedded, or Persistent.<a name="line.136"></a>
-<FONT color="green">137</FONT>         * @param dataDir The directory where the Flume FileChannel should write its data.<a name="line.137"></a>
-<FONT color="green">138</FONT>         * @param connectionTimeout The amount of time in milliseconds to wait before a connection times out. Minimum is<a name="line.138"></a>
-<FONT color="green">139</FONT>         *                          1000.<a name="line.139"></a>
-<FONT color="green">140</FONT>         * @param requestTimeout The amount of time in milliseconds to wait before a request times out. Minimum is 1000.<a name="line.140"></a>
-<FONT color="green">141</FONT>         * @param agentRetries The number of times to retry an agent before failing to the next agent.<a name="line.141"></a>
-<FONT color="green">142</FONT>         * @param maxDelay The maximum number of seconds to wait for a complete batch.<a name="line.142"></a>
-<FONT color="green">143</FONT>         * @param name The name of the Appender.<a name="line.143"></a>
-<FONT color="green">144</FONT>         * @param suppress If true exceptions will be handled in the appender.<a name="line.144"></a>
-<FONT color="green">145</FONT>         * @param excludes A comma separated list of MDC elements to exclude.<a name="line.145"></a>
-<FONT color="green">146</FONT>         * @param includes A comma separated list of MDC elements to include.<a name="line.146"></a>
-<FONT color="green">147</FONT>         * @param required A comma separated list of MDC elements that are required.<a name="line.147"></a>
-<FONT color="green">148</FONT>         * @param mdcPrefix The prefix to add to MDC key names.<a name="line.148"></a>
-<FONT color="green">149</FONT>         * @param eventPrefix The prefix to add to event key names.<a name="line.149"></a>
-<FONT color="green">150</FONT>         * @param compressBody If true the event body will be compressed.<a name="line.150"></a>
-<FONT color="green">151</FONT>         * @param batchSize Number of events to include in a batch. Defaults to 1.<a name="line.151"></a>
-<FONT color="green">152</FONT>         * @param factory The factory to use to create Flume events.<a name="line.152"></a>
-<FONT color="green">153</FONT>         * @param layout The layout to format the event.<a name="line.153"></a>
-<FONT color="green">154</FONT>         * @param filter A Filter to filter events.<a name="line.154"></a>
-<FONT color="green">155</FONT>         * @param &lt;S&gt; The {@link Layout}'s {@link Serializable} type.<a name="line.155"></a>
-<FONT color="green">156</FONT>         *<a name="line.156"></a>
-<FONT color="green">157</FONT>         * @return A Flume Avro Appender.<a name="line.157"></a>
-<FONT color="green">158</FONT>         */<a name="line.158"></a>
-<FONT color="green">159</FONT>        @PluginFactory<a name="line.159"></a>
-<FONT color="green">160</FONT>        public static &lt;S extends Serializable&gt; FlumeAppender&lt;S&gt; createAppender(@PluginElement("agents") Agent[] agents,<a name="line.160"></a>
-<FONT color="green">161</FONT>                                                       @PluginElement("properties") final Property[] properties,<a name="line.161"></a>
-<FONT color="green">162</FONT>                                                       @PluginAttr("embedded") final String embedded,<a name="line.162"></a>
-<FONT color="green">163</FONT>                                                       @PluginAttr("type") final String type,<a name="line.163"></a>
-<FONT color="green">164</FONT>                                                       @PluginAttr("dataDir") final String dataDir,<a name="line.164"></a>
-<FONT color="green">165</FONT>                                                       @PluginAttr("connectTimeout") final String connectionTimeout,<a name="line.165"></a>
-<FONT color="green">166</FONT>                                                       @PluginAttr("requestTimeout") final String requestTimeout,<a name="line.166"></a>
-<FONT color="green">167</FONT>                                                       @PluginAttr("agentRetries") final String agentRetries,<a name="line.167"></a>
-<FONT color="green">168</FONT>                                                       @PluginAttr("maxDelay") final String maxDelay,<a name="line.168"></a>
-<FONT color="green">169</FONT>                                                       @PluginAttr("name") final String name,<a name="line.169"></a>
-<FONT color="green">170</FONT>                                                       @PluginAttr("suppressExceptions") final String suppress,<a name="line.170"></a>
-<FONT color="green">171</FONT>                                                       @PluginAttr("mdcExcludes") final String excludes,<a name="line.171"></a>
-<FONT color="green">172</FONT>                                                       @PluginAttr("mdcIncludes") final String includes,<a name="line.172"></a>
-<FONT color="green">173</FONT>                                                       @PluginAttr("mdcRequired") final String required,<a name="line.173"></a>
-<FONT color="green">174</FONT>                                                       @PluginAttr("mdcPrefix") final String mdcPrefix,<a name="line.174"></a>
-<FONT color="green">175</FONT>                                                       @PluginAttr("eventPrefix") final String eventPrefix,<a name="line.175"></a>
-<FONT color="green">176</FONT>                                                       @PluginAttr("compress") final String compressBody,<a name="line.176"></a>
-<FONT color="green">177</FONT>                                                       @PluginAttr("batchSize") final String batchSize,<a name="line.177"></a>
-<FONT color="green">178</FONT>                                                       @PluginElement("flumeEventFactory") final FlumeEventFactory factory,<a name="line.178"></a>
-<FONT color="green">179</FONT>                                                       @PluginElement("layout") Layout&lt;S&gt; layout,<a name="line.179"></a>
-<FONT color="green">180</FONT>                                                       @PluginElement("filters") final Filter filter) {<a name="line.180"></a>
-<FONT color="green">181</FONT>    <a name="line.181"></a>
-<FONT color="green">182</FONT>            final boolean embed = embedded != null ? Boolean.parseBoolean(embedded) :<a name="line.182"></a>
-<FONT color="green">183</FONT>                (agents == null || agents.length == 0) &amp;&amp; properties != null &amp;&amp; properties.length &gt; 0;<a name="line.183"></a>
-<FONT color="green">184</FONT>            final boolean handleExceptions = Booleans.parseBoolean(suppress, true);<a name="line.184"></a>
-<FONT color="green">185</FONT>            final boolean compress = Booleans.parseBoolean(compressBody, true);<a name="line.185"></a>
-<FONT color="green">186</FONT>            ManagerType managerType;<a name="line.186"></a>
-<FONT color="green">187</FONT>            if (type != null) {<a name="line.187"></a>
-<FONT color="green">188</FONT>                if (embed &amp;&amp; embedded != null) {<a name="line.188"></a>
-<FONT color="green">189</FONT>                    try {<a name="line.189"></a>
-<FONT color="green">190</FONT>                        managerType = ManagerType.getType(type);<a name="line.190"></a>
-<FONT color="green">191</FONT>                        LOGGER.warn("Embedded and type attributes are mutually exclusive. Using type " + type);<a name="line.191"></a>
-<FONT color="green">192</FONT>                    } catch (final Exception ex) {<a name="line.192"></a>
-<FONT color="green">193</FONT>                        LOGGER.warn("Embedded and type attributes are mutually exclusive and type " + type +<a name="line.193"></a>
-<FONT color="green">194</FONT>                            " is invalid.");<a name="line.194"></a>
-<FONT color="green">195</FONT>                        managerType = ManagerType.EMBEDDED;<a name="line.195"></a>
-<FONT color="green">196</FONT>                    }<a name="line.196"></a>
-<FONT color="green">197</FONT>                } else {<a name="line.197"></a>
-<FONT color="green">198</FONT>                    try {<a name="line.198"></a>
-<FONT color="green">199</FONT>                        managerType = ManagerType.getType(type);<a name="line.199"></a>
-<FONT color="green">200</FONT>                    } catch (final Exception ex) {<a name="line.200"></a>
-<FONT color="green">201</FONT>                        LOGGER.warn("Type " + type + " is invalid.");<a name="line.201"></a>
-<FONT color="green">202</FONT>                        managerType = ManagerType.EMBEDDED;<a name="line.202"></a>
-<FONT color="green">203</FONT>                    }<a name="line.203"></a>
-<FONT color="green">204</FONT>                }<a name="line.204"></a>
-<FONT color="green">205</FONT>            }  else if (embed) {<a name="line.205"></a>
-<FONT color="green">206</FONT>               managerType = ManagerType.EMBEDDED;<a name="line.206"></a>
-<FONT color="green">207</FONT>            }  else {<a name="line.207"></a>
-<FONT color="green">208</FONT>               managerType = ManagerType.AVRO;<a name="line.208"></a>
-<FONT color="green">209</FONT>            }<a name="line.209"></a>
-<FONT color="green">210</FONT>    <a name="line.210"></a>
-<FONT color="green">211</FONT>            final int batchCount = Integers.parseInt(batchSize, 1);<a name="line.211"></a>
-<FONT color="green">212</FONT>            final int connectTimeout = Integers.parseInt(connectionTimeout, 0);<a name="line.212"></a>
-<FONT color="green">213</FONT>            final int reqTimeout = Integers.parseInt(requestTimeout, 0);<a name="line.213"></a>
-<FONT color="green">214</FONT>            final int retries = Integers.parseInt(agentRetries, 0);<a name="line.214"></a>
-<FONT color="green">215</FONT>            final int delay = Integers.parseInt(maxDelay, DEFAULT_MAX_DELAY );<a name="line.215"></a>
-<FONT color="green">216</FONT>    <a name="line.216"></a>
-<FONT color="green">217</FONT>            if (layout == null) {<a name="line.217"></a>
-<FONT color="green">218</FONT>                @SuppressWarnings({ "unchecked", "UnnecessaryLocalVariable" })<a name="line.218"></a>
-<FONT color="green">219</FONT>                            final<a name="line.219"></a>
-<FONT color="green">220</FONT>                Layout&lt;S&gt; l = (Layout&lt;S&gt;) RFC5424Layout.createLayout(null, null, null, "True", null, mdcPrefix, eventPrefix,<a name="line.220"></a>
-<FONT color="green">221</FONT>                        null, null, null, excludes, includes, required, null, null, null, null);<a name="line.221"></a>
-<FONT color="green">222</FONT>                layout = l;<a name="line.222"></a>
-<FONT color="green">223</FONT>            }<a name="line.223"></a>
-<FONT color="green">224</FONT>    <a name="line.224"></a>
-<FONT color="green">225</FONT>            if (name == null) {<a name="line.225"></a>
-<FONT color="green">226</FONT>                LOGGER.error("No name provided for Appender");<a name="line.226"></a>
-<FONT color="green">227</FONT>                return null;<a name="line.227"></a>
-<FONT color="green">228</FONT>            }<a name="line.228"></a>
-<FONT color="green">229</FONT>    <a name="line.229"></a>
-<FONT color="green">230</FONT>            AbstractFlumeManager manager;<a name="line.230"></a>
-<FONT color="green">231</FONT>    <a name="line.231"></a>
-<FONT color="green">232</FONT>            switch (managerType) {<a name="line.232"></a>
-<FONT color="green">233</FONT>                case EMBEDDED:<a name="line.233"></a>
-<FONT color="green">234</FONT>                    manager = FlumeEmbeddedManager.getManager(name, agents, properties, batchCount, dataDir);<a name="line.234"></a>
-<FONT color="green">235</FONT>                    break;<a name="line.235"></a>
-<FONT color="green">236</FONT>                case AVRO:<a name="line.236"></a>
-<FONT color="green">237</FONT>                    if (agents == null || agents.length == 0) {<a name="line.237"></a>
-<FONT color="green">238</FONT>                        LOGGER.debug("No agents provided, using defaults");<a name="line.238"></a>
-<FONT color="green">239</FONT>                        agents = new Agent[] {Agent.createAgent(null, null)};<a name="line.239"></a>
-<FONT color="green">240</FONT>                    }<a name="line.240"></a>
-<FONT color="green">241</FONT>                    manager = FlumeAvroManager.getManager(name, agents, batchCount, retries, connectTimeout, reqTimeout);<a name="line.241"></a>
-<FONT color="green">242</FONT>                    break;<a name="line.242"></a>
-<FONT color="green">243</FONT>                case PERSISTENT:<a name="line.243"></a>
-<FONT color="green">244</FONT>                    if (agents == null || agents.length == 0) {<a name="line.244"></a>
-<FONT color="green">245</FONT>                        LOGGER.debug("No agents provided, using defaults");<a name="line.245"></a>
-<FONT color="green">246</FONT>                        agents = new Agent[] {Agent.createAgent(null, null)};<a name="line.246"></a>
-<FONT color="green">247</FONT>                    }<a name="line.247"></a>
-<FONT color="green">248</FONT>                    manager = FlumePersistentManager.getManager(name, agents, properties, batchCount, retries,<a name="line.248"></a>
-<FONT color="green">249</FONT>                        connectTimeout, reqTimeout, delay, dataDir);<a name="line.249"></a>
-<FONT color="green">250</FONT>                    break;<a name="line.250"></a>
-<FONT color="green">251</FONT>                default:<a name="line.251"></a>
-<FONT color="green">252</FONT>                    LOGGER.debug("No manager type specified. Defaulting to AVRO");<a name="line.252"></a>
-<FONT color="green">253</FONT>                    if (agents == null || agents.length == 0) {<a name="line.253"></a>
-<FONT color="green">254</FONT>                        LOGGER.debug("No agents provided, using defaults");<a name="line.254"></a>
-<FONT color="green">255</FONT>                        agents = new Agent[] {Agent.createAgent(null, null)};<a name="line.255"></a>
-<FONT color="green">256</FONT>                    }<a name="line.256"></a>
-<FONT color="green">257</FONT>                    manager = FlumeAvroManager.getManager(name, agents, batchCount, retries, connectTimeout, reqTimeout);<a name="line.257"></a>
-<FONT color="green">258</FONT>            }<a name="line.258"></a>
-<FONT color="green">259</FONT>    <a name="line.259"></a>
-<FONT color="green">260</FONT>            if (manager == null) {<a name="line.260"></a>
-<FONT color="green">261</FONT>                return null;<a name="line.261"></a>
-<FONT color="green">262</FONT>            }<a name="line.262"></a>
-<FONT color="green">263</FONT>    <a name="line.263"></a>
-<FONT color="green">264</FONT>            return new FlumeAppender&lt;S&gt;(name, filter, layout,  handleExceptions, includes,<a name="line.264"></a>
-<FONT color="green">265</FONT>                excludes, required, mdcPrefix, eventPrefix, compress, factory, manager);<a name="line.265"></a>
-<FONT color="green">266</FONT>        }<a name="line.266"></a>
-<FONT color="green">267</FONT>    }<a name="line.267"></a>
+<FONT color="green">037</FONT>     */<a name="line.37"></a>
+<FONT color="green">038</FONT>    @Plugin(name = "Flume", category = "Core", elementType = "appender", printObject = true)<a name="line.38"></a>
+<FONT color="green">039</FONT>    public final class FlumeAppender extends AbstractAppender implements FlumeEventFactory {<a name="line.39"></a>
+<FONT color="green">040</FONT>    <a name="line.40"></a>
+<FONT color="green">041</FONT>        private static final String[] EXCLUDED_PACKAGES = {"org.apache.flume", "org.apache.avro"};<a name="line.41"></a>
+<FONT color="green">042</FONT>        private static final int DEFAULT_MAX_DELAY = 60000;<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>        private static final int DEFAULT_LOCK_TIMEOUT_RETRY_COUNT = 5;<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>        private final AbstractFlumeManager manager;<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>        private final String mdcIncludes;<a name="line.48"></a>
+<FONT color="green">049</FONT>        private final String mdcExcludes;<a name="line.49"></a>
+<FONT color="green">050</FONT>        private final String mdcRequired;<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>        private final String eventPrefix;<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>        private final String mdcPrefix;<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>        private final boolean compressBody;<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>        private final FlumeEventFactory factory;<a name="line.58"></a>
+<FONT color="green">059</FONT>    <a name="line.59"></a>
+<FONT color="green">060</FONT>        /**<a name="line.60"></a>
+<FONT color="green">061</FONT>         * Which Manager will be used by the appender instance.<a name="line.61"></a>
+<FONT color="green">062</FONT>         */<a name="line.62"></a>
+<FONT color="green">063</FONT>        private enum ManagerType {<a name="line.63"></a>
+<FONT color="green">064</FONT>            AVRO, EMBEDDED, PERSISTENT;<a name="line.64"></a>
+<FONT color="green">065</FONT>    <a name="line.65"></a>
+<FONT color="green">066</FONT>            public static ManagerType getType(final String type) {<a name="line.66"></a>
+<FONT color="green">067</FONT>                return valueOf(type.toUpperCase(Locale.US));<a name="line.67"></a>
+<FONT color="green">068</FONT>            }<a name="line.68"></a>
+<FONT color="green">069</FONT>        }<a name="line.69"></a>
+<FONT color="green">070</FONT>    <a name="line.70"></a>
+<FONT color="green">071</FONT>        private FlumeAppender(final String name, final Filter filter, final Layout&lt;? extends Serializable&gt; layout,<a name="line.71"></a>
+<FONT color="green">072</FONT>                              final boolean ignoreExceptions, final String includes, final String excludes,<a name="line.72"></a>
+<FONT color="green">073</FONT>                              final String required, final String mdcPrefix, final String eventPrefix,<a name="line.73"></a>
+<FONT color="green">074</FONT>                              final boolean compress, final FlumeEventFactory factory, final AbstractFlumeManager manager) {<a name="line.74"></a>
+<FONT color="green">075</FONT>            super(name, filter, layout, ignoreExceptions);<a name="line.75"></a>
+<FONT color="green">076</FONT>            this.manager = manager;<a name="line.76"></a>
+<FONT color="green">077</FONT>            this.mdcIncludes = includes;<a name="line.77"></a>
+<FONT color="green">078</FONT>            this.mdcExcludes = excludes;<a name="line.78"></a>
+<FONT color="green">079</FONT>            this.mdcRequired = required;<a name="line.79"></a>
+<FONT color="green">080</FONT>            this.eventPrefix = eventPrefix;<a name="line.80"></a>
+<FONT color="green">081</FONT>            this.mdcPrefix = mdcPrefix;<a name="line.81"></a>
+<FONT color="green">082</FONT>            this.compressBody = compress;<a name="line.82"></a>
+<FONT color="green">083</FONT>            this.factory = factory == null ? this : factory;<a name="line.83"></a>
+<FONT color="green">084</FONT>        }<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>        /**<a name="line.86"></a>
+<FONT color="green">087</FONT>         * Publish the event.<a name="line.87"></a>
+<FONT color="green">088</FONT>         * @param event The LogEvent.<a name="line.88"></a>
+<FONT color="green">089</FONT>         */<a name="line.89"></a>
+<FONT color="green">090</FONT>        @Override<a name="line.90"></a>
+<FONT color="green">091</FONT>        public void append(final LogEvent event) {<a name="line.91"></a>
+<FONT color="green">092</FONT>            final String name = event.getLoggerName();<a name="line.92"></a>
+<FONT color="green">093</FONT>            if (name != null) {<a name="line.93"></a>
+<FONT color="green">094</FONT>                for (final String pkg : EXCLUDED_PACKAGES) {<a name="line.94"></a>
+<FONT color="green">095</FONT>                    if (name.startsWith(pkg)) {<a name="line.95"></a>
+<FONT color="green">096</FONT>                        return;<a name="line.96"></a>
+<FONT color="green">097</FONT>                    }<a name="line.97"></a>
+<FONT color="green">098</FONT>                }<a name="line.98"></a>
+<FONT color="green">099</FONT>            }<a name="line.99"></a>
+<FONT color="green">100</FONT>            final FlumeEvent flumeEvent = factory.createEvent(event, mdcIncludes, mdcExcludes, mdcRequired, mdcPrefix,<a name="line.100"></a>
+<FONT color="green">101</FONT>                eventPrefix, compressBody);<a name="line.101"></a>
+<FONT color="green">102</FONT>            flumeEvent.setBody(getLayout().toByteArray(flumeEvent));<a name="line.102"></a>
+<FONT color="green">103</FONT>            manager.send(flumeEvent);<a name="line.103"></a>
+<FONT color="green">104</FONT>        }<a name="line.104"></a>
+<FONT color="green">105</FONT>    <a name="line.105"></a>
+<FONT color="green">106</FONT>        @Override<a name="line.106"></a>
+<FONT color="green">107</FONT>        public void stop() {<a name="line.107"></a>
+<FONT color="green">108</FONT>            super.stop();<a name="line.108"></a>
+<FONT color="green">109</FONT>            manager.release();<a name="line.109"></a>
+<FONT color="green">110</FONT>        }<a name="line.110"></a>
+<FONT color="green">111</FONT>    <a name="line.111"></a>
+<FONT color="green">112</FONT>        /**<a name="line.112"></a>
+<FONT color="green">113</FONT>         * Create a Flume event.<a name="line.113"></a>
+<FONT color="green">114</FONT>         * @param event The Log4j LogEvent.<a name="line.114"></a>
+<FONT color="green">115</FONT>         * @param includes comma separated list of mdc elements to include.<a name="line.115"></a>
+<FONT color="green">116</FONT>         * @param excludes comma separated list of mdc elements to exclude.<a name="line.116"></a>
+<FONT color="green">117</FONT>         * @param required comma separated list of mdc elements that must be present with a value.<a name="line.117"></a>
+<FONT color="green">118</FONT>         * @param mdcPrefix The prefix to add to MDC key names.<a name="line.118"></a>
+<FONT color="green">119</FONT>         * @param eventPrefix The prefix to add to event fields.<a name="line.119"></a>
+<FONT color="green">120</FONT>         * @param compress If true the body will be compressed.<a name="line.120"></a>
+<FONT color="green">121</FONT>         * @return A Flume Event.<a name="line.121"></a>
+<FONT color="green">122</FONT>         */<a name="line.122"></a>
+<FONT color="green">123</FONT>        @Override<a name="line.123"></a>
+<FONT color="green">124</FONT>        public FlumeEvent createEvent(final LogEvent event, final String includes, final String excludes,<a name="line.124"></a>
+<FONT color="green">125</FONT>                                      final String required, final String mdcPrefix, final String eventPrefix,<a name="line.125"></a>
+<FONT color="green">126</FONT>                                      final boolean compress) {<a name="line.126"></a>
+<FONT color="green">127</FONT>            return new FlumeEvent(event, mdcIncludes, mdcExcludes, mdcRequired, mdcPrefix,<a name="line.127"></a>
+<FONT color="green">128</FONT>                eventPrefix, compressBody);<a name="line.128"></a>
+<FONT color="green">129</FONT>        }<a name="line.129"></a>
+<FONT color="green">130</FONT>    <a name="line.130"></a>
+<FONT color="green">131</FONT>        /**<a name="line.131"></a>
+<FONT color="green">132</FONT>         * Create a Flume Avro Appender.<a name="line.132"></a>
+<FONT color="green">133</FONT>         * @param agents An array of Agents.<a name="line.133"></a>
+<FONT color="green">134</FONT>         * @param properties Properties to pass to the embedded agent.<a name="line.134"></a>
+<FONT color="green">135</FONT>         * @param embedded true if the embedded agent manager should be used. otherwise the Avro manager will be used.<a name="line.135"></a>
+<FONT color="green">136</FONT>         * &lt;b&gt;Note: &lt;/b&gt;&lt;i&gt;The embedded attribute is deprecated in favor of specifying the type attribute.&lt;/i&gt;<a name="line.136"></a>
+<FONT color="green">137</FONT>         * @param type Avro (default), Embedded, or Persistent.<a name="line.137"></a>
+<FONT color="green">138</FONT>         * @param dataDir The directory where the Flume FileChannel should write its data.<a name="line.138"></a>
+<FONT color="green">139</FONT>         * @param connectionTimeout The amount of time in milliseconds to wait before a connection times out. Minimum is<a name="line.139"></a>
+<FONT color="green">140</FONT>         *                          1000.<a name="line.140"></a>
+<FONT color="green">141</FONT>         * @param requestTimeout The amount of time in milliseconds to wait before a request times out. Minimum is 1000.<a name="line.141"></a>
+<FONT color="green">142</FONT>         * @param agentRetries The number of times to retry an agent before failing to the next agent.<a name="line.142"></a>
+<FONT color="green">143</FONT>         * @param maxDelay The maximum number of seconds to wait for a complete batch.<a name="line.143"></a>
+<FONT color="green">144</FONT>         * @param name The name of the Appender.<a name="line.144"></a>
+<FONT color="green">145</FONT>         * @param ignore If {@code "true"} (default) exceptions encountered when appending events are logged; otherwise<a name="line.145"></a>
+<FONT color="green">146</FONT>         *               they are propagated to the caller.<a name="line.146"></a>
+<FONT color="green">147</FONT>         * @param excludes A comma separated list of MDC elements to exclude.<a name="line.147"></a>
+<FONT color="green">148</FONT>         * @param includes A comma separated list of MDC elements to include.<a name="line.148"></a>
+<FONT color="green">149</FONT>         * @param required A comma separated list of MDC elements that are required.<a name="line.149"></a>
+<FONT color="green">150</FONT>         * @param mdcPrefix The prefix to add to MDC key names.<a name="line.150"></a>
+<FONT color="green">151</FONT>         * @param eventPrefix The prefix to add to event key names.<a name="line.151"></a>
+<FONT color="green">152</FONT>         * @param compressBody If true the event body will be compressed.<a name="line.152"></a>
+<FONT color="green">153</FONT>         * @param batchSize Number of events to include in a batch. Defaults to 1.<a name="line.153"></a>
+<FONT color="green">154</FONT>         * @param lockTimeoutRetries Times to retry a lock timeout when writing to Berkeley DB.<a name="line.154"></a>
+<FONT color="green">155</FONT>         * @param factory The factory to use to create Flume events.<a name="line.155"></a>
+<FONT color="green">156</FONT>         * @param layout The layout to format the event.<a name="line.156"></a>
+<FONT color="green">157</FONT>         * @param filter A Filter to filter events.<a name="line.157"></a>
+<FONT color="green">158</FONT>         *<a name="line.158"></a>
+<FONT color="green">159</FONT>         * @return A Flume Avro Appender.<a name="line.159"></a>
+<FONT color="green">160</FONT>         */<a name="line.160"></a>
+<FONT color="green">161</FONT>        @PluginFactory<a name="line.161"></a>
+<FONT color="green">162</FONT>        public static FlumeAppender createAppender(@PluginElement("Agents") Agent[] agents,<a name="line.162"></a>
+<FONT color="green">163</FONT>                                                   @PluginElement("Properties") final Property[] properties,<a name="line.163"></a>
+<FONT color="green">164</FONT>                                                   @PluginAttribute("embedded") final String embedded,<a name="line.164"></a>
+<FONT color="green">165</FONT>                                                   @PluginAttribute("type") final String type,<a name="line.165"></a>
+<FONT color="green">166</FONT>                                                   @PluginAttribute("dataDir") final String dataDir,<a name="line.166"></a>
+<FONT color="green">167</FONT>                                                   @PluginAttribute("connectTimeout") final String connectionTimeout,<a name="line.167"></a>
+<FONT color="green">168</FONT>                                                   @PluginAttribute("requestTimeout") final String requestTimeout,<a name="line.168"></a>
+<FONT color="green">169</FONT>                                                   @PluginAttribute("agentRetries") final String agentRetries,<a name="line.169"></a>
+<FONT color="green">170</FONT>                                                   @PluginAttribute("maxDelay") final String maxDelay,<a name="line.170"></a>
+<FONT color="green">171</FONT>                                                   @PluginAttribute("name") final String name,<a name="line.171"></a>
+<FONT color="green">172</FONT>                                                   @PluginAttribute("ignoreExceptions") final String ignore,<a name="line.172"></a>
+<FONT color="green">173</FONT>                                                   @PluginAttribute("mdcExcludes") final String excludes,<a name="line.173"></a>
+<FONT color="green">174</FONT>                                                   @PluginAttribute("mdcIncludes") final String includes,<a name="line.174"></a>
+<FONT color="green">175</FONT>                                                   @PluginAttribute("mdcRequired") final String required,<a name="line.175"></a>
+<FONT color="green">176</FONT>                                                   @PluginAttribute("mdcPrefix") final String mdcPrefix,<a name="line.176"></a>
+<FONT color="green">177</FONT>                                                   @PluginAttribute("eventPrefix") final String eventPrefix,<a name="line.177"></a>
+<FONT color="green">178</FONT>                                                   @PluginAttribute("compress") final String compressBody,<a name="line.178"></a>
+<FONT color="green">179</FONT>                                                   @PluginAttribute("batchSize") final String batchSize,<a name="line.179"></a>
+<FONT color="green">180</FONT>                                                   @PluginAttribute("lockTimeoutRetries") final String lockTimeoutRetries,<a name="line.180"></a>
+<FONT color="green">181</FONT>                                                   @PluginElement("FlumeEventFactory") final FlumeEventFactory factory,<a name="line.181"></a>
+<FONT color="green">182</FONT>                                                   @PluginElement("Layout") Layout&lt;? extends Serializable&gt; layout,<a name="line.182"></a>
+<FONT color="green">183</FONT>                                                   @PluginElement("Filters") final Filter filter) {<a name="line.183"></a>
+<FONT color="green">184</FONT>    <a name="line.184"></a>
+<FONT color="green">185</FONT>            final boolean embed = embedded != null ? Boolean.parseBoolean(embedded) :<a name="line.185"></a>
+<FONT color="green">186</FONT>                (agents == null || agents.length == 0) &amp;&amp; properties != null &amp;&amp; properties.length &gt; 0;<a name="line.186"></a>
+<FONT color="green">187</FONT>            final boolean ignoreExceptions = Booleans.parseBoolean(ignore, true);<a name="line.187"></a>
+<FONT color="green">188</FONT>            final boolean compress = Booleans.parseBoolean(compressBody, true);<a name="line.188"></a>
+<FONT color="green">189</FONT>            ManagerType managerType;<a name="line.189"></a>
+<FONT color="green">190</FONT>            if (type != null) {<a name="line.190"></a>
+<FONT color="green">191</FONT>                if (embed &amp;&amp; embedded != null) {<a name="line.191"></a>
+<FONT color="green">192</FONT>                    try {<a name="line.192"></a>
+<FONT color="green">193</FONT>                        managerType = ManagerType.getType(type);<a name="line.193"></a>
+<FONT color="green">194</FONT>                        LOGGER.warn("Embedded and type attributes are mutually exclusive. Using type " + type);<a name="line.194"></a>
+<FONT color="green">195</FONT>                    } catch (final Exception ex) {<a name="line.195"></a>
+<FONT color="green">196</FONT>                        LOGGER.warn("Embedded and type attributes are mutually exclusive and type " + type +<a name="line.196"></a>
+<FONT color="green">197</FONT>                            " is invalid.");<a name="line.197"></a>
+<FONT color="green">198</FONT>                        managerType = ManagerType.EMBEDDED;<a name="line.198"></a>
+<FONT color="green">199</FONT>                    }<a name="line.199"></a>
+<FONT color="green">200</FONT>                } else {<a name="line.200"></a>
+<FONT color="green">201</FONT>                    try {<a name="line.201"></a>
+<FONT color="green">202</FONT>                        managerType = ManagerType.getType(type);<a name="line.202"></a>
+<FONT color="green">203</FONT>                    } catch (final Exception ex) {<a name="line.203"></a>
+<FONT color="green">204</FONT>                        LOGGER.warn("Type " + type + " is invalid.");<a name="line.204"></a>
+<FONT color="green">205</FONT>                        managerType = ManagerType.EMBEDDED;<a name="line.205"></a>
+<FONT color="green">206</FONT>                    }<a name="line.206"></a>
+<FONT color="green">207</FONT>                }<a name="line.207"></a>
+<FONT color="green">208</FONT>            }  else if (embed) {<a name="line.208"></a>
+<FONT color="green">209</FONT>               managerType = ManagerType.EMBEDDED;<a name="line.209"></a>
+<FONT color="green">210</FONT>            }  else {<a name="line.210"></a>
+<FONT color="green">211</FONT>               managerType = ManagerType.AVRO;<a name="line.211"></a>
+<FONT color="green">212</FONT>            }<a name="line.212"></a>
+<FONT color="green">213</FONT>    <a name="line.213"></a>
+<FONT color="green">214</FONT>            final int batchCount = Integers.parseInt(batchSize, 1);<a name="line.214"></a>
+<FONT color="green">215</FONT>            final int connectTimeout = Integers.parseInt(connectionTimeout, 0);<a name="line.215"></a>
+<FONT color="green">216</FONT>            final int reqTimeout = Integers.parseInt(requestTimeout, 0);<a name="line.216"></a>
+<FONT color="green">217</FONT>            final int retries = Integers.parseInt(agentRetries, 0);<a name="line.217"></a>
+<FONT color="green">218</FONT>            final int lockTimeoutRetryCount = Integers.parseInt(lockTimeoutRetries, DEFAULT_LOCK_TIMEOUT_RETRY_COUNT);<a name="line.218"></a>
+<FONT color="green">219</FONT>            final int delay = Integers.parseInt(maxDelay, DEFAULT_MAX_DELAY );<a name="line.219"></a>
+<FONT color="green">220</FONT>    <a name="line.220"></a>
+<FONT color="green">221</FONT>            if (layout == null) {<a name="line.221"></a>
+<FONT color="green">222</FONT>                layout = RFC5424Layout.createLayout(null, null, null, "True", null, mdcPrefix, eventPrefix,<a name="line.222"></a>
+<FONT color="green">223</FONT>                        null, null, null, null, excludes, includes, required, null, null, null, null);<a name="line.223"></a>
+<FONT color="green">224</FONT>            }<a name="line.224"></a>
+<FONT color="green">225</FONT>    <a name="line.225"></a>
+<FONT color="green">226</FONT>            if (name == null) {<a name="line.226"></a>
+<FONT color="green">227</FONT>                LOGGER.error("No name provided for Appender");<a name="line.227"></a>
+<FONT color="green">228</FONT>                return null;<a name="line.228"></a>
+<FONT color="green">229</FONT>            }<a name="line.229"></a>
+<FONT color="green">230</FONT>    <a name="line.230"></a>
+<FONT color="green">231</FONT>            AbstractFlumeManager manager;<a name="line.231"></a>
+<FONT color="green">232</FONT>    <a name="line.232"></a>
+<FONT color="green">233</FONT>            switch (managerType) {<a name="line.233"></a>
+<FONT color="green">234</FONT>                case EMBEDDED:<a name="line.234"></a>
+<FONT color="green">235</FONT>                    manager = FlumeEmbeddedManager.getManager(name, agents, properties, batchCount, dataDir);<a name="line.235"></a>
+<FONT color="green">236</FONT>                    break;<a name="line.236"></a>
+<FONT color="green">237</FONT>                case AVRO:<a name="line.237"></a>
+<FONT color="green">238</FONT>                    if (agents == null || agents.length == 0) {<a name="line.238"></a>
+<FONT color="green">239</FONT>                        LOGGER.debug("No agents provided, using defaults");<a name="line.239"></a>
+<FONT color="green">240</FONT>                        agents = new Agent[] {Agent.createAgent(null, null)};<a name="line.240"></a>
+<FONT color="green">241</FONT>                    }<a name="line.241"></a>
+<FONT color="green">242</FONT>                    manager = FlumeAvroManager.getManager(name, agents, batchCount, retries, connectTimeout, reqTimeout);<a name="line.242"></a>
+<FONT color="green">243</FONT>                    break;<a name="line.243"></a>
+<FONT color="green">244</FONT>                case PERSISTENT:<a name="line.244"></a>
+<FONT color="green">245</FONT>                    if (agents == null || agents.length == 0) {<a name="line.245"></a>
+<FONT color="green">246</FONT>                        LOGGER.debug("No agents provided, using defaults");<a name="line.246"></a>
+<FONT color="green">247</FONT>                        agents = new Agent[] {Agent.createAgent(null, null)};<a name="line.247"></a>
+<FONT color="green">248</FONT>                    }<a name="line.248"></a>
+<FONT color="green">249</FONT>                    manager = FlumePersistentManager.getManager(name, agents, properties, batchCount, retries,<a name="line.249"></a>
+<FONT color="green">250</FONT>                        connectTimeout, reqTimeout, delay, lockTimeoutRetryCount, dataDir);<a name="line.250"></a>
+<FONT color="green">251</FONT>                    break;<a name="line.251"></a>
+<FONT color="green">252</FONT>                default:<a name="line.252"></a>
+<FONT color="green">253</FONT>                    LOGGER.debug("No manager type specified. Defaulting to AVRO");<a name="line.253"></a>
+<FONT color="green">254</FONT>                    if (agents == null || agents.length == 0) {<a name="line.254"></a>
+<FONT color="green">255</FONT>                        LOGGER.debug("No agents provided, using defaults");<a name="line.255"></a>
+<FONT color="green">256</FONT>                        agents = new Agent[] {Agent.createAgent(null, null)};<a name="line.256"></a>
+<FONT color="green">257</FONT>                    }<a name="line.257"></a>
+<FONT color="green">258</FONT>                    manager = FlumeAvroManager.getManager(name, agents, batchCount, retries, connectTimeout, reqTimeout);<a name="line.258"></a>
+<FONT color="green">259</FONT>            }<a name="line.259"></a>
+<FONT color="green">260</FONT>    <a name="line.260"></a>
+<FONT color="green">261</FONT>            if (manager == null) {<a name="line.261"></a>
+<FONT color="green">262</FONT>                return null;<a name="line.262"></a>
+<FONT color="green">263</FONT>            }<a name="line.263"></a>
+<FONT color="green">264</FONT>    <a name="line.264"></a>
+<FONT color="green">265</FONT>            return new FlumeAppender(name, filter, layout,  ignoreExceptions, includes,<a name="line.265"></a>
+<FONT color="green">266</FONT>                excludes, required, mdcPrefix, eventPrefix, compress, factory, manager);<a name="line.266"></a>
+<FONT color="green">267</FONT>        }<a name="line.267"></a>
+<FONT color="green">268</FONT>    }<a name="line.268"></a>
 
 
 

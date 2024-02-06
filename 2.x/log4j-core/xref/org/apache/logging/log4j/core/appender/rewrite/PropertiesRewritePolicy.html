@@ -59,9 +59,9 @@
 <a class="jxr_linenumber" name="49" href="#49">49</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rewrite/PropertiesRewritePolicy.html">PropertiesRewritePolicy</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, <strong class="jxr_keyword">final</strong> List&lt;Property&gt; props) {
 <a class="jxr_linenumber" name="50" href="#50">50</a>          <strong class="jxr_keyword">this</strong>.config = config;
 <a class="jxr_linenumber" name="51" href="#51">51</a>          <strong class="jxr_keyword">this</strong>.properties = <strong class="jxr_keyword">new</strong> HashMap&lt;Property, Boolean&gt;(props.size());
-<a class="jxr_linenumber" name="52" href="#52">52</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Property prop : props) {
-<a class="jxr_linenumber" name="53" href="#53">53</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> interpolate = prop.getValue().contains(<span class="jxr_string">"${"</span>);
-<a class="jxr_linenumber" name="54" href="#54">54</a>              properties.put(prop, interpolate);
+<a class="jxr_linenumber" name="52" href="#52">52</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Property property : props) {
+<a class="jxr_linenumber" name="53" href="#53">53</a>              <strong class="jxr_keyword">final</strong> Boolean interpolate = Boolean.valueOf(property.getValue().contains(<span class="jxr_string">"${"</span>));
+<a class="jxr_linenumber" name="54" href="#54">54</a>              properties.put(property, interpolate);
 <a class="jxr_linenumber" name="55" href="#55">55</a>          }
 <a class="jxr_linenumber" name="56" href="#56">56</a>      }
 <a class="jxr_linenumber" name="57" href="#57">57</a>  
@@ -76,8 +76,8 @@
 <a class="jxr_linenumber" name="66" href="#66">66</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; props = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;(source.getContextMap());
 <a class="jxr_linenumber" name="67" href="#67">67</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;Property, Boolean&gt; entry : properties.entrySet()) {
 <a class="jxr_linenumber" name="68" href="#68">68</a>              <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Property.html">Property</a> prop = entry.getKey();
-<a class="jxr_linenumber" name="69" href="#69">69</a>              props.put(prop.getName(), entry.getValue() ?
-<a class="jxr_linenumber" name="70" href="#70">70</a>                  config.getSubst().replace(prop.getValue()) : prop.getValue());
+<a class="jxr_linenumber" name="69" href="#69">69</a>              props.put(prop.getName(), entry.getValue().booleanValue() ?
+<a class="jxr_linenumber" name="70" href="#70">70</a>                  config.getStrSubstitutor().replace(prop.getValue()) : prop.getValue());
 <a class="jxr_linenumber" name="71" href="#71">71</a>          }
 <a class="jxr_linenumber" name="72" href="#72">72</a>  
 <a class="jxr_linenumber" name="73" href="#73">73</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/impl/Log4jLogEvent.html">Log4jLogEvent</a>(source.getLoggerName(), source.getMarker(), source.getFQCN(), source.getLevel(),
@@ -110,7 +110,7 @@
 <a class="jxr_linenumber" name="100" href="#100">100</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="101" href="#101">101</a>     @PluginFactory
 <a class="jxr_linenumber" name="102" href="#102">102</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rewrite/PropertiesRewritePolicy.html">PropertiesRewritePolicy</a> createPolicy(@PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config,
-<a class="jxr_linenumber" name="103" href="#103">103</a>                                                 @PluginElement(<span class="jxr_string">"properties"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Property.html">Property</a>[] props) {
+<a class="jxr_linenumber" name="103" href="#103">103</a>                                                 @PluginElement(<span class="jxr_string">"Properties"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Property.html">Property</a>[] props) {
 <a class="jxr_linenumber" name="104" href="#104">104</a>         <strong class="jxr_keyword">if</strong> (props == <strong class="jxr_keyword">null</strong> || props.length == 0) {
 <a class="jxr_linenumber" name="105" href="#105">105</a>             LOGGER.error(<span class="jxr_string">"Properties must be specified for the PropertiesRewritePolicy"</span>);
 <a class="jxr_linenumber" name="106" href="#106">106</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;

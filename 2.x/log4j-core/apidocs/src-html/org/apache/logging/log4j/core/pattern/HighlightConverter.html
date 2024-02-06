@@ -75,128 +75,128 @@
 <FONT color="green">072</FONT>    @ConverterKeys({ "highlight" })<a name="line.72"></a>
 <FONT color="green">073</FONT>    public final class HighlightConverter extends LogEventPatternConverter {<a name="line.73"></a>
 <FONT color="green">074</FONT>    <a name="line.74"></a>
-<FONT color="green">075</FONT>        private static final String STYLE_KEY_DEFAULT = "DEFAULT";<a name="line.75"></a>
+<FONT color="green">075</FONT>        private static final EnumMap&lt;Level, String&gt; DEFAULT_STYLES = new EnumMap&lt;Level, String&gt;(Level.class);<a name="line.75"></a>
 <FONT color="green">076</FONT>    <a name="line.76"></a>
-<FONT color="green">077</FONT>        private static final String STYLE_KEY_LOGBACK = "LOGBACK";<a name="line.77"></a>
+<FONT color="green">077</FONT>        private static final EnumMap&lt;Level, String&gt; LOGBACK_STYLES = new EnumMap&lt;Level, String&gt;(Level.class);<a name="line.77"></a>
 <FONT color="green">078</FONT>    <a name="line.78"></a>
 <FONT color="green">079</FONT>        private static final String STYLE_KEY = "STYLE";<a name="line.79"></a>
 <FONT color="green">080</FONT>    <a name="line.80"></a>
-<FONT color="green">081</FONT>        private static final EnumMap&lt;Level, String&gt; DEFAULT_STYLES = new EnumMap&lt;Level, String&gt;(Level.class);<a name="line.81"></a>
+<FONT color="green">081</FONT>        private static final String STYLE_KEY_DEFAULT = "DEFAULT";<a name="line.81"></a>
 <FONT color="green">082</FONT>    <a name="line.82"></a>
-<FONT color="green">083</FONT>        private static final EnumMap&lt;Level, String&gt; LOGBACK_STYLES = new EnumMap&lt;Level, String&gt;(Level.class);<a name="line.83"></a>
+<FONT color="green">083</FONT>        private static final String STYLE_KEY_LOGBACK = "LOGBACK";<a name="line.83"></a>
 <FONT color="green">084</FONT>    <a name="line.84"></a>
 <FONT color="green">085</FONT>        private static final Map&lt;String, EnumMap&lt;Level, String&gt;&gt; STYLES = new HashMap&lt;String, EnumMap&lt;Level, String&gt;&gt;();<a name="line.85"></a>
 <FONT color="green">086</FONT>    <a name="line.86"></a>
-<FONT color="green">087</FONT>        private final List&lt;PatternFormatter&gt; formatters;<a name="line.87"></a>
-<FONT color="green">088</FONT>    <a name="line.88"></a>
-<FONT color="green">089</FONT>        private final EnumMap&lt;Level, String&gt; levelStyles;<a name="line.89"></a>
-<FONT color="green">090</FONT>    <a name="line.90"></a>
-<FONT color="green">091</FONT>        static {<a name="line.91"></a>
-<FONT color="green">092</FONT>            // Default styles:<a name="line.92"></a>
-<FONT color="green">093</FONT>            DEFAULT_STYLES.put(Level.FATAL, AnsiEscape.createSequence("BRIGHT", "RED"));<a name="line.93"></a>
-<FONT color="green">094</FONT>            DEFAULT_STYLES.put(Level.ERROR, AnsiEscape.createSequence("BRIGHT", "RED"));<a name="line.94"></a>
-<FONT color="green">095</FONT>            DEFAULT_STYLES.put(Level.WARN, AnsiEscape.createSequence("YELLOW"));<a name="line.95"></a>
-<FONT color="green">096</FONT>            DEFAULT_STYLES.put(Level.INFO, AnsiEscape.createSequence("GREEN"));<a name="line.96"></a>
-<FONT color="green">097</FONT>            DEFAULT_STYLES.put(Level.DEBUG, AnsiEscape.createSequence("CYAN"));<a name="line.97"></a>
-<FONT color="green">098</FONT>            DEFAULT_STYLES.put(Level.TRACE, AnsiEscape.createSequence("BLACK"));<a name="line.98"></a>
-<FONT color="green">099</FONT>            // Logback styles:<a name="line.99"></a>
-<FONT color="green">100</FONT>            LOGBACK_STYLES.put(Level.FATAL, AnsiEscape.createSequence("BLINK", "BRIGHT", "RED"));<a name="line.100"></a>
-<FONT color="green">101</FONT>            LOGBACK_STYLES.put(Level.ERROR, AnsiEscape.createSequence("BRIGHT", "RED"));<a name="line.101"></a>
-<FONT color="green">102</FONT>            LOGBACK_STYLES.put(Level.WARN, AnsiEscape.createSequence("RED"));<a name="line.102"></a>
-<FONT color="green">103</FONT>            LOGBACK_STYLES.put(Level.INFO, AnsiEscape.createSequence("BLUE"));<a name="line.103"></a>
-<FONT color="green">104</FONT>            LOGBACK_STYLES.put(Level.DEBUG, AnsiEscape.createSequence((String[]) null));<a name="line.104"></a>
-<FONT color="green">105</FONT>            LOGBACK_STYLES.put(Level.TRACE, AnsiEscape.createSequence((String[]) null));<a name="line.105"></a>
-<FONT color="green">106</FONT>            // Style map:<a name="line.106"></a>
-<FONT color="green">107</FONT>            STYLES.put(STYLE_KEY_DEFAULT, DEFAULT_STYLES);<a name="line.107"></a>
-<FONT color="green">108</FONT>            STYLES.put(STYLE_KEY_LOGBACK, LOGBACK_STYLES);<a name="line.108"></a>
-<FONT color="green">109</FONT>        }<a name="line.109"></a>
-<FONT color="green">110</FONT>    <a name="line.110"></a>
-<FONT color="green">111</FONT>        /**<a name="line.111"></a>
-<FONT color="green">112</FONT>         * Construct the converter.<a name="line.112"></a>
-<FONT color="green">113</FONT>         *<a name="line.113"></a>
-<FONT color="green">114</FONT>         * @param formatters<a name="line.114"></a>
-<FONT color="green">115</FONT>         *            The PatternFormatters to generate the text to manipulate.<a name="line.115"></a>
-<FONT color="green">116</FONT>         */<a name="line.116"></a>
-<FONT color="green">117</FONT>        private HighlightConverter(final List&lt;PatternFormatter&gt; formatters, final EnumMap&lt;Level, String&gt; levelStyles) {<a name="line.117"></a>
-<FONT color="green">118</FONT>            super("style", "style");<a name="line.118"></a>
-<FONT color="green">119</FONT>            this.formatters = formatters;<a name="line.119"></a>
-<FONT color="green">120</FONT>            this.levelStyles = levelStyles;<a name="line.120"></a>
-<FONT color="green">121</FONT>        }<a name="line.121"></a>
-<FONT color="green">122</FONT>    <a name="line.122"></a>
-<FONT color="green">123</FONT>        /**<a name="line.123"></a>
-<FONT color="green">124</FONT>         * Creates a level style map where values are ANSI escape sequences given configuration options in<a name="line.124"></a>
-<FONT color="green">125</FONT>         * {@code option[1]}.<a name="line.125"></a>
-<FONT color="green">126</FONT>         * &lt;p/&gt;<a name="line.126"></a>
-<FONT color="green">127</FONT>         * The format of the option string in {@code option[1]} is:<a name="line.127"></a>
-<FONT color="green">128</FONT>         *<a name="line.128"></a>
-<FONT color="green">129</FONT>         * &lt;pre&gt;<a name="line.129"></a>
-<FONT color="green">130</FONT>         * Level1=Value, Level2=Value, ...<a name="line.130"></a>
-<FONT color="green">131</FONT>         * &lt;/pre&gt;<a name="line.131"></a>
-<FONT color="green">132</FONT>         *<a name="line.132"></a>
-<FONT color="green">133</FONT>         * For example:<a name="line.133"></a>
-<FONT color="green">134</FONT>         *<a name="line.134"></a>
-<FONT color="green">135</FONT>         * &lt;pre&gt;<a name="line.135"></a>
-<FONT color="green">136</FONT>         * ERROR=red bold, WARN=yellow bold, INFO=green, ...<a name="line.136"></a>
-<FONT color="green">137</FONT>         * &lt;/pre&gt;<a name="line.137"></a>
-<FONT color="green">138</FONT>         *<a name="line.138"></a>
-<FONT color="green">139</FONT>         * You can use whitespace around the comma and equal sign. The names in values MUST come from the<a name="line.139"></a>
-<FONT color="green">140</FONT>         * {@linkplain AnsiEscape} enum, case is<a name="line.140"></a>
-<FONT color="green">141</FONT>         * normalized to upper-case internally.<a name="line.141"></a>
-<FONT color="green">142</FONT>         *<a name="line.142"></a>
-<FONT color="green">143</FONT>         * @param options<a name="line.143"></a>
-<FONT color="green">144</FONT>         *            The second slot can optionally contain the style map.<a name="line.144"></a>
-<FONT color="green">145</FONT>         * @return a new map<a name="line.145"></a>
-<FONT color="green">146</FONT>         */<a name="line.146"></a>
-<FONT color="green">147</FONT>        private static EnumMap&lt;Level, String&gt; createLevelStyleMap(final String[] options) {<a name="line.147"></a>
-<FONT color="green">148</FONT>            if (options.length &lt; 2) {<a name="line.148"></a>
-<FONT color="green">149</FONT>                return DEFAULT_STYLES;<a name="line.149"></a>
-<FONT color="green">150</FONT>            }<a name="line.150"></a>
-<FONT color="green">151</FONT>            final Map&lt;String, String&gt; styles = AnsiEscape.createMap(options[1], new String[] {STYLE_KEY});<a name="line.151"></a>
-<FONT color="green">152</FONT>            final EnumMap&lt;Level, String&gt; levelStyles = new EnumMap&lt;Level, String&gt;(DEFAULT_STYLES);<a name="line.152"></a>
-<FONT color="green">153</FONT>            for (final Map.Entry&lt;String, String&gt; entry : styles.entrySet()) {<a name="line.153"></a>
-<FONT color="green">154</FONT>                final String key = entry.getKey().toUpperCase(Locale.ENGLISH);<a name="line.154"></a>
-<FONT color="green">155</FONT>                final String value = entry.getValue();<a name="line.155"></a>
-<FONT color="green">156</FONT>                if (STYLE_KEY.equalsIgnoreCase(key)) {<a name="line.156"></a>
-<FONT color="green">157</FONT>                    final EnumMap&lt;Level, String&gt; enumMap = STYLES.get(value.toUpperCase(Locale.ENGLISH));<a name="line.157"></a>
-<FONT color="green">158</FONT>                    if (enumMap == null) {<a name="line.158"></a>
-<FONT color="green">159</FONT>                        LOGGER.error("Unknown level style: " + value + ". Use one of " +<a name="line.159"></a>
-<FONT color="green">160</FONT>                            Arrays.toString(STYLES.keySet().toArray()));<a name="line.160"></a>
-<FONT color="green">161</FONT>                    } else {<a name="line.161"></a>
-<FONT color="green">162</FONT>                        levelStyles.putAll(enumMap);<a name="line.162"></a>
-<FONT color="green">163</FONT>                    }<a name="line.163"></a>
-<FONT color="green">164</FONT>                } else {<a name="line.164"></a>
-<FONT color="green">165</FONT>                    final Level level = Level.valueOf(key);<a name="line.165"></a>
-<FONT color="green">166</FONT>                    if (level == null) {<a name="line.166"></a>
-<FONT color="green">167</FONT>                        LOGGER.error("Unknown level name: " + key + ". Use one of " +<a name="line.167"></a>
-<FONT color="green">168</FONT>                            Arrays.toString(DEFAULT_STYLES.keySet().toArray()));<a name="line.168"></a>
-<FONT color="green">169</FONT>                    } else {<a name="line.169"></a>
-<FONT color="green">170</FONT>                        levelStyles.put(level, value);<a name="line.170"></a>
-<FONT color="green">171</FONT>                    }<a name="line.171"></a>
-<FONT color="green">172</FONT>                }<a name="line.172"></a>
+<FONT color="green">087</FONT>        static {<a name="line.87"></a>
+<FONT color="green">088</FONT>            // Default styles:<a name="line.88"></a>
+<FONT color="green">089</FONT>            DEFAULT_STYLES.put(Level.FATAL, AnsiEscape.createSequence("BRIGHT", "RED"));<a name="line.89"></a>
+<FONT color="green">090</FONT>            DEFAULT_STYLES.put(Level.ERROR, AnsiEscape.createSequence("BRIGHT", "RED"));<a name="line.90"></a>
+<FONT color="green">091</FONT>            DEFAULT_STYLES.put(Level.WARN, AnsiEscape.createSequence("YELLOW"));<a name="line.91"></a>
+<FONT color="green">092</FONT>            DEFAULT_STYLES.put(Level.INFO, AnsiEscape.createSequence("GREEN"));<a name="line.92"></a>
+<FONT color="green">093</FONT>            DEFAULT_STYLES.put(Level.DEBUG, AnsiEscape.createSequence("CYAN"));<a name="line.93"></a>
+<FONT color="green">094</FONT>            DEFAULT_STYLES.put(Level.TRACE, AnsiEscape.createSequence("BLACK"));<a name="line.94"></a>
+<FONT color="green">095</FONT>            // Logback styles:<a name="line.95"></a>
+<FONT color="green">096</FONT>            LOGBACK_STYLES.put(Level.FATAL, AnsiEscape.createSequence("BLINK", "BRIGHT", "RED"));<a name="line.96"></a>
+<FONT color="green">097</FONT>            LOGBACK_STYLES.put(Level.ERROR, AnsiEscape.createSequence("BRIGHT", "RED"));<a name="line.97"></a>
+<FONT color="green">098</FONT>            LOGBACK_STYLES.put(Level.WARN, AnsiEscape.createSequence("RED"));<a name="line.98"></a>
+<FONT color="green">099</FONT>            LOGBACK_STYLES.put(Level.INFO, AnsiEscape.createSequence("BLUE"));<a name="line.99"></a>
+<FONT color="green">100</FONT>            LOGBACK_STYLES.put(Level.DEBUG, AnsiEscape.createSequence((String[]) null));<a name="line.100"></a>
+<FONT color="green">101</FONT>            LOGBACK_STYLES.put(Level.TRACE, AnsiEscape.createSequence((String[]) null));<a name="line.101"></a>
+<FONT color="green">102</FONT>            // Style map:<a name="line.102"></a>
+<FONT color="green">103</FONT>            STYLES.put(STYLE_KEY_DEFAULT, DEFAULT_STYLES);<a name="line.103"></a>
+<FONT color="green">104</FONT>            STYLES.put(STYLE_KEY_LOGBACK, LOGBACK_STYLES);<a name="line.104"></a>
+<FONT color="green">105</FONT>        }<a name="line.105"></a>
+<FONT color="green">106</FONT>    <a name="line.106"></a>
+<FONT color="green">107</FONT>        /**<a name="line.107"></a>
+<FONT color="green">108</FONT>         * Creates a level style map where values are ANSI escape sequences given configuration options in<a name="line.108"></a>
+<FONT color="green">109</FONT>         * {@code option[1]}.<a name="line.109"></a>
+<FONT color="green">110</FONT>         * &lt;p/&gt;<a name="line.110"></a>
+<FONT color="green">111</FONT>         * The format of the option string in {@code option[1]} is:<a name="line.111"></a>
+<FONT color="green">112</FONT>         *<a name="line.112"></a>
+<FONT color="green">113</FONT>         * &lt;pre&gt;<a name="line.113"></a>
+<FONT color="green">114</FONT>         * Level1=Value, Level2=Value, ...<a name="line.114"></a>
+<FONT color="green">115</FONT>         * &lt;/pre&gt;<a name="line.115"></a>
+<FONT color="green">116</FONT>         *<a name="line.116"></a>
+<FONT color="green">117</FONT>         * For example:<a name="line.117"></a>
+<FONT color="green">118</FONT>         *<a name="line.118"></a>
+<FONT color="green">119</FONT>         * &lt;pre&gt;<a name="line.119"></a>
+<FONT color="green">120</FONT>         * ERROR=red bold, WARN=yellow bold, INFO=green, ...<a name="line.120"></a>
+<FONT color="green">121</FONT>         * &lt;/pre&gt;<a name="line.121"></a>
+<FONT color="green">122</FONT>         *<a name="line.122"></a>
+<FONT color="green">123</FONT>         * You can use whitespace around the comma and equal sign. The names in values MUST come from the<a name="line.123"></a>
+<FONT color="green">124</FONT>         * {@linkplain AnsiEscape} enum, case is<a name="line.124"></a>
+<FONT color="green">125</FONT>         * normalized to upper-case internally.<a name="line.125"></a>
+<FONT color="green">126</FONT>         *<a name="line.126"></a>
+<FONT color="green">127</FONT>         * @param options<a name="line.127"></a>
+<FONT color="green">128</FONT>         *            The second slot can optionally contain the style map.<a name="line.128"></a>
+<FONT color="green">129</FONT>         * @return a new map<a name="line.129"></a>
+<FONT color="green">130</FONT>         */<a name="line.130"></a>
+<FONT color="green">131</FONT>        private static EnumMap&lt;Level, String&gt; createLevelStyleMap(final String[] options) {<a name="line.131"></a>
+<FONT color="green">132</FONT>            if (options.length &lt; 2) {<a name="line.132"></a>
+<FONT color="green">133</FONT>                return DEFAULT_STYLES;<a name="line.133"></a>
+<FONT color="green">134</FONT>            }<a name="line.134"></a>
+<FONT color="green">135</FONT>            final Map&lt;String, String&gt; styles = AnsiEscape.createMap(options[1], new String[] {STYLE_KEY});<a name="line.135"></a>
+<FONT color="green">136</FONT>            final EnumMap&lt;Level, String&gt; levelStyles = new EnumMap&lt;Level, String&gt;(DEFAULT_STYLES);<a name="line.136"></a>
+<FONT color="green">137</FONT>            for (final Map.Entry&lt;String, String&gt; entry : styles.entrySet()) {<a name="line.137"></a>
+<FONT color="green">138</FONT>                final String key = entry.getKey().toUpperCase(Locale.ENGLISH);<a name="line.138"></a>
+<FONT color="green">139</FONT>                final String value = entry.getValue();<a name="line.139"></a>
+<FONT color="green">140</FONT>                if (STYLE_KEY.equalsIgnoreCase(key)) {<a name="line.140"></a>
+<FONT color="green">141</FONT>                    final EnumMap&lt;Level, String&gt; enumMap = STYLES.get(value.toUpperCase(Locale.ENGLISH));<a name="line.141"></a>
+<FONT color="green">142</FONT>                    if (enumMap == null) {<a name="line.142"></a>
+<FONT color="green">143</FONT>                        LOGGER.error("Unknown level style: " + value + ". Use one of " +<a name="line.143"></a>
+<FONT color="green">144</FONT>                            Arrays.toString(STYLES.keySet().toArray()));<a name="line.144"></a>
+<FONT color="green">145</FONT>                    } else {<a name="line.145"></a>
+<FONT color="green">146</FONT>                        levelStyles.putAll(enumMap);<a name="line.146"></a>
+<FONT color="green">147</FONT>                    }<a name="line.147"></a>
+<FONT color="green">148</FONT>                } else {<a name="line.148"></a>
+<FONT color="green">149</FONT>                    final Level level = Level.valueOf(key);<a name="line.149"></a>
+<FONT color="green">150</FONT>                    if (level == null) {<a name="line.150"></a>
+<FONT color="green">151</FONT>                        LOGGER.error("Unknown level name: " + key + ". Use one of " +<a name="line.151"></a>
+<FONT color="green">152</FONT>                            Arrays.toString(DEFAULT_STYLES.keySet().toArray()));<a name="line.152"></a>
+<FONT color="green">153</FONT>                    } else {<a name="line.153"></a>
+<FONT color="green">154</FONT>                        levelStyles.put(level, value);<a name="line.154"></a>
+<FONT color="green">155</FONT>                    }<a name="line.155"></a>
+<FONT color="green">156</FONT>                }<a name="line.156"></a>
+<FONT color="green">157</FONT>            }<a name="line.157"></a>
+<FONT color="green">158</FONT>            return levelStyles;<a name="line.158"></a>
+<FONT color="green">159</FONT>        }<a name="line.159"></a>
+<FONT color="green">160</FONT>    <a name="line.160"></a>
+<FONT color="green">161</FONT>        /**<a name="line.161"></a>
+<FONT color="green">162</FONT>         * Gets an instance of the class.<a name="line.162"></a>
+<FONT color="green">163</FONT>         *<a name="line.163"></a>
+<FONT color="green">164</FONT>         * @param config The current Configuration.<a name="line.164"></a>
+<FONT color="green">165</FONT>         * @param options pattern options, may be null. If first element is "short", only the first line of the<a name="line.165"></a>
+<FONT color="green">166</FONT>         *                throwable will be formatted.<a name="line.166"></a>
+<FONT color="green">167</FONT>         * @return instance of class.<a name="line.167"></a>
+<FONT color="green">168</FONT>         */<a name="line.168"></a>
+<FONT color="green">169</FONT>        public static HighlightConverter newInstance(final Configuration config, final String[] options) {<a name="line.169"></a>
+<FONT color="green">170</FONT>            if (options.length &lt; 1) {<a name="line.170"></a>
+<FONT color="green">171</FONT>                LOGGER.error("Incorrect number of options on style. Expected at least 1, received " + options.length);<a name="line.171"></a>
+<FONT color="green">172</FONT>                return null;<a name="line.172"></a>
 <FONT color="green">173</FONT>            }<a name="line.173"></a>
-<FONT color="green">174</FONT>            return levelStyles;<a name="line.174"></a>
-<FONT color="green">175</FONT>        }<a name="line.175"></a>
-<FONT color="green">176</FONT>    <a name="line.176"></a>
-<FONT color="green">177</FONT>        /**<a name="line.177"></a>
-<FONT color="green">178</FONT>         * Gets an instance of the class.<a name="line.178"></a>
-<FONT color="green">179</FONT>         *<a name="line.179"></a>
-<FONT color="green">180</FONT>         * @param config The current Configuration.<a name="line.180"></a>
-<FONT color="green">181</FONT>         * @param options pattern options, may be null. If first element is "short", only the first line of the<a name="line.181"></a>
-<FONT color="green">182</FONT>         *                throwable will be formatted.<a name="line.182"></a>
-<FONT color="green">183</FONT>         * @return instance of class.<a name="line.183"></a>
-<FONT color="green">184</FONT>         */<a name="line.184"></a>
-<FONT color="green">185</FONT>        public static HighlightConverter newInstance(final Configuration config, final String[] options) {<a name="line.185"></a>
-<FONT color="green">186</FONT>            if (options.length &lt; 1) {<a name="line.186"></a>
-<FONT color="green">187</FONT>                LOGGER.error("Incorrect number of options on style. Expected at least 1, received " + options.length);<a name="line.187"></a>
-<FONT color="green">188</FONT>                return null;<a name="line.188"></a>
-<FONT color="green">189</FONT>            }<a name="line.189"></a>
-<FONT color="green">190</FONT>            if (options[0] == null) {<a name="line.190"></a>
-<FONT color="green">191</FONT>                LOGGER.error("No pattern supplied on style");<a name="line.191"></a>
-<FONT color="green">192</FONT>                return null;<a name="line.192"></a>
-<FONT color="green">193</FONT>            }<a name="line.193"></a>
-<FONT color="green">194</FONT>            final PatternParser parser = PatternLayout.createPatternParser(config);<a name="line.194"></a>
-<FONT color="green">195</FONT>            final List&lt;PatternFormatter&gt; formatters = parser.parse(options[0]);<a name="line.195"></a>
-<FONT color="green">196</FONT>            return new HighlightConverter(formatters, createLevelStyleMap(options));<a name="line.196"></a>
+<FONT color="green">174</FONT>            if (options[0] == null) {<a name="line.174"></a>
+<FONT color="green">175</FONT>                LOGGER.error("No pattern supplied on style");<a name="line.175"></a>
+<FONT color="green">176</FONT>                return null;<a name="line.176"></a>
+<FONT color="green">177</FONT>            }<a name="line.177"></a>
+<FONT color="green">178</FONT>            final PatternParser parser = PatternLayout.createPatternParser(config);<a name="line.178"></a>
+<FONT color="green">179</FONT>            final List&lt;PatternFormatter&gt; formatters = parser.parse(options[0]);<a name="line.179"></a>
+<FONT color="green">180</FONT>            return new HighlightConverter(formatters, createLevelStyleMap(options));<a name="line.180"></a>
+<FONT color="green">181</FONT>        }<a name="line.181"></a>
+<FONT color="green">182</FONT>    <a name="line.182"></a>
+<FONT color="green">183</FONT>        private final EnumMap&lt;Level, String&gt; levelStyles;<a name="line.183"></a>
+<FONT color="green">184</FONT>    <a name="line.184"></a>
+<FONT color="green">185</FONT>        private final List&lt;PatternFormatter&gt; patternFormatters;<a name="line.185"></a>
+<FONT color="green">186</FONT>    <a name="line.186"></a>
+<FONT color="green">187</FONT>        /**<a name="line.187"></a>
+<FONT color="green">188</FONT>         * Construct the converter.<a name="line.188"></a>
+<FONT color="green">189</FONT>         *<a name="line.189"></a>
+<FONT color="green">190</FONT>         * @param patternFormatters<a name="line.190"></a>
+<FONT color="green">191</FONT>         *            The PatternFormatters to generate the text to manipulate.<a name="line.191"></a>
+<FONT color="green">192</FONT>         */<a name="line.192"></a>
+<FONT color="green">193</FONT>        private HighlightConverter(final List&lt;PatternFormatter&gt; patternFormatters, final EnumMap&lt;Level, String&gt; levelStyles) {<a name="line.193"></a>
+<FONT color="green">194</FONT>            super("style", "style");<a name="line.194"></a>
+<FONT color="green">195</FONT>            this.patternFormatters = patternFormatters;<a name="line.195"></a>
+<FONT color="green">196</FONT>            this.levelStyles = levelStyles;<a name="line.196"></a>
 <FONT color="green">197</FONT>        }<a name="line.197"></a>
 <FONT color="green">198</FONT>    <a name="line.198"></a>
 <FONT color="green">199</FONT>        /**<a name="line.199"></a>
@@ -205,7 +205,7 @@
 <FONT color="green">202</FONT>        @Override<a name="line.202"></a>
 <FONT color="green">203</FONT>        public void format(final LogEvent event, final StringBuilder toAppendTo) {<a name="line.203"></a>
 <FONT color="green">204</FONT>            final StringBuilder buf = new StringBuilder();<a name="line.204"></a>
-<FONT color="green">205</FONT>            for (final PatternFormatter formatter : formatters) {<a name="line.205"></a>
+<FONT color="green">205</FONT>            for (final PatternFormatter formatter : patternFormatters) {<a name="line.205"></a>
 <FONT color="green">206</FONT>                formatter.format(event, buf);<a name="line.206"></a>
 <FONT color="green">207</FONT>            }<a name="line.207"></a>
 <FONT color="green">208</FONT>    <a name="line.208"></a>
@@ -214,7 +214,17 @@
 <FONT color="green">211</FONT>                    append(AnsiEscape.getDefaultStyle());<a name="line.211"></a>
 <FONT color="green">212</FONT>            }<a name="line.212"></a>
 <FONT color="green">213</FONT>        }<a name="line.213"></a>
-<FONT color="green">214</FONT>    }<a name="line.214"></a>
+<FONT color="green">214</FONT>    <a name="line.214"></a>
+<FONT color="green">215</FONT>        @Override<a name="line.215"></a>
+<FONT color="green">216</FONT>        public boolean handlesThrowable() {<a name="line.216"></a>
+<FONT color="green">217</FONT>            for (final PatternFormatter formatter : patternFormatters) {<a name="line.217"></a>
+<FONT color="green">218</FONT>                if (formatter .handlesThrowable()) {<a name="line.218"></a>
+<FONT color="green">219</FONT>                    return true;<a name="line.219"></a>
+<FONT color="green">220</FONT>                }<a name="line.220"></a>
+<FONT color="green">221</FONT>            }<a name="line.221"></a>
+<FONT color="green">222</FONT>            return false;<a name="line.222"></a>
+<FONT color="green">223</FONT>        }<a name="line.223"></a>
+<FONT color="green">224</FONT>    }<a name="line.224"></a>
 
 
 

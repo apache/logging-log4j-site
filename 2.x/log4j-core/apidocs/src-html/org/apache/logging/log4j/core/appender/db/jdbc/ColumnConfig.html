@@ -22,7 +22,7 @@
 <FONT color="green">019</FONT>    import org.apache.logging.log4j.Logger;<a name="line.19"></a>
 <FONT color="green">020</FONT>    import org.apache.logging.log4j.core.config.Configuration;<a name="line.20"></a>
 <FONT color="green">021</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.21"></a>
-<FONT color="green">022</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttr;<a name="line.22"></a>
+<FONT color="green">022</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.22"></a>
 <FONT color="green">023</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;<a name="line.23"></a>
 <FONT color="green">024</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.24"></a>
 <FONT color="green">025</FONT>    import org.apache.logging.log4j.core.helpers.Booleans;<a name="line.25"></a>
@@ -101,46 +101,47 @@
 <FONT color="green">098</FONT>         * @return the created column config.<a name="line.98"></a>
 <FONT color="green">099</FONT>         */<a name="line.99"></a>
 <FONT color="green">100</FONT>        @PluginFactory<a name="line.100"></a>
-<FONT color="green">101</FONT>        public static ColumnConfig createColumnConfig(@PluginConfiguration final Configuration config,<a name="line.101"></a>
-<FONT color="green">102</FONT>                                                      @PluginAttr("name") final String name,<a name="line.102"></a>
-<FONT color="green">103</FONT>                                                      @PluginAttr("pattern") final String pattern,<a name="line.103"></a>
-<FONT color="green">104</FONT>                                                      @PluginAttr("literal") final String literalValue,<a name="line.104"></a>
-<FONT color="green">105</FONT>                                                      @PluginAttr("isEventTimestamp") final String eventTimestamp,<a name="line.105"></a>
-<FONT color="green">106</FONT>                                                      @PluginAttr("isUnicode") final String unicode,<a name="line.106"></a>
-<FONT color="green">107</FONT>                                                      @PluginAttr("isClob") final String clob) {<a name="line.107"></a>
-<FONT color="green">108</FONT>            if (Strings.isEmpty(name)) {<a name="line.108"></a>
-<FONT color="green">109</FONT>                LOGGER.error("The column config is not valid because it does not contain a column name.");<a name="line.109"></a>
-<FONT color="green">110</FONT>                return null;<a name="line.110"></a>
-<FONT color="green">111</FONT>            }<a name="line.111"></a>
-<FONT color="green">112</FONT>    <a name="line.112"></a>
-<FONT color="green">113</FONT>            final boolean isPattern = Strings.isNotEmpty(pattern);<a name="line.113"></a>
-<FONT color="green">114</FONT>            final boolean isLiteralValue = Strings.isNotEmpty(literalValue);<a name="line.114"></a>
-<FONT color="green">115</FONT>            final boolean isEventTimestamp = Boolean.parseBoolean(eventTimestamp);<a name="line.115"></a>
-<FONT color="green">116</FONT>            final boolean isUnicode = Booleans.parseBoolean(unicode, true);<a name="line.116"></a>
-<FONT color="green">117</FONT>            final boolean isClob = Boolean.parseBoolean(clob);<a name="line.117"></a>
-<FONT color="green">118</FONT>    <a name="line.118"></a>
-<FONT color="green">119</FONT>            if ((isPattern &amp;&amp; isLiteralValue) || (isPattern &amp;&amp; isEventTimestamp) || (isLiteralValue &amp;&amp; isEventTimestamp)) {<a name="line.119"></a>
-<FONT color="green">120</FONT>                LOGGER.error("The pattern, literal, and isEventTimestamp attributes are mutually exclusive.");<a name="line.120"></a>
-<FONT color="green">121</FONT>                return null;<a name="line.121"></a>
-<FONT color="green">122</FONT>            }<a name="line.122"></a>
-<FONT color="green">123</FONT>    <a name="line.123"></a>
-<FONT color="green">124</FONT>            if (isEventTimestamp) {<a name="line.124"></a>
-<FONT color="green">125</FONT>                return new ColumnConfig(name, null, null, true, false, false);<a name="line.125"></a>
-<FONT color="green">126</FONT>            }<a name="line.126"></a>
-<FONT color="green">127</FONT>            if (isLiteralValue) {<a name="line.127"></a>
-<FONT color="green">128</FONT>                return new ColumnConfig(name, null, literalValue, false, false, false);<a name="line.128"></a>
-<FONT color="green">129</FONT>            }<a name="line.129"></a>
-<FONT color="green">130</FONT>            if (isPattern) {<a name="line.130"></a>
-<FONT color="green">131</FONT>                return new ColumnConfig(<a name="line.131"></a>
-<FONT color="green">132</FONT>                        name, PatternLayout.createLayout(pattern, config, null, null, "true"), null, false, isUnicode,<a name="line.132"></a>
-<FONT color="green">133</FONT>                        isClob<a name="line.133"></a>
-<FONT color="green">134</FONT>                );<a name="line.134"></a>
-<FONT color="green">135</FONT>            }<a name="line.135"></a>
-<FONT color="green">136</FONT>    <a name="line.136"></a>
-<FONT color="green">137</FONT>            LOGGER.error("To configure a column you must specify a pattern or literal or set isEventDate to true.");<a name="line.137"></a>
-<FONT color="green">138</FONT>            return null;<a name="line.138"></a>
-<FONT color="green">139</FONT>        }<a name="line.139"></a>
-<FONT color="green">140</FONT>    }<a name="line.140"></a>
+<FONT color="green">101</FONT>        public static ColumnConfig createColumnConfig(<a name="line.101"></a>
+<FONT color="green">102</FONT>                @PluginConfiguration final Configuration config,<a name="line.102"></a>
+<FONT color="green">103</FONT>                @PluginAttribute("name") final String name,<a name="line.103"></a>
+<FONT color="green">104</FONT>                @PluginAttribute("pattern") final String pattern,<a name="line.104"></a>
+<FONT color="green">105</FONT>                @PluginAttribute("literal") final String literalValue,<a name="line.105"></a>
+<FONT color="green">106</FONT>                @PluginAttribute("isEventTimestamp") final String eventTimestamp,<a name="line.106"></a>
+<FONT color="green">107</FONT>                @PluginAttribute("isUnicode") final String unicode,<a name="line.107"></a>
+<FONT color="green">108</FONT>                @PluginAttribute("isClob") final String clob) {<a name="line.108"></a>
+<FONT color="green">109</FONT>            if (Strings.isEmpty(name)) {<a name="line.109"></a>
+<FONT color="green">110</FONT>                LOGGER.error("The column config is not valid because it does not contain a column name.");<a name="line.110"></a>
+<FONT color="green">111</FONT>                return null;<a name="line.111"></a>
+<FONT color="green">112</FONT>            }<a name="line.112"></a>
+<FONT color="green">113</FONT>    <a name="line.113"></a>
+<FONT color="green">114</FONT>            final boolean isPattern = Strings.isNotEmpty(pattern);<a name="line.114"></a>
+<FONT color="green">115</FONT>            final boolean isLiteralValue = Strings.isNotEmpty(literalValue);<a name="line.115"></a>
+<FONT color="green">116</FONT>            final boolean isEventTimestamp = Boolean.parseBoolean(eventTimestamp);<a name="line.116"></a>
+<FONT color="green">117</FONT>            final boolean isUnicode = Booleans.parseBoolean(unicode, true);<a name="line.117"></a>
+<FONT color="green">118</FONT>            final boolean isClob = Boolean.parseBoolean(clob);<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>            if ((isPattern &amp;&amp; isLiteralValue) || (isPattern &amp;&amp; isEventTimestamp) || (isLiteralValue &amp;&amp; isEventTimestamp)) {<a name="line.120"></a>
+<FONT color="green">121</FONT>                LOGGER.error("The pattern, literal, and isEventTimestamp attributes are mutually exclusive.");<a name="line.121"></a>
+<FONT color="green">122</FONT>                return null;<a name="line.122"></a>
+<FONT color="green">123</FONT>            }<a name="line.123"></a>
+<FONT color="green">124</FONT>    <a name="line.124"></a>
+<FONT color="green">125</FONT>            if (isEventTimestamp) {<a name="line.125"></a>
+<FONT color="green">126</FONT>                return new ColumnConfig(name, null, null, true, false, false);<a name="line.126"></a>
+<FONT color="green">127</FONT>            }<a name="line.127"></a>
+<FONT color="green">128</FONT>            if (isLiteralValue) {<a name="line.128"></a>
+<FONT color="green">129</FONT>                return new ColumnConfig(name, null, literalValue, false, false, false);<a name="line.129"></a>
+<FONT color="green">130</FONT>            }<a name="line.130"></a>
+<FONT color="green">131</FONT>            if (isPattern) {<a name="line.131"></a>
+<FONT color="green">132</FONT>                return new ColumnConfig(<a name="line.132"></a>
+<FONT color="green">133</FONT>                        name, PatternLayout.createLayout(pattern, config, null, null, "false"), null, false, isUnicode,<a name="line.133"></a>
+<FONT color="green">134</FONT>                        isClob<a name="line.134"></a>
+<FONT color="green">135</FONT>                );<a name="line.135"></a>
+<FONT color="green">136</FONT>            }<a name="line.136"></a>
+<FONT color="green">137</FONT>    <a name="line.137"></a>
+<FONT color="green">138</FONT>            LOGGER.error("To configure a column you must specify a pattern or literal or set isEventDate to true.");<a name="line.138"></a>
+<FONT color="green">139</FONT>            return null;<a name="line.139"></a>
+<FONT color="green">140</FONT>        }<a name="line.140"></a>
+<FONT color="green">141</FONT>    }<a name="line.141"></a>
 
 
 
