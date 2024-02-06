@@ -50,16 +50,16 @@
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 7869000638091304316L;
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Marker EVENT_MARKER = MarkerFactory.getMarker(<span class="jxr_string">"EVENT"</span>);
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> eventLogger;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">transient</strong> ExtendedLogger logger;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String name;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">transient</strong> <a href="../../../../org/apache/logging/slf4j/EventDataConverter.html">EventDataConverter</a> converter;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/apache/logging/slf4j/Log4jLogger.html">Log4jLogger</a>(<strong class="jxr_keyword">final</strong> ExtendedLogger logger, <strong class="jxr_keyword">final</strong> String name) {
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">this</strong>.logger = logger;
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>          <strong class="jxr_keyword">this</strong>.eventLogger = <span class="jxr_string">"EventLogger"</span>.equals(name);
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>          <strong class="jxr_keyword">this</strong>.name = name;
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">this</strong>.converter = createConverter();
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/apache/logging/slf4j/EventDataConverter.html">EventDataConverter</a> CONVERTER = createConverter();
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> eventLogger;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">transient</strong> ExtendedLogger logger;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String name;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/apache/logging/slf4j/Log4jLogger.html">Log4jLogger</a>(<strong class="jxr_keyword">final</strong> ExtendedLogger logger, <strong class="jxr_keyword">final</strong> String name) {
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>          <strong class="jxr_keyword">this</strong>.logger = logger;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>          <strong class="jxr_keyword">this</strong>.eventLogger = <span class="jxr_string">"EventLogger"</span>.equals(name);
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">this</strong>.name = name;
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      }
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      @Override
@@ -371,8 +371,8 @@
 <a class="jxr_linenumber" name="L363" href="#L363">363</a>             <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L364" href="#L364">364</a>         }
 <a class="jxr_linenumber" name="L365" href="#L365">365</a>         <strong class="jxr_keyword">final</strong> Message msg;
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>         <strong class="jxr_keyword">if</strong> (eventLogger &amp;&amp; marker != <strong class="jxr_keyword">null</strong> &amp;&amp; marker.contains(EVENT_MARKER) &amp;&amp; converter != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>             msg = converter.convertEvent(message, params, throwable);
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>         <strong class="jxr_keyword">if</strong> (CONVERTER != <strong class="jxr_keyword">null</strong> &amp;&amp; eventLogger &amp;&amp; marker != <strong class="jxr_keyword">null</strong> &amp;&amp; marker.contains(EVENT_MARKER)) {
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>             msg = CONVERTER.convertEvent(message, params, throwable);
 <a class="jxr_linenumber" name="L368" href="#L368">368</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (params == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L369" href="#L369">369</a>             msg = <strong class="jxr_keyword">new</strong> SimpleMessage(message);
 <a class="jxr_linenumber" name="L370" href="#L370">370</a>         } <strong class="jxr_keyword">else</strong> {
@@ -408,44 +408,43 @@
 <a class="jxr_linenumber" name="L400" href="#L400">400</a>         <em class="jxr_comment">// always perform the default de-serialization first</em>
 <a class="jxr_linenumber" name="L401" href="#L401">401</a>         aInputStream.defaultReadObject();
 <a class="jxr_linenumber" name="L402" href="#L402">402</a>         logger = LogManager.getContext().getLogger(name);
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>         converter = createConverter();
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>     }
-<a class="jxr_linenumber" name="L405" href="#L405">405</a> 
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L407" href="#L407">407</a> <em class="jxr_javadoccomment">     * This is the default implementation of writeObject. Customise if necessary.</em>
-<a class="jxr_linenumber" name="L408" href="#L408">408</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> writeObject(<strong class="jxr_keyword">final</strong> ObjectOutputStream aOutputStream) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>         <em class="jxr_comment">// perform the default serialization for all non-transient, non-static fields</em>
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>         aOutputStream.defaultWriteObject();
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>     }
-<a class="jxr_linenumber" name="L413" href="#L413">413</a> 
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/slf4j/EventDataConverter.html">EventDataConverter</a> createConverter() {
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>             LoaderUtil.loadClass(<span class="jxr_string">"org.slf4j.ext.EventData"</span>);
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/apache/logging/slf4j/EventDataConverter.html">EventDataConverter</a>();
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> ClassNotFoundException cnfe) {
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>         }
-<a class="jxr_linenumber" name="L421" href="#L421">421</a>     }
-<a class="jxr_linenumber" name="L422" href="#L422">422</a> 
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Level getLevel(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> i) {
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>         <strong class="jxr_keyword">switch</strong> (i) {
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>         <strong class="jxr_keyword">case</strong> TRACE_INT:
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>             <strong class="jxr_keyword">return</strong> Level.TRACE;
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>         <strong class="jxr_keyword">case</strong> DEBUG_INT:
-<a class="jxr_linenumber" name="L428" href="#L428">428</a>             <strong class="jxr_keyword">return</strong> Level.DEBUG;
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>         <strong class="jxr_keyword">case</strong> INFO_INT:
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>             <strong class="jxr_keyword">return</strong> Level.INFO;
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>         <strong class="jxr_keyword">case</strong> WARN_INT:
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>             <strong class="jxr_keyword">return</strong> Level.WARN;
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>         <strong class="jxr_keyword">case</strong> ERROR_INT:
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>             <strong class="jxr_keyword">return</strong> Level.ERROR;
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>         }
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>         <strong class="jxr_keyword">return</strong> Level.ERROR;
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>     }
-<a class="jxr_linenumber" name="L438" href="#L438">438</a> }
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>     }
+<a class="jxr_linenumber" name="L404" href="#L404">404</a> 
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L406" href="#L406">406</a> <em class="jxr_javadoccomment">     * This is the default implementation of writeObject. Customise if necessary.</em>
+<a class="jxr_linenumber" name="L407" href="#L407">407</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> writeObject(<strong class="jxr_keyword">final</strong> ObjectOutputStream aOutputStream) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>         <em class="jxr_comment">// perform the default serialization for all non-transient, non-static fields</em>
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>         aOutputStream.defaultWriteObject();
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>     }
+<a class="jxr_linenumber" name="L412" href="#L412">412</a> 
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/apache/logging/slf4j/EventDataConverter.html">EventDataConverter</a> createConverter() {
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>             LoaderUtil.loadClass(<span class="jxr_string">"org.slf4j.ext.EventData"</span>);
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/apache/logging/slf4j/EventDataConverter.html">EventDataConverter</a>();
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> ClassNotFoundException cnfe) {
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L419" href="#L419">419</a>         }
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>     }
+<a class="jxr_linenumber" name="L421" href="#L421">421</a> 
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Level getLevel(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> i) {
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>         <strong class="jxr_keyword">switch</strong> (i) {
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>         <strong class="jxr_keyword">case</strong> TRACE_INT:
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>             <strong class="jxr_keyword">return</strong> Level.TRACE;
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>         <strong class="jxr_keyword">case</strong> DEBUG_INT:
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>             <strong class="jxr_keyword">return</strong> Level.DEBUG;
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>         <strong class="jxr_keyword">case</strong> INFO_INT:
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>             <strong class="jxr_keyword">return</strong> Level.INFO;
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>         <strong class="jxr_keyword">case</strong> WARN_INT:
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>             <strong class="jxr_keyword">return</strong> Level.WARN;
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>         <strong class="jxr_keyword">case</strong> ERROR_INT:
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>             <strong class="jxr_keyword">return</strong> Level.ERROR;
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>         }
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>         <strong class="jxr_keyword">return</strong> Level.ERROR;
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>     }
+<a class="jxr_linenumber" name="L437" href="#L437">437</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2020 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

@@ -50,16 +50,16 @@
 <span class="sourceLineNo">042</span><a name="line.42"></a>
 <span class="sourceLineNo">043</span>    private static final long serialVersionUID = 7869000638091304316L;<a name="line.43"></a>
 <span class="sourceLineNo">044</span>    private static final Marker EVENT_MARKER = MarkerFactory.getMarker("EVENT");<a name="line.44"></a>
-<span class="sourceLineNo">045</span>    private final boolean eventLogger;<a name="line.45"></a>
-<span class="sourceLineNo">046</span>    private transient ExtendedLogger logger;<a name="line.46"></a>
-<span class="sourceLineNo">047</span>    private final String name;<a name="line.47"></a>
-<span class="sourceLineNo">048</span>    private transient EventDataConverter converter;<a name="line.48"></a>
-<span class="sourceLineNo">049</span><a name="line.49"></a>
-<span class="sourceLineNo">050</span>    public Log4jLogger(final ExtendedLogger logger, final String name) {<a name="line.50"></a>
-<span class="sourceLineNo">051</span>        this.logger = logger;<a name="line.51"></a>
-<span class="sourceLineNo">052</span>        this.eventLogger = "EventLogger".equals(name);<a name="line.52"></a>
-<span class="sourceLineNo">053</span>        this.name = name;<a name="line.53"></a>
-<span class="sourceLineNo">054</span>        this.converter = createConverter();<a name="line.54"></a>
+<span class="sourceLineNo">045</span>    private static final EventDataConverter CONVERTER = createConverter();<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>    private final boolean eventLogger;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>    private transient ExtendedLogger logger;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>    private final String name;<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>    public Log4jLogger(final ExtendedLogger logger, final String name) {<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        this.logger = logger;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>        this.eventLogger = "EventLogger".equals(name);<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        this.name = name;<a name="line.54"></a>
 <span class="sourceLineNo">055</span>    }<a name="line.55"></a>
 <span class="sourceLineNo">056</span><a name="line.56"></a>
 <span class="sourceLineNo">057</span>    @Override<a name="line.57"></a>
@@ -371,8 +371,8 @@
 <span class="sourceLineNo">363</span>            return;<a name="line.363"></a>
 <span class="sourceLineNo">364</span>        }<a name="line.364"></a>
 <span class="sourceLineNo">365</span>        final Message msg;<a name="line.365"></a>
-<span class="sourceLineNo">366</span>        if (eventLogger &amp;&amp; marker != null &amp;&amp; marker.contains(EVENT_MARKER) &amp;&amp; converter != null) {<a name="line.366"></a>
-<span class="sourceLineNo">367</span>            msg = converter.convertEvent(message, params, throwable);<a name="line.367"></a>
+<span class="sourceLineNo">366</span>        if (CONVERTER != null &amp;&amp; eventLogger &amp;&amp; marker != null &amp;&amp; marker.contains(EVENT_MARKER)) {<a name="line.366"></a>
+<span class="sourceLineNo">367</span>            msg = CONVERTER.convertEvent(message, params, throwable);<a name="line.367"></a>
 <span class="sourceLineNo">368</span>        } else if (params == null) {<a name="line.368"></a>
 <span class="sourceLineNo">369</span>            msg = new SimpleMessage(message);<a name="line.369"></a>
 <span class="sourceLineNo">370</span>        } else {<a name="line.370"></a>
@@ -408,42 +408,41 @@
 <span class="sourceLineNo">400</span>        // always perform the default de-serialization first<a name="line.400"></a>
 <span class="sourceLineNo">401</span>        aInputStream.defaultReadObject();<a name="line.401"></a>
 <span class="sourceLineNo">402</span>        logger = LogManager.getContext().getLogger(name);<a name="line.402"></a>
-<span class="sourceLineNo">403</span>        converter = createConverter();<a name="line.403"></a>
-<span class="sourceLineNo">404</span>    }<a name="line.404"></a>
-<span class="sourceLineNo">405</span><a name="line.405"></a>
-<span class="sourceLineNo">406</span>    /**<a name="line.406"></a>
-<span class="sourceLineNo">407</span>     * This is the default implementation of writeObject. Customise if necessary.<a name="line.407"></a>
-<span class="sourceLineNo">408</span>     */<a name="line.408"></a>
-<span class="sourceLineNo">409</span>    private void writeObject(final ObjectOutputStream aOutputStream) throws IOException {<a name="line.409"></a>
-<span class="sourceLineNo">410</span>        // perform the default serialization for all non-transient, non-static fields<a name="line.410"></a>
-<span class="sourceLineNo">411</span>        aOutputStream.defaultWriteObject();<a name="line.411"></a>
-<span class="sourceLineNo">412</span>    }<a name="line.412"></a>
-<span class="sourceLineNo">413</span><a name="line.413"></a>
-<span class="sourceLineNo">414</span>    private static EventDataConverter createConverter() {<a name="line.414"></a>
-<span class="sourceLineNo">415</span>        try {<a name="line.415"></a>
-<span class="sourceLineNo">416</span>            LoaderUtil.loadClass("org.slf4j.ext.EventData");<a name="line.416"></a>
-<span class="sourceLineNo">417</span>            return new EventDataConverter();<a name="line.417"></a>
-<span class="sourceLineNo">418</span>        } catch (final ClassNotFoundException cnfe) {<a name="line.418"></a>
-<span class="sourceLineNo">419</span>            return null;<a name="line.419"></a>
-<span class="sourceLineNo">420</span>        }<a name="line.420"></a>
-<span class="sourceLineNo">421</span>    }<a name="line.421"></a>
-<span class="sourceLineNo">422</span><a name="line.422"></a>
-<span class="sourceLineNo">423</span>    private static Level getLevel(final int i) {<a name="line.423"></a>
-<span class="sourceLineNo">424</span>        switch (i) {<a name="line.424"></a>
-<span class="sourceLineNo">425</span>        case TRACE_INT:<a name="line.425"></a>
-<span class="sourceLineNo">426</span>            return Level.TRACE;<a name="line.426"></a>
-<span class="sourceLineNo">427</span>        case DEBUG_INT:<a name="line.427"></a>
-<span class="sourceLineNo">428</span>            return Level.DEBUG;<a name="line.428"></a>
-<span class="sourceLineNo">429</span>        case INFO_INT:<a name="line.429"></a>
-<span class="sourceLineNo">430</span>            return Level.INFO;<a name="line.430"></a>
-<span class="sourceLineNo">431</span>        case WARN_INT:<a name="line.431"></a>
-<span class="sourceLineNo">432</span>            return Level.WARN;<a name="line.432"></a>
-<span class="sourceLineNo">433</span>        case ERROR_INT:<a name="line.433"></a>
-<span class="sourceLineNo">434</span>            return Level.ERROR;<a name="line.434"></a>
-<span class="sourceLineNo">435</span>        }<a name="line.435"></a>
-<span class="sourceLineNo">436</span>        return Level.ERROR;<a name="line.436"></a>
-<span class="sourceLineNo">437</span>    }<a name="line.437"></a>
-<span class="sourceLineNo">438</span>}<a name="line.438"></a>
+<span class="sourceLineNo">403</span>    }<a name="line.403"></a>
+<span class="sourceLineNo">404</span><a name="line.404"></a>
+<span class="sourceLineNo">405</span>    /**<a name="line.405"></a>
+<span class="sourceLineNo">406</span>     * This is the default implementation of writeObject. Customise if necessary.<a name="line.406"></a>
+<span class="sourceLineNo">407</span>     */<a name="line.407"></a>
+<span class="sourceLineNo">408</span>    private void writeObject(final ObjectOutputStream aOutputStream) throws IOException {<a name="line.408"></a>
+<span class="sourceLineNo">409</span>        // perform the default serialization for all non-transient, non-static fields<a name="line.409"></a>
+<span class="sourceLineNo">410</span>        aOutputStream.defaultWriteObject();<a name="line.410"></a>
+<span class="sourceLineNo">411</span>    }<a name="line.411"></a>
+<span class="sourceLineNo">412</span><a name="line.412"></a>
+<span class="sourceLineNo">413</span>    private static EventDataConverter createConverter() {<a name="line.413"></a>
+<span class="sourceLineNo">414</span>        try {<a name="line.414"></a>
+<span class="sourceLineNo">415</span>            LoaderUtil.loadClass("org.slf4j.ext.EventData");<a name="line.415"></a>
+<span class="sourceLineNo">416</span>            return new EventDataConverter();<a name="line.416"></a>
+<span class="sourceLineNo">417</span>        } catch (final ClassNotFoundException cnfe) {<a name="line.417"></a>
+<span class="sourceLineNo">418</span>            return null;<a name="line.418"></a>
+<span class="sourceLineNo">419</span>        }<a name="line.419"></a>
+<span class="sourceLineNo">420</span>    }<a name="line.420"></a>
+<span class="sourceLineNo">421</span><a name="line.421"></a>
+<span class="sourceLineNo">422</span>    private static Level getLevel(final int i) {<a name="line.422"></a>
+<span class="sourceLineNo">423</span>        switch (i) {<a name="line.423"></a>
+<span class="sourceLineNo">424</span>        case TRACE_INT:<a name="line.424"></a>
+<span class="sourceLineNo">425</span>            return Level.TRACE;<a name="line.425"></a>
+<span class="sourceLineNo">426</span>        case DEBUG_INT:<a name="line.426"></a>
+<span class="sourceLineNo">427</span>            return Level.DEBUG;<a name="line.427"></a>
+<span class="sourceLineNo">428</span>        case INFO_INT:<a name="line.428"></a>
+<span class="sourceLineNo">429</span>            return Level.INFO;<a name="line.429"></a>
+<span class="sourceLineNo">430</span>        case WARN_INT:<a name="line.430"></a>
+<span class="sourceLineNo">431</span>            return Level.WARN;<a name="line.431"></a>
+<span class="sourceLineNo">432</span>        case ERROR_INT:<a name="line.432"></a>
+<span class="sourceLineNo">433</span>            return Level.ERROR;<a name="line.433"></a>
+<span class="sourceLineNo">434</span>        }<a name="line.434"></a>
+<span class="sourceLineNo">435</span>        return Level.ERROR;<a name="line.435"></a>
+<span class="sourceLineNo">436</span>    }<a name="line.436"></a>
+<span class="sourceLineNo">437</span>}<a name="line.437"></a>
 
 
 

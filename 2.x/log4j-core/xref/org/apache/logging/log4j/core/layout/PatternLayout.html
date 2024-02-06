@@ -327,10 +327,10 @@
 <a class="jxr_linenumber" name="L319" href="#L319">319</a> 
 <a class="jxr_linenumber" name="L320" href="#L320">320</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternSerializer</a> <strong class="jxr_keyword">implements</strong> Serializer, Serializer2, <a href="../../../../../../org/apache/logging/log4j/core/impl/LocationAware.html">LocationAware</a> {
 <a class="jxr_linenumber" name="L321" href="#L321">321</a> 
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternFormatter.html">PatternFormatter</a>[] formatters;
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/DatePatternConverter.html">PatternFormatter</a>[] formatters;
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RegexReplacement.html">RegexReplacement</a> replace;
 <a class="jxr_linenumber" name="L324" href="#L324">324</a> 
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternSerializer</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternFormatter.html">PatternFormatter</a>[] formatters, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RegexReplacement.html">RegexReplacement</a> replace) {
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternSerializer</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/DatePatternConverter.html">PatternFormatter</a>[] formatters, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RegexReplacement.html">RegexReplacement</a> replace) {
 <a class="jxr_linenumber" name="L326" href="#L326">326</a>             <strong class="jxr_keyword">super</strong>();
 <a class="jxr_linenumber" name="L327" href="#L327">327</a>             <strong class="jxr_keyword">this</strong>.formatters = formatters;
 <a class="jxr_linenumber" name="L328" href="#L328">328</a>             <strong class="jxr_keyword">this</strong>.replace = replace;
@@ -405,7 +405,7 @@
 <a class="jxr_linenumber" name="L397" href="#L397">397</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> parser = createPatternParser(configuration);
 <a class="jxr_linenumber" name="L398" href="#L398">398</a>                     <strong class="jxr_keyword">final</strong> List&lt;PatternFormatter&gt; list = parser.parse(pattern == <strong class="jxr_keyword">null</strong> ? defaultPattern : pattern,
 <a class="jxr_linenumber" name="L399" href="#L399">399</a>                             alwaysWriteExceptions, disableAnsi, noConsoleNoAnsi);
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternFormatter.html">PatternFormatter</a>[] formatters = list.toArray(<strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternFormatter.html">PatternFormatter</a>[0]);
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/DatePatternConverter.html">PatternFormatter</a>[] formatters = list.toArray(<strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/DatePatternConverter.html">PatternFormatter</a>[0]);
 <a class="jxr_linenumber" name="L401" href="#L401">401</a>                     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternSerializer</a>(formatters, replace);
 <a class="jxr_linenumber" name="L402" href="#L402">402</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> RuntimeException ex) {
 <a class="jxr_linenumber" name="L403" href="#L403">403</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"Cannot parse pattern '"</span> + pattern + <span class="jxr_string">"'"</span>, ex);
@@ -479,7 +479,7 @@
 <a class="jxr_linenumber" name="L471" href="#L471">471</a> 
 <a class="jxr_linenumber" name="L472" href="#L472">472</a>         @Override
 <a class="jxr_linenumber" name="L473" href="#L473">473</a>         <strong class="jxr_keyword">public</strong> StringBuilder toSerializable(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event, <strong class="jxr_keyword">final</strong> StringBuilder buffer) {
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternFormatter.html">PatternFormatter</a>[] formatters = patternSelector.getFormatters(event);
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/DatePatternConverter.html">PatternFormatter</a>[] formatters = patternSelector.getFormatters(event);
 <a class="jxr_linenumber" name="L475" href="#L475">475</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> len = formatters.length;
 <a class="jxr_linenumber" name="L476" href="#L476">476</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; len; i++) {
 <a class="jxr_linenumber" name="L477" href="#L477">477</a>                 formatters[i].format(event, buffer);
@@ -702,6 +702,6 @@
 <a class="jxr_linenumber" name="L694" href="#L694">694</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2020 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

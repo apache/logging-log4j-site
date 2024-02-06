@@ -74,7 +74,7 @@
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"A port value is required"</span>);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">return</strong> (DatagramSocketManager) getManager(<span class="jxr_string">"UDP:"</span> + host + ':' + port,
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a>(host, port, layout, bufferSize), FACTORY);
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a>(host, port, layout, bufferSize), FACTORY);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      }
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <em class="jxr_javadoccomment">/**</em>
@@ -97,13 +97,13 @@
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">     * Data for the factory.</em>
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a> {
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a> {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String host;
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> port;
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout;
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize;
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> String host, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> port, <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize) {
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> String host, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> port, <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize) {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">this</strong>.host = host;
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>             <strong class="jxr_keyword">this</strong>.port = port;
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">this</strong>.layout = layout;
@@ -117,7 +117,7 @@
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/DatagramSocketManager.html">DatagramSocketManagerFactory</a> <strong class="jxr_keyword">implements</strong> ManagerFactory&lt;DatagramSocketManager, FactoryData&gt; {
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> 
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         @Override
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/DatagramSocketManager.html">DatagramSocketManager</a> createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a> data) {
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/DatagramSocketManager.html">DatagramSocketManager</a> createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a> data) {
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>             InetAddress inetAddress;
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>             <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>                 inetAddress = InetAddress.getByName(data.host);
@@ -133,6 +133,6 @@
 <a class="jxr_linenumber" name="L125" href="#L125">125</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2020 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

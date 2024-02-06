@@ -158,7 +158,7 @@
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">this</strong>.patternProcessor = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/PatternProcessor.html">PatternProcessor</a>(pattern);
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">this</strong>.patternProcessor.setPrevFileTime(initialTime);
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">this</strong>.fileName = fileName;
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">this</strong>.directWrite = rolloverStrategy instanceof DirectWriteRolloverStrategy;
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">this</strong>.directWrite = rolloverStrategy instanceof DirectFileRolloverStrategy;
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">this</strong>.fileExtension = FileExtension.lookupForFile(pattern);
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>     }
 <a class="jxr_linenumber" name="L156" href="#L156">156</a> 
@@ -214,7 +214,7 @@
 <a class="jxr_linenumber" name="L206" href="#L206">206</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>         }
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>         <strong class="jxr_keyword">final</strong> String name = fileName == <strong class="jxr_keyword">null</strong> ? pattern : fileName;
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>         <strong class="jxr_keyword">return</strong> narrow(RollingFileManager.<strong class="jxr_keyword">class</strong>, getManager(name, <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a>(fileName, pattern, append,
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>         <strong class="jxr_keyword">return</strong> narrow(RollingFileManager.<strong class="jxr_keyword">class</strong>, getManager(name, <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a>(fileName, pattern, append,
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>             bufferedIO, policy, strategy, advertiseURI, layout, bufferSize, immediateFlush, createOnDemand,
 <a class="jxr_linenumber" name="L211" href="#L211">211</a>             filePermissions, fileOwner, fileGroup, configuration), factory));
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>     }
@@ -345,7 +345,7 @@
 <a class="jxr_linenumber" name="L337" href="#L337">337</a> 	}
 <a class="jxr_linenumber" name="L338" href="#L338">338</a> 
 <a class="jxr_linenumber" name="L339" href="#L339">339</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">void</strong> rollover() {
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>         <strong class="jxr_keyword">if</strong> (!hasOutputStream()) {
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>         <strong class="jxr_keyword">if</strong> (!hasOutputStream() &amp;&amp; !isCreateOnDemand()) {
 <a class="jxr_linenumber" name="L341" href="#L341">341</a>             <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L342" href="#L342">342</a>         }
 <a class="jxr_linenumber" name="L343" href="#L343">343</a>         <strong class="jxr_keyword">if</strong> (rollover(rolloverStrategy)) {
@@ -539,7 +539,7 @@
 <a class="jxr_linenumber" name="L531" href="#L531">531</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L532" href="#L532">532</a> <em class="jxr_javadoccomment">     * Factory data.</em>
 <a class="jxr_linenumber" name="L533" href="#L533">533</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L534" href="#L534">534</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/ConfigurationFactoryData.html">ConfigurationFactoryData</a> {
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/ConfigurationFactoryData.html">ConfigurationFactoryData</a> {
 <a class="jxr_linenumber" name="L535" href="#L535">535</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String fileName;
 <a class="jxr_linenumber" name="L536" href="#L536">536</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String pattern;
 <a class="jxr_linenumber" name="L537" href="#L537">537</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> append;
@@ -570,7 +570,7 @@
 <a class="jxr_linenumber" name="L562" href="#L562">562</a> <em class="jxr_javadoccomment">         * @param fileGroup File group</em>
 <a class="jxr_linenumber" name="L563" href="#L563">563</a> <em class="jxr_javadoccomment">         * @param configuration The configuration</em>
 <a class="jxr_linenumber" name="L564" href="#L564">564</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L565" href="#L565">565</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> String fileName, <strong class="jxr_keyword">final</strong> String pattern, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> append, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> bufferedIO,
+<a class="jxr_linenumber" name="L565" href="#L565">565</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> String fileName, <strong class="jxr_keyword">final</strong> String pattern, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> append, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> bufferedIO,
 <a class="jxr_linenumber" name="L566" href="#L566">566</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/TriggeringPolicy.html">TriggeringPolicy</a> policy, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RolloverStrategy.html">RolloverStrategy</a> strategy, <strong class="jxr_keyword">final</strong> String advertiseURI,
 <a class="jxr_linenumber" name="L567" href="#L567">567</a>                 <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush,
 <a class="jxr_linenumber" name="L568" href="#L568">568</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> createOnDemand, <strong class="jxr_keyword">final</strong> String filePermissions, <strong class="jxr_keyword">final</strong> String fileOwner, <strong class="jxr_keyword">final</strong> String fileGroup,
@@ -635,7 +635,7 @@
 <a class="jxr_linenumber" name="L627" href="#L627">627</a> 
 <a class="jxr_linenumber" name="L628" href="#L628">628</a>     @Override
 <a class="jxr_linenumber" name="L629" href="#L629">629</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> updateData(<strong class="jxr_keyword">final</strong> Object data) {
-<a class="jxr_linenumber" name="L630" href="#L630">630</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a> factoryData = (FactoryData) data;
+<a class="jxr_linenumber" name="L630" href="#L630">630</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a> factoryData = (FactoryData) data;
 <a class="jxr_linenumber" name="L631" href="#L631">631</a>         setRolloverStrategy(factoryData.getRolloverStrategy());
 <a class="jxr_linenumber" name="L632" href="#L632">632</a>         setTriggeringPolicy(factoryData.getTriggeringPolicy());
 <a class="jxr_linenumber" name="L633" href="#L633">633</a>         setPatternProcessor(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/PatternProcessor.html">PatternProcessor</a>(factoryData.getPattern(), getPatternProcessor()));
@@ -653,113 +653,111 @@
 <a class="jxr_linenumber" name="L645" href="#L645">645</a> <em class="jxr_javadoccomment">         * @return a RollingFileManager.</em>
 <a class="jxr_linenumber" name="L646" href="#L646">646</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L647" href="#L647">647</a>         @Override
-<a class="jxr_linenumber" name="L648" href="#L648">648</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a> data) {
+<a class="jxr_linenumber" name="L648" href="#L648">648</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a> data) {
 <a class="jxr_linenumber" name="L649" href="#L649">649</a>             <strong class="jxr_keyword">long</strong> size = 0;
-<a class="jxr_linenumber" name="L650" href="#L650">650</a>             <strong class="jxr_keyword">boolean</strong> writeHeader = !data.append;
-<a class="jxr_linenumber" name="L651" href="#L651">651</a>             File file = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L652" href="#L652">652</a>             <strong class="jxr_keyword">if</strong> (data.fileName != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L653" href="#L653">653</a>                 file = <strong class="jxr_keyword">new</strong> File(data.fileName);
-<a class="jxr_linenumber" name="L654" href="#L654">654</a>                 <em class="jxr_comment">// LOG4J2-1140: check writeHeader before creating the file</em>
-<a class="jxr_linenumber" name="L655" href="#L655">655</a>                 writeHeader = !data.append || !file.exists();
-<a class="jxr_linenumber" name="L656" href="#L656">656</a> 
-<a class="jxr_linenumber" name="L657" href="#L657">657</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L658" href="#L658">658</a>                     FileUtils.makeParentDirs(file);
-<a class="jxr_linenumber" name="L659" href="#L659">659</a>                     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> created = data.createOnDemand ? false : file.createNewFile();
-<a class="jxr_linenumber" name="L660" href="#L660">660</a>                     LOGGER.trace(<span class="jxr_string">"New file '{}' created = {}"</span>, name, created);
-<a class="jxr_linenumber" name="L661" href="#L661">661</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioe) {
-<a class="jxr_linenumber" name="L662" href="#L662">662</a>                     LOGGER.error(<span class="jxr_string">"Unable to create file "</span> + name, ioe);
-<a class="jxr_linenumber" name="L663" href="#L663">663</a>                     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L664" href="#L664">664</a>                 }
-<a class="jxr_linenumber" name="L665" href="#L665">665</a>                 size = data.append ? file.length() : 0;
-<a class="jxr_linenumber" name="L666" href="#L666">666</a>             }
-<a class="jxr_linenumber" name="L667" href="#L667">667</a> 
-<a class="jxr_linenumber" name="L668" href="#L668">668</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L669" href="#L669">669</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> actualSize = data.bufferedIO ? data.bufferSize : Constants.ENCODER_BYTE_BUFFER_SIZE;
-<a class="jxr_linenumber" name="L670" href="#L670">670</a>                 <strong class="jxr_keyword">final</strong> ByteBuffer buffer = ByteBuffer.wrap(<strong class="jxr_keyword">new</strong> byte[actualSize]);
-<a class="jxr_linenumber" name="L671" href="#L671">671</a>                 <strong class="jxr_keyword">final</strong> OutputStream os = data.createOnDemand  || data.fileName == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong> :
-<a class="jxr_linenumber" name="L672" href="#L672">672</a>                         <strong class="jxr_keyword">new</strong> FileOutputStream(data.fileName, data.append);
-<a class="jxr_linenumber" name="L673" href="#L673">673</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> initialTime = data.createOnDemand || file == <strong class="jxr_keyword">null</strong> ?
-<a class="jxr_linenumber" name="L674" href="#L674">674</a>                         0 : initialFileTime(file); <em class="jxr_comment">// LOG4J2-531 create file first so time has valid value</em>
-<a class="jxr_linenumber" name="L675" href="#L675">675</a> 
-<a class="jxr_linenumber" name="L676" href="#L676">676</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> rm = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a>(data.getLoggerContext(), data.fileName, data.pattern, os,
-<a class="jxr_linenumber" name="L677" href="#L677">677</a>                     data.append, data.createOnDemand, size, initialTime, data.policy, data.strategy, data.advertiseURI,
-<a class="jxr_linenumber" name="L678" href="#L678">678</a>                     data.layout, data.filePermissions, data.fileOwner, data.fileGroup, writeHeader, buffer);
-<a class="jxr_linenumber" name="L679" href="#L679">679</a>                 <strong class="jxr_keyword">if</strong> (os != <strong class="jxr_keyword">null</strong> &amp;&amp; rm.isAttributeViewEnabled()) {
-<a class="jxr_linenumber" name="L680" href="#L680">680</a>                     rm.defineAttributeView(file.toPath());
-<a class="jxr_linenumber" name="L681" href="#L681">681</a>                 }
-<a class="jxr_linenumber" name="L682" href="#L682">682</a> 
-<a class="jxr_linenumber" name="L683" href="#L683">683</a>                 <strong class="jxr_keyword">return</strong> rm;
-<a class="jxr_linenumber" name="L684" href="#L684">684</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
-<a class="jxr_linenumber" name="L685" href="#L685">685</a>                 LOGGER.error(<span class="jxr_string">"RollingFileManager ("</span> + name + <span class="jxr_string">") "</span> + ex, ex);
-<a class="jxr_linenumber" name="L686" href="#L686">686</a>             }
-<a class="jxr_linenumber" name="L687" href="#L687">687</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L688" href="#L688">688</a>         }
-<a class="jxr_linenumber" name="L689" href="#L689">689</a>     }
-<a class="jxr_linenumber" name="L690" href="#L690">690</a> 
-<a class="jxr_linenumber" name="L691" href="#L691">691</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> initialFileTime(<strong class="jxr_keyword">final</strong> File file) {
-<a class="jxr_linenumber" name="L692" href="#L692">692</a>         <strong class="jxr_keyword">final</strong> Path path = file.toPath();
-<a class="jxr_linenumber" name="L693" href="#L693">693</a>         <strong class="jxr_keyword">if</strong> (Files.exists(path)) {
-<a class="jxr_linenumber" name="L694" href="#L694">694</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L695" href="#L695">695</a>                 <strong class="jxr_keyword">final</strong> BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L696" href="#L696">696</a>                 <strong class="jxr_keyword">final</strong> FileTime fileTime = attrs.creationTime();
-<a class="jxr_linenumber" name="L697" href="#L697">697</a>                 <strong class="jxr_keyword">if</strong> (fileTime.compareTo(EPOCH) &gt; 0) {
-<a class="jxr_linenumber" name="L698" href="#L698">698</a>                     LOGGER.debug(<span class="jxr_string">"Returning file creation time for {}"</span>, file.getAbsolutePath());
-<a class="jxr_linenumber" name="L699" href="#L699">699</a>                     <strong class="jxr_keyword">return</strong> fileTime.toMillis();
-<a class="jxr_linenumber" name="L700" href="#L700">700</a>                 }
-<a class="jxr_linenumber" name="L701" href="#L701">701</a>                 LOGGER.info(<span class="jxr_string">"Unable to obtain file creation time for "</span> + file.getAbsolutePath());
-<a class="jxr_linenumber" name="L702" href="#L702">702</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="L703" href="#L703">703</a>                 LOGGER.info(<span class="jxr_string">"Unable to calculate file creation time for "</span> + file.getAbsolutePath() + <span class="jxr_string">": "</span> + ex.getMessage());
-<a class="jxr_linenumber" name="L704" href="#L704">704</a>             }
-<a class="jxr_linenumber" name="L705" href="#L705">705</a>         }
-<a class="jxr_linenumber" name="L706" href="#L706">706</a>         <strong class="jxr_keyword">return</strong> file.lastModified();
-<a class="jxr_linenumber" name="L707" href="#L707">707</a>     }
+<a class="jxr_linenumber" name="L650" href="#L650">650</a>             File file = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L651" href="#L651">651</a>             <strong class="jxr_keyword">if</strong> (data.fileName != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L652" href="#L652">652</a>                 file = <strong class="jxr_keyword">new</strong> File(data.fileName);
+<a class="jxr_linenumber" name="L653" href="#L653">653</a> 
+<a class="jxr_linenumber" name="L654" href="#L654">654</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L655" href="#L655">655</a>                     FileUtils.makeParentDirs(file);
+<a class="jxr_linenumber" name="L656" href="#L656">656</a>                     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> created = data.createOnDemand ? false : file.createNewFile();
+<a class="jxr_linenumber" name="L657" href="#L657">657</a>                     LOGGER.trace(<span class="jxr_string">"New file '{}' created = {}"</span>, name, created);
+<a class="jxr_linenumber" name="L658" href="#L658">658</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioe) {
+<a class="jxr_linenumber" name="L659" href="#L659">659</a>                     LOGGER.error(<span class="jxr_string">"Unable to create file "</span> + name, ioe);
+<a class="jxr_linenumber" name="L660" href="#L660">660</a>                     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L661" href="#L661">661</a>                 }
+<a class="jxr_linenumber" name="L662" href="#L662">662</a>                 size = data.append ? file.length() : 0;
+<a class="jxr_linenumber" name="L663" href="#L663">663</a>             }
+<a class="jxr_linenumber" name="L664" href="#L664">664</a> 
+<a class="jxr_linenumber" name="L665" href="#L665">665</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L666" href="#L666">666</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> actualSize = data.bufferedIO ? data.bufferSize : Constants.ENCODER_BYTE_BUFFER_SIZE;
+<a class="jxr_linenumber" name="L667" href="#L667">667</a>                 <strong class="jxr_keyword">final</strong> ByteBuffer buffer = ByteBuffer.wrap(<strong class="jxr_keyword">new</strong> byte[actualSize]);
+<a class="jxr_linenumber" name="L668" href="#L668">668</a>                 <strong class="jxr_keyword">final</strong> OutputStream os = data.createOnDemand  || data.fileName == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong> :
+<a class="jxr_linenumber" name="L669" href="#L669">669</a>                         <strong class="jxr_keyword">new</strong> FileOutputStream(data.fileName, data.append);
+<a class="jxr_linenumber" name="L670" href="#L670">670</a>                 <em class="jxr_comment">// LOG4J2-531 create file first so time has valid value.</em>
+<a class="jxr_linenumber" name="L671" href="#L671">671</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> initialTime = file == <strong class="jxr_keyword">null</strong> || !file.exists() ? 0 : initialFileTime(file);
+<a class="jxr_linenumber" name="L672" href="#L672">672</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> writeHeader = file != <strong class="jxr_keyword">null</strong> &amp;&amp; file.exists() &amp;&amp; file.length() == 0;
+<a class="jxr_linenumber" name="L673" href="#L673">673</a> 
+<a class="jxr_linenumber" name="L674" href="#L674">674</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> rm = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a>(data.getLoggerContext(), data.fileName, data.pattern, os,
+<a class="jxr_linenumber" name="L675" href="#L675">675</a>                     data.append, data.createOnDemand, size, initialTime, data.policy, data.strategy, data.advertiseURI,
+<a class="jxr_linenumber" name="L676" href="#L676">676</a>                     data.layout, data.filePermissions, data.fileOwner, data.fileGroup, writeHeader, buffer);
+<a class="jxr_linenumber" name="L677" href="#L677">677</a>                 <strong class="jxr_keyword">if</strong> (os != <strong class="jxr_keyword">null</strong> &amp;&amp; rm.isAttributeViewEnabled()) {
+<a class="jxr_linenumber" name="L678" href="#L678">678</a>                     rm.defineAttributeView(file.toPath());
+<a class="jxr_linenumber" name="L679" href="#L679">679</a>                 }
+<a class="jxr_linenumber" name="L680" href="#L680">680</a> 
+<a class="jxr_linenumber" name="L681" href="#L681">681</a>                 <strong class="jxr_keyword">return</strong> rm;
+<a class="jxr_linenumber" name="L682" href="#L682">682</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
+<a class="jxr_linenumber" name="L683" href="#L683">683</a>                 LOGGER.error(<span class="jxr_string">"RollingFileManager ("</span> + name + <span class="jxr_string">") "</span> + ex, ex);
+<a class="jxr_linenumber" name="L684" href="#L684">684</a>             }
+<a class="jxr_linenumber" name="L685" href="#L685">685</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L686" href="#L686">686</a>         }
+<a class="jxr_linenumber" name="L687" href="#L687">687</a>     }
+<a class="jxr_linenumber" name="L688" href="#L688">688</a> 
+<a class="jxr_linenumber" name="L689" href="#L689">689</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> initialFileTime(<strong class="jxr_keyword">final</strong> File file) {
+<a class="jxr_linenumber" name="L690" href="#L690">690</a>         <strong class="jxr_keyword">final</strong> Path path = file.toPath();
+<a class="jxr_linenumber" name="L691" href="#L691">691</a>         <strong class="jxr_keyword">if</strong> (Files.exists(path)) {
+<a class="jxr_linenumber" name="L692" href="#L692">692</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L693" href="#L693">693</a>                 <strong class="jxr_keyword">final</strong> BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L694" href="#L694">694</a>                 <strong class="jxr_keyword">final</strong> FileTime fileTime = attrs.creationTime();
+<a class="jxr_linenumber" name="L695" href="#L695">695</a>                 <strong class="jxr_keyword">if</strong> (fileTime.compareTo(EPOCH) &gt; 0) {
+<a class="jxr_linenumber" name="L696" href="#L696">696</a>                     LOGGER.debug(<span class="jxr_string">"Returning file creation time for {}"</span>, file.getAbsolutePath());
+<a class="jxr_linenumber" name="L697" href="#L697">697</a>                     <strong class="jxr_keyword">return</strong> fileTime.toMillis();
+<a class="jxr_linenumber" name="L698" href="#L698">698</a>                 }
+<a class="jxr_linenumber" name="L699" href="#L699">699</a>                 LOGGER.info(<span class="jxr_string">"Unable to obtain file creation time for "</span> + file.getAbsolutePath());
+<a class="jxr_linenumber" name="L700" href="#L700">700</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
+<a class="jxr_linenumber" name="L701" href="#L701">701</a>                 LOGGER.info(<span class="jxr_string">"Unable to calculate file creation time for "</span> + file.getAbsolutePath() + <span class="jxr_string">": "</span> + ex.getMessage());
+<a class="jxr_linenumber" name="L702" href="#L702">702</a>             }
+<a class="jxr_linenumber" name="L703" href="#L703">703</a>         }
+<a class="jxr_linenumber" name="L704" href="#L704">704</a>         <strong class="jxr_keyword">return</strong> file.lastModified();
+<a class="jxr_linenumber" name="L705" href="#L705">705</a>     }
+<a class="jxr_linenumber" name="L706" href="#L706">706</a> 
+<a class="jxr_linenumber" name="L707" href="#L707">707</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">EmptyQueue</a> <strong class="jxr_keyword">extends</strong> ArrayBlockingQueue&lt;Runnable&gt; {
 <a class="jxr_linenumber" name="L708" href="#L708">708</a> 
-<a class="jxr_linenumber" name="L709" href="#L709">709</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">EmptyQueue</a> <strong class="jxr_keyword">extends</strong> ArrayBlockingQueue&lt;Runnable&gt; {
-<a class="jxr_linenumber" name="L710" href="#L710">710</a> 
-<a class="jxr_linenumber" name="L711" href="#L711">711</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L712" href="#L712">712</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L713" href="#L713">713</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L714" href="#L714">714</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 1L;
-<a class="jxr_linenumber" name="L715" href="#L715">715</a> 
-<a class="jxr_linenumber" name="L716" href="#L716">716</a>         <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">EmptyQueue</a>() {
-<a class="jxr_linenumber" name="L717" href="#L717">717</a>             <strong class="jxr_keyword">super</strong>(1);
-<a class="jxr_linenumber" name="L718" href="#L718">718</a>         }
-<a class="jxr_linenumber" name="L719" href="#L719">719</a> 
-<a class="jxr_linenumber" name="L720" href="#L720">720</a>         @Override
-<a class="jxr_linenumber" name="L721" href="#L721">721</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> remainingCapacity() {
-<a class="jxr_linenumber" name="L722" href="#L722">722</a>             <strong class="jxr_keyword">return</strong> 0;
-<a class="jxr_linenumber" name="L723" href="#L723">723</a>         }
-<a class="jxr_linenumber" name="L724" href="#L724">724</a> 
-<a class="jxr_linenumber" name="L725" href="#L725">725</a>         @Override
-<a class="jxr_linenumber" name="L726" href="#L726">726</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> add(<strong class="jxr_keyword">final</strong> Runnable runnable) {
-<a class="jxr_linenumber" name="L727" href="#L727">727</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Queue is full"</span>);
-<a class="jxr_linenumber" name="L728" href="#L728">728</a>         }
-<a class="jxr_linenumber" name="L729" href="#L729">729</a> 
-<a class="jxr_linenumber" name="L730" href="#L730">730</a>         @Override
-<a class="jxr_linenumber" name="L731" href="#L731">731</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> put(<strong class="jxr_keyword">final</strong> Runnable runnable) <strong class="jxr_keyword">throws</strong> InterruptedException {
-<a class="jxr_linenumber" name="L732" href="#L732">732</a>             <em class="jxr_comment">/* No point in going into a permanent wait */</em>
-<a class="jxr_linenumber" name="L733" href="#L733">733</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InterruptedException(<span class="jxr_string">"Unable to insert into queue"</span>);
-<a class="jxr_linenumber" name="L734" href="#L734">734</a>         }
-<a class="jxr_linenumber" name="L735" href="#L735">735</a> 
-<a class="jxr_linenumber" name="L736" href="#L736">736</a>         @Override
-<a class="jxr_linenumber" name="L737" href="#L737">737</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> offer(<strong class="jxr_keyword">final</strong> Runnable runnable, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeout, <strong class="jxr_keyword">final</strong> TimeUnit timeUnit) <strong class="jxr_keyword">throws</strong> InterruptedException {
-<a class="jxr_linenumber" name="L738" href="#L738">738</a>             Thread.sleep(timeUnit.toMillis(timeout));
-<a class="jxr_linenumber" name="L739" href="#L739">739</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L740" href="#L740">740</a>         }
-<a class="jxr_linenumber" name="L741" href="#L741">741</a> 
-<a class="jxr_linenumber" name="L742" href="#L742">742</a>         @Override
-<a class="jxr_linenumber" name="L743" href="#L743">743</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> addAll(<strong class="jxr_keyword">final</strong> Collection&lt;? <strong class="jxr_keyword">extends</strong> Runnable&gt; collection) {
-<a class="jxr_linenumber" name="L744" href="#L744">744</a>             <strong class="jxr_keyword">if</strong> (collection.size() &gt; 0) {
-<a class="jxr_linenumber" name="L745" href="#L745">745</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"Too many items in collection"</span>);
-<a class="jxr_linenumber" name="L746" href="#L746">746</a>             }
-<a class="jxr_linenumber" name="L747" href="#L747">747</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L748" href="#L748">748</a>         }
+<a class="jxr_linenumber" name="L709" href="#L709">709</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L710" href="#L710">710</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L711" href="#L711">711</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L712" href="#L712">712</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 1L;
+<a class="jxr_linenumber" name="L713" href="#L713">713</a> 
+<a class="jxr_linenumber" name="L714" href="#L714">714</a>         <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">EmptyQueue</a>() {
+<a class="jxr_linenumber" name="L715" href="#L715">715</a>             <strong class="jxr_keyword">super</strong>(1);
+<a class="jxr_linenumber" name="L716" href="#L716">716</a>         }
+<a class="jxr_linenumber" name="L717" href="#L717">717</a> 
+<a class="jxr_linenumber" name="L718" href="#L718">718</a>         @Override
+<a class="jxr_linenumber" name="L719" href="#L719">719</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> remainingCapacity() {
+<a class="jxr_linenumber" name="L720" href="#L720">720</a>             <strong class="jxr_keyword">return</strong> 0;
+<a class="jxr_linenumber" name="L721" href="#L721">721</a>         }
+<a class="jxr_linenumber" name="L722" href="#L722">722</a> 
+<a class="jxr_linenumber" name="L723" href="#L723">723</a>         @Override
+<a class="jxr_linenumber" name="L724" href="#L724">724</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> add(<strong class="jxr_keyword">final</strong> Runnable runnable) {
+<a class="jxr_linenumber" name="L725" href="#L725">725</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Queue is full"</span>);
+<a class="jxr_linenumber" name="L726" href="#L726">726</a>         }
+<a class="jxr_linenumber" name="L727" href="#L727">727</a> 
+<a class="jxr_linenumber" name="L728" href="#L728">728</a>         @Override
+<a class="jxr_linenumber" name="L729" href="#L729">729</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> put(<strong class="jxr_keyword">final</strong> Runnable runnable) <strong class="jxr_keyword">throws</strong> InterruptedException {
+<a class="jxr_linenumber" name="L730" href="#L730">730</a>             <em class="jxr_comment">/* No point in going into a permanent wait */</em>
+<a class="jxr_linenumber" name="L731" href="#L731">731</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InterruptedException(<span class="jxr_string">"Unable to insert into queue"</span>);
+<a class="jxr_linenumber" name="L732" href="#L732">732</a>         }
+<a class="jxr_linenumber" name="L733" href="#L733">733</a> 
+<a class="jxr_linenumber" name="L734" href="#L734">734</a>         @Override
+<a class="jxr_linenumber" name="L735" href="#L735">735</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> offer(<strong class="jxr_keyword">final</strong> Runnable runnable, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeout, <strong class="jxr_keyword">final</strong> TimeUnit timeUnit) <strong class="jxr_keyword">throws</strong> InterruptedException {
+<a class="jxr_linenumber" name="L736" href="#L736">736</a>             Thread.sleep(timeUnit.toMillis(timeout));
+<a class="jxr_linenumber" name="L737" href="#L737">737</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L738" href="#L738">738</a>         }
+<a class="jxr_linenumber" name="L739" href="#L739">739</a> 
+<a class="jxr_linenumber" name="L740" href="#L740">740</a>         @Override
+<a class="jxr_linenumber" name="L741" href="#L741">741</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> addAll(<strong class="jxr_keyword">final</strong> Collection&lt;? <strong class="jxr_keyword">extends</strong> Runnable&gt; collection) {
+<a class="jxr_linenumber" name="L742" href="#L742">742</a>             <strong class="jxr_keyword">if</strong> (collection.size() &gt; 0) {
+<a class="jxr_linenumber" name="L743" href="#L743">743</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"Too many items in collection"</span>);
+<a class="jxr_linenumber" name="L744" href="#L744">744</a>             }
+<a class="jxr_linenumber" name="L745" href="#L745">745</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L746" href="#L746">746</a>         }
+<a class="jxr_linenumber" name="L747" href="#L747">747</a> 
+<a class="jxr_linenumber" name="L748" href="#L748">748</a>     }
 <a class="jxr_linenumber" name="L749" href="#L749">749</a> 
-<a class="jxr_linenumber" name="L750" href="#L750">750</a>     }
-<a class="jxr_linenumber" name="L751" href="#L751">751</a> 
-<a class="jxr_linenumber" name="L752" href="#L752">752</a> }
+<a class="jxr_linenumber" name="L750" href="#L750">750</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2020 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>
