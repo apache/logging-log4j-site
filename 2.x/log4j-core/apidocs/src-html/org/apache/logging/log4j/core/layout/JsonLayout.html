@@ -25,15 +25,15 @@
 <span class="sourceLineNo">017</span>package org.apache.logging.log4j.core.layout;<a name="line.17"></a>
 <span class="sourceLineNo">018</span><a name="line.18"></a>
 <span class="sourceLineNo">019</span>import java.nio.charset.Charset;<a name="line.19"></a>
-<span class="sourceLineNo">020</span>import java.util.HashMap;<a name="line.20"></a>
-<span class="sourceLineNo">021</span>import java.util.Map;<a name="line.21"></a>
-<span class="sourceLineNo">022</span><a name="line.22"></a>
-<span class="sourceLineNo">023</span>import org.apache.logging.log4j.core.Layout;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import org.apache.logging.log4j.core.config.Node;<a name="line.24"></a>
-<span class="sourceLineNo">025</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.25"></a>
-<span class="sourceLineNo">026</span>import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import org.apache.logging.log4j.core.util.Constants;<a name="line.28"></a>
+<span class="sourceLineNo">020</span>import java.nio.charset.StandardCharsets;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.util.HashMap;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.util.Map;<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.apache.logging.log4j.core.Layout;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.apache.logging.log4j.core.config.Node;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.28"></a>
 <span class="sourceLineNo">029</span><a name="line.29"></a>
 <span class="sourceLineNo">030</span>/**<a name="line.30"></a>
 <span class="sourceLineNo">031</span> * Appends a series of JSON events as strings serialized as bytes.<a name="line.31"></a>
@@ -807,7 +807,7 @@
 <span class="sourceLineNo">799</span>    private static final long serialVersionUID = 1L;<a name="line.799"></a>
 <span class="sourceLineNo">800</span><a name="line.800"></a>
 <span class="sourceLineNo">801</span>    protected JsonLayout(final boolean locationInfo, final boolean properties, final boolean complete, final boolean compact,<a name="line.801"></a>
-<span class="sourceLineNo">802</span>            boolean eventEol, final Charset charset) {<a name="line.802"></a>
+<span class="sourceLineNo">802</span>            final boolean eventEol, final Charset charset) {<a name="line.802"></a>
 <span class="sourceLineNo">803</span>        super(new JacksonFactory.JSON().newWriter(locationInfo, properties, compact), charset, compact, complete, eventEol);<a name="line.803"></a>
 <span class="sourceLineNo">804</span>    }<a name="line.804"></a>
 <span class="sourceLineNo">805</span><a name="line.805"></a>
@@ -842,7 +842,7 @@
 <span class="sourceLineNo">834</span><a name="line.834"></a>
 <span class="sourceLineNo">835</span>    @Override<a name="line.835"></a>
 <span class="sourceLineNo">836</span>    public Map&lt;String, String&gt; getContentFormat() {<a name="line.836"></a>
-<span class="sourceLineNo">837</span>        final Map&lt;String, String&gt; result = new HashMap&lt;String, String&gt;();<a name="line.837"></a>
+<span class="sourceLineNo">837</span>        final Map&lt;String, String&gt; result = new HashMap&lt;&gt;();<a name="line.837"></a>
 <span class="sourceLineNo">838</span>        result.put("version", "2.0");<a name="line.838"></a>
 <span class="sourceLineNo">839</span>        return result;<a name="line.839"></a>
 <span class="sourceLineNo">840</span>    }<a name="line.840"></a>
@@ -893,7 +893,7 @@
 <span class="sourceLineNo">885</span>     * @return A JSON Layout.<a name="line.885"></a>
 <span class="sourceLineNo">886</span>     */<a name="line.886"></a>
 <span class="sourceLineNo">887</span>    public static AbstractJacksonLayout createDefaultLayout() {<a name="line.887"></a>
-<span class="sourceLineNo">888</span>        return new JsonLayout(false, false, false, false, false, Constants.UTF_8);<a name="line.888"></a>
+<span class="sourceLineNo">888</span>        return new JsonLayout(false, false, false, false, false, StandardCharsets.UTF_8);<a name="line.888"></a>
 <span class="sourceLineNo">889</span>    }<a name="line.889"></a>
 <span class="sourceLineNo">890</span>}<a name="line.890"></a>
 

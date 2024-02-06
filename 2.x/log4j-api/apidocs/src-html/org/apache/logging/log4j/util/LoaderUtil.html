@@ -102,7 +102,7 @@
 <span class="sourceLineNo">094</span>                return cl;<a name="line.94"></a>
 <span class="sourceLineNo">095</span>            }<a name="line.95"></a>
 <span class="sourceLineNo">096</span>            final ClassLoader ccl = LoaderUtil.class.getClassLoader();<a name="line.96"></a>
-<span class="sourceLineNo">097</span>            return ccl == null ? ClassLoader.getSystemClassLoader() : ccl;<a name="line.97"></a>
+<span class="sourceLineNo">097</span>            return ccl == null &amp;&amp; !GET_CLASS_LOADER_DISABLED ? ClassLoader.getSystemClassLoader() : ccl;<a name="line.97"></a>
 <span class="sourceLineNo">098</span>        }<a name="line.98"></a>
 <span class="sourceLineNo">099</span>    }<a name="line.99"></a>
 <span class="sourceLineNo">100</span><a name="line.100"></a>
@@ -189,7 +189,7 @@
 <span class="sourceLineNo">181</span>     */<a name="line.181"></a>
 <span class="sourceLineNo">182</span>    public static Collection&lt;URL&gt; findResources(final String resource) {<a name="line.182"></a>
 <span class="sourceLineNo">183</span>        final Collection&lt;UrlResource&gt; urlResources = findUrlResources(resource);<a name="line.183"></a>
-<span class="sourceLineNo">184</span>        final Collection&lt;URL&gt; resources = new LinkedHashSet&lt;URL&gt;(urlResources.size());<a name="line.184"></a>
+<span class="sourceLineNo">184</span>        final Collection&lt;URL&gt; resources = new LinkedHashSet&lt;&gt;(urlResources.size());<a name="line.184"></a>
 <span class="sourceLineNo">185</span>        for (final UrlResource urlResource : urlResources) {<a name="line.185"></a>
 <span class="sourceLineNo">186</span>            resources.add(urlResource.getUrl());<a name="line.186"></a>
 <span class="sourceLineNo">187</span>        }<a name="line.187"></a>
@@ -200,9 +200,9 @@
 <span class="sourceLineNo">192</span>        final ClassLoader[] candidates = {<a name="line.192"></a>
 <span class="sourceLineNo">193</span>            getThreadContextClassLoader(),<a name="line.193"></a>
 <span class="sourceLineNo">194</span>            LoaderUtil.class.getClassLoader(),<a name="line.194"></a>
-<span class="sourceLineNo">195</span>            ClassLoader.getSystemClassLoader()<a name="line.195"></a>
+<span class="sourceLineNo">195</span>            GET_CLASS_LOADER_DISABLED ? null : ClassLoader.getSystemClassLoader()<a name="line.195"></a>
 <span class="sourceLineNo">196</span>        };<a name="line.196"></a>
-<span class="sourceLineNo">197</span>        final Collection&lt;UrlResource&gt; resources = new LinkedHashSet&lt;UrlResource&gt;();<a name="line.197"></a>
+<span class="sourceLineNo">197</span>        final Collection&lt;UrlResource&gt; resources = new LinkedHashSet&lt;&gt;();<a name="line.197"></a>
 <span class="sourceLineNo">198</span>        for (final ClassLoader cl : candidates) {<a name="line.198"></a>
 <span class="sourceLineNo">199</span>            if (cl != null) {<a name="line.199"></a>
 <span class="sourceLineNo">200</span>                try {<a name="line.200"></a>

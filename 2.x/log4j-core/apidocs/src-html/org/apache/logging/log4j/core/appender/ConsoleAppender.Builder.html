@@ -47,7 +47,7 @@
 <span class="sourceLineNo">039</span>import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.39"></a>
 <span class="sourceLineNo">040</span><a name="line.40"></a>
 <span class="sourceLineNo">041</span>/**<a name="line.41"></a>
-<span class="sourceLineNo">042</span> * ConsoleAppender appends log events to &lt;code&gt;System.out&lt;/code&gt; or<a name="line.42"></a>
+<span class="sourceLineNo">042</span> * Appends log events to &lt;code&gt;System.out&lt;/code&gt; or<a name="line.42"></a>
 <span class="sourceLineNo">043</span> * &lt;code&gt;System.err&lt;/code&gt; using a layout specified by the user. The<a name="line.43"></a>
 <span class="sourceLineNo">044</span> * default target is &lt;code&gt;System.out&lt;/code&gt;.<a name="line.44"></a>
 <span class="sourceLineNo">045</span> * TODO accessing System.out or .err as a byte stream instead of a writer<a name="line.45"></a>
@@ -81,7 +81,7 @@
 <span class="sourceLineNo">073</span>    }<a name="line.73"></a>
 <span class="sourceLineNo">074</span><a name="line.74"></a>
 <span class="sourceLineNo">075</span>    /**<a name="line.75"></a>
-<span class="sourceLineNo">076</span>     * Create a Console Appender.<a name="line.76"></a>
+<span class="sourceLineNo">076</span>     * Creates a Console Appender.<a name="line.76"></a>
 <span class="sourceLineNo">077</span>     * @param layout The layout to use (required).<a name="line.77"></a>
 <span class="sourceLineNo">078</span>     * @param filter The Filter or null.<a name="line.78"></a>
 <span class="sourceLineNo">079</span>     * @param targetStr The target ("SYSTEM_OUT" or "SYSTEM_ERR"). The default is "SYSTEM_OUT".<a name="line.79"></a>
@@ -109,12 +109,12 @@
 <span class="sourceLineNo">101</span>        final boolean isFollow = Boolean.parseBoolean(follow);<a name="line.101"></a>
 <span class="sourceLineNo">102</span>        final boolean ignoreExceptions = Booleans.parseBoolean(ignore, true);<a name="line.102"></a>
 <span class="sourceLineNo">103</span>        final Target target = targetStr == null ? DEFAULT_TARGET : Target.valueOf(targetStr);<a name="line.103"></a>
-<span class="sourceLineNo">104</span>        return new ConsoleAppender(name, layout, filter, getManager(isFollow, target, layout), ignoreExceptions);<a name="line.104"></a>
+<span class="sourceLineNo">104</span>        return new ConsoleAppender(name, layout, filter, getManager(target, isFollow, layout), ignoreExceptions);<a name="line.104"></a>
 <span class="sourceLineNo">105</span>    }<a name="line.105"></a>
 <span class="sourceLineNo">106</span><a name="line.106"></a>
 <span class="sourceLineNo">107</span>    public static ConsoleAppender createDefaultAppenderForLayout(final Layout&lt;? extends Serializable&gt; layout) {<a name="line.107"></a>
 <span class="sourceLineNo">108</span>        // this method cannot use the builder class without introducing an infinite loop due to DefaultConfiguration<a name="line.108"></a>
-<span class="sourceLineNo">109</span>        return new ConsoleAppender("Console", layout, null, getManager(false, DEFAULT_TARGET, layout), true);<a name="line.109"></a>
+<span class="sourceLineNo">109</span>        return new ConsoleAppender("Console", layout, null, getManager(DEFAULT_TARGET, false, layout), true);<a name="line.109"></a>
 <span class="sourceLineNo">110</span>    }<a name="line.110"></a>
 <span class="sourceLineNo">111</span><a name="line.111"></a>
 <span class="sourceLineNo">112</span>    @PluginBuilderFactory<a name="line.112"></a>
@@ -177,14 +177,14 @@
 <span class="sourceLineNo">169</span><a name="line.169"></a>
 <span class="sourceLineNo">170</span>        @Override<a name="line.170"></a>
 <span class="sourceLineNo">171</span>        public ConsoleAppender build() {<a name="line.171"></a>
-<span class="sourceLineNo">172</span>            return new ConsoleAppender(name, layout, filter, getManager(follow, target, layout), ignoreExceptions);<a name="line.172"></a>
+<span class="sourceLineNo">172</span>            return new ConsoleAppender(name, layout, filter, getManager(target, follow, layout), ignoreExceptions);<a name="line.172"></a>
 <span class="sourceLineNo">173</span>        }<a name="line.173"></a>
 <span class="sourceLineNo">174</span>    }<a name="line.174"></a>
 <span class="sourceLineNo">175</span><a name="line.175"></a>
-<span class="sourceLineNo">176</span>    private static OutputStreamManager getManager(final boolean follow, final Target target, final Layout&lt;? extends Serializable&gt; layout) {<a name="line.176"></a>
-<span class="sourceLineNo">177</span>        final String type = target.name();<a name="line.177"></a>
-<span class="sourceLineNo">178</span>        final OutputStream os = getOutputStream(follow, target);<a name="line.178"></a>
-<span class="sourceLineNo">179</span>        return OutputStreamManager.getManager(target.name() + '.' + follow, new FactoryData(os, type, layout), factory);<a name="line.179"></a>
+<span class="sourceLineNo">176</span>    private static OutputStreamManager getManager(final Target target, final boolean follow, final Layout&lt;? extends Serializable&gt; layout) {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>        final OutputStream os = getOutputStream(follow, target);<a name="line.177"></a>
+<span class="sourceLineNo">178</span>        final String managerName = target.name() + '.' + follow;<a name="line.178"></a>
+<span class="sourceLineNo">179</span>        return OutputStreamManager.getManager(managerName, new FactoryData(os, managerName, layout), factory);<a name="line.179"></a>
 <span class="sourceLineNo">180</span>    }<a name="line.180"></a>
 <span class="sourceLineNo">181</span><a name="line.181"></a>
 <span class="sourceLineNo">182</span>    private static OutputStream getOutputStream(final boolean follow, final Target target) {<a name="line.182"></a>
@@ -360,7 +360,7 @@
 <span class="sourceLineNo">352</span>         */<a name="line.352"></a>
 <span class="sourceLineNo">353</span>        @Override<a name="line.353"></a>
 <span class="sourceLineNo">354</span>        public OutputStreamManager createManager(final String name, final FactoryData data) {<a name="line.354"></a>
-<span class="sourceLineNo">355</span>            return new OutputStreamManager(data.os, data.type, data.layout);<a name="line.355"></a>
+<span class="sourceLineNo">355</span>            return new OutputStreamManager(data.os, data.type, data.layout, true);<a name="line.355"></a>
 <span class="sourceLineNo">356</span>        }<a name="line.356"></a>
 <span class="sourceLineNo">357</span>    }<a name="line.357"></a>
 <span class="sourceLineNo">358</span><a name="line.358"></a>

@@ -43,7 +43,7 @@
 <span class="sourceLineNo">035</span><a name="line.35"></a>
 <span class="sourceLineNo">036</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.36"></a>
 <span class="sourceLineNo">037</span><a name="line.37"></a>
-<span class="sourceLineNo">038</span>    private final ConcurrentMap&lt;String, Marker&gt; markerMap = new ConcurrentHashMap&lt;String, Marker&gt;();<a name="line.38"></a>
+<span class="sourceLineNo">038</span>    private final ConcurrentMap&lt;String, Marker&gt; markerMap = new ConcurrentHashMap&lt;&gt;();<a name="line.38"></a>
 <span class="sourceLineNo">039</span><a name="line.39"></a>
 <span class="sourceLineNo">040</span>    /**<a name="line.40"></a>
 <span class="sourceLineNo">041</span>     * Returns a Log4j Marker that is compatible with SLF4J.<a name="line.41"></a>
@@ -97,9 +97,9 @@
 <span class="sourceLineNo">089</span>                                                                 final Collection&lt;Marker&gt; visited) {<a name="line.89"></a>
 <span class="sourceLineNo">090</span>        final org.apache.logging.log4j.Marker marker = MarkerManager.getMarker(original.getName());<a name="line.90"></a>
 <span class="sourceLineNo">091</span>        if (original.hasReferences()) {<a name="line.91"></a>
-<span class="sourceLineNo">092</span>            final Iterator it = original.iterator();<a name="line.92"></a>
+<span class="sourceLineNo">092</span>            final Iterator&lt;Marker&gt; it = original.iterator();<a name="line.92"></a>
 <span class="sourceLineNo">093</span>            while (it.hasNext()) {<a name="line.93"></a>
-<span class="sourceLineNo">094</span>                final Marker next = (Marker) it.next();<a name="line.94"></a>
+<span class="sourceLineNo">094</span>                final Marker next = it.next();<a name="line.94"></a>
 <span class="sourceLineNo">095</span>                if (visited.contains(next)) {<a name="line.95"></a>
 <span class="sourceLineNo">096</span>                    LOGGER.warn("Found a cycle in Marker [{}]. Cycle will be broken.", next.getName());<a name="line.96"></a>
 <span class="sourceLineNo">097</span>                } else {<a name="line.97"></a>

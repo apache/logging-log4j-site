@@ -38,22 +38,22 @@
 <span class="sourceLineNo">030</span>import java.net.URISyntaxException;<a name="line.30"></a>
 <span class="sourceLineNo">031</span>import java.net.URL;<a name="line.31"></a>
 <span class="sourceLineNo">032</span>import java.nio.charset.Charset;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>import java.util.Map;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>import java.util.concurrent.Executor;<a name="line.34"></a>
-<span class="sourceLineNo">035</span>import java.util.concurrent.atomic.AtomicLong;<a name="line.35"></a>
-<span class="sourceLineNo">036</span><a name="line.36"></a>
-<span class="sourceLineNo">037</span>import javax.management.MBeanNotificationInfo;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import javax.management.Notification;<a name="line.38"></a>
-<span class="sourceLineNo">039</span>import javax.management.NotificationBroadcasterSupport;<a name="line.39"></a>
-<span class="sourceLineNo">040</span>import javax.management.ObjectName;<a name="line.40"></a>
-<span class="sourceLineNo">041</span><a name="line.41"></a>
-<span class="sourceLineNo">042</span>import org.apache.logging.log4j.core.LoggerContext;<a name="line.42"></a>
-<span class="sourceLineNo">043</span>import org.apache.logging.log4j.core.config.Configuration;<a name="line.43"></a>
-<span class="sourceLineNo">044</span>import org.apache.logging.log4j.core.config.ConfigurationFactory;<a name="line.44"></a>
-<span class="sourceLineNo">045</span>import org.apache.logging.log4j.core.config.ConfigurationSource;<a name="line.45"></a>
-<span class="sourceLineNo">046</span>import org.apache.logging.log4j.core.util.Assert;<a name="line.46"></a>
-<span class="sourceLineNo">047</span>import org.apache.logging.log4j.core.util.Closer;<a name="line.47"></a>
-<span class="sourceLineNo">048</span>import org.apache.logging.log4j.core.util.Constants;<a name="line.48"></a>
+<span class="sourceLineNo">033</span>import java.nio.charset.StandardCharsets;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import java.util.Map;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import java.util.Objects;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import java.util.concurrent.Executor;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import java.util.concurrent.atomic.AtomicLong;<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>import javax.management.MBeanNotificationInfo;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import javax.management.Notification;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import javax.management.NotificationBroadcasterSupport;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import javax.management.ObjectName;<a name="line.42"></a>
+<span class="sourceLineNo">043</span><a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.apache.logging.log4j.core.LoggerContext;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import org.apache.logging.log4j.core.config.Configuration;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import org.apache.logging.log4j.core.config.ConfigurationFactory;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>import org.apache.logging.log4j.core.config.ConfigurationSource;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>import org.apache.logging.log4j.core.util.Closer;<a name="line.48"></a>
 <span class="sourceLineNo">049</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.49"></a>
 <span class="sourceLineNo">050</span>import org.apache.logging.log4j.util.Strings;<a name="line.50"></a>
 <span class="sourceLineNo">051</span><a name="line.51"></a>
@@ -80,7 +80,7 @@
 <span class="sourceLineNo">072</span>     */<a name="line.72"></a>
 <span class="sourceLineNo">073</span>    public LoggerContextAdmin(final LoggerContext loggerContext, final Executor executor) {<a name="line.73"></a>
 <span class="sourceLineNo">074</span>        super(executor, createNotificationInfo());<a name="line.74"></a>
-<span class="sourceLineNo">075</span>        this.loggerContext = Assert.requireNonNull(loggerContext, "loggerContext");<a name="line.75"></a>
+<span class="sourceLineNo">075</span>        this.loggerContext = Objects.requireNonNull(loggerContext, "loggerContext");<a name="line.75"></a>
 <span class="sourceLineNo">076</span>        try {<a name="line.76"></a>
 <span class="sourceLineNo">077</span>            final String ctxName = Server.escape(loggerContext.getName());<a name="line.77"></a>
 <span class="sourceLineNo">078</span>            final String name = String.format(PATTERN, ctxName);<a name="line.78"></a>
@@ -156,7 +156,7 @@
 <span class="sourceLineNo">148</span><a name="line.148"></a>
 <span class="sourceLineNo">149</span>    @Override<a name="line.149"></a>
 <span class="sourceLineNo">150</span>    public String getConfigText() throws IOException {<a name="line.150"></a>
-<span class="sourceLineNo">151</span>        return getConfigText(Constants.UTF_8.name());<a name="line.151"></a>
+<span class="sourceLineNo">151</span>        return getConfigText(StandardCharsets.UTF_8.name());<a name="line.151"></a>
 <span class="sourceLineNo">152</span>    }<a name="line.152"></a>
 <span class="sourceLineNo">153</span><a name="line.153"></a>
 <span class="sourceLineNo">154</span>    @Override<a name="line.154"></a>

@@ -43,7 +43,7 @@
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger LOGGER = StatusLogger.getLogger();
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ConcurrentMap&lt;String, Marker&gt; markerMap = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;String, Marker&gt;();
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ConcurrentMap&lt;String, Marker&gt; markerMap = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment">     * Returns a Log4j Marker that is compatible with SLF4J.</em>
@@ -97,9 +97,9 @@
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>                                                                   <strong class="jxr_keyword">final</strong> Collection&lt;Marker&gt; visited) {
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">final</strong> org.apache.logging.log4j.Marker marker = MarkerManager.getMarker(original.getName());
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">if</strong> (original.hasReferences()) {
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">final</strong> Iterator it = original.iterator();
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">final</strong> Iterator&lt;Marker&gt; it = original.iterator();
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">while</strong> (it.hasNext()) {
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>                  <strong class="jxr_keyword">final</strong> Marker next = (Marker) it.next();
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>                  <strong class="jxr_keyword">final</strong> Marker next = it.next();
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>                  <strong class="jxr_keyword">if</strong> (visited.contains(next)) {
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>                      LOGGER.warn(<span class="jxr_string">"Found a cycle in Marker [{}]. Cycle will be broken."</span>, next.getName());
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>                  } <strong class="jxr_keyword">else</strong> {
@@ -146,6 +146,6 @@
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2021 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

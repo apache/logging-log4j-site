@@ -84,9 +84,9 @@
 <span class="sourceLineNo">076</span>     * @param layout The Layout.<a name="line.76"></a>
 <span class="sourceLineNo">077</span>     */<a name="line.77"></a>
 <span class="sourceLineNo">078</span>    public TcpSocketManager(final String name, final OutputStream os, final Socket sock, final InetAddress inetAddress,<a name="line.78"></a>
-<span class="sourceLineNo">079</span>                            final String host, final int port, int connectTimeoutMillis, final int delay,<a name="line.79"></a>
+<span class="sourceLineNo">079</span>                            final String host, final int port, final int connectTimeoutMillis, final int delay,<a name="line.79"></a>
 <span class="sourceLineNo">080</span>                            final boolean immediateFail, final Layout&lt;? extends Serializable&gt; layout) {<a name="line.80"></a>
-<span class="sourceLineNo">081</span>        super(name, os, inetAddress, host, port, layout);<a name="line.81"></a>
+<span class="sourceLineNo">081</span>        super(name, os, inetAddress, host, port, layout, true);<a name="line.81"></a>
 <span class="sourceLineNo">082</span>        this.connectTimeoutMillis = connectTimeoutMillis;<a name="line.82"></a>
 <span class="sourceLineNo">083</span>        this.reconnectionDelay = delay;<a name="line.83"></a>
 <span class="sourceLineNo">084</span>        this.socket = sock;<a name="line.84"></a>
@@ -108,7 +108,7 @@
 <span class="sourceLineNo">100</span>     * @param delayMillis The interval to pause between retries.<a name="line.100"></a>
 <span class="sourceLineNo">101</span>     * @return A TcpSocketManager.<a name="line.101"></a>
 <span class="sourceLineNo">102</span>     */<a name="line.102"></a>
-<span class="sourceLineNo">103</span>    public static TcpSocketManager getSocketManager(final String host, int port, int connectTimeoutMillis,<a name="line.103"></a>
+<span class="sourceLineNo">103</span>    public static TcpSocketManager getSocketManager(final String host, int port, final int connectTimeoutMillis,<a name="line.103"></a>
 <span class="sourceLineNo">104</span>            int delayMillis, final boolean immediateFail, final Layout&lt;? extends Serializable&gt; layout) {<a name="line.104"></a>
 <span class="sourceLineNo">105</span>        if (Strings.isEmpty(host)) {<a name="line.105"></a>
 <span class="sourceLineNo">106</span>            throw new IllegalArgumentException("A host name is required");<a name="line.106"></a>
@@ -175,7 +175,7 @@
 <span class="sourceLineNo">167</span>     */<a name="line.167"></a>
 <span class="sourceLineNo">168</span>    @Override<a name="line.168"></a>
 <span class="sourceLineNo">169</span>    public Map&lt;String, String&gt; getContentFormat() {<a name="line.169"></a>
-<span class="sourceLineNo">170</span>        final Map&lt;String, String&gt; result = new HashMap&lt;String, String&gt;(super.getContentFormat());<a name="line.170"></a>
+<span class="sourceLineNo">170</span>        final Map&lt;String, String&gt; result = new HashMap&lt;&gt;(super.getContentFormat());<a name="line.170"></a>
 <span class="sourceLineNo">171</span>        result.put("protocol", "tcp");<a name="line.171"></a>
 <span class="sourceLineNo">172</span>        result.put("direction", "out");<a name="line.172"></a>
 <span class="sourceLineNo">173</span>        return result;<a name="line.173"></a>
@@ -263,7 +263,7 @@
 <span class="sourceLineNo">255</span>        private final boolean immediateFail;<a name="line.255"></a>
 <span class="sourceLineNo">256</span>        private final Layout&lt;? extends Serializable&gt; layout;<a name="line.256"></a>
 <span class="sourceLineNo">257</span><a name="line.257"></a>
-<span class="sourceLineNo">258</span>        public FactoryData(final String host, final int port, int connectTimeoutMillis, final int delayMillis,<a name="line.258"></a>
+<span class="sourceLineNo">258</span>        public FactoryData(final String host, final int port, final int connectTimeoutMillis, final int delayMillis,<a name="line.258"></a>
 <span class="sourceLineNo">259</span>                           final boolean immediateFail, final Layout&lt;? extends Serializable&gt; layout) {<a name="line.259"></a>
 <span class="sourceLineNo">260</span>            this.host = host;<a name="line.260"></a>
 <span class="sourceLineNo">261</span>            this.port = port;<a name="line.261"></a>
@@ -290,23 +290,25 @@
 <span class="sourceLineNo">282</span>                return null;<a name="line.282"></a>
 <span class="sourceLineNo">283</span>            }<a name="line.283"></a>
 <span class="sourceLineNo">284</span>            try {<a name="line.284"></a>
-<span class="sourceLineNo">285</span>                final Socket socket = new Socket(data.host, data.port);<a name="line.285"></a>
-<span class="sourceLineNo">286</span>                os = socket.getOutputStream();<a name="line.286"></a>
-<span class="sourceLineNo">287</span>                return new TcpSocketManager(name, os, socket, inetAddress, data.host, data.port,<a name="line.287"></a>
-<span class="sourceLineNo">288</span>                        data.connectTimeoutMillis, data.delayMillis, data.immediateFail, data.layout);<a name="line.288"></a>
-<span class="sourceLineNo">289</span>            } catch (final IOException ex) {<a name="line.289"></a>
-<span class="sourceLineNo">290</span>                LOGGER.error("TcpSocketManager (" + name + ") " + ex);<a name="line.290"></a>
-<span class="sourceLineNo">291</span>                os = new ByteArrayOutputStream();<a name="line.291"></a>
-<span class="sourceLineNo">292</span>            }<a name="line.292"></a>
-<span class="sourceLineNo">293</span>            if (data.delayMillis == 0) {<a name="line.293"></a>
-<span class="sourceLineNo">294</span>                return null;<a name="line.294"></a>
-<span class="sourceLineNo">295</span>            }<a name="line.295"></a>
-<span class="sourceLineNo">296</span>            return new TcpSocketManager(name, os, null, inetAddress, data.host, data.port, data.connectTimeoutMillis,<a name="line.296"></a>
-<span class="sourceLineNo">297</span>                    data.delayMillis, data.immediateFail, data.layout);<a name="line.297"></a>
-<span class="sourceLineNo">298</span>        }<a name="line.298"></a>
-<span class="sourceLineNo">299</span>    }<a name="line.299"></a>
-<span class="sourceLineNo">300</span><a name="line.300"></a>
-<span class="sourceLineNo">301</span>}<a name="line.301"></a>
+<span class="sourceLineNo">285</span>                // LOG4J2-1042<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                final Socket socket = new Socket();<a name="line.286"></a>
+<span class="sourceLineNo">287</span>                socket.connect(new InetSocketAddress(data.host, data.port), data.connectTimeoutMillis);<a name="line.287"></a>
+<span class="sourceLineNo">288</span>                os = socket.getOutputStream();<a name="line.288"></a>
+<span class="sourceLineNo">289</span>                return new TcpSocketManager(name, os, socket, inetAddress, data.host, data.port,<a name="line.289"></a>
+<span class="sourceLineNo">290</span>                        data.connectTimeoutMillis, data.delayMillis, data.immediateFail, data.layout);<a name="line.290"></a>
+<span class="sourceLineNo">291</span>            } catch (final IOException ex) {<a name="line.291"></a>
+<span class="sourceLineNo">292</span>                LOGGER.error("TcpSocketManager (" + name + ") " + ex);<a name="line.292"></a>
+<span class="sourceLineNo">293</span>                os = new ByteArrayOutputStream();<a name="line.293"></a>
+<span class="sourceLineNo">294</span>            }<a name="line.294"></a>
+<span class="sourceLineNo">295</span>            if (data.delayMillis == 0) {<a name="line.295"></a>
+<span class="sourceLineNo">296</span>                return null;<a name="line.296"></a>
+<span class="sourceLineNo">297</span>            }<a name="line.297"></a>
+<span class="sourceLineNo">298</span>            return new TcpSocketManager(name, os, null, inetAddress, data.host, data.port, data.connectTimeoutMillis,<a name="line.298"></a>
+<span class="sourceLineNo">299</span>                    data.delayMillis, data.immediateFail, data.layout);<a name="line.299"></a>
+<span class="sourceLineNo">300</span>        }<a name="line.300"></a>
+<span class="sourceLineNo">301</span>    }<a name="line.301"></a>
+<span class="sourceLineNo">302</span><a name="line.302"></a>
+<span class="sourceLineNo">303</span>}<a name="line.303"></a>
 
 
 

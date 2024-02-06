@@ -70,12 +70,12 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/apache/logging/log4j/simple/SimpleLogger.html">SimpleLogger</a> logger;
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Collection&lt;StatusListener&gt; listeners = <strong class="jxr_keyword">new</strong> CopyOnWriteArrayList&lt;StatusListener&gt;();
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Collection&lt;StatusListener&gt; listeners = <strong class="jxr_keyword">new</strong> CopyOnWriteArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      @SuppressWarnings(<span class="jxr_string">"NonSerializableFieldInSerializableClass"</span>) <em class="jxr_comment">// ReentrantReadWriteLock is Serializable</em>
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ReadWriteLock listenersLock = <strong class="jxr_keyword">new</strong> ReentrantReadWriteLock();
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Queue&lt;StatusData&gt; messages = <strong class="jxr_keyword">new</strong> BoundedQueue&lt;StatusData&gt;(MAX_ENTRIES);
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Queue&lt;StatusData&gt; messages = <strong class="jxr_keyword">new</strong> BoundedQueue&lt;&gt;(MAX_ENTRIES);
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      @SuppressWarnings(<span class="jxr_string">"NonSerializableFieldInSerializableClass"</span>) <em class="jxr_comment">// ReentrantLock is Serializable</em>
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Lock msgLock = <strong class="jxr_keyword">new</strong> ReentrantLock();
@@ -178,7 +178,7 @@
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>     <strong class="jxr_keyword">public</strong> List&lt;StatusData&gt; getStatusData() {
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>         msgLock.lock();
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> ArrayList&lt;StatusData&gt;(messages);
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(messages);
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>         } <strong class="jxr_keyword">finally</strong> {
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>             msgLock.unlock();
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>         }
@@ -215,7 +215,7 @@
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>         <strong class="jxr_keyword">if</strong> (fqcn != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>             element = getStackTraceElement(fqcn, Thread.currentThread().getStackTrace());
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>         }
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/apache/logging/log4j/status/StatusData.html">StatusData</a> data = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/status/StatusData.html">StatusData</a>(element, level, msg, t);
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/apache/logging/log4j/status/StatusData.html">StatusData</a> data = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/status/StatusData.html">StatusData</a>(element, level, msg, t, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L211" href="#L211">211</a>         msgLock.lock();
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>             messages.add(data);
@@ -310,6 +310,6 @@
 <a class="jxr_linenumber" name="L302" href="#L302">302</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2021 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

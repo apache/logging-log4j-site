@@ -33,17 +33,17 @@
 <span class="sourceLineNo">025</span>import java.net.URISyntaxException;<a name="line.25"></a>
 <span class="sourceLineNo">026</span>import java.net.URL;<a name="line.26"></a>
 <span class="sourceLineNo">027</span>import java.net.URLDecoder;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import java.util.Arrays;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import java.util.Collection;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>import java.util.Enumeration;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>import java.util.HashSet;<a name="line.31"></a>
-<span class="sourceLineNo">032</span>import java.util.List;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>import java.util.Set;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>import java.util.jar.JarEntry;<a name="line.34"></a>
-<span class="sourceLineNo">035</span>import java.util.jar.JarInputStream;<a name="line.35"></a>
-<span class="sourceLineNo">036</span><a name="line.36"></a>
-<span class="sourceLineNo">037</span>import org.apache.logging.log4j.Logger;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import org.apache.logging.log4j.core.util.Constants;<a name="line.38"></a>
+<span class="sourceLineNo">028</span>import java.nio.charset.StandardCharsets;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.Arrays;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import java.util.Collection;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import java.util.Enumeration;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import java.util.HashSet;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import java.util.List;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import java.util.Set;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import java.util.jar.JarEntry;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import java.util.jar.JarInputStream;<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.apache.logging.log4j.Logger;<a name="line.38"></a>
 <span class="sourceLineNo">039</span>import org.apache.logging.log4j.core.util.Loader;<a name="line.39"></a>
 <span class="sourceLineNo">040</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.40"></a>
 <span class="sourceLineNo">041</span>import org.osgi.framework.FrameworkUtil;<a name="line.41"></a>
@@ -95,10 +95,10 @@
 <span class="sourceLineNo">087</span>    private static final String BUNDLE_RESOURCE = "bundleresource";<a name="line.87"></a>
 <span class="sourceLineNo">088</span><a name="line.88"></a>
 <span class="sourceLineNo">089</span>    /** The set of matches being accumulated. */<a name="line.89"></a>
-<span class="sourceLineNo">090</span>    private final Set&lt;Class&lt;?&gt;&gt; classMatches = new HashSet&lt;Class&lt;?&gt;&gt;();<a name="line.90"></a>
+<span class="sourceLineNo">090</span>    private final Set&lt;Class&lt;?&gt;&gt; classMatches = new HashSet&lt;&gt;();<a name="line.90"></a>
 <span class="sourceLineNo">091</span><a name="line.91"></a>
 <span class="sourceLineNo">092</span>    /** The set of matches being accumulated. */<a name="line.92"></a>
-<span class="sourceLineNo">093</span>    private final Set&lt;URI&gt; resourceMatches = new HashSet&lt;URI&gt;();<a name="line.93"></a>
+<span class="sourceLineNo">093</span>    private final Set&lt;URI&gt; resourceMatches = new HashSet&lt;&gt;();<a name="line.93"></a>
 <span class="sourceLineNo">094</span><a name="line.94"></a>
 <span class="sourceLineNo">095</span>    /**<a name="line.95"></a>
 <span class="sourceLineNo">096</span>     * The ClassLoader to use when looking for classes. If null then the ClassLoader returned by<a name="line.96"></a>
@@ -216,7 +216,7 @@
 <span class="sourceLineNo">208</span>                }<a name="line.208"></a>
 <span class="sourceLineNo">209</span>            } catch (final IOException ioe) {<a name="line.209"></a>
 <span class="sourceLineNo">210</span>                LOGGER.warn("could not read entries", ioe);<a name="line.210"></a>
-<span class="sourceLineNo">211</span>            } catch (URISyntaxException e) {<a name="line.211"></a>
+<span class="sourceLineNo">211</span>            } catch (final URISyntaxException e) {<a name="line.211"></a>
 <span class="sourceLineNo">212</span>                LOGGER.warn("could not read entries", e);<a name="line.212"></a>
 <span class="sourceLineNo">213</span>            }<a name="line.213"></a>
 <span class="sourceLineNo">214</span>        }<a name="line.214"></a>
@@ -251,199 +251,195 @@
 <span class="sourceLineNo">243</span>            // if URL-encoded file exists, don't decode it<a name="line.243"></a>
 <span class="sourceLineNo">244</span>            return cleanPath;<a name="line.244"></a>
 <span class="sourceLineNo">245</span>        }<a name="line.245"></a>
-<span class="sourceLineNo">246</span>        return URLDecoder.decode(urlPath, Constants.UTF_8.name());<a name="line.246"></a>
+<span class="sourceLineNo">246</span>        return URLDecoder.decode(urlPath, StandardCharsets.UTF_8.name());<a name="line.246"></a>
 <span class="sourceLineNo">247</span>    }<a name="line.247"></a>
 <span class="sourceLineNo">248</span><a name="line.248"></a>
 <span class="sourceLineNo">249</span>    private void loadImplementationsInBundle(final Test test, final String packageName) {<a name="line.249"></a>
-<span class="sourceLineNo">250</span>        // Do not remove the cast on the next line as removing it will cause a compile error on Java 7.<a name="line.250"></a>
-<span class="sourceLineNo">251</span>        @SuppressWarnings("RedundantCast")<a name="line.251"></a>
-<span class="sourceLineNo">252</span>        final BundleWiring wiring = (BundleWiring) FrameworkUtil.getBundle(ResolverUtil.class)<a name="line.252"></a>
-<span class="sourceLineNo">253</span>                .adapt(BundleWiring.class);<a name="line.253"></a>
-<span class="sourceLineNo">254</span>        @SuppressWarnings("unchecked")<a name="line.254"></a>
-<span class="sourceLineNo">255</span>        final Collection&lt;String&gt; list = (Collection&lt;String&gt;) wiring.listResources(packageName, "*.class",<a name="line.255"></a>
-<span class="sourceLineNo">256</span>                BundleWiring.LISTRESOURCES_RECURSE);<a name="line.256"></a>
-<span class="sourceLineNo">257</span>        for (final String name : list) {<a name="line.257"></a>
-<span class="sourceLineNo">258</span>            addIfMatching(test, name);<a name="line.258"></a>
-<span class="sourceLineNo">259</span>        }<a name="line.259"></a>
-<span class="sourceLineNo">260</span>    }<a name="line.260"></a>
-<span class="sourceLineNo">261</span><a name="line.261"></a>
-<span class="sourceLineNo">262</span>    /**<a name="line.262"></a>
-<span class="sourceLineNo">263</span>     * Finds matches in a physical directory on a filesystem. Examines all files within a directory - if the File object<a name="line.263"></a>
-<span class="sourceLineNo">264</span>     * is not a directory, and ends with &lt;i&gt;.class&lt;/i&gt; the file is loaded and tested to see if it is acceptable<a name="line.264"></a>
-<span class="sourceLineNo">265</span>     * according to the Test. Operates recursively to find classes within a folder structure matching the package<a name="line.265"></a>
-<span class="sourceLineNo">266</span>     * structure.<a name="line.266"></a>
-<span class="sourceLineNo">267</span>     *<a name="line.267"></a>
-<span class="sourceLineNo">268</span>     * @param test<a name="line.268"></a>
-<span class="sourceLineNo">269</span>     *        a Test used to filter the classes that are discovered<a name="line.269"></a>
-<span class="sourceLineNo">270</span>     * @param parent<a name="line.270"></a>
-<span class="sourceLineNo">271</span>     *        the package name up to this directory in the package hierarchy. E.g. if /classes is in the classpath and<a name="line.271"></a>
-<span class="sourceLineNo">272</span>     *        we wish to examine files in /classes/org/apache then the values of &lt;i&gt;parent&lt;/i&gt; would be<a name="line.272"></a>
-<span class="sourceLineNo">273</span>     *        &lt;i&gt;org/apache&lt;/i&gt;<a name="line.273"></a>
-<span class="sourceLineNo">274</span>     * @param location<a name="line.274"></a>
-<span class="sourceLineNo">275</span>     *        a File object representing a directory<a name="line.275"></a>
-<span class="sourceLineNo">276</span>     */<a name="line.276"></a>
-<span class="sourceLineNo">277</span>    private void loadImplementationsInDirectory(final Test test, final String parent, final File location) {<a name="line.277"></a>
-<span class="sourceLineNo">278</span>        final File[] files = location.listFiles();<a name="line.278"></a>
-<span class="sourceLineNo">279</span>        if (files == null) {<a name="line.279"></a>
-<span class="sourceLineNo">280</span>            return;<a name="line.280"></a>
-<span class="sourceLineNo">281</span>        }<a name="line.281"></a>
-<span class="sourceLineNo">282</span><a name="line.282"></a>
-<span class="sourceLineNo">283</span>        StringBuilder builder;<a name="line.283"></a>
-<span class="sourceLineNo">284</span>        for (final File file : files) {<a name="line.284"></a>
-<span class="sourceLineNo">285</span>            builder = new StringBuilder();<a name="line.285"></a>
-<span class="sourceLineNo">286</span>            builder.append(parent).append('/').append(file.getName());<a name="line.286"></a>
-<span class="sourceLineNo">287</span>            final String packageOrClass = parent == null ? file.getName() : builder.toString();<a name="line.287"></a>
-<span class="sourceLineNo">288</span><a name="line.288"></a>
-<span class="sourceLineNo">289</span>            if (file.isDirectory()) {<a name="line.289"></a>
-<span class="sourceLineNo">290</span>                loadImplementationsInDirectory(test, packageOrClass, file);<a name="line.290"></a>
-<span class="sourceLineNo">291</span>            } else if (isTestApplicable(test, file.getName())) {<a name="line.291"></a>
-<span class="sourceLineNo">292</span>                addIfMatching(test, packageOrClass);<a name="line.292"></a>
-<span class="sourceLineNo">293</span>            }<a name="line.293"></a>
-<span class="sourceLineNo">294</span>        }<a name="line.294"></a>
+<span class="sourceLineNo">250</span>        final BundleWiring wiring = FrameworkUtil.getBundle(ResolverUtil.class).adapt(BundleWiring.class);<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        final Collection&lt;String&gt; list = wiring.listResources(packageName, "*.class",<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                BundleWiring.LISTRESOURCES_RECURSE);<a name="line.252"></a>
+<span class="sourceLineNo">253</span>        for (final String name : list) {<a name="line.253"></a>
+<span class="sourceLineNo">254</span>            addIfMatching(test, name);<a name="line.254"></a>
+<span class="sourceLineNo">255</span>        }<a name="line.255"></a>
+<span class="sourceLineNo">256</span>    }<a name="line.256"></a>
+<span class="sourceLineNo">257</span><a name="line.257"></a>
+<span class="sourceLineNo">258</span>    /**<a name="line.258"></a>
+<span class="sourceLineNo">259</span>     * Finds matches in a physical directory on a filesystem. Examines all files within a directory - if the File object<a name="line.259"></a>
+<span class="sourceLineNo">260</span>     * is not a directory, and ends with &lt;i&gt;.class&lt;/i&gt; the file is loaded and tested to see if it is acceptable<a name="line.260"></a>
+<span class="sourceLineNo">261</span>     * according to the Test. Operates recursively to find classes within a folder structure matching the package<a name="line.261"></a>
+<span class="sourceLineNo">262</span>     * structure.<a name="line.262"></a>
+<span class="sourceLineNo">263</span>     *<a name="line.263"></a>
+<span class="sourceLineNo">264</span>     * @param test<a name="line.264"></a>
+<span class="sourceLineNo">265</span>     *        a Test used to filter the classes that are discovered<a name="line.265"></a>
+<span class="sourceLineNo">266</span>     * @param parent<a name="line.266"></a>
+<span class="sourceLineNo">267</span>     *        the package name up to this directory in the package hierarchy. E.g. if /classes is in the classpath and<a name="line.267"></a>
+<span class="sourceLineNo">268</span>     *        we wish to examine files in /classes/org/apache then the values of &lt;i&gt;parent&lt;/i&gt; would be<a name="line.268"></a>
+<span class="sourceLineNo">269</span>     *        &lt;i&gt;org/apache&lt;/i&gt;<a name="line.269"></a>
+<span class="sourceLineNo">270</span>     * @param location<a name="line.270"></a>
+<span class="sourceLineNo">271</span>     *        a File object representing a directory<a name="line.271"></a>
+<span class="sourceLineNo">272</span>     */<a name="line.272"></a>
+<span class="sourceLineNo">273</span>    private void loadImplementationsInDirectory(final Test test, final String parent, final File location) {<a name="line.273"></a>
+<span class="sourceLineNo">274</span>        final File[] files = location.listFiles();<a name="line.274"></a>
+<span class="sourceLineNo">275</span>        if (files == null) {<a name="line.275"></a>
+<span class="sourceLineNo">276</span>            return;<a name="line.276"></a>
+<span class="sourceLineNo">277</span>        }<a name="line.277"></a>
+<span class="sourceLineNo">278</span><a name="line.278"></a>
+<span class="sourceLineNo">279</span>        StringBuilder builder;<a name="line.279"></a>
+<span class="sourceLineNo">280</span>        for (final File file : files) {<a name="line.280"></a>
+<span class="sourceLineNo">281</span>            builder = new StringBuilder();<a name="line.281"></a>
+<span class="sourceLineNo">282</span>            builder.append(parent).append('/').append(file.getName());<a name="line.282"></a>
+<span class="sourceLineNo">283</span>            final String packageOrClass = parent == null ? file.getName() : builder.toString();<a name="line.283"></a>
+<span class="sourceLineNo">284</span><a name="line.284"></a>
+<span class="sourceLineNo">285</span>            if (file.isDirectory()) {<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                loadImplementationsInDirectory(test, packageOrClass, file);<a name="line.286"></a>
+<span class="sourceLineNo">287</span>            } else if (isTestApplicable(test, file.getName())) {<a name="line.287"></a>
+<span class="sourceLineNo">288</span>                addIfMatching(test, packageOrClass);<a name="line.288"></a>
+<span class="sourceLineNo">289</span>            }<a name="line.289"></a>
+<span class="sourceLineNo">290</span>        }<a name="line.290"></a>
+<span class="sourceLineNo">291</span>    }<a name="line.291"></a>
+<span class="sourceLineNo">292</span><a name="line.292"></a>
+<span class="sourceLineNo">293</span>    private boolean isTestApplicable(final Test test, final String path) {<a name="line.293"></a>
+<span class="sourceLineNo">294</span>        return test.doesMatchResource() || path.endsWith(".class") &amp;&amp; test.doesMatchClass();<a name="line.294"></a>
 <span class="sourceLineNo">295</span>    }<a name="line.295"></a>
 <span class="sourceLineNo">296</span><a name="line.296"></a>
-<span class="sourceLineNo">297</span>    private boolean isTestApplicable(final Test test, final String path) {<a name="line.297"></a>
-<span class="sourceLineNo">298</span>        return test.doesMatchResource() || path.endsWith(".class") &amp;&amp; test.doesMatchClass();<a name="line.298"></a>
-<span class="sourceLineNo">299</span>    }<a name="line.299"></a>
-<span class="sourceLineNo">300</span><a name="line.300"></a>
-<span class="sourceLineNo">301</span>    /**<a name="line.301"></a>
-<span class="sourceLineNo">302</span>     * Finds matching classes within a jar files that contains a folder structure matching the package structure. If the<a name="line.302"></a>
-<span class="sourceLineNo">303</span>     * File is not a JarFile or does not exist a warning will be logged, but no error will be raised.<a name="line.303"></a>
-<span class="sourceLineNo">304</span>     *<a name="line.304"></a>
-<span class="sourceLineNo">305</span>     * @param test<a name="line.305"></a>
-<span class="sourceLineNo">306</span>     *        a Test used to filter the classes that are discovered<a name="line.306"></a>
-<span class="sourceLineNo">307</span>     * @param parent<a name="line.307"></a>
-<span class="sourceLineNo">308</span>     *        the parent package under which classes must be in order to be considered<a name="line.308"></a>
-<span class="sourceLineNo">309</span>     * @param jarFile<a name="line.309"></a>
-<span class="sourceLineNo">310</span>     *        the jar file to be examined for classes<a name="line.310"></a>
-<span class="sourceLineNo">311</span>     */<a name="line.311"></a>
-<span class="sourceLineNo">312</span>    private void loadImplementationsInJar(final Test test, final String parent, final File jarFile) {<a name="line.312"></a>
-<span class="sourceLineNo">313</span>        @SuppressWarnings("resource")<a name="line.313"></a>
-<span class="sourceLineNo">314</span>        JarInputStream jarStream = null;<a name="line.314"></a>
-<span class="sourceLineNo">315</span>        try {<a name="line.315"></a>
-<span class="sourceLineNo">316</span>            jarStream = new JarInputStream(new FileInputStream(jarFile));<a name="line.316"></a>
-<span class="sourceLineNo">317</span>            loadImplementationsInJar(test, parent, jarFile.getPath(), jarStream);<a name="line.317"></a>
-<span class="sourceLineNo">318</span>        } catch (final FileNotFoundException ex) {<a name="line.318"></a>
-<span class="sourceLineNo">319</span>            LOGGER.error("Could not search jar file '" + jarFile + "' for classes matching criteria: " + test<a name="line.319"></a>
-<span class="sourceLineNo">320</span>                    + " file not found", ex);<a name="line.320"></a>
-<span class="sourceLineNo">321</span>        } catch (final IOException ioe) {<a name="line.321"></a>
-<span class="sourceLineNo">322</span>            LOGGER.error("Could not search jar file '" + jarFile + "' for classes matching criteria: " + test<a name="line.322"></a>
-<span class="sourceLineNo">323</span>                    + " due to an IOException", ioe);<a name="line.323"></a>
-<span class="sourceLineNo">324</span>        } finally {<a name="line.324"></a>
-<span class="sourceLineNo">325</span>            close(jarStream, jarFile);<a name="line.325"></a>
-<span class="sourceLineNo">326</span>        }<a name="line.326"></a>
-<span class="sourceLineNo">327</span>    }<a name="line.327"></a>
-<span class="sourceLineNo">328</span><a name="line.328"></a>
-<span class="sourceLineNo">329</span>    /**<a name="line.329"></a>
-<span class="sourceLineNo">330</span>     * @param jarStream<a name="line.330"></a>
-<span class="sourceLineNo">331</span>     * @param source<a name="line.331"></a>
-<span class="sourceLineNo">332</span>     */<a name="line.332"></a>
-<span class="sourceLineNo">333</span>    private void close(final JarInputStream jarStream, final Object source) {<a name="line.333"></a>
-<span class="sourceLineNo">334</span>        if (jarStream != null) {<a name="line.334"></a>
-<span class="sourceLineNo">335</span>            try {<a name="line.335"></a>
-<span class="sourceLineNo">336</span>                jarStream.close();<a name="line.336"></a>
-<span class="sourceLineNo">337</span>            } catch (final IOException e) {<a name="line.337"></a>
-<span class="sourceLineNo">338</span>                LOGGER.error("Error closing JAR file stream for {}", source, e);<a name="line.338"></a>
-<span class="sourceLineNo">339</span>            }<a name="line.339"></a>
-<span class="sourceLineNo">340</span>        }<a name="line.340"></a>
-<span class="sourceLineNo">341</span>    }<a name="line.341"></a>
-<span class="sourceLineNo">342</span><a name="line.342"></a>
-<span class="sourceLineNo">343</span>    /**<a name="line.343"></a>
-<span class="sourceLineNo">344</span>     * Finds matching classes within a jar files that contains a folder structure matching the package structure. If the<a name="line.344"></a>
-<span class="sourceLineNo">345</span>     * File is not a JarFile or does not exist a warning will be logged, but no error will be raised.<a name="line.345"></a>
-<span class="sourceLineNo">346</span>     *<a name="line.346"></a>
-<span class="sourceLineNo">347</span>     * @param test<a name="line.347"></a>
-<span class="sourceLineNo">348</span>     *        a Test used to filter the classes that are discovered<a name="line.348"></a>
-<span class="sourceLineNo">349</span>     * @param parent<a name="line.349"></a>
-<span class="sourceLineNo">350</span>     *        the parent package under which classes must be in order to be considered<a name="line.350"></a>
-<span class="sourceLineNo">351</span>     * @param stream<a name="line.351"></a>
-<span class="sourceLineNo">352</span>     *        The jar InputStream<a name="line.352"></a>
-<span class="sourceLineNo">353</span>     */<a name="line.353"></a>
-<span class="sourceLineNo">354</span>    private void loadImplementationsInJar(final Test test, final String parent, final String path,<a name="line.354"></a>
-<span class="sourceLineNo">355</span>            final JarInputStream stream) {<a name="line.355"></a>
-<span class="sourceLineNo">356</span><a name="line.356"></a>
-<span class="sourceLineNo">357</span>        try {<a name="line.357"></a>
-<span class="sourceLineNo">358</span>            JarEntry entry;<a name="line.358"></a>
-<span class="sourceLineNo">359</span><a name="line.359"></a>
-<span class="sourceLineNo">360</span>            while ((entry = stream.getNextJarEntry()) != null) {<a name="line.360"></a>
-<span class="sourceLineNo">361</span>                final String name = entry.getName();<a name="line.361"></a>
-<span class="sourceLineNo">362</span>                if (!entry.isDirectory() &amp;&amp; name.startsWith(parent) &amp;&amp; isTestApplicable(test, name)) {<a name="line.362"></a>
-<span class="sourceLineNo">363</span>                    addIfMatching(test, name);<a name="line.363"></a>
-<span class="sourceLineNo">364</span>                }<a name="line.364"></a>
-<span class="sourceLineNo">365</span>            }<a name="line.365"></a>
-<span class="sourceLineNo">366</span>        } catch (final IOException ioe) {<a name="line.366"></a>
-<span class="sourceLineNo">367</span>            LOGGER.error("Could not search jar file '" + path + "' for classes matching criteria: " + test<a name="line.367"></a>
-<span class="sourceLineNo">368</span>                    + " due to an IOException", ioe);<a name="line.368"></a>
-<span class="sourceLineNo">369</span>        }<a name="line.369"></a>
-<span class="sourceLineNo">370</span>    }<a name="line.370"></a>
-<span class="sourceLineNo">371</span><a name="line.371"></a>
-<span class="sourceLineNo">372</span>    /**<a name="line.372"></a>
-<span class="sourceLineNo">373</span>     * Add the class designated by the fully qualified class name provided to the set of resolved classes if and only if<a name="line.373"></a>
-<span class="sourceLineNo">374</span>     * it is approved by the Test supplied.<a name="line.374"></a>
-<span class="sourceLineNo">375</span>     *<a name="line.375"></a>
-<span class="sourceLineNo">376</span>     * @param test<a name="line.376"></a>
-<span class="sourceLineNo">377</span>     *        the test used to determine if the class matches<a name="line.377"></a>
-<span class="sourceLineNo">378</span>     * @param fqn<a name="line.378"></a>
-<span class="sourceLineNo">379</span>     *        the fully qualified name of a class<a name="line.379"></a>
-<span class="sourceLineNo">380</span>     */<a name="line.380"></a>
-<span class="sourceLineNo">381</span>    protected void addIfMatching(final Test test, final String fqn) {<a name="line.381"></a>
-<span class="sourceLineNo">382</span>        try {<a name="line.382"></a>
-<span class="sourceLineNo">383</span>            final ClassLoader loader = getClassLoader();<a name="line.383"></a>
-<span class="sourceLineNo">384</span>            if (test.doesMatchClass()) {<a name="line.384"></a>
-<span class="sourceLineNo">385</span>                final String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');<a name="line.385"></a>
-<span class="sourceLineNo">386</span>                if (LOGGER.isDebugEnabled()) {<a name="line.386"></a>
-<span class="sourceLineNo">387</span>                    LOGGER.debug("Checking to see if class " + externalName + " matches criteria [" + test + ']');<a name="line.387"></a>
-<span class="sourceLineNo">388</span>                }<a name="line.388"></a>
-<span class="sourceLineNo">389</span><a name="line.389"></a>
-<span class="sourceLineNo">390</span>                final Class&lt;?&gt; type = loader.loadClass(externalName);<a name="line.390"></a>
-<span class="sourceLineNo">391</span>                if (test.matches(type)) {<a name="line.391"></a>
-<span class="sourceLineNo">392</span>                    classMatches.add(type);<a name="line.392"></a>
-<span class="sourceLineNo">393</span>                }<a name="line.393"></a>
-<span class="sourceLineNo">394</span>            }<a name="line.394"></a>
-<span class="sourceLineNo">395</span>            if (test.doesMatchResource()) {<a name="line.395"></a>
-<span class="sourceLineNo">396</span>                URL url = loader.getResource(fqn);<a name="line.396"></a>
-<span class="sourceLineNo">397</span>                if (url == null) {<a name="line.397"></a>
-<span class="sourceLineNo">398</span>                    url = loader.getResource(fqn.substring(1));<a name="line.398"></a>
-<span class="sourceLineNo">399</span>                }<a name="line.399"></a>
-<span class="sourceLineNo">400</span>                if (url != null &amp;&amp; test.matches(url.toURI())) {<a name="line.400"></a>
-<span class="sourceLineNo">401</span>                    resourceMatches.add(url.toURI());<a name="line.401"></a>
-<span class="sourceLineNo">402</span>                }<a name="line.402"></a>
-<span class="sourceLineNo">403</span>            }<a name="line.403"></a>
-<span class="sourceLineNo">404</span>        } catch (final Throwable t) {<a name="line.404"></a>
-<span class="sourceLineNo">405</span>            LOGGER.warn("Could not examine class '" + fqn, t);<a name="line.405"></a>
-<span class="sourceLineNo">406</span>        }<a name="line.406"></a>
-<span class="sourceLineNo">407</span>    }<a name="line.407"></a>
-<span class="sourceLineNo">408</span><a name="line.408"></a>
-<span class="sourceLineNo">409</span>    /**<a name="line.409"></a>
-<span class="sourceLineNo">410</span>     * A simple interface that specifies how to test classes to determine if they are to be included in the results<a name="line.410"></a>
-<span class="sourceLineNo">411</span>     * produced by the ResolverUtil.<a name="line.411"></a>
-<span class="sourceLineNo">412</span>     */<a name="line.412"></a>
-<span class="sourceLineNo">413</span>    public interface Test {<a name="line.413"></a>
-<span class="sourceLineNo">414</span>        /**<a name="line.414"></a>
-<span class="sourceLineNo">415</span>         * Will be called repeatedly with candidate classes. Must return True if a class is to be included in the<a name="line.415"></a>
-<span class="sourceLineNo">416</span>         * results, false otherwise.<a name="line.416"></a>
-<span class="sourceLineNo">417</span>         * <a name="line.417"></a>
-<span class="sourceLineNo">418</span>         * @param type<a name="line.418"></a>
-<span class="sourceLineNo">419</span>         *        The Class to match against.<a name="line.419"></a>
-<span class="sourceLineNo">420</span>         * @return true if the Class matches.<a name="line.420"></a>
-<span class="sourceLineNo">421</span>         */<a name="line.421"></a>
-<span class="sourceLineNo">422</span>        boolean matches(Class&lt;?&gt; type);<a name="line.422"></a>
-<span class="sourceLineNo">423</span><a name="line.423"></a>
-<span class="sourceLineNo">424</span>        /**<a name="line.424"></a>
-<span class="sourceLineNo">425</span>         * Test for a resource.<a name="line.425"></a>
-<span class="sourceLineNo">426</span>         * <a name="line.426"></a>
-<span class="sourceLineNo">427</span>         * @param resource<a name="line.427"></a>
-<span class="sourceLineNo">428</span>         *        The URI to the resource.<a name="line.428"></a>
-<span class="sourceLineNo">429</span>         * @return true if the resource matches.<a name="line.429"></a>
-<span class="sourceLineNo">430</span>         */<a name="line.430"></a>
-<span class="sourceLineNo">431</span>        boolean matches(URI resource);<a name="line.431"></a>
-<span class="sourceLineNo">432</span><a name="line.432"></a>
-<span class="sourceLineNo">433</span>        boolean doesMatchClass();<a name="line.433"></a>
-<span class="sourceLineNo">434</span><a name="line.434"></a>
-<span class="sourceLineNo">435</span>        boolean doesMatchResource();<a name="line.435"></a>
-<span class="sourceLineNo">436</span>    }<a name="line.436"></a>
-<span class="sourceLineNo">437</span><a name="line.437"></a>
-<span class="sourceLineNo">438</span>}<a name="line.438"></a>
+<span class="sourceLineNo">297</span>    /**<a name="line.297"></a>
+<span class="sourceLineNo">298</span>     * Finds matching classes within a jar files that contains a folder structure matching the package structure. If the<a name="line.298"></a>
+<span class="sourceLineNo">299</span>     * File is not a JarFile or does not exist a warning will be logged, but no error will be raised.<a name="line.299"></a>
+<span class="sourceLineNo">300</span>     *<a name="line.300"></a>
+<span class="sourceLineNo">301</span>     * @param test<a name="line.301"></a>
+<span class="sourceLineNo">302</span>     *        a Test used to filter the classes that are discovered<a name="line.302"></a>
+<span class="sourceLineNo">303</span>     * @param parent<a name="line.303"></a>
+<span class="sourceLineNo">304</span>     *        the parent package under which classes must be in order to be considered<a name="line.304"></a>
+<span class="sourceLineNo">305</span>     * @param jarFile<a name="line.305"></a>
+<span class="sourceLineNo">306</span>     *        the jar file to be examined for classes<a name="line.306"></a>
+<span class="sourceLineNo">307</span>     */<a name="line.307"></a>
+<span class="sourceLineNo">308</span>    private void loadImplementationsInJar(final Test test, final String parent, final File jarFile) {<a name="line.308"></a>
+<span class="sourceLineNo">309</span>        @SuppressWarnings("resource")<a name="line.309"></a>
+<span class="sourceLineNo">310</span>        JarInputStream jarStream = null;<a name="line.310"></a>
+<span class="sourceLineNo">311</span>        try {<a name="line.311"></a>
+<span class="sourceLineNo">312</span>            jarStream = new JarInputStream(new FileInputStream(jarFile));<a name="line.312"></a>
+<span class="sourceLineNo">313</span>            loadImplementationsInJar(test, parent, jarFile.getPath(), jarStream);<a name="line.313"></a>
+<span class="sourceLineNo">314</span>        } catch (final FileNotFoundException ex) {<a name="line.314"></a>
+<span class="sourceLineNo">315</span>            LOGGER.error("Could not search jar file '" + jarFile + "' for classes matching criteria: " + test<a name="line.315"></a>
+<span class="sourceLineNo">316</span>                    + " file not found", ex);<a name="line.316"></a>
+<span class="sourceLineNo">317</span>        } catch (final IOException ioe) {<a name="line.317"></a>
+<span class="sourceLineNo">318</span>            LOGGER.error("Could not search jar file '" + jarFile + "' for classes matching criteria: " + test<a name="line.318"></a>
+<span class="sourceLineNo">319</span>                    + " due to an IOException", ioe);<a name="line.319"></a>
+<span class="sourceLineNo">320</span>        } finally {<a name="line.320"></a>
+<span class="sourceLineNo">321</span>            close(jarStream, jarFile);<a name="line.321"></a>
+<span class="sourceLineNo">322</span>        }<a name="line.322"></a>
+<span class="sourceLineNo">323</span>    }<a name="line.323"></a>
+<span class="sourceLineNo">324</span><a name="line.324"></a>
+<span class="sourceLineNo">325</span>    /**<a name="line.325"></a>
+<span class="sourceLineNo">326</span>     * @param jarStream<a name="line.326"></a>
+<span class="sourceLineNo">327</span>     * @param source<a name="line.327"></a>
+<span class="sourceLineNo">328</span>     */<a name="line.328"></a>
+<span class="sourceLineNo">329</span>    private void close(final JarInputStream jarStream, final Object source) {<a name="line.329"></a>
+<span class="sourceLineNo">330</span>        if (jarStream != null) {<a name="line.330"></a>
+<span class="sourceLineNo">331</span>            try {<a name="line.331"></a>
+<span class="sourceLineNo">332</span>                jarStream.close();<a name="line.332"></a>
+<span class="sourceLineNo">333</span>            } catch (final IOException e) {<a name="line.333"></a>
+<span class="sourceLineNo">334</span>                LOGGER.error("Error closing JAR file stream for {}", source, e);<a name="line.334"></a>
+<span class="sourceLineNo">335</span>            }<a name="line.335"></a>
+<span class="sourceLineNo">336</span>        }<a name="line.336"></a>
+<span class="sourceLineNo">337</span>    }<a name="line.337"></a>
+<span class="sourceLineNo">338</span><a name="line.338"></a>
+<span class="sourceLineNo">339</span>    /**<a name="line.339"></a>
+<span class="sourceLineNo">340</span>     * Finds matching classes within a jar files that contains a folder structure matching the package structure. If the<a name="line.340"></a>
+<span class="sourceLineNo">341</span>     * File is not a JarFile or does not exist a warning will be logged, but no error will be raised.<a name="line.341"></a>
+<span class="sourceLineNo">342</span>     *<a name="line.342"></a>
+<span class="sourceLineNo">343</span>     * @param test<a name="line.343"></a>
+<span class="sourceLineNo">344</span>     *        a Test used to filter the classes that are discovered<a name="line.344"></a>
+<span class="sourceLineNo">345</span>     * @param parent<a name="line.345"></a>
+<span class="sourceLineNo">346</span>     *        the parent package under which classes must be in order to be considered<a name="line.346"></a>
+<span class="sourceLineNo">347</span>     * @param stream<a name="line.347"></a>
+<span class="sourceLineNo">348</span>     *        The jar InputStream<a name="line.348"></a>
+<span class="sourceLineNo">349</span>     */<a name="line.349"></a>
+<span class="sourceLineNo">350</span>    private void loadImplementationsInJar(final Test test, final String parent, final String path,<a name="line.350"></a>
+<span class="sourceLineNo">351</span>            final JarInputStream stream) {<a name="line.351"></a>
+<span class="sourceLineNo">352</span><a name="line.352"></a>
+<span class="sourceLineNo">353</span>        try {<a name="line.353"></a>
+<span class="sourceLineNo">354</span>            JarEntry entry;<a name="line.354"></a>
+<span class="sourceLineNo">355</span><a name="line.355"></a>
+<span class="sourceLineNo">356</span>            while ((entry = stream.getNextJarEntry()) != null) {<a name="line.356"></a>
+<span class="sourceLineNo">357</span>                final String name = entry.getName();<a name="line.357"></a>
+<span class="sourceLineNo">358</span>                if (!entry.isDirectory() &amp;&amp; name.startsWith(parent) &amp;&amp; isTestApplicable(test, name)) {<a name="line.358"></a>
+<span class="sourceLineNo">359</span>                    addIfMatching(test, name);<a name="line.359"></a>
+<span class="sourceLineNo">360</span>                }<a name="line.360"></a>
+<span class="sourceLineNo">361</span>            }<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        } catch (final IOException ioe) {<a name="line.362"></a>
+<span class="sourceLineNo">363</span>            LOGGER.error("Could not search jar file '" + path + "' for classes matching criteria: " + test<a name="line.363"></a>
+<span class="sourceLineNo">364</span>                    + " due to an IOException", ioe);<a name="line.364"></a>
+<span class="sourceLineNo">365</span>        }<a name="line.365"></a>
+<span class="sourceLineNo">366</span>    }<a name="line.366"></a>
+<span class="sourceLineNo">367</span><a name="line.367"></a>
+<span class="sourceLineNo">368</span>    /**<a name="line.368"></a>
+<span class="sourceLineNo">369</span>     * Add the class designated by the fully qualified class name provided to the set of resolved classes if and only if<a name="line.369"></a>
+<span class="sourceLineNo">370</span>     * it is approved by the Test supplied.<a name="line.370"></a>
+<span class="sourceLineNo">371</span>     *<a name="line.371"></a>
+<span class="sourceLineNo">372</span>     * @param test<a name="line.372"></a>
+<span class="sourceLineNo">373</span>     *        the test used to determine if the class matches<a name="line.373"></a>
+<span class="sourceLineNo">374</span>     * @param fqn<a name="line.374"></a>
+<span class="sourceLineNo">375</span>     *        the fully qualified name of a class<a name="line.375"></a>
+<span class="sourceLineNo">376</span>     */<a name="line.376"></a>
+<span class="sourceLineNo">377</span>    protected void addIfMatching(final Test test, final String fqn) {<a name="line.377"></a>
+<span class="sourceLineNo">378</span>        try {<a name="line.378"></a>
+<span class="sourceLineNo">379</span>            final ClassLoader loader = getClassLoader();<a name="line.379"></a>
+<span class="sourceLineNo">380</span>            if (test.doesMatchClass()) {<a name="line.380"></a>
+<span class="sourceLineNo">381</span>                final String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');<a name="line.381"></a>
+<span class="sourceLineNo">382</span>                if (LOGGER.isDebugEnabled()) {<a name="line.382"></a>
+<span class="sourceLineNo">383</span>                    LOGGER.debug("Checking to see if class " + externalName + " matches criteria [" + test + ']');<a name="line.383"></a>
+<span class="sourceLineNo">384</span>                }<a name="line.384"></a>
+<span class="sourceLineNo">385</span><a name="line.385"></a>
+<span class="sourceLineNo">386</span>                final Class&lt;?&gt; type = loader.loadClass(externalName);<a name="line.386"></a>
+<span class="sourceLineNo">387</span>                if (test.matches(type)) {<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                    classMatches.add(type);<a name="line.388"></a>
+<span class="sourceLineNo">389</span>                }<a name="line.389"></a>
+<span class="sourceLineNo">390</span>            }<a name="line.390"></a>
+<span class="sourceLineNo">391</span>            if (test.doesMatchResource()) {<a name="line.391"></a>
+<span class="sourceLineNo">392</span>                URL url = loader.getResource(fqn);<a name="line.392"></a>
+<span class="sourceLineNo">393</span>                if (url == null) {<a name="line.393"></a>
+<span class="sourceLineNo">394</span>                    url = loader.getResource(fqn.substring(1));<a name="line.394"></a>
+<span class="sourceLineNo">395</span>                }<a name="line.395"></a>
+<span class="sourceLineNo">396</span>                if (url != null &amp;&amp; test.matches(url.toURI())) {<a name="line.396"></a>
+<span class="sourceLineNo">397</span>                    resourceMatches.add(url.toURI());<a name="line.397"></a>
+<span class="sourceLineNo">398</span>                }<a name="line.398"></a>
+<span class="sourceLineNo">399</span>            }<a name="line.399"></a>
+<span class="sourceLineNo">400</span>        } catch (final Throwable t) {<a name="line.400"></a>
+<span class="sourceLineNo">401</span>            LOGGER.warn("Could not examine class '" + fqn, t);<a name="line.401"></a>
+<span class="sourceLineNo">402</span>        }<a name="line.402"></a>
+<span class="sourceLineNo">403</span>    }<a name="line.403"></a>
+<span class="sourceLineNo">404</span><a name="line.404"></a>
+<span class="sourceLineNo">405</span>    /**<a name="line.405"></a>
+<span class="sourceLineNo">406</span>     * A simple interface that specifies how to test classes to determine if they are to be included in the results<a name="line.406"></a>
+<span class="sourceLineNo">407</span>     * produced by the ResolverUtil.<a name="line.407"></a>
+<span class="sourceLineNo">408</span>     */<a name="line.408"></a>
+<span class="sourceLineNo">409</span>    public interface Test {<a name="line.409"></a>
+<span class="sourceLineNo">410</span>        /**<a name="line.410"></a>
+<span class="sourceLineNo">411</span>         * Will be called repeatedly with candidate classes. Must return True if a class is to be included in the<a name="line.411"></a>
+<span class="sourceLineNo">412</span>         * results, false otherwise.<a name="line.412"></a>
+<span class="sourceLineNo">413</span>         * <a name="line.413"></a>
+<span class="sourceLineNo">414</span>         * @param type<a name="line.414"></a>
+<span class="sourceLineNo">415</span>         *        The Class to match against.<a name="line.415"></a>
+<span class="sourceLineNo">416</span>         * @return true if the Class matches.<a name="line.416"></a>
+<span class="sourceLineNo">417</span>         */<a name="line.417"></a>
+<span class="sourceLineNo">418</span>        boolean matches(Class&lt;?&gt; type);<a name="line.418"></a>
+<span class="sourceLineNo">419</span><a name="line.419"></a>
+<span class="sourceLineNo">420</span>        /**<a name="line.420"></a>
+<span class="sourceLineNo">421</span>         * Test for a resource.<a name="line.421"></a>
+<span class="sourceLineNo">422</span>         * <a name="line.422"></a>
+<span class="sourceLineNo">423</span>         * @param resource<a name="line.423"></a>
+<span class="sourceLineNo">424</span>         *        The URI to the resource.<a name="line.424"></a>
+<span class="sourceLineNo">425</span>         * @return true if the resource matches.<a name="line.425"></a>
+<span class="sourceLineNo">426</span>         */<a name="line.426"></a>
+<span class="sourceLineNo">427</span>        boolean matches(URI resource);<a name="line.427"></a>
+<span class="sourceLineNo">428</span><a name="line.428"></a>
+<span class="sourceLineNo">429</span>        boolean doesMatchClass();<a name="line.429"></a>
+<span class="sourceLineNo">430</span><a name="line.430"></a>
+<span class="sourceLineNo">431</span>        boolean doesMatchResource();<a name="line.431"></a>
+<span class="sourceLineNo">432</span>    }<a name="line.432"></a>
+<span class="sourceLineNo">433</span><a name="line.433"></a>
+<span class="sourceLineNo">434</span>}<a name="line.434"></a>
 
 
 
