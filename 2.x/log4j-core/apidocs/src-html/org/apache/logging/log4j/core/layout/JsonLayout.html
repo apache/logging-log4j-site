@@ -106,7 +106,7 @@
 <span class="sourceLineNo">098</span>            final String footerPattern = toStringOrNull(getFooter());<a name="line.98"></a>
 <span class="sourceLineNo">099</span>            return new JsonLayout(getConfiguration(), isLocationInfo(), isProperties(), encodeThreadContextAsList,<a name="line.99"></a>
 <span class="sourceLineNo">100</span>                    isComplete(), isCompact(), getEventEol(), getEndOfLine(), headerPattern, footerPattern, getCharset(),<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                    isIncludeStacktrace(), isStacktraceAsString(), isIncludeNullDelimiter(),<a name="line.101"></a>
+<span class="sourceLineNo">101</span>                    isIncludeStacktrace(), isStacktraceAsString(), isIncludeNullDelimiter(), isIncludeTimeMillis(),<a name="line.101"></a>
 <span class="sourceLineNo">102</span>                    getAdditionalFields(), getObjectMessageAsJsonObject());<a name="line.102"></a>
 <span class="sourceLineNo">103</span>        }<a name="line.103"></a>
 <span class="sourceLineNo">104</span><a name="line.104"></a>
@@ -161,10 +161,10 @@
 <span class="sourceLineNo">153</span>                       final boolean complete, final boolean compact, final boolean eventEol, final String endOfLine,<a name="line.153"></a>
 <span class="sourceLineNo">154</span>                       final String headerPattern, final String footerPattern, final Charset charset,<a name="line.154"></a>
 <span class="sourceLineNo">155</span>                       final boolean includeStacktrace, final boolean stacktraceAsString,<a name="line.155"></a>
-<span class="sourceLineNo">156</span>                       final boolean includeNullDelimiter,<a name="line.156"></a>
+<span class="sourceLineNo">156</span>                       final boolean includeNullDelimiter, final boolean includeTimeMillis,<a name="line.156"></a>
 <span class="sourceLineNo">157</span>                       final KeyValuePair[] additionalFields, final boolean objectMessageAsJsonObject) {<a name="line.157"></a>
 <span class="sourceLineNo">158</span>        super(config, new JacksonFactory.JSON(encodeThreadContextAsList, includeStacktrace, stacktraceAsString, objectMessageAsJsonObject).newWriter(<a name="line.158"></a>
-<span class="sourceLineNo">159</span>                locationInfo, properties, compact),<a name="line.159"></a>
+<span class="sourceLineNo">159</span>                locationInfo, properties, compact, includeTimeMillis),<a name="line.159"></a>
 <span class="sourceLineNo">160</span>                charset, compact, complete, eventEol, endOfLine,<a name="line.160"></a>
 <span class="sourceLineNo">161</span>                PatternLayout.newSerializerBuilder().setConfiguration(config).setPattern(headerPattern).setDefaultPattern(DEFAULT_HEADER).build(),<a name="line.161"></a>
 <span class="sourceLineNo">162</span>                PatternLayout.newSerializerBuilder().setConfiguration(config).setPattern(footerPattern).setDefaultPattern(DEFAULT_FOOTER).build(),<a name="line.162"></a>
@@ -273,7 +273,7 @@
 <span class="sourceLineNo">265</span>            final boolean includeStacktrace) {<a name="line.265"></a>
 <span class="sourceLineNo">266</span>        final boolean encodeThreadContextAsList = properties &amp;&amp; propertiesAsList;<a name="line.266"></a>
 <span class="sourceLineNo">267</span>        return new JsonLayout(config, locationInfo, properties, encodeThreadContextAsList, complete, compact, eventEol,<a name="line.267"></a>
-<span class="sourceLineNo">268</span>                null, headerPattern, footerPattern, charset, includeStacktrace, false, false, null, false);<a name="line.268"></a>
+<span class="sourceLineNo">268</span>                null, headerPattern, footerPattern, charset, includeStacktrace, false, false, false, null, false);<a name="line.268"></a>
 <span class="sourceLineNo">269</span>    }<a name="line.269"></a>
 <span class="sourceLineNo">270</span><a name="line.270"></a>
 <span class="sourceLineNo">271</span>    @PluginBuilderFactory<a name="line.271"></a>
@@ -288,7 +288,7 @@
 <span class="sourceLineNo">280</span>     */<a name="line.280"></a>
 <span class="sourceLineNo">281</span>    public static JsonLayout createDefaultLayout() {<a name="line.281"></a>
 <span class="sourceLineNo">282</span>        return new JsonLayout(new DefaultConfiguration(), false, false, false, false, false, false, null,<a name="line.282"></a>
-<span class="sourceLineNo">283</span>                DEFAULT_HEADER, DEFAULT_FOOTER, StandardCharsets.UTF_8, true, false, false, null, false);<a name="line.283"></a>
+<span class="sourceLineNo">283</span>                DEFAULT_HEADER, DEFAULT_FOOTER, StandardCharsets.UTF_8, true, false, false, false, null, false);<a name="line.283"></a>
 <span class="sourceLineNo">284</span>    }<a name="line.284"></a>
 <span class="sourceLineNo">285</span><a name="line.285"></a>
 <span class="sourceLineNo">286</span>    @Override<a name="line.286"></a>

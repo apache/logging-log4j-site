@@ -251,93 +251,94 @@
 <span class="sourceLineNo">243</span>     * @param protocol The protocol, see http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#SSLContext<a name="line.243"></a>
 <span class="sourceLineNo">244</span>     * @param keyStoreConfig The KeyStoreConfiguration.<a name="line.244"></a>
 <span class="sourceLineNo">245</span>     * @param trustStoreConfig The TrustStoreConfiguration.<a name="line.245"></a>
-<span class="sourceLineNo">246</span>     * @return a new SslConfiguration<a name="line.246"></a>
-<span class="sourceLineNo">247</span>     * @since 2.12<a name="line.247"></a>
-<span class="sourceLineNo">248</span>     */<a name="line.248"></a>
-<span class="sourceLineNo">249</span>    public static SslConfiguration createSSLConfiguration(<a name="line.249"></a>
-<span class="sourceLineNo">250</span>        // @formatter:off<a name="line.250"></a>
-<span class="sourceLineNo">251</span>        @PluginAttribute("protocol") final String protocol,<a name="line.251"></a>
-<span class="sourceLineNo">252</span>        @PluginElement("KeyStore") final KeyStoreConfiguration keyStoreConfig,<a name="line.252"></a>
-<span class="sourceLineNo">253</span>        @PluginElement("TrustStore") final TrustStoreConfiguration trustStoreConfig,<a name="line.253"></a>
-<span class="sourceLineNo">254</span>        @PluginElement("verifyHostName") final boolean verifyHostName) {<a name="line.254"></a>
-<span class="sourceLineNo">255</span>        // @formatter:on<a name="line.255"></a>
-<span class="sourceLineNo">256</span>        return new SslConfiguration(protocol, keyStoreConfig, trustStoreConfig, verifyHostName);<a name="line.256"></a>
-<span class="sourceLineNo">257</span>    }<a name="line.257"></a>
-<span class="sourceLineNo">258</span><a name="line.258"></a>
-<span class="sourceLineNo">259</span>    @Override<a name="line.259"></a>
-<span class="sourceLineNo">260</span>    public int hashCode() {<a name="line.260"></a>
-<span class="sourceLineNo">261</span>        final int prime = 31;<a name="line.261"></a>
-<span class="sourceLineNo">262</span>        int result = 1;<a name="line.262"></a>
-<span class="sourceLineNo">263</span>        result = prime * result + ((keyStoreConfig == null) ? 0 : keyStoreConfig.hashCode());<a name="line.263"></a>
-<span class="sourceLineNo">264</span>        result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());<a name="line.264"></a>
-<span class="sourceLineNo">265</span>        result = prime * result + ((sslContext == null) ? 0 : sslContext.hashCode());<a name="line.265"></a>
-<span class="sourceLineNo">266</span>        result = prime * result + ((trustStoreConfig == null) ? 0 : trustStoreConfig.hashCode());<a name="line.266"></a>
-<span class="sourceLineNo">267</span>        return result;<a name="line.267"></a>
-<span class="sourceLineNo">268</span>    }<a name="line.268"></a>
-<span class="sourceLineNo">269</span><a name="line.269"></a>
-<span class="sourceLineNo">270</span>    @Override<a name="line.270"></a>
-<span class="sourceLineNo">271</span>    public boolean equals(final Object obj) {<a name="line.271"></a>
-<span class="sourceLineNo">272</span>        if (this == obj) {<a name="line.272"></a>
-<span class="sourceLineNo">273</span>            return true;<a name="line.273"></a>
-<span class="sourceLineNo">274</span>        }<a name="line.274"></a>
-<span class="sourceLineNo">275</span>        if (obj == null) {<a name="line.275"></a>
-<span class="sourceLineNo">276</span>            return false;<a name="line.276"></a>
-<span class="sourceLineNo">277</span>        }<a name="line.277"></a>
-<span class="sourceLineNo">278</span>        if (getClass() != obj.getClass()) {<a name="line.278"></a>
-<span class="sourceLineNo">279</span>            return false;<a name="line.279"></a>
-<span class="sourceLineNo">280</span>        }<a name="line.280"></a>
-<span class="sourceLineNo">281</span>        final SslConfiguration other = (SslConfiguration) obj;<a name="line.281"></a>
-<span class="sourceLineNo">282</span>        if (keyStoreConfig == null) {<a name="line.282"></a>
-<span class="sourceLineNo">283</span>            if (other.keyStoreConfig != null) {<a name="line.283"></a>
-<span class="sourceLineNo">284</span>                return false;<a name="line.284"></a>
-<span class="sourceLineNo">285</span>            }<a name="line.285"></a>
-<span class="sourceLineNo">286</span>        } else if (!keyStoreConfig.equals(other.keyStoreConfig)) {<a name="line.286"></a>
-<span class="sourceLineNo">287</span>            return false;<a name="line.287"></a>
-<span class="sourceLineNo">288</span>        }<a name="line.288"></a>
-<span class="sourceLineNo">289</span>        if (protocol == null) {<a name="line.289"></a>
-<span class="sourceLineNo">290</span>            if (other.protocol != null) {<a name="line.290"></a>
-<span class="sourceLineNo">291</span>                return false;<a name="line.291"></a>
-<span class="sourceLineNo">292</span>            }<a name="line.292"></a>
-<span class="sourceLineNo">293</span>        } else if (!protocol.equals(other.protocol)) {<a name="line.293"></a>
-<span class="sourceLineNo">294</span>            return false;<a name="line.294"></a>
-<span class="sourceLineNo">295</span>        }<a name="line.295"></a>
-<span class="sourceLineNo">296</span>        if (sslContext == null) {<a name="line.296"></a>
-<span class="sourceLineNo">297</span>            if (other.sslContext != null) {<a name="line.297"></a>
-<span class="sourceLineNo">298</span>                return false;<a name="line.298"></a>
-<span class="sourceLineNo">299</span>            }<a name="line.299"></a>
-<span class="sourceLineNo">300</span>        } else if (!sslContext.equals(other.sslContext)) {<a name="line.300"></a>
-<span class="sourceLineNo">301</span>            return false;<a name="line.301"></a>
-<span class="sourceLineNo">302</span>        }<a name="line.302"></a>
-<span class="sourceLineNo">303</span>        if (trustStoreConfig == null) {<a name="line.303"></a>
-<span class="sourceLineNo">304</span>            if (other.trustStoreConfig != null) {<a name="line.304"></a>
-<span class="sourceLineNo">305</span>                return false;<a name="line.305"></a>
-<span class="sourceLineNo">306</span>            }<a name="line.306"></a>
-<span class="sourceLineNo">307</span>        } else if (!trustStoreConfig.equals(other.trustStoreConfig)) {<a name="line.307"></a>
-<span class="sourceLineNo">308</span>            return false;<a name="line.308"></a>
-<span class="sourceLineNo">309</span>        }<a name="line.309"></a>
-<span class="sourceLineNo">310</span>        return true;<a name="line.310"></a>
-<span class="sourceLineNo">311</span>    }<a name="line.311"></a>
-<span class="sourceLineNo">312</span><a name="line.312"></a>
-<span class="sourceLineNo">313</span>    public KeyStoreConfiguration getKeyStoreConfig() {<a name="line.313"></a>
-<span class="sourceLineNo">314</span>        return keyStoreConfig;<a name="line.314"></a>
-<span class="sourceLineNo">315</span>    }<a name="line.315"></a>
-<span class="sourceLineNo">316</span><a name="line.316"></a>
-<span class="sourceLineNo">317</span>    public TrustStoreConfiguration getTrustStoreConfig() {<a name="line.317"></a>
-<span class="sourceLineNo">318</span>        return trustStoreConfig;<a name="line.318"></a>
-<span class="sourceLineNo">319</span>    }<a name="line.319"></a>
-<span class="sourceLineNo">320</span><a name="line.320"></a>
-<span class="sourceLineNo">321</span>    public SSLContext getSslContext() {<a name="line.321"></a>
-<span class="sourceLineNo">322</span>        return sslContext;<a name="line.322"></a>
-<span class="sourceLineNo">323</span>    }<a name="line.323"></a>
-<span class="sourceLineNo">324</span><a name="line.324"></a>
-<span class="sourceLineNo">325</span>    public String getProtocol() {<a name="line.325"></a>
-<span class="sourceLineNo">326</span>        return protocol;<a name="line.326"></a>
-<span class="sourceLineNo">327</span>    }<a name="line.327"></a>
-<span class="sourceLineNo">328</span><a name="line.328"></a>
-<span class="sourceLineNo">329</span>    public boolean isVerifyHostName() {<a name="line.329"></a>
-<span class="sourceLineNo">330</span>        return verifyHostName;<a name="line.330"></a>
-<span class="sourceLineNo">331</span>    }<a name="line.331"></a>
-<span class="sourceLineNo">332</span>}<a name="line.332"></a>
+<span class="sourceLineNo">246</span>     * @param verifyHostName whether or not to perform host name verification<a name="line.246"></a>
+<span class="sourceLineNo">247</span>     * @return a new SslConfiguration<a name="line.247"></a>
+<span class="sourceLineNo">248</span>     * @since 2.12<a name="line.248"></a>
+<span class="sourceLineNo">249</span>     */<a name="line.249"></a>
+<span class="sourceLineNo">250</span>    public static SslConfiguration createSSLConfiguration(<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        // @formatter:off<a name="line.251"></a>
+<span class="sourceLineNo">252</span>        @PluginAttribute("protocol") final String protocol,<a name="line.252"></a>
+<span class="sourceLineNo">253</span>        @PluginElement("KeyStore") final KeyStoreConfiguration keyStoreConfig,<a name="line.253"></a>
+<span class="sourceLineNo">254</span>        @PluginElement("TrustStore") final TrustStoreConfiguration trustStoreConfig,<a name="line.254"></a>
+<span class="sourceLineNo">255</span>        @PluginAttribute("verifyHostName") final boolean verifyHostName) {<a name="line.255"></a>
+<span class="sourceLineNo">256</span>        // @formatter:on<a name="line.256"></a>
+<span class="sourceLineNo">257</span>        return new SslConfiguration(protocol, keyStoreConfig, trustStoreConfig, verifyHostName);<a name="line.257"></a>
+<span class="sourceLineNo">258</span>    }<a name="line.258"></a>
+<span class="sourceLineNo">259</span><a name="line.259"></a>
+<span class="sourceLineNo">260</span>    @Override<a name="line.260"></a>
+<span class="sourceLineNo">261</span>    public int hashCode() {<a name="line.261"></a>
+<span class="sourceLineNo">262</span>        final int prime = 31;<a name="line.262"></a>
+<span class="sourceLineNo">263</span>        int result = 1;<a name="line.263"></a>
+<span class="sourceLineNo">264</span>        result = prime * result + ((keyStoreConfig == null) ? 0 : keyStoreConfig.hashCode());<a name="line.264"></a>
+<span class="sourceLineNo">265</span>        result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());<a name="line.265"></a>
+<span class="sourceLineNo">266</span>        result = prime * result + ((sslContext == null) ? 0 : sslContext.hashCode());<a name="line.266"></a>
+<span class="sourceLineNo">267</span>        result = prime * result + ((trustStoreConfig == null) ? 0 : trustStoreConfig.hashCode());<a name="line.267"></a>
+<span class="sourceLineNo">268</span>        return result;<a name="line.268"></a>
+<span class="sourceLineNo">269</span>    }<a name="line.269"></a>
+<span class="sourceLineNo">270</span><a name="line.270"></a>
+<span class="sourceLineNo">271</span>    @Override<a name="line.271"></a>
+<span class="sourceLineNo">272</span>    public boolean equals(final Object obj) {<a name="line.272"></a>
+<span class="sourceLineNo">273</span>        if (this == obj) {<a name="line.273"></a>
+<span class="sourceLineNo">274</span>            return true;<a name="line.274"></a>
+<span class="sourceLineNo">275</span>        }<a name="line.275"></a>
+<span class="sourceLineNo">276</span>        if (obj == null) {<a name="line.276"></a>
+<span class="sourceLineNo">277</span>            return false;<a name="line.277"></a>
+<span class="sourceLineNo">278</span>        }<a name="line.278"></a>
+<span class="sourceLineNo">279</span>        if (getClass() != obj.getClass()) {<a name="line.279"></a>
+<span class="sourceLineNo">280</span>            return false;<a name="line.280"></a>
+<span class="sourceLineNo">281</span>        }<a name="line.281"></a>
+<span class="sourceLineNo">282</span>        final SslConfiguration other = (SslConfiguration) obj;<a name="line.282"></a>
+<span class="sourceLineNo">283</span>        if (keyStoreConfig == null) {<a name="line.283"></a>
+<span class="sourceLineNo">284</span>            if (other.keyStoreConfig != null) {<a name="line.284"></a>
+<span class="sourceLineNo">285</span>                return false;<a name="line.285"></a>
+<span class="sourceLineNo">286</span>            }<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        } else if (!keyStoreConfig.equals(other.keyStoreConfig)) {<a name="line.287"></a>
+<span class="sourceLineNo">288</span>            return false;<a name="line.288"></a>
+<span class="sourceLineNo">289</span>        }<a name="line.289"></a>
+<span class="sourceLineNo">290</span>        if (protocol == null) {<a name="line.290"></a>
+<span class="sourceLineNo">291</span>            if (other.protocol != null) {<a name="line.291"></a>
+<span class="sourceLineNo">292</span>                return false;<a name="line.292"></a>
+<span class="sourceLineNo">293</span>            }<a name="line.293"></a>
+<span class="sourceLineNo">294</span>        } else if (!protocol.equals(other.protocol)) {<a name="line.294"></a>
+<span class="sourceLineNo">295</span>            return false;<a name="line.295"></a>
+<span class="sourceLineNo">296</span>        }<a name="line.296"></a>
+<span class="sourceLineNo">297</span>        if (sslContext == null) {<a name="line.297"></a>
+<span class="sourceLineNo">298</span>            if (other.sslContext != null) {<a name="line.298"></a>
+<span class="sourceLineNo">299</span>                return false;<a name="line.299"></a>
+<span class="sourceLineNo">300</span>            }<a name="line.300"></a>
+<span class="sourceLineNo">301</span>        } else if (!sslContext.equals(other.sslContext)) {<a name="line.301"></a>
+<span class="sourceLineNo">302</span>            return false;<a name="line.302"></a>
+<span class="sourceLineNo">303</span>        }<a name="line.303"></a>
+<span class="sourceLineNo">304</span>        if (trustStoreConfig == null) {<a name="line.304"></a>
+<span class="sourceLineNo">305</span>            if (other.trustStoreConfig != null) {<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                return false;<a name="line.306"></a>
+<span class="sourceLineNo">307</span>            }<a name="line.307"></a>
+<span class="sourceLineNo">308</span>        } else if (!trustStoreConfig.equals(other.trustStoreConfig)) {<a name="line.308"></a>
+<span class="sourceLineNo">309</span>            return false;<a name="line.309"></a>
+<span class="sourceLineNo">310</span>        }<a name="line.310"></a>
+<span class="sourceLineNo">311</span>        return true;<a name="line.311"></a>
+<span class="sourceLineNo">312</span>    }<a name="line.312"></a>
+<span class="sourceLineNo">313</span><a name="line.313"></a>
+<span class="sourceLineNo">314</span>    public KeyStoreConfiguration getKeyStoreConfig() {<a name="line.314"></a>
+<span class="sourceLineNo">315</span>        return keyStoreConfig;<a name="line.315"></a>
+<span class="sourceLineNo">316</span>    }<a name="line.316"></a>
+<span class="sourceLineNo">317</span><a name="line.317"></a>
+<span class="sourceLineNo">318</span>    public TrustStoreConfiguration getTrustStoreConfig() {<a name="line.318"></a>
+<span class="sourceLineNo">319</span>        return trustStoreConfig;<a name="line.319"></a>
+<span class="sourceLineNo">320</span>    }<a name="line.320"></a>
+<span class="sourceLineNo">321</span><a name="line.321"></a>
+<span class="sourceLineNo">322</span>    public SSLContext getSslContext() {<a name="line.322"></a>
+<span class="sourceLineNo">323</span>        return sslContext;<a name="line.323"></a>
+<span class="sourceLineNo">324</span>    }<a name="line.324"></a>
+<span class="sourceLineNo">325</span><a name="line.325"></a>
+<span class="sourceLineNo">326</span>    public String getProtocol() {<a name="line.326"></a>
+<span class="sourceLineNo">327</span>        return protocol;<a name="line.327"></a>
+<span class="sourceLineNo">328</span>    }<a name="line.328"></a>
+<span class="sourceLineNo">329</span><a name="line.329"></a>
+<span class="sourceLineNo">330</span>    public boolean isVerifyHostName() {<a name="line.330"></a>
+<span class="sourceLineNo">331</span>        return verifyHostName;<a name="line.331"></a>
+<span class="sourceLineNo">332</span>    }<a name="line.332"></a>
+<span class="sourceLineNo">333</span>}<a name="line.333"></a>
 
 
 

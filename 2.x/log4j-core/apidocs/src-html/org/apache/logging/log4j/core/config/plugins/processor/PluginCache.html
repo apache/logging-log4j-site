@@ -61,82 +61,85 @@
 <span class="sourceLineNo">053</span>     */<a name="line.53"></a>
 <span class="sourceLineNo">054</span>    public Map&lt;String, PluginEntry&gt; getCategory(final String category) {<a name="line.54"></a>
 <span class="sourceLineNo">055</span>        final String key = category.toLowerCase();<a name="line.55"></a>
-<span class="sourceLineNo">056</span>        if (!categories.containsKey(key)) {<a name="line.56"></a>
-<span class="sourceLineNo">057</span>            categories.put(key, new TreeMap&lt;String, PluginEntry&gt;());<a name="line.57"></a>
-<span class="sourceLineNo">058</span>        }<a name="line.58"></a>
-<span class="sourceLineNo">059</span>        return categories.get(key);<a name="line.59"></a>
-<span class="sourceLineNo">060</span>    }<a name="line.60"></a>
-<span class="sourceLineNo">061</span><a name="line.61"></a>
-<span class="sourceLineNo">062</span>    /**<a name="line.62"></a>
-<span class="sourceLineNo">063</span>     * Stores the plugin cache to a given OutputStream.<a name="line.63"></a>
-<span class="sourceLineNo">064</span>     *<a name="line.64"></a>
-<span class="sourceLineNo">065</span>     * @param os destination to save cache to.<a name="line.65"></a>
-<span class="sourceLineNo">066</span>     * @throws IOException if an I/O exception occurs.<a name="line.66"></a>
-<span class="sourceLineNo">067</span>     */<a name="line.67"></a>
-<span class="sourceLineNo">068</span>    // NOTE: if this file format is to be changed, the filename should change and this format should still be readable<a name="line.68"></a>
-<span class="sourceLineNo">069</span>    public void writeCache(final OutputStream os) throws IOException {<a name="line.69"></a>
-<span class="sourceLineNo">070</span>        try (final DataOutputStream out = new DataOutputStream(new BufferedOutputStream(os))) {<a name="line.70"></a>
-<span class="sourceLineNo">071</span>            // See PluginManager.readFromCacheFiles for the corresponding decoder. Format may not be changed<a name="line.71"></a>
-<span class="sourceLineNo">072</span>            // without breaking existing Log4j2Plugins.dat files.<a name="line.72"></a>
-<span class="sourceLineNo">073</span>            out.writeInt(categories.size());<a name="line.73"></a>
-<span class="sourceLineNo">074</span>            for (final Map.Entry&lt;String, Map&lt;String, PluginEntry&gt;&gt; category : categories.entrySet()) {<a name="line.74"></a>
-<span class="sourceLineNo">075</span>                out.writeUTF(category.getKey());<a name="line.75"></a>
-<span class="sourceLineNo">076</span>                final Map&lt;String, PluginEntry&gt; m = category.getValue();<a name="line.76"></a>
-<span class="sourceLineNo">077</span>                out.writeInt(m.size());<a name="line.77"></a>
-<span class="sourceLineNo">078</span>                for (final Map.Entry&lt;String, PluginEntry&gt; entry : m.entrySet()) {<a name="line.78"></a>
-<span class="sourceLineNo">079</span>                    final PluginEntry plugin = entry.getValue();<a name="line.79"></a>
-<span class="sourceLineNo">080</span>                    out.writeUTF(plugin.getKey());<a name="line.80"></a>
-<span class="sourceLineNo">081</span>                    out.writeUTF(plugin.getClassName());<a name="line.81"></a>
-<span class="sourceLineNo">082</span>                    out.writeUTF(plugin.getName());<a name="line.82"></a>
-<span class="sourceLineNo">083</span>                    out.writeBoolean(plugin.isPrintable());<a name="line.83"></a>
-<span class="sourceLineNo">084</span>                    out.writeBoolean(plugin.isDefer());<a name="line.84"></a>
-<span class="sourceLineNo">085</span>                }<a name="line.85"></a>
-<span class="sourceLineNo">086</span>            }<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        }<a name="line.87"></a>
-<span class="sourceLineNo">088</span>    }<a name="line.88"></a>
-<span class="sourceLineNo">089</span><a name="line.89"></a>
-<span class="sourceLineNo">090</span>    /**<a name="line.90"></a>
-<span class="sourceLineNo">091</span>     * Loads and merges all the Log4j plugin cache files specified. Usually, this is obtained via a ClassLoader.<a name="line.91"></a>
-<span class="sourceLineNo">092</span>     *<a name="line.92"></a>
-<span class="sourceLineNo">093</span>     * @param resources URLs to all the desired plugin cache files to load.<a name="line.93"></a>
-<span class="sourceLineNo">094</span>     * @throws IOException if an I/O exception occurs.<a name="line.94"></a>
-<span class="sourceLineNo">095</span>     */<a name="line.95"></a>
-<span class="sourceLineNo">096</span>    public void loadCacheFiles(final Enumeration&lt;URL&gt; resources) throws IOException {<a name="line.96"></a>
-<span class="sourceLineNo">097</span>        categories.clear();<a name="line.97"></a>
-<span class="sourceLineNo">098</span>        while (resources.hasMoreElements()) {<a name="line.98"></a>
-<span class="sourceLineNo">099</span>            final URL url = resources.nextElement();<a name="line.99"></a>
-<span class="sourceLineNo">100</span>            try (final DataInputStream in = new DataInputStream(new BufferedInputStream(url.openStream()))) {<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                final int count = in.readInt();<a name="line.101"></a>
-<span class="sourceLineNo">102</span>                for (int i = 0; i &lt; count; i++) {<a name="line.102"></a>
-<span class="sourceLineNo">103</span>                    final String category = in.readUTF();<a name="line.103"></a>
-<span class="sourceLineNo">104</span>                    final Map&lt;String, PluginEntry&gt; m = getCategory(category);<a name="line.104"></a>
-<span class="sourceLineNo">105</span>                    final int entries = in.readInt();<a name="line.105"></a>
-<span class="sourceLineNo">106</span>                    for (int j = 0; j &lt; entries; j++) {<a name="line.106"></a>
-<span class="sourceLineNo">107</span>                        final PluginEntry entry = new PluginEntry();<a name="line.107"></a>
-<span class="sourceLineNo">108</span>                        entry.setKey(in.readUTF());<a name="line.108"></a>
-<span class="sourceLineNo">109</span>                        entry.setClassName(in.readUTF());<a name="line.109"></a>
-<span class="sourceLineNo">110</span>                        entry.setName(in.readUTF());<a name="line.110"></a>
-<span class="sourceLineNo">111</span>                        entry.setPrintable(in.readBoolean());<a name="line.111"></a>
-<span class="sourceLineNo">112</span>                        entry.setDefer(in.readBoolean());<a name="line.112"></a>
-<span class="sourceLineNo">113</span>                        entry.setCategory(category);<a name="line.113"></a>
-<span class="sourceLineNo">114</span>                        if (!m.containsKey(entry.getKey())) {<a name="line.114"></a>
-<span class="sourceLineNo">115</span>                            m.put(entry.getKey(), entry);<a name="line.115"></a>
-<span class="sourceLineNo">116</span>                        }<a name="line.116"></a>
-<span class="sourceLineNo">117</span>                    }<a name="line.117"></a>
-<span class="sourceLineNo">118</span>                }<a name="line.118"></a>
-<span class="sourceLineNo">119</span>            }<a name="line.119"></a>
-<span class="sourceLineNo">120</span>        }<a name="line.120"></a>
-<span class="sourceLineNo">121</span>    }<a name="line.121"></a>
-<span class="sourceLineNo">122</span><a name="line.122"></a>
-<span class="sourceLineNo">123</span>    /**<a name="line.123"></a>
-<span class="sourceLineNo">124</span>     * Gets the number of plugin categories registered.<a name="line.124"></a>
-<span class="sourceLineNo">125</span>     *<a name="line.125"></a>
-<span class="sourceLineNo">126</span>     * @return number of plugin categories in cache.<a name="line.126"></a>
-<span class="sourceLineNo">127</span>     */<a name="line.127"></a>
-<span class="sourceLineNo">128</span>    public int size() {<a name="line.128"></a>
-<span class="sourceLineNo">129</span>        return categories.size();<a name="line.129"></a>
-<span class="sourceLineNo">130</span>    }<a name="line.130"></a>
-<span class="sourceLineNo">131</span>}<a name="line.131"></a>
+<span class="sourceLineNo">056</span>        return categories.computeIfAbsent(key, ignored -&gt; new TreeMap&lt;&gt;());<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    }<a name="line.57"></a>
+<span class="sourceLineNo">058</span><a name="line.58"></a>
+<span class="sourceLineNo">059</span>    /**<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     * Stores the plugin cache to a given OutputStream.<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     *<a name="line.61"></a>
+<span class="sourceLineNo">062</span>     * @param os destination to save cache to.<a name="line.62"></a>
+<span class="sourceLineNo">063</span>     * @throws IOException if an I/O exception occurs.<a name="line.63"></a>
+<span class="sourceLineNo">064</span>     */<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    // NOTE: if this file format is to be changed, the filename should change and this format should still be readable<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    public void writeCache(final OutputStream os) throws IOException {<a name="line.66"></a>
+<span class="sourceLineNo">067</span>        try (final DataOutputStream out = new DataOutputStream(new BufferedOutputStream(os))) {<a name="line.67"></a>
+<span class="sourceLineNo">068</span>            // See PluginManager.readFromCacheFiles for the corresponding decoder. Format may not be changed<a name="line.68"></a>
+<span class="sourceLineNo">069</span>            // without breaking existing Log4j2Plugins.dat files.<a name="line.69"></a>
+<span class="sourceLineNo">070</span>            out.writeInt(categories.size());<a name="line.70"></a>
+<span class="sourceLineNo">071</span>            for (final Map.Entry&lt;String, Map&lt;String, PluginEntry&gt;&gt; category : categories.entrySet()) {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                out.writeUTF(category.getKey());<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                final Map&lt;String, PluginEntry&gt; m = category.getValue();<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                out.writeInt(m.size());<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                for (final Map.Entry&lt;String, PluginEntry&gt; entry : m.entrySet()) {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                    final PluginEntry plugin = entry.getValue();<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                    out.writeUTF(plugin.getKey());<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                    out.writeUTF(plugin.getClassName());<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                    out.writeUTF(plugin.getName());<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                    out.writeBoolean(plugin.isPrintable());<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                    out.writeBoolean(plugin.isDefer());<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                }<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            }<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        }<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    }<a name="line.85"></a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span>    /**<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * Loads and merges all the Log4j plugin cache files specified. Usually, this is obtained via a ClassLoader.<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     *<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     * @param resources URLs to all the desired plugin cache files to load.<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     * @throws IOException if an I/O exception occurs.<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     */<a name="line.92"></a>
+<span class="sourceLineNo">093</span>    public void loadCacheFiles(final Enumeration&lt;URL&gt; resources) throws IOException {<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        categories.clear();<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        while (resources.hasMoreElements()) {<a name="line.95"></a>
+<span class="sourceLineNo">096</span>            final URL url = resources.nextElement();<a name="line.96"></a>
+<span class="sourceLineNo">097</span>            try (final DataInputStream in = new DataInputStream(new BufferedInputStream(url.openStream()))) {<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                final int count = in.readInt();<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                for (int i = 0; i &lt; count; i++) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                    final String category = in.readUTF();<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                    final Map&lt;String, PluginEntry&gt; m = getCategory(category);<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                    final int entries = in.readInt();<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                    for (int j = 0; j &lt; entries; j++) {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                        // Must always read all parts of the entry, even if not adding, so that the stream progresses<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                        final String key = in.readUTF();<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                        final String className = in.readUTF();<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                        final String name = in.readUTF();<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                        final boolean printable = in.readBoolean();<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                        final boolean defer = in.readBoolean();<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                        m.computeIfAbsent(key, k -&gt; {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                            final PluginEntry entry = new PluginEntry();<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                            entry.setKey(k);<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                            entry.setClassName(className);<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                            entry.setName(name);<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                            entry.setPrintable(printable);<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                            entry.setDefer(defer);<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                            entry.setCategory(category);<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                            return entry;<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                        });<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                    }<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                }<a name="line.121"></a>
+<span class="sourceLineNo">122</span>            }<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        }<a name="line.123"></a>
+<span class="sourceLineNo">124</span>    }<a name="line.124"></a>
+<span class="sourceLineNo">125</span><a name="line.125"></a>
+<span class="sourceLineNo">126</span>    /**<a name="line.126"></a>
+<span class="sourceLineNo">127</span>     * Gets the number of plugin categories registered.<a name="line.127"></a>
+<span class="sourceLineNo">128</span>     *<a name="line.128"></a>
+<span class="sourceLineNo">129</span>     * @return number of plugin categories in cache.<a name="line.129"></a>
+<span class="sourceLineNo">130</span>     */<a name="line.130"></a>
+<span class="sourceLineNo">131</span>    public int size() {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        return categories.size();<a name="line.132"></a>
+<span class="sourceLineNo">133</span>    }<a name="line.133"></a>
+<span class="sourceLineNo">134</span>}<a name="line.134"></a>
 
 
 
