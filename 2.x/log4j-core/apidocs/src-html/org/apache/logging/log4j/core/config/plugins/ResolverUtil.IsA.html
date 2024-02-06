@@ -279,8 +279,8 @@
 <FONT color="green">276</FONT>    <a name="line.276"></a>
 <FONT color="green">277</FONT>        private void loadImplementationsInBundle(final Test test, final String packageName) {<a name="line.277"></a>
 <FONT color="green">278</FONT>            //Do not remove the cast on the next line as removing it will cause a compile error on Java 7.<a name="line.278"></a>
-<FONT color="green">279</FONT>            final BundleWiring wiring =<a name="line.279"></a>
-<FONT color="green">280</FONT>                (BundleWiring) FrameworkUtil.getBundle(ResolverUtil.class).adapt(BundleWiring.class);<a name="line.280"></a>
+<FONT color="green">279</FONT>            final BundleWiring wiring = (BundleWiring) FrameworkUtil.getBundle(<a name="line.279"></a>
+<FONT color="green">280</FONT>                    ResolverUtil.class).adapt(BundleWiring.class);<a name="line.280"></a>
 <FONT color="green">281</FONT>            final Collection&lt;String&gt; list = wiring.listResources(packageName, "*.class",<a name="line.281"></a>
 <FONT color="green">282</FONT>                BundleWiring.LISTRESOURCES_RECURSE);<a name="line.282"></a>
 <FONT color="green">283</FONT>            for (final String name : list) {<a name="line.283"></a>
@@ -303,272 +303,284 @@
 <FONT color="green">300</FONT>         */<a name="line.300"></a>
 <FONT color="green">301</FONT>        private void loadImplementationsInDirectory(final Test test, final String parent, final File location) {<a name="line.301"></a>
 <FONT color="green">302</FONT>            final File[] files = location.listFiles();<a name="line.302"></a>
-<FONT color="green">303</FONT>            StringBuilder builder;<a name="line.303"></a>
-<FONT color="green">304</FONT>    <a name="line.304"></a>
-<FONT color="green">305</FONT>            for (final File file : files) {<a name="line.305"></a>
-<FONT color="green">306</FONT>                builder = new StringBuilder();<a name="line.306"></a>
-<FONT color="green">307</FONT>                builder.append(parent).append("/").append(file.getName());<a name="line.307"></a>
-<FONT color="green">308</FONT>                final String packageOrClass = parent == null ? file.getName() : builder.toString();<a name="line.308"></a>
-<FONT color="green">309</FONT>    <a name="line.309"></a>
-<FONT color="green">310</FONT>                if (file.isDirectory()) {<a name="line.310"></a>
-<FONT color="green">311</FONT>                    loadImplementationsInDirectory(test, packageOrClass, file);<a name="line.311"></a>
-<FONT color="green">312</FONT>                } else if (isTestApplicable(test, file.getName())) {<a name="line.312"></a>
-<FONT color="green">313</FONT>                    addIfMatching(test, packageOrClass);<a name="line.313"></a>
-<FONT color="green">314</FONT>                }<a name="line.314"></a>
-<FONT color="green">315</FONT>            }<a name="line.315"></a>
-<FONT color="green">316</FONT>        }<a name="line.316"></a>
-<FONT color="green">317</FONT>    <a name="line.317"></a>
-<FONT color="green">318</FONT>        private boolean isTestApplicable(final Test test, final String path) {<a name="line.318"></a>
-<FONT color="green">319</FONT>            return test.doesMatchResource() || path.endsWith(".class") &amp;&amp; test.doesMatchClass();<a name="line.319"></a>
-<FONT color="green">320</FONT>        }<a name="line.320"></a>
-<FONT color="green">321</FONT>    <a name="line.321"></a>
-<FONT color="green">322</FONT>        /**<a name="line.322"></a>
-<FONT color="green">323</FONT>         * Finds matching classes within a jar files that contains a folder structure<a name="line.323"></a>
-<FONT color="green">324</FONT>         * matching the package structure.  If the File is not a JarFile or does not exist a warning<a name="line.324"></a>
-<FONT color="green">325</FONT>         * will be logged, but no error will be raised.<a name="line.325"></a>
-<FONT color="green">326</FONT>         *<a name="line.326"></a>
-<FONT color="green">327</FONT>         * @param test a Test used to filter the classes that are discovered<a name="line.327"></a>
-<FONT color="green">328</FONT>         * @param parent the parent package under which classes must be in order to be considered<a name="line.328"></a>
-<FONT color="green">329</FONT>         * @param jarfile the jar file to be examined for classes<a name="line.329"></a>
-<FONT color="green">330</FONT>         */<a name="line.330"></a>
-<FONT color="green">331</FONT>        private void loadImplementationsInJar(final Test test, final String parent, final File jarfile) {<a name="line.331"></a>
-<FONT color="green">332</FONT>            JarInputStream jarStream;<a name="line.332"></a>
-<FONT color="green">333</FONT>            try {<a name="line.333"></a>
-<FONT color="green">334</FONT>                jarStream = new JarInputStream(new FileInputStream(jarfile));<a name="line.334"></a>
-<FONT color="green">335</FONT>                loadImplementationsInJar(test, parent, jarfile.getPath(), jarStream);<a name="line.335"></a>
-<FONT color="green">336</FONT>            } catch (final FileNotFoundException ex) {<a name="line.336"></a>
-<FONT color="green">337</FONT>                LOG.error("Could not search jar file '" + jarfile + "' for classes matching criteria: " +<a name="line.337"></a>
-<FONT color="green">338</FONT>                    test + " file not found");<a name="line.338"></a>
-<FONT color="green">339</FONT>            } catch (final IOException ioe) {<a name="line.339"></a>
-<FONT color="green">340</FONT>                LOG.error("Could not search jar file '" + jarfile + "' for classes matching criteria: " +<a name="line.340"></a>
-<FONT color="green">341</FONT>                    test + " due to an IOException", ioe);<a name="line.341"></a>
-<FONT color="green">342</FONT>            }<a name="line.342"></a>
-<FONT color="green">343</FONT>        }<a name="line.343"></a>
-<FONT color="green">344</FONT>    <a name="line.344"></a>
-<FONT color="green">345</FONT>        /**<a name="line.345"></a>
-<FONT color="green">346</FONT>         * Finds matching classes within a jar files that contains a folder structure<a name="line.346"></a>
-<FONT color="green">347</FONT>         * matching the package structure.  If the File is not a JarFile or does not exist a warning<a name="line.347"></a>
-<FONT color="green">348</FONT>         * will be logged, but no error will be raised.<a name="line.348"></a>
-<FONT color="green">349</FONT>         *<a name="line.349"></a>
-<FONT color="green">350</FONT>         * @param test a Test used to filter the classes that are discovered<a name="line.350"></a>
-<FONT color="green">351</FONT>         * @param parent the parent package under which classes must be in order to be considered<a name="line.351"></a>
-<FONT color="green">352</FONT>         * @param stream The jar InputStream<a name="line.352"></a>
-<FONT color="green">353</FONT>         */<a name="line.353"></a>
-<FONT color="green">354</FONT>        private void loadImplementationsInJar(final Test test, final String parent, final String path,<a name="line.354"></a>
-<FONT color="green">355</FONT>                                              final JarInputStream stream) {<a name="line.355"></a>
-<FONT color="green">356</FONT>    <a name="line.356"></a>
-<FONT color="green">357</FONT>            try {<a name="line.357"></a>
-<FONT color="green">358</FONT>                JarEntry entry;<a name="line.358"></a>
-<FONT color="green">359</FONT>    <a name="line.359"></a>
-<FONT color="green">360</FONT>                while ((entry = stream.getNextJarEntry()) != null) {<a name="line.360"></a>
-<FONT color="green">361</FONT>                    final String name = entry.getName();<a name="line.361"></a>
-<FONT color="green">362</FONT>                    if (!entry.isDirectory() &amp;&amp; name.startsWith(parent) &amp;&amp; isTestApplicable(test, name)) {<a name="line.362"></a>
-<FONT color="green">363</FONT>                        addIfMatching(test, name);<a name="line.363"></a>
-<FONT color="green">364</FONT>                    }<a name="line.364"></a>
-<FONT color="green">365</FONT>                }<a name="line.365"></a>
-<FONT color="green">366</FONT>            } catch (final IOException ioe) {<a name="line.366"></a>
-<FONT color="green">367</FONT>                LOG.error("Could not search jar file '" + path + "' for classes matching criteria: " +<a name="line.367"></a>
-<FONT color="green">368</FONT>                    test + " due to an IOException", ioe);<a name="line.368"></a>
-<FONT color="green">369</FONT>            }<a name="line.369"></a>
-<FONT color="green">370</FONT>        }<a name="line.370"></a>
-<FONT color="green">371</FONT>    <a name="line.371"></a>
-<FONT color="green">372</FONT>        /**<a name="line.372"></a>
-<FONT color="green">373</FONT>         * Add the class designated by the fully qualified class name provided to the set of<a name="line.373"></a>
-<FONT color="green">374</FONT>         * resolved classes if and only if it is approved by the Test supplied.<a name="line.374"></a>
-<FONT color="green">375</FONT>         *<a name="line.375"></a>
-<FONT color="green">376</FONT>         * @param test the test used to determine if the class matches<a name="line.376"></a>
-<FONT color="green">377</FONT>         * @param fqn the fully qualified name of a class<a name="line.377"></a>
-<FONT color="green">378</FONT>         */<a name="line.378"></a>
-<FONT color="green">379</FONT>        protected void addIfMatching(final Test test, final String fqn) {<a name="line.379"></a>
-<FONT color="green">380</FONT>            try {<a name="line.380"></a>
-<FONT color="green">381</FONT>                final ClassLoader loader = getClassLoader();<a name="line.381"></a>
-<FONT color="green">382</FONT>                if (test.doesMatchClass()) {<a name="line.382"></a>
-<FONT color="green">383</FONT>                    final String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');<a name="line.383"></a>
-<FONT color="green">384</FONT>                    if (LOG.isDebugEnabled()) {<a name="line.384"></a>
-<FONT color="green">385</FONT>                        LOG.debug("Checking to see if class " + externalName + " matches criteria [" + test + "]");<a name="line.385"></a>
-<FONT color="green">386</FONT>                    }<a name="line.386"></a>
-<FONT color="green">387</FONT>    <a name="line.387"></a>
-<FONT color="green">388</FONT>                    final Class&lt;?&gt; type = loader.loadClass(externalName);<a name="line.388"></a>
-<FONT color="green">389</FONT>                    if (test.matches(type)) {<a name="line.389"></a>
-<FONT color="green">390</FONT>                        classMatches.add(type);<a name="line.390"></a>
-<FONT color="green">391</FONT>                    }<a name="line.391"></a>
-<FONT color="green">392</FONT>                }<a name="line.392"></a>
-<FONT color="green">393</FONT>                if (test.doesMatchResource()) {<a name="line.393"></a>
-<FONT color="green">394</FONT>                    URL url = loader.getResource(fqn);<a name="line.394"></a>
-<FONT color="green">395</FONT>                    if (url == null) {<a name="line.395"></a>
-<FONT color="green">396</FONT>                        url = loader.getResource(fqn.substring(1));<a name="line.396"></a>
-<FONT color="green">397</FONT>                    }<a name="line.397"></a>
-<FONT color="green">398</FONT>                    if (url != null &amp;&amp; test.matches(url.toURI())) {<a name="line.398"></a>
-<FONT color="green">399</FONT>                        resourceMatches.add(url.toURI());<a name="line.399"></a>
-<FONT color="green">400</FONT>                    }<a name="line.400"></a>
-<FONT color="green">401</FONT>                }<a name="line.401"></a>
-<FONT color="green">402</FONT>            } catch (final Throwable t) {<a name="line.402"></a>
-<FONT color="green">403</FONT>                LOG.warn("Could not examine class '" + fqn + "' due to a " +<a name="line.403"></a>
-<FONT color="green">404</FONT>                    t.getClass().getName() + " with message: " + t.getMessage());<a name="line.404"></a>
-<FONT color="green">405</FONT>            }<a name="line.405"></a>
-<FONT color="green">406</FONT>        }<a name="line.406"></a>
-<FONT color="green">407</FONT>    <a name="line.407"></a>
-<FONT color="green">408</FONT>        /**<a name="line.408"></a>
-<FONT color="green">409</FONT>         * A simple interface that specifies how to test classes to determine if they<a name="line.409"></a>
-<FONT color="green">410</FONT>         * are to be included in the results produced by the ResolverUtil.<a name="line.410"></a>
-<FONT color="green">411</FONT>         */<a name="line.411"></a>
-<FONT color="green">412</FONT>        public interface Test {<a name="line.412"></a>
-<FONT color="green">413</FONT>            /**<a name="line.413"></a>
-<FONT color="green">414</FONT>             * Will be called repeatedly with candidate classes. Must return True if a class<a name="line.414"></a>
-<FONT color="green">415</FONT>             * is to be included in the results, false otherwise.<a name="line.415"></a>
-<FONT color="green">416</FONT>             * @param type The Class to match against.<a name="line.416"></a>
-<FONT color="green">417</FONT>             * @return true if the Class matches.<a name="line.417"></a>
-<FONT color="green">418</FONT>             */<a name="line.418"></a>
-<FONT color="green">419</FONT>            boolean matches(Class&lt;?&gt; type);<a name="line.419"></a>
-<FONT color="green">420</FONT>    <a name="line.420"></a>
-<FONT color="green">421</FONT>            /**<a name="line.421"></a>
-<FONT color="green">422</FONT>             * Test for a resource.<a name="line.422"></a>
-<FONT color="green">423</FONT>             * @param resource The URI to the resource.<a name="line.423"></a>
-<FONT color="green">424</FONT>             * @return true if the resource matches.<a name="line.424"></a>
-<FONT color="green">425</FONT>             */<a name="line.425"></a>
-<FONT color="green">426</FONT>            boolean matches(URI resource);<a name="line.426"></a>
-<FONT color="green">427</FONT>    <a name="line.427"></a>
-<FONT color="green">428</FONT>            boolean doesMatchClass();<a name="line.428"></a>
+<FONT color="green">303</FONT>            if(files == null)<a name="line.303"></a>
+<FONT color="green">304</FONT>                return;<a name="line.304"></a>
+<FONT color="green">305</FONT>    <a name="line.305"></a>
+<FONT color="green">306</FONT>            StringBuilder builder;<a name="line.306"></a>
+<FONT color="green">307</FONT>            for (final File file : files) {<a name="line.307"></a>
+<FONT color="green">308</FONT>                builder = new StringBuilder();<a name="line.308"></a>
+<FONT color="green">309</FONT>                builder.append(parent).append("/").append(file.getName());<a name="line.309"></a>
+<FONT color="green">310</FONT>                final String packageOrClass = parent == null ? file.getName() : builder.toString();<a name="line.310"></a>
+<FONT color="green">311</FONT>    <a name="line.311"></a>
+<FONT color="green">312</FONT>                if (file.isDirectory()) {<a name="line.312"></a>
+<FONT color="green">313</FONT>                    loadImplementationsInDirectory(test, packageOrClass, file);<a name="line.313"></a>
+<FONT color="green">314</FONT>                } else if (isTestApplicable(test, file.getName())) {<a name="line.314"></a>
+<FONT color="green">315</FONT>                    addIfMatching(test, packageOrClass);<a name="line.315"></a>
+<FONT color="green">316</FONT>                }<a name="line.316"></a>
+<FONT color="green">317</FONT>            }<a name="line.317"></a>
+<FONT color="green">318</FONT>        }<a name="line.318"></a>
+<FONT color="green">319</FONT>    <a name="line.319"></a>
+<FONT color="green">320</FONT>        private boolean isTestApplicable(final Test test, final String path) {<a name="line.320"></a>
+<FONT color="green">321</FONT>            return test.doesMatchResource() || path.endsWith(".class") &amp;&amp; test.doesMatchClass();<a name="line.321"></a>
+<FONT color="green">322</FONT>        }<a name="line.322"></a>
+<FONT color="green">323</FONT>    <a name="line.323"></a>
+<FONT color="green">324</FONT>        /**<a name="line.324"></a>
+<FONT color="green">325</FONT>         * Finds matching classes within a jar files that contains a folder structure<a name="line.325"></a>
+<FONT color="green">326</FONT>         * matching the package structure.  If the File is not a JarFile or does not exist a warning<a name="line.326"></a>
+<FONT color="green">327</FONT>         * will be logged, but no error will be raised.<a name="line.327"></a>
+<FONT color="green">328</FONT>         *<a name="line.328"></a>
+<FONT color="green">329</FONT>         * @param test a Test used to filter the classes that are discovered<a name="line.329"></a>
+<FONT color="green">330</FONT>         * @param parent the parent package under which classes must be in order to be considered<a name="line.330"></a>
+<FONT color="green">331</FONT>         * @param jarfile the jar file to be examined for classes<a name="line.331"></a>
+<FONT color="green">332</FONT>         */<a name="line.332"></a>
+<FONT color="green">333</FONT>        private void loadImplementationsInJar(final Test test, final String parent, final File jarfile) {<a name="line.333"></a>
+<FONT color="green">334</FONT>            JarInputStream jarStream;<a name="line.334"></a>
+<FONT color="green">335</FONT>            try {<a name="line.335"></a>
+<FONT color="green">336</FONT>                jarStream = new JarInputStream(new FileInputStream(jarfile));<a name="line.336"></a>
+<FONT color="green">337</FONT>                loadImplementationsInJar(test, parent, jarfile.getPath(), jarStream);<a name="line.337"></a>
+<FONT color="green">338</FONT>            } catch (final FileNotFoundException ex) {<a name="line.338"></a>
+<FONT color="green">339</FONT>                LOG.error("Could not search jar file '" + jarfile + "' for classes matching criteria: " +<a name="line.339"></a>
+<FONT color="green">340</FONT>                    test + " file not found");<a name="line.340"></a>
+<FONT color="green">341</FONT>            } catch (final IOException ioe) {<a name="line.341"></a>
+<FONT color="green">342</FONT>                LOG.error("Could not search jar file '" + jarfile + "' for classes matching criteria: " +<a name="line.342"></a>
+<FONT color="green">343</FONT>                    test + " due to an IOException", ioe);<a name="line.343"></a>
+<FONT color="green">344</FONT>            }<a name="line.344"></a>
+<FONT color="green">345</FONT>        }<a name="line.345"></a>
+<FONT color="green">346</FONT>    <a name="line.346"></a>
+<FONT color="green">347</FONT>        /**<a name="line.347"></a>
+<FONT color="green">348</FONT>         * Finds matching classes within a jar files that contains a folder structure<a name="line.348"></a>
+<FONT color="green">349</FONT>         * matching the package structure.  If the File is not a JarFile or does not exist a warning<a name="line.349"></a>
+<FONT color="green">350</FONT>         * will be logged, but no error will be raised.<a name="line.350"></a>
+<FONT color="green">351</FONT>         *<a name="line.351"></a>
+<FONT color="green">352</FONT>         * @param test a Test used to filter the classes that are discovered<a name="line.352"></a>
+<FONT color="green">353</FONT>         * @param parent the parent package under which classes must be in order to be considered<a name="line.353"></a>
+<FONT color="green">354</FONT>         * @param stream The jar InputStream<a name="line.354"></a>
+<FONT color="green">355</FONT>         */<a name="line.355"></a>
+<FONT color="green">356</FONT>        private void loadImplementationsInJar(final Test test, final String parent, final String path,<a name="line.356"></a>
+<FONT color="green">357</FONT>                                              final JarInputStream stream) {<a name="line.357"></a>
+<FONT color="green">358</FONT>    <a name="line.358"></a>
+<FONT color="green">359</FONT>            try {<a name="line.359"></a>
+<FONT color="green">360</FONT>                JarEntry entry;<a name="line.360"></a>
+<FONT color="green">361</FONT>    <a name="line.361"></a>
+<FONT color="green">362</FONT>                while ((entry = stream.getNextJarEntry()) != null) {<a name="line.362"></a>
+<FONT color="green">363</FONT>                    final String name = entry.getName();<a name="line.363"></a>
+<FONT color="green">364</FONT>                    if (!entry.isDirectory() &amp;&amp; name.startsWith(parent) &amp;&amp; isTestApplicable(test, name)) {<a name="line.364"></a>
+<FONT color="green">365</FONT>                        addIfMatching(test, name);<a name="line.365"></a>
+<FONT color="green">366</FONT>                    }<a name="line.366"></a>
+<FONT color="green">367</FONT>                }<a name="line.367"></a>
+<FONT color="green">368</FONT>            } catch (final IOException ioe) {<a name="line.368"></a>
+<FONT color="green">369</FONT>                LOG.error("Could not search jar file '" + path + "' for classes matching criteria: " +<a name="line.369"></a>
+<FONT color="green">370</FONT>                    test + " due to an IOException", ioe);<a name="line.370"></a>
+<FONT color="green">371</FONT>            }<a name="line.371"></a>
+<FONT color="green">372</FONT>        }<a name="line.372"></a>
+<FONT color="green">373</FONT>    <a name="line.373"></a>
+<FONT color="green">374</FONT>        /**<a name="line.374"></a>
+<FONT color="green">375</FONT>         * Add the class designated by the fully qualified class name provided to the set of<a name="line.375"></a>
+<FONT color="green">376</FONT>         * resolved classes if and only if it is approved by the Test supplied.<a name="line.376"></a>
+<FONT color="green">377</FONT>         *<a name="line.377"></a>
+<FONT color="green">378</FONT>         * @param test the test used to determine if the class matches<a name="line.378"></a>
+<FONT color="green">379</FONT>         * @param fqn the fully qualified name of a class<a name="line.379"></a>
+<FONT color="green">380</FONT>         */<a name="line.380"></a>
+<FONT color="green">381</FONT>        protected void addIfMatching(final Test test, final String fqn) {<a name="line.381"></a>
+<FONT color="green">382</FONT>            try {<a name="line.382"></a>
+<FONT color="green">383</FONT>                final ClassLoader loader = getClassLoader();<a name="line.383"></a>
+<FONT color="green">384</FONT>                if (test.doesMatchClass()) {<a name="line.384"></a>
+<FONT color="green">385</FONT>                    final String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');<a name="line.385"></a>
+<FONT color="green">386</FONT>                    if (LOG.isDebugEnabled()) {<a name="line.386"></a>
+<FONT color="green">387</FONT>                        LOG.debug("Checking to see if class " + externalName + " matches criteria [" + test + "]");<a name="line.387"></a>
+<FONT color="green">388</FONT>                    }<a name="line.388"></a>
+<FONT color="green">389</FONT>    <a name="line.389"></a>
+<FONT color="green">390</FONT>                    final Class&lt;?&gt; type = loader.loadClass(externalName);<a name="line.390"></a>
+<FONT color="green">391</FONT>                    if (test.matches(type)) {<a name="line.391"></a>
+<FONT color="green">392</FONT>                        classMatches.add(type);<a name="line.392"></a>
+<FONT color="green">393</FONT>                    }<a name="line.393"></a>
+<FONT color="green">394</FONT>                }<a name="line.394"></a>
+<FONT color="green">395</FONT>                if (test.doesMatchResource()) {<a name="line.395"></a>
+<FONT color="green">396</FONT>                    URL url = loader.getResource(fqn);<a name="line.396"></a>
+<FONT color="green">397</FONT>                    if (url == null) {<a name="line.397"></a>
+<FONT color="green">398</FONT>                        url = loader.getResource(fqn.substring(1));<a name="line.398"></a>
+<FONT color="green">399</FONT>                    }<a name="line.399"></a>
+<FONT color="green">400</FONT>                    if (url != null &amp;&amp; test.matches(url.toURI())) {<a name="line.400"></a>
+<FONT color="green">401</FONT>                        resourceMatches.add(url.toURI());<a name="line.401"></a>
+<FONT color="green">402</FONT>                    }<a name="line.402"></a>
+<FONT color="green">403</FONT>                }<a name="line.403"></a>
+<FONT color="green">404</FONT>            } catch (final Throwable t) {<a name="line.404"></a>
+<FONT color="green">405</FONT>                LOG.warn("Could not examine class '" + fqn + "' due to a " +<a name="line.405"></a>
+<FONT color="green">406</FONT>                    t.getClass().getName() + " with message: " + t.getMessage());<a name="line.406"></a>
+<FONT color="green">407</FONT>            }<a name="line.407"></a>
+<FONT color="green">408</FONT>        }<a name="line.408"></a>
+<FONT color="green">409</FONT>    <a name="line.409"></a>
+<FONT color="green">410</FONT>        /**<a name="line.410"></a>
+<FONT color="green">411</FONT>         * A simple interface that specifies how to test classes to determine if they<a name="line.411"></a>
+<FONT color="green">412</FONT>         * are to be included in the results produced by the ResolverUtil.<a name="line.412"></a>
+<FONT color="green">413</FONT>         */<a name="line.413"></a>
+<FONT color="green">414</FONT>        public interface Test {<a name="line.414"></a>
+<FONT color="green">415</FONT>            /**<a name="line.415"></a>
+<FONT color="green">416</FONT>             * Will be called repeatedly with candidate classes. Must return True if a class<a name="line.416"></a>
+<FONT color="green">417</FONT>             * is to be included in the results, false otherwise.<a name="line.417"></a>
+<FONT color="green">418</FONT>             * @param type The Class to match against.<a name="line.418"></a>
+<FONT color="green">419</FONT>             * @return true if the Class matches.<a name="line.419"></a>
+<FONT color="green">420</FONT>             */<a name="line.420"></a>
+<FONT color="green">421</FONT>            boolean matches(Class&lt;?&gt; type);<a name="line.421"></a>
+<FONT color="green">422</FONT>    <a name="line.422"></a>
+<FONT color="green">423</FONT>            /**<a name="line.423"></a>
+<FONT color="green">424</FONT>             * Test for a resource.<a name="line.424"></a>
+<FONT color="green">425</FONT>             * @param resource The URI to the resource.<a name="line.425"></a>
+<FONT color="green">426</FONT>             * @return true if the resource matches.<a name="line.426"></a>
+<FONT color="green">427</FONT>             */<a name="line.427"></a>
+<FONT color="green">428</FONT>            boolean matches(URI resource);<a name="line.428"></a>
 <FONT color="green">429</FONT>    <a name="line.429"></a>
-<FONT color="green">430</FONT>            boolean doesMatchResource();<a name="line.430"></a>
-<FONT color="green">431</FONT>        }<a name="line.431"></a>
-<FONT color="green">432</FONT>    <a name="line.432"></a>
-<FONT color="green">433</FONT>        /**<a name="line.433"></a>
-<FONT color="green">434</FONT>         * Test against a Class.<a name="line.434"></a>
-<FONT color="green">435</FONT>         */<a name="line.435"></a>
-<FONT color="green">436</FONT>        public abstract static class ClassTest implements Test {<a name="line.436"></a>
-<FONT color="green">437</FONT>            public boolean matches(final URI resource) {<a name="line.437"></a>
-<FONT color="green">438</FONT>                throw new UnsupportedOperationException();<a name="line.438"></a>
-<FONT color="green">439</FONT>            }<a name="line.439"></a>
-<FONT color="green">440</FONT>    <a name="line.440"></a>
-<FONT color="green">441</FONT>            public boolean doesMatchClass() {<a name="line.441"></a>
-<FONT color="green">442</FONT>                return true;<a name="line.442"></a>
-<FONT color="green">443</FONT>            }<a name="line.443"></a>
-<FONT color="green">444</FONT>    <a name="line.444"></a>
-<FONT color="green">445</FONT>            public boolean doesMatchResource() {<a name="line.445"></a>
-<FONT color="green">446</FONT>                return false;<a name="line.446"></a>
+<FONT color="green">430</FONT>            boolean doesMatchClass();<a name="line.430"></a>
+<FONT color="green">431</FONT>    <a name="line.431"></a>
+<FONT color="green">432</FONT>            boolean doesMatchResource();<a name="line.432"></a>
+<FONT color="green">433</FONT>        }<a name="line.433"></a>
+<FONT color="green">434</FONT>    <a name="line.434"></a>
+<FONT color="green">435</FONT>        /**<a name="line.435"></a>
+<FONT color="green">436</FONT>         * Test against a Class.<a name="line.436"></a>
+<FONT color="green">437</FONT>         */<a name="line.437"></a>
+<FONT color="green">438</FONT>        public abstract static class ClassTest implements Test {<a name="line.438"></a>
+<FONT color="green">439</FONT>            @Override<a name="line.439"></a>
+<FONT color="green">440</FONT>            public boolean matches(final URI resource) {<a name="line.440"></a>
+<FONT color="green">441</FONT>                throw new UnsupportedOperationException();<a name="line.441"></a>
+<FONT color="green">442</FONT>            }<a name="line.442"></a>
+<FONT color="green">443</FONT>    <a name="line.443"></a>
+<FONT color="green">444</FONT>            @Override<a name="line.444"></a>
+<FONT color="green">445</FONT>            public boolean doesMatchClass() {<a name="line.445"></a>
+<FONT color="green">446</FONT>                return true;<a name="line.446"></a>
 <FONT color="green">447</FONT>            }<a name="line.447"></a>
-<FONT color="green">448</FONT>        }<a name="line.448"></a>
-<FONT color="green">449</FONT>    <a name="line.449"></a>
-<FONT color="green">450</FONT>        /**<a name="line.450"></a>
-<FONT color="green">451</FONT>         * Test against a resource.<a name="line.451"></a>
-<FONT color="green">452</FONT>         */<a name="line.452"></a>
-<FONT color="green">453</FONT>        public abstract static class ResourceTest implements Test {<a name="line.453"></a>
-<FONT color="green">454</FONT>            public boolean matches(final Class&lt;?&gt; cls) {<a name="line.454"></a>
-<FONT color="green">455</FONT>                throw new UnsupportedOperationException();<a name="line.455"></a>
-<FONT color="green">456</FONT>            }<a name="line.456"></a>
-<FONT color="green">457</FONT>    <a name="line.457"></a>
-<FONT color="green">458</FONT>            public boolean doesMatchClass() {<a name="line.458"></a>
-<FONT color="green">459</FONT>                return false;<a name="line.459"></a>
-<FONT color="green">460</FONT>            }<a name="line.460"></a>
-<FONT color="green">461</FONT>    <a name="line.461"></a>
-<FONT color="green">462</FONT>            public boolean doesMatchResource() {<a name="line.462"></a>
-<FONT color="green">463</FONT>                return true;<a name="line.463"></a>
-<FONT color="green">464</FONT>            }<a name="line.464"></a>
-<FONT color="green">465</FONT>        }<a name="line.465"></a>
-<FONT color="green">466</FONT>    <a name="line.466"></a>
-<FONT color="green">467</FONT>        /**<a name="line.467"></a>
-<FONT color="green">468</FONT>         * A Test that checks to see if each class is assignable to the provided class. Note<a name="line.468"></a>
-<FONT color="green">469</FONT>         * that this test will match the parent type itself if it is presented for matching.<a name="line.469"></a>
-<FONT color="green">470</FONT>         */<a name="line.470"></a>
-<FONT color="green">471</FONT>        public static class IsA extends ClassTest {<a name="line.471"></a>
-<FONT color="green">472</FONT>            private final Class&lt;?&gt; parent;<a name="line.472"></a>
-<FONT color="green">473</FONT>    <a name="line.473"></a>
-<FONT color="green">474</FONT>            /**<a name="line.474"></a>
-<FONT color="green">475</FONT>             * Constructs an IsA test using the supplied Class as the parent class/interface.<a name="line.475"></a>
-<FONT color="green">476</FONT>             * @param parentType The parent class to check for.<a name="line.476"></a>
-<FONT color="green">477</FONT>             */<a name="line.477"></a>
-<FONT color="green">478</FONT>            public IsA(final Class&lt;?&gt; parentType) { this.parent = parentType; }<a name="line.478"></a>
-<FONT color="green">479</FONT>    <a name="line.479"></a>
-<FONT color="green">480</FONT>            /**<a name="line.480"></a>
-<FONT color="green">481</FONT>             * Returns true if type is assignable to the parent type supplied in the constructor.<a name="line.481"></a>
-<FONT color="green">482</FONT>             * @param type The Class to check.<a name="line.482"></a>
-<FONT color="green">483</FONT>             * @return true if the Class matches.<a name="line.483"></a>
-<FONT color="green">484</FONT>             */<a name="line.484"></a>
-<FONT color="green">485</FONT>            public boolean matches(final Class&lt;?&gt; type) {<a name="line.485"></a>
-<FONT color="green">486</FONT>                return type != null &amp;&amp; parent.isAssignableFrom(type);<a name="line.486"></a>
-<FONT color="green">487</FONT>            }<a name="line.487"></a>
-<FONT color="green">488</FONT>    <a name="line.488"></a>
-<FONT color="green">489</FONT>            @Override<a name="line.489"></a>
-<FONT color="green">490</FONT>            public String toString() {<a name="line.490"></a>
-<FONT color="green">491</FONT>                return "is assignable to " + parent.getSimpleName();<a name="line.491"></a>
-<FONT color="green">492</FONT>            }<a name="line.492"></a>
-<FONT color="green">493</FONT>        }<a name="line.493"></a>
-<FONT color="green">494</FONT>    <a name="line.494"></a>
-<FONT color="green">495</FONT>        /**<a name="line.495"></a>
-<FONT color="green">496</FONT>         * A Test that checks to see if each class name ends with the provided suffix.<a name="line.496"></a>
-<FONT color="green">497</FONT>         */<a name="line.497"></a>
-<FONT color="green">498</FONT>        public static class NameEndsWith extends ClassTest {<a name="line.498"></a>
-<FONT color="green">499</FONT>            private final String suffix;<a name="line.499"></a>
-<FONT color="green">500</FONT>    <a name="line.500"></a>
-<FONT color="green">501</FONT>            /**<a name="line.501"></a>
-<FONT color="green">502</FONT>             * Constructs a NameEndsWith test using the supplied suffix.<a name="line.502"></a>
-<FONT color="green">503</FONT>             * @param suffix the String suffix to check for.<a name="line.503"></a>
-<FONT color="green">504</FONT>             */<a name="line.504"></a>
-<FONT color="green">505</FONT>            public NameEndsWith(final String suffix) { this.suffix = suffix; }<a name="line.505"></a>
-<FONT color="green">506</FONT>    <a name="line.506"></a>
-<FONT color="green">507</FONT>            /**<a name="line.507"></a>
-<FONT color="green">508</FONT>             * Returns true if type name ends with the suffix supplied in the constructor.<a name="line.508"></a>
-<FONT color="green">509</FONT>             * @param type The Class to check.<a name="line.509"></a>
-<FONT color="green">510</FONT>             * @return true if the Class matches.<a name="line.510"></a>
-<FONT color="green">511</FONT>             */<a name="line.511"></a>
-<FONT color="green">512</FONT>            public boolean matches(final Class&lt;?&gt; type) {<a name="line.512"></a>
-<FONT color="green">513</FONT>                return type != null &amp;&amp; type.getName().endsWith(suffix);<a name="line.513"></a>
-<FONT color="green">514</FONT>            }<a name="line.514"></a>
+<FONT color="green">448</FONT>    <a name="line.448"></a>
+<FONT color="green">449</FONT>            @Override<a name="line.449"></a>
+<FONT color="green">450</FONT>            public boolean doesMatchResource() {<a name="line.450"></a>
+<FONT color="green">451</FONT>                return false;<a name="line.451"></a>
+<FONT color="green">452</FONT>            }<a name="line.452"></a>
+<FONT color="green">453</FONT>        }<a name="line.453"></a>
+<FONT color="green">454</FONT>    <a name="line.454"></a>
+<FONT color="green">455</FONT>        /**<a name="line.455"></a>
+<FONT color="green">456</FONT>         * Test against a resource.<a name="line.456"></a>
+<FONT color="green">457</FONT>         */<a name="line.457"></a>
+<FONT color="green">458</FONT>        public abstract static class ResourceTest implements Test {<a name="line.458"></a>
+<FONT color="green">459</FONT>            @Override<a name="line.459"></a>
+<FONT color="green">460</FONT>            public boolean matches(final Class&lt;?&gt; cls) {<a name="line.460"></a>
+<FONT color="green">461</FONT>                throw new UnsupportedOperationException();<a name="line.461"></a>
+<FONT color="green">462</FONT>            }<a name="line.462"></a>
+<FONT color="green">463</FONT>    <a name="line.463"></a>
+<FONT color="green">464</FONT>            @Override<a name="line.464"></a>
+<FONT color="green">465</FONT>            public boolean doesMatchClass() {<a name="line.465"></a>
+<FONT color="green">466</FONT>                return false;<a name="line.466"></a>
+<FONT color="green">467</FONT>            }<a name="line.467"></a>
+<FONT color="green">468</FONT>    <a name="line.468"></a>
+<FONT color="green">469</FONT>            @Override<a name="line.469"></a>
+<FONT color="green">470</FONT>            public boolean doesMatchResource() {<a name="line.470"></a>
+<FONT color="green">471</FONT>                return true;<a name="line.471"></a>
+<FONT color="green">472</FONT>            }<a name="line.472"></a>
+<FONT color="green">473</FONT>        }<a name="line.473"></a>
+<FONT color="green">474</FONT>    <a name="line.474"></a>
+<FONT color="green">475</FONT>        /**<a name="line.475"></a>
+<FONT color="green">476</FONT>         * A Test that checks to see if each class is assignable to the provided class. Note<a name="line.476"></a>
+<FONT color="green">477</FONT>         * that this test will match the parent type itself if it is presented for matching.<a name="line.477"></a>
+<FONT color="green">478</FONT>         */<a name="line.478"></a>
+<FONT color="green">479</FONT>        public static class IsA extends ClassTest {<a name="line.479"></a>
+<FONT color="green">480</FONT>            private final Class&lt;?&gt; parent;<a name="line.480"></a>
+<FONT color="green">481</FONT>    <a name="line.481"></a>
+<FONT color="green">482</FONT>            /**<a name="line.482"></a>
+<FONT color="green">483</FONT>             * Constructs an IsA test using the supplied Class as the parent class/interface.<a name="line.483"></a>
+<FONT color="green">484</FONT>             * @param parentType The parent class to check for.<a name="line.484"></a>
+<FONT color="green">485</FONT>             */<a name="line.485"></a>
+<FONT color="green">486</FONT>            public IsA(final Class&lt;?&gt; parentType) { this.parent = parentType; }<a name="line.486"></a>
+<FONT color="green">487</FONT>    <a name="line.487"></a>
+<FONT color="green">488</FONT>            /**<a name="line.488"></a>
+<FONT color="green">489</FONT>             * Returns true if type is assignable to the parent type supplied in the constructor.<a name="line.489"></a>
+<FONT color="green">490</FONT>             * @param type The Class to check.<a name="line.490"></a>
+<FONT color="green">491</FONT>             * @return true if the Class matches.<a name="line.491"></a>
+<FONT color="green">492</FONT>             */<a name="line.492"></a>
+<FONT color="green">493</FONT>            @Override<a name="line.493"></a>
+<FONT color="green">494</FONT>            public boolean matches(final Class&lt;?&gt; type) {<a name="line.494"></a>
+<FONT color="green">495</FONT>                return type != null &amp;&amp; parent.isAssignableFrom(type);<a name="line.495"></a>
+<FONT color="green">496</FONT>            }<a name="line.496"></a>
+<FONT color="green">497</FONT>    <a name="line.497"></a>
+<FONT color="green">498</FONT>            @Override<a name="line.498"></a>
+<FONT color="green">499</FONT>            public String toString() {<a name="line.499"></a>
+<FONT color="green">500</FONT>                return "is assignable to " + parent.getSimpleName();<a name="line.500"></a>
+<FONT color="green">501</FONT>            }<a name="line.501"></a>
+<FONT color="green">502</FONT>        }<a name="line.502"></a>
+<FONT color="green">503</FONT>    <a name="line.503"></a>
+<FONT color="green">504</FONT>        /**<a name="line.504"></a>
+<FONT color="green">505</FONT>         * A Test that checks to see if each class name ends with the provided suffix.<a name="line.505"></a>
+<FONT color="green">506</FONT>         */<a name="line.506"></a>
+<FONT color="green">507</FONT>        public static class NameEndsWith extends ClassTest {<a name="line.507"></a>
+<FONT color="green">508</FONT>            private final String suffix;<a name="line.508"></a>
+<FONT color="green">509</FONT>    <a name="line.509"></a>
+<FONT color="green">510</FONT>            /**<a name="line.510"></a>
+<FONT color="green">511</FONT>             * Constructs a NameEndsWith test using the supplied suffix.<a name="line.511"></a>
+<FONT color="green">512</FONT>             * @param suffix the String suffix to check for.<a name="line.512"></a>
+<FONT color="green">513</FONT>             */<a name="line.513"></a>
+<FONT color="green">514</FONT>            public NameEndsWith(final String suffix) { this.suffix = suffix; }<a name="line.514"></a>
 <FONT color="green">515</FONT>    <a name="line.515"></a>
-<FONT color="green">516</FONT>            @Override<a name="line.516"></a>
-<FONT color="green">517</FONT>            public String toString() {<a name="line.517"></a>
-<FONT color="green">518</FONT>                return "ends with the suffix " + suffix;<a name="line.518"></a>
-<FONT color="green">519</FONT>            }<a name="line.519"></a>
-<FONT color="green">520</FONT>        }<a name="line.520"></a>
-<FONT color="green">521</FONT>    <a name="line.521"></a>
-<FONT color="green">522</FONT>        /**<a name="line.522"></a>
-<FONT color="green">523</FONT>         * A Test that checks to see if each class is annotated with a specific annotation. If it<a name="line.523"></a>
-<FONT color="green">524</FONT>         * is, then the test returns true, otherwise false.<a name="line.524"></a>
-<FONT color="green">525</FONT>         */<a name="line.525"></a>
-<FONT color="green">526</FONT>        public static class AnnotatedWith extends ClassTest {<a name="line.526"></a>
-<FONT color="green">527</FONT>            private final Class&lt;? extends Annotation&gt; annotation;<a name="line.527"></a>
-<FONT color="green">528</FONT>    <a name="line.528"></a>
-<FONT color="green">529</FONT>            /**<a name="line.529"></a>
-<FONT color="green">530</FONT>             * Constructs an AnnotatedWith test for the specified annotation type.<a name="line.530"></a>
-<FONT color="green">531</FONT>             * @param annotation The annotation to check for.<a name="line.531"></a>
-<FONT color="green">532</FONT>             */<a name="line.532"></a>
-<FONT color="green">533</FONT>            public AnnotatedWith(final Class&lt;? extends Annotation&gt; annotation) {<a name="line.533"></a>
-<FONT color="green">534</FONT>                this.annotation = annotation;<a name="line.534"></a>
-<FONT color="green">535</FONT>            }<a name="line.535"></a>
-<FONT color="green">536</FONT>    <a name="line.536"></a>
-<FONT color="green">537</FONT>            /**<a name="line.537"></a>
-<FONT color="green">538</FONT>             * Returns true if the type is annotated with the class provided to the constructor.<a name="line.538"></a>
-<FONT color="green">539</FONT>             * @param type the Class to match against.<a name="line.539"></a>
-<FONT color="green">540</FONT>             * @return true if the Classes match.<a name="line.540"></a>
-<FONT color="green">541</FONT>             */<a name="line.541"></a>
-<FONT color="green">542</FONT>            public boolean matches(final Class&lt;?&gt; type) {<a name="line.542"></a>
-<FONT color="green">543</FONT>                return type != null &amp;&amp; type.isAnnotationPresent(annotation);<a name="line.543"></a>
-<FONT color="green">544</FONT>            }<a name="line.544"></a>
-<FONT color="green">545</FONT>    <a name="line.545"></a>
-<FONT color="green">546</FONT>            @Override<a name="line.546"></a>
-<FONT color="green">547</FONT>            public String toString() {<a name="line.547"></a>
-<FONT color="green">548</FONT>                return "annotated with @" + annotation.getSimpleName();<a name="line.548"></a>
-<FONT color="green">549</FONT>            }<a name="line.549"></a>
-<FONT color="green">550</FONT>        }<a name="line.550"></a>
-<FONT color="green">551</FONT>    <a name="line.551"></a>
-<FONT color="green">552</FONT>        /**<a name="line.552"></a>
-<FONT color="green">553</FONT>         * A Test that checks to see if the class name matches.<a name="line.553"></a>
-<FONT color="green">554</FONT>         */<a name="line.554"></a>
-<FONT color="green">555</FONT>        public static class NameIs extends ResourceTest {<a name="line.555"></a>
-<FONT color="green">556</FONT>            private final String name;<a name="line.556"></a>
-<FONT color="green">557</FONT>    <a name="line.557"></a>
-<FONT color="green">558</FONT>            public NameIs(final String name) { this.name = "/" + name; }<a name="line.558"></a>
-<FONT color="green">559</FONT>    <a name="line.559"></a>
-<FONT color="green">560</FONT>            public boolean matches(final URI resource) {<a name="line.560"></a>
-<FONT color="green">561</FONT>                return resource.getPath().endsWith(name);<a name="line.561"></a>
-<FONT color="green">562</FONT>            }<a name="line.562"></a>
-<FONT color="green">563</FONT>    <a name="line.563"></a>
-<FONT color="green">564</FONT>            @Override public String toString() {<a name="line.564"></a>
-<FONT color="green">565</FONT>                return "named " + name;<a name="line.565"></a>
-<FONT color="green">566</FONT>            }<a name="line.566"></a>
-<FONT color="green">567</FONT>        }<a name="line.567"></a>
-<FONT color="green">568</FONT>    }<a name="line.568"></a>
+<FONT color="green">516</FONT>            /**<a name="line.516"></a>
+<FONT color="green">517</FONT>             * Returns true if type name ends with the suffix supplied in the constructor.<a name="line.517"></a>
+<FONT color="green">518</FONT>             * @param type The Class to check.<a name="line.518"></a>
+<FONT color="green">519</FONT>             * @return true if the Class matches.<a name="line.519"></a>
+<FONT color="green">520</FONT>             */<a name="line.520"></a>
+<FONT color="green">521</FONT>            @Override<a name="line.521"></a>
+<FONT color="green">522</FONT>            public boolean matches(final Class&lt;?&gt; type) {<a name="line.522"></a>
+<FONT color="green">523</FONT>                return type != null &amp;&amp; type.getName().endsWith(suffix);<a name="line.523"></a>
+<FONT color="green">524</FONT>            }<a name="line.524"></a>
+<FONT color="green">525</FONT>    <a name="line.525"></a>
+<FONT color="green">526</FONT>            @Override<a name="line.526"></a>
+<FONT color="green">527</FONT>            public String toString() {<a name="line.527"></a>
+<FONT color="green">528</FONT>                return "ends with the suffix " + suffix;<a name="line.528"></a>
+<FONT color="green">529</FONT>            }<a name="line.529"></a>
+<FONT color="green">530</FONT>        }<a name="line.530"></a>
+<FONT color="green">531</FONT>    <a name="line.531"></a>
+<FONT color="green">532</FONT>        /**<a name="line.532"></a>
+<FONT color="green">533</FONT>         * A Test that checks to see if each class is annotated with a specific annotation. If it<a name="line.533"></a>
+<FONT color="green">534</FONT>         * is, then the test returns true, otherwise false.<a name="line.534"></a>
+<FONT color="green">535</FONT>         */<a name="line.535"></a>
+<FONT color="green">536</FONT>        public static class AnnotatedWith extends ClassTest {<a name="line.536"></a>
+<FONT color="green">537</FONT>            private final Class&lt;? extends Annotation&gt; annotation;<a name="line.537"></a>
+<FONT color="green">538</FONT>    <a name="line.538"></a>
+<FONT color="green">539</FONT>            /**<a name="line.539"></a>
+<FONT color="green">540</FONT>             * Constructs an AnnotatedWith test for the specified annotation type.<a name="line.540"></a>
+<FONT color="green">541</FONT>             * @param annotation The annotation to check for.<a name="line.541"></a>
+<FONT color="green">542</FONT>             */<a name="line.542"></a>
+<FONT color="green">543</FONT>            public AnnotatedWith(final Class&lt;? extends Annotation&gt; annotation) {<a name="line.543"></a>
+<FONT color="green">544</FONT>                this.annotation = annotation;<a name="line.544"></a>
+<FONT color="green">545</FONT>            }<a name="line.545"></a>
+<FONT color="green">546</FONT>    <a name="line.546"></a>
+<FONT color="green">547</FONT>            /**<a name="line.547"></a>
+<FONT color="green">548</FONT>             * Returns true if the type is annotated with the class provided to the constructor.<a name="line.548"></a>
+<FONT color="green">549</FONT>             * @param type the Class to match against.<a name="line.549"></a>
+<FONT color="green">550</FONT>             * @return true if the Classes match.<a name="line.550"></a>
+<FONT color="green">551</FONT>             */<a name="line.551"></a>
+<FONT color="green">552</FONT>            @Override<a name="line.552"></a>
+<FONT color="green">553</FONT>            public boolean matches(final Class&lt;?&gt; type) {<a name="line.553"></a>
+<FONT color="green">554</FONT>                return type != null &amp;&amp; type.isAnnotationPresent(annotation);<a name="line.554"></a>
+<FONT color="green">555</FONT>            }<a name="line.555"></a>
+<FONT color="green">556</FONT>    <a name="line.556"></a>
+<FONT color="green">557</FONT>            @Override<a name="line.557"></a>
+<FONT color="green">558</FONT>            public String toString() {<a name="line.558"></a>
+<FONT color="green">559</FONT>                return "annotated with @" + annotation.getSimpleName();<a name="line.559"></a>
+<FONT color="green">560</FONT>            }<a name="line.560"></a>
+<FONT color="green">561</FONT>        }<a name="line.561"></a>
+<FONT color="green">562</FONT>    <a name="line.562"></a>
+<FONT color="green">563</FONT>        /**<a name="line.563"></a>
+<FONT color="green">564</FONT>         * A Test that checks to see if the class name matches.<a name="line.564"></a>
+<FONT color="green">565</FONT>         */<a name="line.565"></a>
+<FONT color="green">566</FONT>        public static class NameIs extends ResourceTest {<a name="line.566"></a>
+<FONT color="green">567</FONT>            private final String name;<a name="line.567"></a>
+<FONT color="green">568</FONT>    <a name="line.568"></a>
+<FONT color="green">569</FONT>            public NameIs(final String name) { this.name = "/" + name; }<a name="line.569"></a>
+<FONT color="green">570</FONT>    <a name="line.570"></a>
+<FONT color="green">571</FONT>            @Override<a name="line.571"></a>
+<FONT color="green">572</FONT>            public boolean matches(final URI resource) {<a name="line.572"></a>
+<FONT color="green">573</FONT>                return resource.getPath().endsWith(name);<a name="line.573"></a>
+<FONT color="green">574</FONT>            }<a name="line.574"></a>
+<FONT color="green">575</FONT>    <a name="line.575"></a>
+<FONT color="green">576</FONT>            @Override public String toString() {<a name="line.576"></a>
+<FONT color="green">577</FONT>                return "named " + name;<a name="line.577"></a>
+<FONT color="green">578</FONT>            }<a name="line.578"></a>
+<FONT color="green">579</FONT>        }<a name="line.579"></a>
+<FONT color="green">580</FONT>    }<a name="line.580"></a>
 
 
 

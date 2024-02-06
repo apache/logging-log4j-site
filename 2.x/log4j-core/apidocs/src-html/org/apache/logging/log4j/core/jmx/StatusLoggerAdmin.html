@@ -46,7 +46,7 @@
 <FONT color="green">043</FONT>         * Constructs a new {@code StatusLoggerAdmin} with the {@code Executor} to<a name="line.43"></a>
 <FONT color="green">044</FONT>         * be used for sending {@code Notification}s asynchronously to listeners.<a name="line.44"></a>
 <FONT color="green">045</FONT>         * <a name="line.45"></a>
-<FONT color="green">046</FONT>         * @param executor<a name="line.46"></a>
+<FONT color="green">046</FONT>         * @param executor used to send notifications asynchronously<a name="line.46"></a>
 <FONT color="green">047</FONT>         */<a name="line.47"></a>
 <FONT color="green">048</FONT>        public StatusLoggerAdmin(Executor executor) {<a name="line.48"></a>
 <FONT color="green">049</FONT>            super(executor, createNotificationInfo());<a name="line.49"></a>
@@ -59,8 +59,8 @@
 <FONT color="green">056</FONT>        }<a name="line.56"></a>
 <FONT color="green">057</FONT>    <a name="line.57"></a>
 <FONT color="green">058</FONT>        private static MBeanNotificationInfo createNotificationInfo() {<a name="line.58"></a>
-<FONT color="green">059</FONT>            String[] notifTypes = new String[] { NOTIF_TYPE_DATA,<a name="line.59"></a>
-<FONT color="green">060</FONT>                    NOTIF_TYPE_MESSAGE };<a name="line.60"></a>
+<FONT color="green">059</FONT>            String[] notifTypes = new String[] {//<a name="line.59"></a>
+<FONT color="green">060</FONT>            NOTIF_TYPE_DATA, NOTIF_TYPE_MESSAGE };<a name="line.60"></a>
 <FONT color="green">061</FONT>            String name = Notification.class.getName();<a name="line.61"></a>
 <FONT color="green">062</FONT>            String description = "StatusLogger has logged an event";<a name="line.62"></a>
 <FONT color="green">063</FONT>            return new MBeanNotificationInfo(notifTypes, name, description);<a name="line.63"></a>
@@ -110,19 +110,24 @@
 <FONT color="green">107</FONT>            sendNotification(notifData);<a name="line.107"></a>
 <FONT color="green">108</FONT>        }<a name="line.108"></a>
 <FONT color="green">109</FONT>    <a name="line.109"></a>
-<FONT color="green">110</FONT>        /** @see StatusLoggerAdminMBean#NAME */<a name="line.110"></a>
-<FONT color="green">111</FONT>        public ObjectName getObjectName() {<a name="line.111"></a>
-<FONT color="green">112</FONT>            return objectName;<a name="line.112"></a>
-<FONT color="green">113</FONT>        }<a name="line.113"></a>
-<FONT color="green">114</FONT>    <a name="line.114"></a>
-<FONT color="green">115</FONT>        private long nextSeqNo() {<a name="line.115"></a>
-<FONT color="green">116</FONT>            return sequenceNo.getAndIncrement();<a name="line.116"></a>
-<FONT color="green">117</FONT>        }<a name="line.117"></a>
-<FONT color="green">118</FONT>    <a name="line.118"></a>
-<FONT color="green">119</FONT>        private long now() {<a name="line.119"></a>
-<FONT color="green">120</FONT>            return System.currentTimeMillis();<a name="line.120"></a>
-<FONT color="green">121</FONT>        }<a name="line.121"></a>
-<FONT color="green">122</FONT>    }<a name="line.122"></a>
+<FONT color="green">110</FONT>        /**<a name="line.110"></a>
+<FONT color="green">111</FONT>         * Returns the {@code ObjectName} of this mbean.<a name="line.111"></a>
+<FONT color="green">112</FONT>         * <a name="line.112"></a>
+<FONT color="green">113</FONT>         * @return the {@code ObjectName}<a name="line.113"></a>
+<FONT color="green">114</FONT>         * @see StatusLoggerAdminMBean#NAME<a name="line.114"></a>
+<FONT color="green">115</FONT>         */<a name="line.115"></a>
+<FONT color="green">116</FONT>        public ObjectName getObjectName() {<a name="line.116"></a>
+<FONT color="green">117</FONT>            return objectName;<a name="line.117"></a>
+<FONT color="green">118</FONT>        }<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>        private long nextSeqNo() {<a name="line.120"></a>
+<FONT color="green">121</FONT>            return sequenceNo.getAndIncrement();<a name="line.121"></a>
+<FONT color="green">122</FONT>        }<a name="line.122"></a>
+<FONT color="green">123</FONT>    <a name="line.123"></a>
+<FONT color="green">124</FONT>        private long now() {<a name="line.124"></a>
+<FONT color="green">125</FONT>            return System.currentTimeMillis();<a name="line.125"></a>
+<FONT color="green">126</FONT>        }<a name="line.126"></a>
+<FONT color="green">127</FONT>    }<a name="line.127"></a>
 
 
 

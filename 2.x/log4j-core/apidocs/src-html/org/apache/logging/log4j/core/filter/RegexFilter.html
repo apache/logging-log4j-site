@@ -39,7 +39,7 @@
 <FONT color="green">036</FONT>     * (false). The default is false.<a name="line.36"></a>
 <FONT color="green">037</FONT>     *<a name="line.37"></a>
 <FONT color="green">038</FONT>     */<a name="line.38"></a>
-<FONT color="green">039</FONT>    @Plugin(name = "RegexFilter", type = "Core", elementType = "filter", printObject = true)<a name="line.39"></a>
+<FONT color="green">039</FONT>    @Plugin(name = "RegexFilter", category = "Core", elementType = "filter", printObject = true)<a name="line.39"></a>
 <FONT color="green">040</FONT>    public final class RegexFilter extends AbstractFilter {<a name="line.40"></a>
 <FONT color="green">041</FONT>    <a name="line.41"></a>
 <FONT color="green">042</FONT>        private final Pattern pattern;<a name="line.42"></a>
@@ -60,71 +60,77 @@
 <FONT color="green">057</FONT>        @Override<a name="line.57"></a>
 <FONT color="green">058</FONT>        public Result filter(final Logger logger, final Level level, final Marker marker, final Object msg,<a name="line.58"></a>
 <FONT color="green">059</FONT>                             final Throwable t) {<a name="line.59"></a>
-<FONT color="green">060</FONT>            return filter(msg.toString());<a name="line.60"></a>
-<FONT color="green">061</FONT>        }<a name="line.61"></a>
-<FONT color="green">062</FONT>    <a name="line.62"></a>
-<FONT color="green">063</FONT>        @Override<a name="line.63"></a>
-<FONT color="green">064</FONT>        public Result filter(final Logger logger, final Level level, final Marker marker, final Message msg,<a name="line.64"></a>
-<FONT color="green">065</FONT>                             final Throwable t) {<a name="line.65"></a>
-<FONT color="green">066</FONT>            final String text = useRawMessage ? msg.getFormat() : msg.getFormattedMessage();<a name="line.66"></a>
-<FONT color="green">067</FONT>            return filter(text);<a name="line.67"></a>
-<FONT color="green">068</FONT>        }<a name="line.68"></a>
-<FONT color="green">069</FONT>    <a name="line.69"></a>
-<FONT color="green">070</FONT>        @Override<a name="line.70"></a>
-<FONT color="green">071</FONT>        public Result filter(final LogEvent event) {<a name="line.71"></a>
-<FONT color="green">072</FONT>            final String text = useRawMessage ? event.getMessage().getFormat() : event.getMessage().getFormattedMessage();<a name="line.72"></a>
+<FONT color="green">060</FONT>            if (msg == null) {<a name="line.60"></a>
+<FONT color="green">061</FONT>                return onMismatch;<a name="line.61"></a>
+<FONT color="green">062</FONT>            }<a name="line.62"></a>
+<FONT color="green">063</FONT>            return filter(msg.toString());<a name="line.63"></a>
+<FONT color="green">064</FONT>        }<a name="line.64"></a>
+<FONT color="green">065</FONT>    <a name="line.65"></a>
+<FONT color="green">066</FONT>        @Override<a name="line.66"></a>
+<FONT color="green">067</FONT>        public Result filter(final Logger logger, final Level level, final Marker marker, final Message msg,<a name="line.67"></a>
+<FONT color="green">068</FONT>                             final Throwable t) {<a name="line.68"></a>
+<FONT color="green">069</FONT>            if (msg == null) {<a name="line.69"></a>
+<FONT color="green">070</FONT>                return onMismatch;<a name="line.70"></a>
+<FONT color="green">071</FONT>            }<a name="line.71"></a>
+<FONT color="green">072</FONT>            final String text = useRawMessage ? msg.getFormat() : msg.getFormattedMessage();<a name="line.72"></a>
 <FONT color="green">073</FONT>            return filter(text);<a name="line.73"></a>
 <FONT color="green">074</FONT>        }<a name="line.74"></a>
 <FONT color="green">075</FONT>    <a name="line.75"></a>
-<FONT color="green">076</FONT>        private Result filter(final String msg) {<a name="line.76"></a>
-<FONT color="green">077</FONT>            if (msg == null) {<a name="line.77"></a>
-<FONT color="green">078</FONT>                return onMismatch;<a name="line.78"></a>
-<FONT color="green">079</FONT>            }<a name="line.79"></a>
-<FONT color="green">080</FONT>            final Matcher m = pattern.matcher(msg);<a name="line.80"></a>
-<FONT color="green">081</FONT>            return m.matches() ? onMatch : onMismatch;<a name="line.81"></a>
-<FONT color="green">082</FONT>        }<a name="line.82"></a>
-<FONT color="green">083</FONT>    <a name="line.83"></a>
-<FONT color="green">084</FONT>        @Override<a name="line.84"></a>
-<FONT color="green">085</FONT>        public String toString() {<a name="line.85"></a>
-<FONT color="green">086</FONT>            final StringBuilder sb = new StringBuilder();<a name="line.86"></a>
-<FONT color="green">087</FONT>            sb.append("useRaw=").append(useRawMessage);<a name="line.87"></a>
-<FONT color="green">088</FONT>            sb.append(", pattern=").append(pattern.toString());<a name="line.88"></a>
-<FONT color="green">089</FONT>            return sb.toString();<a name="line.89"></a>
-<FONT color="green">090</FONT>        }<a name="line.90"></a>
-<FONT color="green">091</FONT>    <a name="line.91"></a>
-<FONT color="green">092</FONT>        /**<a name="line.92"></a>
-<FONT color="green">093</FONT>         * Create a Filter that matches a regular expression.<a name="line.93"></a>
-<FONT color="green">094</FONT>         * @param regex The regular expression to match.<a name="line.94"></a>
-<FONT color="green">095</FONT>         * @param useRawMsg If true, the raw message will be used, otherwise the formatted message will be used.<a name="line.95"></a>
-<FONT color="green">096</FONT>         * @param match The action to perform when a match occurs.<a name="line.96"></a>
-<FONT color="green">097</FONT>         * @param mismatch The action to perform when a mismatch occurs.<a name="line.97"></a>
-<FONT color="green">098</FONT>         * @return The RegexFilter.<a name="line.98"></a>
-<FONT color="green">099</FONT>         */<a name="line.99"></a>
-<FONT color="green">100</FONT>        @PluginFactory<a name="line.100"></a>
-<FONT color="green">101</FONT>        public static RegexFilter createFilter(@PluginAttr("regex") final String regex,<a name="line.101"></a>
-<FONT color="green">102</FONT>                                               @PluginAttr("useRawMsg") final String useRawMsg,<a name="line.102"></a>
-<FONT color="green">103</FONT>                                                @PluginAttr("onMatch") final String match,<a name="line.103"></a>
-<FONT color="green">104</FONT>                                                @PluginAttr("onMismatch") final String mismatch) {<a name="line.104"></a>
-<FONT color="green">105</FONT>    <a name="line.105"></a>
-<FONT color="green">106</FONT>            if (regex == null) {<a name="line.106"></a>
-<FONT color="green">107</FONT>                LOGGER.error("A regular expression must be provided for RegexFilter");<a name="line.107"></a>
-<FONT color="green">108</FONT>                return null;<a name="line.108"></a>
-<FONT color="green">109</FONT>            }<a name="line.109"></a>
-<FONT color="green">110</FONT>            final boolean raw = useRawMsg == null ? false : Boolean.parseBoolean(useRawMsg);<a name="line.110"></a>
-<FONT color="green">111</FONT>            Pattern pattern;<a name="line.111"></a>
-<FONT color="green">112</FONT>            try {<a name="line.112"></a>
-<FONT color="green">113</FONT>                pattern = Pattern.compile(regex);<a name="line.113"></a>
-<FONT color="green">114</FONT>            } catch (final Exception ex) {<a name="line.114"></a>
-<FONT color="green">115</FONT>                LOGGER.error("RegexFilter caught exception compiling pattern: " + regex + " cause: " + ex.getMessage());<a name="line.115"></a>
-<FONT color="green">116</FONT>                return null;<a name="line.116"></a>
-<FONT color="green">117</FONT>            }<a name="line.117"></a>
-<FONT color="green">118</FONT>            final Result onMatch = Result.toResult(match);<a name="line.118"></a>
-<FONT color="green">119</FONT>            final Result onMismatch = Result.toResult(mismatch);<a name="line.119"></a>
-<FONT color="green">120</FONT>    <a name="line.120"></a>
-<FONT color="green">121</FONT>            return new RegexFilter(raw, pattern, onMatch, onMismatch);<a name="line.121"></a>
-<FONT color="green">122</FONT>        }<a name="line.122"></a>
-<FONT color="green">123</FONT>    <a name="line.123"></a>
-<FONT color="green">124</FONT>    }<a name="line.124"></a>
+<FONT color="green">076</FONT>        @Override<a name="line.76"></a>
+<FONT color="green">077</FONT>        public Result filter(final LogEvent event) {<a name="line.77"></a>
+<FONT color="green">078</FONT>            final String text = useRawMessage ? event.getMessage().getFormat() : event.getMessage().getFormattedMessage();<a name="line.78"></a>
+<FONT color="green">079</FONT>            return filter(text);<a name="line.79"></a>
+<FONT color="green">080</FONT>        }<a name="line.80"></a>
+<FONT color="green">081</FONT>    <a name="line.81"></a>
+<FONT color="green">082</FONT>        private Result filter(final String msg) {<a name="line.82"></a>
+<FONT color="green">083</FONT>            if (msg == null) {<a name="line.83"></a>
+<FONT color="green">084</FONT>                return onMismatch;<a name="line.84"></a>
+<FONT color="green">085</FONT>            }<a name="line.85"></a>
+<FONT color="green">086</FONT>            final Matcher m = pattern.matcher(msg);<a name="line.86"></a>
+<FONT color="green">087</FONT>            return m.matches() ? onMatch : onMismatch;<a name="line.87"></a>
+<FONT color="green">088</FONT>        }<a name="line.88"></a>
+<FONT color="green">089</FONT>    <a name="line.89"></a>
+<FONT color="green">090</FONT>        @Override<a name="line.90"></a>
+<FONT color="green">091</FONT>        public String toString() {<a name="line.91"></a>
+<FONT color="green">092</FONT>            final StringBuilder sb = new StringBuilder();<a name="line.92"></a>
+<FONT color="green">093</FONT>            sb.append("useRaw=").append(useRawMessage);<a name="line.93"></a>
+<FONT color="green">094</FONT>            sb.append(", pattern=").append(pattern.toString());<a name="line.94"></a>
+<FONT color="green">095</FONT>            return sb.toString();<a name="line.95"></a>
+<FONT color="green">096</FONT>        }<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>        /**<a name="line.98"></a>
+<FONT color="green">099</FONT>         * Create a Filter that matches a regular expression.<a name="line.99"></a>
+<FONT color="green">100</FONT>         * @param regex The regular expression to match.<a name="line.100"></a>
+<FONT color="green">101</FONT>         * @param useRawMsg If true, the raw message will be used, otherwise the formatted message will be used.<a name="line.101"></a>
+<FONT color="green">102</FONT>         * @param match The action to perform when a match occurs.<a name="line.102"></a>
+<FONT color="green">103</FONT>         * @param mismatch The action to perform when a mismatch occurs.<a name="line.103"></a>
+<FONT color="green">104</FONT>         * @return The RegexFilter.<a name="line.104"></a>
+<FONT color="green">105</FONT>         */<a name="line.105"></a>
+<FONT color="green">106</FONT>        @PluginFactory<a name="line.106"></a>
+<FONT color="green">107</FONT>        public static RegexFilter createFilter(@PluginAttr("regex") final String regex,<a name="line.107"></a>
+<FONT color="green">108</FONT>                                               @PluginAttr("useRawMsg") final String useRawMsg,<a name="line.108"></a>
+<FONT color="green">109</FONT>                                                @PluginAttr("onMatch") final String match,<a name="line.109"></a>
+<FONT color="green">110</FONT>                                                @PluginAttr("onMismatch") final String mismatch) {<a name="line.110"></a>
+<FONT color="green">111</FONT>    <a name="line.111"></a>
+<FONT color="green">112</FONT>            if (regex == null) {<a name="line.112"></a>
+<FONT color="green">113</FONT>                LOGGER.error("A regular expression must be provided for RegexFilter");<a name="line.113"></a>
+<FONT color="green">114</FONT>                return null;<a name="line.114"></a>
+<FONT color="green">115</FONT>            }<a name="line.115"></a>
+<FONT color="green">116</FONT>            final boolean raw = useRawMsg == null ? false : Boolean.parseBoolean(useRawMsg);<a name="line.116"></a>
+<FONT color="green">117</FONT>            Pattern pattern;<a name="line.117"></a>
+<FONT color="green">118</FONT>            try {<a name="line.118"></a>
+<FONT color="green">119</FONT>                pattern = Pattern.compile(regex);<a name="line.119"></a>
+<FONT color="green">120</FONT>            } catch (final Exception ex) {<a name="line.120"></a>
+<FONT color="green">121</FONT>                LOGGER.error("RegexFilter caught exception compiling pattern: " + regex + " cause: " + ex.getMessage());<a name="line.121"></a>
+<FONT color="green">122</FONT>                return null;<a name="line.122"></a>
+<FONT color="green">123</FONT>            }<a name="line.123"></a>
+<FONT color="green">124</FONT>            final Result onMatch = Result.toResult(match);<a name="line.124"></a>
+<FONT color="green">125</FONT>            final Result onMismatch = Result.toResult(mismatch);<a name="line.125"></a>
+<FONT color="green">126</FONT>    <a name="line.126"></a>
+<FONT color="green">127</FONT>            return new RegexFilter(raw, pattern, onMatch, onMismatch);<a name="line.127"></a>
+<FONT color="green">128</FONT>        }<a name="line.128"></a>
+<FONT color="green">129</FONT>    <a name="line.129"></a>
+<FONT color="green">130</FONT>    }<a name="line.130"></a>
 
 
 

@@ -33,165 +33,170 @@
 <FONT color="green">030</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginElement;<a name="line.30"></a>
 <FONT color="green">031</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.31"></a>
 <FONT color="green">032</FONT>    <a name="line.32"></a>
-<FONT color="green">033</FONT>    import java.util.Map;<a name="line.33"></a>
-<FONT color="green">034</FONT>    import java.util.concurrent.ConcurrentHashMap;<a name="line.34"></a>
-<FONT color="green">035</FONT>    import java.util.concurrent.ConcurrentMap;<a name="line.35"></a>
-<FONT color="green">036</FONT>    <a name="line.36"></a>
-<FONT color="green">037</FONT>    /**<a name="line.37"></a>
-<FONT color="green">038</FONT>     * This Appender "routes" between various Appenders, some of which can be references to<a name="line.38"></a>
-<FONT color="green">039</FONT>     * Appenders defined earlier in the configuration while others can be dynamically created<a name="line.39"></a>
-<FONT color="green">040</FONT>     * within this Appender as required. Routing is achieved by specifying a pattern on<a name="line.40"></a>
-<FONT color="green">041</FONT>     * the Routing appender declaration. The pattern should contain one or more substitution patterns of<a name="line.41"></a>
-<FONT color="green">042</FONT>     * the form "$${[key:]token}". The pattern will be resolved each time the Appender is called using<a name="line.42"></a>
-<FONT color="green">043</FONT>     * the built in StrSubstitutor and the StrLookup plugin that matches the specified key.<a name="line.43"></a>
-<FONT color="green">044</FONT>     */<a name="line.44"></a>
-<FONT color="green">045</FONT>    @Plugin(name = "Routing", type = "Core", elementType = "appender", printObject = true)<a name="line.45"></a>
-<FONT color="green">046</FONT>    public final class RoutingAppender extends AbstractAppender {<a name="line.46"></a>
-<FONT color="green">047</FONT>        private static final String DEFAULT_KEY = "ROUTING_APPENDER_DEFAULT";<a name="line.47"></a>
-<FONT color="green">048</FONT>        private final Routes routes;<a name="line.48"></a>
-<FONT color="green">049</FONT>        private final Route defaultRoute;<a name="line.49"></a>
-<FONT color="green">050</FONT>        private final Configuration config;<a name="line.50"></a>
-<FONT color="green">051</FONT>        private final ConcurrentMap&lt;String, AppenderControl&gt; appenders = new ConcurrentHashMap&lt;String, AppenderControl&gt;();<a name="line.51"></a>
-<FONT color="green">052</FONT>        private final RewritePolicy rewritePolicy;<a name="line.52"></a>
-<FONT color="green">053</FONT>    <a name="line.53"></a>
-<FONT color="green">054</FONT>        private RoutingAppender(final String name, final Filter filter, final boolean handleException, final Routes routes,<a name="line.54"></a>
-<FONT color="green">055</FONT>                                final RewritePolicy rewritePolicy, final Configuration config) {<a name="line.55"></a>
-<FONT color="green">056</FONT>            super(name, filter, null, handleException);<a name="line.56"></a>
-<FONT color="green">057</FONT>            this.routes = routes;<a name="line.57"></a>
-<FONT color="green">058</FONT>            this.config = config;<a name="line.58"></a>
-<FONT color="green">059</FONT>            this.rewritePolicy = rewritePolicy;<a name="line.59"></a>
-<FONT color="green">060</FONT>            Route defRoute = null;<a name="line.60"></a>
-<FONT color="green">061</FONT>            for (final Route route : routes.getRoutes()) {<a name="line.61"></a>
-<FONT color="green">062</FONT>                if (route.getKey() == null) {<a name="line.62"></a>
-<FONT color="green">063</FONT>                    if (defRoute == null) {<a name="line.63"></a>
-<FONT color="green">064</FONT>                        defRoute = route;<a name="line.64"></a>
-<FONT color="green">065</FONT>                    } else {<a name="line.65"></a>
-<FONT color="green">066</FONT>                        error("Multiple default routes. Route " + route.toString() + " will be ignored");<a name="line.66"></a>
-<FONT color="green">067</FONT>                    }<a name="line.67"></a>
-<FONT color="green">068</FONT>                }<a name="line.68"></a>
-<FONT color="green">069</FONT>            }<a name="line.69"></a>
-<FONT color="green">070</FONT>            defaultRoute = defRoute;<a name="line.70"></a>
-<FONT color="green">071</FONT>        }<a name="line.71"></a>
-<FONT color="green">072</FONT>    <a name="line.72"></a>
-<FONT color="green">073</FONT>        @Override<a name="line.73"></a>
-<FONT color="green">074</FONT>        public void start() {<a name="line.74"></a>
-<FONT color="green">075</FONT>            final Map&lt;String, Appender&lt;?&gt;&gt; map = config.getAppenders();<a name="line.75"></a>
-<FONT color="green">076</FONT>            // Register all the static routes.<a name="line.76"></a>
-<FONT color="green">077</FONT>            for (final Route route : routes.getRoutes()) {<a name="line.77"></a>
-<FONT color="green">078</FONT>                if (route.getAppenderRef() != null) {<a name="line.78"></a>
-<FONT color="green">079</FONT>                    final Appender appender = map.get(route.getAppenderRef());<a name="line.79"></a>
-<FONT color="green">080</FONT>                    if (appender != null) {<a name="line.80"></a>
-<FONT color="green">081</FONT>                        final String key = route == defaultRoute ? DEFAULT_KEY : route.getKey();<a name="line.81"></a>
-<FONT color="green">082</FONT>                        appenders.put(key, new AppenderControl(appender, null, null));<a name="line.82"></a>
-<FONT color="green">083</FONT>                    } else {<a name="line.83"></a>
-<FONT color="green">084</FONT>                        LOGGER.error("Appender " + route.getAppenderRef() + " cannot be located. Route ignored");<a name="line.84"></a>
-<FONT color="green">085</FONT>                    }<a name="line.85"></a>
-<FONT color="green">086</FONT>                }<a name="line.86"></a>
-<FONT color="green">087</FONT>            }<a name="line.87"></a>
-<FONT color="green">088</FONT>            super.start();<a name="line.88"></a>
-<FONT color="green">089</FONT>        }<a name="line.89"></a>
-<FONT color="green">090</FONT>    <a name="line.90"></a>
-<FONT color="green">091</FONT>        @Override<a name="line.91"></a>
-<FONT color="green">092</FONT>        public void stop() {<a name="line.92"></a>
-<FONT color="green">093</FONT>            super.stop();<a name="line.93"></a>
-<FONT color="green">094</FONT>            final Map&lt;String, Appender&lt;?&gt;&gt; map = config.getAppenders();<a name="line.94"></a>
-<FONT color="green">095</FONT>            for (final Map.Entry&lt;String, AppenderControl&gt; entry : appenders.entrySet()) {<a name="line.95"></a>
-<FONT color="green">096</FONT>                final String name = entry.getValue().getAppender().getName();<a name="line.96"></a>
-<FONT color="green">097</FONT>                if (!map.containsKey(name)) {<a name="line.97"></a>
-<FONT color="green">098</FONT>                    entry.getValue().getAppender().stop();<a name="line.98"></a>
-<FONT color="green">099</FONT>                }<a name="line.99"></a>
-<FONT color="green">100</FONT>            }<a name="line.100"></a>
-<FONT color="green">101</FONT>        }<a name="line.101"></a>
-<FONT color="green">102</FONT>    <a name="line.102"></a>
-<FONT color="green">103</FONT>        public void append(LogEvent event) {<a name="line.103"></a>
-<FONT color="green">104</FONT>            if (rewritePolicy != null) {<a name="line.104"></a>
-<FONT color="green">105</FONT>                event = rewritePolicy.rewrite(event);<a name="line.105"></a>
-<FONT color="green">106</FONT>            }<a name="line.106"></a>
-<FONT color="green">107</FONT>            final String key = config.getSubst().replace(event, routes.getPattern());<a name="line.107"></a>
-<FONT color="green">108</FONT>            final AppenderControl control = getControl(key, event);<a name="line.108"></a>
-<FONT color="green">109</FONT>            if (control != null) {<a name="line.109"></a>
-<FONT color="green">110</FONT>                control.callAppender(event);<a name="line.110"></a>
-<FONT color="green">111</FONT>            }<a name="line.111"></a>
-<FONT color="green">112</FONT>        }<a name="line.112"></a>
-<FONT color="green">113</FONT>    <a name="line.113"></a>
-<FONT color="green">114</FONT>        private synchronized AppenderControl getControl(final String key, final LogEvent event) {<a name="line.114"></a>
-<FONT color="green">115</FONT>            AppenderControl control = appenders.get(key);<a name="line.115"></a>
-<FONT color="green">116</FONT>            if (control != null) {<a name="line.116"></a>
-<FONT color="green">117</FONT>                return control;<a name="line.117"></a>
-<FONT color="green">118</FONT>            }<a name="line.118"></a>
-<FONT color="green">119</FONT>            Route route = null;<a name="line.119"></a>
-<FONT color="green">120</FONT>            for (final Route r : routes.getRoutes()) {<a name="line.120"></a>
-<FONT color="green">121</FONT>                if (r.getAppenderRef() == null &amp;&amp; key.equals(r.getKey())) {<a name="line.121"></a>
-<FONT color="green">122</FONT>                    route = r;<a name="line.122"></a>
-<FONT color="green">123</FONT>                    break;<a name="line.123"></a>
-<FONT color="green">124</FONT>                }<a name="line.124"></a>
-<FONT color="green">125</FONT>            }<a name="line.125"></a>
-<FONT color="green">126</FONT>            if (route == null) {<a name="line.126"></a>
-<FONT color="green">127</FONT>                route = defaultRoute;<a name="line.127"></a>
-<FONT color="green">128</FONT>            }<a name="line.128"></a>
-<FONT color="green">129</FONT>            if (route != null) {<a name="line.129"></a>
-<FONT color="green">130</FONT>                final Appender app = createAppender(route, event);<a name="line.130"></a>
-<FONT color="green">131</FONT>                if (app == null) {<a name="line.131"></a>
-<FONT color="green">132</FONT>                    return null;<a name="line.132"></a>
-<FONT color="green">133</FONT>                }<a name="line.133"></a>
-<FONT color="green">134</FONT>                control = new AppenderControl(app, null, null);<a name="line.134"></a>
-<FONT color="green">135</FONT>                appenders.put(key, control);<a name="line.135"></a>
-<FONT color="green">136</FONT>            }<a name="line.136"></a>
-<FONT color="green">137</FONT>    <a name="line.137"></a>
-<FONT color="green">138</FONT>            return control;<a name="line.138"></a>
-<FONT color="green">139</FONT>        }<a name="line.139"></a>
-<FONT color="green">140</FONT>    <a name="line.140"></a>
-<FONT color="green">141</FONT>        private Appender createAppender(final Route route, final LogEvent event) {<a name="line.141"></a>
-<FONT color="green">142</FONT>            final Node routeNode = route.getNode();<a name="line.142"></a>
-<FONT color="green">143</FONT>            for (final Node node : routeNode.getChildren()) {<a name="line.143"></a>
-<FONT color="green">144</FONT>                if (node.getType().getElementName().equals("appender")) {<a name="line.144"></a>
-<FONT color="green">145</FONT>                    final Node appNode = new Node(node);<a name="line.145"></a>
-<FONT color="green">146</FONT>                    config.createConfiguration(appNode, event);<a name="line.146"></a>
-<FONT color="green">147</FONT>                    if (appNode.getObject() instanceof Appender) {<a name="line.147"></a>
-<FONT color="green">148</FONT>                        final Appender app = (Appender) appNode.getObject();<a name="line.148"></a>
-<FONT color="green">149</FONT>                        app.start();<a name="line.149"></a>
-<FONT color="green">150</FONT>                        return app;<a name="line.150"></a>
-<FONT color="green">151</FONT>                    }<a name="line.151"></a>
-<FONT color="green">152</FONT>                    LOGGER.error("Unable to create Appender of type " + node.getName());<a name="line.152"></a>
-<FONT color="green">153</FONT>                    return null;<a name="line.153"></a>
-<FONT color="green">154</FONT>                }<a name="line.154"></a>
-<FONT color="green">155</FONT>            }<a name="line.155"></a>
-<FONT color="green">156</FONT>            LOGGER.error("No Appender was configured for route " + route.getKey());<a name="line.156"></a>
-<FONT color="green">157</FONT>            return null;<a name="line.157"></a>
-<FONT color="green">158</FONT>        }<a name="line.158"></a>
-<FONT color="green">159</FONT>    <a name="line.159"></a>
-<FONT color="green">160</FONT>        /**<a name="line.160"></a>
-<FONT color="green">161</FONT>         * Create a RoutingAppender.<a name="line.161"></a>
-<FONT color="green">162</FONT>         * @param name The name of the Appender.<a name="line.162"></a>
-<FONT color="green">163</FONT>         * @param suppress "true" if exceptions should be hidden from the application, "false" otherwise.<a name="line.163"></a>
-<FONT color="green">164</FONT>         * The default is "true".<a name="line.164"></a>
-<FONT color="green">165</FONT>         * @param routes The routing definitions.<a name="line.165"></a>
-<FONT color="green">166</FONT>         * @param config The Configuration (automatically added by the Configuration).<a name="line.166"></a>
-<FONT color="green">167</FONT>         * @param rewritePolicy A RewritePolicy, if any.<a name="line.167"></a>
-<FONT color="green">168</FONT>         * @param filter A Filter to restrict events processed by the Appender or null.<a name="line.168"></a>
-<FONT color="green">169</FONT>         * @return The RoutingAppender<a name="line.169"></a>
-<FONT color="green">170</FONT>         */<a name="line.170"></a>
-<FONT color="green">171</FONT>        @PluginFactory<a name="line.171"></a>
-<FONT color="green">172</FONT>        public static RoutingAppender createAppender(@PluginAttr("name") final String name,<a name="line.172"></a>
-<FONT color="green">173</FONT>                                              @PluginAttr("suppressExceptions") final String suppress,<a name="line.173"></a>
-<FONT color="green">174</FONT>                                              @PluginElement("routes") final Routes routes,<a name="line.174"></a>
-<FONT color="green">175</FONT>                                              @PluginConfiguration final Configuration config,<a name="line.175"></a>
-<FONT color="green">176</FONT>                                              @PluginElement("rewritePolicy") final RewritePolicy rewritePolicy,<a name="line.176"></a>
-<FONT color="green">177</FONT>                                              @PluginElement("filters") final Filter filter) {<a name="line.177"></a>
-<FONT color="green">178</FONT>    <a name="line.178"></a>
-<FONT color="green">179</FONT>            final boolean handleExceptions = suppress == null ? true : Boolean.valueOf(suppress);<a name="line.179"></a>
-<FONT color="green">180</FONT>    <a name="line.180"></a>
-<FONT color="green">181</FONT>            if (name == null) {<a name="line.181"></a>
-<FONT color="green">182</FONT>                LOGGER.error("No name provided for RoutingAppender");<a name="line.182"></a>
-<FONT color="green">183</FONT>                return null;<a name="line.183"></a>
-<FONT color="green">184</FONT>            }<a name="line.184"></a>
-<FONT color="green">185</FONT>            if (routes == null) {<a name="line.185"></a>
-<FONT color="green">186</FONT>                LOGGER.error("No routes defined for RoutingAppender");<a name="line.186"></a>
-<FONT color="green">187</FONT>                return null;<a name="line.187"></a>
-<FONT color="green">188</FONT>            }<a name="line.188"></a>
-<FONT color="green">189</FONT>            return new RoutingAppender(name, filter, handleExceptions, routes, rewritePolicy, config);<a name="line.189"></a>
-<FONT color="green">190</FONT>        }<a name="line.190"></a>
-<FONT color="green">191</FONT>    }<a name="line.191"></a>
+<FONT color="green">033</FONT>    import java.io.Serializable;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import java.util.Map;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import java.util.concurrent.ConcurrentHashMap;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import java.util.concurrent.ConcurrentMap;<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>    /**<a name="line.38"></a>
+<FONT color="green">039</FONT>     * This Appender "routes" between various Appenders, some of which can be references to<a name="line.39"></a>
+<FONT color="green">040</FONT>     * Appenders defined earlier in the configuration while others can be dynamically created<a name="line.40"></a>
+<FONT color="green">041</FONT>     * within this Appender as required. Routing is achieved by specifying a pattern on<a name="line.41"></a>
+<FONT color="green">042</FONT>     * the Routing appender declaration. The pattern should contain one or more substitution patterns of<a name="line.42"></a>
+<FONT color="green">043</FONT>     * the form "$${[key:]token}". The pattern will be resolved each time the Appender is called using<a name="line.43"></a>
+<FONT color="green">044</FONT>     * the built in StrSubstitutor and the StrLookup plugin that matches the specified key.<a name="line.44"></a>
+<FONT color="green">045</FONT>     */<a name="line.45"></a>
+<FONT color="green">046</FONT>    @Plugin(name = "Routing", category = "Core", elementType = "appender", printObject = true)<a name="line.46"></a>
+<FONT color="green">047</FONT>    public final class RoutingAppender&lt;T extends Serializable&gt; extends AbstractAppender&lt;T&gt; {<a name="line.47"></a>
+<FONT color="green">048</FONT>        private static final String DEFAULT_KEY = "ROUTING_APPENDER_DEFAULT";<a name="line.48"></a>
+<FONT color="green">049</FONT>        private final Routes routes;<a name="line.49"></a>
+<FONT color="green">050</FONT>        private final Route defaultRoute;<a name="line.50"></a>
+<FONT color="green">051</FONT>        private final Configuration config;<a name="line.51"></a>
+<FONT color="green">052</FONT>        private final ConcurrentMap&lt;String, AppenderControl&lt;T&gt;&gt; appenders =<a name="line.52"></a>
+<FONT color="green">053</FONT>                new ConcurrentHashMap&lt;String, AppenderControl&lt;T&gt;&gt;();<a name="line.53"></a>
+<FONT color="green">054</FONT>        private final RewritePolicy rewritePolicy;<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>        private RoutingAppender(final String name, final Filter filter, final boolean handleException, final Routes routes,<a name="line.56"></a>
+<FONT color="green">057</FONT>                                final RewritePolicy rewritePolicy, final Configuration config) {<a name="line.57"></a>
+<FONT color="green">058</FONT>            super(name, filter, null, handleException);<a name="line.58"></a>
+<FONT color="green">059</FONT>            this.routes = routes;<a name="line.59"></a>
+<FONT color="green">060</FONT>            this.config = config;<a name="line.60"></a>
+<FONT color="green">061</FONT>            this.rewritePolicy = rewritePolicy;<a name="line.61"></a>
+<FONT color="green">062</FONT>            Route defRoute = null;<a name="line.62"></a>
+<FONT color="green">063</FONT>            for (final Route route : routes.getRoutes()) {<a name="line.63"></a>
+<FONT color="green">064</FONT>                if (route.getKey() == null) {<a name="line.64"></a>
+<FONT color="green">065</FONT>                    if (defRoute == null) {<a name="line.65"></a>
+<FONT color="green">066</FONT>                        defRoute = route;<a name="line.66"></a>
+<FONT color="green">067</FONT>                    } else {<a name="line.67"></a>
+<FONT color="green">068</FONT>                        error("Multiple default routes. Route " + route.toString() + " will be ignored");<a name="line.68"></a>
+<FONT color="green">069</FONT>                    }<a name="line.69"></a>
+<FONT color="green">070</FONT>                }<a name="line.70"></a>
+<FONT color="green">071</FONT>            }<a name="line.71"></a>
+<FONT color="green">072</FONT>            defaultRoute = defRoute;<a name="line.72"></a>
+<FONT color="green">073</FONT>        }<a name="line.73"></a>
+<FONT color="green">074</FONT>    <a name="line.74"></a>
+<FONT color="green">075</FONT>        @Override<a name="line.75"></a>
+<FONT color="green">076</FONT>        @SuppressWarnings("unchecked")<a name="line.76"></a>
+<FONT color="green">077</FONT>        public void start() {<a name="line.77"></a>
+<FONT color="green">078</FONT>            final Map&lt;String, Appender&lt;?&gt;&gt; map = config.getAppenders();<a name="line.78"></a>
+<FONT color="green">079</FONT>            // Register all the static routes.<a name="line.79"></a>
+<FONT color="green">080</FONT>            for (final Route route : routes.getRoutes()) {<a name="line.80"></a>
+<FONT color="green">081</FONT>                if (route.getAppenderRef() != null) {<a name="line.81"></a>
+<FONT color="green">082</FONT>                    final Appender&lt;?&gt; appender = map.get(route.getAppenderRef());<a name="line.82"></a>
+<FONT color="green">083</FONT>                    if (appender != null) {<a name="line.83"></a>
+<FONT color="green">084</FONT>                        final String key = route == defaultRoute ? DEFAULT_KEY : route.getKey();<a name="line.84"></a>
+<FONT color="green">085</FONT>                        appenders.put(key, new AppenderControl(appender, null, null));<a name="line.85"></a>
+<FONT color="green">086</FONT>                    } else {<a name="line.86"></a>
+<FONT color="green">087</FONT>                        LOGGER.error("Appender " + route.getAppenderRef() + " cannot be located. Route ignored");<a name="line.87"></a>
+<FONT color="green">088</FONT>                    }<a name="line.88"></a>
+<FONT color="green">089</FONT>                }<a name="line.89"></a>
+<FONT color="green">090</FONT>            }<a name="line.90"></a>
+<FONT color="green">091</FONT>            super.start();<a name="line.91"></a>
+<FONT color="green">092</FONT>        }<a name="line.92"></a>
+<FONT color="green">093</FONT>    <a name="line.93"></a>
+<FONT color="green">094</FONT>        @Override<a name="line.94"></a>
+<FONT color="green">095</FONT>        public void stop() {<a name="line.95"></a>
+<FONT color="green">096</FONT>            super.stop();<a name="line.96"></a>
+<FONT color="green">097</FONT>            final Map&lt;String, Appender&lt;?&gt;&gt; map = config.getAppenders();<a name="line.97"></a>
+<FONT color="green">098</FONT>            for (final Map.Entry&lt;String, AppenderControl&lt;T&gt;&gt; entry : appenders.entrySet()) {<a name="line.98"></a>
+<FONT color="green">099</FONT>                final String name = entry.getValue().getAppender().getName();<a name="line.99"></a>
+<FONT color="green">100</FONT>                if (!map.containsKey(name)) {<a name="line.100"></a>
+<FONT color="green">101</FONT>                    entry.getValue().getAppender().stop();<a name="line.101"></a>
+<FONT color="green">102</FONT>                }<a name="line.102"></a>
+<FONT color="green">103</FONT>            }<a name="line.103"></a>
+<FONT color="green">104</FONT>        }<a name="line.104"></a>
+<FONT color="green">105</FONT>    <a name="line.105"></a>
+<FONT color="green">106</FONT>        @Override<a name="line.106"></a>
+<FONT color="green">107</FONT>        public void append(LogEvent event) {<a name="line.107"></a>
+<FONT color="green">108</FONT>            if (rewritePolicy != null) {<a name="line.108"></a>
+<FONT color="green">109</FONT>                event = rewritePolicy.rewrite(event);<a name="line.109"></a>
+<FONT color="green">110</FONT>            }<a name="line.110"></a>
+<FONT color="green">111</FONT>            final String key = config.getSubst().replace(event, routes.getPattern());<a name="line.111"></a>
+<FONT color="green">112</FONT>            final AppenderControl&lt;T&gt; control = getControl(key, event);<a name="line.112"></a>
+<FONT color="green">113</FONT>            if (control != null) {<a name="line.113"></a>
+<FONT color="green">114</FONT>                control.callAppender(event);<a name="line.114"></a>
+<FONT color="green">115</FONT>            }<a name="line.115"></a>
+<FONT color="green">116</FONT>        }<a name="line.116"></a>
+<FONT color="green">117</FONT>    <a name="line.117"></a>
+<FONT color="green">118</FONT>        private synchronized AppenderControl&lt;T&gt; getControl(final String key, final LogEvent event) {<a name="line.118"></a>
+<FONT color="green">119</FONT>            AppenderControl&lt;T&gt; control = appenders.get(key);<a name="line.119"></a>
+<FONT color="green">120</FONT>            if (control != null) {<a name="line.120"></a>
+<FONT color="green">121</FONT>                return control;<a name="line.121"></a>
+<FONT color="green">122</FONT>            }<a name="line.122"></a>
+<FONT color="green">123</FONT>            Route route = null;<a name="line.123"></a>
+<FONT color="green">124</FONT>            for (final Route r : routes.getRoutes()) {<a name="line.124"></a>
+<FONT color="green">125</FONT>                if (r.getAppenderRef() == null &amp;&amp; key.equals(r.getKey())) {<a name="line.125"></a>
+<FONT color="green">126</FONT>                    route = r;<a name="line.126"></a>
+<FONT color="green">127</FONT>                    break;<a name="line.127"></a>
+<FONT color="green">128</FONT>                }<a name="line.128"></a>
+<FONT color="green">129</FONT>            }<a name="line.129"></a>
+<FONT color="green">130</FONT>            if (route == null) {<a name="line.130"></a>
+<FONT color="green">131</FONT>                route = defaultRoute;<a name="line.131"></a>
+<FONT color="green">132</FONT>            }<a name="line.132"></a>
+<FONT color="green">133</FONT>            if (route != null) {<a name="line.133"></a>
+<FONT color="green">134</FONT>                final Appender&lt;T&gt; app = createAppender(route, event);<a name="line.134"></a>
+<FONT color="green">135</FONT>                if (app == null) {<a name="line.135"></a>
+<FONT color="green">136</FONT>                    return null;<a name="line.136"></a>
+<FONT color="green">137</FONT>                }<a name="line.137"></a>
+<FONT color="green">138</FONT>                control = new AppenderControl&lt;T&gt;(app, null, null);<a name="line.138"></a>
+<FONT color="green">139</FONT>                appenders.put(key, control);<a name="line.139"></a>
+<FONT color="green">140</FONT>            }<a name="line.140"></a>
+<FONT color="green">141</FONT>    <a name="line.141"></a>
+<FONT color="green">142</FONT>            return control;<a name="line.142"></a>
+<FONT color="green">143</FONT>        }<a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>        private Appender&lt;T&gt; createAppender(final Route route, final LogEvent event) {<a name="line.145"></a>
+<FONT color="green">146</FONT>            final Node routeNode = route.getNode();<a name="line.146"></a>
+<FONT color="green">147</FONT>            for (final Node node : routeNode.getChildren()) {<a name="line.147"></a>
+<FONT color="green">148</FONT>                if (node.getType().getElementName().equals("appender")) {<a name="line.148"></a>
+<FONT color="green">149</FONT>                    final Node appNode = new Node(node);<a name="line.149"></a>
+<FONT color="green">150</FONT>                    config.createConfiguration(appNode, event);<a name="line.150"></a>
+<FONT color="green">151</FONT>                    if (appNode.getObject() instanceof Appender) {<a name="line.151"></a>
+<FONT color="green">152</FONT>                        @SuppressWarnings("unchecked")<a name="line.152"></a>
+<FONT color="green">153</FONT>                        final Appender&lt;T&gt; app = (Appender&lt;T&gt;) appNode.getObject();<a name="line.153"></a>
+<FONT color="green">154</FONT>                        app.start();<a name="line.154"></a>
+<FONT color="green">155</FONT>                        return app;<a name="line.155"></a>
+<FONT color="green">156</FONT>                    }<a name="line.156"></a>
+<FONT color="green">157</FONT>                    LOGGER.error("Unable to create Appender of type " + node.getName());<a name="line.157"></a>
+<FONT color="green">158</FONT>                    return null;<a name="line.158"></a>
+<FONT color="green">159</FONT>                }<a name="line.159"></a>
+<FONT color="green">160</FONT>            }<a name="line.160"></a>
+<FONT color="green">161</FONT>            LOGGER.error("No Appender was configured for route " + route.getKey());<a name="line.161"></a>
+<FONT color="green">162</FONT>            return null;<a name="line.162"></a>
+<FONT color="green">163</FONT>        }<a name="line.163"></a>
+<FONT color="green">164</FONT>    <a name="line.164"></a>
+<FONT color="green">165</FONT>        /**<a name="line.165"></a>
+<FONT color="green">166</FONT>         * Create a RoutingAppender.<a name="line.166"></a>
+<FONT color="green">167</FONT>         * @param name The name of the Appender.<a name="line.167"></a>
+<FONT color="green">168</FONT>         * @param suppress "true" if exceptions should be hidden from the application, "false" otherwise.<a name="line.168"></a>
+<FONT color="green">169</FONT>         * The default is "true".<a name="line.169"></a>
+<FONT color="green">170</FONT>         * @param routes The routing definitions.<a name="line.170"></a>
+<FONT color="green">171</FONT>         * @param config The Configuration (automatically added by the Configuration).<a name="line.171"></a>
+<FONT color="green">172</FONT>         * @param rewritePolicy A RewritePolicy, if any.<a name="line.172"></a>
+<FONT color="green">173</FONT>         * @param filter A Filter to restrict events processed by the Appender or null.<a name="line.173"></a>
+<FONT color="green">174</FONT>         * @return The RoutingAppender<a name="line.174"></a>
+<FONT color="green">175</FONT>         */<a name="line.175"></a>
+<FONT color="green">176</FONT>        @PluginFactory<a name="line.176"></a>
+<FONT color="green">177</FONT>        public static &lt;S extends Serializable&gt; RoutingAppender&lt;S&gt; createAppender(@PluginAttr("name") final String name,<a name="line.177"></a>
+<FONT color="green">178</FONT>                                              @PluginAttr("suppressExceptions") final String suppress,<a name="line.178"></a>
+<FONT color="green">179</FONT>                                              @PluginElement("routes") final Routes routes,<a name="line.179"></a>
+<FONT color="green">180</FONT>                                              @PluginConfiguration final Configuration config,<a name="line.180"></a>
+<FONT color="green">181</FONT>                                              @PluginElement("rewritePolicy") final RewritePolicy rewritePolicy,<a name="line.181"></a>
+<FONT color="green">182</FONT>                                              @PluginElement("filters") final Filter filter) {<a name="line.182"></a>
+<FONT color="green">183</FONT>    <a name="line.183"></a>
+<FONT color="green">184</FONT>            final boolean handleExceptions = suppress == null ? true : Boolean.valueOf(suppress);<a name="line.184"></a>
+<FONT color="green">185</FONT>    <a name="line.185"></a>
+<FONT color="green">186</FONT>            if (name == null) {<a name="line.186"></a>
+<FONT color="green">187</FONT>                LOGGER.error("No name provided for RoutingAppender");<a name="line.187"></a>
+<FONT color="green">188</FONT>                return null;<a name="line.188"></a>
+<FONT color="green">189</FONT>            }<a name="line.189"></a>
+<FONT color="green">190</FONT>            if (routes == null) {<a name="line.190"></a>
+<FONT color="green">191</FONT>                LOGGER.error("No routes defined for RoutingAppender");<a name="line.191"></a>
+<FONT color="green">192</FONT>                return null;<a name="line.192"></a>
+<FONT color="green">193</FONT>            }<a name="line.193"></a>
+<FONT color="green">194</FONT>            return new RoutingAppender&lt;S&gt;(name, filter, handleExceptions, routes, rewritePolicy, config);<a name="line.194"></a>
+<FONT color="green">195</FONT>        }<a name="line.195"></a>
+<FONT color="green">196</FONT>    }<a name="line.196"></a>
 
 
 

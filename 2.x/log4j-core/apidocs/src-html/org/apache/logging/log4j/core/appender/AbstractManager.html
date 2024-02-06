@@ -68,81 +68,82 @@
 <FONT color="green">065</FONT>                                                                  final T data) {<a name="line.65"></a>
 <FONT color="green">066</FONT>            LOCK.lock();<a name="line.66"></a>
 <FONT color="green">067</FONT>            try {<a name="line.67"></a>
-<FONT color="green">068</FONT>                M manager = (M) MAP.get(name);<a name="line.68"></a>
-<FONT color="green">069</FONT>                if (manager == null) {<a name="line.69"></a>
-<FONT color="green">070</FONT>                    manager = factory.createManager(name, data);<a name="line.70"></a>
-<FONT color="green">071</FONT>                    if (manager == null) {<a name="line.71"></a>
-<FONT color="green">072</FONT>                        throw new IllegalStateException("Unable to create a manager");<a name="line.72"></a>
-<FONT color="green">073</FONT>                    }<a name="line.73"></a>
-<FONT color="green">074</FONT>                    MAP.put(name, manager);<a name="line.74"></a>
-<FONT color="green">075</FONT>                }<a name="line.75"></a>
-<FONT color="green">076</FONT>                manager.count++;<a name="line.76"></a>
-<FONT color="green">077</FONT>                return manager;<a name="line.77"></a>
-<FONT color="green">078</FONT>            } finally {<a name="line.78"></a>
-<FONT color="green">079</FONT>                LOCK.unlock();<a name="line.79"></a>
-<FONT color="green">080</FONT>            }<a name="line.80"></a>
-<FONT color="green">081</FONT>        }<a name="line.81"></a>
-<FONT color="green">082</FONT>    <a name="line.82"></a>
-<FONT color="green">083</FONT>        /**<a name="line.83"></a>
-<FONT color="green">084</FONT>         * Determines if a Manager with the specified name exists.<a name="line.84"></a>
-<FONT color="green">085</FONT>         * @param name The name of the Manager.<a name="line.85"></a>
-<FONT color="green">086</FONT>         * @return True if the Manager exists, false otherwise.<a name="line.86"></a>
-<FONT color="green">087</FONT>         */<a name="line.87"></a>
-<FONT color="green">088</FONT>        public static boolean hasManager(final String name) {<a name="line.88"></a>
-<FONT color="green">089</FONT>            LOCK.lock();<a name="line.89"></a>
-<FONT color="green">090</FONT>            try {<a name="line.90"></a>
-<FONT color="green">091</FONT>                return MAP.containsKey(name);<a name="line.91"></a>
-<FONT color="green">092</FONT>            } finally {<a name="line.92"></a>
-<FONT color="green">093</FONT>                LOCK.unlock();<a name="line.93"></a>
-<FONT color="green">094</FONT>            }<a name="line.94"></a>
-<FONT color="green">095</FONT>        }<a name="line.95"></a>
-<FONT color="green">096</FONT>    <a name="line.96"></a>
-<FONT color="green">097</FONT>        /**<a name="line.97"></a>
-<FONT color="green">098</FONT>         * May be overridden by Managers to perform processing while the Manager is being released and the<a name="line.98"></a>
-<FONT color="green">099</FONT>         * lock is held.<a name="line.99"></a>
-<FONT color="green">100</FONT>         */<a name="line.100"></a>
-<FONT color="green">101</FONT>        protected void releaseSub() {<a name="line.101"></a>
-<FONT color="green">102</FONT>        }<a name="line.102"></a>
-<FONT color="green">103</FONT>    <a name="line.103"></a>
-<FONT color="green">104</FONT>        protected int getCount() {<a name="line.104"></a>
-<FONT color="green">105</FONT>            return count;<a name="line.105"></a>
-<FONT color="green">106</FONT>        }<a name="line.106"></a>
-<FONT color="green">107</FONT>    <a name="line.107"></a>
-<FONT color="green">108</FONT>        /**<a name="line.108"></a>
-<FONT color="green">109</FONT>         * Called to signify that this Manager is no longer required by an Appender.<a name="line.109"></a>
-<FONT color="green">110</FONT>         */<a name="line.110"></a>
-<FONT color="green">111</FONT>        public void release() {<a name="line.111"></a>
-<FONT color="green">112</FONT>            LOCK.lock();<a name="line.112"></a>
-<FONT color="green">113</FONT>            try {<a name="line.113"></a>
-<FONT color="green">114</FONT>                --count;<a name="line.114"></a>
-<FONT color="green">115</FONT>                if (count &lt;= 0) {<a name="line.115"></a>
-<FONT color="green">116</FONT>                    MAP.remove(name);<a name="line.116"></a>
-<FONT color="green">117</FONT>                    LOGGER.debug("Shutting down {} {}", this.getClass().getSimpleName(), getName());<a name="line.117"></a>
-<FONT color="green">118</FONT>                    releaseSub();<a name="line.118"></a>
-<FONT color="green">119</FONT>                }<a name="line.119"></a>
-<FONT color="green">120</FONT>            } finally {<a name="line.120"></a>
-<FONT color="green">121</FONT>                LOCK.unlock();<a name="line.121"></a>
-<FONT color="green">122</FONT>            }<a name="line.122"></a>
-<FONT color="green">123</FONT>        }<a name="line.123"></a>
-<FONT color="green">124</FONT>    <a name="line.124"></a>
-<FONT color="green">125</FONT>        /**<a name="line.125"></a>
-<FONT color="green">126</FONT>         * Returns the name of the Manager.<a name="line.126"></a>
-<FONT color="green">127</FONT>         * @return The name of the Manager.<a name="line.127"></a>
-<FONT color="green">128</FONT>         */<a name="line.128"></a>
-<FONT color="green">129</FONT>        public String getName() {<a name="line.129"></a>
-<FONT color="green">130</FONT>            return name;<a name="line.130"></a>
-<FONT color="green">131</FONT>        }<a name="line.131"></a>
-<FONT color="green">132</FONT>    <a name="line.132"></a>
-<FONT color="green">133</FONT>        /**<a name="line.133"></a>
-<FONT color="green">134</FONT>         * Provide a description of the content format supported by this Manager.  Default implementation returns an empty (unspecified) Map.<a name="line.134"></a>
-<FONT color="green">135</FONT>         *<a name="line.135"></a>
-<FONT color="green">136</FONT>         * @return a Map of key/value pairs describing the Manager-specific content format, or an empty Map if no content format descriptors are specified. <a name="line.136"></a>
-<FONT color="green">137</FONT>         *<a name="line.137"></a>
-<FONT color="green">138</FONT>         */<a name="line.138"></a>
-<FONT color="green">139</FONT>        public Map&lt;String, String&gt; getContentFormat() {<a name="line.139"></a>
-<FONT color="green">140</FONT>            return new HashMap&lt;String, String&gt;();<a name="line.140"></a>
-<FONT color="green">141</FONT>        }<a name="line.141"></a>
-<FONT color="green">142</FONT>    }<a name="line.142"></a>
+<FONT color="green">068</FONT>                @SuppressWarnings("unchecked")<a name="line.68"></a>
+<FONT color="green">069</FONT>                M manager = (M) MAP.get(name);<a name="line.69"></a>
+<FONT color="green">070</FONT>                if (manager == null) {<a name="line.70"></a>
+<FONT color="green">071</FONT>                    manager = factory.createManager(name, data);<a name="line.71"></a>
+<FONT color="green">072</FONT>                    if (manager == null) {<a name="line.72"></a>
+<FONT color="green">073</FONT>                        throw new IllegalStateException("Unable to create a manager");<a name="line.73"></a>
+<FONT color="green">074</FONT>                    }<a name="line.74"></a>
+<FONT color="green">075</FONT>                    MAP.put(name, manager);<a name="line.75"></a>
+<FONT color="green">076</FONT>                }<a name="line.76"></a>
+<FONT color="green">077</FONT>                manager.count++;<a name="line.77"></a>
+<FONT color="green">078</FONT>                return manager;<a name="line.78"></a>
+<FONT color="green">079</FONT>            } finally {<a name="line.79"></a>
+<FONT color="green">080</FONT>                LOCK.unlock();<a name="line.80"></a>
+<FONT color="green">081</FONT>            }<a name="line.81"></a>
+<FONT color="green">082</FONT>        }<a name="line.82"></a>
+<FONT color="green">083</FONT>    <a name="line.83"></a>
+<FONT color="green">084</FONT>        /**<a name="line.84"></a>
+<FONT color="green">085</FONT>         * Determines if a Manager with the specified name exists.<a name="line.85"></a>
+<FONT color="green">086</FONT>         * @param name The name of the Manager.<a name="line.86"></a>
+<FONT color="green">087</FONT>         * @return True if the Manager exists, false otherwise.<a name="line.87"></a>
+<FONT color="green">088</FONT>         */<a name="line.88"></a>
+<FONT color="green">089</FONT>        public static boolean hasManager(final String name) {<a name="line.89"></a>
+<FONT color="green">090</FONT>            LOCK.lock();<a name="line.90"></a>
+<FONT color="green">091</FONT>            try {<a name="line.91"></a>
+<FONT color="green">092</FONT>                return MAP.containsKey(name);<a name="line.92"></a>
+<FONT color="green">093</FONT>            } finally {<a name="line.93"></a>
+<FONT color="green">094</FONT>                LOCK.unlock();<a name="line.94"></a>
+<FONT color="green">095</FONT>            }<a name="line.95"></a>
+<FONT color="green">096</FONT>        }<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>        /**<a name="line.98"></a>
+<FONT color="green">099</FONT>         * May be overridden by Managers to perform processing while the Manager is being released and the<a name="line.99"></a>
+<FONT color="green">100</FONT>         * lock is held.<a name="line.100"></a>
+<FONT color="green">101</FONT>         */<a name="line.101"></a>
+<FONT color="green">102</FONT>        protected void releaseSub() {<a name="line.102"></a>
+<FONT color="green">103</FONT>        }<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>        protected int getCount() {<a name="line.105"></a>
+<FONT color="green">106</FONT>            return count;<a name="line.106"></a>
+<FONT color="green">107</FONT>        }<a name="line.107"></a>
+<FONT color="green">108</FONT>    <a name="line.108"></a>
+<FONT color="green">109</FONT>        /**<a name="line.109"></a>
+<FONT color="green">110</FONT>         * Called to signify that this Manager is no longer required by an Appender.<a name="line.110"></a>
+<FONT color="green">111</FONT>         */<a name="line.111"></a>
+<FONT color="green">112</FONT>        public void release() {<a name="line.112"></a>
+<FONT color="green">113</FONT>            LOCK.lock();<a name="line.113"></a>
+<FONT color="green">114</FONT>            try {<a name="line.114"></a>
+<FONT color="green">115</FONT>                --count;<a name="line.115"></a>
+<FONT color="green">116</FONT>                if (count &lt;= 0) {<a name="line.116"></a>
+<FONT color="green">117</FONT>                    MAP.remove(name);<a name="line.117"></a>
+<FONT color="green">118</FONT>                    LOGGER.debug("Shutting down {} {}", this.getClass().getSimpleName(), getName());<a name="line.118"></a>
+<FONT color="green">119</FONT>                    releaseSub();<a name="line.119"></a>
+<FONT color="green">120</FONT>                }<a name="line.120"></a>
+<FONT color="green">121</FONT>            } finally {<a name="line.121"></a>
+<FONT color="green">122</FONT>                LOCK.unlock();<a name="line.122"></a>
+<FONT color="green">123</FONT>            }<a name="line.123"></a>
+<FONT color="green">124</FONT>        }<a name="line.124"></a>
+<FONT color="green">125</FONT>    <a name="line.125"></a>
+<FONT color="green">126</FONT>        /**<a name="line.126"></a>
+<FONT color="green">127</FONT>         * Returns the name of the Manager.<a name="line.127"></a>
+<FONT color="green">128</FONT>         * @return The name of the Manager.<a name="line.128"></a>
+<FONT color="green">129</FONT>         */<a name="line.129"></a>
+<FONT color="green">130</FONT>        public String getName() {<a name="line.130"></a>
+<FONT color="green">131</FONT>            return name;<a name="line.131"></a>
+<FONT color="green">132</FONT>        }<a name="line.132"></a>
+<FONT color="green">133</FONT>    <a name="line.133"></a>
+<FONT color="green">134</FONT>        /**<a name="line.134"></a>
+<FONT color="green">135</FONT>         * Provide a description of the content format supported by this Manager.  Default implementation returns an empty (unspecified) Map.<a name="line.135"></a>
+<FONT color="green">136</FONT>         *<a name="line.136"></a>
+<FONT color="green">137</FONT>         * @return a Map of key/value pairs describing the Manager-specific content format, or an empty Map if no content format descriptors are specified. <a name="line.137"></a>
+<FONT color="green">138</FONT>         *<a name="line.138"></a>
+<FONT color="green">139</FONT>         */<a name="line.139"></a>
+<FONT color="green">140</FONT>        public Map&lt;String, String&gt; getContentFormat() {<a name="line.140"></a>
+<FONT color="green">141</FONT>            return new HashMap&lt;String, String&gt;();<a name="line.141"></a>
+<FONT color="green">142</FONT>        }<a name="line.142"></a>
+<FONT color="green">143</FONT>    }<a name="line.143"></a>
 
 
 

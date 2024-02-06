@@ -32,29 +32,35 @@
 <FONT color="green">029</FONT>    <a name="line.29"></a>
 <FONT color="green">030</FONT>        private final ConcurrentMap&lt;String, Marker&gt; markerMap = new ConcurrentHashMap&lt;String, Marker&gt;();<a name="line.30"></a>
 <FONT color="green">031</FONT>    <a name="line.31"></a>
-<FONT color="green">032</FONT>        public Marker getMarker(final String name) {<a name="line.32"></a>
-<FONT color="green">033</FONT>            if (name == null) {<a name="line.33"></a>
-<FONT color="green">034</FONT>                throw new IllegalArgumentException("Marker name must not be null");<a name="line.34"></a>
-<FONT color="green">035</FONT>            }<a name="line.35"></a>
-<FONT color="green">036</FONT>            Marker marker = markerMap.get(name);<a name="line.36"></a>
-<FONT color="green">037</FONT>            if (marker == null) {<a name="line.37"></a>
-<FONT color="green">038</FONT>                marker = new MarkerWrapper(name);<a name="line.38"></a>
-<FONT color="green">039</FONT>            }<a name="line.39"></a>
-<FONT color="green">040</FONT>            return marker;<a name="line.40"></a>
-<FONT color="green">041</FONT>        }<a name="line.41"></a>
-<FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>        public boolean exists(final String name) {<a name="line.43"></a>
-<FONT color="green">044</FONT>            return markerMap.containsKey(name);<a name="line.44"></a>
-<FONT color="green">045</FONT>        }<a name="line.45"></a>
-<FONT color="green">046</FONT>    <a name="line.46"></a>
-<FONT color="green">047</FONT>        public boolean detachMarker(final String name) {<a name="line.47"></a>
-<FONT color="green">048</FONT>            return false;<a name="line.48"></a>
+<FONT color="green">032</FONT>        @Override<a name="line.32"></a>
+<FONT color="green">033</FONT>        public Marker getMarker(final String name) {<a name="line.33"></a>
+<FONT color="green">034</FONT>            if (name == null) {<a name="line.34"></a>
+<FONT color="green">035</FONT>                throw new IllegalArgumentException("Marker name must not be null");<a name="line.35"></a>
+<FONT color="green">036</FONT>            }<a name="line.36"></a>
+<FONT color="green">037</FONT>            Marker marker = markerMap.get(name);<a name="line.37"></a>
+<FONT color="green">038</FONT>            if (marker != null) {<a name="line.38"></a>
+<FONT color="green">039</FONT>                return marker;<a name="line.39"></a>
+<FONT color="green">040</FONT>            }<a name="line.40"></a>
+<FONT color="green">041</FONT>            marker = new MarkerWrapper(name);<a name="line.41"></a>
+<FONT color="green">042</FONT>            Marker existing = markerMap.putIfAbsent(name, marker);<a name="line.42"></a>
+<FONT color="green">043</FONT>            return existing == null ? marker : existing;<a name="line.43"></a>
+<FONT color="green">044</FONT>        }<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>        @Override<a name="line.46"></a>
+<FONT color="green">047</FONT>        public boolean exists(final String name) {<a name="line.47"></a>
+<FONT color="green">048</FONT>            return markerMap.containsKey(name);<a name="line.48"></a>
 <FONT color="green">049</FONT>        }<a name="line.49"></a>
 <FONT color="green">050</FONT>    <a name="line.50"></a>
-<FONT color="green">051</FONT>        public Marker getDetachedMarker(final String name) {<a name="line.51"></a>
-<FONT color="green">052</FONT>            return new MarkerWrapper(name);<a name="line.52"></a>
-<FONT color="green">053</FONT>        }<a name="line.53"></a>
-<FONT color="green">054</FONT>    }<a name="line.54"></a>
+<FONT color="green">051</FONT>        @Override<a name="line.51"></a>
+<FONT color="green">052</FONT>        public boolean detachMarker(final String name) {<a name="line.52"></a>
+<FONT color="green">053</FONT>            return false;<a name="line.53"></a>
+<FONT color="green">054</FONT>        }<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>        @Override<a name="line.56"></a>
+<FONT color="green">057</FONT>        public Marker getDetachedMarker(final String name) {<a name="line.57"></a>
+<FONT color="green">058</FONT>            return new MarkerWrapper(name);<a name="line.58"></a>
+<FONT color="green">059</FONT>        }<a name="line.59"></a>
+<FONT color="green">060</FONT>    }<a name="line.60"></a>
 
 
 

@@ -30,15 +30,30 @@
 <FONT color="green">027</FONT>    public class SLF4JLoggerContextFactory implements LoggerContextFactory {<a name="line.27"></a>
 <FONT color="green">028</FONT>        private static LoggerContext context = new SLF4JLoggerContext();<a name="line.28"></a>
 <FONT color="green">029</FONT>    <a name="line.29"></a>
-<FONT color="green">030</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext) {<a name="line.30"></a>
-<FONT color="green">031</FONT>            return context;<a name="line.31"></a>
-<FONT color="green">032</FONT>        }<a name="line.32"></a>
-<FONT color="green">033</FONT>    <a name="line.33"></a>
-<FONT color="green">034</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext,<a name="line.34"></a>
-<FONT color="green">035</FONT>                                        URI configLocation) {<a name="line.35"></a>
-<FONT color="green">036</FONT>            return context;<a name="line.36"></a>
-<FONT color="green">037</FONT>        }<a name="line.37"></a>
-<FONT color="green">038</FONT>    }<a name="line.38"></a>
+<FONT color="green">030</FONT>        public SLF4JLoggerContextFactory() {<a name="line.30"></a>
+<FONT color="green">031</FONT>            // LOG4J2-230, LOG4J2-204 (improve error reporting when misconfigured)<a name="line.31"></a>
+<FONT color="green">032</FONT>            boolean misconfigured = false;<a name="line.32"></a>
+<FONT color="green">033</FONT>            try {<a name="line.33"></a>
+<FONT color="green">034</FONT>                Class.forName("org.slf4j.helpers.Log4JLoggerFactory");<a name="line.34"></a>
+<FONT color="green">035</FONT>                misconfigured = true;<a name="line.35"></a>
+<FONT color="green">036</FONT>            } catch (ClassNotFoundException classNotFoundIsGood) {<a name="line.36"></a>
+<FONT color="green">037</FONT>                // org.slf4j.helpers.Log4JLoggerFactory is not on classpath. Good!<a name="line.37"></a>
+<FONT color="green">038</FONT>            }<a name="line.38"></a>
+<FONT color="green">039</FONT>            if (misconfigured) {<a name="line.39"></a>
+<FONT color="green">040</FONT>                throw new IllegalStateException("slf4j-impl jar is mutually exclusive with log4j-to-slf4j jar "<a name="line.40"></a>
+<FONT color="green">041</FONT>                        + "(the first routes calls from SLF4J to Log4j, the second from Log4j to SLF4J)");<a name="line.41"></a>
+<FONT color="green">042</FONT>            }<a name="line.42"></a>
+<FONT color="green">043</FONT>        }<a name="line.43"></a>
+<FONT color="green">044</FONT>    <a name="line.44"></a>
+<FONT color="green">045</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext) {<a name="line.45"></a>
+<FONT color="green">046</FONT>            return context;<a name="line.46"></a>
+<FONT color="green">047</FONT>        }<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext,<a name="line.49"></a>
+<FONT color="green">050</FONT>                                        URI configLocation) {<a name="line.50"></a>
+<FONT color="green">051</FONT>            return context;<a name="line.51"></a>
+<FONT color="green">052</FONT>        }<a name="line.52"></a>
+<FONT color="green">053</FONT>    }<a name="line.53"></a>
 
 
 

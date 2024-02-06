@@ -29,242 +29,243 @@
 <FONT color="green">026</FONT>    import org.apache.logging.log4j.core.Logger;<a name="line.26"></a>
 <FONT color="green">027</FONT>    import org.apache.logging.log4j.core.LoggerContext;<a name="line.27"></a>
 <FONT color="green">028</FONT>    import org.apache.logging.log4j.core.config.Property;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import org.apache.logging.log4j.core.impl.Log4jLogEvent;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import org.apache.logging.log4j.message.Message;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import org.apache.logging.log4j.message.MessageFactory;<a name="line.31"></a>
-<FONT color="green">032</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.32"></a>
-<FONT color="green">033</FONT>    <a name="line.33"></a>
-<FONT color="green">034</FONT>    import com.lmax.disruptor.BlockingWaitStrategy;<a name="line.34"></a>
-<FONT color="green">035</FONT>    import com.lmax.disruptor.EventHandler;<a name="line.35"></a>
-<FONT color="green">036</FONT>    import com.lmax.disruptor.ExceptionHandler;<a name="line.36"></a>
-<FONT color="green">037</FONT>    import com.lmax.disruptor.RingBuffer;<a name="line.37"></a>
-<FONT color="green">038</FONT>    import com.lmax.disruptor.SleepingWaitStrategy;<a name="line.38"></a>
-<FONT color="green">039</FONT>    import com.lmax.disruptor.WaitStrategy;<a name="line.39"></a>
-<FONT color="green">040</FONT>    import com.lmax.disruptor.YieldingWaitStrategy;<a name="line.40"></a>
-<FONT color="green">041</FONT>    import com.lmax.disruptor.dsl.Disruptor;<a name="line.41"></a>
-<FONT color="green">042</FONT>    import com.lmax.disruptor.dsl.ProducerType;<a name="line.42"></a>
-<FONT color="green">043</FONT>    import com.lmax.disruptor.util.Util;<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>    /**<a name="line.45"></a>
-<FONT color="green">046</FONT>     * AsyncLogger is a logger designed for high throughput and low latency logging.<a name="line.46"></a>
-<FONT color="green">047</FONT>     * It does not perform any I/O in the calling (application) thread, but instead<a name="line.47"></a>
-<FONT color="green">048</FONT>     * hands off the work to another thread as soon as possible. The actual logging<a name="line.48"></a>
-<FONT color="green">049</FONT>     * is performed in the background thread. It uses the LMAX Disruptor library for<a name="line.49"></a>
-<FONT color="green">050</FONT>     * inter-thread communication. (&lt;a<a name="line.50"></a>
-<FONT color="green">051</FONT>     * href="http://lmax-exchange.github.com/disruptor/"<a name="line.51"></a>
-<FONT color="green">052</FONT>     * &gt;http://lmax-exchange.github.com/disruptor/&lt;/a&gt;)<a name="line.52"></a>
-<FONT color="green">053</FONT>     * &lt;p&gt;<a name="line.53"></a>
-<FONT color="green">054</FONT>     * To use AsyncLogger, specify the System property<a name="line.54"></a>
-<FONT color="green">055</FONT>     * {@code -DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector}<a name="line.55"></a>
-<FONT color="green">056</FONT>     * before you obtain a Logger, and all Loggers returned by LogManager.getLogger<a name="line.56"></a>
-<FONT color="green">057</FONT>     * will be AsyncLoggers.<a name="line.57"></a>
-<FONT color="green">058</FONT>     * &lt;p&gt;<a name="line.58"></a>
-<FONT color="green">059</FONT>     * Note that for performance reasons, this logger does not include source<a name="line.59"></a>
-<FONT color="green">060</FONT>     * location by default. You need to specify {@code includeLocation="true"} in<a name="line.60"></a>
-<FONT color="green">061</FONT>     * the configuration or any %class, %location or %line conversion patterns in<a name="line.61"></a>
-<FONT color="green">062</FONT>     * your log4j.xml configuration will produce either a "?" character or no output<a name="line.62"></a>
-<FONT color="green">063</FONT>     * at all.<a name="line.63"></a>
-<FONT color="green">064</FONT>     * &lt;p&gt;<a name="line.64"></a>
-<FONT color="green">065</FONT>     * For best performance, use AsyncLogger with the FastFileAppender or<a name="line.65"></a>
-<FONT color="green">066</FONT>     * FastRollingFileAppender, with immediateFlush=false. These appenders have<a name="line.66"></a>
-<FONT color="green">067</FONT>     * built-in support for the batching mechanism used by the Disruptor library,<a name="line.67"></a>
-<FONT color="green">068</FONT>     * and they will flush to disk at the end of each batch. This means that even<a name="line.68"></a>
-<FONT color="green">069</FONT>     * with immediateFlush=false, there will never be any items left in the buffer;<a name="line.69"></a>
-<FONT color="green">070</FONT>     * all log events will all be written to disk in a very efficient manner.<a name="line.70"></a>
-<FONT color="green">071</FONT>     */<a name="line.71"></a>
-<FONT color="green">072</FONT>    public class AsyncLogger extends Logger {<a name="line.72"></a>
-<FONT color="green">073</FONT>        private static final int HALF_A_SECOND = 500;<a name="line.73"></a>
-<FONT color="green">074</FONT>        private static final int MAX_DRAIN_ATTEMPTS_BEFORE_SHUTDOWN = 20;<a name="line.74"></a>
-<FONT color="green">075</FONT>        private static final int RINGBUFFER_MIN_SIZE = 128;<a name="line.75"></a>
-<FONT color="green">076</FONT>        private static final int RINGBUFFER_DEFAULT_SIZE = 256 * 1024;<a name="line.76"></a>
-<FONT color="green">077</FONT>        private static final StatusLogger LOGGER = StatusLogger.getLogger();<a name="line.77"></a>
-<FONT color="green">078</FONT>    <a name="line.78"></a>
-<FONT color="green">079</FONT>        private static volatile Disruptor&lt;RingBufferLogEvent&gt; disruptor;<a name="line.79"></a>
-<FONT color="green">080</FONT>        private static Clock clock = ClockFactory.getClock();<a name="line.80"></a>
-<FONT color="green">081</FONT>    <a name="line.81"></a>
-<FONT color="green">082</FONT>        private static ExecutorService executor = Executors<a name="line.82"></a>
-<FONT color="green">083</FONT>                .newSingleThreadExecutor();<a name="line.83"></a>
-<FONT color="green">084</FONT>        private ThreadLocal&lt;Info&gt; threadlocalInfo = new ThreadLocal&lt;Info&gt;();<a name="line.84"></a>
-<FONT color="green">085</FONT>    <a name="line.85"></a>
-<FONT color="green">086</FONT>        static {<a name="line.86"></a>
-<FONT color="green">087</FONT>            int ringBufferSize = calculateRingBufferSize();<a name="line.87"></a>
-<FONT color="green">088</FONT>    <a name="line.88"></a>
-<FONT color="green">089</FONT>            WaitStrategy waitStrategy = createWaitStrategy();<a name="line.89"></a>
-<FONT color="green">090</FONT>            disruptor = new Disruptor&lt;RingBufferLogEvent&gt;(<a name="line.90"></a>
-<FONT color="green">091</FONT>                    RingBufferLogEvent.FACTORY, ringBufferSize, executor,<a name="line.91"></a>
-<FONT color="green">092</FONT>                    ProducerType.MULTI, waitStrategy);<a name="line.92"></a>
-<FONT color="green">093</FONT>            EventHandler&lt;RingBufferLogEvent&gt;[] handlers = new RingBufferLogEventHandler[] {//<a name="line.93"></a>
-<FONT color="green">094</FONT>            new RingBufferLogEventHandler() };<a name="line.94"></a>
-<FONT color="green">095</FONT>            disruptor.handleExceptionsWith(getExceptionHandler());<a name="line.95"></a>
-<FONT color="green">096</FONT>            disruptor.handleEventsWith(handlers);<a name="line.96"></a>
-<FONT color="green">097</FONT>    <a name="line.97"></a>
-<FONT color="green">098</FONT>            LOGGER.debug(<a name="line.98"></a>
-<FONT color="green">099</FONT>                    "Starting AsyncLogger disruptor with ringbuffer size {}...",<a name="line.99"></a>
-<FONT color="green">100</FONT>                    disruptor.getRingBuffer().getBufferSize());<a name="line.100"></a>
-<FONT color="green">101</FONT>            disruptor.start();<a name="line.101"></a>
-<FONT color="green">102</FONT>        }<a name="line.102"></a>
-<FONT color="green">103</FONT>    <a name="line.103"></a>
-<FONT color="green">104</FONT>        private static int calculateRingBufferSize() {<a name="line.104"></a>
-<FONT color="green">105</FONT>            int ringBufferSize = RINGBUFFER_DEFAULT_SIZE;<a name="line.105"></a>
-<FONT color="green">106</FONT>            String userPreferredRBSize = System.getProperty(<a name="line.106"></a>
-<FONT color="green">107</FONT>                    "AsyncLogger.RingBufferSize", String.valueOf(ringBufferSize));<a name="line.107"></a>
-<FONT color="green">108</FONT>            try {<a name="line.108"></a>
-<FONT color="green">109</FONT>                int size = Integer.parseInt(userPreferredRBSize);<a name="line.109"></a>
-<FONT color="green">110</FONT>                if (size &lt; RINGBUFFER_MIN_SIZE) {<a name="line.110"></a>
-<FONT color="green">111</FONT>                    size = RINGBUFFER_MIN_SIZE;<a name="line.111"></a>
-<FONT color="green">112</FONT>                    LOGGER.warn(<a name="line.112"></a>
-<FONT color="green">113</FONT>                            "Invalid RingBufferSize {}, using minimum size {}.",<a name="line.113"></a>
-<FONT color="green">114</FONT>                            userPreferredRBSize, RINGBUFFER_MIN_SIZE);<a name="line.114"></a>
-<FONT color="green">115</FONT>                }<a name="line.115"></a>
-<FONT color="green">116</FONT>                ringBufferSize = size;<a name="line.116"></a>
-<FONT color="green">117</FONT>            } catch (Exception ex) {<a name="line.117"></a>
-<FONT color="green">118</FONT>                LOGGER.warn("Invalid RingBufferSize {}, using default size {}.",<a name="line.118"></a>
-<FONT color="green">119</FONT>                        userPreferredRBSize, ringBufferSize);<a name="line.119"></a>
-<FONT color="green">120</FONT>            }<a name="line.120"></a>
-<FONT color="green">121</FONT>            return Util.ceilingNextPowerOfTwo(ringBufferSize);<a name="line.121"></a>
-<FONT color="green">122</FONT>        }<a name="line.122"></a>
-<FONT color="green">123</FONT>    <a name="line.123"></a>
-<FONT color="green">124</FONT>        private static WaitStrategy createWaitStrategy() {<a name="line.124"></a>
-<FONT color="green">125</FONT>            String strategy = System.getProperty("AsyncLogger.WaitStrategy");<a name="line.125"></a>
-<FONT color="green">126</FONT>            LOGGER.debug("property AsyncLogger.WaitStrategy={}", strategy);<a name="line.126"></a>
-<FONT color="green">127</FONT>            if ("Sleep".equals(strategy)) {<a name="line.127"></a>
-<FONT color="green">128</FONT>                LOGGER.debug("disruptor event handler uses SleepingWaitStrategy");<a name="line.128"></a>
-<FONT color="green">129</FONT>                return new SleepingWaitStrategy();<a name="line.129"></a>
-<FONT color="green">130</FONT>            } else if ("Yield".equals(strategy)) {<a name="line.130"></a>
-<FONT color="green">131</FONT>                LOGGER.debug("disruptor event handler uses YieldingWaitStrategy");<a name="line.131"></a>
-<FONT color="green">132</FONT>                return new YieldingWaitStrategy();<a name="line.132"></a>
-<FONT color="green">133</FONT>            } else if ("Block".equals(strategy)) {<a name="line.133"></a>
-<FONT color="green">134</FONT>                LOGGER.debug("disruptor event handler uses BlockingWaitStrategy");<a name="line.134"></a>
-<FONT color="green">135</FONT>                return new BlockingWaitStrategy();<a name="line.135"></a>
-<FONT color="green">136</FONT>            }<a name="line.136"></a>
-<FONT color="green">137</FONT>            LOGGER.debug("disruptor event handler uses SleepingWaitStrategy");<a name="line.137"></a>
-<FONT color="green">138</FONT>            return new SleepingWaitStrategy();<a name="line.138"></a>
-<FONT color="green">139</FONT>        }<a name="line.139"></a>
-<FONT color="green">140</FONT>    <a name="line.140"></a>
-<FONT color="green">141</FONT>        private static ExceptionHandler getExceptionHandler() {<a name="line.141"></a>
-<FONT color="green">142</FONT>            String cls = System.getProperty("AsyncLogger.ExceptionHandler");<a name="line.142"></a>
-<FONT color="green">143</FONT>            if (cls == null) {<a name="line.143"></a>
-<FONT color="green">144</FONT>                LOGGER.debug("No AsyncLogger.ExceptionHandler specified");<a name="line.144"></a>
-<FONT color="green">145</FONT>                return null;<a name="line.145"></a>
-<FONT color="green">146</FONT>            }<a name="line.146"></a>
-<FONT color="green">147</FONT>            try {<a name="line.147"></a>
-<FONT color="green">148</FONT>                @SuppressWarnings("unchecked")<a name="line.148"></a>
-<FONT color="green">149</FONT>                Class&lt;? extends ExceptionHandler&gt; klass = (Class&lt;? extends ExceptionHandler&gt;) Class<a name="line.149"></a>
-<FONT color="green">150</FONT>                        .forName(cls);<a name="line.150"></a>
-<FONT color="green">151</FONT>                ExceptionHandler result = klass.newInstance();<a name="line.151"></a>
-<FONT color="green">152</FONT>                LOGGER.debug("AsyncLogger.ExceptionHandler=" + result);<a name="line.152"></a>
-<FONT color="green">153</FONT>                return result;<a name="line.153"></a>
-<FONT color="green">154</FONT>            } catch (Exception ignored) {<a name="line.154"></a>
-<FONT color="green">155</FONT>                LOGGER.debug(<a name="line.155"></a>
-<FONT color="green">156</FONT>                        "AsyncLogger.ExceptionHandler not set: error creating "<a name="line.156"></a>
-<FONT color="green">157</FONT>                                + cls + ": ", ignored);<a name="line.157"></a>
-<FONT color="green">158</FONT>                return null;<a name="line.158"></a>
-<FONT color="green">159</FONT>            }<a name="line.159"></a>
-<FONT color="green">160</FONT>        }<a name="line.160"></a>
-<FONT color="green">161</FONT>    <a name="line.161"></a>
-<FONT color="green">162</FONT>        /**<a name="line.162"></a>
-<FONT color="green">163</FONT>         * Constructs an {@code AsyncLogger} with the specified context, name and<a name="line.163"></a>
-<FONT color="green">164</FONT>         * message factory.<a name="line.164"></a>
-<FONT color="green">165</FONT>         * <a name="line.165"></a>
-<FONT color="green">166</FONT>         * @param context context of this logger<a name="line.166"></a>
-<FONT color="green">167</FONT>         * @param name name of this logger<a name="line.167"></a>
-<FONT color="green">168</FONT>         * @param messageFactory message factory of this logger<a name="line.168"></a>
-<FONT color="green">169</FONT>         */<a name="line.169"></a>
-<FONT color="green">170</FONT>        public AsyncLogger(LoggerContext context, String name,<a name="line.170"></a>
-<FONT color="green">171</FONT>                MessageFactory messageFactory) {<a name="line.171"></a>
-<FONT color="green">172</FONT>            super(context, name, messageFactory);<a name="line.172"></a>
-<FONT color="green">173</FONT>        }<a name="line.173"></a>
-<FONT color="green">174</FONT>    <a name="line.174"></a>
-<FONT color="green">175</FONT>        /**<a name="line.175"></a>
-<FONT color="green">176</FONT>         * Tuple with the event translator and thread name for a thread.<a name="line.176"></a>
-<FONT color="green">177</FONT>         */<a name="line.177"></a>
-<FONT color="green">178</FONT>        private static class Info {<a name="line.178"></a>
-<FONT color="green">179</FONT>            private RingBufferLogEventTranslator translator;<a name="line.179"></a>
-<FONT color="green">180</FONT>            private String cachedThreadName;<a name="line.180"></a>
-<FONT color="green">181</FONT>        }<a name="line.181"></a>
-<FONT color="green">182</FONT>    <a name="line.182"></a>
-<FONT color="green">183</FONT>        @Override<a name="line.183"></a>
-<FONT color="green">184</FONT>        public void log(Marker marker, String fqcn, Level level, Message data,<a name="line.184"></a>
-<FONT color="green">185</FONT>                Throwable t) {<a name="line.185"></a>
-<FONT color="green">186</FONT>            Info info = threadlocalInfo.get();<a name="line.186"></a>
-<FONT color="green">187</FONT>            if (info == null) {<a name="line.187"></a>
-<FONT color="green">188</FONT>                info = new Info();<a name="line.188"></a>
-<FONT color="green">189</FONT>                info.translator = new RingBufferLogEventTranslator();<a name="line.189"></a>
-<FONT color="green">190</FONT>                info.cachedThreadName = Thread.currentThread().getName();<a name="line.190"></a>
-<FONT color="green">191</FONT>                threadlocalInfo.set(info);<a name="line.191"></a>
-<FONT color="green">192</FONT>            }<a name="line.192"></a>
-<FONT color="green">193</FONT>    <a name="line.193"></a>
-<FONT color="green">194</FONT>            Boolean includeLocation = config.loggerConfig.isIncludeLocation();<a name="line.194"></a>
-<FONT color="green">195</FONT>            info.translator.setValues(this, getName(), marker, fqcn, level, data,<a name="line.195"></a>
-<FONT color="green">196</FONT>                    t, //<a name="line.196"></a>
-<FONT color="green">197</FONT>    <a name="line.197"></a>
-<FONT color="green">198</FONT>                    // config properties are taken care of in the EventHandler<a name="line.198"></a>
-<FONT color="green">199</FONT>                    // thread in the #actualAsyncLog method<a name="line.199"></a>
-<FONT color="green">200</FONT>    <a name="line.200"></a>
-<FONT color="green">201</FONT>                    // needs shallow copy to be fast (LOG4J2-154)<a name="line.201"></a>
-<FONT color="green">202</FONT>                    ThreadContext.getImmutableContext(), //<a name="line.202"></a>
-<FONT color="green">203</FONT>    <a name="line.203"></a>
-<FONT color="green">204</FONT>                    // needs shallow copy to be fast (LOG4J2-154)<a name="line.204"></a>
-<FONT color="green">205</FONT>                    ThreadContext.getImmutableStack(), //<a name="line.205"></a>
-<FONT color="green">206</FONT>    <a name="line.206"></a>
-<FONT color="green">207</FONT>                    // Thread.currentThread().getName(), //<a name="line.207"></a>
-<FONT color="green">208</FONT>                    info.cachedThreadName, //<a name="line.208"></a>
-<FONT color="green">209</FONT>    <a name="line.209"></a>
-<FONT color="green">210</FONT>                    // location: very expensive operation. LOG4J2-153:<a name="line.210"></a>
-<FONT color="green">211</FONT>                    // Only include if "includeLocation=true" is specified,<a name="line.211"></a>
-<FONT color="green">212</FONT>                    // exclude if not specified or if "false" was specified.<a name="line.212"></a>
-<FONT color="green">213</FONT>                    includeLocation != null &amp;&amp; includeLocation ? location(fqcn)<a name="line.213"></a>
-<FONT color="green">214</FONT>                            : null,<a name="line.214"></a>
-<FONT color="green">215</FONT>    <a name="line.215"></a>
-<FONT color="green">216</FONT>                    // System.currentTimeMillis());<a name="line.216"></a>
-<FONT color="green">217</FONT>                    // CoarseCachedClock: 20% faster than system clock, 16ms gaps<a name="line.217"></a>
-<FONT color="green">218</FONT>                    // CachedClock: 10% faster than system clock, smaller gaps<a name="line.218"></a>
-<FONT color="green">219</FONT>                    clock.currentTimeMillis());<a name="line.219"></a>
-<FONT color="green">220</FONT>    <a name="line.220"></a>
-<FONT color="green">221</FONT>            disruptor.publishEvent(info.translator);<a name="line.221"></a>
-<FONT color="green">222</FONT>        }<a name="line.222"></a>
-<FONT color="green">223</FONT>    <a name="line.223"></a>
-<FONT color="green">224</FONT>        private StackTraceElement location(String fqcnOfLogger) {<a name="line.224"></a>
-<FONT color="green">225</FONT>            return Log4jLogEvent.calcLocation(fqcnOfLogger);<a name="line.225"></a>
-<FONT color="green">226</FONT>        }<a name="line.226"></a>
-<FONT color="green">227</FONT>    <a name="line.227"></a>
-<FONT color="green">228</FONT>        /**<a name="line.228"></a>
-<FONT color="green">229</FONT>         * This method is called by the EventHandler that processes the<a name="line.229"></a>
-<FONT color="green">230</FONT>         * RingBufferLogEvent in a separate thread.<a name="line.230"></a>
-<FONT color="green">231</FONT>         * <a name="line.231"></a>
-<FONT color="green">232</FONT>         * @param event the event to log<a name="line.232"></a>
-<FONT color="green">233</FONT>         */<a name="line.233"></a>
-<FONT color="green">234</FONT>        public void actualAsyncLog(RingBufferLogEvent event) {<a name="line.234"></a>
-<FONT color="green">235</FONT>            Map&lt;Property, Boolean&gt; properties = config.loggerConfig.getProperties();<a name="line.235"></a>
-<FONT color="green">236</FONT>            event.mergePropertiesIntoContextMap(properties,<a name="line.236"></a>
-<FONT color="green">237</FONT>                    config.config.getSubst());<a name="line.237"></a>
-<FONT color="green">238</FONT>            config.logEvent(event);<a name="line.238"></a>
-<FONT color="green">239</FONT>        }<a name="line.239"></a>
-<FONT color="green">240</FONT>    <a name="line.240"></a>
-<FONT color="green">241</FONT>        public static void stop() {<a name="line.241"></a>
-<FONT color="green">242</FONT>            Disruptor&lt;RingBufferLogEvent&gt; temp = disruptor;<a name="line.242"></a>
-<FONT color="green">243</FONT>    <a name="line.243"></a>
-<FONT color="green">244</FONT>            // Must guarantee that publishing to the RingBuffer has stopped<a name="line.244"></a>
-<FONT color="green">245</FONT>            // before we call disruptor.shutdown()<a name="line.245"></a>
-<FONT color="green">246</FONT>            disruptor = null; // client code fails with NPE if log after stop = OK<a name="line.246"></a>
-<FONT color="green">247</FONT>            temp.shutdown();<a name="line.247"></a>
-<FONT color="green">248</FONT>    <a name="line.248"></a>
-<FONT color="green">249</FONT>            // wait up to 10 seconds for the ringbuffer to drain<a name="line.249"></a>
-<FONT color="green">250</FONT>            RingBuffer&lt;RingBufferLogEvent&gt; ringBuffer = temp.getRingBuffer();<a name="line.250"></a>
-<FONT color="green">251</FONT>            for (int i = 0; i &lt; MAX_DRAIN_ATTEMPTS_BEFORE_SHUTDOWN; i++) {<a name="line.251"></a>
-<FONT color="green">252</FONT>                if (ringBuffer.hasAvailableCapacity(ringBuffer.getBufferSize())) {<a name="line.252"></a>
-<FONT color="green">253</FONT>                    break;<a name="line.253"></a>
-<FONT color="green">254</FONT>                }<a name="line.254"></a>
-<FONT color="green">255</FONT>                try {<a name="line.255"></a>
-<FONT color="green">256</FONT>                    // give ringbuffer some time to drain...<a name="line.256"></a>
-<FONT color="green">257</FONT>                    Thread.sleep(HALF_A_SECOND);<a name="line.257"></a>
-<FONT color="green">258</FONT>                } catch (InterruptedException e) {<a name="line.258"></a>
-<FONT color="green">259</FONT>                    // ignored<a name="line.259"></a>
-<FONT color="green">260</FONT>                }<a name="line.260"></a>
-<FONT color="green">261</FONT>            }<a name="line.261"></a>
-<FONT color="green">262</FONT>            executor.shutdown(); // finally, kill the processor thread<a name="line.262"></a>
-<FONT color="green">263</FONT>        }<a name="line.263"></a>
-<FONT color="green">264</FONT>    }<a name="line.264"></a>
+<FONT color="green">029</FONT>    import org.apache.logging.log4j.core.helpers.Clock;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.apache.logging.log4j.core.helpers.ClockFactory;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.apache.logging.log4j.core.impl.Log4jLogEvent;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.apache.logging.log4j.message.Message;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.apache.logging.log4j.message.MessageFactory;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.34"></a>
+<FONT color="green">035</FONT>    <a name="line.35"></a>
+<FONT color="green">036</FONT>    import com.lmax.disruptor.BlockingWaitStrategy;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import com.lmax.disruptor.EventHandler;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import com.lmax.disruptor.ExceptionHandler;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import com.lmax.disruptor.RingBuffer;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import com.lmax.disruptor.SleepingWaitStrategy;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import com.lmax.disruptor.WaitStrategy;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import com.lmax.disruptor.YieldingWaitStrategy;<a name="line.42"></a>
+<FONT color="green">043</FONT>    import com.lmax.disruptor.dsl.Disruptor;<a name="line.43"></a>
+<FONT color="green">044</FONT>    import com.lmax.disruptor.dsl.ProducerType;<a name="line.44"></a>
+<FONT color="green">045</FONT>    import com.lmax.disruptor.util.Util;<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>    /**<a name="line.47"></a>
+<FONT color="green">048</FONT>     * AsyncLogger is a logger designed for high throughput and low latency logging.<a name="line.48"></a>
+<FONT color="green">049</FONT>     * It does not perform any I/O in the calling (application) thread, but instead<a name="line.49"></a>
+<FONT color="green">050</FONT>     * hands off the work to another thread as soon as possible. The actual logging<a name="line.50"></a>
+<FONT color="green">051</FONT>     * is performed in the background thread. It uses the LMAX Disruptor library for<a name="line.51"></a>
+<FONT color="green">052</FONT>     * inter-thread communication. (&lt;a<a name="line.52"></a>
+<FONT color="green">053</FONT>     * href="http://lmax-exchange.github.com/disruptor/"<a name="line.53"></a>
+<FONT color="green">054</FONT>     * &gt;http://lmax-exchange.github.com/disruptor/&lt;/a&gt;)<a name="line.54"></a>
+<FONT color="green">055</FONT>     * &lt;p&gt;<a name="line.55"></a>
+<FONT color="green">056</FONT>     * To use AsyncLogger, specify the System property<a name="line.56"></a>
+<FONT color="green">057</FONT>     * {@code -DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector}<a name="line.57"></a>
+<FONT color="green">058</FONT>     * before you obtain a Logger, and all Loggers returned by LogManager.getLogger<a name="line.58"></a>
+<FONT color="green">059</FONT>     * will be AsyncLoggers.<a name="line.59"></a>
+<FONT color="green">060</FONT>     * &lt;p&gt;<a name="line.60"></a>
+<FONT color="green">061</FONT>     * Note that for performance reasons, this logger does not include source<a name="line.61"></a>
+<FONT color="green">062</FONT>     * location by default. You need to specify {@code includeLocation="true"} in<a name="line.62"></a>
+<FONT color="green">063</FONT>     * the configuration or any %class, %location or %line conversion patterns in<a name="line.63"></a>
+<FONT color="green">064</FONT>     * your log4j.xml configuration will produce either a "?" character or no output<a name="line.64"></a>
+<FONT color="green">065</FONT>     * at all.<a name="line.65"></a>
+<FONT color="green">066</FONT>     * &lt;p&gt;<a name="line.66"></a>
+<FONT color="green">067</FONT>     * For best performance, use AsyncLogger with the FastFileAppender or<a name="line.67"></a>
+<FONT color="green">068</FONT>     * FastRollingFileAppender, with immediateFlush=false. These appenders have<a name="line.68"></a>
+<FONT color="green">069</FONT>     * built-in support for the batching mechanism used by the Disruptor library,<a name="line.69"></a>
+<FONT color="green">070</FONT>     * and they will flush to disk at the end of each batch. This means that even<a name="line.70"></a>
+<FONT color="green">071</FONT>     * with immediateFlush=false, there will never be any items left in the buffer;<a name="line.71"></a>
+<FONT color="green">072</FONT>     * all log events will all be written to disk in a very efficient manner.<a name="line.72"></a>
+<FONT color="green">073</FONT>     */<a name="line.73"></a>
+<FONT color="green">074</FONT>    public class AsyncLogger extends Logger {<a name="line.74"></a>
+<FONT color="green">075</FONT>        private static final int HALF_A_SECOND = 500;<a name="line.75"></a>
+<FONT color="green">076</FONT>        private static final int MAX_DRAIN_ATTEMPTS_BEFORE_SHUTDOWN = 20;<a name="line.76"></a>
+<FONT color="green">077</FONT>        private static final int RINGBUFFER_MIN_SIZE = 128;<a name="line.77"></a>
+<FONT color="green">078</FONT>        private static final int RINGBUFFER_DEFAULT_SIZE = 256 * 1024;<a name="line.78"></a>
+<FONT color="green">079</FONT>        private static final StatusLogger LOGGER = StatusLogger.getLogger();<a name="line.79"></a>
+<FONT color="green">080</FONT>    <a name="line.80"></a>
+<FONT color="green">081</FONT>        private static volatile Disruptor&lt;RingBufferLogEvent&gt; disruptor;<a name="line.81"></a>
+<FONT color="green">082</FONT>        private static Clock clock = ClockFactory.getClock();<a name="line.82"></a>
+<FONT color="green">083</FONT>    <a name="line.83"></a>
+<FONT color="green">084</FONT>        private static ExecutorService executor = Executors<a name="line.84"></a>
+<FONT color="green">085</FONT>                .newSingleThreadExecutor();<a name="line.85"></a>
+<FONT color="green">086</FONT>        private ThreadLocal&lt;Info&gt; threadlocalInfo = new ThreadLocal&lt;Info&gt;();<a name="line.86"></a>
+<FONT color="green">087</FONT>    <a name="line.87"></a>
+<FONT color="green">088</FONT>        static {<a name="line.88"></a>
+<FONT color="green">089</FONT>            int ringBufferSize = calculateRingBufferSize();<a name="line.89"></a>
+<FONT color="green">090</FONT>    <a name="line.90"></a>
+<FONT color="green">091</FONT>            WaitStrategy waitStrategy = createWaitStrategy();<a name="line.91"></a>
+<FONT color="green">092</FONT>            disruptor = new Disruptor&lt;RingBufferLogEvent&gt;(<a name="line.92"></a>
+<FONT color="green">093</FONT>                    RingBufferLogEvent.FACTORY, ringBufferSize, executor,<a name="line.93"></a>
+<FONT color="green">094</FONT>                    ProducerType.MULTI, waitStrategy);<a name="line.94"></a>
+<FONT color="green">095</FONT>            EventHandler&lt;RingBufferLogEvent&gt;[] handlers = new RingBufferLogEventHandler[] {//<a name="line.95"></a>
+<FONT color="green">096</FONT>            new RingBufferLogEventHandler() };<a name="line.96"></a>
+<FONT color="green">097</FONT>            disruptor.handleExceptionsWith(getExceptionHandler());<a name="line.97"></a>
+<FONT color="green">098</FONT>            disruptor.handleEventsWith(handlers);<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>            LOGGER.debug(<a name="line.100"></a>
+<FONT color="green">101</FONT>                    "Starting AsyncLogger disruptor with ringbuffer size {}...",<a name="line.101"></a>
+<FONT color="green">102</FONT>                    disruptor.getRingBuffer().getBufferSize());<a name="line.102"></a>
+<FONT color="green">103</FONT>            disruptor.start();<a name="line.103"></a>
+<FONT color="green">104</FONT>        }<a name="line.104"></a>
+<FONT color="green">105</FONT>    <a name="line.105"></a>
+<FONT color="green">106</FONT>        private static int calculateRingBufferSize() {<a name="line.106"></a>
+<FONT color="green">107</FONT>            int ringBufferSize = RINGBUFFER_DEFAULT_SIZE;<a name="line.107"></a>
+<FONT color="green">108</FONT>            String userPreferredRBSize = System.getProperty(<a name="line.108"></a>
+<FONT color="green">109</FONT>                    "AsyncLogger.RingBufferSize", String.valueOf(ringBufferSize));<a name="line.109"></a>
+<FONT color="green">110</FONT>            try {<a name="line.110"></a>
+<FONT color="green">111</FONT>                int size = Integer.parseInt(userPreferredRBSize);<a name="line.111"></a>
+<FONT color="green">112</FONT>                if (size &lt; RINGBUFFER_MIN_SIZE) {<a name="line.112"></a>
+<FONT color="green">113</FONT>                    size = RINGBUFFER_MIN_SIZE;<a name="line.113"></a>
+<FONT color="green">114</FONT>                    LOGGER.warn(<a name="line.114"></a>
+<FONT color="green">115</FONT>                            "Invalid RingBufferSize {}, using minimum size {}.",<a name="line.115"></a>
+<FONT color="green">116</FONT>                            userPreferredRBSize, RINGBUFFER_MIN_SIZE);<a name="line.116"></a>
+<FONT color="green">117</FONT>                }<a name="line.117"></a>
+<FONT color="green">118</FONT>                ringBufferSize = size;<a name="line.118"></a>
+<FONT color="green">119</FONT>            } catch (Exception ex) {<a name="line.119"></a>
+<FONT color="green">120</FONT>                LOGGER.warn("Invalid RingBufferSize {}, using default size {}.",<a name="line.120"></a>
+<FONT color="green">121</FONT>                        userPreferredRBSize, ringBufferSize);<a name="line.121"></a>
+<FONT color="green">122</FONT>            }<a name="line.122"></a>
+<FONT color="green">123</FONT>            return Util.ceilingNextPowerOfTwo(ringBufferSize);<a name="line.123"></a>
+<FONT color="green">124</FONT>        }<a name="line.124"></a>
+<FONT color="green">125</FONT>    <a name="line.125"></a>
+<FONT color="green">126</FONT>        private static WaitStrategy createWaitStrategy() {<a name="line.126"></a>
+<FONT color="green">127</FONT>            String strategy = System.getProperty("AsyncLogger.WaitStrategy");<a name="line.127"></a>
+<FONT color="green">128</FONT>            LOGGER.debug("property AsyncLogger.WaitStrategy={}", strategy);<a name="line.128"></a>
+<FONT color="green">129</FONT>            if ("Sleep".equals(strategy)) {<a name="line.129"></a>
+<FONT color="green">130</FONT>                LOGGER.debug("disruptor event handler uses SleepingWaitStrategy");<a name="line.130"></a>
+<FONT color="green">131</FONT>                return new SleepingWaitStrategy();<a name="line.131"></a>
+<FONT color="green">132</FONT>            } else if ("Yield".equals(strategy)) {<a name="line.132"></a>
+<FONT color="green">133</FONT>                LOGGER.debug("disruptor event handler uses YieldingWaitStrategy");<a name="line.133"></a>
+<FONT color="green">134</FONT>                return new YieldingWaitStrategy();<a name="line.134"></a>
+<FONT color="green">135</FONT>            } else if ("Block".equals(strategy)) {<a name="line.135"></a>
+<FONT color="green">136</FONT>                LOGGER.debug("disruptor event handler uses BlockingWaitStrategy");<a name="line.136"></a>
+<FONT color="green">137</FONT>                return new BlockingWaitStrategy();<a name="line.137"></a>
+<FONT color="green">138</FONT>            }<a name="line.138"></a>
+<FONT color="green">139</FONT>            LOGGER.debug("disruptor event handler uses SleepingWaitStrategy");<a name="line.139"></a>
+<FONT color="green">140</FONT>            return new SleepingWaitStrategy();<a name="line.140"></a>
+<FONT color="green">141</FONT>        }<a name="line.141"></a>
+<FONT color="green">142</FONT>    <a name="line.142"></a>
+<FONT color="green">143</FONT>        private static ExceptionHandler getExceptionHandler() {<a name="line.143"></a>
+<FONT color="green">144</FONT>            String cls = System.getProperty("AsyncLogger.ExceptionHandler");<a name="line.144"></a>
+<FONT color="green">145</FONT>            if (cls == null) {<a name="line.145"></a>
+<FONT color="green">146</FONT>                LOGGER.debug("No AsyncLogger.ExceptionHandler specified");<a name="line.146"></a>
+<FONT color="green">147</FONT>                return null;<a name="line.147"></a>
+<FONT color="green">148</FONT>            }<a name="line.148"></a>
+<FONT color="green">149</FONT>            try {<a name="line.149"></a>
+<FONT color="green">150</FONT>                @SuppressWarnings("unchecked")<a name="line.150"></a>
+<FONT color="green">151</FONT>                Class&lt;? extends ExceptionHandler&gt; klass = (Class&lt;? extends ExceptionHandler&gt;) Class<a name="line.151"></a>
+<FONT color="green">152</FONT>                        .forName(cls);<a name="line.152"></a>
+<FONT color="green">153</FONT>                ExceptionHandler result = klass.newInstance();<a name="line.153"></a>
+<FONT color="green">154</FONT>                LOGGER.debug("AsyncLogger.ExceptionHandler=" + result);<a name="line.154"></a>
+<FONT color="green">155</FONT>                return result;<a name="line.155"></a>
+<FONT color="green">156</FONT>            } catch (Exception ignored) {<a name="line.156"></a>
+<FONT color="green">157</FONT>                LOGGER.debug(<a name="line.157"></a>
+<FONT color="green">158</FONT>                        "AsyncLogger.ExceptionHandler not set: error creating "<a name="line.158"></a>
+<FONT color="green">159</FONT>                                + cls + ": ", ignored);<a name="line.159"></a>
+<FONT color="green">160</FONT>                return null;<a name="line.160"></a>
+<FONT color="green">161</FONT>            }<a name="line.161"></a>
+<FONT color="green">162</FONT>        }<a name="line.162"></a>
+<FONT color="green">163</FONT>    <a name="line.163"></a>
+<FONT color="green">164</FONT>        /**<a name="line.164"></a>
+<FONT color="green">165</FONT>         * Constructs an {@code AsyncLogger} with the specified context, name and<a name="line.165"></a>
+<FONT color="green">166</FONT>         * message factory.<a name="line.166"></a>
+<FONT color="green">167</FONT>         * <a name="line.167"></a>
+<FONT color="green">168</FONT>         * @param context context of this logger<a name="line.168"></a>
+<FONT color="green">169</FONT>         * @param name name of this logger<a name="line.169"></a>
+<FONT color="green">170</FONT>         * @param messageFactory message factory of this logger<a name="line.170"></a>
+<FONT color="green">171</FONT>         */<a name="line.171"></a>
+<FONT color="green">172</FONT>        public AsyncLogger(LoggerContext context, String name,<a name="line.172"></a>
+<FONT color="green">173</FONT>                MessageFactory messageFactory) {<a name="line.173"></a>
+<FONT color="green">174</FONT>            super(context, name, messageFactory);<a name="line.174"></a>
+<FONT color="green">175</FONT>        }<a name="line.175"></a>
+<FONT color="green">176</FONT>    <a name="line.176"></a>
+<FONT color="green">177</FONT>        /**<a name="line.177"></a>
+<FONT color="green">178</FONT>         * Tuple with the event translator and thread name for a thread.<a name="line.178"></a>
+<FONT color="green">179</FONT>         */<a name="line.179"></a>
+<FONT color="green">180</FONT>        private static class Info {<a name="line.180"></a>
+<FONT color="green">181</FONT>            private RingBufferLogEventTranslator translator;<a name="line.181"></a>
+<FONT color="green">182</FONT>            private String cachedThreadName;<a name="line.182"></a>
+<FONT color="green">183</FONT>        }<a name="line.183"></a>
+<FONT color="green">184</FONT>    <a name="line.184"></a>
+<FONT color="green">185</FONT>        @Override<a name="line.185"></a>
+<FONT color="green">186</FONT>        public void log(Marker marker, String fqcn, Level level, Message data,<a name="line.186"></a>
+<FONT color="green">187</FONT>                Throwable t) {<a name="line.187"></a>
+<FONT color="green">188</FONT>            Info info = threadlocalInfo.get();<a name="line.188"></a>
+<FONT color="green">189</FONT>            if (info == null) {<a name="line.189"></a>
+<FONT color="green">190</FONT>                info = new Info();<a name="line.190"></a>
+<FONT color="green">191</FONT>                info.translator = new RingBufferLogEventTranslator();<a name="line.191"></a>
+<FONT color="green">192</FONT>                info.cachedThreadName = Thread.currentThread().getName();<a name="line.192"></a>
+<FONT color="green">193</FONT>                threadlocalInfo.set(info);<a name="line.193"></a>
+<FONT color="green">194</FONT>            }<a name="line.194"></a>
+<FONT color="green">195</FONT>    <a name="line.195"></a>
+<FONT color="green">196</FONT>            boolean includeLocation = config.loggerConfig.isIncludeLocation();<a name="line.196"></a>
+<FONT color="green">197</FONT>            info.translator.setValues(this, getName(), marker, fqcn, level, data,<a name="line.197"></a>
+<FONT color="green">198</FONT>                    t, //<a name="line.198"></a>
+<FONT color="green">199</FONT>    <a name="line.199"></a>
+<FONT color="green">200</FONT>                    // config properties are taken care of in the EventHandler<a name="line.200"></a>
+<FONT color="green">201</FONT>                    // thread in the #actualAsyncLog method<a name="line.201"></a>
+<FONT color="green">202</FONT>    <a name="line.202"></a>
+<FONT color="green">203</FONT>                    // needs shallow copy to be fast (LOG4J2-154)<a name="line.203"></a>
+<FONT color="green">204</FONT>                    ThreadContext.getImmutableContext(), //<a name="line.204"></a>
+<FONT color="green">205</FONT>    <a name="line.205"></a>
+<FONT color="green">206</FONT>                    // needs shallow copy to be fast (LOG4J2-154)<a name="line.206"></a>
+<FONT color="green">207</FONT>                    ThreadContext.getImmutableStack(), //<a name="line.207"></a>
+<FONT color="green">208</FONT>    <a name="line.208"></a>
+<FONT color="green">209</FONT>                    // Thread.currentThread().getName(), //<a name="line.209"></a>
+<FONT color="green">210</FONT>                    info.cachedThreadName, //<a name="line.210"></a>
+<FONT color="green">211</FONT>    <a name="line.211"></a>
+<FONT color="green">212</FONT>                    // location: very expensive operation. LOG4J2-153:<a name="line.212"></a>
+<FONT color="green">213</FONT>                    // Only include if "includeLocation=true" is specified,<a name="line.213"></a>
+<FONT color="green">214</FONT>                    // exclude if not specified or if "false" was specified.<a name="line.214"></a>
+<FONT color="green">215</FONT>                    includeLocation ? location(fqcn) : null,<a name="line.215"></a>
+<FONT color="green">216</FONT>    <a name="line.216"></a>
+<FONT color="green">217</FONT>                    // System.currentTimeMillis());<a name="line.217"></a>
+<FONT color="green">218</FONT>                    // CoarseCachedClock: 20% faster than system clock, 16ms gaps<a name="line.218"></a>
+<FONT color="green">219</FONT>                    // CachedClock: 10% faster than system clock, smaller gaps<a name="line.219"></a>
+<FONT color="green">220</FONT>                    clock.currentTimeMillis());<a name="line.220"></a>
+<FONT color="green">221</FONT>    <a name="line.221"></a>
+<FONT color="green">222</FONT>            disruptor.publishEvent(info.translator);<a name="line.222"></a>
+<FONT color="green">223</FONT>        }<a name="line.223"></a>
+<FONT color="green">224</FONT>    <a name="line.224"></a>
+<FONT color="green">225</FONT>        private StackTraceElement location(String fqcnOfLogger) {<a name="line.225"></a>
+<FONT color="green">226</FONT>            return Log4jLogEvent.calcLocation(fqcnOfLogger);<a name="line.226"></a>
+<FONT color="green">227</FONT>        }<a name="line.227"></a>
+<FONT color="green">228</FONT>    <a name="line.228"></a>
+<FONT color="green">229</FONT>        /**<a name="line.229"></a>
+<FONT color="green">230</FONT>         * This method is called by the EventHandler that processes the<a name="line.230"></a>
+<FONT color="green">231</FONT>         * RingBufferLogEvent in a separate thread.<a name="line.231"></a>
+<FONT color="green">232</FONT>         * <a name="line.232"></a>
+<FONT color="green">233</FONT>         * @param event the event to log<a name="line.233"></a>
+<FONT color="green">234</FONT>         */<a name="line.234"></a>
+<FONT color="green">235</FONT>        public void actualAsyncLog(RingBufferLogEvent event) {<a name="line.235"></a>
+<FONT color="green">236</FONT>            Map&lt;Property, Boolean&gt; properties = config.loggerConfig.getProperties();<a name="line.236"></a>
+<FONT color="green">237</FONT>            event.mergePropertiesIntoContextMap(properties,<a name="line.237"></a>
+<FONT color="green">238</FONT>                    config.config.getSubst());<a name="line.238"></a>
+<FONT color="green">239</FONT>            config.logEvent(event);<a name="line.239"></a>
+<FONT color="green">240</FONT>        }<a name="line.240"></a>
+<FONT color="green">241</FONT>    <a name="line.241"></a>
+<FONT color="green">242</FONT>        public static void stop() {<a name="line.242"></a>
+<FONT color="green">243</FONT>            Disruptor&lt;RingBufferLogEvent&gt; temp = disruptor;<a name="line.243"></a>
+<FONT color="green">244</FONT>    <a name="line.244"></a>
+<FONT color="green">245</FONT>            // Must guarantee that publishing to the RingBuffer has stopped<a name="line.245"></a>
+<FONT color="green">246</FONT>            // before we call disruptor.shutdown()<a name="line.246"></a>
+<FONT color="green">247</FONT>            disruptor = null; // client code fails with NPE if log after stop = OK<a name="line.247"></a>
+<FONT color="green">248</FONT>            temp.shutdown();<a name="line.248"></a>
+<FONT color="green">249</FONT>    <a name="line.249"></a>
+<FONT color="green">250</FONT>            // wait up to 10 seconds for the ringbuffer to drain<a name="line.250"></a>
+<FONT color="green">251</FONT>            RingBuffer&lt;RingBufferLogEvent&gt; ringBuffer = temp.getRingBuffer();<a name="line.251"></a>
+<FONT color="green">252</FONT>            for (int i = 0; i &lt; MAX_DRAIN_ATTEMPTS_BEFORE_SHUTDOWN; i++) {<a name="line.252"></a>
+<FONT color="green">253</FONT>                if (ringBuffer.hasAvailableCapacity(ringBuffer.getBufferSize())) {<a name="line.253"></a>
+<FONT color="green">254</FONT>                    break;<a name="line.254"></a>
+<FONT color="green">255</FONT>                }<a name="line.255"></a>
+<FONT color="green">256</FONT>                try {<a name="line.256"></a>
+<FONT color="green">257</FONT>                    // give ringbuffer some time to drain...<a name="line.257"></a>
+<FONT color="green">258</FONT>                    Thread.sleep(HALF_A_SECOND);<a name="line.258"></a>
+<FONT color="green">259</FONT>                } catch (InterruptedException e) {<a name="line.259"></a>
+<FONT color="green">260</FONT>                    // ignored<a name="line.260"></a>
+<FONT color="green">261</FONT>                }<a name="line.261"></a>
+<FONT color="green">262</FONT>            }<a name="line.262"></a>
+<FONT color="green">263</FONT>            executor.shutdown(); // finally, kill the processor thread<a name="line.263"></a>
+<FONT color="green">264</FONT>        }<a name="line.264"></a>
+<FONT color="green">265</FONT>    }<a name="line.265"></a>
 
 
 

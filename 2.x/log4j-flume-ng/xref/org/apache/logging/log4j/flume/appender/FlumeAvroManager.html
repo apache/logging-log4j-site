@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="31" href="#31">31</a>  
 <a class="jxr_linenumber" name="32" href="#32">32</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> MAX_RECONNECTS = 3;
 <a class="jxr_linenumber" name="33" href="#33">33</a>  
-<a class="jxr_linenumber" name="34" href="#34">34</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ManagerFactory factory = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumeAvroManager.html">AvroManagerFactory</a>();
+<a class="jxr_linenumber" name="34" href="#34">34</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumeAvroManager.html">AvroManagerFactory</a> factory = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumeAvroManager.html">AvroManagerFactory</a>();
 <a class="jxr_linenumber" name="35" href="#35">35</a>  
 <a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/Agent.html">Agent</a>[] agents;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  
@@ -105,8 +105,8 @@
 <a class="jxr_linenumber" name="95" href="#95">95</a>              first = false;
 <a class="jxr_linenumber" name="96" href="#96">96</a>          }
 <a class="jxr_linenumber" name="97" href="#97">97</a>          sb.append(<span class="jxr_string">"]"</span>);
-<a class="jxr_linenumber" name="98" href="#98">98</a>          <strong class="jxr_keyword">return</strong> (FlumeAvroManager) getManager(sb.toString(), factory, <strong class="jxr_keyword">new</strong> FactoryData(name, agents, batchSize, retries,
-<a class="jxr_linenumber" name="99" href="#99">99</a>              connectTimeout, requestTimeout));
+<a class="jxr_linenumber" name="98" href="#98">98</a>          <strong class="jxr_keyword">return</strong> getManager(sb.toString(), factory,
+<a class="jxr_linenumber" name="99" href="#99">99</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumePersistentManager.html">FactoryData</a>(name, agents, batchSize, retries, connectTimeout, requestTimeout));
 <a class="jxr_linenumber" name="100" href="#100">100</a>     }
 <a class="jxr_linenumber" name="101" href="#101">101</a> 
 <a class="jxr_linenumber" name="102" href="#102">102</a>     <em class="jxr_javadoccomment">/**</em>
@@ -183,103 +183,108 @@
 <a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="174" href="#174">174</a> 
 <a class="jxr_linenumber" name="175" href="#175">175</a>     <strong class="jxr_keyword">private</strong> RpcClient connect(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/Agent.html">Agent</a>[] agents, <strong class="jxr_keyword">int</strong> retries, <strong class="jxr_keyword">int</strong> connectTimeout, <strong class="jxr_keyword">int</strong> requestTimeout) {
-<a class="jxr_linenumber" name="176" href="#176">176</a>         Properties props = <strong class="jxr_keyword">new</strong> Properties();
-<a class="jxr_linenumber" name="177" href="#177">177</a> 
-<a class="jxr_linenumber" name="178" href="#178">178</a>         props.put(<span class="jxr_string">"client.type"</span>, agents.length &gt; 1 ? <span class="jxr_string">"default_failover"</span> : <span class="jxr_string">"default"</span>);
-<a class="jxr_linenumber" name="179" href="#179">179</a> 
-<a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">int</strong> count = 1;
-<a class="jxr_linenumber" name="181" href="#181">181</a>         StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="182" href="#182">182</a>         <strong class="jxr_keyword">for</strong> (Agent agent : agents) {
-<a class="jxr_linenumber" name="183" href="#183">183</a>             <strong class="jxr_keyword">if</strong> (sb.length() &gt; 0) {
-<a class="jxr_linenumber" name="184" href="#184">184</a>                 sb.append(<span class="jxr_string">" "</span>);
-<a class="jxr_linenumber" name="185" href="#185">185</a>             }
-<a class="jxr_linenumber" name="186" href="#186">186</a>             String hostName = <span class="jxr_string">"host"</span> + count++;
-<a class="jxr_linenumber" name="187" href="#187">187</a>             props.put(<span class="jxr_string">"hosts."</span> + hostName, agent.getHost() + <span class="jxr_string">":"</span> + agent.getPort());
-<a class="jxr_linenumber" name="188" href="#188">188</a>             sb.append(hostName);
-<a class="jxr_linenumber" name="189" href="#189">189</a>         }
-<a class="jxr_linenumber" name="190" href="#190">190</a>         props.put(<span class="jxr_string">"hosts"</span>, sb.toString());
-<a class="jxr_linenumber" name="191" href="#191">191</a>         <strong class="jxr_keyword">if</strong> (batchSize &gt; 0) {
-<a class="jxr_linenumber" name="192" href="#192">192</a>             props.put(<span class="jxr_string">"batch-size"</span>, Integer.toString(batchSize));
-<a class="jxr_linenumber" name="193" href="#193">193</a>         }
-<a class="jxr_linenumber" name="194" href="#194">194</a>         <strong class="jxr_keyword">if</strong> (retries &gt; 1) {
-<a class="jxr_linenumber" name="195" href="#195">195</a>             <strong class="jxr_keyword">if</strong> (retries &gt; MAX_RECONNECTS) {
-<a class="jxr_linenumber" name="196" href="#196">196</a>                 retries = MAX_RECONNECTS;
-<a class="jxr_linenumber" name="197" href="#197">197</a>             }
-<a class="jxr_linenumber" name="198" href="#198">198</a>             props.put(<span class="jxr_string">"max-attempts"</span>, Integer.toString(retries * agents.length));
-<a class="jxr_linenumber" name="199" href="#199">199</a>         }
-<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">if</strong> (requestTimeout &gt;= 1000) {
-<a class="jxr_linenumber" name="201" href="#201">201</a>             props.put(<span class="jxr_string">"request-timeout"</span>, Integer.toString(requestTimeout));
-<a class="jxr_linenumber" name="202" href="#202">202</a>         }
-<a class="jxr_linenumber" name="203" href="#203">203</a>         <strong class="jxr_keyword">if</strong> (connectTimeout &gt;= 1000) {
-<a class="jxr_linenumber" name="204" href="#204">204</a>             props.put(<span class="jxr_string">"connect-timeout"</span>, Integer.toString(connectTimeout));
-<a class="jxr_linenumber" name="205" href="#205">205</a>         }
-<a class="jxr_linenumber" name="206" href="#206">206</a>         <strong class="jxr_keyword">return</strong> RpcClientFactory.getInstance(props);
-<a class="jxr_linenumber" name="207" href="#207">207</a>     }
-<a class="jxr_linenumber" name="208" href="#208">208</a> 
-<a class="jxr_linenumber" name="209" href="#209">209</a>     @Override
-<a class="jxr_linenumber" name="210" href="#210">210</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> releaseSub() {
-<a class="jxr_linenumber" name="211" href="#211">211</a>         <strong class="jxr_keyword">if</strong> (rpcClient != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="212" href="#212">212</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="213" href="#213">213</a>                 rpcClient.close();
-<a class="jxr_linenumber" name="214" href="#214">214</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="215" href="#215">215</a>                 LOGGER.error(<span class="jxr_string">"Attempt to close RPC client failed"</span>, ex);
-<a class="jxr_linenumber" name="216" href="#216">216</a>             }
-<a class="jxr_linenumber" name="217" href="#217">217</a>         }
-<a class="jxr_linenumber" name="218" href="#218">218</a>         rpcClient = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="219" href="#219">219</a>     }
-<a class="jxr_linenumber" name="220" href="#220">220</a> 
-<a class="jxr_linenumber" name="221" href="#221">221</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="222" href="#222">222</a> <em class="jxr_javadoccomment">     * Factory data.</em>
-<a class="jxr_linenumber" name="223" href="#223">223</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="224" href="#224">224</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumePersistentManager.html">FactoryData</a> {
-<a class="jxr_linenumber" name="225" href="#225">225</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String name;
-<a class="jxr_linenumber" name="226" href="#226">226</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/Agent.html">Agent</a>[] agents;
-<a class="jxr_linenumber" name="227" href="#227">227</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> batchSize;
-<a class="jxr_linenumber" name="228" href="#228">228</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> retries;
-<a class="jxr_linenumber" name="229" href="#229">229</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> conntectTimeout;
-<a class="jxr_linenumber" name="230" href="#230">230</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> requestTimeout;
-<a class="jxr_linenumber" name="231" href="#231">231</a> 
-<a class="jxr_linenumber" name="232" href="#232">232</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="233" href="#233">233</a> <em class="jxr_javadoccomment">         * Constructor.</em>
-<a class="jxr_linenumber" name="234" href="#234">234</a> <em class="jxr_javadoccomment">         * @param name The name of the Appender.</em>
-<a class="jxr_linenumber" name="235" href="#235">235</a> <em class="jxr_javadoccomment">         * @param agents The agents.</em>
-<a class="jxr_linenumber" name="236" href="#236">236</a> <em class="jxr_javadoccomment">         * @param batchSize The number of events to include in a batch.</em>
-<a class="jxr_linenumber" name="237" href="#237">237</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="238" href="#238">238</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumePersistentManager.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/Agent.html">Agent</a>[] agents, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> batchSize, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> retries,
-<a class="jxr_linenumber" name="239" href="#239">239</a>                            <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> connectTimeout, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> requestTimeout) {
-<a class="jxr_linenumber" name="240" href="#240">240</a>             <strong class="jxr_keyword">this</strong>.name = name;
-<a class="jxr_linenumber" name="241" href="#241">241</a>             <strong class="jxr_keyword">this</strong>.agents = agents;
-<a class="jxr_linenumber" name="242" href="#242">242</a>             <strong class="jxr_keyword">this</strong>.batchSize = batchSize;
-<a class="jxr_linenumber" name="243" href="#243">243</a>             <strong class="jxr_keyword">this</strong>.retries = retries;
-<a class="jxr_linenumber" name="244" href="#244">244</a>             <strong class="jxr_keyword">this</strong>.conntectTimeout = connectTimeout;
-<a class="jxr_linenumber" name="245" href="#245">245</a>             <strong class="jxr_keyword">this</strong>.requestTimeout = requestTimeout;
-<a class="jxr_linenumber" name="246" href="#246">246</a>         }
-<a class="jxr_linenumber" name="247" href="#247">247</a>     }
-<a class="jxr_linenumber" name="248" href="#248">248</a> 
-<a class="jxr_linenumber" name="249" href="#249">249</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="250" href="#250">250</a> <em class="jxr_javadoccomment">     * Avro Manager Factory.</em>
-<a class="jxr_linenumber" name="251" href="#251">251</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="252" href="#252">252</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumeAvroManager.html">AvroManagerFactory</a> <strong class="jxr_keyword">implements</strong> ManagerFactory&lt;FlumeAvroManager, FactoryData&gt; {
+<a class="jxr_linenumber" name="176" href="#176">176</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="177" href="#177">177</a>             Properties props = <strong class="jxr_keyword">new</strong> Properties();
+<a class="jxr_linenumber" name="178" href="#178">178</a> 
+<a class="jxr_linenumber" name="179" href="#179">179</a>             props.put(<span class="jxr_string">"client.type"</span>, agents.length &gt; 1 ? <span class="jxr_string">"default_failover"</span> : <span class="jxr_string">"default"</span>);
+<a class="jxr_linenumber" name="180" href="#180">180</a> 
+<a class="jxr_linenumber" name="181" href="#181">181</a>             <strong class="jxr_keyword">int</strong> count = 1;
+<a class="jxr_linenumber" name="182" href="#182">182</a>             StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="183" href="#183">183</a>             <strong class="jxr_keyword">for</strong> (Agent agent : agents) {
+<a class="jxr_linenumber" name="184" href="#184">184</a>                 <strong class="jxr_keyword">if</strong> (sb.length() &gt; 0) {
+<a class="jxr_linenumber" name="185" href="#185">185</a>                     sb.append(<span class="jxr_string">" "</span>);
+<a class="jxr_linenumber" name="186" href="#186">186</a>                 }
+<a class="jxr_linenumber" name="187" href="#187">187</a>                 String hostName = <span class="jxr_string">"host"</span> + count++;
+<a class="jxr_linenumber" name="188" href="#188">188</a>                 props.put(<span class="jxr_string">"hosts."</span> + hostName, agent.getHost() + <span class="jxr_string">":"</span> + agent.getPort());
+<a class="jxr_linenumber" name="189" href="#189">189</a>                 sb.append(hostName);
+<a class="jxr_linenumber" name="190" href="#190">190</a>             }
+<a class="jxr_linenumber" name="191" href="#191">191</a>             props.put(<span class="jxr_string">"hosts"</span>, sb.toString());
+<a class="jxr_linenumber" name="192" href="#192">192</a>             <strong class="jxr_keyword">if</strong> (batchSize &gt; 0) {
+<a class="jxr_linenumber" name="193" href="#193">193</a>                 props.put(<span class="jxr_string">"batch-size"</span>, Integer.toString(batchSize));
+<a class="jxr_linenumber" name="194" href="#194">194</a>             }
+<a class="jxr_linenumber" name="195" href="#195">195</a>             <strong class="jxr_keyword">if</strong> (retries &gt; 1) {
+<a class="jxr_linenumber" name="196" href="#196">196</a>                 <strong class="jxr_keyword">if</strong> (retries &gt; MAX_RECONNECTS) {
+<a class="jxr_linenumber" name="197" href="#197">197</a>                     retries = MAX_RECONNECTS;
+<a class="jxr_linenumber" name="198" href="#198">198</a>                 }
+<a class="jxr_linenumber" name="199" href="#199">199</a>                 props.put(<span class="jxr_string">"max-attempts"</span>, Integer.toString(retries * agents.length));
+<a class="jxr_linenumber" name="200" href="#200">200</a>             }
+<a class="jxr_linenumber" name="201" href="#201">201</a>             <strong class="jxr_keyword">if</strong> (requestTimeout &gt;= 1000) {
+<a class="jxr_linenumber" name="202" href="#202">202</a>                 props.put(<span class="jxr_string">"request-timeout"</span>, Integer.toString(requestTimeout));
+<a class="jxr_linenumber" name="203" href="#203">203</a>             }
+<a class="jxr_linenumber" name="204" href="#204">204</a>             <strong class="jxr_keyword">if</strong> (connectTimeout &gt;= 1000) {
+<a class="jxr_linenumber" name="205" href="#205">205</a>                 props.put(<span class="jxr_string">"connect-timeout"</span>, Integer.toString(connectTimeout));
+<a class="jxr_linenumber" name="206" href="#206">206</a>             }
+<a class="jxr_linenumber" name="207" href="#207">207</a>             <strong class="jxr_keyword">return</strong> RpcClientFactory.getInstance(props);
+<a class="jxr_linenumber" name="208" href="#208">208</a>         } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="209" href="#209">209</a>             LOGGER.error(<span class="jxr_string">"Unable to create Flume RPCClient: {}"</span>, ex.getMessage());
+<a class="jxr_linenumber" name="210" href="#210">210</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="211" href="#211">211</a>         }
+<a class="jxr_linenumber" name="212" href="#212">212</a>     }
+<a class="jxr_linenumber" name="213" href="#213">213</a> 
+<a class="jxr_linenumber" name="214" href="#214">214</a>     @Override
+<a class="jxr_linenumber" name="215" href="#215">215</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> releaseSub() {
+<a class="jxr_linenumber" name="216" href="#216">216</a>         <strong class="jxr_keyword">if</strong> (rpcClient != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="217" href="#217">217</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="218" href="#218">218</a>                 rpcClient.close();
+<a class="jxr_linenumber" name="219" href="#219">219</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
+<a class="jxr_linenumber" name="220" href="#220">220</a>                 LOGGER.error(<span class="jxr_string">"Attempt to close RPC client failed"</span>, ex);
+<a class="jxr_linenumber" name="221" href="#221">221</a>             }
+<a class="jxr_linenumber" name="222" href="#222">222</a>         }
+<a class="jxr_linenumber" name="223" href="#223">223</a>         rpcClient = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="224" href="#224">224</a>     }
+<a class="jxr_linenumber" name="225" href="#225">225</a> 
+<a class="jxr_linenumber" name="226" href="#226">226</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="227" href="#227">227</a> <em class="jxr_javadoccomment">     * Factory data.</em>
+<a class="jxr_linenumber" name="228" href="#228">228</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="229" href="#229">229</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumePersistentManager.html">FactoryData</a> {
+<a class="jxr_linenumber" name="230" href="#230">230</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String name;
+<a class="jxr_linenumber" name="231" href="#231">231</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/Agent.html">Agent</a>[] agents;
+<a class="jxr_linenumber" name="232" href="#232">232</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> batchSize;
+<a class="jxr_linenumber" name="233" href="#233">233</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> retries;
+<a class="jxr_linenumber" name="234" href="#234">234</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> conntectTimeout;
+<a class="jxr_linenumber" name="235" href="#235">235</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> requestTimeout;
+<a class="jxr_linenumber" name="236" href="#236">236</a> 
+<a class="jxr_linenumber" name="237" href="#237">237</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="238" href="#238">238</a> <em class="jxr_javadoccomment">         * Constructor.</em>
+<a class="jxr_linenumber" name="239" href="#239">239</a> <em class="jxr_javadoccomment">         * @param name The name of the Appender.</em>
+<a class="jxr_linenumber" name="240" href="#240">240</a> <em class="jxr_javadoccomment">         * @param agents The agents.</em>
+<a class="jxr_linenumber" name="241" href="#241">241</a> <em class="jxr_javadoccomment">         * @param batchSize The number of events to include in a batch.</em>
+<a class="jxr_linenumber" name="242" href="#242">242</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="243" href="#243">243</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumePersistentManager.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/Agent.html">Agent</a>[] agents, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> batchSize, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> retries,
+<a class="jxr_linenumber" name="244" href="#244">244</a>                            <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> connectTimeout, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> requestTimeout) {
+<a class="jxr_linenumber" name="245" href="#245">245</a>             <strong class="jxr_keyword">this</strong>.name = name;
+<a class="jxr_linenumber" name="246" href="#246">246</a>             <strong class="jxr_keyword">this</strong>.agents = agents;
+<a class="jxr_linenumber" name="247" href="#247">247</a>             <strong class="jxr_keyword">this</strong>.batchSize = batchSize;
+<a class="jxr_linenumber" name="248" href="#248">248</a>             <strong class="jxr_keyword">this</strong>.retries = retries;
+<a class="jxr_linenumber" name="249" href="#249">249</a>             <strong class="jxr_keyword">this</strong>.conntectTimeout = connectTimeout;
+<a class="jxr_linenumber" name="250" href="#250">250</a>             <strong class="jxr_keyword">this</strong>.requestTimeout = requestTimeout;
+<a class="jxr_linenumber" name="251" href="#251">251</a>         }
+<a class="jxr_linenumber" name="252" href="#252">252</a>     }
 <a class="jxr_linenumber" name="253" href="#253">253</a> 
-<a class="jxr_linenumber" name="254" href="#254">254</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="255" href="#255">255</a> <em class="jxr_javadoccomment">         * Create the FlumeAvroManager.</em>
-<a class="jxr_linenumber" name="256" href="#256">256</a> <em class="jxr_javadoccomment">         * @param name The name of the entity to manage.</em>
-<a class="jxr_linenumber" name="257" href="#257">257</a> <em class="jxr_javadoccomment">         * @param data The data required to create the entity.</em>
-<a class="jxr_linenumber" name="258" href="#258">258</a> <em class="jxr_javadoccomment">         * @return The FlumeAvroManager.</em>
-<a class="jxr_linenumber" name="259" href="#259">259</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="260" href="#260">260</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumeAvroManager.html">FlumeAvroManager</a> createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumePersistentManager.html">FactoryData</a> data) {
-<a class="jxr_linenumber" name="261" href="#261">261</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="262" href="#262">262</a> 
-<a class="jxr_linenumber" name="263" href="#263">263</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumeAvroManager.html">FlumeAvroManager</a>(name, data.name, data.agents, data.batchSize, data.retries,
-<a class="jxr_linenumber" name="264" href="#264">264</a>                     data.conntectTimeout, data.requestTimeout);
-<a class="jxr_linenumber" name="265" href="#265">265</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="266" href="#266">266</a>                 LOGGER.error(<span class="jxr_string">"Could not create FlumeAvroManager"</span>, ex);
-<a class="jxr_linenumber" name="267" href="#267">267</a>             }
-<a class="jxr_linenumber" name="268" href="#268">268</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="269" href="#269">269</a>         }
-<a class="jxr_linenumber" name="270" href="#270">270</a>     }
-<a class="jxr_linenumber" name="271" href="#271">271</a> 
-<a class="jxr_linenumber" name="272" href="#272">272</a> }
+<a class="jxr_linenumber" name="254" href="#254">254</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="255" href="#255">255</a> <em class="jxr_javadoccomment">     * Avro Manager Factory.</em>
+<a class="jxr_linenumber" name="256" href="#256">256</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="257" href="#257">257</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumeAvroManager.html">AvroManagerFactory</a> <strong class="jxr_keyword">implements</strong> ManagerFactory&lt;FlumeAvroManager, FactoryData&gt; {
+<a class="jxr_linenumber" name="258" href="#258">258</a> 
+<a class="jxr_linenumber" name="259" href="#259">259</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="260" href="#260">260</a> <em class="jxr_javadoccomment">         * Create the FlumeAvroManager.</em>
+<a class="jxr_linenumber" name="261" href="#261">261</a> <em class="jxr_javadoccomment">         * @param name The name of the entity to manage.</em>
+<a class="jxr_linenumber" name="262" href="#262">262</a> <em class="jxr_javadoccomment">         * @param data The data required to create the entity.</em>
+<a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">         * @return The FlumeAvroManager.</em>
+<a class="jxr_linenumber" name="264" href="#264">264</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="265" href="#265">265</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumeAvroManager.html">FlumeAvroManager</a> createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumePersistentManager.html">FactoryData</a> data) {
+<a class="jxr_linenumber" name="266" href="#266">266</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="267" href="#267">267</a> 
+<a class="jxr_linenumber" name="268" href="#268">268</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/flume/appender/FlumeAvroManager.html">FlumeAvroManager</a>(name, data.name, data.agents, data.batchSize, data.retries,
+<a class="jxr_linenumber" name="269" href="#269">269</a>                     data.conntectTimeout, data.requestTimeout);
+<a class="jxr_linenumber" name="270" href="#270">270</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
+<a class="jxr_linenumber" name="271" href="#271">271</a>                 LOGGER.error(<span class="jxr_string">"Could not create FlumeAvroManager"</span>, ex);
+<a class="jxr_linenumber" name="272" href="#272">272</a>             }
+<a class="jxr_linenumber" name="273" href="#273">273</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="274" href="#274">274</a>         }
+<a class="jxr_linenumber" name="275" href="#275">275</a>     }
+<a class="jxr_linenumber" name="276" href="#276">276</a> 
+<a class="jxr_linenumber" name="277" href="#277">277</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
