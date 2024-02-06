@@ -52,81 +52,86 @@
 <span class="sourceLineNo">044</span>    private ScriptArbiter(final Configuration configuration, final AbstractScript script) {<a name="line.44"></a>
 <span class="sourceLineNo">045</span>        this.configuration = configuration;<a name="line.45"></a>
 <span class="sourceLineNo">046</span>        this.script = script;<a name="line.46"></a>
-<span class="sourceLineNo">047</span>        if (!(script instanceof ScriptRef)) {<a name="line.47"></a>
-<span class="sourceLineNo">048</span>            configuration.getScriptManager().addScript(script);<a name="line.48"></a>
-<span class="sourceLineNo">049</span>        }<a name="line.49"></a>
-<span class="sourceLineNo">050</span>    }<a name="line.50"></a>
-<span class="sourceLineNo">051</span><a name="line.51"></a>
-<span class="sourceLineNo">052</span>    /**<a name="line.52"></a>
-<span class="sourceLineNo">053</span>     * Returns the boolean result of the Script.<a name="line.53"></a>
-<span class="sourceLineNo">054</span>     */<a name="line.54"></a>
-<span class="sourceLineNo">055</span>    @Override<a name="line.55"></a>
-<span class="sourceLineNo">056</span>    public boolean isCondition() {<a name="line.56"></a>
-<span class="sourceLineNo">057</span>        final SimpleBindings bindings = new SimpleBindings();<a name="line.57"></a>
-<span class="sourceLineNo">058</span>        bindings.putAll(configuration.getProperties());<a name="line.58"></a>
-<span class="sourceLineNo">059</span>        bindings.put("substitutor", configuration.getStrSubstitutor());<a name="line.59"></a>
-<span class="sourceLineNo">060</span>        final Object object = configuration.getScriptManager().execute(script.getName(), bindings);<a name="line.60"></a>
-<span class="sourceLineNo">061</span>        return Boolean.parseBoolean(object.toString());<a name="line.61"></a>
-<span class="sourceLineNo">062</span>    }<a name="line.62"></a>
-<span class="sourceLineNo">063</span><a name="line.63"></a>
-<span class="sourceLineNo">064</span>    @PluginBuilderFactory<a name="line.64"></a>
-<span class="sourceLineNo">065</span>    public static Builder newBuilder() {<a name="line.65"></a>
-<span class="sourceLineNo">066</span>        return new Builder();<a name="line.66"></a>
-<span class="sourceLineNo">067</span>    }<a name="line.67"></a>
-<span class="sourceLineNo">068</span><a name="line.68"></a>
-<span class="sourceLineNo">069</span>    public static class Builder implements org.apache.logging.log4j.core.util.Builder&lt;ScriptArbiter&gt; {<a name="line.69"></a>
-<span class="sourceLineNo">070</span><a name="line.70"></a>
-<span class="sourceLineNo">071</span>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.71"></a>
+<span class="sourceLineNo">047</span>    }<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>    /**<a name="line.49"></a>
+<span class="sourceLineNo">050</span>     * Returns the boolean result of the Script.<a name="line.50"></a>
+<span class="sourceLineNo">051</span>     */<a name="line.51"></a>
+<span class="sourceLineNo">052</span>    @Override<a name="line.52"></a>
+<span class="sourceLineNo">053</span>    public boolean isCondition() {<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        final SimpleBindings bindings = new SimpleBindings();<a name="line.54"></a>
+<span class="sourceLineNo">055</span>        bindings.putAll(configuration.getProperties());<a name="line.55"></a>
+<span class="sourceLineNo">056</span>        bindings.put("substitutor", configuration.getStrSubstitutor());<a name="line.56"></a>
+<span class="sourceLineNo">057</span>        final Object object = configuration.getScriptManager().execute(script.getName(), bindings);<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        return Boolean.parseBoolean(object.toString());<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    }<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>    @PluginBuilderFactory<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    public static Builder newBuilder() {<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        return new Builder();<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    }<a name="line.64"></a>
+<span class="sourceLineNo">065</span><a name="line.65"></a>
+<span class="sourceLineNo">066</span>    public static class Builder implements org.apache.logging.log4j.core.util.Builder&lt;ScriptArbiter&gt; {<a name="line.66"></a>
+<span class="sourceLineNo">067</span><a name="line.67"></a>
+<span class="sourceLineNo">068</span>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>        @PluginConfiguration<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        private AbstractConfiguration configuration;<a name="line.71"></a>
 <span class="sourceLineNo">072</span><a name="line.72"></a>
-<span class="sourceLineNo">073</span>        @PluginConfiguration<a name="line.73"></a>
-<span class="sourceLineNo">074</span>        private AbstractConfiguration configuration;<a name="line.74"></a>
+<span class="sourceLineNo">073</span>        @PluginNode<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        private Node node;<a name="line.74"></a>
 <span class="sourceLineNo">075</span><a name="line.75"></a>
-<span class="sourceLineNo">076</span>        @PluginNode<a name="line.76"></a>
-<span class="sourceLineNo">077</span>        private Node node;<a name="line.77"></a>
-<span class="sourceLineNo">078</span><a name="line.78"></a>
-<span class="sourceLineNo">079</span>        public Builder setConfiguration(final AbstractConfiguration configuration) {<a name="line.79"></a>
-<span class="sourceLineNo">080</span>            this.configuration = configuration;<a name="line.80"></a>
-<span class="sourceLineNo">081</span>            return asBuilder();<a name="line.81"></a>
-<span class="sourceLineNo">082</span>        }<a name="line.82"></a>
-<span class="sourceLineNo">083</span><a name="line.83"></a>
-<span class="sourceLineNo">084</span>        public Builder setNode(final Node node) {<a name="line.84"></a>
-<span class="sourceLineNo">085</span>            this.node = node;<a name="line.85"></a>
-<span class="sourceLineNo">086</span>            return asBuilder();<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        }<a name="line.87"></a>
-<span class="sourceLineNo">088</span><a name="line.88"></a>
-<span class="sourceLineNo">089</span>        public Builder asBuilder() {<a name="line.89"></a>
-<span class="sourceLineNo">090</span>            return this;<a name="line.90"></a>
-<span class="sourceLineNo">091</span>        }<a name="line.91"></a>
-<span class="sourceLineNo">092</span><a name="line.92"></a>
-<span class="sourceLineNo">093</span>        public ScriptArbiter build() {<a name="line.93"></a>
-<span class="sourceLineNo">094</span>            AbstractScript script = null;<a name="line.94"></a>
-<span class="sourceLineNo">095</span>            for (Node child : node.getChildren()) {<a name="line.95"></a>
-<span class="sourceLineNo">096</span>                PluginType&lt;?&gt; type = child.getType();<a name="line.96"></a>
-<span class="sourceLineNo">097</span>                if (type == null) {<a name="line.97"></a>
-<span class="sourceLineNo">098</span>                    LOGGER.error("Node {} is missing a Plugintype", child.getName());<a name="line.98"></a>
-<span class="sourceLineNo">099</span>                    continue;<a name="line.99"></a>
-<span class="sourceLineNo">100</span>                }<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                if (AbstractScript.class.isAssignableFrom(type.getPluginClass())) {<a name="line.101"></a>
-<span class="sourceLineNo">102</span>                    script = (AbstractScript) configuration.createPluginObject(type, child);<a name="line.102"></a>
-<span class="sourceLineNo">103</span>                    node.getChildren().remove(child);<a name="line.103"></a>
-<span class="sourceLineNo">104</span>                    break;<a name="line.104"></a>
-<span class="sourceLineNo">105</span>                }<a name="line.105"></a>
-<span class="sourceLineNo">106</span>            }<a name="line.106"></a>
-<span class="sourceLineNo">107</span><a name="line.107"></a>
-<span class="sourceLineNo">108</span>            if (script == null) {<a name="line.108"></a>
-<span class="sourceLineNo">109</span>                LOGGER.error("A Script, ScriptFile or ScriptRef element must be provided for this ScriptFilter");<a name="line.109"></a>
-<span class="sourceLineNo">110</span>                return null;<a name="line.110"></a>
-<span class="sourceLineNo">111</span>            }<a name="line.111"></a>
-<span class="sourceLineNo">112</span>            if (script instanceof ScriptRef) {<a name="line.112"></a>
-<span class="sourceLineNo">113</span>                if (configuration.getScriptManager().getScript(script.getName()) == null) {<a name="line.113"></a>
-<span class="sourceLineNo">114</span>                    LOGGER.error("No script with name {} has been declared.", script.getName());<a name="line.114"></a>
-<span class="sourceLineNo">115</span>                    return null;<a name="line.115"></a>
-<span class="sourceLineNo">116</span>                }<a name="line.116"></a>
-<span class="sourceLineNo">117</span>            }<a name="line.117"></a>
-<span class="sourceLineNo">118</span>            return new ScriptArbiter(configuration, script);<a name="line.118"></a>
-<span class="sourceLineNo">119</span>        }<a name="line.119"></a>
-<span class="sourceLineNo">120</span>    }<a name="line.120"></a>
-<span class="sourceLineNo">121</span>}<a name="line.121"></a>
+<span class="sourceLineNo">076</span>        public Builder setConfiguration(final AbstractConfiguration configuration) {<a name="line.76"></a>
+<span class="sourceLineNo">077</span>            this.configuration = configuration;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>            return asBuilder();<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        }<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>        public Builder setNode(final Node node) {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            this.node = node;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            return asBuilder();<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        }<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>        public Builder asBuilder() {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>            return this;<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        }<a name="line.88"></a>
+<span class="sourceLineNo">089</span><a name="line.89"></a>
+<span class="sourceLineNo">090</span>        public ScriptArbiter build() {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>            AbstractScript script = null;<a name="line.91"></a>
+<span class="sourceLineNo">092</span>            for (Node child : node.getChildren()) {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                PluginType&lt;?&gt; type = child.getType();<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                if (type == null) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                    LOGGER.error("Node {} is missing a Plugintype", child.getName());<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                    continue;<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                }<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                if (AbstractScript.class.isAssignableFrom(type.getPluginClass())) {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                    script = (AbstractScript) configuration.createPluginObject(type, child);<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                    node.getChildren().remove(child);<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                    break;<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                }<a name="line.102"></a>
+<span class="sourceLineNo">103</span>            }<a name="line.103"></a>
+<span class="sourceLineNo">104</span><a name="line.104"></a>
+<span class="sourceLineNo">105</span>            if (script == null) {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                LOGGER.error("A Script, ScriptFile or ScriptRef element must be provided for this ScriptFilter");<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                return null;<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            }<a name="line.108"></a>
+<span class="sourceLineNo">109</span>            if (configuration.getScriptManager() == null) {<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                LOGGER.error("Script support is not enabled");<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                return null;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>            }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            if (script instanceof ScriptRef) {<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                if (configuration.getScriptManager().getScript(script.getName()) == null) {<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                    LOGGER.error("No script with name {} has been declared.", script.getName());<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                    return null;<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                }<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            } else {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                if (!configuration.getScriptManager().addScript(script)) {<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                    return null;<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                }<a name="line.121"></a>
+<span class="sourceLineNo">122</span>            }<a name="line.122"></a>
+<span class="sourceLineNo">123</span>            return new ScriptArbiter(configuration, script);<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        }<a name="line.124"></a>
+<span class="sourceLineNo">125</span>    }<a name="line.125"></a>
+<span class="sourceLineNo">126</span>}<a name="line.126"></a>
 
 
 

@@ -353,7 +353,7 @@
 <span class="sourceLineNo">345</span>        }<a name="line.345"></a>
 <span class="sourceLineNo">346</span><a name="line.346"></a>
 <span class="sourceLineNo">347</span>        void reconnect() throws IOException {<a name="line.347"></a>
-<span class="sourceLineNo">348</span>            List&lt;InetSocketAddress&gt; socketAddresses = FACTORY.resolver.resolveHost(host, port);<a name="line.348"></a>
+<span class="sourceLineNo">348</span>            List&lt;InetSocketAddress&gt; socketAddresses = TcpSocketManagerFactory.RESOLVER.resolveHost(host, port);<a name="line.348"></a>
 <span class="sourceLineNo">349</span>            if (socketAddresses.size() == 1) {<a name="line.349"></a>
 <span class="sourceLineNo">350</span>                LOGGER.debug("Reconnecting " + socketAddresses.get(0));<a name="line.350"></a>
 <span class="sourceLineNo">351</span>                connect(socketAddresses.get(0));<a name="line.351"></a>
@@ -467,7 +467,7 @@
 <span class="sourceLineNo">459</span>    protected static class TcpSocketManagerFactory&lt;M extends TcpSocketManager, T extends FactoryData&gt;<a name="line.459"></a>
 <span class="sourceLineNo">460</span>            implements ManagerFactory&lt;M, T&gt; {<a name="line.460"></a>
 <span class="sourceLineNo">461</span><a name="line.461"></a>
-<span class="sourceLineNo">462</span>        static HostResolver resolver = new HostResolver();<a name="line.462"></a>
+<span class="sourceLineNo">462</span>        static volatile HostResolver RESOLVER = HostResolver.INSTANCE;<a name="line.462"></a>
 <span class="sourceLineNo">463</span><a name="line.463"></a>
 <span class="sourceLineNo">464</span>        @SuppressWarnings("resource")<a name="line.464"></a>
 <span class="sourceLineNo">465</span>        @Override<a name="line.465"></a>
@@ -505,7 +505,7 @@
 <span class="sourceLineNo">497</span>        }<a name="line.497"></a>
 <span class="sourceLineNo">498</span><a name="line.498"></a>
 <span class="sourceLineNo">499</span>        Socket createSocket(final T data) throws IOException {<a name="line.499"></a>
-<span class="sourceLineNo">500</span>            List&lt;InetSocketAddress&gt; socketAddresses = resolver.resolveHost(data.host, data.port);<a name="line.500"></a>
+<span class="sourceLineNo">500</span>            List&lt;InetSocketAddress&gt; socketAddresses = RESOLVER.resolveHost(data.host, data.port);<a name="line.500"></a>
 <span class="sourceLineNo">501</span>            IOException ioe = null;<a name="line.501"></a>
 <span class="sourceLineNo">502</span>            for (InetSocketAddress socketAddress : socketAddresses) {<a name="line.502"></a>
 <span class="sourceLineNo">503</span>                try {<a name="line.503"></a>
@@ -545,49 +545,54 @@
 <span class="sourceLineNo">537</span>     * @param resolver the HostResolver.<a name="line.537"></a>
 <span class="sourceLineNo">538</span>     */<a name="line.538"></a>
 <span class="sourceLineNo">539</span>    public static void setHostResolver(HostResolver resolver) {<a name="line.539"></a>
-<span class="sourceLineNo">540</span>        TcpSocketManagerFactory.resolver = resolver;<a name="line.540"></a>
+<span class="sourceLineNo">540</span>        TcpSocketManagerFactory.RESOLVER = resolver;<a name="line.540"></a>
 <span class="sourceLineNo">541</span>    }<a name="line.541"></a>
 <span class="sourceLineNo">542</span><a name="line.542"></a>
 <span class="sourceLineNo">543</span>    public static class HostResolver {<a name="line.543"></a>
-<span class="sourceLineNo">544</span><a name="line.544"></a>
-<span class="sourceLineNo">545</span>        public List&lt;InetSocketAddress&gt; resolveHost(String host, int port) throws UnknownHostException {<a name="line.545"></a>
-<span class="sourceLineNo">546</span>            InetAddress[] addresses = InetAddress.getAllByName(host);<a name="line.546"></a>
-<span class="sourceLineNo">547</span>            List&lt;InetSocketAddress&gt; socketAddresses = new ArrayList&lt;&gt;(addresses.length);<a name="line.547"></a>
-<span class="sourceLineNo">548</span>            for (InetAddress address: addresses) {<a name="line.548"></a>
-<span class="sourceLineNo">549</span>                socketAddresses.add(new InetSocketAddress(address, port));<a name="line.549"></a>
-<span class="sourceLineNo">550</span>            }<a name="line.550"></a>
-<span class="sourceLineNo">551</span>            return socketAddresses;<a name="line.551"></a>
-<span class="sourceLineNo">552</span>        }<a name="line.552"></a>
-<span class="sourceLineNo">553</span>    }<a name="line.553"></a>
-<span class="sourceLineNo">554</span><a name="line.554"></a>
-<span class="sourceLineNo">555</span>    /**<a name="line.555"></a>
-<span class="sourceLineNo">556</span>     * USE AT YOUR OWN RISK, method is public for testing purpose only for now.<a name="line.556"></a>
-<span class="sourceLineNo">557</span>     */<a name="line.557"></a>
-<span class="sourceLineNo">558</span>    public SocketOptions getSocketOptions() {<a name="line.558"></a>
-<span class="sourceLineNo">559</span>        return socketOptions;<a name="line.559"></a>
-<span class="sourceLineNo">560</span>    }<a name="line.560"></a>
-<span class="sourceLineNo">561</span><a name="line.561"></a>
-<span class="sourceLineNo">562</span>    /**<a name="line.562"></a>
-<span class="sourceLineNo">563</span>     * USE AT YOUR OWN RISK, method is public for testing purpose only for now.<a name="line.563"></a>
-<span class="sourceLineNo">564</span>     */<a name="line.564"></a>
-<span class="sourceLineNo">565</span>    public Socket getSocket() {<a name="line.565"></a>
-<span class="sourceLineNo">566</span>        return socket;<a name="line.566"></a>
-<span class="sourceLineNo">567</span>    }<a name="line.567"></a>
-<span class="sourceLineNo">568</span><a name="line.568"></a>
-<span class="sourceLineNo">569</span>    public int getReconnectionDelayMillis() {<a name="line.569"></a>
-<span class="sourceLineNo">570</span>        return reconnectionDelayMillis;<a name="line.570"></a>
-<span class="sourceLineNo">571</span>    }<a name="line.571"></a>
-<span class="sourceLineNo">572</span><a name="line.572"></a>
-<span class="sourceLineNo">573</span>    @Override<a name="line.573"></a>
-<span class="sourceLineNo">574</span>    public String toString() {<a name="line.574"></a>
-<span class="sourceLineNo">575</span>        return "TcpSocketManager [reconnectionDelayMillis=" + reconnectionDelayMillis + ", reconnector=" + reconnector<a name="line.575"></a>
-<span class="sourceLineNo">576</span>                + ", socket=" + socket + ", socketOptions=" + socketOptions + ", retry=" + retry + ", immediateFail="<a name="line.576"></a>
-<span class="sourceLineNo">577</span>                + immediateFail + ", connectTimeoutMillis=" + connectTimeoutMillis + ", inetAddress=" + inetAddress<a name="line.577"></a>
-<span class="sourceLineNo">578</span>                + ", host=" + host + ", port=" + port + ", layout=" + layout + ", byteBuffer=" + byteBuffer + ", count="<a name="line.578"></a>
-<span class="sourceLineNo">579</span>                + count + "]";<a name="line.579"></a>
-<span class="sourceLineNo">580</span>    }<a name="line.580"></a>
-<span class="sourceLineNo">581</span><a name="line.581"></a>
-<span class="sourceLineNo">582</span>}<a name="line.582"></a>
+<span class="sourceLineNo">544</span>        <a name="line.544"></a>
+<span class="sourceLineNo">545</span>        /**<a name="line.545"></a>
+<span class="sourceLineNo">546</span>         * Singleton instance.<a name="line.546"></a>
+<span class="sourceLineNo">547</span>         */<a name="line.547"></a>
+<span class="sourceLineNo">548</span>        public static final HostResolver INSTANCE = new HostResolver();<a name="line.548"></a>
+<span class="sourceLineNo">549</span><a name="line.549"></a>
+<span class="sourceLineNo">550</span>        public List&lt;InetSocketAddress&gt; resolveHost(String host, int port) throws UnknownHostException {<a name="line.550"></a>
+<span class="sourceLineNo">551</span>            InetAddress[] addresses = InetAddress.getAllByName(host);<a name="line.551"></a>
+<span class="sourceLineNo">552</span>            List&lt;InetSocketAddress&gt; socketAddresses = new ArrayList&lt;&gt;(addresses.length);<a name="line.552"></a>
+<span class="sourceLineNo">553</span>            for (InetAddress address: addresses) {<a name="line.553"></a>
+<span class="sourceLineNo">554</span>                socketAddresses.add(new InetSocketAddress(address, port));<a name="line.554"></a>
+<span class="sourceLineNo">555</span>            }<a name="line.555"></a>
+<span class="sourceLineNo">556</span>            return socketAddresses;<a name="line.556"></a>
+<span class="sourceLineNo">557</span>        }<a name="line.557"></a>
+<span class="sourceLineNo">558</span>    }<a name="line.558"></a>
+<span class="sourceLineNo">559</span><a name="line.559"></a>
+<span class="sourceLineNo">560</span>    /**<a name="line.560"></a>
+<span class="sourceLineNo">561</span>     * USE AT YOUR OWN RISK, method is public for testing purpose only for now.<a name="line.561"></a>
+<span class="sourceLineNo">562</span>     */<a name="line.562"></a>
+<span class="sourceLineNo">563</span>    public SocketOptions getSocketOptions() {<a name="line.563"></a>
+<span class="sourceLineNo">564</span>        return socketOptions;<a name="line.564"></a>
+<span class="sourceLineNo">565</span>    }<a name="line.565"></a>
+<span class="sourceLineNo">566</span><a name="line.566"></a>
+<span class="sourceLineNo">567</span>    /**<a name="line.567"></a>
+<span class="sourceLineNo">568</span>     * USE AT YOUR OWN RISK, method is public for testing purpose only for now.<a name="line.568"></a>
+<span class="sourceLineNo">569</span>     */<a name="line.569"></a>
+<span class="sourceLineNo">570</span>    public Socket getSocket() {<a name="line.570"></a>
+<span class="sourceLineNo">571</span>        return socket;<a name="line.571"></a>
+<span class="sourceLineNo">572</span>    }<a name="line.572"></a>
+<span class="sourceLineNo">573</span><a name="line.573"></a>
+<span class="sourceLineNo">574</span>    public int getReconnectionDelayMillis() {<a name="line.574"></a>
+<span class="sourceLineNo">575</span>        return reconnectionDelayMillis;<a name="line.575"></a>
+<span class="sourceLineNo">576</span>    }<a name="line.576"></a>
+<span class="sourceLineNo">577</span><a name="line.577"></a>
+<span class="sourceLineNo">578</span>    @Override<a name="line.578"></a>
+<span class="sourceLineNo">579</span>    public String toString() {<a name="line.579"></a>
+<span class="sourceLineNo">580</span>        return "TcpSocketManager [reconnectionDelayMillis=" + reconnectionDelayMillis + ", reconnector=" + reconnector<a name="line.580"></a>
+<span class="sourceLineNo">581</span>                + ", socket=" + socket + ", socketOptions=" + socketOptions + ", retry=" + retry + ", immediateFail="<a name="line.581"></a>
+<span class="sourceLineNo">582</span>                + immediateFail + ", connectTimeoutMillis=" + connectTimeoutMillis + ", inetAddress=" + inetAddress<a name="line.582"></a>
+<span class="sourceLineNo">583</span>                + ", host=" + host + ", port=" + port + ", layout=" + layout + ", byteBuffer=" + byteBuffer + ", count="<a name="line.583"></a>
+<span class="sourceLineNo">584</span>                + count + "]";<a name="line.584"></a>
+<span class="sourceLineNo">585</span>    }<a name="line.585"></a>
+<span class="sourceLineNo">586</span><a name="line.586"></a>
+<span class="sourceLineNo">587</span>}<a name="line.587"></a>
 
 
 

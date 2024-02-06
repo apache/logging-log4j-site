@@ -25,78 +25,90 @@
 <span class="sourceLineNo">017</span><a name="line.17"></a>
 <span class="sourceLineNo">018</span>package org.apache.logging.log4j.core.appender.rolling;<a name="line.18"></a>
 <span class="sourceLineNo">019</span><a name="line.19"></a>
-<span class="sourceLineNo">020</span>import java.text.NumberFormat;<a name="line.20"></a>
-<span class="sourceLineNo">021</span>import java.text.ParseException;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import java.util.Locale;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import java.util.regex.Matcher;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import java.util.regex.Pattern;<a name="line.24"></a>
-<span class="sourceLineNo">025</span><a name="line.25"></a>
-<span class="sourceLineNo">026</span>import org.apache.logging.log4j.Logger;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.27"></a>
+<span class="sourceLineNo">020</span>import org.apache.logging.log4j.Logger;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.text.NumberFormat;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.text.ParseException;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.util.Locale;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.util.regex.Matcher;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.util.regex.Pattern;<a name="line.27"></a>
 <span class="sourceLineNo">028</span><a name="line.28"></a>
 <span class="sourceLineNo">029</span>/**<a name="line.29"></a>
 <span class="sourceLineNo">030</span> * FileSize utility class.<a name="line.30"></a>
 <span class="sourceLineNo">031</span> */<a name="line.31"></a>
 <span class="sourceLineNo">032</span>public final class FileSize {<a name="line.32"></a>
-<span class="sourceLineNo">033</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.33"></a>
-<span class="sourceLineNo">034</span><a name="line.34"></a>
-<span class="sourceLineNo">035</span>    private static final long KB = 1024;<a name="line.35"></a>
-<span class="sourceLineNo">036</span>    private static final long MB = KB * KB;<a name="line.36"></a>
-<span class="sourceLineNo">037</span>    private static final long GB = KB * MB;<a name="line.37"></a>
-<span class="sourceLineNo">038</span><a name="line.38"></a>
-<span class="sourceLineNo">039</span>    /**<a name="line.39"></a>
-<span class="sourceLineNo">040</span>     * Pattern for string parsing.<a name="line.40"></a>
-<span class="sourceLineNo">041</span>     */<a name="line.41"></a>
-<span class="sourceLineNo">042</span>    private static final Pattern VALUE_PATTERN =<a name="line.42"></a>
-<span class="sourceLineNo">043</span>        Pattern.compile("([0-9]+([\\.,][0-9]+)?)\\s*(|K|M|G)B?", Pattern.CASE_INSENSITIVE);<a name="line.43"></a>
-<span class="sourceLineNo">044</span><a name="line.44"></a>
-<span class="sourceLineNo">045</span>    private FileSize() {<a name="line.45"></a>
-<span class="sourceLineNo">046</span>    }<a name="line.46"></a>
-<span class="sourceLineNo">047</span><a name="line.47"></a>
-<span class="sourceLineNo">048</span>    /**<a name="line.48"></a>
-<span class="sourceLineNo">049</span>     * Converts a string to a number of bytes. Strings consist of a floating point value followed by<a name="line.49"></a>
-<span class="sourceLineNo">050</span>     * K, M, or G for kilobytes, megabytes, gigabytes, respectively. The<a name="line.50"></a>
-<span class="sourceLineNo">051</span>     * abbreviations KB, MB, and GB are also accepted. Matching is case insensitive.<a name="line.51"></a>
-<span class="sourceLineNo">052</span>     *<a name="line.52"></a>
-<span class="sourceLineNo">053</span>     * @param string The string to convert<a name="line.53"></a>
-<span class="sourceLineNo">054</span>     * @param defaultValue The default value if a problem is detected parsing.<a name="line.54"></a>
-<span class="sourceLineNo">055</span>     * @return The Bytes value for the string<a name="line.55"></a>
-<span class="sourceLineNo">056</span>     */<a name="line.56"></a>
-<span class="sourceLineNo">057</span>    public static long parse(final String string, final long defaultValue) {<a name="line.57"></a>
-<span class="sourceLineNo">058</span>        final Matcher matcher = VALUE_PATTERN.matcher(string);<a name="line.58"></a>
-<span class="sourceLineNo">059</span><a name="line.59"></a>
-<span class="sourceLineNo">060</span>        // Valid input?<a name="line.60"></a>
-<span class="sourceLineNo">061</span>        if (matcher.matches()) {<a name="line.61"></a>
-<span class="sourceLineNo">062</span>            try {<a name="line.62"></a>
-<span class="sourceLineNo">063</span>                // Get double precision value<a name="line.63"></a>
-<span class="sourceLineNo">064</span>                final double value = NumberFormat.getNumberInstance(Locale.ROOT).parse(<a name="line.64"></a>
-<span class="sourceLineNo">065</span>                    matcher.group(1)).doubleValue();<a name="line.65"></a>
-<span class="sourceLineNo">066</span><a name="line.66"></a>
-<span class="sourceLineNo">067</span>                // Get units specified<a name="line.67"></a>
-<span class="sourceLineNo">068</span>                final String units = matcher.group(3);<a name="line.68"></a>
-<span class="sourceLineNo">069</span><a name="line.69"></a>
-<span class="sourceLineNo">070</span>                if (units.isEmpty()) {<a name="line.70"></a>
-<span class="sourceLineNo">071</span>                    return (long) value;<a name="line.71"></a>
-<span class="sourceLineNo">072</span>                } else if (units.equalsIgnoreCase("K")) {<a name="line.72"></a>
-<span class="sourceLineNo">073</span>                    return (long) (value * KB);<a name="line.73"></a>
-<span class="sourceLineNo">074</span>                } else if (units.equalsIgnoreCase("M")) {<a name="line.74"></a>
-<span class="sourceLineNo">075</span>                    return (long) (value * MB);<a name="line.75"></a>
-<span class="sourceLineNo">076</span>                } else if (units.equalsIgnoreCase("G")) {<a name="line.76"></a>
-<span class="sourceLineNo">077</span>                    return (long) (value * GB);<a name="line.77"></a>
-<span class="sourceLineNo">078</span>                } else {<a name="line.78"></a>
-<span class="sourceLineNo">079</span>                    LOGGER.error("FileSize units not recognized: " + string);<a name="line.79"></a>
-<span class="sourceLineNo">080</span>                    return defaultValue;<a name="line.80"></a>
-<span class="sourceLineNo">081</span>                }<a name="line.81"></a>
-<span class="sourceLineNo">082</span>            } catch (final ParseException e) {<a name="line.82"></a>
-<span class="sourceLineNo">083</span>                LOGGER.error("FileSize unable to parse numeric part: " + string, e);<a name="line.83"></a>
-<span class="sourceLineNo">084</span>                return defaultValue;<a name="line.84"></a>
-<span class="sourceLineNo">085</span>            }<a name="line.85"></a>
-<span class="sourceLineNo">086</span>        }<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        LOGGER.error("FileSize unable to parse bytes: " + string);<a name="line.87"></a>
-<span class="sourceLineNo">088</span>        return defaultValue;<a name="line.88"></a>
-<span class="sourceLineNo">089</span>    }<a name="line.89"></a>
+<span class="sourceLineNo">033</span><a name="line.33"></a>
+<span class="sourceLineNo">034</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.34"></a>
+<span class="sourceLineNo">035</span><a name="line.35"></a>
+<span class="sourceLineNo">036</span>    private static final long KB = 1024;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>    private static final long MB = KB * KB;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>    private static final long GB = KB * MB;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>    private static final long TB = KB * GB;<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>    /**<a name="line.41"></a>
+<span class="sourceLineNo">042</span>     * Pattern for string parsing.<a name="line.42"></a>
+<span class="sourceLineNo">043</span>     */<a name="line.43"></a>
+<span class="sourceLineNo">044</span>    private static final Pattern VALUE_PATTERN =<a name="line.44"></a>
+<span class="sourceLineNo">045</span>            Pattern.compile("([0-9]+([.,][0-9]+)?)\\s*(|K|M|G|T)B?", Pattern.CASE_INSENSITIVE);<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>    private FileSize() {}<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>    /**<a name="line.49"></a>
+<span class="sourceLineNo">050</span>     * Converts a string to a number of bytes. Strings consist of a floating point value followed by<a name="line.50"></a>
+<span class="sourceLineNo">051</span>     * K, M, or G for kilobytes, megabytes, gigabytes, respectively. The<a name="line.51"></a>
+<span class="sourceLineNo">052</span>     * abbreviations KB, MB, and GB are also accepted. Matching is case insensitive.<a name="line.52"></a>
+<span class="sourceLineNo">053</span>     *<a name="line.53"></a>
+<span class="sourceLineNo">054</span>     * @param string The string to convert<a name="line.54"></a>
+<span class="sourceLineNo">055</span>     * @param defaultValue The default value if a problem is detected parsing.<a name="line.55"></a>
+<span class="sourceLineNo">056</span>     * @return The Bytes value for the string<a name="line.56"></a>
+<span class="sourceLineNo">057</span>     */<a name="line.57"></a>
+<span class="sourceLineNo">058</span>    public static long parse(final String string, final long defaultValue) {<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        final Matcher matcher = VALUE_PATTERN.matcher(string);<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>        // Valid input?<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        if (matcher.matches()) {<a name="line.62"></a>
+<span class="sourceLineNo">063</span>            try {<a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>                // Read the quantity.<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                final String quantityString = matcher.group(1);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                final double quantity = NumberFormat<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                        .getNumberInstance(Locale.ROOT)<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                        .parse(quantityString)<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                        .doubleValue();<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>                // Read the unit.<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                final String unit = matcher.group(3);<a name="line.73"></a>
+<span class="sourceLineNo">074</span><a name="line.74"></a>
+<span class="sourceLineNo">075</span>                // Calculate the number of bytes.<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                if (unit == null || unit.isEmpty()) {<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                    return (long) quantity;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                } else if (unit.equalsIgnoreCase("K")) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                    return (long) (quantity * KB);<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                } else if (unit.equalsIgnoreCase("M")) {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                    return (long) (quantity * MB);<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                } else if (unit.equalsIgnoreCase("G")) {<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                    return (long) (quantity * GB);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                } else if (unit.equalsIgnoreCase("T")) {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                    return (long) (quantity * TB);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                } else {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                    LOGGER.error("FileSize units not recognized: " + string);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                    return defaultValue;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                }<a name="line.89"></a>
 <span class="sourceLineNo">090</span><a name="line.90"></a>
-<span class="sourceLineNo">091</span>}<a name="line.91"></a>
+<span class="sourceLineNo">091</span>            } catch (final ParseException error) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                LOGGER.error("FileSize unable to parse numeric part: " + string, error);<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                return defaultValue;<a name="line.93"></a>
+<span class="sourceLineNo">094</span>            }<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        }<a name="line.95"></a>
+<span class="sourceLineNo">096</span><a name="line.96"></a>
+<span class="sourceLineNo">097</span>        // Invalid input, bail out.<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        LOGGER.error("FileSize unable to parse bytes: " + string);<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        return defaultValue;<a name="line.99"></a>
+<span class="sourceLineNo">100</span><a name="line.100"></a>
+<span class="sourceLineNo">101</span>    }<a name="line.101"></a>
+<span class="sourceLineNo">102</span><a name="line.102"></a>
+<span class="sourceLineNo">103</span>}<a name="line.103"></a>
 
 
 

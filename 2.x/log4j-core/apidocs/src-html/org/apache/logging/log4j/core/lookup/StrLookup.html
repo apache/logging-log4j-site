@@ -107,7 +107,29 @@
 <span class="sourceLineNo">099</span>     * @return the matching value, null if no match<a name="line.99"></a>
 <span class="sourceLineNo">100</span>     */<a name="line.100"></a>
 <span class="sourceLineNo">101</span>    String lookup(LogEvent event, String key);<a name="line.101"></a>
-<span class="sourceLineNo">102</span>}<a name="line.102"></a>
+<span class="sourceLineNo">102</span><a name="line.102"></a>
+<span class="sourceLineNo">103</span>    /**<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     * Same as {@link #lookup(String)}, but provides additional metadata describing the result.<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     * Returns null if the key cannot be evaluated, otherwise a {@link LookupResult} wrapping the non-null string value.<a name="line.105"></a>
+<span class="sourceLineNo">106</span>     */<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    default LookupResult evaluate(String key) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        String value = lookup(key);<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        return value == null<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                ? null<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                : new DefaultLookupResult(value);<a name="line.111"></a>
+<span class="sourceLineNo">112</span>    }<a name="line.112"></a>
+<span class="sourceLineNo">113</span><a name="line.113"></a>
+<span class="sourceLineNo">114</span>    /**<a name="line.114"></a>
+<span class="sourceLineNo">115</span>     * Same as {@link #lookup(LogEvent, String)}, but provides additional metadata describing the result.<a name="line.115"></a>
+<span class="sourceLineNo">116</span>     * Returns null if the key cannot be evaluated, otherwise a {@link LookupResult} wrapping the non-null string value.<a name="line.116"></a>
+<span class="sourceLineNo">117</span>     */<a name="line.117"></a>
+<span class="sourceLineNo">118</span>    default LookupResult evaluate(LogEvent event, String key) {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        String value = lookup(event, key);<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        return value == null<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                ? null<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                : new DefaultLookupResult(value);<a name="line.122"></a>
+<span class="sourceLineNo">123</span>    }<a name="line.123"></a>
+<span class="sourceLineNo">124</span>}<a name="line.124"></a>
 
 
 

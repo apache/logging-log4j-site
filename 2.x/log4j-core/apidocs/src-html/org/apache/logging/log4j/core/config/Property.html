@@ -31,78 +31,117 @@
 <span class="sourceLineNo">023</span>import org.apache.logging.log4j.core.config.plugins.PluginAttribute;<a name="line.23"></a>
 <span class="sourceLineNo">024</span>import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.24"></a>
 <span class="sourceLineNo">025</span>import org.apache.logging.log4j.core.config.plugins.PluginValue;<a name="line.25"></a>
-<span class="sourceLineNo">026</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import org.apache.logging.log4j.util.Strings;<a name="line.27"></a>
-<span class="sourceLineNo">028</span><a name="line.28"></a>
-<span class="sourceLineNo">029</span>/**<a name="line.29"></a>
-<span class="sourceLineNo">030</span> * Represents a key/value pair in the configuration.<a name="line.30"></a>
-<span class="sourceLineNo">031</span> */<a name="line.31"></a>
-<span class="sourceLineNo">032</span>@Plugin(name = "property", category = Node.CATEGORY, printObject = true)<a name="line.32"></a>
-<span class="sourceLineNo">033</span>public final class Property {<a name="line.33"></a>
-<span class="sourceLineNo">034</span><a name="line.34"></a>
-<span class="sourceLineNo">035</span>    /**<a name="line.35"></a>
-<span class="sourceLineNo">036</span>     * @since 2.11.2<a name="line.36"></a>
-<span class="sourceLineNo">037</span>     */<a name="line.37"></a>
-<span class="sourceLineNo">038</span>    public static final Property[] EMPTY_ARRAY = {};<a name="line.38"></a>
-<span class="sourceLineNo">039</span><a name="line.39"></a>
-<span class="sourceLineNo">040</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.40"></a>
-<span class="sourceLineNo">041</span><a name="line.41"></a>
-<span class="sourceLineNo">042</span>    private final String name;<a name="line.42"></a>
-<span class="sourceLineNo">043</span>    private final String value;<a name="line.43"></a>
-<span class="sourceLineNo">044</span>    private final boolean valueNeedsLookup;<a name="line.44"></a>
-<span class="sourceLineNo">045</span><a name="line.45"></a>
-<span class="sourceLineNo">046</span>    private Property(final String name, final String value) {<a name="line.46"></a>
-<span class="sourceLineNo">047</span>        this.name = name;<a name="line.47"></a>
-<span class="sourceLineNo">048</span>        this.value = value;<a name="line.48"></a>
-<span class="sourceLineNo">049</span>        this.valueNeedsLookup = value != null &amp;&amp; value.contains("${");<a name="line.49"></a>
-<span class="sourceLineNo">050</span>    }<a name="line.50"></a>
-<span class="sourceLineNo">051</span><a name="line.51"></a>
-<span class="sourceLineNo">052</span>    /**<a name="line.52"></a>
-<span class="sourceLineNo">053</span>     * Returns the property name.<a name="line.53"></a>
-<span class="sourceLineNo">054</span>     * @return the property name.<a name="line.54"></a>
-<span class="sourceLineNo">055</span>     */<a name="line.55"></a>
-<span class="sourceLineNo">056</span>    public String getName() {<a name="line.56"></a>
-<span class="sourceLineNo">057</span>        return name;<a name="line.57"></a>
-<span class="sourceLineNo">058</span>    }<a name="line.58"></a>
-<span class="sourceLineNo">059</span><a name="line.59"></a>
-<span class="sourceLineNo">060</span>    /**<a name="line.60"></a>
-<span class="sourceLineNo">061</span>     * Returns the property value.<a name="line.61"></a>
-<span class="sourceLineNo">062</span>     * @return the value of the property.<a name="line.62"></a>
-<span class="sourceLineNo">063</span>     */<a name="line.63"></a>
-<span class="sourceLineNo">064</span>    public String getValue() {<a name="line.64"></a>
-<span class="sourceLineNo">065</span>        return Objects.toString(value, Strings.EMPTY); // LOG4J2-1313 null would be same as Property not existing<a name="line.65"></a>
-<span class="sourceLineNo">066</span>    }<a name="line.66"></a>
-<span class="sourceLineNo">067</span><a name="line.67"></a>
-<span class="sourceLineNo">068</span>    /**<a name="line.68"></a>
-<span class="sourceLineNo">069</span>     * Returns {@code true} if the value contains a substitutable property that requires a lookup to be resolved.<a name="line.69"></a>
-<span class="sourceLineNo">070</span>     * @return {@code true} if the value contains {@code "${"}, {@code false} otherwise<a name="line.70"></a>
-<span class="sourceLineNo">071</span>     */<a name="line.71"></a>
-<span class="sourceLineNo">072</span>    public boolean isValueNeedsLookup() {<a name="line.72"></a>
-<span class="sourceLineNo">073</span>        return valueNeedsLookup;<a name="line.73"></a>
-<span class="sourceLineNo">074</span>    }<a name="line.74"></a>
-<span class="sourceLineNo">075</span><a name="line.75"></a>
-<span class="sourceLineNo">076</span>    /**<a name="line.76"></a>
-<span class="sourceLineNo">077</span>     * Creates a Property.<a name="line.77"></a>
-<span class="sourceLineNo">078</span>     *<a name="line.78"></a>
-<span class="sourceLineNo">079</span>     * @param name The key.<a name="line.79"></a>
-<span class="sourceLineNo">080</span>     * @param value The value.<a name="line.80"></a>
-<span class="sourceLineNo">081</span>     * @return A Property.<a name="line.81"></a>
+<span class="sourceLineNo">026</span>import org.apache.logging.log4j.core.lookup.StrSubstitutor;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.logging.log4j.util.Strings;<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>/**<a name="line.30"></a>
+<span class="sourceLineNo">031</span> * Represents a key/value pair in the configuration.<a name="line.31"></a>
+<span class="sourceLineNo">032</span> */<a name="line.32"></a>
+<span class="sourceLineNo">033</span>@Plugin(name = "property", category = Node.CATEGORY, printObject = true)<a name="line.33"></a>
+<span class="sourceLineNo">034</span>public final class Property {<a name="line.34"></a>
+<span class="sourceLineNo">035</span><a name="line.35"></a>
+<span class="sourceLineNo">036</span>    /**<a name="line.36"></a>
+<span class="sourceLineNo">037</span>     * @since 2.11.2<a name="line.37"></a>
+<span class="sourceLineNo">038</span>     */<a name="line.38"></a>
+<span class="sourceLineNo">039</span>    public static final Property[] EMPTY_ARRAY = {};<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.41"></a>
+<span class="sourceLineNo">042</span><a name="line.42"></a>
+<span class="sourceLineNo">043</span>    private final String name;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>    private final String rawValue;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>    private final String value;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>    private final boolean valueNeedsLookup;<a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span>    private Property(final String name, final String rawValue, final String value) {<a name="line.48"></a>
+<span class="sourceLineNo">049</span>        this.name = name;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        this.rawValue = rawValue;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>        this.value = value;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        this.valueNeedsLookup = value != null &amp;&amp; value.contains("${");<a name="line.52"></a>
+<span class="sourceLineNo">053</span>    }<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>    /**<a name="line.55"></a>
+<span class="sourceLineNo">056</span>     * Returns the property name.<a name="line.56"></a>
+<span class="sourceLineNo">057</span>     * @return the property name.<a name="line.57"></a>
+<span class="sourceLineNo">058</span>     */<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    public String getName() {<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        return name;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    }<a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>    /**<a name="line.63"></a>
+<span class="sourceLineNo">064</span>     * Returns the original raw property value without substitution.<a name="line.64"></a>
+<span class="sourceLineNo">065</span>     * @return the raw value of the property, or empty string if it is not set.<a name="line.65"></a>
+<span class="sourceLineNo">066</span>     */<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    public String getRawValue() {<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        return Objects.toString(rawValue, Strings.EMPTY);<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    }<a name="line.69"></a>
+<span class="sourceLineNo">070</span><a name="line.70"></a>
+<span class="sourceLineNo">071</span>    /**<a name="line.71"></a>
+<span class="sourceLineNo">072</span>     * Returns the property value.<a name="line.72"></a>
+<span class="sourceLineNo">073</span>     * @return the value of the property.<a name="line.73"></a>
+<span class="sourceLineNo">074</span>     */<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    public String getValue() {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        return Objects.toString(value, Strings.EMPTY); // LOG4J2-1313 null would be same as Property not existing<a name="line.76"></a>
+<span class="sourceLineNo">077</span>    }<a name="line.77"></a>
+<span class="sourceLineNo">078</span><a name="line.78"></a>
+<span class="sourceLineNo">079</span>    /**<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     * Returns {@code true} if the value contains a substitutable property that requires a lookup to be resolved.<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     * @return {@code true} if the value contains {@code "${"}, {@code false} otherwise<a name="line.81"></a>
 <span class="sourceLineNo">082</span>     */<a name="line.82"></a>
-<span class="sourceLineNo">083</span>    @PluginFactory<a name="line.83"></a>
-<span class="sourceLineNo">084</span>    public static Property createProperty(<a name="line.84"></a>
-<span class="sourceLineNo">085</span>            @PluginAttribute("name") final String name,<a name="line.85"></a>
-<span class="sourceLineNo">086</span>            @PluginValue("value") final String value) {<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        if (name == null) {<a name="line.87"></a>
-<span class="sourceLineNo">088</span>            LOGGER.error("Property name cannot be null");<a name="line.88"></a>
-<span class="sourceLineNo">089</span>        }<a name="line.89"></a>
-<span class="sourceLineNo">090</span>        return new Property(name, value);<a name="line.90"></a>
-<span class="sourceLineNo">091</span>    }<a name="line.91"></a>
-<span class="sourceLineNo">092</span><a name="line.92"></a>
-<span class="sourceLineNo">093</span>    @Override<a name="line.93"></a>
-<span class="sourceLineNo">094</span>    public String toString() {<a name="line.94"></a>
-<span class="sourceLineNo">095</span>        return name + '=' + getValue();<a name="line.95"></a>
-<span class="sourceLineNo">096</span>    }<a name="line.96"></a>
-<span class="sourceLineNo">097</span>}<a name="line.97"></a>
+<span class="sourceLineNo">083</span>    public boolean isValueNeedsLookup() {<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        return valueNeedsLookup;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    }<a name="line.85"></a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span>    /**<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * Evaluate this property with the provided substitutor. If {@link #isValueNeedsLookup()} is {@code false},<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     * the {@link #getValue() value} is returned, otherwise the {@link #getRawValue() raw value} is evaluated<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     * with the given substitutor.<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     */<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    public String evaluate(StrSubstitutor substitutor) {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        return valueNeedsLookup<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                // Unescape the raw value first, handling '$${ctx:foo}' -&gt; '${ctx:foo}'<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                ? substitutor.replace(PropertiesPlugin.unescape(getRawValue()))<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                : getValue();<a name="line.96"></a>
+<span class="sourceLineNo">097</span>    }<a name="line.97"></a>
+<span class="sourceLineNo">098</span><a name="line.98"></a>
+<span class="sourceLineNo">099</span>    /**<a name="line.99"></a>
+<span class="sourceLineNo">100</span>     * Creates a Property.<a name="line.100"></a>
+<span class="sourceLineNo">101</span>     *<a name="line.101"></a>
+<span class="sourceLineNo">102</span>     * @param name The key.<a name="line.102"></a>
+<span class="sourceLineNo">103</span>     * @param value The value.<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     * @return A Property.<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     */<a name="line.105"></a>
+<span class="sourceLineNo">106</span>    public static Property createProperty(final String name, final String value) {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        if (name == null) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            LOGGER.error("Property name cannot be null");<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        return new Property(name, value, value);<a name="line.110"></a>
+<span class="sourceLineNo">111</span>    }<a name="line.111"></a>
+<span class="sourceLineNo">112</span><a name="line.112"></a>
+<span class="sourceLineNo">113</span>    /**<a name="line.113"></a>
+<span class="sourceLineNo">114</span>     * Creates a Property.<a name="line.114"></a>
+<span class="sourceLineNo">115</span>     *<a name="line.115"></a>
+<span class="sourceLineNo">116</span>     * @param name The key.<a name="line.116"></a>
+<span class="sourceLineNo">117</span>     * @param rawValue The value without any substitution applied.<a name="line.117"></a>
+<span class="sourceLineNo">118</span>     * @param value The value.<a name="line.118"></a>
+<span class="sourceLineNo">119</span>     * @return A Property.<a name="line.119"></a>
+<span class="sourceLineNo">120</span>     */<a name="line.120"></a>
+<span class="sourceLineNo">121</span>    @PluginFactory<a name="line.121"></a>
+<span class="sourceLineNo">122</span>    public static Property createProperty(<a name="line.122"></a>
+<span class="sourceLineNo">123</span>            @PluginAttribute("name") final String name,<a name="line.123"></a>
+<span class="sourceLineNo">124</span>            @PluginValue(value = "value", substitute = false) final String rawValue,<a name="line.124"></a>
+<span class="sourceLineNo">125</span>            @PluginValue("value") final String value) {<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        if (name == null) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>            LOGGER.error("Property name cannot be null");<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        }<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        return new Property(name, rawValue, value);<a name="line.129"></a>
+<span class="sourceLineNo">130</span>    }<a name="line.130"></a>
+<span class="sourceLineNo">131</span><a name="line.131"></a>
+<span class="sourceLineNo">132</span>    @Override<a name="line.132"></a>
+<span class="sourceLineNo">133</span>    public String toString() {<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        return name + '=' + getValue();<a name="line.134"></a>
+<span class="sourceLineNo">135</span>    }<a name="line.135"></a>
+<span class="sourceLineNo">136</span>}<a name="line.136"></a>
 
 
 

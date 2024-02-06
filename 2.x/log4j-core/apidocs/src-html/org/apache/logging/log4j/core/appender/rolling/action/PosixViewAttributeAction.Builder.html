@@ -50,9 +50,9 @@
 <span class="sourceLineNo">042</span>import org.apache.logging.log4j.util.Strings;<a name="line.42"></a>
 <span class="sourceLineNo">043</span><a name="line.43"></a>
 <span class="sourceLineNo">044</span>/**<a name="line.44"></a>
-<span class="sourceLineNo">045</span> * File posix attribute view action.<a name="line.45"></a>
+<span class="sourceLineNo">045</span> * File POSIX attribute view action.<a name="line.45"></a>
 <span class="sourceLineNo">046</span> *<a name="line.46"></a>
-<span class="sourceLineNo">047</span> * Allow to define file permissions, user and group for log files on posix supported OS.<a name="line.47"></a>
+<span class="sourceLineNo">047</span> * Allow to define file permissions, user and group for log files on POSIX supported OS.<a name="line.47"></a>
 <span class="sourceLineNo">048</span> */<a name="line.48"></a>
 <span class="sourceLineNo">049</span>@Plugin(name = "PosixViewAttribute", category = Core.CATEGORY_NAME, printObject = true)<a name="line.49"></a>
 <span class="sourceLineNo">050</span>public class PosixViewAttributeAction extends AbstractPathAction {<a name="line.50"></a>
@@ -88,7 +88,7 @@
 <span class="sourceLineNo">080</span>    }<a name="line.80"></a>
 <span class="sourceLineNo">081</span><a name="line.81"></a>
 <span class="sourceLineNo">082</span>    /**<a name="line.82"></a>
-<span class="sourceLineNo">083</span>     * Builder for the posix view attribute action.<a name="line.83"></a>
+<span class="sourceLineNo">083</span>     * Builder for the POSIX view attribute action.<a name="line.83"></a>
 <span class="sourceLineNo">084</span>     */<a name="line.84"></a>
 <span class="sourceLineNo">085</span>    public static class Builder implements org.apache.logging.log4j.core.util.Builder&lt;PosixViewAttributeAction&gt; {<a name="line.85"></a>
 <span class="sourceLineNo">086</span><a name="line.86"></a>
@@ -170,7 +170,7 @@
 <span class="sourceLineNo">162</span>        }<a name="line.162"></a>
 <span class="sourceLineNo">163</span><a name="line.163"></a>
 <span class="sourceLineNo">164</span>        /**<a name="line.164"></a>
-<span class="sourceLineNo">165</span>         * Define base path to apply condition before execute posix file attribute action.<a name="line.165"></a>
+<span class="sourceLineNo">165</span>         * Define base path to apply condition before execute POSIX file attribute action.<a name="line.165"></a>
 <span class="sourceLineNo">166</span>         * @param basePath {@link AbstractPathAction#getBasePath()}<a name="line.166"></a>
 <span class="sourceLineNo">167</span>         * @return This builder<a name="line.167"></a>
 <span class="sourceLineNo">168</span>         */<a name="line.168"></a>
@@ -190,7 +190,7 @@
 <span class="sourceLineNo">182</span>        }<a name="line.182"></a>
 <span class="sourceLineNo">183</span><a name="line.183"></a>
 <span class="sourceLineNo">184</span>        /**<a name="line.184"></a>
-<span class="sourceLineNo">185</span>         * Define max folder depth to search for eligible files to apply posix attribute view.<a name="line.185"></a>
+<span class="sourceLineNo">185</span>         * Define max folder depth to search for eligible files to apply POSIX attribute view.<a name="line.185"></a>
 <span class="sourceLineNo">186</span>         * @param maxDepth Max search depth<a name="line.186"></a>
 <span class="sourceLineNo">187</span>         * @return This builder<a name="line.187"></a>
 <span class="sourceLineNo">188</span>         */<a name="line.188"></a>
@@ -211,7 +211,7 @@
 <span class="sourceLineNo">203</span>        }<a name="line.203"></a>
 <span class="sourceLineNo">204</span><a name="line.204"></a>
 <span class="sourceLineNo">205</span>        /**<a name="line.205"></a>
-<span class="sourceLineNo">206</span>         * Define file permissions in posix format to apply during action execution eligible files.<a name="line.206"></a>
+<span class="sourceLineNo">206</span>         * Define file permissions in POSIX format to apply during action execution eligible files.<a name="line.206"></a>
 <span class="sourceLineNo">207</span>         *<a name="line.207"></a>
 <span class="sourceLineNo">208</span>         * Example:<a name="line.208"></a>
 <span class="sourceLineNo">209</span>         * &lt;p&gt;rw-rw-rw<a name="line.209"></a>
@@ -264,7 +264,7 @@
 <span class="sourceLineNo">256</span>                for (final PathCondition pathFilter : conditions) {<a name="line.256"></a>
 <span class="sourceLineNo">257</span>                    final Path relative = basePath.relativize(file);<a name="line.257"></a>
 <span class="sourceLineNo">258</span>                    if (!pathFilter.accept(basePath, relative, attrs)) {<a name="line.258"></a>
-<span class="sourceLineNo">259</span>                        LOGGER.trace("Not defining posix attribute base={}, relative={}", basePath, relative);<a name="line.259"></a>
+<span class="sourceLineNo">259</span>                        LOGGER.trace("Not defining POSIX attribute base={}, relative={}", basePath, relative);<a name="line.259"></a>
 <span class="sourceLineNo">260</span>                        return FileVisitResult.CONTINUE;<a name="line.260"></a>
 <span class="sourceLineNo">261</span>                    }<a name="line.261"></a>
 <span class="sourceLineNo">262</span>                }<a name="line.262"></a>
@@ -275,9 +275,9 @@
 <span class="sourceLineNo">267</span>    }<a name="line.267"></a>
 <span class="sourceLineNo">268</span><a name="line.268"></a>
 <span class="sourceLineNo">269</span>    /**<a name="line.269"></a>
-<span class="sourceLineNo">270</span>     * Returns posix file permissions if defined and the OS supports posix file attribute,<a name="line.270"></a>
+<span class="sourceLineNo">270</span>     * Returns POSIX file permissions if defined and the OS supports POSIX file attribute,<a name="line.270"></a>
 <span class="sourceLineNo">271</span>     * null otherwise.<a name="line.271"></a>
-<span class="sourceLineNo">272</span>     * @return File posix permissions<a name="line.272"></a>
+<span class="sourceLineNo">272</span>     * @return File POSIX permissions<a name="line.272"></a>
 <span class="sourceLineNo">273</span>     * @see PosixFileAttributeView<a name="line.273"></a>
 <span class="sourceLineNo">274</span>     */<a name="line.274"></a>
 <span class="sourceLineNo">275</span>    public Set&lt;PosixFilePermission&gt; getFilePermissions() {<a name="line.275"></a>
@@ -295,7 +295,7 @@
 <span class="sourceLineNo">287</span>    }<a name="line.287"></a>
 <span class="sourceLineNo">288</span><a name="line.288"></a>
 <span class="sourceLineNo">289</span>    /**<a name="line.289"></a>
-<span class="sourceLineNo">290</span>     * Returns file group if defined and the OS supports posix/group file attribute view,<a name="line.290"></a>
+<span class="sourceLineNo">290</span>     * Returns file group if defined and the OS supports POSIX/group file attribute view,<a name="line.290"></a>
 <span class="sourceLineNo">291</span>     * null otherwise.<a name="line.291"></a>
 <span class="sourceLineNo">292</span>     * @return File group<a name="line.292"></a>
 <span class="sourceLineNo">293</span>     * @see PosixFileAttributeView<a name="line.293"></a>

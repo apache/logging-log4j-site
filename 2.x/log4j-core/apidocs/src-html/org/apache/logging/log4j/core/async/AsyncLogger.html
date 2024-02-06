@@ -504,24 +504,22 @@
 <span class="sourceLineNo">496</span>            if (contextData.getValue(prop.getName()) != null) {<a name="line.496"></a>
 <span class="sourceLineNo">497</span>                continue; // contextMap overrides config properties<a name="line.497"></a>
 <span class="sourceLineNo">498</span>            }<a name="line.498"></a>
-<span class="sourceLineNo">499</span>            final String value = prop.isValueNeedsLookup() //<a name="line.499"></a>
-<span class="sourceLineNo">500</span>                    ? privateConfig.config.getStrSubstitutor().replace(event, prop.getValue()) //<a name="line.500"></a>
-<span class="sourceLineNo">501</span>                    : prop.getValue();<a name="line.501"></a>
-<span class="sourceLineNo">502</span>            contextData.putValue(prop.getName(), value);<a name="line.502"></a>
-<span class="sourceLineNo">503</span>        }<a name="line.503"></a>
-<span class="sourceLineNo">504</span>        event.setContextData(contextData);<a name="line.504"></a>
-<span class="sourceLineNo">505</span>    }<a name="line.505"></a>
-<span class="sourceLineNo">506</span><a name="line.506"></a>
-<span class="sourceLineNo">507</span>    private static StringMap getContextData(final RingBufferLogEvent event) {<a name="line.507"></a>
-<span class="sourceLineNo">508</span>        StringMap contextData = (StringMap) event.getContextData();<a name="line.508"></a>
-<span class="sourceLineNo">509</span>        if (contextData.isFrozen()) {<a name="line.509"></a>
-<span class="sourceLineNo">510</span>            final StringMap temp = ContextDataFactory.createContextData();<a name="line.510"></a>
-<span class="sourceLineNo">511</span>            temp.putAll(contextData);<a name="line.511"></a>
-<span class="sourceLineNo">512</span>            return temp;<a name="line.512"></a>
-<span class="sourceLineNo">513</span>        }<a name="line.513"></a>
-<span class="sourceLineNo">514</span>        return contextData;<a name="line.514"></a>
-<span class="sourceLineNo">515</span>    }<a name="line.515"></a>
-<span class="sourceLineNo">516</span>}<a name="line.516"></a>
+<span class="sourceLineNo">499</span>            final String value = prop.evaluate(privateConfig.config.getStrSubstitutor());<a name="line.499"></a>
+<span class="sourceLineNo">500</span>            contextData.putValue(prop.getName(), value);<a name="line.500"></a>
+<span class="sourceLineNo">501</span>        }<a name="line.501"></a>
+<span class="sourceLineNo">502</span>        event.setContextData(contextData);<a name="line.502"></a>
+<span class="sourceLineNo">503</span>    }<a name="line.503"></a>
+<span class="sourceLineNo">504</span><a name="line.504"></a>
+<span class="sourceLineNo">505</span>    private static StringMap getContextData(final RingBufferLogEvent event) {<a name="line.505"></a>
+<span class="sourceLineNo">506</span>        StringMap contextData = (StringMap) event.getContextData();<a name="line.506"></a>
+<span class="sourceLineNo">507</span>        if (contextData.isFrozen()) {<a name="line.507"></a>
+<span class="sourceLineNo">508</span>            final StringMap temp = ContextDataFactory.createContextData();<a name="line.508"></a>
+<span class="sourceLineNo">509</span>            temp.putAll(contextData);<a name="line.509"></a>
+<span class="sourceLineNo">510</span>            return temp;<a name="line.510"></a>
+<span class="sourceLineNo">511</span>        }<a name="line.511"></a>
+<span class="sourceLineNo">512</span>        return contextData;<a name="line.512"></a>
+<span class="sourceLineNo">513</span>    }<a name="line.513"></a>
+<span class="sourceLineNo">514</span>}<a name="line.514"></a>
 
 
 
