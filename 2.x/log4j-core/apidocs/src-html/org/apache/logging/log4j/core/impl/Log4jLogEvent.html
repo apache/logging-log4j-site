@@ -226,64 +226,80 @@
 <FONT color="green">223</FONT>            return new LogEventProxy(this);<a name="line.223"></a>
 <FONT color="green">224</FONT>        }<a name="line.224"></a>
 <FONT color="green">225</FONT>    <a name="line.225"></a>
-<FONT color="green">226</FONT>        private void readObject(ObjectInputStream stream) throws InvalidObjectException {<a name="line.226"></a>
-<FONT color="green">227</FONT>            throw new InvalidObjectException("Proxy required");<a name="line.227"></a>
+<FONT color="green">226</FONT>        public static Serializable serialize(Log4jLogEvent event) {<a name="line.226"></a>
+<FONT color="green">227</FONT>            return new LogEventProxy(event);<a name="line.227"></a>
 <FONT color="green">228</FONT>        }<a name="line.228"></a>
 <FONT color="green">229</FONT>    <a name="line.229"></a>
-<FONT color="green">230</FONT>        @Override<a name="line.230"></a>
-<FONT color="green">231</FONT>        public String toString() {<a name="line.231"></a>
-<FONT color="green">232</FONT>            StringBuilder sb = new StringBuilder();<a name="line.232"></a>
-<FONT color="green">233</FONT>            String n = name.length() == 0 ? "root" : name;<a name="line.233"></a>
-<FONT color="green">234</FONT>            sb.append("Logger=").append(n);<a name="line.234"></a>
-<FONT color="green">235</FONT>            sb.append(" Level=").append(level.name());<a name="line.235"></a>
-<FONT color="green">236</FONT>            sb.append(" Message").append(message.getFormattedMessage());<a name="line.236"></a>
-<FONT color="green">237</FONT>            return sb.toString();<a name="line.237"></a>
-<FONT color="green">238</FONT>        }<a name="line.238"></a>
-<FONT color="green">239</FONT>    <a name="line.239"></a>
-<FONT color="green">240</FONT>        /**<a name="line.240"></a>
-<FONT color="green">241</FONT>         * Proxy pattern used to serialize the LogEvent.<a name="line.241"></a>
-<FONT color="green">242</FONT>         */<a name="line.242"></a>
-<FONT color="green">243</FONT>        private static class LogEventProxy implements Serializable {<a name="line.243"></a>
-<FONT color="green">244</FONT>    <a name="line.244"></a>
-<FONT color="green">245</FONT>            private static final long serialVersionUID = -7139032940312647146L;<a name="line.245"></a>
-<FONT color="green">246</FONT>            private final String fqcnOfLogger;<a name="line.246"></a>
-<FONT color="green">247</FONT>            private final Marker marker;<a name="line.247"></a>
-<FONT color="green">248</FONT>            private final Level level;<a name="line.248"></a>
-<FONT color="green">249</FONT>            private final String name;<a name="line.249"></a>
-<FONT color="green">250</FONT>            private final Message message;<a name="line.250"></a>
-<FONT color="green">251</FONT>            private final long timestamp;<a name="line.251"></a>
-<FONT color="green">252</FONT>            private final Throwable throwable;<a name="line.252"></a>
-<FONT color="green">253</FONT>            private final HashMap&lt;String, String&gt; mdc;<a name="line.253"></a>
-<FONT color="green">254</FONT>            private final Stack&lt;String&gt; ndc;<a name="line.254"></a>
-<FONT color="green">255</FONT>            private String threadName;<a name="line.255"></a>
-<FONT color="green">256</FONT>            private StackTraceElement location;<a name="line.256"></a>
-<FONT color="green">257</FONT>    <a name="line.257"></a>
-<FONT color="green">258</FONT>            public LogEventProxy(Log4jLogEvent event) {<a name="line.258"></a>
-<FONT color="green">259</FONT>                this.fqcnOfLogger = event.fqcnOfLogger;<a name="line.259"></a>
-<FONT color="green">260</FONT>                this.marker = event.marker;<a name="line.260"></a>
-<FONT color="green">261</FONT>                this.level = event.level;<a name="line.261"></a>
-<FONT color="green">262</FONT>                this.name = event.name;<a name="line.262"></a>
-<FONT color="green">263</FONT>                this.message = event.message;<a name="line.263"></a>
-<FONT color="green">264</FONT>                this.timestamp = event.timestamp;<a name="line.264"></a>
-<FONT color="green">265</FONT>                this.throwable = event.throwable;<a name="line.265"></a>
-<FONT color="green">266</FONT>                this.mdc = new HashMap&lt;String, String&gt;(event.mdc);<a name="line.266"></a>
-<FONT color="green">267</FONT>                this.ndc = event.ndc;<a name="line.267"></a>
-<FONT color="green">268</FONT>                this.location = event.getSource();<a name="line.268"></a>
-<FONT color="green">269</FONT>                this.threadName = event.getThreadName();<a name="line.269"></a>
-<FONT color="green">270</FONT>            }<a name="line.270"></a>
-<FONT color="green">271</FONT>    <a name="line.271"></a>
-<FONT color="green">272</FONT>            /**<a name="line.272"></a>
-<FONT color="green">273</FONT>             * Return a Log4jLogEvent using the data in the proxy.<a name="line.273"></a>
-<FONT color="green">274</FONT>             * @return Log4jLogEvent.<a name="line.274"></a>
-<FONT color="green">275</FONT>             */<a name="line.275"></a>
-<FONT color="green">276</FONT>            protected Object readResolve() {<a name="line.276"></a>
-<FONT color="green">277</FONT>                return new Log4jLogEvent(name, marker, fqcnOfLogger, level, message, throwable, mdc, ndc, threadName,<a name="line.277"></a>
-<FONT color="green">278</FONT>                                         location, timestamp);<a name="line.278"></a>
-<FONT color="green">279</FONT>            }<a name="line.279"></a>
-<FONT color="green">280</FONT>    <a name="line.280"></a>
-<FONT color="green">281</FONT>        }<a name="line.281"></a>
-<FONT color="green">282</FONT>    <a name="line.282"></a>
-<FONT color="green">283</FONT>    }<a name="line.283"></a>
+<FONT color="green">230</FONT>        public static Log4jLogEvent deserialize(Serializable event) {<a name="line.230"></a>
+<FONT color="green">231</FONT>            if (event == null) {<a name="line.231"></a>
+<FONT color="green">232</FONT>                throw new NullPointerException("Event cannot be null");<a name="line.232"></a>
+<FONT color="green">233</FONT>            }<a name="line.233"></a>
+<FONT color="green">234</FONT>            if (event instanceof LogEventProxy) {<a name="line.234"></a>
+<FONT color="green">235</FONT>                LogEventProxy proxy = (LogEventProxy) event;<a name="line.235"></a>
+<FONT color="green">236</FONT>                return new Log4jLogEvent(proxy.name, proxy.marker, proxy.fqcnOfLogger, proxy.level, proxy.message,<a name="line.236"></a>
+<FONT color="green">237</FONT>                    proxy.throwable, proxy.mdc, proxy.ndc, proxy.threadName, proxy.location, proxy.timestamp);<a name="line.237"></a>
+<FONT color="green">238</FONT>            }<a name="line.238"></a>
+<FONT color="green">239</FONT>            throw new IllegalArgumentException("Event is not a serialized LogEvent: " + event.toString());<a name="line.239"></a>
+<FONT color="green">240</FONT>        }<a name="line.240"></a>
+<FONT color="green">241</FONT>    <a name="line.241"></a>
+<FONT color="green">242</FONT>        private void readObject(ObjectInputStream stream) throws InvalidObjectException {<a name="line.242"></a>
+<FONT color="green">243</FONT>            throw new InvalidObjectException("Proxy required");<a name="line.243"></a>
+<FONT color="green">244</FONT>        }<a name="line.244"></a>
+<FONT color="green">245</FONT>    <a name="line.245"></a>
+<FONT color="green">246</FONT>        @Override<a name="line.246"></a>
+<FONT color="green">247</FONT>        public String toString() {<a name="line.247"></a>
+<FONT color="green">248</FONT>            StringBuilder sb = new StringBuilder();<a name="line.248"></a>
+<FONT color="green">249</FONT>            String n = name.length() == 0 ? "root" : name;<a name="line.249"></a>
+<FONT color="green">250</FONT>            sb.append("Logger=").append(n);<a name="line.250"></a>
+<FONT color="green">251</FONT>            sb.append(" Level=").append(level.name());<a name="line.251"></a>
+<FONT color="green">252</FONT>            sb.append(" Message").append(message.getFormattedMessage());<a name="line.252"></a>
+<FONT color="green">253</FONT>            return sb.toString();<a name="line.253"></a>
+<FONT color="green">254</FONT>        }<a name="line.254"></a>
+<FONT color="green">255</FONT>    <a name="line.255"></a>
+<FONT color="green">256</FONT>        /**<a name="line.256"></a>
+<FONT color="green">257</FONT>         * Proxy pattern used to serialize the LogEvent.<a name="line.257"></a>
+<FONT color="green">258</FONT>         */<a name="line.258"></a>
+<FONT color="green">259</FONT>        private static class LogEventProxy implements Serializable {<a name="line.259"></a>
+<FONT color="green">260</FONT>    <a name="line.260"></a>
+<FONT color="green">261</FONT>            private static final long serialVersionUID = -7139032940312647146L;<a name="line.261"></a>
+<FONT color="green">262</FONT>            private final String fqcnOfLogger;<a name="line.262"></a>
+<FONT color="green">263</FONT>            private final Marker marker;<a name="line.263"></a>
+<FONT color="green">264</FONT>            private final Level level;<a name="line.264"></a>
+<FONT color="green">265</FONT>            private final String name;<a name="line.265"></a>
+<FONT color="green">266</FONT>            private final Message message;<a name="line.266"></a>
+<FONT color="green">267</FONT>            private final long timestamp;<a name="line.267"></a>
+<FONT color="green">268</FONT>            private final Throwable throwable;<a name="line.268"></a>
+<FONT color="green">269</FONT>            private final HashMap&lt;String, String&gt; mdc;<a name="line.269"></a>
+<FONT color="green">270</FONT>            private final Stack&lt;String&gt; ndc;<a name="line.270"></a>
+<FONT color="green">271</FONT>            private String threadName;<a name="line.271"></a>
+<FONT color="green">272</FONT>            private StackTraceElement location;<a name="line.272"></a>
+<FONT color="green">273</FONT>    <a name="line.273"></a>
+<FONT color="green">274</FONT>            public LogEventProxy(Log4jLogEvent event) {<a name="line.274"></a>
+<FONT color="green">275</FONT>                this.fqcnOfLogger = event.fqcnOfLogger;<a name="line.275"></a>
+<FONT color="green">276</FONT>                this.marker = event.marker;<a name="line.276"></a>
+<FONT color="green">277</FONT>                this.level = event.level;<a name="line.277"></a>
+<FONT color="green">278</FONT>                this.name = event.name;<a name="line.278"></a>
+<FONT color="green">279</FONT>                this.message = event.message;<a name="line.279"></a>
+<FONT color="green">280</FONT>                this.timestamp = event.timestamp;<a name="line.280"></a>
+<FONT color="green">281</FONT>                this.throwable = event.throwable;<a name="line.281"></a>
+<FONT color="green">282</FONT>                this.mdc = new HashMap&lt;String, String&gt;(event.mdc);<a name="line.282"></a>
+<FONT color="green">283</FONT>                this.ndc = event.ndc;<a name="line.283"></a>
+<FONT color="green">284</FONT>                this.location = event.getSource();<a name="line.284"></a>
+<FONT color="green">285</FONT>                this.threadName = event.getThreadName();<a name="line.285"></a>
+<FONT color="green">286</FONT>            }<a name="line.286"></a>
+<FONT color="green">287</FONT>    <a name="line.287"></a>
+<FONT color="green">288</FONT>            /**<a name="line.288"></a>
+<FONT color="green">289</FONT>             * Return a Log4jLogEvent using the data in the proxy.<a name="line.289"></a>
+<FONT color="green">290</FONT>             * @return Log4jLogEvent.<a name="line.290"></a>
+<FONT color="green">291</FONT>             */<a name="line.291"></a>
+<FONT color="green">292</FONT>            protected Object readResolve() {<a name="line.292"></a>
+<FONT color="green">293</FONT>                return new Log4jLogEvent(name, marker, fqcnOfLogger, level, message, throwable, mdc, ndc, threadName,<a name="line.293"></a>
+<FONT color="green">294</FONT>                                         location, timestamp);<a name="line.294"></a>
+<FONT color="green">295</FONT>            }<a name="line.295"></a>
+<FONT color="green">296</FONT>    <a name="line.296"></a>
+<FONT color="green">297</FONT>        }<a name="line.297"></a>
+<FONT color="green">298</FONT>    <a name="line.298"></a>
+<FONT color="green">299</FONT>    }<a name="line.299"></a>
 
 
 

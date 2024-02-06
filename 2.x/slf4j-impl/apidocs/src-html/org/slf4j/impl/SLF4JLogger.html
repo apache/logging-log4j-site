@@ -425,56 +425,59 @@
 <FONT color="green">422</FONT>    <a name="line.422"></a>
 <FONT color="green">423</FONT>    <a name="line.423"></a>
 <FONT color="green">424</FONT>        public void log(Marker marker, String fqcn, int i, String s1, Object[] objects, Throwable throwable) {<a name="line.424"></a>
-<FONT color="green">425</FONT>            Message msg;<a name="line.425"></a>
-<FONT color="green">426</FONT>            if (eventLogger &amp;&amp; marker != null &amp;&amp; marker.contains(EVENT_MARKER)) {<a name="line.426"></a>
-<FONT color="green">427</FONT>                try {<a name="line.427"></a>
-<FONT color="green">428</FONT>                    EventData data = (objects != null &amp;&amp; objects[0] instanceof EventData) ? (EventData) objects[0] :<a name="line.428"></a>
-<FONT color="green">429</FONT>                        new EventData(s1);<a name="line.429"></a>
-<FONT color="green">430</FONT>                    msg = new StructuredDataMessage(data.getEventId(), data.getMessage(), data.getEventType());<a name="line.430"></a>
-<FONT color="green">431</FONT>                    for (Map.Entry entry : data.getEventMap().entrySet()) {<a name="line.431"></a>
-<FONT color="green">432</FONT>                        String key = entry.getKey().toString();<a name="line.432"></a>
-<FONT color="green">433</FONT>                        if (EventData.EVENT_TYPE.equals(key) || EventData.EVENT_ID.equals(key) ||<a name="line.433"></a>
-<FONT color="green">434</FONT>                            EventData.EVENT_MESSAGE.equals(key)) {<a name="line.434"></a>
-<FONT color="green">435</FONT>                            continue;<a name="line.435"></a>
-<FONT color="green">436</FONT>                        }<a name="line.436"></a>
-<FONT color="green">437</FONT>                        ((StructuredDataMessage) msg).put(entry.getKey().toString(), entry.getValue().toString());<a name="line.437"></a>
-<FONT color="green">438</FONT>                    }<a name="line.438"></a>
-<FONT color="green">439</FONT>                } catch (Exception ex) {<a name="line.439"></a>
-<FONT color="green">440</FONT>                    msg = new ParameterizedMessage(s1, objects, throwable);<a name="line.440"></a>
-<FONT color="green">441</FONT>                }<a name="line.441"></a>
-<FONT color="green">442</FONT>    <a name="line.442"></a>
-<FONT color="green">443</FONT>           } else if (objects == null) {<a name="line.443"></a>
-<FONT color="green">444</FONT>                msg = new SimpleMessage(s1);<a name="line.444"></a>
-<FONT color="green">445</FONT>            } else {<a name="line.445"></a>
-<FONT color="green">446</FONT>                msg = new ParameterizedMessage(s1, objects, throwable);<a name="line.446"></a>
-<FONT color="green">447</FONT>                if (throwable != null) {<a name="line.447"></a>
-<FONT color="green">448</FONT>                    throwable = ((ParameterizedMessage) msg).getThrowable();<a name="line.448"></a>
-<FONT color="green">449</FONT>                }<a name="line.449"></a>
-<FONT color="green">450</FONT>            }<a name="line.450"></a>
-<FONT color="green">451</FONT>            logger.log((org.apache.logging.log4j.Marker) marker, fqcn, getLevel(i), msg, throwable);<a name="line.451"></a>
-<FONT color="green">452</FONT>        }<a name="line.452"></a>
-<FONT color="green">453</FONT>    <a name="line.453"></a>
-<FONT color="green">454</FONT>        public String getName() {<a name="line.454"></a>
-<FONT color="green">455</FONT>            return name;<a name="line.455"></a>
-<FONT color="green">456</FONT>        }<a name="line.456"></a>
-<FONT color="green">457</FONT>    <a name="line.457"></a>
-<FONT color="green">458</FONT>        private Level getLevel(int i) {<a name="line.458"></a>
-<FONT color="green">459</FONT>    <a name="line.459"></a>
-<FONT color="green">460</FONT>            switch (i) {<a name="line.460"></a>
-<FONT color="green">461</FONT>                case TRACE_INT :<a name="line.461"></a>
-<FONT color="green">462</FONT>                    return Level.TRACE;<a name="line.462"></a>
-<FONT color="green">463</FONT>                case DEBUG_INT :<a name="line.463"></a>
-<FONT color="green">464</FONT>                    return Level.DEBUG;<a name="line.464"></a>
-<FONT color="green">465</FONT>                case INFO_INT :<a name="line.465"></a>
-<FONT color="green">466</FONT>                    return Level.INFO;<a name="line.466"></a>
-<FONT color="green">467</FONT>                case WARN_INT :<a name="line.467"></a>
-<FONT color="green">468</FONT>                    return Level.WARN;<a name="line.468"></a>
-<FONT color="green">469</FONT>                case ERROR_INT :<a name="line.469"></a>
-<FONT color="green">470</FONT>                    return Level.ERROR;<a name="line.470"></a>
-<FONT color="green">471</FONT>            }<a name="line.471"></a>
-<FONT color="green">472</FONT>            return Level.ERROR;<a name="line.472"></a>
-<FONT color="green">473</FONT>        }<a name="line.473"></a>
-<FONT color="green">474</FONT>    }<a name="line.474"></a>
+<FONT color="green">425</FONT>            if (!logger.isEnabled(getLevel(i), (org.apache.logging.log4j.Marker) marker, s1)) {<a name="line.425"></a>
+<FONT color="green">426</FONT>                return;<a name="line.426"></a>
+<FONT color="green">427</FONT>            }<a name="line.427"></a>
+<FONT color="green">428</FONT>            Message msg;<a name="line.428"></a>
+<FONT color="green">429</FONT>            if (eventLogger &amp;&amp; marker != null &amp;&amp; marker.contains(EVENT_MARKER)) {<a name="line.429"></a>
+<FONT color="green">430</FONT>                try {<a name="line.430"></a>
+<FONT color="green">431</FONT>                    EventData data = (objects != null &amp;&amp; objects[0] instanceof EventData) ? (EventData) objects[0] :<a name="line.431"></a>
+<FONT color="green">432</FONT>                        new EventData(s1);<a name="line.432"></a>
+<FONT color="green">433</FONT>                    msg = new StructuredDataMessage(data.getEventId(), data.getMessage(), data.getEventType());<a name="line.433"></a>
+<FONT color="green">434</FONT>                    for (Map.Entry entry : data.getEventMap().entrySet()) {<a name="line.434"></a>
+<FONT color="green">435</FONT>                        String key = entry.getKey().toString();<a name="line.435"></a>
+<FONT color="green">436</FONT>                        if (EventData.EVENT_TYPE.equals(key) || EventData.EVENT_ID.equals(key) ||<a name="line.436"></a>
+<FONT color="green">437</FONT>                            EventData.EVENT_MESSAGE.equals(key)) {<a name="line.437"></a>
+<FONT color="green">438</FONT>                            continue;<a name="line.438"></a>
+<FONT color="green">439</FONT>                        }<a name="line.439"></a>
+<FONT color="green">440</FONT>                        ((StructuredDataMessage) msg).put(entry.getKey().toString(), entry.getValue().toString());<a name="line.440"></a>
+<FONT color="green">441</FONT>                    }<a name="line.441"></a>
+<FONT color="green">442</FONT>                } catch (Exception ex) {<a name="line.442"></a>
+<FONT color="green">443</FONT>                    msg = new ParameterizedMessage(s1, objects, throwable);<a name="line.443"></a>
+<FONT color="green">444</FONT>                }<a name="line.444"></a>
+<FONT color="green">445</FONT>    <a name="line.445"></a>
+<FONT color="green">446</FONT>           } else if (objects == null) {<a name="line.446"></a>
+<FONT color="green">447</FONT>                msg = new SimpleMessage(s1);<a name="line.447"></a>
+<FONT color="green">448</FONT>            } else {<a name="line.448"></a>
+<FONT color="green">449</FONT>                msg = new ParameterizedMessage(s1, objects, throwable);<a name="line.449"></a>
+<FONT color="green">450</FONT>                if (throwable != null) {<a name="line.450"></a>
+<FONT color="green">451</FONT>                    throwable = ((ParameterizedMessage) msg).getThrowable();<a name="line.451"></a>
+<FONT color="green">452</FONT>                }<a name="line.452"></a>
+<FONT color="green">453</FONT>            }<a name="line.453"></a>
+<FONT color="green">454</FONT>            logger.log((org.apache.logging.log4j.Marker) marker, fqcn, getLevel(i), msg, throwable);<a name="line.454"></a>
+<FONT color="green">455</FONT>        }<a name="line.455"></a>
+<FONT color="green">456</FONT>    <a name="line.456"></a>
+<FONT color="green">457</FONT>        public String getName() {<a name="line.457"></a>
+<FONT color="green">458</FONT>            return name;<a name="line.458"></a>
+<FONT color="green">459</FONT>        }<a name="line.459"></a>
+<FONT color="green">460</FONT>    <a name="line.460"></a>
+<FONT color="green">461</FONT>        private Level getLevel(int i) {<a name="line.461"></a>
+<FONT color="green">462</FONT>    <a name="line.462"></a>
+<FONT color="green">463</FONT>            switch (i) {<a name="line.463"></a>
+<FONT color="green">464</FONT>                case TRACE_INT :<a name="line.464"></a>
+<FONT color="green">465</FONT>                    return Level.TRACE;<a name="line.465"></a>
+<FONT color="green">466</FONT>                case DEBUG_INT :<a name="line.466"></a>
+<FONT color="green">467</FONT>                    return Level.DEBUG;<a name="line.467"></a>
+<FONT color="green">468</FONT>                case INFO_INT :<a name="line.468"></a>
+<FONT color="green">469</FONT>                    return Level.INFO;<a name="line.469"></a>
+<FONT color="green">470</FONT>                case WARN_INT :<a name="line.470"></a>
+<FONT color="green">471</FONT>                    return Level.WARN;<a name="line.471"></a>
+<FONT color="green">472</FONT>                case ERROR_INT :<a name="line.472"></a>
+<FONT color="green">473</FONT>                    return Level.ERROR;<a name="line.473"></a>
+<FONT color="green">474</FONT>            }<a name="line.474"></a>
+<FONT color="green">475</FONT>            return Level.ERROR;<a name="line.475"></a>
+<FONT color="green">476</FONT>        }<a name="line.476"></a>
+<FONT color="green">477</FONT>    }<a name="line.477"></a>
 
 
 

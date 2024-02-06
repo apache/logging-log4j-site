@@ -432,56 +432,59 @@
 <a class="jxr_linenumber" name="422" href="#422">422</a> 
 <a class="jxr_linenumber" name="423" href="#423">423</a> 
 <a class="jxr_linenumber" name="424" href="#424">424</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> log(Marker marker, String fqcn, <strong class="jxr_keyword">int</strong> i, String s1, Object[] objects, Throwable throwable) {
-<a class="jxr_linenumber" name="425" href="#425">425</a>         Message msg;
-<a class="jxr_linenumber" name="426" href="#426">426</a>         <strong class="jxr_keyword">if</strong> (eventLogger &amp;&amp; marker != <strong class="jxr_keyword">null</strong> &amp;&amp; marker.contains(EVENT_MARKER)) {
-<a class="jxr_linenumber" name="427" href="#427">427</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="428" href="#428">428</a>                 EventData data = (objects != <strong class="jxr_keyword">null</strong> &amp;&amp; objects[0] instanceof EventData) ? (EventData) objects[0] :
-<a class="jxr_linenumber" name="429" href="#429">429</a>                     <strong class="jxr_keyword">new</strong> EventData(s1);
-<a class="jxr_linenumber" name="430" href="#430">430</a>                 msg = <strong class="jxr_keyword">new</strong> StructuredDataMessage(data.getEventId(), data.getMessage(), data.getEventType());
-<a class="jxr_linenumber" name="431" href="#431">431</a>                 <strong class="jxr_keyword">for</strong> (Map.Entry entry : data.getEventMap().entrySet()) {
-<a class="jxr_linenumber" name="432" href="#432">432</a>                     String key = entry.getKey().toString();
-<a class="jxr_linenumber" name="433" href="#433">433</a>                     <strong class="jxr_keyword">if</strong> (EventData.EVENT_TYPE.equals(key) || EventData.EVENT_ID.equals(key) ||
-<a class="jxr_linenumber" name="434" href="#434">434</a>                         EventData.EVENT_MESSAGE.equals(key)) {
-<a class="jxr_linenumber" name="435" href="#435">435</a>                         <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="436" href="#436">436</a>                     }
-<a class="jxr_linenumber" name="437" href="#437">437</a>                     ((StructuredDataMessage) msg).put(entry.getKey().toString(), entry.getValue().toString());
-<a class="jxr_linenumber" name="438" href="#438">438</a>                 }
-<a class="jxr_linenumber" name="439" href="#439">439</a>             } <strong class="jxr_keyword">catch</strong> (Exception ex) {
-<a class="jxr_linenumber" name="440" href="#440">440</a>                 msg = <strong class="jxr_keyword">new</strong> ParameterizedMessage(s1, objects, throwable);
-<a class="jxr_linenumber" name="441" href="#441">441</a>             }
-<a class="jxr_linenumber" name="442" href="#442">442</a> 
-<a class="jxr_linenumber" name="443" href="#443">443</a>        } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (objects == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="444" href="#444">444</a>             msg = <strong class="jxr_keyword">new</strong> SimpleMessage(s1);
-<a class="jxr_linenumber" name="445" href="#445">445</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="446" href="#446">446</a>             msg = <strong class="jxr_keyword">new</strong> ParameterizedMessage(s1, objects, throwable);
-<a class="jxr_linenumber" name="447" href="#447">447</a>             <strong class="jxr_keyword">if</strong> (throwable != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="448" href="#448">448</a>                 throwable = ((ParameterizedMessage) msg).getThrowable();
-<a class="jxr_linenumber" name="449" href="#449">449</a>             }
-<a class="jxr_linenumber" name="450" href="#450">450</a>         }
-<a class="jxr_linenumber" name="451" href="#451">451</a>         logger.log((org.apache.logging.log4j.Marker) marker, fqcn, getLevel(i), msg, throwable);
-<a class="jxr_linenumber" name="452" href="#452">452</a>     }
-<a class="jxr_linenumber" name="453" href="#453">453</a> 
-<a class="jxr_linenumber" name="454" href="#454">454</a>     <strong class="jxr_keyword">public</strong> String getName() {
-<a class="jxr_linenumber" name="455" href="#455">455</a>         <strong class="jxr_keyword">return</strong> name;
-<a class="jxr_linenumber" name="456" href="#456">456</a>     }
-<a class="jxr_linenumber" name="457" href="#457">457</a> 
-<a class="jxr_linenumber" name="458" href="#458">458</a>     <strong class="jxr_keyword">private</strong> Level getLevel(<strong class="jxr_keyword">int</strong> i) {
-<a class="jxr_linenumber" name="459" href="#459">459</a> 
-<a class="jxr_linenumber" name="460" href="#460">460</a>         <strong class="jxr_keyword">switch</strong> (i) {
-<a class="jxr_linenumber" name="461" href="#461">461</a>             <strong class="jxr_keyword">case</strong> TRACE_INT :
-<a class="jxr_linenumber" name="462" href="#462">462</a>                 <strong class="jxr_keyword">return</strong> Level.TRACE;
-<a class="jxr_linenumber" name="463" href="#463">463</a>             <strong class="jxr_keyword">case</strong> DEBUG_INT :
-<a class="jxr_linenumber" name="464" href="#464">464</a>                 <strong class="jxr_keyword">return</strong> Level.DEBUG;
-<a class="jxr_linenumber" name="465" href="#465">465</a>             <strong class="jxr_keyword">case</strong> INFO_INT :
-<a class="jxr_linenumber" name="466" href="#466">466</a>                 <strong class="jxr_keyword">return</strong> Level.INFO;
-<a class="jxr_linenumber" name="467" href="#467">467</a>             <strong class="jxr_keyword">case</strong> WARN_INT :
-<a class="jxr_linenumber" name="468" href="#468">468</a>                 <strong class="jxr_keyword">return</strong> Level.WARN;
-<a class="jxr_linenumber" name="469" href="#469">469</a>             <strong class="jxr_keyword">case</strong> ERROR_INT :
-<a class="jxr_linenumber" name="470" href="#470">470</a>                 <strong class="jxr_keyword">return</strong> Level.ERROR;
-<a class="jxr_linenumber" name="471" href="#471">471</a>         }
-<a class="jxr_linenumber" name="472" href="#472">472</a>         <strong class="jxr_keyword">return</strong> Level.ERROR;
-<a class="jxr_linenumber" name="473" href="#473">473</a>     }
-<a class="jxr_linenumber" name="474" href="#474">474</a> }
+<a class="jxr_linenumber" name="425" href="#425">425</a>         <strong class="jxr_keyword">if</strong> (!logger.isEnabled(getLevel(i), (org.apache.logging.log4j.Marker) marker, s1)) {
+<a class="jxr_linenumber" name="426" href="#426">426</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="427" href="#427">427</a>         }
+<a class="jxr_linenumber" name="428" href="#428">428</a>         Message msg;
+<a class="jxr_linenumber" name="429" href="#429">429</a>         <strong class="jxr_keyword">if</strong> (eventLogger &amp;&amp; marker != <strong class="jxr_keyword">null</strong> &amp;&amp; marker.contains(EVENT_MARKER)) {
+<a class="jxr_linenumber" name="430" href="#430">430</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="431" href="#431">431</a>                 EventData data = (objects != <strong class="jxr_keyword">null</strong> &amp;&amp; objects[0] instanceof EventData) ? (EventData) objects[0] :
+<a class="jxr_linenumber" name="432" href="#432">432</a>                     <strong class="jxr_keyword">new</strong> EventData(s1);
+<a class="jxr_linenumber" name="433" href="#433">433</a>                 msg = <strong class="jxr_keyword">new</strong> StructuredDataMessage(data.getEventId(), data.getMessage(), data.getEventType());
+<a class="jxr_linenumber" name="434" href="#434">434</a>                 <strong class="jxr_keyword">for</strong> (Map.Entry entry : data.getEventMap().entrySet()) {
+<a class="jxr_linenumber" name="435" href="#435">435</a>                     String key = entry.getKey().toString();
+<a class="jxr_linenumber" name="436" href="#436">436</a>                     <strong class="jxr_keyword">if</strong> (EventData.EVENT_TYPE.equals(key) || EventData.EVENT_ID.equals(key) ||
+<a class="jxr_linenumber" name="437" href="#437">437</a>                         EventData.EVENT_MESSAGE.equals(key)) {
+<a class="jxr_linenumber" name="438" href="#438">438</a>                         <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="439" href="#439">439</a>                     }
+<a class="jxr_linenumber" name="440" href="#440">440</a>                     ((StructuredDataMessage) msg).put(entry.getKey().toString(), entry.getValue().toString());
+<a class="jxr_linenumber" name="441" href="#441">441</a>                 }
+<a class="jxr_linenumber" name="442" href="#442">442</a>             } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="443" href="#443">443</a>                 msg = <strong class="jxr_keyword">new</strong> ParameterizedMessage(s1, objects, throwable);
+<a class="jxr_linenumber" name="444" href="#444">444</a>             }
+<a class="jxr_linenumber" name="445" href="#445">445</a> 
+<a class="jxr_linenumber" name="446" href="#446">446</a>        } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (objects == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="447" href="#447">447</a>             msg = <strong class="jxr_keyword">new</strong> SimpleMessage(s1);
+<a class="jxr_linenumber" name="448" href="#448">448</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="449" href="#449">449</a>             msg = <strong class="jxr_keyword">new</strong> ParameterizedMessage(s1, objects, throwable);
+<a class="jxr_linenumber" name="450" href="#450">450</a>             <strong class="jxr_keyword">if</strong> (throwable != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="451" href="#451">451</a>                 throwable = ((ParameterizedMessage) msg).getThrowable();
+<a class="jxr_linenumber" name="452" href="#452">452</a>             }
+<a class="jxr_linenumber" name="453" href="#453">453</a>         }
+<a class="jxr_linenumber" name="454" href="#454">454</a>         logger.log((org.apache.logging.log4j.Marker) marker, fqcn, getLevel(i), msg, throwable);
+<a class="jxr_linenumber" name="455" href="#455">455</a>     }
+<a class="jxr_linenumber" name="456" href="#456">456</a> 
+<a class="jxr_linenumber" name="457" href="#457">457</a>     <strong class="jxr_keyword">public</strong> String getName() {
+<a class="jxr_linenumber" name="458" href="#458">458</a>         <strong class="jxr_keyword">return</strong> name;
+<a class="jxr_linenumber" name="459" href="#459">459</a>     }
+<a class="jxr_linenumber" name="460" href="#460">460</a> 
+<a class="jxr_linenumber" name="461" href="#461">461</a>     <strong class="jxr_keyword">private</strong> Level getLevel(<strong class="jxr_keyword">int</strong> i) {
+<a class="jxr_linenumber" name="462" href="#462">462</a> 
+<a class="jxr_linenumber" name="463" href="#463">463</a>         <strong class="jxr_keyword">switch</strong> (i) {
+<a class="jxr_linenumber" name="464" href="#464">464</a>             <strong class="jxr_keyword">case</strong> TRACE_INT :
+<a class="jxr_linenumber" name="465" href="#465">465</a>                 <strong class="jxr_keyword">return</strong> Level.TRACE;
+<a class="jxr_linenumber" name="466" href="#466">466</a>             <strong class="jxr_keyword">case</strong> DEBUG_INT :
+<a class="jxr_linenumber" name="467" href="#467">467</a>                 <strong class="jxr_keyword">return</strong> Level.DEBUG;
+<a class="jxr_linenumber" name="468" href="#468">468</a>             <strong class="jxr_keyword">case</strong> INFO_INT :
+<a class="jxr_linenumber" name="469" href="#469">469</a>                 <strong class="jxr_keyword">return</strong> Level.INFO;
+<a class="jxr_linenumber" name="470" href="#470">470</a>             <strong class="jxr_keyword">case</strong> WARN_INT :
+<a class="jxr_linenumber" name="471" href="#471">471</a>                 <strong class="jxr_keyword">return</strong> Level.WARN;
+<a class="jxr_linenumber" name="472" href="#472">472</a>             <strong class="jxr_keyword">case</strong> ERROR_INT :
+<a class="jxr_linenumber" name="473" href="#473">473</a>                 <strong class="jxr_keyword">return</strong> Level.ERROR;
+<a class="jxr_linenumber" name="474" href="#474">474</a>         }
+<a class="jxr_linenumber" name="475" href="#475">475</a>         <strong class="jxr_keyword">return</strong> Level.ERROR;
+<a class="jxr_linenumber" name="476" href="#476">476</a>     }
+<a class="jxr_linenumber" name="477" href="#477">477</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

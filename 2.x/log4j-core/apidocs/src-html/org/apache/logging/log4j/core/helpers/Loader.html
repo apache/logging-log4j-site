@@ -222,41 +222,61 @@
 <FONT color="green">219</FONT>            }<a name="line.219"></a>
 <FONT color="green">220</FONT>        }<a name="line.220"></a>
 <FONT color="green">221</FONT>    <a name="line.221"></a>
-<FONT color="green">222</FONT>        /**<a name="line.222"></a>
-<FONT color="green">223</FONT>         * Return the ClassLoader to use.<a name="line.223"></a>
-<FONT color="green">224</FONT>         * @return the ClassLoader.<a name="line.224"></a>
-<FONT color="green">225</FONT>         */<a name="line.225"></a>
-<FONT color="green">226</FONT>        public static ClassLoader getClassLoader() {<a name="line.226"></a>
-<FONT color="green">227</FONT>            ClassLoader cl = null;<a name="line.227"></a>
-<FONT color="green">228</FONT>    <a name="line.228"></a>
-<FONT color="green">229</FONT>            try {<a name="line.229"></a>
-<FONT color="green">230</FONT>                cl = getTCL();<a name="line.230"></a>
-<FONT color="green">231</FONT>            } catch (Exception ex) {<a name="line.231"></a>
-<FONT color="green">232</FONT>                // Ignore the exception. The ClassLoader will be located.<a name="line.232"></a>
-<FONT color="green">233</FONT>            }<a name="line.233"></a>
-<FONT color="green">234</FONT>            if (cl == null) {<a name="line.234"></a>
-<FONT color="green">235</FONT>                cl = Loader.getClassLoader();<a name="line.235"></a>
-<FONT color="green">236</FONT>            }<a name="line.236"></a>
-<FONT color="green">237</FONT>            return cl;<a name="line.237"></a>
+<FONT color="green">222</FONT>        public static ClassLoader getClassLoader(Class class1, Class class2) {<a name="line.222"></a>
+<FONT color="green">223</FONT>    <a name="line.223"></a>
+<FONT color="green">224</FONT>            ClassLoader loader1 = null;<a name="line.224"></a>
+<FONT color="green">225</FONT>            try {<a name="line.225"></a>
+<FONT color="green">226</FONT>                loader1 = getTCL();<a name="line.226"></a>
+<FONT color="green">227</FONT>            } catch (Exception ex) {<a name="line.227"></a>
+<FONT color="green">228</FONT>                LOGGER.warn("Caught exception locating thread ClassLoader {}", ex.getMessage());<a name="line.228"></a>
+<FONT color="green">229</FONT>            }<a name="line.229"></a>
+<FONT color="green">230</FONT>            ClassLoader loader2 = class1 == null ? null : class1.getClassLoader();<a name="line.230"></a>
+<FONT color="green">231</FONT>            ClassLoader loader3 = class2 == null ? null : class2.getClass().getClassLoader();<a name="line.231"></a>
+<FONT color="green">232</FONT>    <a name="line.232"></a>
+<FONT color="green">233</FONT>            if (isChild(loader1, loader2)) {<a name="line.233"></a>
+<FONT color="green">234</FONT>                return isChild(loader1, loader3) ? loader1 : loader3;<a name="line.234"></a>
+<FONT color="green">235</FONT>            } else {<a name="line.235"></a>
+<FONT color="green">236</FONT>                return isChild(loader2, loader3) ? loader2 : loader3;<a name="line.236"></a>
+<FONT color="green">237</FONT>            }<a name="line.237"></a>
 <FONT color="green">238</FONT>        }<a name="line.238"></a>
 <FONT color="green">239</FONT>    <a name="line.239"></a>
-<FONT color="green">240</FONT>        private static ClassLoader getTCL() throws IllegalAccessException, InvocationTargetException {<a name="line.240"></a>
-<FONT color="green">241</FONT>            ClassLoader cl;<a name="line.241"></a>
-<FONT color="green">242</FONT>            if (System.getSecurityManager() == null) {<a name="line.242"></a>
-<FONT color="green">243</FONT>                cl = Thread.currentThread().getContextClassLoader();<a name="line.243"></a>
-<FONT color="green">244</FONT>            } else {<a name="line.244"></a>
-<FONT color="green">245</FONT>                cl = (ClassLoader) java.security.AccessController.doPrivileged(<a name="line.245"></a>
-<FONT color="green">246</FONT>                    new java.security.PrivilegedAction() {<a name="line.246"></a>
-<FONT color="green">247</FONT>                        public Object run() {<a name="line.247"></a>
-<FONT color="green">248</FONT>                            return Thread.currentThread().getContextClassLoader();<a name="line.248"></a>
-<FONT color="green">249</FONT>                        }<a name="line.249"></a>
-<FONT color="green">250</FONT>                    }<a name="line.250"></a>
-<FONT color="green">251</FONT>                );<a name="line.251"></a>
-<FONT color="green">252</FONT>            }<a name="line.252"></a>
-<FONT color="green">253</FONT>    <a name="line.253"></a>
-<FONT color="green">254</FONT>            return cl;<a name="line.254"></a>
-<FONT color="green">255</FONT>        }<a name="line.255"></a>
-<FONT color="green">256</FONT>    }<a name="line.256"></a>
+<FONT color="green">240</FONT>        private static boolean isChild(ClassLoader loader1, ClassLoader loader2) {<a name="line.240"></a>
+<FONT color="green">241</FONT>            if (loader1 != null &amp;&amp; loader2 != null) {<a name="line.241"></a>
+<FONT color="green">242</FONT>                ClassLoader parent = loader1.getParent();<a name="line.242"></a>
+<FONT color="green">243</FONT>                while (parent != null &amp;&amp; parent != loader2) {<a name="line.243"></a>
+<FONT color="green">244</FONT>                    parent = parent.getParent();<a name="line.244"></a>
+<FONT color="green">245</FONT>                }<a name="line.245"></a>
+<FONT color="green">246</FONT>                return parent != null;<a name="line.246"></a>
+<FONT color="green">247</FONT>            }<a name="line.247"></a>
+<FONT color="green">248</FONT>            return loader1 != null;<a name="line.248"></a>
+<FONT color="green">249</FONT>        }<a name="line.249"></a>
+<FONT color="green">250</FONT>    <a name="line.250"></a>
+<FONT color="green">251</FONT>        /**<a name="line.251"></a>
+<FONT color="green">252</FONT>         * Return the ClassLoader to use.<a name="line.252"></a>
+<FONT color="green">253</FONT>         * @return the ClassLoader.<a name="line.253"></a>
+<FONT color="green">254</FONT>         */<a name="line.254"></a>
+<FONT color="green">255</FONT>        public static ClassLoader getClassLoader() {<a name="line.255"></a>
+<FONT color="green">256</FONT>    <a name="line.256"></a>
+<FONT color="green">257</FONT>            return getClassLoader(Loader.class, null);<a name="line.257"></a>
+<FONT color="green">258</FONT>        }<a name="line.258"></a>
+<FONT color="green">259</FONT>    <a name="line.259"></a>
+<FONT color="green">260</FONT>        private static ClassLoader getTCL() throws IllegalAccessException, InvocationTargetException {<a name="line.260"></a>
+<FONT color="green">261</FONT>            ClassLoader cl;<a name="line.261"></a>
+<FONT color="green">262</FONT>            if (System.getSecurityManager() == null) {<a name="line.262"></a>
+<FONT color="green">263</FONT>                cl = Thread.currentThread().getContextClassLoader();<a name="line.263"></a>
+<FONT color="green">264</FONT>            } else {<a name="line.264"></a>
+<FONT color="green">265</FONT>                cl = (ClassLoader) java.security.AccessController.doPrivileged(<a name="line.265"></a>
+<FONT color="green">266</FONT>                    new java.security.PrivilegedAction() {<a name="line.266"></a>
+<FONT color="green">267</FONT>                        public Object run() {<a name="line.267"></a>
+<FONT color="green">268</FONT>                            return Thread.currentThread().getContextClassLoader();<a name="line.268"></a>
+<FONT color="green">269</FONT>                        }<a name="line.269"></a>
+<FONT color="green">270</FONT>                    }<a name="line.270"></a>
+<FONT color="green">271</FONT>                );<a name="line.271"></a>
+<FONT color="green">272</FONT>            }<a name="line.272"></a>
+<FONT color="green">273</FONT>    <a name="line.273"></a>
+<FONT color="green">274</FONT>            return cl;<a name="line.274"></a>
+<FONT color="green">275</FONT>        }<a name="line.275"></a>
+<FONT color="green">276</FONT>    }<a name="line.276"></a>
 
 
 

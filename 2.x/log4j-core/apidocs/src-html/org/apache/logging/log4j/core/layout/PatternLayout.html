@@ -28,7 +28,7 @@
 <FONT color="green">025</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.25"></a>
 <FONT color="green">026</FONT>    import org.apache.logging.log4j.core.helpers.OptionConverter;<a name="line.26"></a>
 <FONT color="green">027</FONT>    import org.apache.logging.log4j.core.pattern.LogEventPatternConverter;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import org.apache.logging.log4j.core.pattern.PatternConverter;<a name="line.28"></a>
+<FONT color="green">028</FONT>    import org.apache.logging.log4j.core.pattern.PatternFormatter;<a name="line.28"></a>
 <FONT color="green">029</FONT>    import org.apache.logging.log4j.core.pattern.PatternParser;<a name="line.29"></a>
 <FONT color="green">030</FONT>    import org.apache.logging.log4j.core.pattern.RegexReplacement;<a name="line.30"></a>
 <FONT color="green">031</FONT>    <a name="line.31"></a>
@@ -76,7 +76,7 @@
 <FONT color="green">073</FONT>        /**<a name="line.73"></a>
 <FONT color="green">074</FONT>         * Initial converter for pattern.<a name="line.74"></a>
 <FONT color="green">075</FONT>         */<a name="line.75"></a>
-<FONT color="green">076</FONT>        private List&lt;PatternConverter&gt; converters;<a name="line.76"></a>
+<FONT color="green">076</FONT>        private List&lt;PatternFormatter&gt; formatters;<a name="line.76"></a>
 <FONT color="green">077</FONT>    <a name="line.77"></a>
 <FONT color="green">078</FONT>        /**<a name="line.78"></a>
 <FONT color="green">079</FONT>         * Conversion pattern.<a name="line.79"></a>
@@ -110,7 +110,7 @@
 <FONT color="green">107</FONT>            this.conversionPattern = pattern;<a name="line.107"></a>
 <FONT color="green">108</FONT>            this.config = config;<a name="line.108"></a>
 <FONT color="green">109</FONT>            PatternParser parser = createPatternParser(config);<a name="line.109"></a>
-<FONT color="green">110</FONT>            converters = parser.parse((pattern == null) ? DEFAULT_CONVERSION_PATTERN : pattern);<a name="line.110"></a>
+<FONT color="green">110</FONT>            formatters = parser.parse((pattern == null) ? DEFAULT_CONVERSION_PATTERN : pattern);<a name="line.110"></a>
 <FONT color="green">111</FONT>            handlesExceptions = parser.handlesExceptions();<a name="line.111"></a>
 <FONT color="green">112</FONT>    <a name="line.112"></a>
 <FONT color="green">113</FONT>        }<a name="line.113"></a>
@@ -128,7 +128,7 @@
 <FONT color="green">125</FONT>                return;<a name="line.125"></a>
 <FONT color="green">126</FONT>            }<a name="line.126"></a>
 <FONT color="green">127</FONT>            PatternParser parser = createPatternParser(this.config);<a name="line.127"></a>
-<FONT color="green">128</FONT>            converters = parser.parse(pattern);<a name="line.128"></a>
+<FONT color="green">128</FONT>            formatters = parser.parse(pattern);<a name="line.128"></a>
 <FONT color="green">129</FONT>            handlesExceptions = parser.handlesExceptions();<a name="line.129"></a>
 <FONT color="green">130</FONT>        }<a name="line.130"></a>
 <FONT color="green">131</FONT>    <a name="line.131"></a>
@@ -140,8 +140,8 @@
 <FONT color="green">137</FONT>         */<a name="line.137"></a>
 <FONT color="green">138</FONT>        public String formatAs(final LogEvent event) {<a name="line.138"></a>
 <FONT color="green">139</FONT>            StringBuilder buf = new StringBuilder();<a name="line.139"></a>
-<FONT color="green">140</FONT>            for (PatternConverter c : converters) {<a name="line.140"></a>
-<FONT color="green">141</FONT>                c.format(event, buf);<a name="line.141"></a>
+<FONT color="green">140</FONT>            for (PatternFormatter formatter : formatters) {<a name="line.140"></a>
+<FONT color="green">141</FONT>                formatter.format(event, buf);<a name="line.141"></a>
 <FONT color="green">142</FONT>            }<a name="line.142"></a>
 <FONT color="green">143</FONT>            String str = buf.toString();<a name="line.143"></a>
 <FONT color="green">144</FONT>            if (replace != null) {<a name="line.144"></a>

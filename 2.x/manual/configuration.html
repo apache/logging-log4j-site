@@ -17,7 +17,7 @@
 
     
             <meta name="author" content="Ralph Goers" />
-                    <meta name="Date-Revision-yyyymmdd" content="20120824" />
+                    <meta name="Date-Revision-yyyymmdd" content="20120921" />
                 <meta http-equiv="Content-Language" content="en" />
                 </head>
         <body class="topBarDisabled">
@@ -43,8 +43,8 @@
         <ul class="breadcrumb">
                         
                         
-                            <li id="publishDate">Last Published: 2012-08-24</li>
-                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-alpha2</li>
+                            <li id="publishDate">Last Published: 2012-09-21</li>
+                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta1</li>
                                     
                         
                         
@@ -94,6 +94,9 @@
                   <li class="none">
                                                 <a href="../manual/architecture.html" title="Architecture">Architecture</a>
                     </li>
+                  <li class="none">
+                                                <a href="../manual/migration.html" title="Log4j 1.x Migration">Log4j 1.x Migration</a>
+                    </li>
                                                                                                                                                                                                                                                                                                                                                                                                               <li class="collapsed">
                                                 <a href="../manual/api.html" title="API">API</a>
                                 </li>
@@ -129,7 +132,7 @@
                                                                                                                                                                                                                                                                                                                                                                                                               <li class="collapsed">
                                                 <a href="../manual/lookups.html" title="Lookups">Lookups</a>
                                 </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <li class="collapsed">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <li class="collapsed">
                                                 <a href="../manual/appenders.html" title="Appenders">Appenders</a>
                                 </li>
                                                                                                                                                                                                                                                                                                                                                                                                               <li class="collapsed">
@@ -147,18 +150,6 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <li class="collapsed">
                                                 <a href="../manual/extending.html" title="Extending Log4j">Extending Log4j</a>
                                 </li>
-              </ul>
-                                                                <h3>Logging Adapters</h3>
-                                                    <ul>
-                        <li class="none">
-                                                <a href="../log4j12-api/api.html" title="Log4j 1.x API">Log4j 1.x API</a>
-                    </li>
-                  <li class="none">
-                                                <a href="../log4j2-jcl/api.html" title="Commons Logging">Commons Logging</a>
-                    </li>
-                  <li class="none">
-                                                <a href="../slf4j-impl/api.html" title="SLF4J">SLF4J</a>
-                    </li>
               </ul>
                                                                 <h3>Components</h3>
                                                     <ul>
@@ -179,6 +170,9 @@
                     </li>
                   <li class="none">
                                                 <a href="../log4j-flume-ng/index.html" title="Apache Flume">Apache Flume</a>
+                    </li>
+                  <li class="none">
+                                                <a href="../log4j-web/index.html" title="Log4j Web">Log4j Web</a>
                     </li>
               </ul>
                                                                                                         <h3>Site Documentation</h3>
@@ -296,7 +290,7 @@
    if (!bar.doIt() {
      logger.error(&quot;Didn't do it.&quot;);
    }
-   logger.trace(&quot;Exiting application.&quot;                 }
+   logger.trace(&quot;Exiting application.&quot;);                 }
  }</pre></div>
           
           <p>
@@ -317,8 +311,7 @@
     public boolean doIt() {
       logger.entry();
       logger.error(&quot;Did it again!&quot;);
-      logger.exit();
-      return false;
+      return logger.exit(false);
     }
   }</pre></div>
           
@@ -361,7 +354,7 @@
   17:13:01.540 [main] TRACE MyApp - Entering application.
   17:13:01.540 [main] TRACE com.foo.Bar - entry
   17:13:01.540 [main] ERROR com.foo.Bar - Did it again!
-  17:13:01.540 [main] TRACE com.foo.Bar - exit
+  17:13:01.540 [main] TRACE com.foo.Bar - exit with (false)
   17:13:01.540 [main] ERROR MyApp - Didn't do it.
   17:13:01.540 [main] TRACE MyApp - Exiting application.</pre></div>
           
@@ -410,8 +403,8 @@
   17:13:01.540 [main] TRACE com.foo.Bar - entry
   17:13:01.540 [main] TRACE com.foo.Bar - entry
   17:13:01.540 [main] ERROR com.foo.Bar - Did it again!
-  17:13:01.540 [main] TRACE com.foo.Bar - exit
-  17:13:01.540 [main] TRACE com.foo.Bar - exit
+  17:13:01.540 [main] TRACE com.foo.Bar - exit (false)
+  17:13:01.540 [main] TRACE com.foo.Bar - exit (false)
   17:13:01.540 [main] ERROR MyApp - Didn't do it.</pre></div>
           <p>Notice that the trace messages from com.foo.Bar appear twice. This is because the appender associated
             with logger com.foo.Bar is first used, which writes the first instance to the Console. Next, the parent
@@ -450,7 +443,7 @@
             and is set to a non-zero value then the file will be checked the next time a log event is evaluated
             and/or logged and the monitorInterval has elapsed since the last check. The example below shows how
             to configure the attribute so that the configuration file will be checked for changes only after at
-            least 30 seconds have elapsed.  The minimum, and default, interval is 30 seconds.
+            least 30 seconds have elapsed.  The minimum interval is 5 seconds.
           </p>
           <div class="source"><pre class="prettyprint">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;configuration monitorInterval=&quot;30&quot;&gt;
@@ -726,6 +719,20 @@
     }
   }
 }</pre></div>
+          <p>
+            The JSON support uses Jackson to parse the JSON files. These dependencies must be added to a project
+            that wants to use JSON for configuration:
+          </p><div class="source"><pre class="prettyprint">    &lt;dependency&gt;
+      &lt;groupId&gt;org.codehaus.jackson&lt;/groupId&gt;
+      &lt;artifactId&gt;jackson-core-asl&lt;/artifactId&gt;
+      &lt;version&gt;1.9.2&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.codehaus.jackson&lt;/groupId&gt;
+      &lt;artifactId&gt;jackson-mapper-asl&lt;/artifactId&gt;
+      &lt;version&gt;1.9.2&lt;/version&gt;
+    &lt;/dependency&gt;</pre></div>
+          
           </div><div class="section"><h4>Configuring loggers<a name="Configuring_loggers"></a></h4>
           <p>
             An understanding of how loggers work in Log4j is critical before trying to configure them.
@@ -907,20 +914,24 @@
                 <td>Thread Context Map (MDC)</td>
               </tr>
               <tr class="a">
+                <td>date</td>
+                <td>Inserts the current date and/or time using the specified format</td>
+              </tr>
+              <tr class="b">
                 <td>env</td>
                 <td>System environment variables</td>
               </tr>
-              <tr class="b">
+              <tr class="a">
                 <td>map</td>
                 <td>A value from a MapMessage</td>
               </tr>
-              <tr class="a">
+              <tr class="b">
                 <td>sd</td>
                 <td>A value from a StructuredDataMessage. The key &quot;id&quot; will return the name of the StructuredDataId
                   without the enterprise number. The key &quot;type&quot; will return the message type. Other keys will
                   retrieve individual elements from the Map.</td>
               </tr>
-              <tr class="b">
+              <tr class="a">
                 <td>sys</td>
                 <td>System properties</td>
               </tr>

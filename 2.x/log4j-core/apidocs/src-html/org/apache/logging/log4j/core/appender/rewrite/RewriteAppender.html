@@ -72,55 +72,52 @@
 <FONT color="green">069</FONT>        @Override<a name="line.69"></a>
 <FONT color="green">070</FONT>        public void stop() {<a name="line.70"></a>
 <FONT color="green">071</FONT>            super.stop();<a name="line.71"></a>
-<FONT color="green">072</FONT>            for (AppenderControl control : appenders.values()) {<a name="line.72"></a>
-<FONT color="green">073</FONT>                control.getAppender().stop();<a name="line.73"></a>
-<FONT color="green">074</FONT>            }<a name="line.74"></a>
-<FONT color="green">075</FONT>        }<a name="line.75"></a>
-<FONT color="green">076</FONT>    <a name="line.76"></a>
-<FONT color="green">077</FONT>        /**<a name="line.77"></a>
-<FONT color="green">078</FONT>         * Modify the event and pass to the subordinate Appenders.<a name="line.78"></a>
-<FONT color="green">079</FONT>         * @param event The LogEvent.<a name="line.79"></a>
-<FONT color="green">080</FONT>         */<a name="line.80"></a>
-<FONT color="green">081</FONT>        public void append(LogEvent event) {<a name="line.81"></a>
-<FONT color="green">082</FONT>            if (rewritePolicy != null) {<a name="line.82"></a>
-<FONT color="green">083</FONT>                event = rewritePolicy.rewrite(event);<a name="line.83"></a>
+<FONT color="green">072</FONT>        }<a name="line.72"></a>
+<FONT color="green">073</FONT>    <a name="line.73"></a>
+<FONT color="green">074</FONT>        /**<a name="line.74"></a>
+<FONT color="green">075</FONT>         * Modify the event and pass to the subordinate Appenders.<a name="line.75"></a>
+<FONT color="green">076</FONT>         * @param event The LogEvent.<a name="line.76"></a>
+<FONT color="green">077</FONT>         */<a name="line.77"></a>
+<FONT color="green">078</FONT>        public void append(LogEvent event) {<a name="line.78"></a>
+<FONT color="green">079</FONT>            if (rewritePolicy != null) {<a name="line.79"></a>
+<FONT color="green">080</FONT>                event = rewritePolicy.rewrite(event);<a name="line.80"></a>
+<FONT color="green">081</FONT>            }<a name="line.81"></a>
+<FONT color="green">082</FONT>            for (AppenderControl control : appenders.values()) {<a name="line.82"></a>
+<FONT color="green">083</FONT>                control.callAppender(event);<a name="line.83"></a>
 <FONT color="green">084</FONT>            }<a name="line.84"></a>
-<FONT color="green">085</FONT>            for (AppenderControl control : appenders.values()) {<a name="line.85"></a>
-<FONT color="green">086</FONT>                control.callAppender(event);<a name="line.86"></a>
-<FONT color="green">087</FONT>            }<a name="line.87"></a>
-<FONT color="green">088</FONT>        }<a name="line.88"></a>
-<FONT color="green">089</FONT>    <a name="line.89"></a>
-<FONT color="green">090</FONT>        /**<a name="line.90"></a>
-<FONT color="green">091</FONT>         * Create a RewriteAppender.<a name="line.91"></a>
-<FONT color="green">092</FONT>         * @param name The name of the Appender.<a name="line.92"></a>
-<FONT color="green">093</FONT>         * @param suppress If true, exceptions will be handled in the Appender.<a name="line.93"></a>
-<FONT color="green">094</FONT>         * @param appenderRefs An array of Appender names to call.<a name="line.94"></a>
-<FONT color="green">095</FONT>         * @param config The Configuration.<a name="line.95"></a>
-<FONT color="green">096</FONT>         * @param rewritePolicy The policy to use to modify the event.<a name="line.96"></a>
-<FONT color="green">097</FONT>         * @param filter A Filter to filter events.<a name="line.97"></a>
-<FONT color="green">098</FONT>         * @return The created RewriteAppender.<a name="line.98"></a>
-<FONT color="green">099</FONT>         */<a name="line.99"></a>
-<FONT color="green">100</FONT>        @PluginFactory<a name="line.100"></a>
-<FONT color="green">101</FONT>        public static RewriteAppender createAppender(@PluginAttr("name") String name,<a name="line.101"></a>
-<FONT color="green">102</FONT>                                              @PluginAttr("suppressExceptions") String suppress,<a name="line.102"></a>
-<FONT color="green">103</FONT>                                              @PluginElement("appender-ref") AppenderRef[] appenderRefs,<a name="line.103"></a>
-<FONT color="green">104</FONT>                                              @PluginConfiguration Configuration config,<a name="line.104"></a>
-<FONT color="green">105</FONT>                                              @PluginElement("rewritePolicy") RewritePolicy rewritePolicy,<a name="line.105"></a>
-<FONT color="green">106</FONT>                                              @PluginElement("filter") Filter filter) {<a name="line.106"></a>
-<FONT color="green">107</FONT>    <a name="line.107"></a>
-<FONT color="green">108</FONT>            boolean handleExceptions = suppress == null ? true : Boolean.valueOf(suppress);<a name="line.108"></a>
-<FONT color="green">109</FONT>    <a name="line.109"></a>
-<FONT color="green">110</FONT>            if (name == null) {<a name="line.110"></a>
-<FONT color="green">111</FONT>                LOGGER.error("No name provided for RewriteAppender");<a name="line.111"></a>
-<FONT color="green">112</FONT>                return null;<a name="line.112"></a>
-<FONT color="green">113</FONT>            }<a name="line.113"></a>
-<FONT color="green">114</FONT>            if (appenderRefs == null) {<a name="line.114"></a>
-<FONT color="green">115</FONT>                LOGGER.error("No appender references defined for RewriteAppender");<a name="line.115"></a>
-<FONT color="green">116</FONT>                return null;<a name="line.116"></a>
-<FONT color="green">117</FONT>            }<a name="line.117"></a>
-<FONT color="green">118</FONT>            return new RewriteAppender(name, filter, handleExceptions, appenderRefs, rewritePolicy, config);<a name="line.118"></a>
-<FONT color="green">119</FONT>        }<a name="line.119"></a>
-<FONT color="green">120</FONT>    }<a name="line.120"></a>
+<FONT color="green">085</FONT>        }<a name="line.85"></a>
+<FONT color="green">086</FONT>    <a name="line.86"></a>
+<FONT color="green">087</FONT>        /**<a name="line.87"></a>
+<FONT color="green">088</FONT>         * Create a RewriteAppender.<a name="line.88"></a>
+<FONT color="green">089</FONT>         * @param name The name of the Appender.<a name="line.89"></a>
+<FONT color="green">090</FONT>         * @param suppress If true, exceptions will be handled in the Appender.<a name="line.90"></a>
+<FONT color="green">091</FONT>         * @param appenderRefs An array of Appender names to call.<a name="line.91"></a>
+<FONT color="green">092</FONT>         * @param config The Configuration.<a name="line.92"></a>
+<FONT color="green">093</FONT>         * @param rewritePolicy The policy to use to modify the event.<a name="line.93"></a>
+<FONT color="green">094</FONT>         * @param filter A Filter to filter events.<a name="line.94"></a>
+<FONT color="green">095</FONT>         * @return The created RewriteAppender.<a name="line.95"></a>
+<FONT color="green">096</FONT>         */<a name="line.96"></a>
+<FONT color="green">097</FONT>        @PluginFactory<a name="line.97"></a>
+<FONT color="green">098</FONT>        public static RewriteAppender createAppender(@PluginAttr("name") String name,<a name="line.98"></a>
+<FONT color="green">099</FONT>                                              @PluginAttr("suppressExceptions") String suppress,<a name="line.99"></a>
+<FONT color="green">100</FONT>                                              @PluginElement("appender-ref") AppenderRef[] appenderRefs,<a name="line.100"></a>
+<FONT color="green">101</FONT>                                              @PluginConfiguration Configuration config,<a name="line.101"></a>
+<FONT color="green">102</FONT>                                              @PluginElement("rewritePolicy") RewritePolicy rewritePolicy,<a name="line.102"></a>
+<FONT color="green">103</FONT>                                              @PluginElement("filter") Filter filter) {<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>            boolean handleExceptions = suppress == null ? true : Boolean.valueOf(suppress);<a name="line.105"></a>
+<FONT color="green">106</FONT>    <a name="line.106"></a>
+<FONT color="green">107</FONT>            if (name == null) {<a name="line.107"></a>
+<FONT color="green">108</FONT>                LOGGER.error("No name provided for RewriteAppender");<a name="line.108"></a>
+<FONT color="green">109</FONT>                return null;<a name="line.109"></a>
+<FONT color="green">110</FONT>            }<a name="line.110"></a>
+<FONT color="green">111</FONT>            if (appenderRefs == null) {<a name="line.111"></a>
+<FONT color="green">112</FONT>                LOGGER.error("No appender references defined for RewriteAppender");<a name="line.112"></a>
+<FONT color="green">113</FONT>                return null;<a name="line.113"></a>
+<FONT color="green">114</FONT>            }<a name="line.114"></a>
+<FONT color="green">115</FONT>            return new RewriteAppender(name, filter, handleExceptions, appenderRefs, rewritePolicy, config);<a name="line.115"></a>
+<FONT color="green">116</FONT>        }<a name="line.116"></a>
+<FONT color="green">117</FONT>    }<a name="line.117"></a>
 
 
 

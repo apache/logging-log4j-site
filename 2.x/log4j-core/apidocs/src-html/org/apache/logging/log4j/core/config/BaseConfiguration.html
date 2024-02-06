@@ -129,216 +129,216 @@
 <FONT color="green">126</FONT>                logger.clearAppenders();<a name="line.126"></a>
 <FONT color="green">127</FONT>                logger.stopFilter();<a name="line.127"></a>
 <FONT color="green">128</FONT>            }<a name="line.128"></a>
-<FONT color="green">129</FONT>            for (Appender appender : appenders.values()) {<a name="line.129"></a>
-<FONT color="green">130</FONT>                appender.stop();<a name="line.130"></a>
-<FONT color="green">131</FONT>            }<a name="line.131"></a>
-<FONT color="green">132</FONT>            stopFilter();<a name="line.132"></a>
-<FONT color="green">133</FONT>        }<a name="line.133"></a>
-<FONT color="green">134</FONT>    <a name="line.134"></a>
-<FONT color="green">135</FONT>        protected void setup() {<a name="line.135"></a>
-<FONT color="green">136</FONT>        }<a name="line.136"></a>
-<FONT color="green">137</FONT>    <a name="line.137"></a>
-<FONT color="green">138</FONT>        public Object getComponent(String name) {<a name="line.138"></a>
-<FONT color="green">139</FONT>            return componentMap.get(name);<a name="line.139"></a>
-<FONT color="green">140</FONT>        }<a name="line.140"></a>
-<FONT color="green">141</FONT>    <a name="line.141"></a>
-<FONT color="green">142</FONT>        public void addComponent(String name, Object obj) {<a name="line.142"></a>
-<FONT color="green">143</FONT>            componentMap.putIfAbsent(name, obj);<a name="line.143"></a>
-<FONT color="green">144</FONT>        }<a name="line.144"></a>
-<FONT color="green">145</FONT>    <a name="line.145"></a>
-<FONT color="green">146</FONT>        protected void doConfigure() {<a name="line.146"></a>
-<FONT color="green">147</FONT>            boolean setRoot = false;<a name="line.147"></a>
-<FONT color="green">148</FONT>            boolean setLoggers = false;<a name="line.148"></a>
-<FONT color="green">149</FONT>            for (Node child : rootNode.getChildren()) {<a name="line.149"></a>
-<FONT color="green">150</FONT>                createConfiguration(child, null);<a name="line.150"></a>
-<FONT color="green">151</FONT>                if (child.getObject() == null) {<a name="line.151"></a>
-<FONT color="green">152</FONT>                    continue;<a name="line.152"></a>
-<FONT color="green">153</FONT>                }<a name="line.153"></a>
-<FONT color="green">154</FONT>                if (child.getName().equalsIgnoreCase("properties")) {<a name="line.154"></a>
-<FONT color="green">155</FONT>                    if (tempLookup == subst.getVariableResolver()) {<a name="line.155"></a>
-<FONT color="green">156</FONT>                        subst.setVariableResolver((StrLookup) child.getObject());<a name="line.156"></a>
-<FONT color="green">157</FONT>                    } else {<a name="line.157"></a>
-<FONT color="green">158</FONT>                        LOGGER.error("Properties declaration must be the first element in the configuration");<a name="line.158"></a>
-<FONT color="green">159</FONT>                    }<a name="line.159"></a>
-<FONT color="green">160</FONT>                    continue;<a name="line.160"></a>
-<FONT color="green">161</FONT>                } else if (tempLookup == subst.getVariableResolver()) {<a name="line.161"></a>
-<FONT color="green">162</FONT>                    subst.setVariableResolver(new Interpolator(null));<a name="line.162"></a>
-<FONT color="green">163</FONT>                }<a name="line.163"></a>
-<FONT color="green">164</FONT>                if (child.getName().equalsIgnoreCase("appenders")) {<a name="line.164"></a>
-<FONT color="green">165</FONT>                    appenders = (ConcurrentMap&lt;String, Appender&gt;) child.getObject();<a name="line.165"></a>
-<FONT color="green">166</FONT>                } else if (child.getObject() instanceof Filter) {<a name="line.166"></a>
-<FONT color="green">167</FONT>                    addFilter((Filter) child.getObject());<a name="line.167"></a>
-<FONT color="green">168</FONT>                } else if (child.getName().equalsIgnoreCase("loggers")) {<a name="line.168"></a>
-<FONT color="green">169</FONT>                    Loggers l = (Loggers) child.getObject();<a name="line.169"></a>
-<FONT color="green">170</FONT>                    loggers = l.getMap();<a name="line.170"></a>
-<FONT color="green">171</FONT>                    setLoggers = true;<a name="line.171"></a>
-<FONT color="green">172</FONT>                    if (l.getRoot() != null) {<a name="line.172"></a>
-<FONT color="green">173</FONT>                        root = l.getRoot();<a name="line.173"></a>
-<FONT color="green">174</FONT>                        setRoot = true;<a name="line.174"></a>
-<FONT color="green">175</FONT>                    }<a name="line.175"></a>
-<FONT color="green">176</FONT>                } else {<a name="line.176"></a>
-<FONT color="green">177</FONT>                    LOGGER.error("Unknown object \"" + child.getName() + "\" of type " +<a name="line.177"></a>
-<FONT color="green">178</FONT>                        child.getObject().getClass().getName() + " is ignored");<a name="line.178"></a>
-<FONT color="green">179</FONT>                }<a name="line.179"></a>
-<FONT color="green">180</FONT>            }<a name="line.180"></a>
-<FONT color="green">181</FONT>    <a name="line.181"></a>
-<FONT color="green">182</FONT>            if (!setLoggers) {<a name="line.182"></a>
-<FONT color="green">183</FONT>                LOGGER.warn("No Loggers were configured, using default");<a name="line.183"></a>
-<FONT color="green">184</FONT>            } else if (!setRoot) {<a name="line.184"></a>
-<FONT color="green">185</FONT>                LOGGER.warn("No Root logger was configured, using default");<a name="line.185"></a>
-<FONT color="green">186</FONT>            }<a name="line.186"></a>
-<FONT color="green">187</FONT>    <a name="line.187"></a>
-<FONT color="green">188</FONT>            root.setConfigurationMonitor(monitor);<a name="line.188"></a>
+<FONT color="green">129</FONT>            // Stop the appenders in reverse order in case they still have activity.<a name="line.129"></a>
+<FONT color="green">130</FONT>            Appender[] array = appenders.values().toArray(new Appender[appenders.size()]);<a name="line.130"></a>
+<FONT color="green">131</FONT>            for (int i = array.length - 1; i &gt; 0; --i) {<a name="line.131"></a>
+<FONT color="green">132</FONT>                array[i].stop();<a name="line.132"></a>
+<FONT color="green">133</FONT>            }<a name="line.133"></a>
+<FONT color="green">134</FONT>            stopFilter();<a name="line.134"></a>
+<FONT color="green">135</FONT>        }<a name="line.135"></a>
+<FONT color="green">136</FONT>    <a name="line.136"></a>
+<FONT color="green">137</FONT>        protected void setup() {<a name="line.137"></a>
+<FONT color="green">138</FONT>        }<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>        public Object getComponent(String name) {<a name="line.140"></a>
+<FONT color="green">141</FONT>            return componentMap.get(name);<a name="line.141"></a>
+<FONT color="green">142</FONT>        }<a name="line.142"></a>
+<FONT color="green">143</FONT>    <a name="line.143"></a>
+<FONT color="green">144</FONT>        public void addComponent(String name, Object obj) {<a name="line.144"></a>
+<FONT color="green">145</FONT>            componentMap.putIfAbsent(name, obj);<a name="line.145"></a>
+<FONT color="green">146</FONT>        }<a name="line.146"></a>
+<FONT color="green">147</FONT>    <a name="line.147"></a>
+<FONT color="green">148</FONT>        protected void doConfigure() {<a name="line.148"></a>
+<FONT color="green">149</FONT>            boolean setRoot = false;<a name="line.149"></a>
+<FONT color="green">150</FONT>            boolean setLoggers = false;<a name="line.150"></a>
+<FONT color="green">151</FONT>            for (Node child : rootNode.getChildren()) {<a name="line.151"></a>
+<FONT color="green">152</FONT>                createConfiguration(child, null);<a name="line.152"></a>
+<FONT color="green">153</FONT>                if (child.getObject() == null) {<a name="line.153"></a>
+<FONT color="green">154</FONT>                    continue;<a name="line.154"></a>
+<FONT color="green">155</FONT>                }<a name="line.155"></a>
+<FONT color="green">156</FONT>                if (child.getName().equalsIgnoreCase("properties")) {<a name="line.156"></a>
+<FONT color="green">157</FONT>                    if (tempLookup == subst.getVariableResolver()) {<a name="line.157"></a>
+<FONT color="green">158</FONT>                        subst.setVariableResolver((StrLookup) child.getObject());<a name="line.158"></a>
+<FONT color="green">159</FONT>                    } else {<a name="line.159"></a>
+<FONT color="green">160</FONT>                        LOGGER.error("Properties declaration must be the first element in the configuration");<a name="line.160"></a>
+<FONT color="green">161</FONT>                    }<a name="line.161"></a>
+<FONT color="green">162</FONT>                    continue;<a name="line.162"></a>
+<FONT color="green">163</FONT>                } else if (tempLookup == subst.getVariableResolver()) {<a name="line.163"></a>
+<FONT color="green">164</FONT>                    subst.setVariableResolver(new Interpolator(null));<a name="line.164"></a>
+<FONT color="green">165</FONT>                }<a name="line.165"></a>
+<FONT color="green">166</FONT>                if (child.getName().equalsIgnoreCase("appenders")) {<a name="line.166"></a>
+<FONT color="green">167</FONT>                    appenders = (ConcurrentMap&lt;String, Appender&gt;) child.getObject();<a name="line.167"></a>
+<FONT color="green">168</FONT>                } else if (child.getObject() instanceof Filter) {<a name="line.168"></a>
+<FONT color="green">169</FONT>                    addFilter((Filter) child.getObject());<a name="line.169"></a>
+<FONT color="green">170</FONT>                } else if (child.getName().equalsIgnoreCase("loggers")) {<a name="line.170"></a>
+<FONT color="green">171</FONT>                    Loggers l = (Loggers) child.getObject();<a name="line.171"></a>
+<FONT color="green">172</FONT>                    loggers = l.getMap();<a name="line.172"></a>
+<FONT color="green">173</FONT>                    setLoggers = true;<a name="line.173"></a>
+<FONT color="green">174</FONT>                    if (l.getRoot() != null) {<a name="line.174"></a>
+<FONT color="green">175</FONT>                        root = l.getRoot();<a name="line.175"></a>
+<FONT color="green">176</FONT>                        setRoot = true;<a name="line.176"></a>
+<FONT color="green">177</FONT>                    }<a name="line.177"></a>
+<FONT color="green">178</FONT>                } else {<a name="line.178"></a>
+<FONT color="green">179</FONT>                    LOGGER.error("Unknown object \"" + child.getName() + "\" of type " +<a name="line.179"></a>
+<FONT color="green">180</FONT>                        child.getObject().getClass().getName() + " is ignored");<a name="line.180"></a>
+<FONT color="green">181</FONT>                }<a name="line.181"></a>
+<FONT color="green">182</FONT>            }<a name="line.182"></a>
+<FONT color="green">183</FONT>    <a name="line.183"></a>
+<FONT color="green">184</FONT>            if (!setLoggers) {<a name="line.184"></a>
+<FONT color="green">185</FONT>                LOGGER.warn("No Loggers were configured, using default");<a name="line.185"></a>
+<FONT color="green">186</FONT>            } else if (!setRoot) {<a name="line.186"></a>
+<FONT color="green">187</FONT>                LOGGER.warn("No Root logger was configured, using default");<a name="line.187"></a>
+<FONT color="green">188</FONT>            }<a name="line.188"></a>
 <FONT color="green">189</FONT>    <a name="line.189"></a>
 <FONT color="green">190</FONT>            for (Map.Entry&lt;String, LoggerConfig&gt; entry : loggers.entrySet()) {<a name="line.190"></a>
 <FONT color="green">191</FONT>                LoggerConfig l = entry.getValue();<a name="line.191"></a>
-<FONT color="green">192</FONT>                l.setConfigurationMonitor(monitor);<a name="line.192"></a>
-<FONT color="green">193</FONT>                for (AppenderRef ref : l.getAppenderRefs()) {<a name="line.193"></a>
-<FONT color="green">194</FONT>                    Appender app = appenders.get(ref.getRef());<a name="line.194"></a>
-<FONT color="green">195</FONT>                    if (app != null) {<a name="line.195"></a>
-<FONT color="green">196</FONT>                        l.addAppender(app, ref.getLevel(), ref.getFilter());<a name="line.196"></a>
-<FONT color="green">197</FONT>                    } else {<a name="line.197"></a>
-<FONT color="green">198</FONT>                        LOGGER.error("Unable to locate appender " + ref.getRef() + " for logger " + l.getName());<a name="line.198"></a>
-<FONT color="green">199</FONT>                    }<a name="line.199"></a>
-<FONT color="green">200</FONT>                }<a name="line.200"></a>
-<FONT color="green">201</FONT>    <a name="line.201"></a>
-<FONT color="green">202</FONT>            }<a name="line.202"></a>
-<FONT color="green">203</FONT>    <a name="line.203"></a>
-<FONT color="green">204</FONT>            setParents();<a name="line.204"></a>
-<FONT color="green">205</FONT>        }<a name="line.205"></a>
-<FONT color="green">206</FONT>    <a name="line.206"></a>
-<FONT color="green">207</FONT>        protected PluginManager getPluginManager() {<a name="line.207"></a>
-<FONT color="green">208</FONT>            return pluginManager;<a name="line.208"></a>
-<FONT color="green">209</FONT>        }<a name="line.209"></a>
-<FONT color="green">210</FONT>    <a name="line.210"></a>
-<FONT color="green">211</FONT>        /**<a name="line.211"></a>
-<FONT color="green">212</FONT>         * Set the name of the configuration.<a name="line.212"></a>
-<FONT color="green">213</FONT>         * @param name The name.<a name="line.213"></a>
-<FONT color="green">214</FONT>         */<a name="line.214"></a>
-<FONT color="green">215</FONT>        public void setName(String name) {<a name="line.215"></a>
-<FONT color="green">216</FONT>            this.name = name;<a name="line.216"></a>
-<FONT color="green">217</FONT>        }<a name="line.217"></a>
-<FONT color="green">218</FONT>    <a name="line.218"></a>
-<FONT color="green">219</FONT>        /**<a name="line.219"></a>
-<FONT color="green">220</FONT>         * Return the name of the configuration.<a name="line.220"></a>
-<FONT color="green">221</FONT>         * @return the name of the configuration.<a name="line.221"></a>
-<FONT color="green">222</FONT>         */<a name="line.222"></a>
-<FONT color="green">223</FONT>        public String getName() {<a name="line.223"></a>
-<FONT color="green">224</FONT>            return name;<a name="line.224"></a>
-<FONT color="green">225</FONT>        }<a name="line.225"></a>
-<FONT color="green">226</FONT>    <a name="line.226"></a>
-<FONT color="green">227</FONT>        /**<a name="line.227"></a>
-<FONT color="green">228</FONT>         * Add a listener for changes on the configuration.<a name="line.228"></a>
-<FONT color="green">229</FONT>         * @param listener The ConfigurationListener to add.<a name="line.229"></a>
-<FONT color="green">230</FONT>         */<a name="line.230"></a>
-<FONT color="green">231</FONT>        public void addListener(ConfigurationListener listener) {<a name="line.231"></a>
-<FONT color="green">232</FONT>            listeners.add(listener);<a name="line.232"></a>
-<FONT color="green">233</FONT>        }<a name="line.233"></a>
-<FONT color="green">234</FONT>    <a name="line.234"></a>
-<FONT color="green">235</FONT>        /**<a name="line.235"></a>
-<FONT color="green">236</FONT>         * Remove a ConfigurationListener.<a name="line.236"></a>
-<FONT color="green">237</FONT>         * @param listener The ConfigurationListener to remove.<a name="line.237"></a>
-<FONT color="green">238</FONT>         */<a name="line.238"></a>
-<FONT color="green">239</FONT>        public void removeListener(ConfigurationListener listener) {<a name="line.239"></a>
-<FONT color="green">240</FONT>            listeners.remove(listener);<a name="line.240"></a>
-<FONT color="green">241</FONT>        }<a name="line.241"></a>
-<FONT color="green">242</FONT>    <a name="line.242"></a>
-<FONT color="green">243</FONT>        /**<a name="line.243"></a>
-<FONT color="green">244</FONT>         * Return the Appender with the specified name.<a name="line.244"></a>
-<FONT color="green">245</FONT>         * @param name The name of the Appender.<a name="line.245"></a>
-<FONT color="green">246</FONT>         * @return the Appender with the specified name or null if the Appender cannot be located.<a name="line.246"></a>
-<FONT color="green">247</FONT>         */<a name="line.247"></a>
-<FONT color="green">248</FONT>        public Appender getAppender(String name) {<a name="line.248"></a>
-<FONT color="green">249</FONT>            return appenders.get(name);<a name="line.249"></a>
-<FONT color="green">250</FONT>        }<a name="line.250"></a>
-<FONT color="green">251</FONT>    <a name="line.251"></a>
-<FONT color="green">252</FONT>        /**<a name="line.252"></a>
-<FONT color="green">253</FONT>         * Return a Map containing all the Appenders and their name.<a name="line.253"></a>
-<FONT color="green">254</FONT>         * @return A Map containing each Appender's naem and the Appender object.<a name="line.254"></a>
-<FONT color="green">255</FONT>         */<a name="line.255"></a>
-<FONT color="green">256</FONT>        public Map&lt;String, Appender&gt; getAppenders() {<a name="line.256"></a>
-<FONT color="green">257</FONT>            return appenders;<a name="line.257"></a>
-<FONT color="green">258</FONT>        }<a name="line.258"></a>
-<FONT color="green">259</FONT>    <a name="line.259"></a>
-<FONT color="green">260</FONT>        /**<a name="line.260"></a>
-<FONT color="green">261</FONT>         * Adds an Appender to the configuration.<a name="line.261"></a>
-<FONT color="green">262</FONT>         * @param appender The Appender to add.<a name="line.262"></a>
-<FONT color="green">263</FONT>         */<a name="line.263"></a>
-<FONT color="green">264</FONT>        public void addAppender(Appender appender) {<a name="line.264"></a>
-<FONT color="green">265</FONT>            appenders.put(appender.getName(), appender);<a name="line.265"></a>
-<FONT color="green">266</FONT>        }<a name="line.266"></a>
-<FONT color="green">267</FONT>    <a name="line.267"></a>
-<FONT color="green">268</FONT>        public StrSubstitutor getSubst() {<a name="line.268"></a>
-<FONT color="green">269</FONT>            return subst;<a name="line.269"></a>
-<FONT color="green">270</FONT>        }<a name="line.270"></a>
-<FONT color="green">271</FONT>    <a name="line.271"></a>
-<FONT color="green">272</FONT>        /**<a name="line.272"></a>
-<FONT color="green">273</FONT>         * Associates an Appender with a LoggerConfig. This method is synchronized in case a Logger with the<a name="line.273"></a>
-<FONT color="green">274</FONT>         * same name is being updated at the same time.<a name="line.274"></a>
-<FONT color="green">275</FONT>         *<a name="line.275"></a>
-<FONT color="green">276</FONT>         * Note: This method is not used when configuring via configuration. It is primarily used by<a name="line.276"></a>
-<FONT color="green">277</FONT>         * unit tests.<a name="line.277"></a>
-<FONT color="green">278</FONT>         * @param logger The Logger the Appender will be associated with.<a name="line.278"></a>
-<FONT color="green">279</FONT>         * @param appender The Appender.<a name="line.279"></a>
-<FONT color="green">280</FONT>         */<a name="line.280"></a>
-<FONT color="green">281</FONT>        public synchronized void addLoggerAppender(org.apache.logging.log4j.core.Logger logger, Appender appender) {<a name="line.281"></a>
-<FONT color="green">282</FONT>            String name = logger.getName();<a name="line.282"></a>
-<FONT color="green">283</FONT>            appenders.putIfAbsent(name, appender);<a name="line.283"></a>
-<FONT color="green">284</FONT>            LoggerConfig lc = getLoggerConfig(name);<a name="line.284"></a>
-<FONT color="green">285</FONT>            if (lc.getName().equals(name)) {<a name="line.285"></a>
-<FONT color="green">286</FONT>                lc.addAppender(appender, null, null);<a name="line.286"></a>
-<FONT color="green">287</FONT>            } else {<a name="line.287"></a>
-<FONT color="green">288</FONT>                LoggerConfig nlc = new LoggerConfig(name, lc.getLevel(), lc.isAdditive());<a name="line.288"></a>
-<FONT color="green">289</FONT>                nlc.setConfigurationMonitor(monitor);<a name="line.289"></a>
-<FONT color="green">290</FONT>                nlc.addAppender(appender, null, null);<a name="line.290"></a>
-<FONT color="green">291</FONT>                nlc.setParent(lc);<a name="line.291"></a>
-<FONT color="green">292</FONT>                loggers.putIfAbsent(name, nlc);<a name="line.292"></a>
-<FONT color="green">293</FONT>                setParents();<a name="line.293"></a>
-<FONT color="green">294</FONT>                logger.getContext().updateLoggers();<a name="line.294"></a>
-<FONT color="green">295</FONT>            }<a name="line.295"></a>
-<FONT color="green">296</FONT>        }<a name="line.296"></a>
-<FONT color="green">297</FONT>        /**<a name="line.297"></a>
-<FONT color="green">298</FONT>         * Associates a Filter with a LoggerConfig. This method is synchronized in case a Logger with the<a name="line.298"></a>
-<FONT color="green">299</FONT>         * same name is being updated at the same time.<a name="line.299"></a>
-<FONT color="green">300</FONT>         *<a name="line.300"></a>
-<FONT color="green">301</FONT>         * Note: This method is not used when configuring via configuration. It is primarily used by<a name="line.301"></a>
-<FONT color="green">302</FONT>         * unit tests.<a name="line.302"></a>
-<FONT color="green">303</FONT>         * @param logger The Logger the Fo;ter will be associated with.<a name="line.303"></a>
-<FONT color="green">304</FONT>         * @param filter The Filter.<a name="line.304"></a>
-<FONT color="green">305</FONT>         */<a name="line.305"></a>
-<FONT color="green">306</FONT>        public synchronized void addLoggerFilter(org.apache.logging.log4j.core.Logger logger, Filter filter) {<a name="line.306"></a>
-<FONT color="green">307</FONT>            String name = logger.getName();<a name="line.307"></a>
-<FONT color="green">308</FONT>            LoggerConfig lc = getLoggerConfig(name);<a name="line.308"></a>
-<FONT color="green">309</FONT>            if (lc.getName().equals(name)) {<a name="line.309"></a>
-<FONT color="green">310</FONT>    <a name="line.310"></a>
-<FONT color="green">311</FONT>                lc.addFilter(filter);<a name="line.311"></a>
-<FONT color="green">312</FONT>            } else {<a name="line.312"></a>
-<FONT color="green">313</FONT>                LoggerConfig nlc = new LoggerConfig(name, lc.getLevel(), lc.isAdditive());<a name="line.313"></a>
-<FONT color="green">314</FONT>                nlc.setConfigurationMonitor(monitor);<a name="line.314"></a>
-<FONT color="green">315</FONT>                nlc.addFilter(filter);<a name="line.315"></a>
-<FONT color="green">316</FONT>                nlc.setParent(lc);<a name="line.316"></a>
-<FONT color="green">317</FONT>                loggers.putIfAbsent(name, nlc);<a name="line.317"></a>
-<FONT color="green">318</FONT>                setParents();<a name="line.318"></a>
-<FONT color="green">319</FONT>                logger.getContext().updateLoggers();<a name="line.319"></a>
-<FONT color="green">320</FONT>            }<a name="line.320"></a>
-<FONT color="green">321</FONT>        }<a name="line.321"></a>
-<FONT color="green">322</FONT>        /**<a name="line.322"></a>
-<FONT color="green">323</FONT>         * Marks a LoggerConfig as additive. This method is synchronized in case a Logger with the<a name="line.323"></a>
-<FONT color="green">324</FONT>         * same name is being updated at the same time.<a name="line.324"></a>
-<FONT color="green">325</FONT>         *<a name="line.325"></a>
-<FONT color="green">326</FONT>         * Note: This method is not used when configuring via configuration. It is primarily used by<a name="line.326"></a>
-<FONT color="green">327</FONT>         * unit tests.<a name="line.327"></a>
-<FONT color="green">328</FONT>         * @param logger The Logger the Appender will be associated with.<a name="line.328"></a>
-<FONT color="green">329</FONT>         * @param additive True if the LoggerConfig should be additive, false otherwise.<a name="line.329"></a>
-<FONT color="green">330</FONT>         */<a name="line.330"></a>
-<FONT color="green">331</FONT>        public synchronized void setLoggerAdditive(org.apache.logging.log4j.core.Logger logger, boolean additive) {<a name="line.331"></a>
-<FONT color="green">332</FONT>            String name = logger.getName();<a name="line.332"></a>
-<FONT color="green">333</FONT>            LoggerConfig lc = getLoggerConfig(name);<a name="line.333"></a>
-<FONT color="green">334</FONT>            if (lc.getName().equals(name)) {<a name="line.334"></a>
-<FONT color="green">335</FONT>                lc.setAdditive(additive);<a name="line.335"></a>
-<FONT color="green">336</FONT>            } else {<a name="line.336"></a>
-<FONT color="green">337</FONT>                LoggerConfig nlc = new LoggerConfig(name, lc.getLevel(), additive);<a name="line.337"></a>
-<FONT color="green">338</FONT>                nlc.setConfigurationMonitor(monitor);<a name="line.338"></a>
+<FONT color="green">192</FONT>                for (AppenderRef ref : l.getAppenderRefs()) {<a name="line.192"></a>
+<FONT color="green">193</FONT>                    Appender app = appenders.get(ref.getRef());<a name="line.193"></a>
+<FONT color="green">194</FONT>                    if (app != null) {<a name="line.194"></a>
+<FONT color="green">195</FONT>                        l.addAppender(app, ref.getLevel(), ref.getFilter());<a name="line.195"></a>
+<FONT color="green">196</FONT>                    } else {<a name="line.196"></a>
+<FONT color="green">197</FONT>                        LOGGER.error("Unable to locate appender " + ref.getRef() + " for logger " + l.getName());<a name="line.197"></a>
+<FONT color="green">198</FONT>                    }<a name="line.198"></a>
+<FONT color="green">199</FONT>                }<a name="line.199"></a>
+<FONT color="green">200</FONT>    <a name="line.200"></a>
+<FONT color="green">201</FONT>            }<a name="line.201"></a>
+<FONT color="green">202</FONT>    <a name="line.202"></a>
+<FONT color="green">203</FONT>            setParents();<a name="line.203"></a>
+<FONT color="green">204</FONT>        }<a name="line.204"></a>
+<FONT color="green">205</FONT>    <a name="line.205"></a>
+<FONT color="green">206</FONT>        protected PluginManager getPluginManager() {<a name="line.206"></a>
+<FONT color="green">207</FONT>            return pluginManager;<a name="line.207"></a>
+<FONT color="green">208</FONT>        }<a name="line.208"></a>
+<FONT color="green">209</FONT>    <a name="line.209"></a>
+<FONT color="green">210</FONT>        /**<a name="line.210"></a>
+<FONT color="green">211</FONT>         * Set the name of the configuration.<a name="line.211"></a>
+<FONT color="green">212</FONT>         * @param name The name.<a name="line.212"></a>
+<FONT color="green">213</FONT>         */<a name="line.213"></a>
+<FONT color="green">214</FONT>        public void setName(String name) {<a name="line.214"></a>
+<FONT color="green">215</FONT>            this.name = name;<a name="line.215"></a>
+<FONT color="green">216</FONT>        }<a name="line.216"></a>
+<FONT color="green">217</FONT>    <a name="line.217"></a>
+<FONT color="green">218</FONT>        /**<a name="line.218"></a>
+<FONT color="green">219</FONT>         * Return the name of the configuration.<a name="line.219"></a>
+<FONT color="green">220</FONT>         * @return the name of the configuration.<a name="line.220"></a>
+<FONT color="green">221</FONT>         */<a name="line.221"></a>
+<FONT color="green">222</FONT>        public String getName() {<a name="line.222"></a>
+<FONT color="green">223</FONT>            return name;<a name="line.223"></a>
+<FONT color="green">224</FONT>        }<a name="line.224"></a>
+<FONT color="green">225</FONT>    <a name="line.225"></a>
+<FONT color="green">226</FONT>        /**<a name="line.226"></a>
+<FONT color="green">227</FONT>         * Add a listener for changes on the configuration.<a name="line.227"></a>
+<FONT color="green">228</FONT>         * @param listener The ConfigurationListener to add.<a name="line.228"></a>
+<FONT color="green">229</FONT>         */<a name="line.229"></a>
+<FONT color="green">230</FONT>        public void addListener(ConfigurationListener listener) {<a name="line.230"></a>
+<FONT color="green">231</FONT>            listeners.add(listener);<a name="line.231"></a>
+<FONT color="green">232</FONT>        }<a name="line.232"></a>
+<FONT color="green">233</FONT>    <a name="line.233"></a>
+<FONT color="green">234</FONT>        /**<a name="line.234"></a>
+<FONT color="green">235</FONT>         * Remove a ConfigurationListener.<a name="line.235"></a>
+<FONT color="green">236</FONT>         * @param listener The ConfigurationListener to remove.<a name="line.236"></a>
+<FONT color="green">237</FONT>         */<a name="line.237"></a>
+<FONT color="green">238</FONT>        public void removeListener(ConfigurationListener listener) {<a name="line.238"></a>
+<FONT color="green">239</FONT>            listeners.remove(listener);<a name="line.239"></a>
+<FONT color="green">240</FONT>        }<a name="line.240"></a>
+<FONT color="green">241</FONT>    <a name="line.241"></a>
+<FONT color="green">242</FONT>        /**<a name="line.242"></a>
+<FONT color="green">243</FONT>         * Return the Appender with the specified name.<a name="line.243"></a>
+<FONT color="green">244</FONT>         * @param name The name of the Appender.<a name="line.244"></a>
+<FONT color="green">245</FONT>         * @return the Appender with the specified name or null if the Appender cannot be located.<a name="line.245"></a>
+<FONT color="green">246</FONT>         */<a name="line.246"></a>
+<FONT color="green">247</FONT>        public Appender getAppender(String name) {<a name="line.247"></a>
+<FONT color="green">248</FONT>            return appenders.get(name);<a name="line.248"></a>
+<FONT color="green">249</FONT>        }<a name="line.249"></a>
+<FONT color="green">250</FONT>    <a name="line.250"></a>
+<FONT color="green">251</FONT>        /**<a name="line.251"></a>
+<FONT color="green">252</FONT>         * Return a Map containing all the Appenders and their name.<a name="line.252"></a>
+<FONT color="green">253</FONT>         * @return A Map containing each Appender's naem and the Appender object.<a name="line.253"></a>
+<FONT color="green">254</FONT>         */<a name="line.254"></a>
+<FONT color="green">255</FONT>        public Map&lt;String, Appender&gt; getAppenders() {<a name="line.255"></a>
+<FONT color="green">256</FONT>            return appenders;<a name="line.256"></a>
+<FONT color="green">257</FONT>        }<a name="line.257"></a>
+<FONT color="green">258</FONT>    <a name="line.258"></a>
+<FONT color="green">259</FONT>        /**<a name="line.259"></a>
+<FONT color="green">260</FONT>         * Adds an Appender to the configuration.<a name="line.260"></a>
+<FONT color="green">261</FONT>         * @param appender The Appender to add.<a name="line.261"></a>
+<FONT color="green">262</FONT>         */<a name="line.262"></a>
+<FONT color="green">263</FONT>        public void addAppender(Appender appender) {<a name="line.263"></a>
+<FONT color="green">264</FONT>            appenders.put(appender.getName(), appender);<a name="line.264"></a>
+<FONT color="green">265</FONT>        }<a name="line.265"></a>
+<FONT color="green">266</FONT>    <a name="line.266"></a>
+<FONT color="green">267</FONT>        public StrSubstitutor getSubst() {<a name="line.267"></a>
+<FONT color="green">268</FONT>            return subst;<a name="line.268"></a>
+<FONT color="green">269</FONT>        }<a name="line.269"></a>
+<FONT color="green">270</FONT>    <a name="line.270"></a>
+<FONT color="green">271</FONT>        public ConfigurationMonitor getConfigurationMonitor() {<a name="line.271"></a>
+<FONT color="green">272</FONT>            return monitor;<a name="line.272"></a>
+<FONT color="green">273</FONT>        }<a name="line.273"></a>
+<FONT color="green">274</FONT>    <a name="line.274"></a>
+<FONT color="green">275</FONT>        /**<a name="line.275"></a>
+<FONT color="green">276</FONT>         * Associates an Appender with a LoggerConfig. This method is synchronized in case a Logger with the<a name="line.276"></a>
+<FONT color="green">277</FONT>         * same name is being updated at the same time.<a name="line.277"></a>
+<FONT color="green">278</FONT>         *<a name="line.278"></a>
+<FONT color="green">279</FONT>         * Note: This method is not used when configuring via configuration. It is primarily used by<a name="line.279"></a>
+<FONT color="green">280</FONT>         * unit tests.<a name="line.280"></a>
+<FONT color="green">281</FONT>         * @param logger The Logger the Appender will be associated with.<a name="line.281"></a>
+<FONT color="green">282</FONT>         * @param appender The Appender.<a name="line.282"></a>
+<FONT color="green">283</FONT>         */<a name="line.283"></a>
+<FONT color="green">284</FONT>        public synchronized void addLoggerAppender(org.apache.logging.log4j.core.Logger logger, Appender appender) {<a name="line.284"></a>
+<FONT color="green">285</FONT>            String name = logger.getName();<a name="line.285"></a>
+<FONT color="green">286</FONT>            appenders.putIfAbsent(name, appender);<a name="line.286"></a>
+<FONT color="green">287</FONT>            LoggerConfig lc = getLoggerConfig(name);<a name="line.287"></a>
+<FONT color="green">288</FONT>            if (lc.getName().equals(name)) {<a name="line.288"></a>
+<FONT color="green">289</FONT>                lc.addAppender(appender, null, null);<a name="line.289"></a>
+<FONT color="green">290</FONT>            } else {<a name="line.290"></a>
+<FONT color="green">291</FONT>                LoggerConfig nlc = new LoggerConfig(name, lc.getLevel(), lc.isAdditive());<a name="line.291"></a>
+<FONT color="green">292</FONT>                nlc.addAppender(appender, null, null);<a name="line.292"></a>
+<FONT color="green">293</FONT>                nlc.setParent(lc);<a name="line.293"></a>
+<FONT color="green">294</FONT>                loggers.putIfAbsent(name, nlc);<a name="line.294"></a>
+<FONT color="green">295</FONT>                setParents();<a name="line.295"></a>
+<FONT color="green">296</FONT>                logger.getContext().updateLoggers();<a name="line.296"></a>
+<FONT color="green">297</FONT>            }<a name="line.297"></a>
+<FONT color="green">298</FONT>        }<a name="line.298"></a>
+<FONT color="green">299</FONT>        /**<a name="line.299"></a>
+<FONT color="green">300</FONT>         * Associates a Filter with a LoggerConfig. This method is synchronized in case a Logger with the<a name="line.300"></a>
+<FONT color="green">301</FONT>         * same name is being updated at the same time.<a name="line.301"></a>
+<FONT color="green">302</FONT>         *<a name="line.302"></a>
+<FONT color="green">303</FONT>         * Note: This method is not used when configuring via configuration. It is primarily used by<a name="line.303"></a>
+<FONT color="green">304</FONT>         * unit tests.<a name="line.304"></a>
+<FONT color="green">305</FONT>         * @param logger The Logger the Fo;ter will be associated with.<a name="line.305"></a>
+<FONT color="green">306</FONT>         * @param filter The Filter.<a name="line.306"></a>
+<FONT color="green">307</FONT>         */<a name="line.307"></a>
+<FONT color="green">308</FONT>        public synchronized void addLoggerFilter(org.apache.logging.log4j.core.Logger logger, Filter filter) {<a name="line.308"></a>
+<FONT color="green">309</FONT>            String name = logger.getName();<a name="line.309"></a>
+<FONT color="green">310</FONT>            LoggerConfig lc = getLoggerConfig(name);<a name="line.310"></a>
+<FONT color="green">311</FONT>            if (lc.getName().equals(name)) {<a name="line.311"></a>
+<FONT color="green">312</FONT>    <a name="line.312"></a>
+<FONT color="green">313</FONT>                lc.addFilter(filter);<a name="line.313"></a>
+<FONT color="green">314</FONT>            } else {<a name="line.314"></a>
+<FONT color="green">315</FONT>                LoggerConfig nlc = new LoggerConfig(name, lc.getLevel(), lc.isAdditive());<a name="line.315"></a>
+<FONT color="green">316</FONT>                nlc.addFilter(filter);<a name="line.316"></a>
+<FONT color="green">317</FONT>                nlc.setParent(lc);<a name="line.317"></a>
+<FONT color="green">318</FONT>                loggers.putIfAbsent(name, nlc);<a name="line.318"></a>
+<FONT color="green">319</FONT>                setParents();<a name="line.319"></a>
+<FONT color="green">320</FONT>                logger.getContext().updateLoggers();<a name="line.320"></a>
+<FONT color="green">321</FONT>            }<a name="line.321"></a>
+<FONT color="green">322</FONT>        }<a name="line.322"></a>
+<FONT color="green">323</FONT>        /**<a name="line.323"></a>
+<FONT color="green">324</FONT>         * Marks a LoggerConfig as additive. This method is synchronized in case a Logger with the<a name="line.324"></a>
+<FONT color="green">325</FONT>         * same name is being updated at the same time.<a name="line.325"></a>
+<FONT color="green">326</FONT>         *<a name="line.326"></a>
+<FONT color="green">327</FONT>         * Note: This method is not used when configuring via configuration. It is primarily used by<a name="line.327"></a>
+<FONT color="green">328</FONT>         * unit tests.<a name="line.328"></a>
+<FONT color="green">329</FONT>         * @param logger The Logger the Appender will be associated with.<a name="line.329"></a>
+<FONT color="green">330</FONT>         * @param additive True if the LoggerConfig should be additive, false otherwise.<a name="line.330"></a>
+<FONT color="green">331</FONT>         */<a name="line.331"></a>
+<FONT color="green">332</FONT>        public synchronized void setLoggerAdditive(org.apache.logging.log4j.core.Logger logger, boolean additive) {<a name="line.332"></a>
+<FONT color="green">333</FONT>            String name = logger.getName();<a name="line.333"></a>
+<FONT color="green">334</FONT>            LoggerConfig lc = getLoggerConfig(name);<a name="line.334"></a>
+<FONT color="green">335</FONT>            if (lc.getName().equals(name)) {<a name="line.335"></a>
+<FONT color="green">336</FONT>                lc.setAdditive(additive);<a name="line.336"></a>
+<FONT color="green">337</FONT>            } else {<a name="line.337"></a>
+<FONT color="green">338</FONT>                LoggerConfig nlc = new LoggerConfig(name, lc.getLevel(), additive);<a name="line.338"></a>
 <FONT color="green">339</FONT>                nlc.setParent(lc);<a name="line.339"></a>
 <FONT color="green">340</FONT>                loggers.putIfAbsent(name, nlc);<a name="line.340"></a>
 <FONT color="green">341</FONT>                setParents();<a name="line.341"></a>
@@ -683,7 +683,7 @@
 <FONT color="green">680</FONT>                        clazz.getName() + " for element " + node.getName());<a name="line.680"></a>
 <FONT color="green">681</FONT>                    return null;<a name="line.681"></a>
 <FONT color="green">682</FONT>                }<a name="line.682"></a>
-<FONT color="green">683</FONT>                LOGGER.debug("Calling {} on class {} for element {}", factoryMethod.getName(), clazz.getName(),<a name="line.683"></a>
+<FONT color="green">683</FONT>                LOGGER.debug("Calling {} on class {} for element {}{}", factoryMethod.getName(), clazz.getName(),<a name="line.683"></a>
 <FONT color="green">684</FONT>                    node.getName(), sb.toString());<a name="line.684"></a>
 <FONT color="green">685</FONT>                //if (parms.length &gt; 0) {<a name="line.685"></a>
 <FONT color="green">686</FONT>                    return factoryMethod.invoke(null, parms);<a name="line.686"></a>
