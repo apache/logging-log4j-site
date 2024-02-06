@@ -30,7 +30,7 @@
 <FONT color="green">027</FONT>     */<a name="line.27"></a>
 <FONT color="green">028</FONT>    public final class MarkerManager {<a name="line.28"></a>
 <FONT color="green">029</FONT>    <a name="line.29"></a>
-<FONT color="green">030</FONT>        private static final ConcurrentMap&lt;String, Marker&gt; markerMap = new ConcurrentHashMap&lt;String, Marker&gt;();<a name="line.30"></a>
+<FONT color="green">030</FONT>        private static final ConcurrentMap&lt;String, Marker&gt; MARKERS = new ConcurrentHashMap&lt;String, Marker&gt;();<a name="line.30"></a>
 <FONT color="green">031</FONT>    <a name="line.31"></a>
 <FONT color="green">032</FONT>        private MarkerManager() {<a name="line.32"></a>
 <FONT color="green">033</FONT>            // do nothing<a name="line.33"></a>
@@ -40,7 +40,7 @@
 <FONT color="green">037</FONT>         * Clears all markers.<a name="line.37"></a>
 <FONT color="green">038</FONT>         */<a name="line.38"></a>
 <FONT color="green">039</FONT>        public static void clear() {<a name="line.39"></a>
-<FONT color="green">040</FONT>            markerMap.clear();        <a name="line.40"></a>
+<FONT color="green">040</FONT>            MARKERS.clear();<a name="line.40"></a>
 <FONT color="green">041</FONT>        }<a name="line.41"></a>
 <FONT color="green">042</FONT>    <a name="line.42"></a>
 <FONT color="green">043</FONT>        /**<a name="line.43"></a>
@@ -50,8 +50,8 @@
 <FONT color="green">047</FONT>         * @throws IllegalArgumentException if the argument is {@code null}<a name="line.47"></a>
 <FONT color="green">048</FONT>         */<a name="line.48"></a>
 <FONT color="green">049</FONT>        public static Marker getMarker(final String name) {<a name="line.49"></a>
-<FONT color="green">050</FONT>            markerMap.putIfAbsent(name, new Log4jMarker(name));<a name="line.50"></a>
-<FONT color="green">051</FONT>            return markerMap.get(name);<a name="line.51"></a>
+<FONT color="green">050</FONT>            MARKERS.putIfAbsent(name, new Log4jMarker(name));<a name="line.50"></a>
+<FONT color="green">051</FONT>            return MARKERS.get(name);<a name="line.51"></a>
 <FONT color="green">052</FONT>        }<a name="line.52"></a>
 <FONT color="green">053</FONT>    <a name="line.53"></a>
 <FONT color="green">054</FONT>        /**<a name="line.54"></a>
@@ -64,7 +64,7 @@
 <FONT color="green">061</FONT>         */<a name="line.61"></a>
 <FONT color="green">062</FONT>        @Deprecated<a name="line.62"></a>
 <FONT color="green">063</FONT>        public static Marker getMarker(final String name, final String parent) {<a name="line.63"></a>
-<FONT color="green">064</FONT>            final Marker parentMarker = markerMap.get(parent);<a name="line.64"></a>
+<FONT color="green">064</FONT>            final Marker parentMarker = MARKERS.get(parent);<a name="line.64"></a>
 <FONT color="green">065</FONT>            if (parentMarker == null) {<a name="line.65"></a>
 <FONT color="green">066</FONT>                throw new IllegalArgumentException("Parent Marker " + parent + " has not been defined");<a name="line.66"></a>
 <FONT color="green">067</FONT>            }<a name="line.67"></a>
@@ -83,18 +83,18 @@
 <FONT color="green">080</FONT>         */<a name="line.80"></a>
 <FONT color="green">081</FONT>        @Deprecated<a name="line.81"></a>
 <FONT color="green">082</FONT>        public static Marker getMarker(final String name, final Marker parent) {<a name="line.82"></a>
-<FONT color="green">083</FONT>            markerMap.putIfAbsent(name, new Log4jMarker(name));<a name="line.83"></a>
-<FONT color="green">084</FONT>            return markerMap.get(name).addParents(parent);<a name="line.84"></a>
+<FONT color="green">083</FONT>            MARKERS.putIfAbsent(name, new Log4jMarker(name));<a name="line.83"></a>
+<FONT color="green">084</FONT>            return MARKERS.get(name).addParents(parent);<a name="line.84"></a>
 <FONT color="green">085</FONT>        }<a name="line.85"></a>
-<FONT color="green">086</FONT>        <a name="line.86"></a>
+<FONT color="green">086</FONT>    <a name="line.86"></a>
 <FONT color="green">087</FONT>        /**<a name="line.87"></a>
 <FONT color="green">088</FONT>         * &lt;em&gt;Consider this class private, it is only public to satisfy Jackson for XML and JSON IO.&lt;/em&gt;<a name="line.88"></a>
 <FONT color="green">089</FONT>         * &lt;p&gt;<a name="line.89"></a>
 <FONT color="green">090</FONT>         * The actual Marker implementation.<a name="line.90"></a>
 <FONT color="green">091</FONT>         * &lt;/p&gt;<a name="line.91"></a>
 <FONT color="green">092</FONT>         * &lt;p&gt;<a name="line.92"></a>
-<FONT color="green">093</FONT>         * &lt;em&gt;Internal note: We could make this class package private instead of public if the class <a name="line.93"></a>
-<FONT color="green">094</FONT>         * {@code org.apache.logging.log4j.core.jackson.MarkerMixIn} <a name="line.94"></a>
+<FONT color="green">093</FONT>         * &lt;em&gt;Internal note: We could make this class package private instead of public if the class<a name="line.93"></a>
+<FONT color="green">094</FONT>         * {@code org.apache.logging.log4j.core.jackson.MarkerMixIn}<a name="line.94"></a>
 <FONT color="green">095</FONT>         * is moved to this package and would of course stay in its current module.&lt;/em&gt;<a name="line.95"></a>
 <FONT color="green">096</FONT>         * &lt;/p&gt;<a name="line.96"></a>
 <FONT color="green">097</FONT>         */<a name="line.97"></a>
@@ -103,7 +103,7 @@
 <FONT color="green">100</FONT>            private static final long serialVersionUID = 100L;<a name="line.100"></a>
 <FONT color="green">101</FONT>    <a name="line.101"></a>
 <FONT color="green">102</FONT>            private final String name;<a name="line.102"></a>
-<FONT color="green">103</FONT>            <a name="line.103"></a>
+<FONT color="green">103</FONT>    <a name="line.103"></a>
 <FONT color="green">104</FONT>            private volatile Marker[] parents;<a name="line.104"></a>
 <FONT color="green">105</FONT>    <a name="line.105"></a>
 <FONT color="green">106</FONT>            /**<a name="line.106"></a>
@@ -231,7 +231,7 @@
 <FONT color="green">228</FONT>    <a name="line.228"></a>
 <FONT color="green">229</FONT>            @Override<a name="line.229"></a>
 <FONT color="green">230</FONT>            public boolean hasParents() {<a name="line.230"></a>
-<FONT color="green">231</FONT>                return this.parents == null;<a name="line.231"></a>
+<FONT color="green">231</FONT>                return this.parents != null;<a name="line.231"></a>
 <FONT color="green">232</FONT>            }<a name="line.232"></a>
 <FONT color="green">233</FONT>    <a name="line.233"></a>
 <FONT color="green">234</FONT>            @Override<a name="line.234"></a>
@@ -272,7 +272,7 @@
 <FONT color="green">269</FONT>                    return true;<a name="line.269"></a>
 <FONT color="green">270</FONT>                }<a name="line.270"></a>
 <FONT color="green">271</FONT>                // Use a real marker for child comparisons. It is faster than comparing the names.<a name="line.271"></a>
-<FONT color="green">272</FONT>                final Marker marker = markerMap.get(markerName);<a name="line.272"></a>
+<FONT color="green">272</FONT>                final Marker marker = MARKERS.get(markerName);<a name="line.272"></a>
 <FONT color="green">273</FONT>                if (marker == null) {<a name="line.273"></a>
 <FONT color="green">274</FONT>                    return false;<a name="line.274"></a>
 <FONT color="green">275</FONT>                }<a name="line.275"></a>
@@ -326,63 +326,64 @@
 <FONT color="green">323</FONT>             */<a name="line.323"></a>
 <FONT color="green">324</FONT>            private static boolean contains(final Marker parent, final Marker... localParents) {<a name="line.324"></a>
 <FONT color="green">325</FONT>                //noinspection ForLoopReplaceableByForEach<a name="line.325"></a>
-<FONT color="green">326</FONT>                for (int i = 0, localParentsLength = localParents.length; i &lt; localParentsLength; i++) {<a name="line.326"></a>
-<FONT color="green">327</FONT>                    final Marker marker = localParents[i];<a name="line.327"></a>
-<FONT color="green">328</FONT>                    if (marker == parent) {<a name="line.328"></a>
-<FONT color="green">329</FONT>                        return true;<a name="line.329"></a>
-<FONT color="green">330</FONT>                    }<a name="line.330"></a>
-<FONT color="green">331</FONT>                }<a name="line.331"></a>
-<FONT color="green">332</FONT>                return false;<a name="line.332"></a>
-<FONT color="green">333</FONT>            }<a name="line.333"></a>
-<FONT color="green">334</FONT>    <a name="line.334"></a>
-<FONT color="green">335</FONT>            @Override<a name="line.335"></a>
-<FONT color="green">336</FONT>            public boolean equals(final Object o) {<a name="line.336"></a>
-<FONT color="green">337</FONT>                if (this == o) {<a name="line.337"></a>
-<FONT color="green">338</FONT>                    return true;<a name="line.338"></a>
-<FONT color="green">339</FONT>                }<a name="line.339"></a>
-<FONT color="green">340</FONT>                if (o == null || !(o instanceof Marker)) {<a name="line.340"></a>
-<FONT color="green">341</FONT>                    return false;<a name="line.341"></a>
-<FONT color="green">342</FONT>                }<a name="line.342"></a>
-<FONT color="green">343</FONT>                final Marker marker = (Marker) o;<a name="line.343"></a>
-<FONT color="green">344</FONT>                return name.equals(marker.getName());<a name="line.344"></a>
-<FONT color="green">345</FONT>            }<a name="line.345"></a>
-<FONT color="green">346</FONT>    <a name="line.346"></a>
-<FONT color="green">347</FONT>            @Override<a name="line.347"></a>
-<FONT color="green">348</FONT>            public int hashCode() {<a name="line.348"></a>
-<FONT color="green">349</FONT>                return name.hashCode();<a name="line.349"></a>
-<FONT color="green">350</FONT>            }<a name="line.350"></a>
-<FONT color="green">351</FONT>    <a name="line.351"></a>
-<FONT color="green">352</FONT>            @Override<a name="line.352"></a>
-<FONT color="green">353</FONT>            public String toString() {<a name="line.353"></a>
-<FONT color="green">354</FONT>                // FIXME: might want to use an initial capacity; the default is 16 (or str.length() + 16)<a name="line.354"></a>
-<FONT color="green">355</FONT>                final StringBuilder sb = new StringBuilder(name);<a name="line.355"></a>
-<FONT color="green">356</FONT>                final Marker[] localParents = parents;<a name="line.356"></a>
-<FONT color="green">357</FONT>                if (localParents != null) {<a name="line.357"></a>
-<FONT color="green">358</FONT>                    addParentInfo(sb, localParents);<a name="line.358"></a>
-<FONT color="green">359</FONT>                }<a name="line.359"></a>
-<FONT color="green">360</FONT>                return sb.toString();<a name="line.360"></a>
-<FONT color="green">361</FONT>            }<a name="line.361"></a>
-<FONT color="green">362</FONT>    <a name="line.362"></a>
-<FONT color="green">363</FONT>            private static void addParentInfo(final StringBuilder sb, final Marker... parents) {<a name="line.363"></a>
-<FONT color="green">364</FONT>                sb.append("[ ");<a name="line.364"></a>
-<FONT color="green">365</FONT>                boolean first = true;<a name="line.365"></a>
-<FONT color="green">366</FONT>                //noinspection ForLoopReplaceableByForEach<a name="line.366"></a>
-<FONT color="green">367</FONT>                for (int i = 0, parentsLength = parents.length; i &lt; parentsLength; i++) {<a name="line.367"></a>
-<FONT color="green">368</FONT>                    final Marker marker = parents[i];<a name="line.368"></a>
-<FONT color="green">369</FONT>                    if (!first) {<a name="line.369"></a>
-<FONT color="green">370</FONT>                        sb.append(", ");<a name="line.370"></a>
-<FONT color="green">371</FONT>                    }<a name="line.371"></a>
-<FONT color="green">372</FONT>                    first = false;<a name="line.372"></a>
-<FONT color="green">373</FONT>                    sb.append(marker.getName());<a name="line.373"></a>
-<FONT color="green">374</FONT>                    final Marker[] p = marker instanceof Log4jMarker ? ((Log4jMarker) marker).parents : marker.getParents();<a name="line.374"></a>
-<FONT color="green">375</FONT>                    if (p != null) {<a name="line.375"></a>
-<FONT color="green">376</FONT>                        addParentInfo(sb, p);<a name="line.376"></a>
-<FONT color="green">377</FONT>                    }<a name="line.377"></a>
-<FONT color="green">378</FONT>                }<a name="line.378"></a>
-<FONT color="green">379</FONT>                sb.append(" ]");<a name="line.379"></a>
-<FONT color="green">380</FONT>            }<a name="line.380"></a>
-<FONT color="green">381</FONT>        }<a name="line.381"></a>
-<FONT color="green">382</FONT>    }<a name="line.382"></a>
+<FONT color="green">326</FONT>                // performance tests showed a normal for loop is slightly faster than a for-each loop on some platforms<a name="line.326"></a>
+<FONT color="green">327</FONT>                for (int i = 0, localParentsLength = localParents.length; i &lt; localParentsLength; i++) {<a name="line.327"></a>
+<FONT color="green">328</FONT>                    final Marker marker = localParents[i];<a name="line.328"></a>
+<FONT color="green">329</FONT>                    if (marker == parent) {<a name="line.329"></a>
+<FONT color="green">330</FONT>                        return true;<a name="line.330"></a>
+<FONT color="green">331</FONT>                    }<a name="line.331"></a>
+<FONT color="green">332</FONT>                }<a name="line.332"></a>
+<FONT color="green">333</FONT>                return false;<a name="line.333"></a>
+<FONT color="green">334</FONT>            }<a name="line.334"></a>
+<FONT color="green">335</FONT>    <a name="line.335"></a>
+<FONT color="green">336</FONT>            @Override<a name="line.336"></a>
+<FONT color="green">337</FONT>            public boolean equals(final Object o) {<a name="line.337"></a>
+<FONT color="green">338</FONT>                if (this == o) {<a name="line.338"></a>
+<FONT color="green">339</FONT>                    return true;<a name="line.339"></a>
+<FONT color="green">340</FONT>                }<a name="line.340"></a>
+<FONT color="green">341</FONT>                if (o == null || !(o instanceof Marker)) {<a name="line.341"></a>
+<FONT color="green">342</FONT>                    return false;<a name="line.342"></a>
+<FONT color="green">343</FONT>                }<a name="line.343"></a>
+<FONT color="green">344</FONT>                final Marker marker = (Marker) o;<a name="line.344"></a>
+<FONT color="green">345</FONT>                return name.equals(marker.getName());<a name="line.345"></a>
+<FONT color="green">346</FONT>            }<a name="line.346"></a>
+<FONT color="green">347</FONT>    <a name="line.347"></a>
+<FONT color="green">348</FONT>            @Override<a name="line.348"></a>
+<FONT color="green">349</FONT>            public int hashCode() {<a name="line.349"></a>
+<FONT color="green">350</FONT>                return name.hashCode();<a name="line.350"></a>
+<FONT color="green">351</FONT>            }<a name="line.351"></a>
+<FONT color="green">352</FONT>    <a name="line.352"></a>
+<FONT color="green">353</FONT>            @Override<a name="line.353"></a>
+<FONT color="green">354</FONT>            public String toString() {<a name="line.354"></a>
+<FONT color="green">355</FONT>                // FIXME: might want to use an initial capacity; the default is 16 (or str.length() + 16)<a name="line.355"></a>
+<FONT color="green">356</FONT>                final StringBuilder sb = new StringBuilder(name);<a name="line.356"></a>
+<FONT color="green">357</FONT>                final Marker[] localParents = parents;<a name="line.357"></a>
+<FONT color="green">358</FONT>                if (localParents != null) {<a name="line.358"></a>
+<FONT color="green">359</FONT>                    addParentInfo(sb, localParents);<a name="line.359"></a>
+<FONT color="green">360</FONT>                }<a name="line.360"></a>
+<FONT color="green">361</FONT>                return sb.toString();<a name="line.361"></a>
+<FONT color="green">362</FONT>            }<a name="line.362"></a>
+<FONT color="green">363</FONT>    <a name="line.363"></a>
+<FONT color="green">364</FONT>            private static void addParentInfo(final StringBuilder sb, final Marker... parents) {<a name="line.364"></a>
+<FONT color="green">365</FONT>                sb.append("[ ");<a name="line.365"></a>
+<FONT color="green">366</FONT>                boolean first = true;<a name="line.366"></a>
+<FONT color="green">367</FONT>                //noinspection ForLoopReplaceableByForEach<a name="line.367"></a>
+<FONT color="green">368</FONT>                for (int i = 0, parentsLength = parents.length; i &lt; parentsLength; i++) {<a name="line.368"></a>
+<FONT color="green">369</FONT>                    final Marker marker = parents[i];<a name="line.369"></a>
+<FONT color="green">370</FONT>                    if (!first) {<a name="line.370"></a>
+<FONT color="green">371</FONT>                        sb.append(", ");<a name="line.371"></a>
+<FONT color="green">372</FONT>                    }<a name="line.372"></a>
+<FONT color="green">373</FONT>                    first = false;<a name="line.373"></a>
+<FONT color="green">374</FONT>                    sb.append(marker.getName());<a name="line.374"></a>
+<FONT color="green">375</FONT>                    final Marker[] p = marker instanceof Log4jMarker ? ((Log4jMarker) marker).parents : marker.getParents();<a name="line.375"></a>
+<FONT color="green">376</FONT>                    if (p != null) {<a name="line.376"></a>
+<FONT color="green">377</FONT>                        addParentInfo(sb, p);<a name="line.377"></a>
+<FONT color="green">378</FONT>                    }<a name="line.378"></a>
+<FONT color="green">379</FONT>                }<a name="line.379"></a>
+<FONT color="green">380</FONT>                sb.append(" ]");<a name="line.380"></a>
+<FONT color="green">381</FONT>            }<a name="line.381"></a>
+<FONT color="green">382</FONT>        }<a name="line.382"></a>
+<FONT color="green">383</FONT>    }<a name="line.383"></a>
 
 
 

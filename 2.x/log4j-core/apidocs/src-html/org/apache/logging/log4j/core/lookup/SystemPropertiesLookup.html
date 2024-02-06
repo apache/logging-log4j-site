@@ -19,46 +19,38 @@
 <FONT color="green">016</FONT>     */<a name="line.16"></a>
 <FONT color="green">017</FONT>    package org.apache.logging.log4j.core.lookup;<a name="line.17"></a>
 <FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    import org.apache.logging.log4j.core.LogEvent;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.20"></a>
-<FONT color="green">021</FONT>    <a name="line.21"></a>
-<FONT color="green">022</FONT>    /**<a name="line.22"></a>
-<FONT color="green">023</FONT>     * Looks up keys from system properties.<a name="line.23"></a>
-<FONT color="green">024</FONT>     */<a name="line.24"></a>
-<FONT color="green">025</FONT>    @Plugin(name = "sys", category = "Lookup")<a name="line.25"></a>
-<FONT color="green">026</FONT>    public class SystemPropertiesLookup implements StrLookup {<a name="line.26"></a>
-<FONT color="green">027</FONT>    <a name="line.27"></a>
-<FONT color="green">028</FONT>        /**<a name="line.28"></a>
-<FONT color="green">029</FONT>         * Looks up the value for the key.<a name="line.29"></a>
-<FONT color="green">030</FONT>         * @param key  the key to be looked up, may be null<a name="line.30"></a>
-<FONT color="green">031</FONT>         * @return The value for the key.<a name="line.31"></a>
-<FONT color="green">032</FONT>         */<a name="line.32"></a>
-<FONT color="green">033</FONT>        @Override<a name="line.33"></a>
-<FONT color="green">034</FONT>        public String lookup(final String key) {<a name="line.34"></a>
-<FONT color="green">035</FONT>            try {<a name="line.35"></a>
-<FONT color="green">036</FONT>                return System.getProperty(key);<a name="line.36"></a>
-<FONT color="green">037</FONT>            } catch (final Exception ex) {<a name="line.37"></a>
-<FONT color="green">038</FONT>                // Should this be logged?<a name="line.38"></a>
-<FONT color="green">039</FONT>                return null;<a name="line.39"></a>
-<FONT color="green">040</FONT>            }<a name="line.40"></a>
-<FONT color="green">041</FONT>        }<a name="line.41"></a>
-<FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>        /**<a name="line.43"></a>
-<FONT color="green">044</FONT>         * Looks up the value for the key using the data in the LogEvent.<a name="line.44"></a>
-<FONT color="green">045</FONT>         * @param event The current LogEvent.<a name="line.45"></a>
-<FONT color="green">046</FONT>         * @param key  the key to be looked up, may be null<a name="line.46"></a>
-<FONT color="green">047</FONT>         * @return The value associated with the key.<a name="line.47"></a>
-<FONT color="green">048</FONT>         */<a name="line.48"></a>
-<FONT color="green">049</FONT>        @Override<a name="line.49"></a>
-<FONT color="green">050</FONT>        public String lookup(final LogEvent event, final String key) {<a name="line.50"></a>
-<FONT color="green">051</FONT>            try {<a name="line.51"></a>
-<FONT color="green">052</FONT>                return System.getProperty(key);<a name="line.52"></a>
-<FONT color="green">053</FONT>            } catch (final Exception ex) {<a name="line.53"></a>
-<FONT color="green">054</FONT>                // Should this be logged?<a name="line.54"></a>
-<FONT color="green">055</FONT>                return null;<a name="line.55"></a>
-<FONT color="green">056</FONT>            }<a name="line.56"></a>
-<FONT color="green">057</FONT>        }<a name="line.57"></a>
-<FONT color="green">058</FONT>    }<a name="line.58"></a>
+<FONT color="green">019</FONT>    import org.apache.logging.log4j.Logger;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.apache.logging.log4j.Marker;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.apache.logging.log4j.MarkerManager;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.apache.logging.log4j.core.LogEvent;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>    /**<a name="line.26"></a>
+<FONT color="green">027</FONT>     * Looks up keys from system properties.<a name="line.27"></a>
+<FONT color="green">028</FONT>     */<a name="line.28"></a>
+<FONT color="green">029</FONT>    @Plugin(name = "sys", category = StrLookup.CATEGORY)<a name="line.29"></a>
+<FONT color="green">030</FONT>    public class SystemPropertiesLookup extends AbstractLookup {<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.32"></a>
+<FONT color="green">033</FONT>        private static final Marker LOOKUP = MarkerManager.getMarker("LOOKUP");<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>        /**<a name="line.35"></a>
+<FONT color="green">036</FONT>         * Looks up the value for the key using the data in the LogEvent.<a name="line.36"></a>
+<FONT color="green">037</FONT>         * @param event The current LogEvent.<a name="line.37"></a>
+<FONT color="green">038</FONT>         * @param key  the key to be looked up, may be null<a name="line.38"></a>
+<FONT color="green">039</FONT>         * @return The value associated with the key.<a name="line.39"></a>
+<FONT color="green">040</FONT>         */<a name="line.40"></a>
+<FONT color="green">041</FONT>        @Override<a name="line.41"></a>
+<FONT color="green">042</FONT>        public String lookup(final LogEvent event, final String key) {<a name="line.42"></a>
+<FONT color="green">043</FONT>            try {<a name="line.43"></a>
+<FONT color="green">044</FONT>                return System.getProperty(key);<a name="line.44"></a>
+<FONT color="green">045</FONT>            } catch (final Exception ex) {<a name="line.45"></a>
+<FONT color="green">046</FONT>                LOGGER.warn(LOOKUP, "Error while getting system property [{}].", key, ex);<a name="line.46"></a>
+<FONT color="green">047</FONT>                return null;<a name="line.47"></a>
+<FONT color="green">048</FONT>            }<a name="line.48"></a>
+<FONT color="green">049</FONT>        }<a name="line.49"></a>
+<FONT color="green">050</FONT>    }<a name="line.50"></a>
 
 
 

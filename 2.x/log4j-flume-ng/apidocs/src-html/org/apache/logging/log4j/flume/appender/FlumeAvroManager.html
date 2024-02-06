@@ -43,9 +43,9 @@
 <FONT color="green">040</FONT>    <a name="line.40"></a>
 <FONT color="green">041</FONT>        private final int retries;<a name="line.41"></a>
 <FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>        private final int connectTimeout;<a name="line.43"></a>
+<FONT color="green">043</FONT>        private final int connectTimeoutMillis;<a name="line.43"></a>
 <FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>        private final int requestTimeout;<a name="line.45"></a>
+<FONT color="green">045</FONT>        private final int requestTimeoutMillis;<a name="line.45"></a>
 <FONT color="green">046</FONT>    <a name="line.46"></a>
 <FONT color="green">047</FONT>        private final int current = 0;<a name="line.47"></a>
 <FONT color="green">048</FONT>    <a name="line.48"></a>
@@ -67,8 +67,8 @@
 <FONT color="green">064</FONT>            this.agents = agents;<a name="line.64"></a>
 <FONT color="green">065</FONT>            this.batchSize = batchSize;<a name="line.65"></a>
 <FONT color="green">066</FONT>            this.retries = retries;<a name="line.66"></a>
-<FONT color="green">067</FONT>            this.connectTimeout = connectTimeout;<a name="line.67"></a>
-<FONT color="green">068</FONT>            this.requestTimeout = requestTimeout;<a name="line.68"></a>
+<FONT color="green">067</FONT>            this.connectTimeoutMillis = connectTimeout;<a name="line.67"></a>
+<FONT color="green">068</FONT>            this.requestTimeoutMillis = requestTimeout;<a name="line.68"></a>
 <FONT color="green">069</FONT>            this.rpcClient = connect(agents, retries, connectTimeout, requestTimeout);<a name="line.69"></a>
 <FONT color="green">070</FONT>        }<a name="line.70"></a>
 <FONT color="green">071</FONT>    <a name="line.71"></a>
@@ -78,12 +78,12 @@
 <FONT color="green">075</FONT>         * @param agents The agents to use.<a name="line.75"></a>
 <FONT color="green">076</FONT>         * @param batchSize The number of events to include in a batch.<a name="line.76"></a>
 <FONT color="green">077</FONT>         * @param retries The number of times to retry connecting before giving up.<a name="line.77"></a>
-<FONT color="green">078</FONT>         * @param connectTimeout The connection timeout in ms.<a name="line.78"></a>
-<FONT color="green">079</FONT>         * @param requestTimeout The request timeout in ms.<a name="line.79"></a>
+<FONT color="green">078</FONT>         * @param connectTimeoutMillis The connection timeout in ms.<a name="line.78"></a>
+<FONT color="green">079</FONT>         * @param requestTimeoutMillis The request timeout in ms.<a name="line.79"></a>
 <FONT color="green">080</FONT>         * @return A FlumeAvroManager.<a name="line.80"></a>
 <FONT color="green">081</FONT>         */<a name="line.81"></a>
 <FONT color="green">082</FONT>        public static FlumeAvroManager getManager(final String name, final Agent[] agents, int batchSize,<a name="line.82"></a>
-<FONT color="green">083</FONT>                                                  final int retries, final int connectTimeout, final int requestTimeout) {<a name="line.83"></a>
+<FONT color="green">083</FONT>                                                  final int retries, final int connectTimeoutMillis, final int requestTimeoutMillis) {<a name="line.83"></a>
 <FONT color="green">084</FONT>            if (agents == null || agents.length == 0) {<a name="line.84"></a>
 <FONT color="green">085</FONT>                throw new IllegalArgumentException("At least one agent is required");<a name="line.85"></a>
 <FONT color="green">086</FONT>            }<a name="line.86"></a>
@@ -103,7 +103,7 @@
 <FONT color="green">100</FONT>            }<a name="line.100"></a>
 <FONT color="green">101</FONT>            sb.append(']');<a name="line.101"></a>
 <FONT color="green">102</FONT>            return getManager(sb.toString(), factory,<a name="line.102"></a>
-<FONT color="green">103</FONT>                    new FactoryData(name, agents, batchSize, retries, connectTimeout, requestTimeout));<a name="line.103"></a>
+<FONT color="green">103</FONT>                    new FactoryData(name, agents, batchSize, retries, connectTimeoutMillis, requestTimeoutMillis));<a name="line.103"></a>
 <FONT color="green">104</FONT>        }<a name="line.104"></a>
 <FONT color="green">105</FONT>    <a name="line.105"></a>
 <FONT color="green">106</FONT>        /**<a name="line.106"></a>
@@ -126,12 +126,12 @@
 <FONT color="green">123</FONT>            return retries;<a name="line.123"></a>
 <FONT color="green">124</FONT>        }<a name="line.124"></a>
 <FONT color="green">125</FONT>    <a name="line.125"></a>
-<FONT color="green">126</FONT>        public int getConnectTimeout() {<a name="line.126"></a>
-<FONT color="green">127</FONT>            return connectTimeout;<a name="line.127"></a>
+<FONT color="green">126</FONT>        public int getConnectTimeoutMillis() {<a name="line.126"></a>
+<FONT color="green">127</FONT>            return connectTimeoutMillis;<a name="line.127"></a>
 <FONT color="green">128</FONT>        }<a name="line.128"></a>
 <FONT color="green">129</FONT>    <a name="line.129"></a>
-<FONT color="green">130</FONT>        public int getRequestTimeout() {<a name="line.130"></a>
-<FONT color="green">131</FONT>            return requestTimeout;<a name="line.131"></a>
+<FONT color="green">130</FONT>        public int getRequestTimeoutMillis() {<a name="line.130"></a>
+<FONT color="green">131</FONT>            return requestTimeoutMillis;<a name="line.131"></a>
 <FONT color="green">132</FONT>        }<a name="line.132"></a>
 <FONT color="green">133</FONT>    <a name="line.133"></a>
 <FONT color="green">134</FONT>        public int getBatchSize() {<a name="line.134"></a>
@@ -140,7 +140,7 @@
 <FONT color="green">137</FONT>    <a name="line.137"></a>
 <FONT color="green">138</FONT>        public synchronized void send(final BatchEvent events) {<a name="line.138"></a>
 <FONT color="green">139</FONT>            if (rpcClient == null) {<a name="line.139"></a>
-<FONT color="green">140</FONT>                rpcClient = connect(agents, retries, connectTimeout, requestTimeout);<a name="line.140"></a>
+<FONT color="green">140</FONT>                rpcClient = connect(agents, retries, connectTimeoutMillis, requestTimeoutMillis);<a name="line.140"></a>
 <FONT color="green">141</FONT>            }<a name="line.141"></a>
 <FONT color="green">142</FONT>    <a name="line.142"></a>
 <FONT color="green">143</FONT>            if (rpcClient != null) {<a name="line.143"></a>
@@ -166,7 +166,7 @@
 <FONT color="green">163</FONT>        @Override<a name="line.163"></a>
 <FONT color="green">164</FONT>        public synchronized void send(final Event event)  {<a name="line.164"></a>
 <FONT color="green">165</FONT>            if (rpcClient == null) {<a name="line.165"></a>
-<FONT color="green">166</FONT>                rpcClient = connect(agents, retries, connectTimeout, requestTimeout);<a name="line.166"></a>
+<FONT color="green">166</FONT>                rpcClient = connect(agents, retries, connectTimeoutMillis, requestTimeoutMillis);<a name="line.166"></a>
 <FONT color="green">167</FONT>            }<a name="line.167"></a>
 <FONT color="green">168</FONT>    <a name="line.168"></a>
 <FONT color="green">169</FONT>            if (rpcClient != null) {<a name="line.169"></a>
@@ -193,111 +193,110 @@
 <FONT color="green">190</FONT>         * @param agents The list of agents to choose from<a name="line.190"></a>
 <FONT color="green">191</FONT>         * @return The FlumeEventAvroServer.<a name="line.191"></a>
 <FONT color="green">192</FONT>         */<a name="line.192"></a>
-<FONT color="green">193</FONT>    <a name="line.193"></a>
-<FONT color="green">194</FONT>        private RpcClient connect(final Agent[] agents, int retries, final int connectTimeout, final int requestTimeout) {<a name="line.194"></a>
-<FONT color="green">195</FONT>            try {<a name="line.195"></a>
-<FONT color="green">196</FONT>                final Properties props = new Properties();<a name="line.196"></a>
-<FONT color="green">197</FONT>    <a name="line.197"></a>
-<FONT color="green">198</FONT>                props.put("client.type", "default_failover");<a name="line.198"></a>
-<FONT color="green">199</FONT>    <a name="line.199"></a>
-<FONT color="green">200</FONT>                int count = 1;<a name="line.200"></a>
-<FONT color="green">201</FONT>                final StringBuilder sb = new StringBuilder();<a name="line.201"></a>
-<FONT color="green">202</FONT>                for (final Agent agent : agents) {<a name="line.202"></a>
-<FONT color="green">203</FONT>                    if (sb.length() &gt; 0) {<a name="line.203"></a>
-<FONT color="green">204</FONT>                        sb.append(' ');<a name="line.204"></a>
-<FONT color="green">205</FONT>                    }<a name="line.205"></a>
-<FONT color="green">206</FONT>                    final String hostName = "host" + count++;<a name="line.206"></a>
-<FONT color="green">207</FONT>                    props.put("hosts." + hostName, agent.getHost() + ':' + agent.getPort());<a name="line.207"></a>
-<FONT color="green">208</FONT>                    sb.append(hostName);<a name="line.208"></a>
-<FONT color="green">209</FONT>                }<a name="line.209"></a>
-<FONT color="green">210</FONT>                props.put("hosts", sb.toString());<a name="line.210"></a>
-<FONT color="green">211</FONT>                if (batchSize &gt; 0) {<a name="line.211"></a>
-<FONT color="green">212</FONT>                    props.put("batch-size", Integer.toString(batchSize));<a name="line.212"></a>
-<FONT color="green">213</FONT>                }<a name="line.213"></a>
-<FONT color="green">214</FONT>                if (retries &gt; 1) {<a name="line.214"></a>
-<FONT color="green">215</FONT>                    if (retries &gt; MAX_RECONNECTS) {<a name="line.215"></a>
-<FONT color="green">216</FONT>                        retries = MAX_RECONNECTS;<a name="line.216"></a>
-<FONT color="green">217</FONT>                    }<a name="line.217"></a>
-<FONT color="green">218</FONT>                    props.put("max-attempts", Integer.toString(retries * agents.length));<a name="line.218"></a>
-<FONT color="green">219</FONT>                }<a name="line.219"></a>
-<FONT color="green">220</FONT>                if (requestTimeout &gt;= MINIMUM_TIMEOUT) {<a name="line.220"></a>
-<FONT color="green">221</FONT>                    props.put("request-timeout", Integer.toString(requestTimeout));<a name="line.221"></a>
-<FONT color="green">222</FONT>                }<a name="line.222"></a>
-<FONT color="green">223</FONT>                if (connectTimeout &gt;= MINIMUM_TIMEOUT) {<a name="line.223"></a>
-<FONT color="green">224</FONT>                    props.put("connect-timeout", Integer.toString(connectTimeout));<a name="line.224"></a>
-<FONT color="green">225</FONT>                }<a name="line.225"></a>
-<FONT color="green">226</FONT>                return RpcClientFactory.getInstance(props);<a name="line.226"></a>
-<FONT color="green">227</FONT>            } catch (final Exception ex) {<a name="line.227"></a>
-<FONT color="green">228</FONT>                LOGGER.error("Unable to create Flume RPCClient: {}", ex.getMessage());<a name="line.228"></a>
-<FONT color="green">229</FONT>                return null;<a name="line.229"></a>
-<FONT color="green">230</FONT>            }<a name="line.230"></a>
-<FONT color="green">231</FONT>        }<a name="line.231"></a>
-<FONT color="green">232</FONT>    <a name="line.232"></a>
-<FONT color="green">233</FONT>        @Override<a name="line.233"></a>
-<FONT color="green">234</FONT>        protected void releaseSub() {<a name="line.234"></a>
-<FONT color="green">235</FONT>            if (rpcClient != null) {<a name="line.235"></a>
-<FONT color="green">236</FONT>                try {<a name="line.236"></a>
-<FONT color="green">237</FONT>                    rpcClient.close();<a name="line.237"></a>
-<FONT color="green">238</FONT>                } catch (final Exception ex) {<a name="line.238"></a>
-<FONT color="green">239</FONT>                    LOGGER.error("Attempt to close RPC client failed", ex);<a name="line.239"></a>
-<FONT color="green">240</FONT>                }<a name="line.240"></a>
-<FONT color="green">241</FONT>            }<a name="line.241"></a>
-<FONT color="green">242</FONT>            rpcClient = null;<a name="line.242"></a>
-<FONT color="green">243</FONT>        }<a name="line.243"></a>
-<FONT color="green">244</FONT>    <a name="line.244"></a>
-<FONT color="green">245</FONT>        /**<a name="line.245"></a>
-<FONT color="green">246</FONT>         * Factory data.<a name="line.246"></a>
-<FONT color="green">247</FONT>         */<a name="line.247"></a>
-<FONT color="green">248</FONT>        private static class FactoryData {<a name="line.248"></a>
-<FONT color="green">249</FONT>            private final String name;<a name="line.249"></a>
-<FONT color="green">250</FONT>            private final Agent[] agents;<a name="line.250"></a>
-<FONT color="green">251</FONT>            private final int batchSize;<a name="line.251"></a>
-<FONT color="green">252</FONT>            private final int retries;<a name="line.252"></a>
-<FONT color="green">253</FONT>            private final int conntectTimeout;<a name="line.253"></a>
-<FONT color="green">254</FONT>            private final int requestTimeout;<a name="line.254"></a>
-<FONT color="green">255</FONT>    <a name="line.255"></a>
-<FONT color="green">256</FONT>            /**<a name="line.256"></a>
-<FONT color="green">257</FONT>             * Constructor.<a name="line.257"></a>
-<FONT color="green">258</FONT>             * @param name The name of the Appender.<a name="line.258"></a>
-<FONT color="green">259</FONT>             * @param agents The agents.<a name="line.259"></a>
-<FONT color="green">260</FONT>             * @param batchSize The number of events to include in a batch.<a name="line.260"></a>
-<FONT color="green">261</FONT>             */<a name="line.261"></a>
-<FONT color="green">262</FONT>            public FactoryData(final String name, final Agent[] agents, final int batchSize, final int retries,<a name="line.262"></a>
-<FONT color="green">263</FONT>                               final int connectTimeout, final int requestTimeout) {<a name="line.263"></a>
-<FONT color="green">264</FONT>                this.name = name;<a name="line.264"></a>
-<FONT color="green">265</FONT>                this.agents = agents;<a name="line.265"></a>
-<FONT color="green">266</FONT>                this.batchSize = batchSize;<a name="line.266"></a>
-<FONT color="green">267</FONT>                this.retries = retries;<a name="line.267"></a>
-<FONT color="green">268</FONT>                this.conntectTimeout = connectTimeout;<a name="line.268"></a>
-<FONT color="green">269</FONT>                this.requestTimeout = requestTimeout;<a name="line.269"></a>
-<FONT color="green">270</FONT>            }<a name="line.270"></a>
-<FONT color="green">271</FONT>        }<a name="line.271"></a>
-<FONT color="green">272</FONT>    <a name="line.272"></a>
-<FONT color="green">273</FONT>        /**<a name="line.273"></a>
-<FONT color="green">274</FONT>         * Avro Manager Factory.<a name="line.274"></a>
-<FONT color="green">275</FONT>         */<a name="line.275"></a>
-<FONT color="green">276</FONT>        private static class AvroManagerFactory implements ManagerFactory&lt;FlumeAvroManager, FactoryData&gt; {<a name="line.276"></a>
-<FONT color="green">277</FONT>    <a name="line.277"></a>
-<FONT color="green">278</FONT>            /**<a name="line.278"></a>
-<FONT color="green">279</FONT>             * Create the FlumeAvroManager.<a name="line.279"></a>
-<FONT color="green">280</FONT>             * @param name The name of the entity to manage.<a name="line.280"></a>
-<FONT color="green">281</FONT>             * @param data The data required to create the entity.<a name="line.281"></a>
-<FONT color="green">282</FONT>             * @return The FlumeAvroManager.<a name="line.282"></a>
-<FONT color="green">283</FONT>             */<a name="line.283"></a>
-<FONT color="green">284</FONT>            @Override<a name="line.284"></a>
-<FONT color="green">285</FONT>            public FlumeAvroManager createManager(final String name, final FactoryData data) {<a name="line.285"></a>
-<FONT color="green">286</FONT>                try {<a name="line.286"></a>
-<FONT color="green">287</FONT>    <a name="line.287"></a>
-<FONT color="green">288</FONT>                    return new FlumeAvroManager(name, data.name, data.agents, data.batchSize, data.retries,<a name="line.288"></a>
-<FONT color="green">289</FONT>                        data.conntectTimeout, data.requestTimeout);<a name="line.289"></a>
-<FONT color="green">290</FONT>                } catch (final Exception ex) {<a name="line.290"></a>
-<FONT color="green">291</FONT>                    LOGGER.error("Could not create FlumeAvroManager", ex);<a name="line.291"></a>
-<FONT color="green">292</FONT>                }<a name="line.292"></a>
-<FONT color="green">293</FONT>                return null;<a name="line.293"></a>
-<FONT color="green">294</FONT>            }<a name="line.294"></a>
-<FONT color="green">295</FONT>        }<a name="line.295"></a>
-<FONT color="green">296</FONT>    <a name="line.296"></a>
-<FONT color="green">297</FONT>    }<a name="line.297"></a>
+<FONT color="green">193</FONT>        private RpcClient connect(final Agent[] agents, int retries, final int connectTimeoutMillis, final int requestTimeoutMillis) {<a name="line.193"></a>
+<FONT color="green">194</FONT>            try {<a name="line.194"></a>
+<FONT color="green">195</FONT>                final Properties props = new Properties();<a name="line.195"></a>
+<FONT color="green">196</FONT>    <a name="line.196"></a>
+<FONT color="green">197</FONT>                props.put("client.type", "default_failover");<a name="line.197"></a>
+<FONT color="green">198</FONT>    <a name="line.198"></a>
+<FONT color="green">199</FONT>                int count = 1;<a name="line.199"></a>
+<FONT color="green">200</FONT>                final StringBuilder sb = new StringBuilder();<a name="line.200"></a>
+<FONT color="green">201</FONT>                for (final Agent agent : agents) {<a name="line.201"></a>
+<FONT color="green">202</FONT>                    if (sb.length() &gt; 0) {<a name="line.202"></a>
+<FONT color="green">203</FONT>                        sb.append(' ');<a name="line.203"></a>
+<FONT color="green">204</FONT>                    }<a name="line.204"></a>
+<FONT color="green">205</FONT>                    final String hostName = "host" + count++;<a name="line.205"></a>
+<FONT color="green">206</FONT>                    props.put("hosts." + hostName, agent.getHost() + ':' + agent.getPort());<a name="line.206"></a>
+<FONT color="green">207</FONT>                    sb.append(hostName);<a name="line.207"></a>
+<FONT color="green">208</FONT>                }<a name="line.208"></a>
+<FONT color="green">209</FONT>                props.put("hosts", sb.toString());<a name="line.209"></a>
+<FONT color="green">210</FONT>                if (batchSize &gt; 0) {<a name="line.210"></a>
+<FONT color="green">211</FONT>                    props.put("batch-size", Integer.toString(batchSize));<a name="line.211"></a>
+<FONT color="green">212</FONT>                }<a name="line.212"></a>
+<FONT color="green">213</FONT>                if (retries &gt; 1) {<a name="line.213"></a>
+<FONT color="green">214</FONT>                    if (retries &gt; MAX_RECONNECTS) {<a name="line.214"></a>
+<FONT color="green">215</FONT>                        retries = MAX_RECONNECTS;<a name="line.215"></a>
+<FONT color="green">216</FONT>                    }<a name="line.216"></a>
+<FONT color="green">217</FONT>                    props.put("max-attempts", Integer.toString(retries * agents.length));<a name="line.217"></a>
+<FONT color="green">218</FONT>                }<a name="line.218"></a>
+<FONT color="green">219</FONT>                if (requestTimeoutMillis &gt;= MINIMUM_TIMEOUT) {<a name="line.219"></a>
+<FONT color="green">220</FONT>                    props.put("request-timeout", Integer.toString(requestTimeoutMillis));<a name="line.220"></a>
+<FONT color="green">221</FONT>                }<a name="line.221"></a>
+<FONT color="green">222</FONT>                if (connectTimeoutMillis &gt;= MINIMUM_TIMEOUT) {<a name="line.222"></a>
+<FONT color="green">223</FONT>                    props.put("connect-timeout", Integer.toString(connectTimeoutMillis));<a name="line.223"></a>
+<FONT color="green">224</FONT>                }<a name="line.224"></a>
+<FONT color="green">225</FONT>                return RpcClientFactory.getInstance(props);<a name="line.225"></a>
+<FONT color="green">226</FONT>            } catch (final Exception ex) {<a name="line.226"></a>
+<FONT color="green">227</FONT>                LOGGER.error("Unable to create Flume RPCClient: {}", ex.getMessage());<a name="line.227"></a>
+<FONT color="green">228</FONT>                return null;<a name="line.228"></a>
+<FONT color="green">229</FONT>            }<a name="line.229"></a>
+<FONT color="green">230</FONT>        }<a name="line.230"></a>
+<FONT color="green">231</FONT>    <a name="line.231"></a>
+<FONT color="green">232</FONT>        @Override<a name="line.232"></a>
+<FONT color="green">233</FONT>        protected void releaseSub() {<a name="line.233"></a>
+<FONT color="green">234</FONT>            if (rpcClient != null) {<a name="line.234"></a>
+<FONT color="green">235</FONT>                try {<a name="line.235"></a>
+<FONT color="green">236</FONT>                    rpcClient.close();<a name="line.236"></a>
+<FONT color="green">237</FONT>                } catch (final Exception ex) {<a name="line.237"></a>
+<FONT color="green">238</FONT>                    LOGGER.error("Attempt to close RPC client failed", ex);<a name="line.238"></a>
+<FONT color="green">239</FONT>                }<a name="line.239"></a>
+<FONT color="green">240</FONT>            }<a name="line.240"></a>
+<FONT color="green">241</FONT>            rpcClient = null;<a name="line.241"></a>
+<FONT color="green">242</FONT>        }<a name="line.242"></a>
+<FONT color="green">243</FONT>    <a name="line.243"></a>
+<FONT color="green">244</FONT>        /**<a name="line.244"></a>
+<FONT color="green">245</FONT>         * Factory data.<a name="line.245"></a>
+<FONT color="green">246</FONT>         */<a name="line.246"></a>
+<FONT color="green">247</FONT>        private static class FactoryData {<a name="line.247"></a>
+<FONT color="green">248</FONT>            private final String name;<a name="line.248"></a>
+<FONT color="green">249</FONT>            private final Agent[] agents;<a name="line.249"></a>
+<FONT color="green">250</FONT>            private final int batchSize;<a name="line.250"></a>
+<FONT color="green">251</FONT>            private final int retries;<a name="line.251"></a>
+<FONT color="green">252</FONT>            private final int conntectTimeoutMillis;<a name="line.252"></a>
+<FONT color="green">253</FONT>            private final int requestTimeoutMillis;<a name="line.253"></a>
+<FONT color="green">254</FONT>    <a name="line.254"></a>
+<FONT color="green">255</FONT>            /**<a name="line.255"></a>
+<FONT color="green">256</FONT>             * Constructor.<a name="line.256"></a>
+<FONT color="green">257</FONT>             * @param name The name of the Appender.<a name="line.257"></a>
+<FONT color="green">258</FONT>             * @param agents The agents.<a name="line.258"></a>
+<FONT color="green">259</FONT>             * @param batchSize The number of events to include in a batch.<a name="line.259"></a>
+<FONT color="green">260</FONT>             */<a name="line.260"></a>
+<FONT color="green">261</FONT>            public FactoryData(final String name, final Agent[] agents, final int batchSize, final int retries,<a name="line.261"></a>
+<FONT color="green">262</FONT>                               final int connectTimeoutMillis, final int requestTimeoutMillis) {<a name="line.262"></a>
+<FONT color="green">263</FONT>                this.name = name;<a name="line.263"></a>
+<FONT color="green">264</FONT>                this.agents = agents;<a name="line.264"></a>
+<FONT color="green">265</FONT>                this.batchSize = batchSize;<a name="line.265"></a>
+<FONT color="green">266</FONT>                this.retries = retries;<a name="line.266"></a>
+<FONT color="green">267</FONT>                this.conntectTimeoutMillis = connectTimeoutMillis;<a name="line.267"></a>
+<FONT color="green">268</FONT>                this.requestTimeoutMillis = requestTimeoutMillis;<a name="line.268"></a>
+<FONT color="green">269</FONT>            }<a name="line.269"></a>
+<FONT color="green">270</FONT>        }<a name="line.270"></a>
+<FONT color="green">271</FONT>    <a name="line.271"></a>
+<FONT color="green">272</FONT>        /**<a name="line.272"></a>
+<FONT color="green">273</FONT>         * Avro Manager Factory.<a name="line.273"></a>
+<FONT color="green">274</FONT>         */<a name="line.274"></a>
+<FONT color="green">275</FONT>        private static class AvroManagerFactory implements ManagerFactory&lt;FlumeAvroManager, FactoryData&gt; {<a name="line.275"></a>
+<FONT color="green">276</FONT>    <a name="line.276"></a>
+<FONT color="green">277</FONT>            /**<a name="line.277"></a>
+<FONT color="green">278</FONT>             * Create the FlumeAvroManager.<a name="line.278"></a>
+<FONT color="green">279</FONT>             * @param name The name of the entity to manage.<a name="line.279"></a>
+<FONT color="green">280</FONT>             * @param data The data required to create the entity.<a name="line.280"></a>
+<FONT color="green">281</FONT>             * @return The FlumeAvroManager.<a name="line.281"></a>
+<FONT color="green">282</FONT>             */<a name="line.282"></a>
+<FONT color="green">283</FONT>            @Override<a name="line.283"></a>
+<FONT color="green">284</FONT>            public FlumeAvroManager createManager(final String name, final FactoryData data) {<a name="line.284"></a>
+<FONT color="green">285</FONT>                try {<a name="line.285"></a>
+<FONT color="green">286</FONT>    <a name="line.286"></a>
+<FONT color="green">287</FONT>                    return new FlumeAvroManager(name, data.name, data.agents, data.batchSize, data.retries,<a name="line.287"></a>
+<FONT color="green">288</FONT>                        data.conntectTimeoutMillis, data.requestTimeoutMillis);<a name="line.288"></a>
+<FONT color="green">289</FONT>                } catch (final Exception ex) {<a name="line.289"></a>
+<FONT color="green">290</FONT>                    LOGGER.error("Could not create FlumeAvroManager", ex);<a name="line.290"></a>
+<FONT color="green">291</FONT>                }<a name="line.291"></a>
+<FONT color="green">292</FONT>                return null;<a name="line.292"></a>
+<FONT color="green">293</FONT>            }<a name="line.293"></a>
+<FONT color="green">294</FONT>        }<a name="line.294"></a>
+<FONT color="green">295</FONT>    <a name="line.295"></a>
+<FONT color="green">296</FONT>    }<a name="line.296"></a>
 
 
 

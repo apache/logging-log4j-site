@@ -20,161 +20,160 @@
 <FONT color="green">017</FONT>    <a name="line.17"></a>
 <FONT color="green">018</FONT>    package org.apache.logging.log4j.core.config.plugins.processor;<a name="line.18"></a>
 <FONT color="green">019</FONT>    <a name="line.19"></a>
-<FONT color="green">020</FONT>    import java.io.IOException;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import java.io.OutputStream;<a name="line.21"></a>
-<FONT color="green">022</FONT>    import java.util.ArrayList;<a name="line.22"></a>
-<FONT color="green">023</FONT>    import java.util.Collection;<a name="line.23"></a>
-<FONT color="green">024</FONT>    import java.util.Collections;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import java.util.Set;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import java.util.concurrent.ConcurrentMap;<a name="line.26"></a>
-<FONT color="green">027</FONT>    <a name="line.27"></a>
-<FONT color="green">028</FONT>    import javax.annotation.processing.AbstractProcessor;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import javax.annotation.processing.RoundEnvironment;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import javax.annotation.processing.SupportedAnnotationTypes;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import javax.lang.model.SourceVersion;<a name="line.31"></a>
-<FONT color="green">032</FONT>    import javax.lang.model.element.Element;<a name="line.32"></a>
-<FONT color="green">033</FONT>    import javax.lang.model.element.ElementVisitor;<a name="line.33"></a>
-<FONT color="green">034</FONT>    import javax.lang.model.element.TypeElement;<a name="line.34"></a>
-<FONT color="green">035</FONT>    import javax.lang.model.util.Elements;<a name="line.35"></a>
-<FONT color="green">036</FONT>    import javax.lang.model.util.SimpleElementVisitor6;<a name="line.36"></a>
-<FONT color="green">037</FONT>    import javax.tools.Diagnostic.Kind;<a name="line.37"></a>
-<FONT color="green">038</FONT>    import javax.tools.FileObject;<a name="line.38"></a>
-<FONT color="green">039</FONT>    import javax.tools.StandardLocation;<a name="line.39"></a>
-<FONT color="green">040</FONT>    <a name="line.40"></a>
-<FONT color="green">041</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.41"></a>
-<FONT color="green">042</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAliases;<a name="line.42"></a>
-<FONT color="green">043</FONT>    import org.apache.logging.log4j.util.Strings;<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>    /**<a name="line.45"></a>
-<FONT color="green">046</FONT>     * Annotation processor for pre-scanning Log4j 2 plugins.<a name="line.46"></a>
-<FONT color="green">047</FONT>     */<a name="line.47"></a>
-<FONT color="green">048</FONT>    @SupportedAnnotationTypes("org.apache.logging.log4j.core.config.plugins.*")<a name="line.48"></a>
-<FONT color="green">049</FONT>    public class PluginProcessor extends AbstractProcessor {<a name="line.49"></a>
-<FONT color="green">050</FONT>    <a name="line.50"></a>
-<FONT color="green">051</FONT>        // TODO: this could be made more abstract to allow for compile-time and run-time plugin processing<a name="line.51"></a>
-<FONT color="green">052</FONT>    <a name="line.52"></a>
-<FONT color="green">053</FONT>        /**<a name="line.53"></a>
-<FONT color="green">054</FONT>         * The location of the plugin cache data file. This file is written to by this processor, and read from by<a name="line.54"></a>
-<FONT color="green">055</FONT>         * {@link org.apache.logging.log4j.core.config.plugins.util.PluginManager}.<a name="line.55"></a>
-<FONT color="green">056</FONT>         */<a name="line.56"></a>
-<FONT color="green">057</FONT>        public static final String PLUGIN_CACHE_FILE = "META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat";<a name="line.57"></a>
-<FONT color="green">058</FONT>    <a name="line.58"></a>
-<FONT color="green">059</FONT>        private final PluginCache pluginCache = new PluginCache();<a name="line.59"></a>
-<FONT color="green">060</FONT>    <a name="line.60"></a>
-<FONT color="green">061</FONT>        @Override<a name="line.61"></a>
-<FONT color="green">062</FONT>        public SourceVersion getSupportedSourceVersion() {<a name="line.62"></a>
-<FONT color="green">063</FONT>            return SourceVersion.latest();<a name="line.63"></a>
-<FONT color="green">064</FONT>        }<a name="line.64"></a>
-<FONT color="green">065</FONT>    <a name="line.65"></a>
-<FONT color="green">066</FONT>        @Override<a name="line.66"></a>
-<FONT color="green">067</FONT>        public boolean process(final Set&lt;? extends TypeElement&gt; annotations, final RoundEnvironment roundEnv) {<a name="line.67"></a>
-<FONT color="green">068</FONT>            try {<a name="line.68"></a>
-<FONT color="green">069</FONT>                final Set&lt;? extends Element&gt; elements = roundEnv.getElementsAnnotatedWith(Plugin.class);<a name="line.69"></a>
-<FONT color="green">070</FONT>                if (elements.isEmpty()) {<a name="line.70"></a>
-<FONT color="green">071</FONT>                    return false;<a name="line.71"></a>
-<FONT color="green">072</FONT>                }<a name="line.72"></a>
-<FONT color="green">073</FONT>                collectPlugins(elements);<a name="line.73"></a>
-<FONT color="green">074</FONT>                writeCacheFile(elements.toArray(new Element[elements.size()]));<a name="line.74"></a>
-<FONT color="green">075</FONT>                return true;<a name="line.75"></a>
-<FONT color="green">076</FONT>            } catch (final IOException e) {<a name="line.76"></a>
-<FONT color="green">077</FONT>                error(e.getMessage());<a name="line.77"></a>
-<FONT color="green">078</FONT>                return false;<a name="line.78"></a>
-<FONT color="green">079</FONT>            }<a name="line.79"></a>
-<FONT color="green">080</FONT>        }<a name="line.80"></a>
-<FONT color="green">081</FONT>    <a name="line.81"></a>
-<FONT color="green">082</FONT>        private void error(final CharSequence message) {<a name="line.82"></a>
-<FONT color="green">083</FONT>            processingEnv.getMessager().printMessage(Kind.ERROR, message);<a name="line.83"></a>
-<FONT color="green">084</FONT>        }<a name="line.84"></a>
-<FONT color="green">085</FONT>    <a name="line.85"></a>
-<FONT color="green">086</FONT>        private void collectPlugins(final Iterable&lt;? extends Element&gt; elements) {<a name="line.86"></a>
-<FONT color="green">087</FONT>            final Elements elementUtils = processingEnv.getElementUtils();<a name="line.87"></a>
-<FONT color="green">088</FONT>            final ElementVisitor&lt;PluginEntry, Plugin&gt; pluginVisitor =<a name="line.88"></a>
-<FONT color="green">089</FONT>                    new PluginElementVisitor(elementUtils);<a name="line.89"></a>
-<FONT color="green">090</FONT>            final ElementVisitor&lt;Collection&lt;PluginEntry&gt;, Plugin&gt; pluginAliasesVisitor =<a name="line.90"></a>
-<FONT color="green">091</FONT>                    new PluginAliasesElementVisitor(elementUtils);<a name="line.91"></a>
-<FONT color="green">092</FONT>            for (final Element element : elements) {<a name="line.92"></a>
-<FONT color="green">093</FONT>                final Plugin plugin = element.getAnnotation(Plugin.class);<a name="line.93"></a>
-<FONT color="green">094</FONT>                final PluginEntry entry = element.accept(pluginVisitor, plugin);<a name="line.94"></a>
-<FONT color="green">095</FONT>                final ConcurrentMap&lt;String, PluginEntry&gt; category = pluginCache.getCategory(entry.getCategory());<a name="line.95"></a>
-<FONT color="green">096</FONT>                category.put(entry.getKey(), entry);<a name="line.96"></a>
-<FONT color="green">097</FONT>                final Collection&lt;PluginEntry&gt; entries = element.accept(pluginAliasesVisitor, plugin);<a name="line.97"></a>
-<FONT color="green">098</FONT>                for (final PluginEntry pluginEntry : entries) {<a name="line.98"></a>
-<FONT color="green">099</FONT>                    category.put(pluginEntry.getKey(), pluginEntry);<a name="line.99"></a>
-<FONT color="green">100</FONT>                }<a name="line.100"></a>
-<FONT color="green">101</FONT>            }<a name="line.101"></a>
-<FONT color="green">102</FONT>        }<a name="line.102"></a>
-<FONT color="green">103</FONT>    <a name="line.103"></a>
-<FONT color="green">104</FONT>        private void writeCacheFile(final Element... elements) throws IOException {<a name="line.104"></a>
-<FONT color="green">105</FONT>            final FileObject fo = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT,<a name="line.105"></a>
-<FONT color="green">106</FONT>                Strings.EMPTY, PLUGIN_CACHE_FILE, elements);<a name="line.106"></a>
-<FONT color="green">107</FONT>            final OutputStream out = fo.openOutputStream();<a name="line.107"></a>
-<FONT color="green">108</FONT>            try {<a name="line.108"></a>
-<FONT color="green">109</FONT>                pluginCache.writeCache(out);<a name="line.109"></a>
-<FONT color="green">110</FONT>            } finally {<a name="line.110"></a>
-<FONT color="green">111</FONT>                out.close();<a name="line.111"></a>
-<FONT color="green">112</FONT>            }<a name="line.112"></a>
-<FONT color="green">113</FONT>        }<a name="line.113"></a>
-<FONT color="green">114</FONT>    <a name="line.114"></a>
-<FONT color="green">115</FONT>        /**<a name="line.115"></a>
-<FONT color="green">116</FONT>         * ElementVisitor to scan the Plugin annotation.<a name="line.116"></a>
-<FONT color="green">117</FONT>         */<a name="line.117"></a>
-<FONT color="green">118</FONT>        private static class PluginElementVisitor extends SimpleElementVisitor6&lt;PluginEntry, Plugin&gt; {<a name="line.118"></a>
-<FONT color="green">119</FONT>    <a name="line.119"></a>
-<FONT color="green">120</FONT>            private final Elements elements;<a name="line.120"></a>
-<FONT color="green">121</FONT>    <a name="line.121"></a>
-<FONT color="green">122</FONT>            private PluginElementVisitor(final Elements elements) {<a name="line.122"></a>
-<FONT color="green">123</FONT>                this.elements = elements;<a name="line.123"></a>
-<FONT color="green">124</FONT>            }<a name="line.124"></a>
-<FONT color="green">125</FONT>    <a name="line.125"></a>
-<FONT color="green">126</FONT>            @Override<a name="line.126"></a>
-<FONT color="green">127</FONT>            public PluginEntry visitType(final TypeElement e, final Plugin plugin) {<a name="line.127"></a>
-<FONT color="green">128</FONT>                if (plugin == null) {<a name="line.128"></a>
-<FONT color="green">129</FONT>                    throw new NullPointerException("Plugin annotation is null.");<a name="line.129"></a>
-<FONT color="green">130</FONT>                }<a name="line.130"></a>
-<FONT color="green">131</FONT>                final PluginEntry entry = new PluginEntry();<a name="line.131"></a>
-<FONT color="green">132</FONT>                entry.setKey(plugin.name().toLowerCase());<a name="line.132"></a>
-<FONT color="green">133</FONT>                entry.setClassName(elements.getBinaryName(e).toString());<a name="line.133"></a>
-<FONT color="green">134</FONT>                entry.setName(Plugin.EMPTY.equals(plugin.elementType()) ? plugin.name() : plugin.elementType());<a name="line.134"></a>
-<FONT color="green">135</FONT>                entry.setPrintable(plugin.printObject());<a name="line.135"></a>
-<FONT color="green">136</FONT>                entry.setDefer(plugin.deferChildren());<a name="line.136"></a>
-<FONT color="green">137</FONT>                entry.setCategory(plugin.category());<a name="line.137"></a>
-<FONT color="green">138</FONT>                return entry;<a name="line.138"></a>
-<FONT color="green">139</FONT>            }<a name="line.139"></a>
-<FONT color="green">140</FONT>        }<a name="line.140"></a>
-<FONT color="green">141</FONT>    <a name="line.141"></a>
-<FONT color="green">142</FONT>        /**<a name="line.142"></a>
-<FONT color="green">143</FONT>         * ElementVisitor to scan the PluginAliases annotation.<a name="line.143"></a>
-<FONT color="green">144</FONT>         */<a name="line.144"></a>
-<FONT color="green">145</FONT>        private static class PluginAliasesElementVisitor extends SimpleElementVisitor6&lt;Collection&lt;PluginEntry&gt;, Plugin&gt; {<a name="line.145"></a>
-<FONT color="green">146</FONT>    <a name="line.146"></a>
-<FONT color="green">147</FONT>            private final Elements elements;<a name="line.147"></a>
-<FONT color="green">148</FONT>    <a name="line.148"></a>
-<FONT color="green">149</FONT>            private PluginAliasesElementVisitor(final Elements elements) {<a name="line.149"></a>
-<FONT color="green">150</FONT>                super(Collections.&lt;PluginEntry&gt;emptyList());<a name="line.150"></a>
-<FONT color="green">151</FONT>                this.elements = elements;<a name="line.151"></a>
-<FONT color="green">152</FONT>            }<a name="line.152"></a>
-<FONT color="green">153</FONT>    <a name="line.153"></a>
-<FONT color="green">154</FONT>            @Override<a name="line.154"></a>
-<FONT color="green">155</FONT>            public Collection&lt;PluginEntry&gt; visitType(final TypeElement e, final Plugin plugin) {<a name="line.155"></a>
-<FONT color="green">156</FONT>                final PluginAliases aliases = e.getAnnotation(PluginAliases.class);<a name="line.156"></a>
-<FONT color="green">157</FONT>                if (aliases == null) {<a name="line.157"></a>
-<FONT color="green">158</FONT>                    return DEFAULT_VALUE;<a name="line.158"></a>
-<FONT color="green">159</FONT>                }<a name="line.159"></a>
-<FONT color="green">160</FONT>                final Collection&lt;PluginEntry&gt; entries = new ArrayList&lt;PluginEntry&gt;(aliases.value().length);<a name="line.160"></a>
-<FONT color="green">161</FONT>                for (final String alias : aliases.value()) {<a name="line.161"></a>
-<FONT color="green">162</FONT>                    final PluginEntry entry = new PluginEntry();<a name="line.162"></a>
-<FONT color="green">163</FONT>                    entry.setKey(alias.toLowerCase());<a name="line.163"></a>
-<FONT color="green">164</FONT>                    entry.setClassName(elements.getBinaryName(e).toString());<a name="line.164"></a>
-<FONT color="green">165</FONT>                    entry.setName(Plugin.EMPTY.equals(plugin.elementType()) ? alias : plugin.elementType());<a name="line.165"></a>
-<FONT color="green">166</FONT>                    entry.setPrintable(plugin.printObject());<a name="line.166"></a>
-<FONT color="green">167</FONT>                    entry.setDefer(plugin.deferChildren());<a name="line.167"></a>
-<FONT color="green">168</FONT>                    entry.setCategory(plugin.category());<a name="line.168"></a>
-<FONT color="green">169</FONT>                    entries.add(entry);<a name="line.169"></a>
-<FONT color="green">170</FONT>                }<a name="line.170"></a>
-<FONT color="green">171</FONT>                return entries;<a name="line.171"></a>
-<FONT color="green">172</FONT>            }<a name="line.172"></a>
-<FONT color="green">173</FONT>        }<a name="line.173"></a>
-<FONT color="green">174</FONT>    }<a name="line.174"></a>
+<FONT color="green">020</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAliases;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.apache.logging.log4j.util.Strings;<a name="line.22"></a>
+<FONT color="green">023</FONT>    <a name="line.23"></a>
+<FONT color="green">024</FONT>    import javax.annotation.processing.AbstractProcessor;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import javax.annotation.processing.RoundEnvironment;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import javax.annotation.processing.SupportedAnnotationTypes;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import javax.lang.model.SourceVersion;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import javax.lang.model.element.Element;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import javax.lang.model.element.ElementVisitor;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import javax.lang.model.element.TypeElement;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import javax.lang.model.util.Elements;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import javax.lang.model.util.SimpleElementVisitor6;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import javax.tools.Diagnostic.Kind;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import javax.tools.FileObject;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import javax.tools.StandardLocation;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import java.io.IOException;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import java.io.OutputStream;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import java.util.ArrayList;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import java.util.Collection;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import java.util.Collections;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import java.util.Map;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import java.util.Set;<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>    /**<a name="line.44"></a>
+<FONT color="green">045</FONT>     * Annotation processor for pre-scanning Log4j 2 plugins.<a name="line.45"></a>
+<FONT color="green">046</FONT>     */<a name="line.46"></a>
+<FONT color="green">047</FONT>    @SupportedAnnotationTypes("org.apache.logging.log4j.core.config.plugins.*")<a name="line.47"></a>
+<FONT color="green">048</FONT>    public class PluginProcessor extends AbstractProcessor {<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>        // TODO: this could be made more abstract to allow for compile-time and run-time plugin processing<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>        /**<a name="line.52"></a>
+<FONT color="green">053</FONT>         * The location of the plugin cache data file. This file is written to by this processor, and read from by<a name="line.53"></a>
+<FONT color="green">054</FONT>         * {@link org.apache.logging.log4j.core.config.plugins.util.PluginManager}.<a name="line.54"></a>
+<FONT color="green">055</FONT>         */<a name="line.55"></a>
+<FONT color="green">056</FONT>        public static final String PLUGIN_CACHE_FILE = "META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat";<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>        private final PluginCache pluginCache = new PluginCache();<a name="line.58"></a>
+<FONT color="green">059</FONT>    <a name="line.59"></a>
+<FONT color="green">060</FONT>        @Override<a name="line.60"></a>
+<FONT color="green">061</FONT>        public SourceVersion getSupportedSourceVersion() {<a name="line.61"></a>
+<FONT color="green">062</FONT>            return SourceVersion.latest();<a name="line.62"></a>
+<FONT color="green">063</FONT>        }<a name="line.63"></a>
+<FONT color="green">064</FONT>    <a name="line.64"></a>
+<FONT color="green">065</FONT>        @Override<a name="line.65"></a>
+<FONT color="green">066</FONT>        public boolean process(final Set&lt;? extends TypeElement&gt; annotations, final RoundEnvironment roundEnv) {<a name="line.66"></a>
+<FONT color="green">067</FONT>            try {<a name="line.67"></a>
+<FONT color="green">068</FONT>                final Set&lt;? extends Element&gt; elements = roundEnv.getElementsAnnotatedWith(Plugin.class);<a name="line.68"></a>
+<FONT color="green">069</FONT>                if (elements.isEmpty()) {<a name="line.69"></a>
+<FONT color="green">070</FONT>                    return false;<a name="line.70"></a>
+<FONT color="green">071</FONT>                }<a name="line.71"></a>
+<FONT color="green">072</FONT>                collectPlugins(elements);<a name="line.72"></a>
+<FONT color="green">073</FONT>                writeCacheFile(elements.toArray(new Element[elements.size()]));<a name="line.73"></a>
+<FONT color="green">074</FONT>                return true;<a name="line.74"></a>
+<FONT color="green">075</FONT>            } catch (final IOException e) {<a name="line.75"></a>
+<FONT color="green">076</FONT>                error(e.getMessage());<a name="line.76"></a>
+<FONT color="green">077</FONT>                return false;<a name="line.77"></a>
+<FONT color="green">078</FONT>            }<a name="line.78"></a>
+<FONT color="green">079</FONT>        }<a name="line.79"></a>
+<FONT color="green">080</FONT>    <a name="line.80"></a>
+<FONT color="green">081</FONT>        private void error(final CharSequence message) {<a name="line.81"></a>
+<FONT color="green">082</FONT>            processingEnv.getMessager().printMessage(Kind.ERROR, message);<a name="line.82"></a>
+<FONT color="green">083</FONT>        }<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>        private void collectPlugins(final Iterable&lt;? extends Element&gt; elements) {<a name="line.85"></a>
+<FONT color="green">086</FONT>            final Elements elementUtils = processingEnv.getElementUtils();<a name="line.86"></a>
+<FONT color="green">087</FONT>            final ElementVisitor&lt;PluginEntry, Plugin&gt; pluginVisitor =<a name="line.87"></a>
+<FONT color="green">088</FONT>                    new PluginElementVisitor(elementUtils);<a name="line.88"></a>
+<FONT color="green">089</FONT>            final ElementVisitor&lt;Collection&lt;PluginEntry&gt;, Plugin&gt; pluginAliasesVisitor =<a name="line.89"></a>
+<FONT color="green">090</FONT>                    new PluginAliasesElementVisitor(elementUtils);<a name="line.90"></a>
+<FONT color="green">091</FONT>            for (final Element element : elements) {<a name="line.91"></a>
+<FONT color="green">092</FONT>                final Plugin plugin = element.getAnnotation(Plugin.class);<a name="line.92"></a>
+<FONT color="green">093</FONT>                final PluginEntry entry = element.accept(pluginVisitor, plugin);<a name="line.93"></a>
+<FONT color="green">094</FONT>                final Map&lt;String, PluginEntry&gt; category = pluginCache.getCategory(entry.getCategory());<a name="line.94"></a>
+<FONT color="green">095</FONT>                category.put(entry.getKey(), entry);<a name="line.95"></a>
+<FONT color="green">096</FONT>                final Collection&lt;PluginEntry&gt; entries = element.accept(pluginAliasesVisitor, plugin);<a name="line.96"></a>
+<FONT color="green">097</FONT>                for (final PluginEntry pluginEntry : entries) {<a name="line.97"></a>
+<FONT color="green">098</FONT>                    category.put(pluginEntry.getKey(), pluginEntry);<a name="line.98"></a>
+<FONT color="green">099</FONT>                }<a name="line.99"></a>
+<FONT color="green">100</FONT>            }<a name="line.100"></a>
+<FONT color="green">101</FONT>        }<a name="line.101"></a>
+<FONT color="green">102</FONT>    <a name="line.102"></a>
+<FONT color="green">103</FONT>        private void writeCacheFile(final Element... elements) throws IOException {<a name="line.103"></a>
+<FONT color="green">104</FONT>            final FileObject fo = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT,<a name="line.104"></a>
+<FONT color="green">105</FONT>                Strings.EMPTY, PLUGIN_CACHE_FILE, elements);<a name="line.105"></a>
+<FONT color="green">106</FONT>            final OutputStream out = fo.openOutputStream();<a name="line.106"></a>
+<FONT color="green">107</FONT>            try {<a name="line.107"></a>
+<FONT color="green">108</FONT>                pluginCache.writeCache(out);<a name="line.108"></a>
+<FONT color="green">109</FONT>            } finally {<a name="line.109"></a>
+<FONT color="green">110</FONT>                out.close();<a name="line.110"></a>
+<FONT color="green">111</FONT>            }<a name="line.111"></a>
+<FONT color="green">112</FONT>        }<a name="line.112"></a>
+<FONT color="green">113</FONT>    <a name="line.113"></a>
+<FONT color="green">114</FONT>        /**<a name="line.114"></a>
+<FONT color="green">115</FONT>         * ElementVisitor to scan the Plugin annotation.<a name="line.115"></a>
+<FONT color="green">116</FONT>         */<a name="line.116"></a>
+<FONT color="green">117</FONT>        private static class PluginElementVisitor extends SimpleElementVisitor6&lt;PluginEntry, Plugin&gt; {<a name="line.117"></a>
+<FONT color="green">118</FONT>    <a name="line.118"></a>
+<FONT color="green">119</FONT>            private final Elements elements;<a name="line.119"></a>
+<FONT color="green">120</FONT>    <a name="line.120"></a>
+<FONT color="green">121</FONT>            private PluginElementVisitor(final Elements elements) {<a name="line.121"></a>
+<FONT color="green">122</FONT>                this.elements = elements;<a name="line.122"></a>
+<FONT color="green">123</FONT>            }<a name="line.123"></a>
+<FONT color="green">124</FONT>    <a name="line.124"></a>
+<FONT color="green">125</FONT>            @Override<a name="line.125"></a>
+<FONT color="green">126</FONT>            public PluginEntry visitType(final TypeElement e, final Plugin plugin) {<a name="line.126"></a>
+<FONT color="green">127</FONT>                if (plugin == null) {<a name="line.127"></a>
+<FONT color="green">128</FONT>                    throw new NullPointerException("Plugin annotation is null.");<a name="line.128"></a>
+<FONT color="green">129</FONT>                }<a name="line.129"></a>
+<FONT color="green">130</FONT>                final PluginEntry entry = new PluginEntry();<a name="line.130"></a>
+<FONT color="green">131</FONT>                entry.setKey(plugin.name().toLowerCase());<a name="line.131"></a>
+<FONT color="green">132</FONT>                entry.setClassName(elements.getBinaryName(e).toString());<a name="line.132"></a>
+<FONT color="green">133</FONT>                entry.setName(Plugin.EMPTY.equals(plugin.elementType()) ? plugin.name() : plugin.elementType());<a name="line.133"></a>
+<FONT color="green">134</FONT>                entry.setPrintable(plugin.printObject());<a name="line.134"></a>
+<FONT color="green">135</FONT>                entry.setDefer(plugin.deferChildren());<a name="line.135"></a>
+<FONT color="green">136</FONT>                entry.setCategory(plugin.category());<a name="line.136"></a>
+<FONT color="green">137</FONT>                return entry;<a name="line.137"></a>
+<FONT color="green">138</FONT>            }<a name="line.138"></a>
+<FONT color="green">139</FONT>        }<a name="line.139"></a>
+<FONT color="green">140</FONT>    <a name="line.140"></a>
+<FONT color="green">141</FONT>        /**<a name="line.141"></a>
+<FONT color="green">142</FONT>         * ElementVisitor to scan the PluginAliases annotation.<a name="line.142"></a>
+<FONT color="green">143</FONT>         */<a name="line.143"></a>
+<FONT color="green">144</FONT>        private static class PluginAliasesElementVisitor extends SimpleElementVisitor6&lt;Collection&lt;PluginEntry&gt;, Plugin&gt; {<a name="line.144"></a>
+<FONT color="green">145</FONT>    <a name="line.145"></a>
+<FONT color="green">146</FONT>            private final Elements elements;<a name="line.146"></a>
+<FONT color="green">147</FONT>    <a name="line.147"></a>
+<FONT color="green">148</FONT>            private PluginAliasesElementVisitor(final Elements elements) {<a name="line.148"></a>
+<FONT color="green">149</FONT>                super(Collections.&lt;PluginEntry&gt;emptyList());<a name="line.149"></a>
+<FONT color="green">150</FONT>                this.elements = elements;<a name="line.150"></a>
+<FONT color="green">151</FONT>            }<a name="line.151"></a>
+<FONT color="green">152</FONT>    <a name="line.152"></a>
+<FONT color="green">153</FONT>            @Override<a name="line.153"></a>
+<FONT color="green">154</FONT>            public Collection&lt;PluginEntry&gt; visitType(final TypeElement e, final Plugin plugin) {<a name="line.154"></a>
+<FONT color="green">155</FONT>                final PluginAliases aliases = e.getAnnotation(PluginAliases.class);<a name="line.155"></a>
+<FONT color="green">156</FONT>                if (aliases == null) {<a name="line.156"></a>
+<FONT color="green">157</FONT>                    return DEFAULT_VALUE;<a name="line.157"></a>
+<FONT color="green">158</FONT>                }<a name="line.158"></a>
+<FONT color="green">159</FONT>                final Collection&lt;PluginEntry&gt; entries = new ArrayList&lt;PluginEntry&gt;(aliases.value().length);<a name="line.159"></a>
+<FONT color="green">160</FONT>                for (final String alias : aliases.value()) {<a name="line.160"></a>
+<FONT color="green">161</FONT>                    final PluginEntry entry = new PluginEntry();<a name="line.161"></a>
+<FONT color="green">162</FONT>                    entry.setKey(alias.toLowerCase());<a name="line.162"></a>
+<FONT color="green">163</FONT>                    entry.setClassName(elements.getBinaryName(e).toString());<a name="line.163"></a>
+<FONT color="green">164</FONT>                    entry.setName(Plugin.EMPTY.equals(plugin.elementType()) ? alias : plugin.elementType());<a name="line.164"></a>
+<FONT color="green">165</FONT>                    entry.setPrintable(plugin.printObject());<a name="line.165"></a>
+<FONT color="green">166</FONT>                    entry.setDefer(plugin.deferChildren());<a name="line.166"></a>
+<FONT color="green">167</FONT>                    entry.setCategory(plugin.category());<a name="line.167"></a>
+<FONT color="green">168</FONT>                    entries.add(entry);<a name="line.168"></a>
+<FONT color="green">169</FONT>                }<a name="line.169"></a>
+<FONT color="green">170</FONT>                return entries;<a name="line.170"></a>
+<FONT color="green">171</FONT>            }<a name="line.171"></a>
+<FONT color="green">172</FONT>        }<a name="line.172"></a>
+<FONT color="green">173</FONT>    }<a name="line.173"></a>
 
 
 

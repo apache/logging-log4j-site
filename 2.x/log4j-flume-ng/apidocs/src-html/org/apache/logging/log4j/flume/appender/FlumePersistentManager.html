@@ -93,7 +93,7 @@
 <FONT color="green">090</FONT>    <a name="line.90"></a>
 <FONT color="green">091</FONT>        private final SecretKey secretKey;<a name="line.91"></a>
 <FONT color="green">092</FONT>    <a name="line.92"></a>
-<FONT color="green">093</FONT>        private final int delay;<a name="line.93"></a>
+<FONT color="green">093</FONT>        private final int delayMillis;<a name="line.93"></a>
 <FONT color="green">094</FONT>    <a name="line.94"></a>
 <FONT color="green">095</FONT>        private final int lockTimeoutRetryCount;<a name="line.95"></a>
 <FONT color="green">096</FONT>    <a name="line.96"></a>
@@ -122,7 +122,7 @@
 <FONT color="green">119</FONT>                                         final Environment environment, final SecretKey secretKey,<a name="line.119"></a>
 <FONT color="green">120</FONT>                                         final int lockTimeoutRetryCount) {<a name="line.120"></a>
 <FONT color="green">121</FONT>            super(name, shortName, agents, batchSize, retries, connectionTimeout, requestTimeout);<a name="line.121"></a>
-<FONT color="green">122</FONT>            this.delay = delay;<a name="line.122"></a>
+<FONT color="green">122</FONT>            this.delayMillis = delay;<a name="line.122"></a>
 <FONT color="green">123</FONT>            this.database = database;<a name="line.123"></a>
 <FONT color="green">124</FONT>            this.environment = environment;<a name="line.124"></a>
 <FONT color="green">125</FONT>            dbCount.set(database.count());<a name="line.125"></a>
@@ -144,7 +144,7 @@
 <FONT color="green">141</FONT>         * @param retries The number of times to retry connecting before giving up.<a name="line.141"></a>
 <FONT color="green">142</FONT>         * @param connectionTimeout The amount of time to wait to establish a connection.<a name="line.142"></a>
 <FONT color="green">143</FONT>         * @param requestTimeout The amount of time to wait for a response to a request.<a name="line.143"></a>
-<FONT color="green">144</FONT>         * @param delay Amount of time to delay before delivering a batch.<a name="line.144"></a>
+<FONT color="green">144</FONT>         * @param delayMillis Amount of time to delay before delivering a batch.<a name="line.144"></a>
 <FONT color="green">145</FONT>         * @param lockTimeoutRetryCount The number of times to retry after a lock timeout.<a name="line.145"></a>
 <FONT color="green">146</FONT>         * @param dataDir The location of the Berkeley database.<a name="line.146"></a>
 <FONT color="green">147</FONT>         * @return A FlumeAvroManager.<a name="line.147"></a>
@@ -152,7 +152,7 @@
 <FONT color="green">149</FONT>        public static FlumePersistentManager getManager(final String name, final Agent[] agents,<a name="line.149"></a>
 <FONT color="green">150</FONT>                                                        final Property[] properties, int batchSize, final int retries,<a name="line.150"></a>
 <FONT color="green">151</FONT>                                                        final int connectionTimeout, final int requestTimeout,<a name="line.151"></a>
-<FONT color="green">152</FONT>                                                        final int delay, final int lockTimeoutRetryCount,<a name="line.152"></a>
+<FONT color="green">152</FONT>                                                        final int delayMillis, final int lockTimeoutRetryCount,<a name="line.152"></a>
 <FONT color="green">153</FONT>                                                        final String dataDir) {<a name="line.153"></a>
 <FONT color="green">154</FONT>            if (agents == null || agents.length == 0) {<a name="line.154"></a>
 <FONT color="green">155</FONT>                throw new IllegalArgumentException("At least one agent is required");<a name="line.155"></a>
@@ -175,7 +175,7 @@
 <FONT color="green">172</FONT>            sb.append(']');<a name="line.172"></a>
 <FONT color="green">173</FONT>            sb.append(' ').append(dataDirectory);<a name="line.173"></a>
 <FONT color="green">174</FONT>            return getManager(sb.toString(), factory, new FactoryData(name, agents, batchSize, retries,<a name="line.174"></a>
-<FONT color="green">175</FONT>                connectionTimeout, requestTimeout, delay, lockTimeoutRetryCount, dataDir, properties));<a name="line.175"></a>
+<FONT color="green">175</FONT>                connectionTimeout, requestTimeout, delayMillis, lockTimeoutRetryCount, dataDir, properties));<a name="line.175"></a>
 <FONT color="green">176</FONT>        }<a name="line.176"></a>
 <FONT color="green">177</FONT>    <a name="line.177"></a>
 <FONT color="green">178</FONT>        @Override<a name="line.178"></a>
@@ -354,7 +354,7 @@
 <FONT color="green">351</FONT>            private final int retries;<a name="line.351"></a>
 <FONT color="green">352</FONT>            private final int connectionTimeout;<a name="line.352"></a>
 <FONT color="green">353</FONT>            private final int requestTimeout;<a name="line.353"></a>
-<FONT color="green">354</FONT>            private final int delay;<a name="line.354"></a>
+<FONT color="green">354</FONT>            private final int delayMillis;<a name="line.354"></a>
 <FONT color="green">355</FONT>            private final int lockTimeoutRetryCount;<a name="line.355"></a>
 <FONT color="green">356</FONT>            private final Property[] properties;<a name="line.356"></a>
 <FONT color="green">357</FONT>    <a name="line.357"></a>
@@ -366,7 +366,7 @@
 <FONT color="green">363</FONT>             * @param dataDir The directory for data.<a name="line.363"></a>
 <FONT color="green">364</FONT>             */<a name="line.364"></a>
 <FONT color="green">365</FONT>            public FactoryData(final String name, final Agent[] agents, final int batchSize, final int retries,<a name="line.365"></a>
-<FONT color="green">366</FONT>                               final int connectionTimeout, final int requestTimeout, final int delay,<a name="line.366"></a>
+<FONT color="green">366</FONT>                               final int connectionTimeout, final int requestTimeout, final int delayMillis,<a name="line.366"></a>
 <FONT color="green">367</FONT>                               final int lockTimeoutRetryCount, final String dataDir, final Property[] properties) {<a name="line.367"></a>
 <FONT color="green">368</FONT>                this.name = name;<a name="line.368"></a>
 <FONT color="green">369</FONT>                this.agents = agents;<a name="line.369"></a>
@@ -375,7 +375,7 @@
 <FONT color="green">372</FONT>                this.retries = retries;<a name="line.372"></a>
 <FONT color="green">373</FONT>                this.connectionTimeout = connectionTimeout;<a name="line.373"></a>
 <FONT color="green">374</FONT>                this.requestTimeout = requestTimeout;<a name="line.374"></a>
-<FONT color="green">375</FONT>                this.delay = delay;<a name="line.375"></a>
+<FONT color="green">375</FONT>                this.delayMillis = delayMillis;<a name="line.375"></a>
 <FONT color="green">376</FONT>                this.lockTimeoutRetryCount = lockTimeoutRetryCount;<a name="line.376"></a>
 <FONT color="green">377</FONT>                this.properties = properties;<a name="line.377"></a>
 <FONT color="green">378</FONT>            }<a name="line.378"></a>
@@ -473,7 +473,7 @@
 <FONT color="green">470</FONT>                    LOGGER.warn("Error setting up encryption - encryption will be disabled", ex);<a name="line.470"></a>
 <FONT color="green">471</FONT>                }<a name="line.471"></a>
 <FONT color="green">472</FONT>                return new FlumePersistentManager(name, data.name, data.agents, data.batchSize, data.retries,<a name="line.472"></a>
-<FONT color="green">473</FONT>                    data.connectionTimeout, data.requestTimeout, data.delay, database, environment, secretKey,<a name="line.473"></a>
+<FONT color="green">473</FONT>                    data.connectionTimeout, data.requestTimeout, data.delayMillis, database, environment, secretKey,<a name="line.473"></a>
 <FONT color="green">474</FONT>                    data.lockTimeoutRetryCount);<a name="line.474"></a>
 <FONT color="green">475</FONT>            }<a name="line.475"></a>
 <FONT color="green">476</FONT>        }<a name="line.476"></a>
@@ -518,14 +518,14 @@
 <FONT color="green">515</FONT>    <a name="line.515"></a>
 <FONT color="green">516</FONT>            @Override<a name="line.516"></a>
 <FONT color="green">517</FONT>            public void run() {<a name="line.517"></a>
-<FONT color="green">518</FONT>                LOGGER.trace("WriterThread started - batch size = " + batchSize + ", delay = " + manager.delay);<a name="line.518"></a>
-<FONT color="green">519</FONT>                long nextBatch = System.currentTimeMillis() + manager.delay;<a name="line.519"></a>
+<FONT color="green">518</FONT>                LOGGER.trace("WriterThread started - batch size = " + batchSize + ", delayMillis = " + manager.delayMillis);<a name="line.518"></a>
+<FONT color="green">519</FONT>                long nextBatchMillis = System.currentTimeMillis() + manager.delayMillis;<a name="line.519"></a>
 <FONT color="green">520</FONT>                while (!shutdown) {<a name="line.520"></a>
-<FONT color="green">521</FONT>                    final long now = System.currentTimeMillis();<a name="line.521"></a>
+<FONT color="green">521</FONT>                    final long nowMillis = System.currentTimeMillis();<a name="line.521"></a>
 <FONT color="green">522</FONT>                    final long dbCount = database.count();<a name="line.522"></a>
 <FONT color="green">523</FONT>                    dbCounter.set(dbCount);<a name="line.523"></a>
-<FONT color="green">524</FONT>                    if (dbCount &gt;= batchSize || dbCount &gt; 0 &amp;&amp; nextBatch &lt;= now) {<a name="line.524"></a>
-<FONT color="green">525</FONT>                        nextBatch = now + manager.delay;<a name="line.525"></a>
+<FONT color="green">524</FONT>                    if (dbCount &gt;= batchSize || dbCount &gt; 0 &amp;&amp; nextBatchMillis &lt;= nowMillis) {<a name="line.524"></a>
+<FONT color="green">525</FONT>                        nextBatchMillis = nowMillis + manager.delayMillis;<a name="line.525"></a>
 <FONT color="green">526</FONT>                        try {<a name="line.526"></a>
 <FONT color="green">527</FONT>                            boolean errors = false;<a name="line.527"></a>
 <FONT color="green">528</FONT>                            final DatabaseEntry key = new DatabaseEntry();<a name="line.528"></a>
@@ -624,18 +624,18 @@
 <FONT color="green">621</FONT>                                }<a name="line.621"></a>
 <FONT color="green">622</FONT>                            }<a name="line.622"></a>
 <FONT color="green">623</FONT>                            if (errors) {<a name="line.623"></a>
-<FONT color="green">624</FONT>                                Thread.sleep(manager.delay);<a name="line.624"></a>
+<FONT color="green">624</FONT>                                Thread.sleep(manager.delayMillis);<a name="line.624"></a>
 <FONT color="green">625</FONT>                                continue;<a name="line.625"></a>
 <FONT color="green">626</FONT>                            }<a name="line.626"></a>
 <FONT color="green">627</FONT>                        } catch (final Exception ex) {<a name="line.627"></a>
 <FONT color="green">628</FONT>                            LOGGER.warn("WriterThread encountered an exception. Continuing.", ex);<a name="line.628"></a>
 <FONT color="green">629</FONT>                        }<a name="line.629"></a>
 <FONT color="green">630</FONT>                    } else {<a name="line.630"></a>
-<FONT color="green">631</FONT>                        if (nextBatch &lt;= now) {<a name="line.631"></a>
-<FONT color="green">632</FONT>                            nextBatch = now + manager.delay;<a name="line.632"></a>
+<FONT color="green">631</FONT>                        if (nextBatchMillis &lt;= nowMillis) {<a name="line.631"></a>
+<FONT color="green">632</FONT>                            nextBatchMillis = nowMillis + manager.delayMillis;<a name="line.632"></a>
 <FONT color="green">633</FONT>                        }<a name="line.633"></a>
 <FONT color="green">634</FONT>                        try {<a name="line.634"></a>
-<FONT color="green">635</FONT>                            final long interval = nextBatch - now;<a name="line.635"></a>
+<FONT color="green">635</FONT>                            final long interval = nextBatchMillis - nowMillis;<a name="line.635"></a>
 <FONT color="green">636</FONT>                            gate.waitForOpen(interval);<a name="line.636"></a>
 <FONT color="green">637</FONT>                        } catch (final InterruptedException ie) {<a name="line.637"></a>
 <FONT color="green">638</FONT>                            LOGGER.warn("WriterThread interrupted, continuing");<a name="line.638"></a>
@@ -661,208 +661,226 @@
 <FONT color="green">658</FONT>            private boolean sendBatch(DatabaseEntry key, final DatabaseEntry data) throws Exception {<a name="line.658"></a>
 <FONT color="green">659</FONT>                boolean errors = false;<a name="line.659"></a>
 <FONT color="green">660</FONT>                OperationStatus status;<a name="line.660"></a>
-<FONT color="green">661</FONT>                Cursor cursor = database.openCursor(null, CursorConfig.DEFAULT);<a name="line.661"></a>
+<FONT color="green">661</FONT>                Cursor cursor = null;<a name="line.661"></a>
 <FONT color="green">662</FONT>                try {<a name="line.662"></a>
-<FONT color="green">663</FONT>                    status = cursor.getFirst(key, data, null);<a name="line.663"></a>
-<FONT color="green">664</FONT>    <a name="line.664"></a>
-<FONT color="green">665</FONT>                    final BatchEvent batch = new BatchEvent();<a name="line.665"></a>
-<FONT color="green">666</FONT>                    for (int i = 0; status == OperationStatus.SUCCESS &amp;&amp; i &lt; batchSize; ++i) {<a name="line.666"></a>
-<FONT color="green">667</FONT>                        final SimpleEvent event = createEvent(data);<a name="line.667"></a>
-<FONT color="green">668</FONT>                        if (event != null) {<a name="line.668"></a>
-<FONT color="green">669</FONT>                            batch.addEvent(event);<a name="line.669"></a>
-<FONT color="green">670</FONT>                        }<a name="line.670"></a>
-<FONT color="green">671</FONT>                        status = cursor.getNext(key, data, null);<a name="line.671"></a>
-<FONT color="green">672</FONT>                    }<a name="line.672"></a>
-<FONT color="green">673</FONT>                    try {<a name="line.673"></a>
-<FONT color="green">674</FONT>                        manager.send(batch);<a name="line.674"></a>
-<FONT color="green">675</FONT>                    } catch (final Exception ioe) {<a name="line.675"></a>
-<FONT color="green">676</FONT>                        LOGGER.error("Error sending events", ioe);<a name="line.676"></a>
-<FONT color="green">677</FONT>                        errors = true;<a name="line.677"></a>
-<FONT color="green">678</FONT>                    }<a name="line.678"></a>
-<FONT color="green">679</FONT>                    if (!errors) {<a name="line.679"></a>
-<FONT color="green">680</FONT>                        cursor.close();<a name="line.680"></a>
-<FONT color="green">681</FONT>                        cursor = null;<a name="line.681"></a>
-<FONT color="green">682</FONT>                        Transaction txn = null;<a name="line.682"></a>
-<FONT color="green">683</FONT>                        Exception exception = null;<a name="line.683"></a>
-<FONT color="green">684</FONT>                        for (int retryIndex = 0; retryIndex &lt; lockTimeoutRetryCount; ++retryIndex) {<a name="line.684"></a>
-<FONT color="green">685</FONT>                            try {<a name="line.685"></a>
-<FONT color="green">686</FONT>                                txn = environment.beginTransaction(null, null);<a name="line.686"></a>
-<FONT color="green">687</FONT>                                try {<a name="line.687"></a>
-<FONT color="green">688</FONT>                                    for (final Event event : batch.getEvents()) {<a name="line.688"></a>
-<FONT color="green">689</FONT>                                        try {<a name="line.689"></a>
-<FONT color="green">690</FONT>                                            final Map&lt;String, String&gt; headers = event.getHeaders();<a name="line.690"></a>
-<FONT color="green">691</FONT>                                            key = new DatabaseEntry(headers.get(FlumeEvent.GUID).getBytes(UTF8));<a name="line.691"></a>
-<FONT color="green">692</FONT>                                            database.delete(txn, key);<a name="line.692"></a>
-<FONT color="green">693</FONT>                                        } catch (final Exception ex) {<a name="line.693"></a>
-<FONT color="green">694</FONT>                                            LOGGER.error("Error deleting key from database", ex);<a name="line.694"></a>
-<FONT color="green">695</FONT>                                        }<a name="line.695"></a>
-<FONT color="green">696</FONT>                                    }<a name="line.696"></a>
-<FONT color="green">697</FONT>                                    txn.commit();<a name="line.697"></a>
-<FONT color="green">698</FONT>                                    long count = dbCounter.get();<a name="line.698"></a>
-<FONT color="green">699</FONT>                                    while (!dbCounter.compareAndSet(count, count - batch.getEvents().size())) {<a name="line.699"></a>
-<FONT color="green">700</FONT>                                        count = dbCounter.get();<a name="line.700"></a>
-<FONT color="green">701</FONT>                                    }<a name="line.701"></a>
-<FONT color="green">702</FONT>                                    exception = null;<a name="line.702"></a>
-<FONT color="green">703</FONT>                                    break;<a name="line.703"></a>
-<FONT color="green">704</FONT>                                } catch (final LockConflictException lce) {<a name="line.704"></a>
-<FONT color="green">705</FONT>                                    exception = lce;<a name="line.705"></a>
-<FONT color="green">706</FONT>                                    if (cursor != null) {<a name="line.706"></a>
+<FONT color="green">663</FONT>                    final BatchEvent batch = new BatchEvent();<a name="line.663"></a>
+<FONT color="green">664</FONT>                    for (int retryIndex = 0; retryIndex &lt; lockTimeoutRetryCount; ++retryIndex) {<a name="line.664"></a>
+<FONT color="green">665</FONT>                            try {<a name="line.665"></a>
+<FONT color="green">666</FONT>                                    cursor = database.openCursor(null, CursorConfig.DEFAULT);<a name="line.666"></a>
+<FONT color="green">667</FONT>                                    status = cursor.getFirst(key, data, null);<a name="line.667"></a>
+<FONT color="green">668</FONT>    <a name="line.668"></a>
+<FONT color="green">669</FONT>                                    for (int i = 0; status == OperationStatus.SUCCESS &amp;&amp; i &lt; batchSize; ++i) {<a name="line.669"></a>
+<FONT color="green">670</FONT>                                            final SimpleEvent event = createEvent(data);<a name="line.670"></a>
+<FONT color="green">671</FONT>                                            if (event != null) {<a name="line.671"></a>
+<FONT color="green">672</FONT>                                                    batch.addEvent(event);<a name="line.672"></a>
+<FONT color="green">673</FONT>                                            }<a name="line.673"></a>
+<FONT color="green">674</FONT>                                            status = cursor.getNext(key, data, null);<a name="line.674"></a>
+<FONT color="green">675</FONT>                                    }<a name="line.675"></a>
+<FONT color="green">676</FONT>                                    break;<a name="line.676"></a>
+<FONT color="green">677</FONT>                            } catch (final LockConflictException lce) {<a name="line.677"></a>
+<FONT color="green">678</FONT>                                    if (cursor != null) {<a name="line.678"></a>
+<FONT color="green">679</FONT>                                            try {<a name="line.679"></a>
+<FONT color="green">680</FONT>                                    cursor.close();<a name="line.680"></a>
+<FONT color="green">681</FONT>                                    cursor = null;<a name="line.681"></a>
+<FONT color="green">682</FONT>                                } catch (final Exception ex) {<a name="line.682"></a>
+<FONT color="green">683</FONT>                                    LOGGER.trace("Ignored exception closing cursor during lock conflict.");<a name="line.683"></a>
+<FONT color="green">684</FONT>                                }<a name="line.684"></a>
+<FONT color="green">685</FONT>                            }<a name="line.685"></a>
+<FONT color="green">686</FONT>                        }<a name="line.686"></a>
+<FONT color="green">687</FONT>                    }<a name="line.687"></a>
+<FONT color="green">688</FONT>    <a name="line.688"></a>
+<FONT color="green">689</FONT>                    try {<a name="line.689"></a>
+<FONT color="green">690</FONT>                        manager.send(batch);<a name="line.690"></a>
+<FONT color="green">691</FONT>                    } catch (final Exception ioe) {<a name="line.691"></a>
+<FONT color="green">692</FONT>                        LOGGER.error("Error sending events", ioe);<a name="line.692"></a>
+<FONT color="green">693</FONT>                        errors = true;<a name="line.693"></a>
+<FONT color="green">694</FONT>                    }<a name="line.694"></a>
+<FONT color="green">695</FONT>                    if (!errors) {<a name="line.695"></a>
+<FONT color="green">696</FONT>                            if (cursor != null) {<a name="line.696"></a>
+<FONT color="green">697</FONT>                                cursor.close();<a name="line.697"></a>
+<FONT color="green">698</FONT>                                cursor = null;<a name="line.698"></a>
+<FONT color="green">699</FONT>                            }<a name="line.699"></a>
+<FONT color="green">700</FONT>                        Transaction txn = null;<a name="line.700"></a>
+<FONT color="green">701</FONT>                        Exception exception = null;<a name="line.701"></a>
+<FONT color="green">702</FONT>                        for (int retryIndex = 0; retryIndex &lt; lockTimeoutRetryCount; ++retryIndex) {<a name="line.702"></a>
+<FONT color="green">703</FONT>                            try {<a name="line.703"></a>
+<FONT color="green">704</FONT>                                txn = environment.beginTransaction(null, null);<a name="line.704"></a>
+<FONT color="green">705</FONT>                                try {<a name="line.705"></a>
+<FONT color="green">706</FONT>                                    for (final Event event : batch.getEvents()) {<a name="line.706"></a>
 <FONT color="green">707</FONT>                                        try {<a name="line.707"></a>
-<FONT color="green">708</FONT>                                            cursor.close();<a name="line.708"></a>
-<FONT color="green">709</FONT>                                            cursor = null;<a name="line.709"></a>
-<FONT color="green">710</FONT>                                        } catch (final Exception ex) {<a name="line.710"></a>
-<FONT color="green">711</FONT>                                            LOGGER.trace("Ignored exception closing cursor during lock conflict.");<a name="line.711"></a>
-<FONT color="green">712</FONT>                                        }<a name="line.712"></a>
-<FONT color="green">713</FONT>                                    }<a name="line.713"></a>
-<FONT color="green">714</FONT>                                    if (txn != null) {<a name="line.714"></a>
-<FONT color="green">715</FONT>                                        try {<a name="line.715"></a>
-<FONT color="green">716</FONT>                                            txn.abort();<a name="line.716"></a>
-<FONT color="green">717</FONT>                                            txn = null;<a name="line.717"></a>
-<FONT color="green">718</FONT>                                        } catch (final Exception ex) {<a name="line.718"></a>
-<FONT color="green">719</FONT>                                            LOGGER.trace("Ignored exception aborting transaction during lock conflict.");<a name="line.719"></a>
-<FONT color="green">720</FONT>                                        }<a name="line.720"></a>
-<FONT color="green">721</FONT>                                    }<a name="line.721"></a>
-<FONT color="green">722</FONT>                                } catch (final Exception ex) {<a name="line.722"></a>
-<FONT color="green">723</FONT>                                    LOGGER.error("Unable to commit transaction", ex);<a name="line.723"></a>
-<FONT color="green">724</FONT>                                    if (txn != null) {<a name="line.724"></a>
-<FONT color="green">725</FONT>                                        txn.abort();<a name="line.725"></a>
-<FONT color="green">726</FONT>                                    }<a name="line.726"></a>
-<FONT color="green">727</FONT>                                }<a name="line.727"></a>
-<FONT color="green">728</FONT>                            } catch (final LockConflictException lce) {<a name="line.728"></a>
-<FONT color="green">729</FONT>                                exception = lce;<a name="line.729"></a>
-<FONT color="green">730</FONT>                                if (cursor != null) {<a name="line.730"></a>
-<FONT color="green">731</FONT>                                    try {<a name="line.731"></a>
-<FONT color="green">732</FONT>                                        cursor.close();<a name="line.732"></a>
-<FONT color="green">733</FONT>                                        cursor = null;<a name="line.733"></a>
-<FONT color="green">734</FONT>                                    } catch (final Exception ex) {<a name="line.734"></a>
-<FONT color="green">735</FONT>                                        LOGGER.trace("Ignored exception closing cursor during lock conflict.");<a name="line.735"></a>
-<FONT color="green">736</FONT>                                    }<a name="line.736"></a>
-<FONT color="green">737</FONT>                                }<a name="line.737"></a>
-<FONT color="green">738</FONT>                                if (txn != null) {<a name="line.738"></a>
-<FONT color="green">739</FONT>                                    try {<a name="line.739"></a>
-<FONT color="green">740</FONT>                                        txn.abort();<a name="line.740"></a>
-<FONT color="green">741</FONT>                                        txn = null;<a name="line.741"></a>
-<FONT color="green">742</FONT>                                    } catch (final Exception ex) {<a name="line.742"></a>
-<FONT color="green">743</FONT>                                        LOGGER.trace("Ignored exception aborting transaction during lock conflict.");<a name="line.743"></a>
+<FONT color="green">708</FONT>                                            final Map&lt;String, String&gt; headers = event.getHeaders();<a name="line.708"></a>
+<FONT color="green">709</FONT>                                            key = new DatabaseEntry(headers.get(FlumeEvent.GUID).getBytes(UTF8));<a name="line.709"></a>
+<FONT color="green">710</FONT>                                            database.delete(txn, key);<a name="line.710"></a>
+<FONT color="green">711</FONT>                                        } catch (final Exception ex) {<a name="line.711"></a>
+<FONT color="green">712</FONT>                                            LOGGER.error("Error deleting key from database", ex);<a name="line.712"></a>
+<FONT color="green">713</FONT>                                        }<a name="line.713"></a>
+<FONT color="green">714</FONT>                                    }<a name="line.714"></a>
+<FONT color="green">715</FONT>                                    txn.commit();<a name="line.715"></a>
+<FONT color="green">716</FONT>                                    long count = dbCounter.get();<a name="line.716"></a>
+<FONT color="green">717</FONT>                                    while (!dbCounter.compareAndSet(count, count - batch.getEvents().size())) {<a name="line.717"></a>
+<FONT color="green">718</FONT>                                        count = dbCounter.get();<a name="line.718"></a>
+<FONT color="green">719</FONT>                                    }<a name="line.719"></a>
+<FONT color="green">720</FONT>                                    exception = null;<a name="line.720"></a>
+<FONT color="green">721</FONT>                                    break;<a name="line.721"></a>
+<FONT color="green">722</FONT>                                } catch (final LockConflictException lce) {<a name="line.722"></a>
+<FONT color="green">723</FONT>                                    exception = lce;<a name="line.723"></a>
+<FONT color="green">724</FONT>                                    if (cursor != null) {<a name="line.724"></a>
+<FONT color="green">725</FONT>                                        try {<a name="line.725"></a>
+<FONT color="green">726</FONT>                                            cursor.close();<a name="line.726"></a>
+<FONT color="green">727</FONT>                                            cursor = null;<a name="line.727"></a>
+<FONT color="green">728</FONT>                                        } catch (final Exception ex) {<a name="line.728"></a>
+<FONT color="green">729</FONT>                                            LOGGER.trace("Ignored exception closing cursor during lock conflict.");<a name="line.729"></a>
+<FONT color="green">730</FONT>                                        }<a name="line.730"></a>
+<FONT color="green">731</FONT>                                    }<a name="line.731"></a>
+<FONT color="green">732</FONT>                                    if (txn != null) {<a name="line.732"></a>
+<FONT color="green">733</FONT>                                        try {<a name="line.733"></a>
+<FONT color="green">734</FONT>                                            txn.abort();<a name="line.734"></a>
+<FONT color="green">735</FONT>                                            txn = null;<a name="line.735"></a>
+<FONT color="green">736</FONT>                                        } catch (final Exception ex) {<a name="line.736"></a>
+<FONT color="green">737</FONT>                                            LOGGER.trace("Ignored exception aborting transaction during lock conflict.");<a name="line.737"></a>
+<FONT color="green">738</FONT>                                        }<a name="line.738"></a>
+<FONT color="green">739</FONT>                                    }<a name="line.739"></a>
+<FONT color="green">740</FONT>                                } catch (final Exception ex) {<a name="line.740"></a>
+<FONT color="green">741</FONT>                                    LOGGER.error("Unable to commit transaction", ex);<a name="line.741"></a>
+<FONT color="green">742</FONT>                                    if (txn != null) {<a name="line.742"></a>
+<FONT color="green">743</FONT>                                        txn.abort();<a name="line.743"></a>
 <FONT color="green">744</FONT>                                    }<a name="line.744"></a>
 <FONT color="green">745</FONT>                                }<a name="line.745"></a>
-<FONT color="green">746</FONT>                            } finally {<a name="line.746"></a>
-<FONT color="green">747</FONT>                                if (cursor != null) {<a name="line.747"></a>
-<FONT color="green">748</FONT>                                    cursor.close();<a name="line.748"></a>
-<FONT color="green">749</FONT>                                    cursor = null;<a name="line.749"></a>
-<FONT color="green">750</FONT>                                }<a name="line.750"></a>
-<FONT color="green">751</FONT>                                if (txn != null) {<a name="line.751"></a>
-<FONT color="green">752</FONT>                                    txn.abort();<a name="line.752"></a>
-<FONT color="green">753</FONT>                                    txn = null;<a name="line.753"></a>
-<FONT color="green">754</FONT>                                }<a name="line.754"></a>
-<FONT color="green">755</FONT>                            }<a name="line.755"></a>
-<FONT color="green">756</FONT>                            try {<a name="line.756"></a>
-<FONT color="green">757</FONT>                                Thread.sleep(LOCK_TIMEOUT_SLEEP_MILLIS);<a name="line.757"></a>
-<FONT color="green">758</FONT>                            } catch (final InterruptedException ie) {<a name="line.758"></a>
-<FONT color="green">759</FONT>                                // Ignore the error<a name="line.759"></a>
-<FONT color="green">760</FONT>                            }<a name="line.760"></a>
-<FONT color="green">761</FONT>                        }<a name="line.761"></a>
-<FONT color="green">762</FONT>                        if (exception != null) {<a name="line.762"></a>
-<FONT color="green">763</FONT>                            LOGGER.error("Unable to delete events from data base", exception);<a name="line.763"></a>
-<FONT color="green">764</FONT>                        }<a name="line.764"></a>
-<FONT color="green">765</FONT>                    }<a name="line.765"></a>
-<FONT color="green">766</FONT>                } catch (final Exception ex) {<a name="line.766"></a>
-<FONT color="green">767</FONT>                    LOGGER.error("Error reading database", ex);<a name="line.767"></a>
-<FONT color="green">768</FONT>                    shutdown = true;<a name="line.768"></a>
-<FONT color="green">769</FONT>                    throw ex;<a name="line.769"></a>
-<FONT color="green">770</FONT>                } finally {<a name="line.770"></a>
-<FONT color="green">771</FONT>                    if (cursor != null) {<a name="line.771"></a>
-<FONT color="green">772</FONT>                        cursor.close();<a name="line.772"></a>
-<FONT color="green">773</FONT>                    }<a name="line.773"></a>
-<FONT color="green">774</FONT>                }<a name="line.774"></a>
-<FONT color="green">775</FONT>    <a name="line.775"></a>
-<FONT color="green">776</FONT>                return errors;<a name="line.776"></a>
-<FONT color="green">777</FONT>            }<a name="line.777"></a>
-<FONT color="green">778</FONT>    <a name="line.778"></a>
-<FONT color="green">779</FONT>            private SimpleEvent createEvent(final DatabaseEntry data) {<a name="line.779"></a>
-<FONT color="green">780</FONT>                final SimpleEvent event = new SimpleEvent();<a name="line.780"></a>
-<FONT color="green">781</FONT>                try {<a name="line.781"></a>
-<FONT color="green">782</FONT>                    byte[] eventData = data.getData();<a name="line.782"></a>
-<FONT color="green">783</FONT>                    if (secretKey != null) {<a name="line.783"></a>
-<FONT color="green">784</FONT>                        final Cipher cipher = Cipher.getInstance("AES");<a name="line.784"></a>
-<FONT color="green">785</FONT>                        cipher.init(Cipher.DECRYPT_MODE, secretKey);<a name="line.785"></a>
-<FONT color="green">786</FONT>                        eventData = cipher.doFinal(eventData);<a name="line.786"></a>
-<FONT color="green">787</FONT>                    }<a name="line.787"></a>
-<FONT color="green">788</FONT>                    final ByteArrayInputStream bais = new ByteArrayInputStream(eventData);<a name="line.788"></a>
-<FONT color="green">789</FONT>                    final DataInputStream dais = new DataInputStream(bais);<a name="line.789"></a>
-<FONT color="green">790</FONT>                    int length = dais.readInt();<a name="line.790"></a>
-<FONT color="green">791</FONT>                    final byte[] bytes = new byte[length];<a name="line.791"></a>
-<FONT color="green">792</FONT>                    dais.read(bytes, 0, length);<a name="line.792"></a>
-<FONT color="green">793</FONT>                    event.setBody(bytes);<a name="line.793"></a>
-<FONT color="green">794</FONT>                    length = dais.readInt();<a name="line.794"></a>
-<FONT color="green">795</FONT>                    final Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;(length);<a name="line.795"></a>
-<FONT color="green">796</FONT>                    for (int i = 0; i &lt; length; ++i) {<a name="line.796"></a>
-<FONT color="green">797</FONT>                        final String headerKey = dais.readUTF();<a name="line.797"></a>
-<FONT color="green">798</FONT>                        final String value = dais.readUTF();<a name="line.798"></a>
-<FONT color="green">799</FONT>                        map.put(headerKey, value);<a name="line.799"></a>
-<FONT color="green">800</FONT>                    }<a name="line.800"></a>
-<FONT color="green">801</FONT>                    event.setHeaders(map);<a name="line.801"></a>
-<FONT color="green">802</FONT>                    return event;<a name="line.802"></a>
-<FONT color="green">803</FONT>                } catch (final Exception ex) {<a name="line.803"></a>
-<FONT color="green">804</FONT>                    LOGGER.error("Error retrieving event", ex);<a name="line.804"></a>
-<FONT color="green">805</FONT>                    return null;<a name="line.805"></a>
-<FONT color="green">806</FONT>                }<a name="line.806"></a>
-<FONT color="green">807</FONT>            }<a name="line.807"></a>
-<FONT color="green">808</FONT>    <a name="line.808"></a>
-<FONT color="green">809</FONT>        }<a name="line.809"></a>
-<FONT color="green">810</FONT>    <a name="line.810"></a>
-<FONT color="green">811</FONT>        /**<a name="line.811"></a>
-<FONT color="green">812</FONT>         * Factory that creates Daemon threads that can be properly shut down.<a name="line.812"></a>
-<FONT color="green">813</FONT>         */<a name="line.813"></a>
-<FONT color="green">814</FONT>        private static class DaemonThreadFactory implements ThreadFactory {<a name="line.814"></a>
-<FONT color="green">815</FONT>            private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);<a name="line.815"></a>
-<FONT color="green">816</FONT>            private final ThreadGroup group;<a name="line.816"></a>
-<FONT color="green">817</FONT>            private final AtomicInteger threadNumber = new AtomicInteger(1);<a name="line.817"></a>
-<FONT color="green">818</FONT>            private final String namePrefix;<a name="line.818"></a>
-<FONT color="green">819</FONT>    <a name="line.819"></a>
-<FONT color="green">820</FONT>            public DaemonThreadFactory() {<a name="line.820"></a>
-<FONT color="green">821</FONT>                final SecurityManager securityManager = System.getSecurityManager();<a name="line.821"></a>
-<FONT color="green">822</FONT>                group = securityManager != null ? securityManager.getThreadGroup() :<a name="line.822"></a>
-<FONT color="green">823</FONT>                    Thread.currentThread().getThreadGroup();<a name="line.823"></a>
-<FONT color="green">824</FONT>                namePrefix = "DaemonPool-" + POOL_NUMBER.getAndIncrement() + "-thread-";<a name="line.824"></a>
+<FONT color="green">746</FONT>                            } catch (final LockConflictException lce) {<a name="line.746"></a>
+<FONT color="green">747</FONT>                                exception = lce;<a name="line.747"></a>
+<FONT color="green">748</FONT>                                if (cursor != null) {<a name="line.748"></a>
+<FONT color="green">749</FONT>                                    try {<a name="line.749"></a>
+<FONT color="green">750</FONT>                                        cursor.close();<a name="line.750"></a>
+<FONT color="green">751</FONT>                                        cursor = null;<a name="line.751"></a>
+<FONT color="green">752</FONT>                                    } catch (final Exception ex) {<a name="line.752"></a>
+<FONT color="green">753</FONT>                                        LOGGER.trace("Ignored exception closing cursor during lock conflict.");<a name="line.753"></a>
+<FONT color="green">754</FONT>                                    }<a name="line.754"></a>
+<FONT color="green">755</FONT>                                }<a name="line.755"></a>
+<FONT color="green">756</FONT>                                if (txn != null) {<a name="line.756"></a>
+<FONT color="green">757</FONT>                                    try {<a name="line.757"></a>
+<FONT color="green">758</FONT>                                        txn.abort();<a name="line.758"></a>
+<FONT color="green">759</FONT>                                        txn = null;<a name="line.759"></a>
+<FONT color="green">760</FONT>                                    } catch (final Exception ex) {<a name="line.760"></a>
+<FONT color="green">761</FONT>                                        LOGGER.trace("Ignored exception aborting transaction during lock conflict.");<a name="line.761"></a>
+<FONT color="green">762</FONT>                                    }<a name="line.762"></a>
+<FONT color="green">763</FONT>                                }<a name="line.763"></a>
+<FONT color="green">764</FONT>                            } finally {<a name="line.764"></a>
+<FONT color="green">765</FONT>                                if (cursor != null) {<a name="line.765"></a>
+<FONT color="green">766</FONT>                                    cursor.close();<a name="line.766"></a>
+<FONT color="green">767</FONT>                                    cursor = null;<a name="line.767"></a>
+<FONT color="green">768</FONT>                                }<a name="line.768"></a>
+<FONT color="green">769</FONT>                                if (txn != null) {<a name="line.769"></a>
+<FONT color="green">770</FONT>                                    txn.abort();<a name="line.770"></a>
+<FONT color="green">771</FONT>                                    txn = null;<a name="line.771"></a>
+<FONT color="green">772</FONT>                                }<a name="line.772"></a>
+<FONT color="green">773</FONT>                            }<a name="line.773"></a>
+<FONT color="green">774</FONT>                            try {<a name="line.774"></a>
+<FONT color="green">775</FONT>                                Thread.sleep(LOCK_TIMEOUT_SLEEP_MILLIS);<a name="line.775"></a>
+<FONT color="green">776</FONT>                            } catch (final InterruptedException ie) {<a name="line.776"></a>
+<FONT color="green">777</FONT>                                // Ignore the error<a name="line.777"></a>
+<FONT color="green">778</FONT>                            }<a name="line.778"></a>
+<FONT color="green">779</FONT>                        }<a name="line.779"></a>
+<FONT color="green">780</FONT>                        if (exception != null) {<a name="line.780"></a>
+<FONT color="green">781</FONT>                            LOGGER.error("Unable to delete events from data base", exception);<a name="line.781"></a>
+<FONT color="green">782</FONT>                        }<a name="line.782"></a>
+<FONT color="green">783</FONT>                    }<a name="line.783"></a>
+<FONT color="green">784</FONT>                } catch (final Exception ex) {<a name="line.784"></a>
+<FONT color="green">785</FONT>                    LOGGER.error("Error reading database", ex);<a name="line.785"></a>
+<FONT color="green">786</FONT>                    shutdown = true;<a name="line.786"></a>
+<FONT color="green">787</FONT>                    throw ex;<a name="line.787"></a>
+<FONT color="green">788</FONT>                } finally {<a name="line.788"></a>
+<FONT color="green">789</FONT>                    if (cursor != null) {<a name="line.789"></a>
+<FONT color="green">790</FONT>                        cursor.close();<a name="line.790"></a>
+<FONT color="green">791</FONT>                    }<a name="line.791"></a>
+<FONT color="green">792</FONT>                }<a name="line.792"></a>
+<FONT color="green">793</FONT>    <a name="line.793"></a>
+<FONT color="green">794</FONT>                return errors;<a name="line.794"></a>
+<FONT color="green">795</FONT>            }<a name="line.795"></a>
+<FONT color="green">796</FONT>    <a name="line.796"></a>
+<FONT color="green">797</FONT>            private SimpleEvent createEvent(final DatabaseEntry data) {<a name="line.797"></a>
+<FONT color="green">798</FONT>                final SimpleEvent event = new SimpleEvent();<a name="line.798"></a>
+<FONT color="green">799</FONT>                try {<a name="line.799"></a>
+<FONT color="green">800</FONT>                    byte[] eventData = data.getData();<a name="line.800"></a>
+<FONT color="green">801</FONT>                    if (secretKey != null) {<a name="line.801"></a>
+<FONT color="green">802</FONT>                        final Cipher cipher = Cipher.getInstance("AES");<a name="line.802"></a>
+<FONT color="green">803</FONT>                        cipher.init(Cipher.DECRYPT_MODE, secretKey);<a name="line.803"></a>
+<FONT color="green">804</FONT>                        eventData = cipher.doFinal(eventData);<a name="line.804"></a>
+<FONT color="green">805</FONT>                    }<a name="line.805"></a>
+<FONT color="green">806</FONT>                    final ByteArrayInputStream bais = new ByteArrayInputStream(eventData);<a name="line.806"></a>
+<FONT color="green">807</FONT>                    final DataInputStream dais = new DataInputStream(bais);<a name="line.807"></a>
+<FONT color="green">808</FONT>                    int length = dais.readInt();<a name="line.808"></a>
+<FONT color="green">809</FONT>                    final byte[] bytes = new byte[length];<a name="line.809"></a>
+<FONT color="green">810</FONT>                    dais.read(bytes, 0, length);<a name="line.810"></a>
+<FONT color="green">811</FONT>                    event.setBody(bytes);<a name="line.811"></a>
+<FONT color="green">812</FONT>                    length = dais.readInt();<a name="line.812"></a>
+<FONT color="green">813</FONT>                    final Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;(length);<a name="line.813"></a>
+<FONT color="green">814</FONT>                    for (int i = 0; i &lt; length; ++i) {<a name="line.814"></a>
+<FONT color="green">815</FONT>                        final String headerKey = dais.readUTF();<a name="line.815"></a>
+<FONT color="green">816</FONT>                        final String value = dais.readUTF();<a name="line.816"></a>
+<FONT color="green">817</FONT>                        map.put(headerKey, value);<a name="line.817"></a>
+<FONT color="green">818</FONT>                    }<a name="line.818"></a>
+<FONT color="green">819</FONT>                    event.setHeaders(map);<a name="line.819"></a>
+<FONT color="green">820</FONT>                    return event;<a name="line.820"></a>
+<FONT color="green">821</FONT>                } catch (final Exception ex) {<a name="line.821"></a>
+<FONT color="green">822</FONT>                    LOGGER.error("Error retrieving event", ex);<a name="line.822"></a>
+<FONT color="green">823</FONT>                    return null;<a name="line.823"></a>
+<FONT color="green">824</FONT>                }<a name="line.824"></a>
 <FONT color="green">825</FONT>            }<a name="line.825"></a>
 <FONT color="green">826</FONT>    <a name="line.826"></a>
-<FONT color="green">827</FONT>            @Override<a name="line.827"></a>
-<FONT color="green">828</FONT>            public Thread newThread(final Runnable r) {<a name="line.828"></a>
-<FONT color="green">829</FONT>                final Thread thread = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);<a name="line.829"></a>
-<FONT color="green">830</FONT>                thread.setDaemon(true);<a name="line.830"></a>
-<FONT color="green">831</FONT>                if (thread.getPriority() != Thread.NORM_PRIORITY) {<a name="line.831"></a>
-<FONT color="green">832</FONT>                    thread.setPriority(Thread.NORM_PRIORITY);<a name="line.832"></a>
-<FONT color="green">833</FONT>                }<a name="line.833"></a>
-<FONT color="green">834</FONT>                return thread;<a name="line.834"></a>
-<FONT color="green">835</FONT>            }<a name="line.835"></a>
-<FONT color="green">836</FONT>        }<a name="line.836"></a>
+<FONT color="green">827</FONT>        }<a name="line.827"></a>
+<FONT color="green">828</FONT>    <a name="line.828"></a>
+<FONT color="green">829</FONT>        /**<a name="line.829"></a>
+<FONT color="green">830</FONT>         * Factory that creates Daemon threads that can be properly shut down.<a name="line.830"></a>
+<FONT color="green">831</FONT>         */<a name="line.831"></a>
+<FONT color="green">832</FONT>        private static class DaemonThreadFactory implements ThreadFactory {<a name="line.832"></a>
+<FONT color="green">833</FONT>            private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);<a name="line.833"></a>
+<FONT color="green">834</FONT>            private final ThreadGroup group;<a name="line.834"></a>
+<FONT color="green">835</FONT>            private final AtomicInteger threadNumber = new AtomicInteger(1);<a name="line.835"></a>
+<FONT color="green">836</FONT>            private final String namePrefix;<a name="line.836"></a>
 <FONT color="green">837</FONT>    <a name="line.837"></a>
-<FONT color="green">838</FONT>        /**<a name="line.838"></a>
-<FONT color="green">839</FONT>         * An internal class.<a name="line.839"></a>
-<FONT color="green">840</FONT>         */<a name="line.840"></a>
-<FONT color="green">841</FONT>        private static class Gate {<a name="line.841"></a>
-<FONT color="green">842</FONT>    <a name="line.842"></a>
-<FONT color="green">843</FONT>            private boolean isOpen = false;<a name="line.843"></a>
+<FONT color="green">838</FONT>            public DaemonThreadFactory() {<a name="line.838"></a>
+<FONT color="green">839</FONT>                final SecurityManager securityManager = System.getSecurityManager();<a name="line.839"></a>
+<FONT color="green">840</FONT>                group = securityManager != null ? securityManager.getThreadGroup() :<a name="line.840"></a>
+<FONT color="green">841</FONT>                    Thread.currentThread().getThreadGroup();<a name="line.841"></a>
+<FONT color="green">842</FONT>                namePrefix = "DaemonPool-" + POOL_NUMBER.getAndIncrement() + "-thread-";<a name="line.842"></a>
+<FONT color="green">843</FONT>            }<a name="line.843"></a>
 <FONT color="green">844</FONT>    <a name="line.844"></a>
-<FONT color="green">845</FONT>            public boolean isOpen() {<a name="line.845"></a>
-<FONT color="green">846</FONT>                return isOpen;<a name="line.846"></a>
-<FONT color="green">847</FONT>            }<a name="line.847"></a>
-<FONT color="green">848</FONT>    <a name="line.848"></a>
-<FONT color="green">849</FONT>            public synchronized void open() {<a name="line.849"></a>
-<FONT color="green">850</FONT>                isOpen = true;<a name="line.850"></a>
-<FONT color="green">851</FONT>                notifyAll();<a name="line.851"></a>
-<FONT color="green">852</FONT>            }<a name="line.852"></a>
-<FONT color="green">853</FONT>    <a name="line.853"></a>
-<FONT color="green">854</FONT>            public synchronized void close() {<a name="line.854"></a>
-<FONT color="green">855</FONT>                isOpen = false;<a name="line.855"></a>
-<FONT color="green">856</FONT>            }<a name="line.856"></a>
-<FONT color="green">857</FONT>    <a name="line.857"></a>
-<FONT color="green">858</FONT>            public synchronized void waitForOpen(final long timeout) throws InterruptedException {<a name="line.858"></a>
-<FONT color="green">859</FONT>                wait(timeout);<a name="line.859"></a>
-<FONT color="green">860</FONT>            }<a name="line.860"></a>
-<FONT color="green">861</FONT>        }<a name="line.861"></a>
-<FONT color="green">862</FONT>    }<a name="line.862"></a>
+<FONT color="green">845</FONT>            @Override<a name="line.845"></a>
+<FONT color="green">846</FONT>            public Thread newThread(final Runnable r) {<a name="line.846"></a>
+<FONT color="green">847</FONT>                final Thread thread = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);<a name="line.847"></a>
+<FONT color="green">848</FONT>                thread.setDaemon(true);<a name="line.848"></a>
+<FONT color="green">849</FONT>                if (thread.getPriority() != Thread.NORM_PRIORITY) {<a name="line.849"></a>
+<FONT color="green">850</FONT>                    thread.setPriority(Thread.NORM_PRIORITY);<a name="line.850"></a>
+<FONT color="green">851</FONT>                }<a name="line.851"></a>
+<FONT color="green">852</FONT>                return thread;<a name="line.852"></a>
+<FONT color="green">853</FONT>            }<a name="line.853"></a>
+<FONT color="green">854</FONT>        }<a name="line.854"></a>
+<FONT color="green">855</FONT>    <a name="line.855"></a>
+<FONT color="green">856</FONT>        /**<a name="line.856"></a>
+<FONT color="green">857</FONT>         * An internal class.<a name="line.857"></a>
+<FONT color="green">858</FONT>         */<a name="line.858"></a>
+<FONT color="green">859</FONT>        private static class Gate {<a name="line.859"></a>
+<FONT color="green">860</FONT>    <a name="line.860"></a>
+<FONT color="green">861</FONT>            private boolean isOpen = false;<a name="line.861"></a>
+<FONT color="green">862</FONT>    <a name="line.862"></a>
+<FONT color="green">863</FONT>            public boolean isOpen() {<a name="line.863"></a>
+<FONT color="green">864</FONT>                return isOpen;<a name="line.864"></a>
+<FONT color="green">865</FONT>            }<a name="line.865"></a>
+<FONT color="green">866</FONT>    <a name="line.866"></a>
+<FONT color="green">867</FONT>            public synchronized void open() {<a name="line.867"></a>
+<FONT color="green">868</FONT>                isOpen = true;<a name="line.868"></a>
+<FONT color="green">869</FONT>                notifyAll();<a name="line.869"></a>
+<FONT color="green">870</FONT>            }<a name="line.870"></a>
+<FONT color="green">871</FONT>    <a name="line.871"></a>
+<FONT color="green">872</FONT>            public synchronized void close() {<a name="line.872"></a>
+<FONT color="green">873</FONT>                isOpen = false;<a name="line.873"></a>
+<FONT color="green">874</FONT>            }<a name="line.874"></a>
+<FONT color="green">875</FONT>    <a name="line.875"></a>
+<FONT color="green">876</FONT>            public synchronized void waitForOpen(final long timeout) throws InterruptedException {<a name="line.876"></a>
+<FONT color="green">877</FONT>                wait(timeout);<a name="line.877"></a>
+<FONT color="green">878</FONT>            }<a name="line.878"></a>
+<FONT color="green">879</FONT>        }<a name="line.879"></a>
+<FONT color="green">880</FONT>    }<a name="line.880"></a>
 
 
 
