@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ConcurrentMap&lt;String, ConcurrentMap&lt;String, PluginType&gt;&gt; pluginTypeMap =
 <a class="jxr_linenumber" name="48" href="#48">48</a>          <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;String, ConcurrentMap&lt;String, PluginType&gt;&gt;();
 <a class="jxr_linenumber" name="49" href="#49">49</a>  
-<a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> CopyOnWriteArrayList&lt;String&gt; packages = <strong class="jxr_keyword">new</strong> CopyOnWriteArrayList&lt;String&gt;();
+<a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> CopyOnWriteArrayList&lt;String&gt; packages = <strong class="jxr_keyword">new</strong> CopyOnWriteArrayList&lt;String&gt;();
 <a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String PATH = <span class="jxr_string">"org/apache/logging/log4j/core/config/plugins/"</span>;
 <a class="jxr_linenumber" name="52" href="#52">52</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String FILENAME = <span class="jxr_string">"Log4j2Plugins.dat"</span>;
 <a class="jxr_linenumber" name="53" href="#53">53</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String LOG4J_PACKAGES = <span class="jxr_string">"org.apache.logging.log4j.core"</span>;
@@ -147,10 +147,10 @@
 <a class="jxr_linenumber" name="137" href="#137">137</a>             preLoad = false;
 <a class="jxr_linenumber" name="138" href="#138">138</a>         }
 <a class="jxr_linenumber" name="139" href="#139">139</a>         <strong class="jxr_keyword">long</strong> start = System.nanoTime();
-<a class="jxr_linenumber" name="140" href="#140">140</a>         ResolverUtil&lt;?&gt; r = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/plugins/ResolverUtil.html">ResolverUtil</a>();
+<a class="jxr_linenumber" name="140" href="#140">140</a>         ResolverUtil&lt;?&gt; resolver = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/plugins/ResolverUtil.html">ResolverUtil</a>();
 <a class="jxr_linenumber" name="141" href="#141">141</a>         ClassLoader loader = Loader.getClassLoader();
 <a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">if</strong> (loader != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="143" href="#143">143</a>             r.setClassLoader(loader);
+<a class="jxr_linenumber" name="143" href="#143">143</a>             resolver.setClassLoader(loader);
 <a class="jxr_linenumber" name="144" href="#144">144</a>         }
 <a class="jxr_linenumber" name="145" href="#145">145</a>         <strong class="jxr_keyword">if</strong> (preLoad) {
 <a class="jxr_linenumber" name="146" href="#146">146</a>             ConcurrentMap&lt;String, ConcurrentMap&lt;String, PluginType&gt;&gt; map = decode(loader);
@@ -173,9 +173,9 @@
 <a class="jxr_linenumber" name="163" href="#163">163</a>         }
 <a class="jxr_linenumber" name="164" href="#164">164</a>         ResolverUtil.Test test = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/plugins/PluginManager.html">PluginTest</a>(clazz);
 <a class="jxr_linenumber" name="165" href="#165">165</a>         <strong class="jxr_keyword">for</strong> (String pkg : packages) {
-<a class="jxr_linenumber" name="166" href="#166">166</a>             r.findInPackage(test, pkg);
+<a class="jxr_linenumber" name="166" href="#166">166</a>             resolver.findInPackage(test, pkg);
 <a class="jxr_linenumber" name="167" href="#167">167</a>         }
-<a class="jxr_linenumber" name="168" href="#168">168</a>         <strong class="jxr_keyword">for</strong> (Class&lt;?&gt; item : r.getClasses()) {
+<a class="jxr_linenumber" name="168" href="#168">168</a>         <strong class="jxr_keyword">for</strong> (Class&lt;?&gt; item : resolver.getClasses()) {
 <a class="jxr_linenumber" name="169" href="#169">169</a>             <a href="../../../../../../../org/apache/logging/log4j/core/config/plugins/Plugin.html">Plugin</a> p = item.getAnnotation(Plugin.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="170" href="#170">170</a>             String pluginType = p.type();
 <a class="jxr_linenumber" name="171" href="#171">171</a>             <strong class="jxr_keyword">if</strong> (!pluginTypeMap.containsKey(pluginType)) {
@@ -192,7 +192,7 @@
 <a class="jxr_linenumber" name="182" href="#182">182</a>         DecimalFormat numFormat = <strong class="jxr_keyword">new</strong> DecimalFormat(<span class="jxr_string">"#0"</span>);
 <a class="jxr_linenumber" name="183" href="#183">183</a>         <strong class="jxr_keyword">long</strong> seconds = elapsed / NANOS_PER_SECOND;
 <a class="jxr_linenumber" name="184" href="#184">184</a>         elapsed %= NANOS_PER_SECOND;
-<a class="jxr_linenumber" name="185" href="#185">185</a>         sb.append(numFormat.format(seconds)).append(<span class="jxr_string">"."</span>);
+<a class="jxr_linenumber" name="185" href="#185">185</a>         sb.append(numFormat.format(seconds)).append('.');
 <a class="jxr_linenumber" name="186" href="#186">186</a>         numFormat = <strong class="jxr_keyword">new</strong> DecimalFormat(<span class="jxr_string">"000000000"</span>);
 <a class="jxr_linenumber" name="187" href="#187">187</a>         sb.append(numFormat.format(elapsed)).append(<span class="jxr_string">" seconds"</span>);
 <a class="jxr_linenumber" name="188" href="#188">188</a>         LOGGER.debug(sb.toString());

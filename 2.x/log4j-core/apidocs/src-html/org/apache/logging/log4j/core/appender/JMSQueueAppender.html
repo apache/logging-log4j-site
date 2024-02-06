@@ -33,7 +33,7 @@
 <FONT color="green">030</FONT>     * Appender to write to a JMS Queue.<a name="line.30"></a>
 <FONT color="green">031</FONT>     */<a name="line.31"></a>
 <FONT color="green">032</FONT>    @Plugin(name = "JMSQueue", type = "Core", elementType = "appender", printObject = true)<a name="line.32"></a>
-<FONT color="green">033</FONT>    public final class JMSQueueAppender extends AppenderBase {<a name="line.33"></a>
+<FONT color="green">033</FONT>    public final class JMSQueueAppender extends AbstractAppender {<a name="line.33"></a>
 <FONT color="green">034</FONT>    <a name="line.34"></a>
 <FONT color="green">035</FONT>        private final JMSQueueManager manager;<a name="line.35"></a>
 <FONT color="green">036</FONT>    <a name="line.36"></a>
@@ -50,7 +50,7 @@
 <FONT color="green">047</FONT>         */<a name="line.47"></a>
 <FONT color="green">048</FONT>        public void append(LogEvent event) {<a name="line.48"></a>
 <FONT color="green">049</FONT>            try {<a name="line.49"></a>
-<FONT color="green">050</FONT>                manager.send(getLayout().formatAs(event));<a name="line.50"></a>
+<FONT color="green">050</FONT>                manager.send(getLayout().toSerializable(event));<a name="line.50"></a>
 <FONT color="green">051</FONT>            } catch (Exception ex) {<a name="line.51"></a>
 <FONT color="green">052</FONT>                throw new AppenderRuntimeException(ex);<a name="line.52"></a>
 <FONT color="green">053</FONT>            }<a name="line.53"></a>
@@ -88,7 +88,7 @@
 <FONT color="green">085</FONT>                                                      @PluginElement("filter") Filter filter,<a name="line.85"></a>
 <FONT color="green">086</FONT>                                                      @PluginAttr("suppressExceptions") String suppress) {<a name="line.86"></a>
 <FONT color="green">087</FONT>    <a name="line.87"></a>
-<FONT color="green">088</FONT>            String name = "JMSQueue" + factoryBindingName + "." + queueBindingName;<a name="line.88"></a>
+<FONT color="green">088</FONT>            String name = "JMSQueue" + factoryBindingName + '.' + queueBindingName;<a name="line.88"></a>
 <FONT color="green">089</FONT>            boolean handleExceptions = suppress == null ? true : Boolean.valueOf(suppress);<a name="line.89"></a>
 <FONT color="green">090</FONT>            JMSQueueManager manager = JMSQueueManager.getJMSQueueManager(factoryName, providerURL, urlPkgPrefixes,<a name="line.90"></a>
 <FONT color="green">091</FONT>                securityPrincipalName, securityCredentials, factoryBindingName, queueBindingName, userName, password);<a name="line.91"></a>

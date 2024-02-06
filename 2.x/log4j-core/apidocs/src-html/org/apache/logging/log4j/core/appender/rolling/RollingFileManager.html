@@ -23,7 +23,7 @@
 <FONT color="green">020</FONT>    import org.apache.logging.log4j.core.appender.FileManager;<a name="line.20"></a>
 <FONT color="green">021</FONT>    import org.apache.logging.log4j.core.appender.ManagerFactory;<a name="line.21"></a>
 <FONT color="green">022</FONT>    import org.apache.logging.log4j.core.appender.rolling.helper.Action;<a name="line.22"></a>
-<FONT color="green">023</FONT>    import org.apache.logging.log4j.core.appender.rolling.helper.ActionBase;<a name="line.23"></a>
+<FONT color="green">023</FONT>    import org.apache.logging.log4j.core.appender.rolling.helper.AbstractAction;<a name="line.23"></a>
 <FONT color="green">024</FONT>    <a name="line.24"></a>
 <FONT color="green">025</FONT>    import java.io.BufferedOutputStream;<a name="line.25"></a>
 <FONT color="green">026</FONT>    import java.io.File;<a name="line.26"></a>
@@ -38,11 +38,11 @@
 <FONT color="green">035</FONT>     */<a name="line.35"></a>
 <FONT color="green">036</FONT>    public class RollingFileManager extends FileManager {<a name="line.36"></a>
 <FONT color="green">037</FONT>    <a name="line.37"></a>
-<FONT color="green">038</FONT>        private static ManagerFactory factory = new RollingFileManagerFactory();<a name="line.38"></a>
+<FONT color="green">038</FONT>        private static RollingFileManagerFactory factory = new RollingFileManagerFactory();<a name="line.38"></a>
 <FONT color="green">039</FONT>    <a name="line.39"></a>
 <FONT color="green">040</FONT>        private long size;<a name="line.40"></a>
 <FONT color="green">041</FONT>        private long initialTime;<a name="line.41"></a>
-<FONT color="green">042</FONT>        private PatternProcessor processor;<a name="line.42"></a>
+<FONT color="green">042</FONT>        private final PatternProcessor processor;<a name="line.42"></a>
 <FONT color="green">043</FONT>        private final Semaphore semaphore = new Semaphore(1);<a name="line.43"></a>
 <FONT color="green">044</FONT>    <a name="line.44"></a>
 <FONT color="green">045</FONT>        protected RollingFileManager(String fileName, String pattern, OutputStream os, boolean append, long size,<a name="line.45"></a>
@@ -54,7 +54,7 @@
 <FONT color="green">051</FONT>        }<a name="line.51"></a>
 <FONT color="green">052</FONT>    <a name="line.52"></a>
 <FONT color="green">053</FONT>        /**<a name="line.53"></a>
-<FONT color="green">054</FONT>         * Return a RollingFileManager.<a name="line.54"></a>
+<FONT color="green">054</FONT>         * Returns a RollingFileManager.<a name="line.54"></a>
 <FONT color="green">055</FONT>         * @param fileName The file name.<a name="line.55"></a>
 <FONT color="green">056</FONT>         * @param pattern The pattern for rolling file.<a name="line.56"></a>
 <FONT color="green">057</FONT>         * @param append true if the file should be appended to.<a name="line.57"></a>
@@ -75,7 +75,7 @@
 <FONT color="green">072</FONT>        }<a name="line.72"></a>
 <FONT color="green">073</FONT>    <a name="line.73"></a>
 <FONT color="green">074</FONT>        /**<a name="line.74"></a>
-<FONT color="green">075</FONT>         * Return the current size of the file.<a name="line.75"></a>
+<FONT color="green">075</FONT>         * Returns the current size of the file.<a name="line.75"></a>
 <FONT color="green">076</FONT>         * @return The size of the file in bytes.<a name="line.76"></a>
 <FONT color="green">077</FONT>         */<a name="line.77"></a>
 <FONT color="green">078</FONT>        public long getFileSize() {<a name="line.78"></a>
@@ -83,7 +83,7 @@
 <FONT color="green">080</FONT>        }<a name="line.80"></a>
 <FONT color="green">081</FONT>    <a name="line.81"></a>
 <FONT color="green">082</FONT>        /**<a name="line.82"></a>
-<FONT color="green">083</FONT>         * Return the time the file was created.<a name="line.83"></a>
+<FONT color="green">083</FONT>         * Returns the time the file was created.<a name="line.83"></a>
 <FONT color="green">084</FONT>         * @return The time the file was created.<a name="line.84"></a>
 <FONT color="green">085</FONT>         */<a name="line.85"></a>
 <FONT color="green">086</FONT>        public long getFileTime() {<a name="line.86"></a>
@@ -110,7 +110,7 @@
 <FONT color="green">107</FONT>        }<a name="line.107"></a>
 <FONT color="green">108</FONT>    <a name="line.108"></a>
 <FONT color="green">109</FONT>        /**<a name="line.109"></a>
-<FONT color="green">110</FONT>         * Return the pattern processor.<a name="line.110"></a>
+<FONT color="green">110</FONT>         * Returns the pattern processor.<a name="line.110"></a>
 <FONT color="green">111</FONT>         * @return The PatternProcessor.<a name="line.111"></a>
 <FONT color="green">112</FONT>         */<a name="line.112"></a>
 <FONT color="green">113</FONT>        public PatternProcessor getProcessor() {<a name="line.113"></a>
@@ -164,7 +164,7 @@
 <FONT color="green">161</FONT>        /**<a name="line.161"></a>
 <FONT color="green">162</FONT>         * Performs actions asynchronously.<a name="line.162"></a>
 <FONT color="green">163</FONT>         */<a name="line.163"></a>
-<FONT color="green">164</FONT>        private static class AsyncAction extends ActionBase {<a name="line.164"></a>
+<FONT color="green">164</FONT>        private static class AsyncAction extends AbstractAction {<a name="line.164"></a>
 <FONT color="green">165</FONT>    <a name="line.165"></a>
 <FONT color="green">166</FONT>            private final Action action;<a name="line.166"></a>
 <FONT color="green">167</FONT>            private final RollingFileManager manager;<a name="line.167"></a>

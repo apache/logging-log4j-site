@@ -98,7 +98,7 @@
 <FONT color="green">095</FONT>                    }<a name="line.95"></a>
 <FONT color="green">096</FONT>    <a name="line.96"></a>
 <FONT color="green">097</FONT>                    fragments.add(new PatternAbbreviatorFragment(charCount, ellipsis));<a name="line.97"></a>
-<FONT color="green">098</FONT>                    pos = trimmed.indexOf(".", pos);<a name="line.98"></a>
+<FONT color="green">098</FONT>                    pos = trimmed.indexOf('.', pos);<a name="line.98"></a>
 <FONT color="green">099</FONT>    <a name="line.99"></a>
 <FONT color="green">100</FONT>                    if (pos == -1) {<a name="line.100"></a>
 <FONT color="green">101</FONT>                        break;<a name="line.101"></a>
@@ -185,7 +185,7 @@
 <FONT color="green">182</FONT>                int end = buf.length() - 1;<a name="line.182"></a>
 <FONT color="green">183</FONT>    <a name="line.183"></a>
 <FONT color="green">184</FONT>                for (int i = count; i &gt; 0; i--) {<a name="line.184"></a>
-<FONT color="green">185</FONT>                    end = buf.lastIndexOf(".", end - 1);<a name="line.185"></a>
+<FONT color="green">185</FONT>                    end = buf.lastIndexOf('.', end - 1);<a name="line.185"></a>
 <FONT color="green">186</FONT>                    if (end == -1) {<a name="line.186"></a>
 <FONT color="green">187</FONT>                        return buf;<a name="line.187"></a>
 <FONT color="green">188</FONT>                    }<a name="line.188"></a>
@@ -231,7 +231,7 @@
 <FONT color="green">228</FONT>             * @return starting index of next element.<a name="line.228"></a>
 <FONT color="green">229</FONT>             */<a name="line.229"></a>
 <FONT color="green">230</FONT>            public int abbreviate(final StringBuilder buf, final int startPos) {<a name="line.230"></a>
-<FONT color="green">231</FONT>                int nextDot = buf.toString().indexOf(".", startPos);<a name="line.231"></a>
+<FONT color="green">231</FONT>                int nextDot = buf.toString().indexOf('.', startPos);<a name="line.231"></a>
 <FONT color="green">232</FONT>    <a name="line.232"></a>
 <FONT color="green">233</FONT>                if (nextDot != -1) {<a name="line.233"></a>
 <FONT color="green">234</FONT>                    if ((nextDot - startPos) &gt; charCount) {<a name="line.234"></a>
@@ -265,7 +265,7 @@
 <FONT color="green">262</FONT>             *<a name="line.262"></a>
 <FONT color="green">263</FONT>             * @param fragments element abbreviation patterns.<a name="line.263"></a>
 <FONT color="green">264</FONT>             */<a name="line.264"></a>
-<FONT color="green">265</FONT>            public PatternAbbreviator(List fragments) {<a name="line.265"></a>
+<FONT color="green">265</FONT>            public PatternAbbreviator(List&lt;PatternAbbreviatorFragment&gt; fragments) {<a name="line.265"></a>
 <FONT color="green">266</FONT>                if (fragments.size() == 0) {<a name="line.266"></a>
 <FONT color="green">267</FONT>                    throw new IllegalArgumentException(<a name="line.267"></a>
 <FONT color="green">268</FONT>                        "fragments must have at least one element");<a name="line.268"></a>
@@ -276,36 +276,35 @@
 <FONT color="green">273</FONT>            }<a name="line.273"></a>
 <FONT color="green">274</FONT>    <a name="line.274"></a>
 <FONT color="green">275</FONT>            /**<a name="line.275"></a>
-<FONT color="green">276</FONT>             * Abbreviate name.<a name="line.276"></a>
+<FONT color="green">276</FONT>             * Abbreviates name.<a name="line.276"></a>
 <FONT color="green">277</FONT>             *<a name="line.277"></a>
 <FONT color="green">278</FONT>             * @param buf       buffer that abbreviated name is appended.<a name="line.278"></a>
-<FONT color="green">279</FONT>             * @param nameStart start of name.<a name="line.279"></a>
-<FONT color="green">280</FONT>             */<a name="line.280"></a>
-<FONT color="green">281</FONT>            @Override<a name="line.281"></a>
-<FONT color="green">282</FONT>            public String abbreviate(final String buf) {<a name="line.282"></a>
-<FONT color="green">283</FONT>                //<a name="line.283"></a>
-<FONT color="green">284</FONT>                //  all non-terminal patterns are executed once<a name="line.284"></a>
-<FONT color="green">285</FONT>                //<a name="line.285"></a>
-<FONT color="green">286</FONT>                int pos = 0;<a name="line.286"></a>
-<FONT color="green">287</FONT>                StringBuilder sb = new StringBuilder(buf);<a name="line.287"></a>
-<FONT color="green">288</FONT>    <a name="line.288"></a>
-<FONT color="green">289</FONT>                for (int i = 0; (i &lt; (fragments.length - 1)) &amp;&amp; (pos &lt; buf.length());<a name="line.289"></a>
-<FONT color="green">290</FONT>                     i++) {<a name="line.290"></a>
-<FONT color="green">291</FONT>                    pos = fragments[i].abbreviate(sb, pos);<a name="line.291"></a>
-<FONT color="green">292</FONT>                }<a name="line.292"></a>
-<FONT color="green">293</FONT>    <a name="line.293"></a>
-<FONT color="green">294</FONT>                //<a name="line.294"></a>
-<FONT color="green">295</FONT>                //   last pattern in executed repeatedly<a name="line.295"></a>
-<FONT color="green">296</FONT>                //<a name="line.296"></a>
-<FONT color="green">297</FONT>                PatternAbbreviatorFragment terminalFragment = fragments[fragments.length - 1];<a name="line.297"></a>
-<FONT color="green">298</FONT>    <a name="line.298"></a>
-<FONT color="green">299</FONT>                while ((pos &lt; buf.length()) &amp;&amp; (pos &gt;= 0)) {<a name="line.299"></a>
-<FONT color="green">300</FONT>                    pos = terminalFragment.abbreviate(sb, pos);<a name="line.300"></a>
-<FONT color="green">301</FONT>                }<a name="line.301"></a>
-<FONT color="green">302</FONT>                return sb.toString();<a name="line.302"></a>
-<FONT color="green">303</FONT>            }<a name="line.303"></a>
-<FONT color="green">304</FONT>        }<a name="line.304"></a>
-<FONT color="green">305</FONT>    }<a name="line.305"></a>
+<FONT color="green">279</FONT>             */<a name="line.279"></a>
+<FONT color="green">280</FONT>            @Override<a name="line.280"></a>
+<FONT color="green">281</FONT>            public String abbreviate(final String buf) {<a name="line.281"></a>
+<FONT color="green">282</FONT>                //<a name="line.282"></a>
+<FONT color="green">283</FONT>                //  all non-terminal patterns are executed once<a name="line.283"></a>
+<FONT color="green">284</FONT>                //<a name="line.284"></a>
+<FONT color="green">285</FONT>                int pos = 0;<a name="line.285"></a>
+<FONT color="green">286</FONT>                StringBuilder sb = new StringBuilder(buf);<a name="line.286"></a>
+<FONT color="green">287</FONT>    <a name="line.287"></a>
+<FONT color="green">288</FONT>                for (int i = 0; (i &lt; (fragments.length - 1)) &amp;&amp; (pos &lt; buf.length());<a name="line.288"></a>
+<FONT color="green">289</FONT>                     i++) {<a name="line.289"></a>
+<FONT color="green">290</FONT>                    pos = fragments[i].abbreviate(sb, pos);<a name="line.290"></a>
+<FONT color="green">291</FONT>                }<a name="line.291"></a>
+<FONT color="green">292</FONT>    <a name="line.292"></a>
+<FONT color="green">293</FONT>                //<a name="line.293"></a>
+<FONT color="green">294</FONT>                //   last pattern in executed repeatedly<a name="line.294"></a>
+<FONT color="green">295</FONT>                //<a name="line.295"></a>
+<FONT color="green">296</FONT>                PatternAbbreviatorFragment terminalFragment = fragments[fragments.length - 1];<a name="line.296"></a>
+<FONT color="green">297</FONT>    <a name="line.297"></a>
+<FONT color="green">298</FONT>                while ((pos &lt; buf.length()) &amp;&amp; (pos &gt;= 0)) {<a name="line.298"></a>
+<FONT color="green">299</FONT>                    pos = terminalFragment.abbreviate(sb, pos);<a name="line.299"></a>
+<FONT color="green">300</FONT>                }<a name="line.300"></a>
+<FONT color="green">301</FONT>                return sb.toString();<a name="line.301"></a>
+<FONT color="green">302</FONT>            }<a name="line.302"></a>
+<FONT color="green">303</FONT>        }<a name="line.303"></a>
+<FONT color="green">304</FONT>    }<a name="line.304"></a>
 
 
 

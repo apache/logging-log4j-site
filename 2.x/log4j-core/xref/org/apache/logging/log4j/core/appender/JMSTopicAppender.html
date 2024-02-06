@@ -40,7 +40,7 @@
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment"> * Appender to write to a JMS Topic.</em>
 <a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="32" href="#32">32</a>  @Plugin(name = <span class="jxr_string">"JMSTopic"</span>, type = <span class="jxr_string">"Core"</span>, elementType = <span class="jxr_string">"appender"</span>, printObject = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/JMSTopicAppender.html">JMSTopicAppender</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AppenderBase.html">AppenderBase</a> {
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/JMSTopicAppender.html">JMSTopicAppender</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AbstractAppender.html">AbstractAppender</a> {
 <a class="jxr_linenumber" name="34" href="#34">34</a>  
 <a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/JMSTopicManager.html">JMSTopicManager</a> manager;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  
@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="47" href="#47">47</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="48" href="#48">48</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> append(<a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
 <a class="jxr_linenumber" name="49" href="#49">49</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="50" href="#50">50</a>              manager.send(getLayout().formatAs(event));
+<a class="jxr_linenumber" name="50" href="#50">50</a>              manager.send(getLayout().toSerializable(event));
 <a class="jxr_linenumber" name="51" href="#51">51</a>          } <strong class="jxr_keyword">catch</strong> (Exception ex) {
 <a class="jxr_linenumber" name="52" href="#52">52</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AppenderRuntimeException.html">AppenderRuntimeException</a>(ex);
 <a class="jxr_linenumber" name="53" href="#53">53</a>          }
@@ -95,7 +95,7 @@
 <a class="jxr_linenumber" name="85" href="#85">85</a>                                                    @PluginElement(<span class="jxr_string">"filters"</span>) <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter,
 <a class="jxr_linenumber" name="86" href="#86">86</a>                                                    @PluginAttr(<span class="jxr_string">"suppressExceptions"</span>) String suppress) {
 <a class="jxr_linenumber" name="87" href="#87">87</a>  
-<a class="jxr_linenumber" name="88" href="#88">88</a>          String name = <span class="jxr_string">"JMSTopic"</span> + factoryBindingName + <span class="jxr_string">"."</span> + topicBindingName;
+<a class="jxr_linenumber" name="88" href="#88">88</a>          String name = <span class="jxr_string">"JMSTopic"</span> + factoryBindingName + '.' + topicBindingName;
 <a class="jxr_linenumber" name="89" href="#89">89</a>          <strong class="jxr_keyword">boolean</strong> handleExceptions = suppress == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">true</strong> : Boolean.valueOf(suppress);
 <a class="jxr_linenumber" name="90" href="#90">90</a>          <a href="../../../../../../org/apache/logging/log4j/core/net/JMSTopicManager.html">JMSTopicManager</a> manager = JMSTopicManager.getJMSTopicManager(factoryName, providerURL, urlPkgPrefixes,
 <a class="jxr_linenumber" name="91" href="#91">91</a>              securityPrincipalName, securityCredentials, factoryBindingName, topicBindingName, userName, password);

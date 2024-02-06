@@ -50,7 +50,7 @@
 <FONT color="green">047</FONT>        private static ConcurrentMap&lt;String, ConcurrentMap&lt;String, PluginType&gt;&gt; pluginTypeMap =<a name="line.47"></a>
 <FONT color="green">048</FONT>            new ConcurrentHashMap&lt;String, ConcurrentMap&lt;String, PluginType&gt;&gt;();<a name="line.48"></a>
 <FONT color="green">049</FONT>    <a name="line.49"></a>
-<FONT color="green">050</FONT>        private static CopyOnWriteArrayList&lt;String&gt; packages = new CopyOnWriteArrayList&lt;String&gt;();<a name="line.50"></a>
+<FONT color="green">050</FONT>        private static final CopyOnWriteArrayList&lt;String&gt; packages = new CopyOnWriteArrayList&lt;String&gt;();<a name="line.50"></a>
 <FONT color="green">051</FONT>        private static final String PATH = "org/apache/logging/log4j/core/config/plugins/";<a name="line.51"></a>
 <FONT color="green">052</FONT>        private static final String FILENAME = "Log4j2Plugins.dat";<a name="line.52"></a>
 <FONT color="green">053</FONT>        private static final String LOG4J_PACKAGES = "org.apache.logging.log4j.core";<a name="line.53"></a>
@@ -140,10 +140,10 @@
 <FONT color="green">137</FONT>                preLoad = false;<a name="line.137"></a>
 <FONT color="green">138</FONT>            }<a name="line.138"></a>
 <FONT color="green">139</FONT>            long start = System.nanoTime();<a name="line.139"></a>
-<FONT color="green">140</FONT>            ResolverUtil&lt;?&gt; r = new ResolverUtil();<a name="line.140"></a>
+<FONT color="green">140</FONT>            ResolverUtil&lt;?&gt; resolver = new ResolverUtil();<a name="line.140"></a>
 <FONT color="green">141</FONT>            ClassLoader loader = Loader.getClassLoader();<a name="line.141"></a>
 <FONT color="green">142</FONT>            if (loader != null) {<a name="line.142"></a>
-<FONT color="green">143</FONT>                r.setClassLoader(loader);<a name="line.143"></a>
+<FONT color="green">143</FONT>                resolver.setClassLoader(loader);<a name="line.143"></a>
 <FONT color="green">144</FONT>            }<a name="line.144"></a>
 <FONT color="green">145</FONT>            if (preLoad) {<a name="line.145"></a>
 <FONT color="green">146</FONT>                ConcurrentMap&lt;String, ConcurrentMap&lt;String, PluginType&gt;&gt; map = decode(loader);<a name="line.146"></a>
@@ -166,9 +166,9 @@
 <FONT color="green">163</FONT>            }<a name="line.163"></a>
 <FONT color="green">164</FONT>            ResolverUtil.Test test = new PluginTest(clazz);<a name="line.164"></a>
 <FONT color="green">165</FONT>            for (String pkg : packages) {<a name="line.165"></a>
-<FONT color="green">166</FONT>                r.findInPackage(test, pkg);<a name="line.166"></a>
+<FONT color="green">166</FONT>                resolver.findInPackage(test, pkg);<a name="line.166"></a>
 <FONT color="green">167</FONT>            }<a name="line.167"></a>
-<FONT color="green">168</FONT>            for (Class&lt;?&gt; item : r.getClasses()) {<a name="line.168"></a>
+<FONT color="green">168</FONT>            for (Class&lt;?&gt; item : resolver.getClasses()) {<a name="line.168"></a>
 <FONT color="green">169</FONT>                Plugin p = item.getAnnotation(Plugin.class);<a name="line.169"></a>
 <FONT color="green">170</FONT>                String pluginType = p.type();<a name="line.170"></a>
 <FONT color="green">171</FONT>                if (!pluginTypeMap.containsKey(pluginType)) {<a name="line.171"></a>
@@ -185,7 +185,7 @@
 <FONT color="green">182</FONT>            DecimalFormat numFormat = new DecimalFormat("#0");<a name="line.182"></a>
 <FONT color="green">183</FONT>            long seconds = elapsed / NANOS_PER_SECOND;<a name="line.183"></a>
 <FONT color="green">184</FONT>            elapsed %= NANOS_PER_SECOND;<a name="line.184"></a>
-<FONT color="green">185</FONT>            sb.append(numFormat.format(seconds)).append(".");<a name="line.185"></a>
+<FONT color="green">185</FONT>            sb.append(numFormat.format(seconds)).append('.');<a name="line.185"></a>
 <FONT color="green">186</FONT>            numFormat = new DecimalFormat("000000000");<a name="line.186"></a>
 <FONT color="green">187</FONT>            sb.append(numFormat.format(elapsed)).append(" seconds");<a name="line.187"></a>
 <FONT color="green">188</FONT>            LOGGER.debug(sb.toString());<a name="line.188"></a>

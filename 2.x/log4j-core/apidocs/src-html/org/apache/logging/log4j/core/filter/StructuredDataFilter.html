@@ -33,113 +33,114 @@
 <FONT color="green">030</FONT>    import java.util.ArrayList;<a name="line.30"></a>
 <FONT color="green">031</FONT>    import java.util.HashMap;<a name="line.31"></a>
 <FONT color="green">032</FONT>    import java.util.List;<a name="line.32"></a>
-<FONT color="green">033</FONT>    import java.util.Map;<a name="line.33"></a>
-<FONT color="green">034</FONT>    <a name="line.34"></a>
-<FONT color="green">035</FONT>    /**<a name="line.35"></a>
-<FONT color="green">036</FONT>     * Filter based on data in a StructuredDataMessage.<a name="line.36"></a>
-<FONT color="green">037</FONT>     */<a name="line.37"></a>
-<FONT color="green">038</FONT>    @Plugin(name = "StructuredDataFilter", type = "Core", elementType = "filter", printObject = true)<a name="line.38"></a>
-<FONT color="green">039</FONT>    public final class StructuredDataFilter extends MapFilter {<a name="line.39"></a>
-<FONT color="green">040</FONT>    <a name="line.40"></a>
-<FONT color="green">041</FONT>        private StructuredDataFilter(Map&lt;String, List&lt;String&gt;&gt; map, boolean oper, Result onMatch, Result onMismatch) {<a name="line.41"></a>
-<FONT color="green">042</FONT>            super(map, oper, onMatch, onMismatch);<a name="line.42"></a>
-<FONT color="green">043</FONT>        }<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>        @Override<a name="line.45"></a>
-<FONT color="green">046</FONT>        public Result filter(Logger logger, Level level, Marker marker, Message msg, Throwable t) {<a name="line.46"></a>
-<FONT color="green">047</FONT>            if (msg instanceof StructuredDataMessage) {<a name="line.47"></a>
-<FONT color="green">048</FONT>                return filter((StructuredDataMessage) msg);<a name="line.48"></a>
-<FONT color="green">049</FONT>            }<a name="line.49"></a>
-<FONT color="green">050</FONT>            return Result.NEUTRAL;<a name="line.50"></a>
-<FONT color="green">051</FONT>        }<a name="line.51"></a>
-<FONT color="green">052</FONT>    <a name="line.52"></a>
-<FONT color="green">053</FONT>        @Override<a name="line.53"></a>
-<FONT color="green">054</FONT>        public Result filter(LogEvent event) {<a name="line.54"></a>
-<FONT color="green">055</FONT>            Message msg = event.getMessage();<a name="line.55"></a>
-<FONT color="green">056</FONT>            if (msg instanceof StructuredDataMessage) {<a name="line.56"></a>
-<FONT color="green">057</FONT>                return filter((StructuredDataMessage) msg);<a name="line.57"></a>
-<FONT color="green">058</FONT>            }<a name="line.58"></a>
-<FONT color="green">059</FONT>            return super.filter(event);<a name="line.59"></a>
-<FONT color="green">060</FONT>        }<a name="line.60"></a>
-<FONT color="green">061</FONT>    <a name="line.61"></a>
-<FONT color="green">062</FONT>        protected Result filter(StructuredDataMessage message) {<a name="line.62"></a>
-<FONT color="green">063</FONT>            boolean match = false;<a name="line.63"></a>
-<FONT color="green">064</FONT>            for (Map.Entry&lt;String, List&lt;String&gt;&gt; entry : getMap().entrySet()) {<a name="line.64"></a>
-<FONT color="green">065</FONT>                String toMatch = getValue(message, entry.getKey());<a name="line.65"></a>
-<FONT color="green">066</FONT>                if (toMatch != null) {<a name="line.66"></a>
-<FONT color="green">067</FONT>                    match = entry.getValue().contains(toMatch);<a name="line.67"></a>
-<FONT color="green">068</FONT>                } else {<a name="line.68"></a>
-<FONT color="green">069</FONT>                    match = false;<a name="line.69"></a>
-<FONT color="green">070</FONT>                }<a name="line.70"></a>
-<FONT color="green">071</FONT>                if ((!isAnd() &amp;&amp; match) || (isAnd() &amp;&amp; !match)) {<a name="line.71"></a>
-<FONT color="green">072</FONT>                    break;<a name="line.72"></a>
-<FONT color="green">073</FONT>                }<a name="line.73"></a>
-<FONT color="green">074</FONT>            }<a name="line.74"></a>
-<FONT color="green">075</FONT>            return match ? onMatch : onMismatch;<a name="line.75"></a>
-<FONT color="green">076</FONT>        }<a name="line.76"></a>
-<FONT color="green">077</FONT>    <a name="line.77"></a>
-<FONT color="green">078</FONT>        private String getValue(StructuredDataMessage data, String key) {<a name="line.78"></a>
-<FONT color="green">079</FONT>            if (key.equalsIgnoreCase("id")) {<a name="line.79"></a>
-<FONT color="green">080</FONT>                return data.getId().toString();<a name="line.80"></a>
-<FONT color="green">081</FONT>            } else if (key.equalsIgnoreCase("id.name")) {<a name="line.81"></a>
-<FONT color="green">082</FONT>                return data.getId().getName();<a name="line.82"></a>
-<FONT color="green">083</FONT>            } else if (key.equalsIgnoreCase("type")) {<a name="line.83"></a>
-<FONT color="green">084</FONT>                return data.getType();<a name="line.84"></a>
-<FONT color="green">085</FONT>            } else if (key.equalsIgnoreCase("message")) {<a name="line.85"></a>
-<FONT color="green">086</FONT>                return data.getFormattedMessage();<a name="line.86"></a>
-<FONT color="green">087</FONT>            } else {<a name="line.87"></a>
-<FONT color="green">088</FONT>                return data.getData().get(key);<a name="line.88"></a>
-<FONT color="green">089</FONT>            }<a name="line.89"></a>
-<FONT color="green">090</FONT>        }<a name="line.90"></a>
-<FONT color="green">091</FONT>    <a name="line.91"></a>
-<FONT color="green">092</FONT>        /**<a name="line.92"></a>
-<FONT color="green">093</FONT>         * Create the StructuredDataFilter.<a name="line.93"></a>
-<FONT color="green">094</FONT>         * @param pairs Key and value pairs.<a name="line.94"></a>
-<FONT color="green">095</FONT>         * @param oper The operator to perform. If not "or" the operation will be an "and".<a name="line.95"></a>
-<FONT color="green">096</FONT>         * @param match The action to perform on a match.<a name="line.96"></a>
-<FONT color="green">097</FONT>         * @param mismatch The action to perform on a mismatch.<a name="line.97"></a>
-<FONT color="green">098</FONT>         * @return The StructuredDataFilter.<a name="line.98"></a>
-<FONT color="green">099</FONT>         */<a name="line.99"></a>
-<FONT color="green">100</FONT>        @PluginFactory<a name="line.100"></a>
-<FONT color="green">101</FONT>        public static StructuredDataFilter createFilter(@PluginAttr("pairs") KeyValuePair[] pairs,<a name="line.101"></a>
-<FONT color="green">102</FONT>                                                        @PluginAttr("operator") String oper,<a name="line.102"></a>
-<FONT color="green">103</FONT>                                                        @PluginAttr("onmatch") String match,<a name="line.103"></a>
-<FONT color="green">104</FONT>                                                        @PluginAttr("onmismatch") String mismatch) {<a name="line.104"></a>
-<FONT color="green">105</FONT>            if (pairs == null || pairs.length == 0) {<a name="line.105"></a>
-<FONT color="green">106</FONT>                LOGGER.error("keys and values must be specified for the StructuredDataFilter");<a name="line.106"></a>
-<FONT color="green">107</FONT>                return null;<a name="line.107"></a>
-<FONT color="green">108</FONT>            }<a name="line.108"></a>
-<FONT color="green">109</FONT>            Map&lt;String, List&lt;String&gt;&gt; map = new HashMap&lt;String, List&lt;String&gt;&gt;();<a name="line.109"></a>
-<FONT color="green">110</FONT>            for (KeyValuePair pair : pairs) {<a name="line.110"></a>
-<FONT color="green">111</FONT>                String key = pair.getKey();<a name="line.111"></a>
-<FONT color="green">112</FONT>                if (key == null) {<a name="line.112"></a>
-<FONT color="green">113</FONT>                    LOGGER.error("A null key is not valid in MapFilter");<a name="line.113"></a>
-<FONT color="green">114</FONT>                    continue;<a name="line.114"></a>
-<FONT color="green">115</FONT>                }<a name="line.115"></a>
-<FONT color="green">116</FONT>                String value = pair.getValue();<a name="line.116"></a>
-<FONT color="green">117</FONT>                if (value == null) {<a name="line.117"></a>
-<FONT color="green">118</FONT>                    LOGGER.error("A null value for key " + key + " is not allowed in MapFilter");<a name="line.118"></a>
-<FONT color="green">119</FONT>                    continue;<a name="line.119"></a>
-<FONT color="green">120</FONT>                }<a name="line.120"></a>
-<FONT color="green">121</FONT>                List&lt;String&gt; list = map.get(pair.getKey());<a name="line.121"></a>
-<FONT color="green">122</FONT>                if (list != null) {<a name="line.122"></a>
-<FONT color="green">123</FONT>                    list.add(value);<a name="line.123"></a>
-<FONT color="green">124</FONT>                } else {<a name="line.124"></a>
-<FONT color="green">125</FONT>                    list = new ArrayList&lt;String&gt;();<a name="line.125"></a>
-<FONT color="green">126</FONT>                    list.add(value);<a name="line.126"></a>
-<FONT color="green">127</FONT>                    map.put(pair.getKey(), list);<a name="line.127"></a>
-<FONT color="green">128</FONT>                }<a name="line.128"></a>
-<FONT color="green">129</FONT>            }<a name="line.129"></a>
-<FONT color="green">130</FONT>            if (map.size() == 0) {<a name="line.130"></a>
-<FONT color="green">131</FONT>                LOGGER.error("StructuredDataFilter is not configured with any valid key value pairs");<a name="line.131"></a>
-<FONT color="green">132</FONT>                return null;<a name="line.132"></a>
-<FONT color="green">133</FONT>            }<a name="line.133"></a>
-<FONT color="green">134</FONT>            boolean isAnd = oper == null || !oper.equalsIgnoreCase("or");<a name="line.134"></a>
-<FONT color="green">135</FONT>            Result onMatch = match == null ? null : Result.valueOf(match.toUpperCase());<a name="line.135"></a>
-<FONT color="green">136</FONT>            Result onMismatch = mismatch == null ? null : Result.valueOf(mismatch.toUpperCase());<a name="line.136"></a>
-<FONT color="green">137</FONT>            return new StructuredDataFilter(map, isAnd, onMatch, onMismatch);<a name="line.137"></a>
-<FONT color="green">138</FONT>        }<a name="line.138"></a>
-<FONT color="green">139</FONT>    }<a name="line.139"></a>
+<FONT color="green">033</FONT>    import java.util.Locale;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import java.util.Map;<a name="line.34"></a>
+<FONT color="green">035</FONT>    <a name="line.35"></a>
+<FONT color="green">036</FONT>    /**<a name="line.36"></a>
+<FONT color="green">037</FONT>     * Filter based on data in a StructuredDataMessage.<a name="line.37"></a>
+<FONT color="green">038</FONT>     */<a name="line.38"></a>
+<FONT color="green">039</FONT>    @Plugin(name = "StructuredDataFilter", type = "Core", elementType = "filter", printObject = true)<a name="line.39"></a>
+<FONT color="green">040</FONT>    public final class StructuredDataFilter extends MapFilter {<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>        private StructuredDataFilter(Map&lt;String, List&lt;String&gt;&gt; map, boolean oper, Result onMatch, Result onMismatch) {<a name="line.42"></a>
+<FONT color="green">043</FONT>            super(map, oper, onMatch, onMismatch);<a name="line.43"></a>
+<FONT color="green">044</FONT>        }<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>        @Override<a name="line.46"></a>
+<FONT color="green">047</FONT>        public Result filter(Logger logger, Level level, Marker marker, Message msg, Throwable t) {<a name="line.47"></a>
+<FONT color="green">048</FONT>            if (msg instanceof StructuredDataMessage) {<a name="line.48"></a>
+<FONT color="green">049</FONT>                return filter((StructuredDataMessage) msg);<a name="line.49"></a>
+<FONT color="green">050</FONT>            }<a name="line.50"></a>
+<FONT color="green">051</FONT>            return Result.NEUTRAL;<a name="line.51"></a>
+<FONT color="green">052</FONT>        }<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>        @Override<a name="line.54"></a>
+<FONT color="green">055</FONT>        public Result filter(LogEvent event) {<a name="line.55"></a>
+<FONT color="green">056</FONT>            Message msg = event.getMessage();<a name="line.56"></a>
+<FONT color="green">057</FONT>            if (msg instanceof StructuredDataMessage) {<a name="line.57"></a>
+<FONT color="green">058</FONT>                return filter((StructuredDataMessage) msg);<a name="line.58"></a>
+<FONT color="green">059</FONT>            }<a name="line.59"></a>
+<FONT color="green">060</FONT>            return super.filter(event);<a name="line.60"></a>
+<FONT color="green">061</FONT>        }<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>        protected Result filter(StructuredDataMessage message) {<a name="line.63"></a>
+<FONT color="green">064</FONT>            boolean match = false;<a name="line.64"></a>
+<FONT color="green">065</FONT>            for (Map.Entry&lt;String, List&lt;String&gt;&gt; entry : getMap().entrySet()) {<a name="line.65"></a>
+<FONT color="green">066</FONT>                String toMatch = getValue(message, entry.getKey());<a name="line.66"></a>
+<FONT color="green">067</FONT>                if (toMatch != null) {<a name="line.67"></a>
+<FONT color="green">068</FONT>                    match = entry.getValue().contains(toMatch);<a name="line.68"></a>
+<FONT color="green">069</FONT>                } else {<a name="line.69"></a>
+<FONT color="green">070</FONT>                    match = false;<a name="line.70"></a>
+<FONT color="green">071</FONT>                }<a name="line.71"></a>
+<FONT color="green">072</FONT>                if ((!isAnd() &amp;&amp; match) || (isAnd() &amp;&amp; !match)) {<a name="line.72"></a>
+<FONT color="green">073</FONT>                    break;<a name="line.73"></a>
+<FONT color="green">074</FONT>                }<a name="line.74"></a>
+<FONT color="green">075</FONT>            }<a name="line.75"></a>
+<FONT color="green">076</FONT>            return match ? onMatch : onMismatch;<a name="line.76"></a>
+<FONT color="green">077</FONT>        }<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>        private String getValue(StructuredDataMessage data, String key) {<a name="line.79"></a>
+<FONT color="green">080</FONT>            if (key.equalsIgnoreCase("id")) {<a name="line.80"></a>
+<FONT color="green">081</FONT>                return data.getId().toString();<a name="line.81"></a>
+<FONT color="green">082</FONT>            } else if (key.equalsIgnoreCase("id.name")) {<a name="line.82"></a>
+<FONT color="green">083</FONT>                return data.getId().getName();<a name="line.83"></a>
+<FONT color="green">084</FONT>            } else if (key.equalsIgnoreCase("type")) {<a name="line.84"></a>
+<FONT color="green">085</FONT>                return data.getType();<a name="line.85"></a>
+<FONT color="green">086</FONT>            } else if (key.equalsIgnoreCase("message")) {<a name="line.86"></a>
+<FONT color="green">087</FONT>                return data.getFormattedMessage();<a name="line.87"></a>
+<FONT color="green">088</FONT>            } else {<a name="line.88"></a>
+<FONT color="green">089</FONT>                return data.getData().get(key);<a name="line.89"></a>
+<FONT color="green">090</FONT>            }<a name="line.90"></a>
+<FONT color="green">091</FONT>        }<a name="line.91"></a>
+<FONT color="green">092</FONT>    <a name="line.92"></a>
+<FONT color="green">093</FONT>        /**<a name="line.93"></a>
+<FONT color="green">094</FONT>         * Create the StructuredDataFilter.<a name="line.94"></a>
+<FONT color="green">095</FONT>         * @param pairs Key and value pairs.<a name="line.95"></a>
+<FONT color="green">096</FONT>         * @param oper The operator to perform. If not "or" the operation will be an "and".<a name="line.96"></a>
+<FONT color="green">097</FONT>         * @param match The action to perform on a match.<a name="line.97"></a>
+<FONT color="green">098</FONT>         * @param mismatch The action to perform on a mismatch.<a name="line.98"></a>
+<FONT color="green">099</FONT>         * @return The StructuredDataFilter.<a name="line.99"></a>
+<FONT color="green">100</FONT>         */<a name="line.100"></a>
+<FONT color="green">101</FONT>        @PluginFactory<a name="line.101"></a>
+<FONT color="green">102</FONT>        public static StructuredDataFilter createFilter(@PluginAttr("pairs") KeyValuePair[] pairs,<a name="line.102"></a>
+<FONT color="green">103</FONT>                                                        @PluginAttr("operator") String oper,<a name="line.103"></a>
+<FONT color="green">104</FONT>                                                        @PluginAttr("onmatch") String match,<a name="line.104"></a>
+<FONT color="green">105</FONT>                                                        @PluginAttr("onmismatch") String mismatch) {<a name="line.105"></a>
+<FONT color="green">106</FONT>            if (pairs == null || pairs.length == 0) {<a name="line.106"></a>
+<FONT color="green">107</FONT>                LOGGER.error("keys and values must be specified for the StructuredDataFilter");<a name="line.107"></a>
+<FONT color="green">108</FONT>                return null;<a name="line.108"></a>
+<FONT color="green">109</FONT>            }<a name="line.109"></a>
+<FONT color="green">110</FONT>            Map&lt;String, List&lt;String&gt;&gt; map = new HashMap&lt;String, List&lt;String&gt;&gt;();<a name="line.110"></a>
+<FONT color="green">111</FONT>            for (KeyValuePair pair : pairs) {<a name="line.111"></a>
+<FONT color="green">112</FONT>                String key = pair.getKey();<a name="line.112"></a>
+<FONT color="green">113</FONT>                if (key == null) {<a name="line.113"></a>
+<FONT color="green">114</FONT>                    LOGGER.error("A null key is not valid in MapFilter");<a name="line.114"></a>
+<FONT color="green">115</FONT>                    continue;<a name="line.115"></a>
+<FONT color="green">116</FONT>                }<a name="line.116"></a>
+<FONT color="green">117</FONT>                String value = pair.getValue();<a name="line.117"></a>
+<FONT color="green">118</FONT>                if (value == null) {<a name="line.118"></a>
+<FONT color="green">119</FONT>                    LOGGER.error("A null value for key " + key + " is not allowed in MapFilter");<a name="line.119"></a>
+<FONT color="green">120</FONT>                    continue;<a name="line.120"></a>
+<FONT color="green">121</FONT>                }<a name="line.121"></a>
+<FONT color="green">122</FONT>                List&lt;String&gt; list = map.get(pair.getKey());<a name="line.122"></a>
+<FONT color="green">123</FONT>                if (list != null) {<a name="line.123"></a>
+<FONT color="green">124</FONT>                    list.add(value);<a name="line.124"></a>
+<FONT color="green">125</FONT>                } else {<a name="line.125"></a>
+<FONT color="green">126</FONT>                    list = new ArrayList&lt;String&gt;();<a name="line.126"></a>
+<FONT color="green">127</FONT>                    list.add(value);<a name="line.127"></a>
+<FONT color="green">128</FONT>                    map.put(pair.getKey(), list);<a name="line.128"></a>
+<FONT color="green">129</FONT>                }<a name="line.129"></a>
+<FONT color="green">130</FONT>            }<a name="line.130"></a>
+<FONT color="green">131</FONT>            if (map.size() == 0) {<a name="line.131"></a>
+<FONT color="green">132</FONT>                LOGGER.error("StructuredDataFilter is not configured with any valid key value pairs");<a name="line.132"></a>
+<FONT color="green">133</FONT>                return null;<a name="line.133"></a>
+<FONT color="green">134</FONT>            }<a name="line.134"></a>
+<FONT color="green">135</FONT>            boolean isAnd = oper == null || !oper.equalsIgnoreCase("or");<a name="line.135"></a>
+<FONT color="green">136</FONT>            Result onMatch = Result.toResult(match);<a name="line.136"></a>
+<FONT color="green">137</FONT>            Result onMismatch = Result.toResult(mismatch);<a name="line.137"></a>
+<FONT color="green">138</FONT>            return new StructuredDataFilter(map, isAnd, onMatch, onMismatch);<a name="line.138"></a>
+<FONT color="green">139</FONT>        }<a name="line.139"></a>
+<FONT color="green">140</FONT>    }<a name="line.140"></a>
 
 
 

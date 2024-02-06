@@ -49,7 +49,7 @@
 <a class="jxr_linenumber" name="39" href="#39">39</a>  
 <a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String FILTERS = <span class="jxr_string">"filters("</span>;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  
-<a class="jxr_linenumber" name="42" href="#42">42</a>      <strong class="jxr_keyword">private</strong> List&lt;String&gt; packages = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="42" href="#42">42</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;String&gt; packages;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  
 <a class="jxr_linenumber" name="44" href="#44">44</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">     * Private constructor.</em>
@@ -58,78 +58,80 @@
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="49" href="#49">49</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.html">RootThrowablePatternConverter</a>(<strong class="jxr_keyword">final</strong> String[] options) {
 <a class="jxr_linenumber" name="50" href="#50">50</a>          <strong class="jxr_keyword">super</strong>(<span class="jxr_string">"RootThrowable"</span>, <span class="jxr_string">"throwable"</span>, options);
-<a class="jxr_linenumber" name="51" href="#51">51</a>          <strong class="jxr_keyword">if</strong> (options != <strong class="jxr_keyword">null</strong> &amp;&amp; options.length &gt; 1) {
-<a class="jxr_linenumber" name="52" href="#52">52</a>              <strong class="jxr_keyword">if</strong> (options[1].startsWith(FILTERS) &amp;&amp; options[1].endsWith(<span class="jxr_string">")"</span>)) {
-<a class="jxr_linenumber" name="53" href="#53">53</a>                  String filterStr = options[1].substring(FILTERS.length(), options[1].length() - 1);
-<a class="jxr_linenumber" name="54" href="#54">54</a>                  String[] array = filterStr.split(<span class="jxr_string">","</span>);
-<a class="jxr_linenumber" name="55" href="#55">55</a>                  <strong class="jxr_keyword">if</strong> (array.length &gt; 0) {
-<a class="jxr_linenumber" name="56" href="#56">56</a>                      packages = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(array.length);
-<a class="jxr_linenumber" name="57" href="#57">57</a>                      <strong class="jxr_keyword">for</strong> (String token : array) {
-<a class="jxr_linenumber" name="58" href="#58">58</a>                          packages.add(token.trim());
-<a class="jxr_linenumber" name="59" href="#59">59</a>                      }
-<a class="jxr_linenumber" name="60" href="#60">60</a>                  }
-<a class="jxr_linenumber" name="61" href="#61">61</a>              }
-<a class="jxr_linenumber" name="62" href="#62">62</a>          }
-<a class="jxr_linenumber" name="63" href="#63">63</a>      }
-<a class="jxr_linenumber" name="64" href="#64">64</a>  
-<a class="jxr_linenumber" name="65" href="#65">65</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     * Gets an instance of the class.</em>
-<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_javadoccomment">     * @param options pattern options, may be null.  If first element is "short",</em>
-<a class="jxr_linenumber" name="69" href="#69">69</a>  <em class="jxr_javadoccomment">     *                only the first line of the throwable will be formatted.</em>
-<a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_javadoccomment">     * @return instance of class.</em>
-<a class="jxr_linenumber" name="71" href="#71">71</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="72" href="#72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.html">RootThrowablePatternConverter</a> newInstance(<strong class="jxr_keyword">final</strong> String[] options) {
-<a class="jxr_linenumber" name="73" href="#73">73</a>          String type = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="74" href="#74">74</a>          String[] array = options;
-<a class="jxr_linenumber" name="75" href="#75">75</a>          <strong class="jxr_keyword">if</strong> (options != <strong class="jxr_keyword">null</strong> &amp;&amp; options.length == 1 &amp;&amp; options[0].length() &gt; 0) {
-<a class="jxr_linenumber" name="76" href="#76">76</a>              String[] opts = options[0].split(<span class="jxr_string">","</span>, 2);
-<a class="jxr_linenumber" name="77" href="#77">77</a>              String first = opts[0].trim();
-<a class="jxr_linenumber" name="78" href="#78">78</a>              String filter;
-<a class="jxr_linenumber" name="79" href="#79">79</a>              Scanner scanner = <strong class="jxr_keyword">new</strong> Scanner(first);
-<a class="jxr_linenumber" name="80" href="#80">80</a>              <strong class="jxr_keyword">if</strong> (first.equalsIgnoreCase(FULL) || first.equalsIgnoreCase(SHORT) || scanner.hasNextInt()) {
-<a class="jxr_linenumber" name="81" href="#81">81</a>                  type = first;
-<a class="jxr_linenumber" name="82" href="#82">82</a>                  filter = opts[1].trim();
-<a class="jxr_linenumber" name="83" href="#83">83</a>              } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="84" href="#84">84</a>                  filter = options[0].trim();
-<a class="jxr_linenumber" name="85" href="#85">85</a>              }
-<a class="jxr_linenumber" name="86" href="#86">86</a>              array = <strong class="jxr_keyword">new</strong> String[] {type, filter};
-<a class="jxr_linenumber" name="87" href="#87">87</a>          }
-<a class="jxr_linenumber" name="88" href="#88">88</a>  
-<a class="jxr_linenumber" name="89" href="#89">89</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.html">RootThrowablePatternConverter</a>(array);
-<a class="jxr_linenumber" name="90" href="#90">90</a>      }
-<a class="jxr_linenumber" name="91" href="#91">91</a>  
-<a class="jxr_linenumber" name="92" href="#92">92</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="93" href="#93">93</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="94" href="#94">94</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="95" href="#95">95</a>      @Override
-<a class="jxr_linenumber" name="96" href="#96">96</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> format(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event, <strong class="jxr_keyword">final</strong> StringBuilder toAppendTo) {
-<a class="jxr_linenumber" name="97" href="#97">97</a>          Throwable throwable = event.getThrown();
-<a class="jxr_linenumber" name="98" href="#98">98</a>          <strong class="jxr_keyword">if</strong> (throwable != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="99" href="#99">99</a>              <strong class="jxr_keyword">if</strong> (!(throwable instanceof ThrowableProxy)) {
-<a class="jxr_linenumber" name="100" href="#100">100</a>                 <strong class="jxr_keyword">super</strong>.format(event, toAppendTo);
-<a class="jxr_linenumber" name="101" href="#101">101</a>                 <strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="102" href="#102">102</a>             }
-<a class="jxr_linenumber" name="103" href="#103">103</a>             <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">ThrowableProxy</a> t = (ThrowableProxy) throwable;
-<a class="jxr_linenumber" name="104" href="#104">104</a>             String trace = t.getRootCauseStackTrace(packages);
-<a class="jxr_linenumber" name="105" href="#105">105</a>             <strong class="jxr_keyword">int</strong> len = toAppendTo.length();
-<a class="jxr_linenumber" name="106" href="#106">106</a>             <strong class="jxr_keyword">if</strong> (len &gt; 0 &amp;&amp; !Character.isWhitespace(toAppendTo.charAt(len - 1))) {
-<a class="jxr_linenumber" name="107" href="#107">107</a>                 toAppendTo.append(<span class="jxr_string">" "</span>);
-<a class="jxr_linenumber" name="108" href="#108">108</a>             }
-<a class="jxr_linenumber" name="109" href="#109">109</a>             <strong class="jxr_keyword">if</strong> (lines &gt; 0) {
-<a class="jxr_linenumber" name="110" href="#110">110</a>                 StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="111" href="#111">111</a>                 String[] array = trace.split(<span class="jxr_string">"\n"</span>);
-<a class="jxr_linenumber" name="112" href="#112">112</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; lines; ++i) {
-<a class="jxr_linenumber" name="113" href="#113">113</a>                     sb.append(array[i]).append(<span class="jxr_string">"\n"</span>);
-<a class="jxr_linenumber" name="114" href="#114">114</a>                 }
-<a class="jxr_linenumber" name="115" href="#115">115</a>                 toAppendTo.append(sb.toString());
-<a class="jxr_linenumber" name="116" href="#116">116</a> 
-<a class="jxr_linenumber" name="117" href="#117">117</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="118" href="#118">118</a>                 toAppendTo.append(trace);
-<a class="jxr_linenumber" name="119" href="#119">119</a>             }
-<a class="jxr_linenumber" name="120" href="#120">120</a>         }
-<a class="jxr_linenumber" name="121" href="#121">121</a>     }
-<a class="jxr_linenumber" name="122" href="#122">122</a> }
+<a class="jxr_linenumber" name="51" href="#51">51</a>          List&lt;String&gt; tempPackages = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="52" href="#52">52</a>          <strong class="jxr_keyword">if</strong> (options != <strong class="jxr_keyword">null</strong> &amp;&amp; options.length &gt; 1) {
+<a class="jxr_linenumber" name="53" href="#53">53</a>              <strong class="jxr_keyword">if</strong> (options[1].startsWith(FILTERS) &amp;&amp; options[1].endsWith(<span class="jxr_string">")"</span>)) {
+<a class="jxr_linenumber" name="54" href="#54">54</a>                  String filterStr = options[1].substring(FILTERS.length(), options[1].length() - 1);
+<a class="jxr_linenumber" name="55" href="#55">55</a>                  String[] array = filterStr.split(<span class="jxr_string">","</span>);
+<a class="jxr_linenumber" name="56" href="#56">56</a>                  <strong class="jxr_keyword">if</strong> (array.length &gt; 0) {
+<a class="jxr_linenumber" name="57" href="#57">57</a>                      tempPackages = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(array.length);
+<a class="jxr_linenumber" name="58" href="#58">58</a>                      <strong class="jxr_keyword">for</strong> (String token : array) {
+<a class="jxr_linenumber" name="59" href="#59">59</a>                          tempPackages.add(token.trim());
+<a class="jxr_linenumber" name="60" href="#60">60</a>                      }
+<a class="jxr_linenumber" name="61" href="#61">61</a>                  }
+<a class="jxr_linenumber" name="62" href="#62">62</a>              }
+<a class="jxr_linenumber" name="63" href="#63">63</a>          }
+<a class="jxr_linenumber" name="64" href="#64">64</a>          packages = tempPackages;
+<a class="jxr_linenumber" name="65" href="#65">65</a>      }
+<a class="jxr_linenumber" name="66" href="#66">66</a>  
+<a class="jxr_linenumber" name="67" href="#67">67</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_javadoccomment">     * Gets an instance of the class.</em>
+<a class="jxr_linenumber" name="69" href="#69">69</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_javadoccomment">     * @param options pattern options, may be null.  If first element is "short",</em>
+<a class="jxr_linenumber" name="71" href="#71">71</a>  <em class="jxr_javadoccomment">     *                only the first line of the throwable will be formatted.</em>
+<a class="jxr_linenumber" name="72" href="#72">72</a>  <em class="jxr_javadoccomment">     * @return instance of class.</em>
+<a class="jxr_linenumber" name="73" href="#73">73</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="74" href="#74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.html">RootThrowablePatternConverter</a> newInstance(<strong class="jxr_keyword">final</strong> String[] options) {
+<a class="jxr_linenumber" name="75" href="#75">75</a>          String type = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="76" href="#76">76</a>          String[] array = options;
+<a class="jxr_linenumber" name="77" href="#77">77</a>          <strong class="jxr_keyword">if</strong> (options != <strong class="jxr_keyword">null</strong> &amp;&amp; options.length == 1 &amp;&amp; options[0].length() &gt; 0) {
+<a class="jxr_linenumber" name="78" href="#78">78</a>              String[] opts = options[0].split(<span class="jxr_string">","</span>, 2);
+<a class="jxr_linenumber" name="79" href="#79">79</a>              String first = opts[0].trim();
+<a class="jxr_linenumber" name="80" href="#80">80</a>              String filter;
+<a class="jxr_linenumber" name="81" href="#81">81</a>              Scanner scanner = <strong class="jxr_keyword">new</strong> Scanner(first);
+<a class="jxr_linenumber" name="82" href="#82">82</a>              <strong class="jxr_keyword">if</strong> (first.equalsIgnoreCase(FULL) || first.equalsIgnoreCase(SHORT) || scanner.hasNextInt()) {
+<a class="jxr_linenumber" name="83" href="#83">83</a>                  type = first;
+<a class="jxr_linenumber" name="84" href="#84">84</a>                  filter = opts[1].trim();
+<a class="jxr_linenumber" name="85" href="#85">85</a>              } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="86" href="#86">86</a>                  filter = options[0].trim();
+<a class="jxr_linenumber" name="87" href="#87">87</a>              }
+<a class="jxr_linenumber" name="88" href="#88">88</a>              array = <strong class="jxr_keyword">new</strong> String[] {type, filter};
+<a class="jxr_linenumber" name="89" href="#89">89</a>          }
+<a class="jxr_linenumber" name="90" href="#90">90</a>  
+<a class="jxr_linenumber" name="91" href="#91">91</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.html">RootThrowablePatternConverter</a>(array);
+<a class="jxr_linenumber" name="92" href="#92">92</a>      }
+<a class="jxr_linenumber" name="93" href="#93">93</a>  
+<a class="jxr_linenumber" name="94" href="#94">94</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="95" href="#95">95</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="96" href="#96">96</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="97" href="#97">97</a>      @Override
+<a class="jxr_linenumber" name="98" href="#98">98</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> format(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event, <strong class="jxr_keyword">final</strong> StringBuilder toAppendTo) {
+<a class="jxr_linenumber" name="99" href="#99">99</a>          Throwable throwable = event.getThrown();
+<a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">if</strong> (throwable != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="101" href="#101">101</a>             <strong class="jxr_keyword">if</strong> (!(throwable instanceof ThrowableProxy)) {
+<a class="jxr_linenumber" name="102" href="#102">102</a>                 <strong class="jxr_keyword">super</strong>.format(event, toAppendTo);
+<a class="jxr_linenumber" name="103" href="#103">103</a>                 <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="104" href="#104">104</a>             }
+<a class="jxr_linenumber" name="105" href="#105">105</a>             <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">ThrowableProxy</a> t = (ThrowableProxy) throwable;
+<a class="jxr_linenumber" name="106" href="#106">106</a>             String trace = t.getRootCauseStackTrace(packages);
+<a class="jxr_linenumber" name="107" href="#107">107</a>             <strong class="jxr_keyword">int</strong> len = toAppendTo.length();
+<a class="jxr_linenumber" name="108" href="#108">108</a>             <strong class="jxr_keyword">if</strong> (len &gt; 0 &amp;&amp; !Character.isWhitespace(toAppendTo.charAt(len - 1))) {
+<a class="jxr_linenumber" name="109" href="#109">109</a>                 toAppendTo.append(<span class="jxr_string">" "</span>);
+<a class="jxr_linenumber" name="110" href="#110">110</a>             }
+<a class="jxr_linenumber" name="111" href="#111">111</a>             <strong class="jxr_keyword">if</strong> (lines &gt; 0) {
+<a class="jxr_linenumber" name="112" href="#112">112</a>                 StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="113" href="#113">113</a>                 String[] array = trace.split(<span class="jxr_string">"\n"</span>);
+<a class="jxr_linenumber" name="114" href="#114">114</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; lines; ++i) {
+<a class="jxr_linenumber" name="115" href="#115">115</a>                     sb.append(array[i]).append(<span class="jxr_string">"\n"</span>);
+<a class="jxr_linenumber" name="116" href="#116">116</a>                 }
+<a class="jxr_linenumber" name="117" href="#117">117</a>                 toAppendTo.append(sb.toString());
+<a class="jxr_linenumber" name="118" href="#118">118</a> 
+<a class="jxr_linenumber" name="119" href="#119">119</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="120" href="#120">120</a>                 toAppendTo.append(trace);
+<a class="jxr_linenumber" name="121" href="#121">121</a>             }
+<a class="jxr_linenumber" name="122" href="#122">122</a>         }
+<a class="jxr_linenumber" name="123" href="#123">123</a>     }
+<a class="jxr_linenumber" name="124" href="#124">124</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

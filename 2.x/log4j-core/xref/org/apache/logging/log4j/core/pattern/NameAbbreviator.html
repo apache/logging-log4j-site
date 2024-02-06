@@ -105,7 +105,7 @@
 <a class="jxr_linenumber" name="95" href="#95">95</a>                  }
 <a class="jxr_linenumber" name="96" href="#96">96</a>  
 <a class="jxr_linenumber" name="97" href="#97">97</a>                  fragments.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">PatternAbbreviatorFragment</a>(charCount, ellipsis));
-<a class="jxr_linenumber" name="98" href="#98">98</a>                  pos = trimmed.indexOf(<span class="jxr_string">"."</span>, pos);
+<a class="jxr_linenumber" name="98" href="#98">98</a>                  pos = trimmed.indexOf('.', pos);
 <a class="jxr_linenumber" name="99" href="#99">99</a>  
 <a class="jxr_linenumber" name="100" href="#100">100</a>                 <strong class="jxr_keyword">if</strong> (pos == -1) {
 <a class="jxr_linenumber" name="101" href="#101">101</a>                     <strong class="jxr_keyword">break</strong>;
@@ -192,7 +192,7 @@
 <a class="jxr_linenumber" name="182" href="#182">182</a>             <strong class="jxr_keyword">int</strong> end = buf.length() - 1;
 <a class="jxr_linenumber" name="183" href="#183">183</a> 
 <a class="jxr_linenumber" name="184" href="#184">184</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = count; i &gt; 0; i--) {
-<a class="jxr_linenumber" name="185" href="#185">185</a>                 end = buf.lastIndexOf(<span class="jxr_string">"."</span>, end - 1);
+<a class="jxr_linenumber" name="185" href="#185">185</a>                 end = buf.lastIndexOf('.', end - 1);
 <a class="jxr_linenumber" name="186" href="#186">186</a>                 <strong class="jxr_keyword">if</strong> (end == -1) {
 <a class="jxr_linenumber" name="187" href="#187">187</a>                     <strong class="jxr_keyword">return</strong> buf;
 <a class="jxr_linenumber" name="188" href="#188">188</a>                 }
@@ -238,7 +238,7 @@
 <a class="jxr_linenumber" name="228" href="#228">228</a> <em class="jxr_javadoccomment">         * @return starting index of next element.</em>
 <a class="jxr_linenumber" name="229" href="#229">229</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="230" href="#230">230</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> abbreviate(<strong class="jxr_keyword">final</strong> StringBuilder buf, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> startPos) {
-<a class="jxr_linenumber" name="231" href="#231">231</a>             <strong class="jxr_keyword">int</strong> nextDot = buf.toString().indexOf(<span class="jxr_string">"."</span>, startPos);
+<a class="jxr_linenumber" name="231" href="#231">231</a>             <strong class="jxr_keyword">int</strong> nextDot = buf.toString().indexOf('.', startPos);
 <a class="jxr_linenumber" name="232" href="#232">232</a> 
 <a class="jxr_linenumber" name="233" href="#233">233</a>             <strong class="jxr_keyword">if</strong> (nextDot != -1) {
 <a class="jxr_linenumber" name="234" href="#234">234</a>                 <strong class="jxr_keyword">if</strong> ((nextDot - startPos) &gt; charCount) {
@@ -272,7 +272,7 @@
 <a class="jxr_linenumber" name="262" href="#262">262</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">         * @param fragments element abbreviation patterns.</em>
 <a class="jxr_linenumber" name="264" href="#264">264</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="265" href="#265">265</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">PatternAbbreviator</a>(List fragments) {
+<a class="jxr_linenumber" name="265" href="#265">265</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">PatternAbbreviator</a>(List&lt;PatternAbbreviatorFragment&gt; fragments) {
 <a class="jxr_linenumber" name="266" href="#266">266</a>             <strong class="jxr_keyword">if</strong> (fragments.size() == 0) {
 <a class="jxr_linenumber" name="267" href="#267">267</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(
 <a class="jxr_linenumber" name="268" href="#268">268</a>                     <span class="jxr_string">"fragments must have at least one element"</span>);
@@ -283,36 +283,35 @@
 <a class="jxr_linenumber" name="273" href="#273">273</a>         }
 <a class="jxr_linenumber" name="274" href="#274">274</a> 
 <a class="jxr_linenumber" name="275" href="#275">275</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="276" href="#276">276</a> <em class="jxr_javadoccomment">         * Abbreviate name.</em>
+<a class="jxr_linenumber" name="276" href="#276">276</a> <em class="jxr_javadoccomment">         * Abbreviates name.</em>
 <a class="jxr_linenumber" name="277" href="#277">277</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="278" href="#278">278</a> <em class="jxr_javadoccomment">         * @param buf       buffer that abbreviated name is appended.</em>
-<a class="jxr_linenumber" name="279" href="#279">279</a> <em class="jxr_javadoccomment">         * @param nameStart start of name.</em>
-<a class="jxr_linenumber" name="280" href="#280">280</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="281" href="#281">281</a>         @Override
-<a class="jxr_linenumber" name="282" href="#282">282</a>         <strong class="jxr_keyword">public</strong> String abbreviate(<strong class="jxr_keyword">final</strong> String buf) {
-<a class="jxr_linenumber" name="283" href="#283">283</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="284" href="#284">284</a>             <em class="jxr_comment">//  all non-terminal patterns are executed once</em>
-<a class="jxr_linenumber" name="285" href="#285">285</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="286" href="#286">286</a>             <strong class="jxr_keyword">int</strong> pos = 0;
-<a class="jxr_linenumber" name="287" href="#287">287</a>             StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder(buf);
-<a class="jxr_linenumber" name="288" href="#288">288</a> 
-<a class="jxr_linenumber" name="289" href="#289">289</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; (i &lt; (fragments.length - 1)) &amp;&amp; (pos &lt; buf.length());
-<a class="jxr_linenumber" name="290" href="#290">290</a>                  i++) {
-<a class="jxr_linenumber" name="291" href="#291">291</a>                 pos = fragments[i].abbreviate(sb, pos);
-<a class="jxr_linenumber" name="292" href="#292">292</a>             }
-<a class="jxr_linenumber" name="293" href="#293">293</a> 
-<a class="jxr_linenumber" name="294" href="#294">294</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="295" href="#295">295</a>             <em class="jxr_comment">//   last pattern in executed repeatedly</em>
-<a class="jxr_linenumber" name="296" href="#296">296</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="297" href="#297">297</a>             <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">PatternAbbreviatorFragment</a> terminalFragment = fragments[fragments.length - 1];
-<a class="jxr_linenumber" name="298" href="#298">298</a> 
-<a class="jxr_linenumber" name="299" href="#299">299</a>             <strong class="jxr_keyword">while</strong> ((pos &lt; buf.length()) &amp;&amp; (pos &gt;= 0)) {
-<a class="jxr_linenumber" name="300" href="#300">300</a>                 pos = terminalFragment.abbreviate(sb, pos);
-<a class="jxr_linenumber" name="301" href="#301">301</a>             }
-<a class="jxr_linenumber" name="302" href="#302">302</a>             <strong class="jxr_keyword">return</strong> sb.toString();
-<a class="jxr_linenumber" name="303" href="#303">303</a>         }
-<a class="jxr_linenumber" name="304" href="#304">304</a>     }
-<a class="jxr_linenumber" name="305" href="#305">305</a> }
+<a class="jxr_linenumber" name="279" href="#279">279</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="280" href="#280">280</a>         @Override
+<a class="jxr_linenumber" name="281" href="#281">281</a>         <strong class="jxr_keyword">public</strong> String abbreviate(<strong class="jxr_keyword">final</strong> String buf) {
+<a class="jxr_linenumber" name="282" href="#282">282</a>             <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="283" href="#283">283</a>             <em class="jxr_comment">//  all non-terminal patterns are executed once</em>
+<a class="jxr_linenumber" name="284" href="#284">284</a>             <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="285" href="#285">285</a>             <strong class="jxr_keyword">int</strong> pos = 0;
+<a class="jxr_linenumber" name="286" href="#286">286</a>             StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder(buf);
+<a class="jxr_linenumber" name="287" href="#287">287</a> 
+<a class="jxr_linenumber" name="288" href="#288">288</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; (i &lt; (fragments.length - 1)) &amp;&amp; (pos &lt; buf.length());
+<a class="jxr_linenumber" name="289" href="#289">289</a>                  i++) {
+<a class="jxr_linenumber" name="290" href="#290">290</a>                 pos = fragments[i].abbreviate(sb, pos);
+<a class="jxr_linenumber" name="291" href="#291">291</a>             }
+<a class="jxr_linenumber" name="292" href="#292">292</a> 
+<a class="jxr_linenumber" name="293" href="#293">293</a>             <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="294" href="#294">294</a>             <em class="jxr_comment">//   last pattern in executed repeatedly</em>
+<a class="jxr_linenumber" name="295" href="#295">295</a>             <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="296" href="#296">296</a>             <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">PatternAbbreviatorFragment</a> terminalFragment = fragments[fragments.length - 1];
+<a class="jxr_linenumber" name="297" href="#297">297</a> 
+<a class="jxr_linenumber" name="298" href="#298">298</a>             <strong class="jxr_keyword">while</strong> ((pos &lt; buf.length()) &amp;&amp; (pos &gt;= 0)) {
+<a class="jxr_linenumber" name="299" href="#299">299</a>                 pos = terminalFragment.abbreviate(sb, pos);
+<a class="jxr_linenumber" name="300" href="#300">300</a>             }
+<a class="jxr_linenumber" name="301" href="#301">301</a>             <strong class="jxr_keyword">return</strong> sb.toString();
+<a class="jxr_linenumber" name="302" href="#302">302</a>         }
+<a class="jxr_linenumber" name="303" href="#303">303</a>     }
+<a class="jxr_linenumber" name="304" href="#304">304</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

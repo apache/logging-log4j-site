@@ -74,7 +74,7 @@
 <FONT color="green">071</FONT>        }<a name="line.71"></a>
 <FONT color="green">072</FONT>    <a name="line.72"></a>
 <FONT color="green">073</FONT>        /**<a name="line.73"></a>
-<FONT color="green">074</FONT>         * Return the next potential rollover time.<a name="line.74"></a>
+<FONT color="green">074</FONT>         * Returns the next potential rollover time.<a name="line.74"></a>
 <FONT color="green">075</FONT>         * @param current The current time.<a name="line.75"></a>
 <FONT color="green">076</FONT>         * @param increment The increment to the next time.<a name="line.76"></a>
 <FONT color="green">077</FONT>         * @return the next potential rollover time.<a name="line.77"></a>
@@ -131,78 +131,75 @@
 <FONT color="green">128</FONT>    <a name="line.128"></a>
 <FONT color="green">129</FONT>        /**<a name="line.129"></a>
 <FONT color="green">130</FONT>         * Format file name.<a name="line.130"></a>
-<FONT color="green">131</FONT>         *<a name="line.131"></a>
+<FONT color="green">131</FONT>         * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.131"></a>
 <FONT color="green">132</FONT>         * @param obj object to be evaluated in formatting, may not be null.<a name="line.132"></a>
-<FONT color="green">133</FONT>         * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.133"></a>
-<FONT color="green">134</FONT>         */<a name="line.134"></a>
-<FONT color="green">135</FONT>        protected final void formatFileName(final Object obj, final StringBuilder buf) {<a name="line.135"></a>
-<FONT color="green">136</FONT>            Object[] objects = new Object[] {new Date(System.currentTimeMillis()), obj};<a name="line.136"></a>
-<FONT color="green">137</FONT>            formatFileName(objects, buf);<a name="line.137"></a>
-<FONT color="green">138</FONT>        }<a name="line.138"></a>
-<FONT color="green">139</FONT>    <a name="line.139"></a>
-<FONT color="green">140</FONT>        /**<a name="line.140"></a>
-<FONT color="green">141</FONT>         * Format file name.<a name="line.141"></a>
-<FONT color="green">142</FONT>         *<a name="line.142"></a>
-<FONT color="green">143</FONT>         * @param objects objects to be evaluated in formatting, may not be null.<a name="line.143"></a>
-<FONT color="green">144</FONT>         * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.144"></a>
-<FONT color="green">145</FONT>         */<a name="line.145"></a>
-<FONT color="green">146</FONT>        protected final void formatFileName(final Object[] objects, final StringBuilder buf) {<a name="line.146"></a>
-<FONT color="green">147</FONT>            for (int i = 0; i &lt; patternConverters.length; i++) {<a name="line.147"></a>
-<FONT color="green">148</FONT>                int fieldStart = buf.length();<a name="line.148"></a>
-<FONT color="green">149</FONT>                patternConverters[i].format(objects, buf);<a name="line.149"></a>
-<FONT color="green">150</FONT>    <a name="line.150"></a>
-<FONT color="green">151</FONT>                if (patternFields[i] != null) {<a name="line.151"></a>
-<FONT color="green">152</FONT>                    patternFields[i].format(fieldStart, buf);<a name="line.152"></a>
-<FONT color="green">153</FONT>                }<a name="line.153"></a>
-<FONT color="green">154</FONT>            }<a name="line.154"></a>
-<FONT color="green">155</FONT>        }<a name="line.155"></a>
-<FONT color="green">156</FONT>    <a name="line.156"></a>
-<FONT color="green">157</FONT>        private RolloverFrequency calculateFrequency(String pattern) {<a name="line.157"></a>
-<FONT color="green">158</FONT>            if (patternContains(pattern, MILLIS_CHAR)) {<a name="line.158"></a>
-<FONT color="green">159</FONT>                return RolloverFrequency.EVERY_MILLISECOND;<a name="line.159"></a>
+<FONT color="green">133</FONT>         */<a name="line.133"></a>
+<FONT color="green">134</FONT>        protected final void formatFileName(final StringBuilder buf, final Object obj) {<a name="line.134"></a>
+<FONT color="green">135</FONT>            formatFileName(buf, new Date(System.currentTimeMillis()), obj);<a name="line.135"></a>
+<FONT color="green">136</FONT>        }<a name="line.136"></a>
+<FONT color="green">137</FONT>    <a name="line.137"></a>
+<FONT color="green">138</FONT>        /**<a name="line.138"></a>
+<FONT color="green">139</FONT>         * Format file name.<a name="line.139"></a>
+<FONT color="green">140</FONT>         * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.140"></a>
+<FONT color="green">141</FONT>         * @param objects objects to be evaluated in formatting, may not be null.<a name="line.141"></a>
+<FONT color="green">142</FONT>         */<a name="line.142"></a>
+<FONT color="green">143</FONT>        protected final void formatFileName(final StringBuilder buf, final Object... objects) {<a name="line.143"></a>
+<FONT color="green">144</FONT>            for (int i = 0; i &lt; patternConverters.length; i++) {<a name="line.144"></a>
+<FONT color="green">145</FONT>                int fieldStart = buf.length();<a name="line.145"></a>
+<FONT color="green">146</FONT>                patternConverters[i].format(buf, objects);<a name="line.146"></a>
+<FONT color="green">147</FONT>    <a name="line.147"></a>
+<FONT color="green">148</FONT>                if (patternFields[i] != null) {<a name="line.148"></a>
+<FONT color="green">149</FONT>                    patternFields[i].format(fieldStart, buf);<a name="line.149"></a>
+<FONT color="green">150</FONT>                }<a name="line.150"></a>
+<FONT color="green">151</FONT>            }<a name="line.151"></a>
+<FONT color="green">152</FONT>        }<a name="line.152"></a>
+<FONT color="green">153</FONT>    <a name="line.153"></a>
+<FONT color="green">154</FONT>        private RolloverFrequency calculateFrequency(String pattern) {<a name="line.154"></a>
+<FONT color="green">155</FONT>            if (patternContains(pattern, MILLIS_CHAR)) {<a name="line.155"></a>
+<FONT color="green">156</FONT>                return RolloverFrequency.EVERY_MILLISECOND;<a name="line.156"></a>
+<FONT color="green">157</FONT>            }<a name="line.157"></a>
+<FONT color="green">158</FONT>            if (patternContains(pattern, SECOND_CHAR)) {<a name="line.158"></a>
+<FONT color="green">159</FONT>                return RolloverFrequency.EVERY_SECOND;<a name="line.159"></a>
 <FONT color="green">160</FONT>            }<a name="line.160"></a>
-<FONT color="green">161</FONT>            if (patternContains(pattern, SECOND_CHAR)) {<a name="line.161"></a>
-<FONT color="green">162</FONT>                return RolloverFrequency.EVERY_SECOND;<a name="line.162"></a>
+<FONT color="green">161</FONT>            if (patternContains(pattern, MINUTE_CHAR)) {<a name="line.161"></a>
+<FONT color="green">162</FONT>                return RolloverFrequency.EVERY_MINUTE;<a name="line.162"></a>
 <FONT color="green">163</FONT>            }<a name="line.163"></a>
-<FONT color="green">164</FONT>            if (patternContains(pattern, MINUTE_CHAR)) {<a name="line.164"></a>
-<FONT color="green">165</FONT>                return RolloverFrequency.EVERY_MINUTE;<a name="line.165"></a>
+<FONT color="green">164</FONT>            if (patternContains(pattern, HOUR_CHARS)) {<a name="line.164"></a>
+<FONT color="green">165</FONT>                return RolloverFrequency.HOURLY;<a name="line.165"></a>
 <FONT color="green">166</FONT>            }<a name="line.166"></a>
-<FONT color="green">167</FONT>            if (patternContains(pattern, HOUR_CHARS)) {<a name="line.167"></a>
-<FONT color="green">168</FONT>                return RolloverFrequency.HOURLY;<a name="line.168"></a>
+<FONT color="green">167</FONT>            if (patternContains(pattern, DAY_CHARS)) {<a name="line.167"></a>
+<FONT color="green">168</FONT>                return RolloverFrequency.DAILY;<a name="line.168"></a>
 <FONT color="green">169</FONT>            }<a name="line.169"></a>
-<FONT color="green">170</FONT>            if (patternContains(pattern, DAY_CHARS)) {<a name="line.170"></a>
-<FONT color="green">171</FONT>                return RolloverFrequency.DAILY;<a name="line.171"></a>
+<FONT color="green">170</FONT>            if (patternContains(pattern, WEEK_CHARS)) {<a name="line.170"></a>
+<FONT color="green">171</FONT>                return RolloverFrequency.WEEKLY;<a name="line.171"></a>
 <FONT color="green">172</FONT>            }<a name="line.172"></a>
-<FONT color="green">173</FONT>            if (patternContains(pattern, WEEK_CHARS)) {<a name="line.173"></a>
-<FONT color="green">174</FONT>                return RolloverFrequency.WEEKLY;<a name="line.174"></a>
+<FONT color="green">173</FONT>            if (patternContains(pattern, MONTH_CHAR)) {<a name="line.173"></a>
+<FONT color="green">174</FONT>                return RolloverFrequency.MONTHLY;<a name="line.174"></a>
 <FONT color="green">175</FONT>            }<a name="line.175"></a>
-<FONT color="green">176</FONT>            if (patternContains(pattern, MONTH_CHAR)) {<a name="line.176"></a>
-<FONT color="green">177</FONT>                return RolloverFrequency.MONTHLY;<a name="line.177"></a>
+<FONT color="green">176</FONT>            if (patternContains(pattern, YEAR_CHAR)) {<a name="line.176"></a>
+<FONT color="green">177</FONT>                return RolloverFrequency.ANNUALLY;<a name="line.177"></a>
 <FONT color="green">178</FONT>            }<a name="line.178"></a>
-<FONT color="green">179</FONT>            if (patternContains(pattern, YEAR_CHAR)) {<a name="line.179"></a>
-<FONT color="green">180</FONT>                return RolloverFrequency.ANNUALLY;<a name="line.180"></a>
-<FONT color="green">181</FONT>            }<a name="line.181"></a>
-<FONT color="green">182</FONT>            return null;<a name="line.182"></a>
-<FONT color="green">183</FONT>        }<a name="line.183"></a>
-<FONT color="green">184</FONT>    <a name="line.184"></a>
-<FONT color="green">185</FONT>        private PatternParser createPatternParser() {<a name="line.185"></a>
+<FONT color="green">179</FONT>            return null;<a name="line.179"></a>
+<FONT color="green">180</FONT>        }<a name="line.180"></a>
+<FONT color="green">181</FONT>    <a name="line.181"></a>
+<FONT color="green">182</FONT>        private PatternParser createPatternParser() {<a name="line.182"></a>
+<FONT color="green">183</FONT>    <a name="line.183"></a>
+<FONT color="green">184</FONT>            return new PatternParser(null, KEY, null);<a name="line.184"></a>
+<FONT color="green">185</FONT>        }<a name="line.185"></a>
 <FONT color="green">186</FONT>    <a name="line.186"></a>
-<FONT color="green">187</FONT>            return new PatternParser(null, KEY, null);<a name="line.187"></a>
-<FONT color="green">188</FONT>        }<a name="line.188"></a>
-<FONT color="green">189</FONT>    <a name="line.189"></a>
-<FONT color="green">190</FONT>        private boolean patternContains(String pattern, char[] chars) {<a name="line.190"></a>
-<FONT color="green">191</FONT>            for (char character : chars) {<a name="line.191"></a>
-<FONT color="green">192</FONT>                if (patternContains(pattern, character)) {<a name="line.192"></a>
-<FONT color="green">193</FONT>                    return true;<a name="line.193"></a>
-<FONT color="green">194</FONT>                }<a name="line.194"></a>
-<FONT color="green">195</FONT>            }<a name="line.195"></a>
-<FONT color="green">196</FONT>            return false;<a name="line.196"></a>
-<FONT color="green">197</FONT>        }<a name="line.197"></a>
-<FONT color="green">198</FONT>    <a name="line.198"></a>
-<FONT color="green">199</FONT>        private boolean patternContains(String pattern, char character) {<a name="line.199"></a>
-<FONT color="green">200</FONT>            return pattern.indexOf(character) &gt;= 0;<a name="line.200"></a>
-<FONT color="green">201</FONT>        }<a name="line.201"></a>
-<FONT color="green">202</FONT>    }<a name="line.202"></a>
+<FONT color="green">187</FONT>        private boolean patternContains(String pattern, char... chars) {<a name="line.187"></a>
+<FONT color="green">188</FONT>            for (char character : chars) {<a name="line.188"></a>
+<FONT color="green">189</FONT>                if (patternContains(pattern, character)) {<a name="line.189"></a>
+<FONT color="green">190</FONT>                    return true;<a name="line.190"></a>
+<FONT color="green">191</FONT>                }<a name="line.191"></a>
+<FONT color="green">192</FONT>            }<a name="line.192"></a>
+<FONT color="green">193</FONT>            return false;<a name="line.193"></a>
+<FONT color="green">194</FONT>        }<a name="line.194"></a>
+<FONT color="green">195</FONT>    <a name="line.195"></a>
+<FONT color="green">196</FONT>        private boolean patternContains(String pattern, char character) {<a name="line.196"></a>
+<FONT color="green">197</FONT>            return pattern.indexOf(character) &gt;= 0;<a name="line.197"></a>
+<FONT color="green">198</FONT>        }<a name="line.198"></a>
+<FONT color="green">199</FONT>    }<a name="line.199"></a>
 
 
 

@@ -1,5 +1,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements. See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License. You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<!--
  | (Unfortunately) copied from the Fluido skin to allow the footer to be centered.
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -16,7 +32,7 @@
     <script type="text/javascript" src="./js/apache-maven-fluido.min.js"></script>
 
     
-                    <meta name="Date-Revision-yyyymmdd" content="20121007" />
+                    <meta name="Date-Revision-yyyymmdd" content="20121111" />
                 <meta http-equiv="Content-Language" content="en" />
                 </head>
         <body class="topBarDisabled">
@@ -42,8 +58,8 @@
         <ul class="breadcrumb">
                         
                         
-                            <li id="publishDate">Last Published: 2012-10-07</li>
-                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta2</li>
+                            <li id="publishDate">Last Published: 2012-11-11</li>
+                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta3</li>
                                     
                         
                         
@@ -142,7 +158,7 @@
                                                 <a href="log4j-jcl/index.html" title="Commons Logging Bridge">Commons Logging Bridge</a>
                     </li>
                   <li class="none">
-                                                <a href="slf4j-impl/index.html" title="SLF4J Binding">SLF4J Binding</a>
+                                                <a href="log4j-slf4j-impl/index.html" title="SLF4J Binding">SLF4J Binding</a>
                     </li>
                   <li class="none">
                                                 <a href="log4j-flume-ng/index.html" title="Apache Flume">Apache Flume</a>
@@ -219,17 +235,61 @@
       &lt;dependency&gt;
         &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
         &lt;artifactId&gt;log4j-api&lt;/artifactId&gt;
-        &lt;version&gt;2.0-beta2&lt;/version&gt;
+        &lt;version&gt;2.0-beta3&lt;/version&gt;
       &lt;/dependency&gt;
       &lt;dependency&gt;
         &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
         &lt;artifactId&gt;log4j-core&lt;/artifactId&gt;
-        &lt;version&gt;2.0-beta2&lt;/version&gt;
+        &lt;version&gt;2.0-beta3&lt;/version&gt;
       &lt;/dependency&gt;
     &lt;/dependecies&gt;
             </pre></div>
       </div>
-
+      <div class="section"><h3>Optional Components<a name="Optional_Components"></a></h3>
+        <p>
+          Log4j 2.x contains several optional components that can be included in an application.
+        </p>
+        <div class="section"><h4>Log4j 1.x<a name="Log4j_1.x"></a></h4>
+        <p>If there are existing components that are written to use Log4j 1.x and it is desired to have this
+           logging routed to Log4j 2 then remove any log4j 1.x dependencies and add the following.
+        </p>
+          <div class="source"><pre class="prettyprint">
+    &lt;dependencies&gt;
+      &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.logging.log4j.adapters&lt;/groupId&gt;
+        &lt;artifactId&gt;log4j12-api&lt;/artifactId&gt;
+        &lt;version&gt;2.0-beta3&lt;/version&gt;
+      &lt;/dependency&gt;
+    &lt;/dependecies&gt;
+            </pre></div>
+          </div><div class="section"><h4>Apache Commons Logging<a name="Apache_Commons_Logging"></a></h4>
+          <p>Commons Logging is used in many components as a way of letting applications choose the specific
+             logging implementation. To route logging from those components into Log4j 2 include the
+             following dependency and do not remove the Commons Logging jar.
+          </p>
+          <div class="source"><pre class="prettyprint">
+    &lt;dependencies&gt;
+      &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.logging.log4j.adapters&lt;/groupId&gt;
+        &lt;artifactId&gt;log4j-jcl&lt;/artifactId&gt;
+        &lt;version&gt;2.0-beta3&lt;/version&gt;
+      &lt;/dependency&gt;
+    &lt;/dependecies&gt;
+            </pre></div>
+          </div><div class="section"><h4>SLF4J<a name="SLF4J"></a></h4>
+          <p>SLF4J is another popular logging API that may be bound to Log4j 2 by including the following
+             dependency along with the SLF4J dependencies.
+          </p>
+          <div class="source"><pre class="prettyprint">
+    &lt;dependencies&gt;
+      &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.logging.log4j.adapters&lt;/groupId&gt;
+        &lt;artifactId&gt;log4j-slf4j-impl&lt;/artifactId&gt;
+        &lt;version&gt;2.0-beta3&lt;/version&gt;
+      &lt;/dependency&gt;
+    &lt;/dependecies&gt;
+            </pre></div>
+      </div></div>
 		</div>
 	
 

@@ -46,9 +46,9 @@
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment"> * applications and a reference to the Configuration. The Configuration will contain the configured loggers, appenders,</em>
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment"> * filters, etc and will be atomically updated whenever a reconfigure occurs.</em>
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> <strong class="jxr_keyword">implements</strong> org.apache.logging.log4j.spi.LoggerContext, ConfigurationListener, <a href="../../../../../org/apache/logging/log4j/core/Lifecycle.html">Lifecycle</a> {
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> <strong class="jxr_keyword">implements</strong> org.apache.logging.log4j.spi.LoggerContext, ConfigurationListener, <a href="../../../../../org/apache/logging/log4j/core/LifeCycle.html">LifeCycle</a> {
 <a class="jxr_linenumber" name="40" href="#40">40</a>  
-<a class="jxr_linenumber" name="41" href="#41">41</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> StatusLogger logger = StatusLogger.getLogger();
+<a class="jxr_linenumber" name="41" href="#41">41</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> StatusLogger logger = StatusLogger.getLogger();
 <a class="jxr_linenumber" name="42" href="#42">42</a>  
 <a class="jxr_linenumber" name="43" href="#43">43</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ConcurrentMap&lt;String, Logger&gt; loggers = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;String, Logger&gt;();
 <a class="jxr_linenumber" name="44" href="#44">44</a>  
@@ -58,7 +58,7 @@
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="49" href="#49">49</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">volatile</strong> <a href="../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/core/config/DefaultConfiguration.html">DefaultConfiguration</a>();
 <a class="jxr_linenumber" name="50" href="#50">50</a>  
-<a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">private</strong> Object externalContext = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">private</strong> Object externalContext;
 <a class="jxr_linenumber" name="52" href="#52">52</a>  
 <a class="jxr_linenumber" name="53" href="#53">53</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String name;
 <a class="jxr_linenumber" name="54" href="#54">54</a>  
@@ -82,7 +82,7 @@
 <a class="jxr_linenumber" name="72" href="#72">72</a>  
 <a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">volatile</strong> <a href="../../../../../org/apache/logging/log4j/core/config/XMLConfiguration.html">Status</a> status = Status.INITIALIZED;
 <a class="jxr_linenumber" name="74" href="#74">74</a>  
-<a class="jxr_linenumber" name="75" href="#75">75</a>      <strong class="jxr_keyword">private</strong> Lock configLock = <strong class="jxr_keyword">new</strong> ReentrantLock();
+<a class="jxr_linenumber" name="75" href="#75">75</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Lock configLock = <strong class="jxr_keyword">new</strong> ReentrantLock();
 <a class="jxr_linenumber" name="76" href="#76">76</a>  
 <a class="jxr_linenumber" name="77" href="#77">77</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="78" href="#78">78</a>  <em class="jxr_javadoccomment">     * Constructor taking only a name.</em>
@@ -189,7 +189,7 @@
 <a class="jxr_linenumber" name="179" href="#179">179</a>     }
 <a class="jxr_linenumber" name="180" href="#180">180</a> 
 <a class="jxr_linenumber" name="181" href="#181">181</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="182" href="#182">182</a> <em class="jxr_javadoccomment">     * Return the external context.</em>
+<a class="jxr_linenumber" name="182" href="#182">182</a> <em class="jxr_javadoccomment">     * Returns the external context.</em>
 <a class="jxr_linenumber" name="183" href="#183">183</a> <em class="jxr_javadoccomment">     * @return The external context.</em>
 <a class="jxr_linenumber" name="184" href="#184">184</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="185" href="#185">185</a>     <strong class="jxr_keyword">public</strong> Object getExternalContext() {
@@ -223,7 +223,7 @@
 <a class="jxr_linenumber" name="213" href="#213">213</a>     }
 <a class="jxr_linenumber" name="214" href="#214">214</a> 
 <a class="jxr_linenumber" name="215" href="#215">215</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="216" href="#216">216</a> <em class="jxr_javadoccomment">     * Return the current Configuration. The Configuration will be replaced when a reconfigure occurs.</em>
+<a class="jxr_linenumber" name="216" href="#216">216</a> <em class="jxr_javadoccomment">     * Returns the current Configuration. The Configuration will be replaced when a reconfigure occurs.</em>
 <a class="jxr_linenumber" name="217" href="#217">217</a> <em class="jxr_javadoccomment">     * @return The Configuration.</em>
 <a class="jxr_linenumber" name="218" href="#218">218</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="219" href="#219">219</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> getConfiguration() {

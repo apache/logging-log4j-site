@@ -59,235 +59,232 @@
 <FONT color="green">056</FONT>    import java.util.Map;<a name="line.56"></a>
 <FONT color="green">057</FONT>    import java.util.Properties;<a name="line.57"></a>
 <FONT color="green">058</FONT>    import java.util.Set;<a name="line.58"></a>
-<FONT color="green">059</FONT>    import java.util.SortedMap;<a name="line.59"></a>
-<FONT color="green">060</FONT>    import java.util.SortedSet;<a name="line.60"></a>
-<FONT color="green">061</FONT>    import java.util.TreeMap;<a name="line.61"></a>
-<FONT color="green">062</FONT>    import java.util.TreeSet;<a name="line.62"></a>
-<FONT color="green">063</FONT>    <a name="line.63"></a>
-<FONT color="green">064</FONT>    /**<a name="line.64"></a>
-<FONT color="green">065</FONT>     * See Flume's PropertiesFileConfigurationProvider. This class would extend that if it were possible.<a name="line.65"></a>
-<FONT color="green">066</FONT>     */<a name="line.66"></a>
-<FONT color="green">067</FONT>    <a name="line.67"></a>
-<FONT color="green">068</FONT>    public class FlumeConfigurationBuilder {<a name="line.68"></a>
-<FONT color="green">069</FONT>    <a name="line.69"></a>
-<FONT color="green">070</FONT>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.70"></a>
-<FONT color="green">071</FONT>    <a name="line.71"></a>
-<FONT color="green">072</FONT>        private final ChannelFactory channelFactory = new DefaultChannelFactory();<a name="line.72"></a>
-<FONT color="green">073</FONT>        private final SourceFactory sourceFactory = new DefaultSourceFactory();<a name="line.73"></a>
-<FONT color="green">074</FONT>        private final SinkFactory sinkFactory = new DefaultSinkFactory();<a name="line.74"></a>
-<FONT color="green">075</FONT>    <a name="line.75"></a>
-<FONT color="green">076</FONT>        public NodeConfiguration load(String name, Properties props, NodeConfigurationAware configurationAware) {<a name="line.76"></a>
-<FONT color="green">077</FONT>            NodeConfiguration conf = new SimpleNodeConfiguration();<a name="line.77"></a>
-<FONT color="green">078</FONT>            FlumeConfiguration fconfig;<a name="line.78"></a>
-<FONT color="green">079</FONT>            try {<a name="line.79"></a>
-<FONT color="green">080</FONT>                fconfig = new FlumeConfiguration(props);<a name="line.80"></a>
-<FONT color="green">081</FONT>                List&lt;FlumeConfigurationError&gt; errors = fconfig.getConfigurationErrors();<a name="line.81"></a>
-<FONT color="green">082</FONT>                if (errors.size() &gt; 0) {<a name="line.82"></a>
-<FONT color="green">083</FONT>                    boolean isError = false;<a name="line.83"></a>
-<FONT color="green">084</FONT>                    for (FlumeConfigurationError error : errors) {<a name="line.84"></a>
-<FONT color="green">085</FONT>                        StringBuilder sb = new StringBuilder();<a name="line.85"></a>
-<FONT color="green">086</FONT>                        sb.append("Component: ").append(error.getComponentName()).append(" ");<a name="line.86"></a>
-<FONT color="green">087</FONT>                        sb.append("Key: ").append(error.getKey()).append(" ");<a name="line.87"></a>
-<FONT color="green">088</FONT>                        sb.append(error.getErrorType().name()).append(" - ").append(error.getErrorType().getError());<a name="line.88"></a>
-<FONT color="green">089</FONT>                        switch (error.getErrorOrWarning()) {<a name="line.89"></a>
-<FONT color="green">090</FONT>                            case ERROR:<a name="line.90"></a>
-<FONT color="green">091</FONT>                                isError = true;<a name="line.91"></a>
-<FONT color="green">092</FONT>                                LOGGER.error(sb.toString());<a name="line.92"></a>
+<FONT color="green">059</FONT>    import java.util.TreeSet;<a name="line.59"></a>
+<FONT color="green">060</FONT>    <a name="line.60"></a>
+<FONT color="green">061</FONT>    /**<a name="line.61"></a>
+<FONT color="green">062</FONT>     * See Flume's PropertiesFileConfigurationProvider. This class would extend that if it were possible.<a name="line.62"></a>
+<FONT color="green">063</FONT>     */<a name="line.63"></a>
+<FONT color="green">064</FONT>    <a name="line.64"></a>
+<FONT color="green">065</FONT>    public class FlumeConfigurationBuilder {<a name="line.65"></a>
+<FONT color="green">066</FONT>    <a name="line.66"></a>
+<FONT color="green">067</FONT>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.67"></a>
+<FONT color="green">068</FONT>    <a name="line.68"></a>
+<FONT color="green">069</FONT>        private final ChannelFactory channelFactory = new DefaultChannelFactory();<a name="line.69"></a>
+<FONT color="green">070</FONT>        private final SourceFactory sourceFactory = new DefaultSourceFactory();<a name="line.70"></a>
+<FONT color="green">071</FONT>        private final SinkFactory sinkFactory = new DefaultSinkFactory();<a name="line.71"></a>
+<FONT color="green">072</FONT>    <a name="line.72"></a>
+<FONT color="green">073</FONT>        public NodeConfiguration load(String name, Properties props, NodeConfigurationAware configurationAware) {<a name="line.73"></a>
+<FONT color="green">074</FONT>            NodeConfiguration conf = new SimpleNodeConfiguration();<a name="line.74"></a>
+<FONT color="green">075</FONT>            FlumeConfiguration fconfig;<a name="line.75"></a>
+<FONT color="green">076</FONT>            try {<a name="line.76"></a>
+<FONT color="green">077</FONT>                fconfig = new FlumeConfiguration(props);<a name="line.77"></a>
+<FONT color="green">078</FONT>                List&lt;FlumeConfigurationError&gt; errors = fconfig.getConfigurationErrors();<a name="line.78"></a>
+<FONT color="green">079</FONT>                if (errors.size() &gt; 0) {<a name="line.79"></a>
+<FONT color="green">080</FONT>                    boolean isError = false;<a name="line.80"></a>
+<FONT color="green">081</FONT>                    for (FlumeConfigurationError error : errors) {<a name="line.81"></a>
+<FONT color="green">082</FONT>                        StringBuilder sb = new StringBuilder();<a name="line.82"></a>
+<FONT color="green">083</FONT>                        sb.append("Component: ").append(error.getComponentName()).append(" ");<a name="line.83"></a>
+<FONT color="green">084</FONT>                        sb.append("Key: ").append(error.getKey()).append(" ");<a name="line.84"></a>
+<FONT color="green">085</FONT>                        sb.append(error.getErrorType().name()).append(" - ").append(error.getErrorType().getError());<a name="line.85"></a>
+<FONT color="green">086</FONT>                        switch (error.getErrorOrWarning()) {<a name="line.86"></a>
+<FONT color="green">087</FONT>                            case ERROR:<a name="line.87"></a>
+<FONT color="green">088</FONT>                                isError = true;<a name="line.88"></a>
+<FONT color="green">089</FONT>                                LOGGER.error(sb.toString());<a name="line.89"></a>
+<FONT color="green">090</FONT>                                break;<a name="line.90"></a>
+<FONT color="green">091</FONT>                            case WARNING:<a name="line.91"></a>
+<FONT color="green">092</FONT>                                LOGGER.warn(sb.toString());<a name="line.92"></a>
 <FONT color="green">093</FONT>                                break;<a name="line.93"></a>
-<FONT color="green">094</FONT>                            case WARNING:<a name="line.94"></a>
-<FONT color="green">095</FONT>                                LOGGER.warn(sb.toString());<a name="line.95"></a>
-<FONT color="green">096</FONT>                                break;<a name="line.96"></a>
-<FONT color="green">097</FONT>                        }<a name="line.97"></a>
+<FONT color="green">094</FONT>                        }<a name="line.94"></a>
+<FONT color="green">095</FONT>                    }<a name="line.95"></a>
+<FONT color="green">096</FONT>                    if (isError) {<a name="line.96"></a>
+<FONT color="green">097</FONT>                        throw new ConfigurationException("Unable to configure Flume due to errors");<a name="line.97"></a>
 <FONT color="green">098</FONT>                    }<a name="line.98"></a>
-<FONT color="green">099</FONT>                    if (isError) {<a name="line.99"></a>
-<FONT color="green">100</FONT>                        throw new ConfigurationException("Unable to configure Flume due to errors");<a name="line.100"></a>
-<FONT color="green">101</FONT>                    }<a name="line.101"></a>
-<FONT color="green">102</FONT>                }<a name="line.102"></a>
-<FONT color="green">103</FONT>            } catch (RuntimeException ex) {<a name="line.103"></a>
-<FONT color="green">104</FONT>                printProps(props);<a name="line.104"></a>
-<FONT color="green">105</FONT>                throw ex;<a name="line.105"></a>
-<FONT color="green">106</FONT>            }<a name="line.106"></a>
-<FONT color="green">107</FONT>    <a name="line.107"></a>
-<FONT color="green">108</FONT>            FlumeConfiguration.AgentConfiguration agentConf = fconfig.getConfigurationFor(name);<a name="line.108"></a>
-<FONT color="green">109</FONT>    <a name="line.109"></a>
-<FONT color="green">110</FONT>            if (agentConf != null) {<a name="line.110"></a>
-<FONT color="green">111</FONT>    <a name="line.111"></a>
-<FONT color="green">112</FONT>                loadChannels(agentConf, conf);<a name="line.112"></a>
-<FONT color="green">113</FONT>                loadSources(agentConf, conf);<a name="line.113"></a>
-<FONT color="green">114</FONT>                loadSinks(agentConf, conf);<a name="line.114"></a>
-<FONT color="green">115</FONT>    <a name="line.115"></a>
-<FONT color="green">116</FONT>                configurationAware.startAllComponents(conf);<a name="line.116"></a>
-<FONT color="green">117</FONT>            } else {<a name="line.117"></a>
-<FONT color="green">118</FONT>                LOGGER.warn("No configuration found for: {}", name);<a name="line.118"></a>
-<FONT color="green">119</FONT>            }<a name="line.119"></a>
-<FONT color="green">120</FONT>            return conf;<a name="line.120"></a>
-<FONT color="green">121</FONT>        }<a name="line.121"></a>
-<FONT color="green">122</FONT>    <a name="line.122"></a>
-<FONT color="green">123</FONT>        private void printProps(Properties props) {<a name="line.123"></a>
-<FONT color="green">124</FONT>            for (String key : new TreeSet&lt;String&gt;(props.stringPropertyNames())) {<a name="line.124"></a>
-<FONT color="green">125</FONT>                LOGGER.error(key + "=" + props.getProperty(key));<a name="line.125"></a>
-<FONT color="green">126</FONT>            }<a name="line.126"></a>
-<FONT color="green">127</FONT>        }<a name="line.127"></a>
-<FONT color="green">128</FONT>    <a name="line.128"></a>
-<FONT color="green">129</FONT>        protected void loadChannels(FlumeConfiguration.AgentConfiguration agentConf, NodeConfiguration conf) {<a name="line.129"></a>
-<FONT color="green">130</FONT>            LOGGER.info("Creating channels");<a name="line.130"></a>
-<FONT color="green">131</FONT>            Set&lt;String&gt; channels = agentConf.getChannelSet();<a name="line.131"></a>
-<FONT color="green">132</FONT>            Map&lt;String, ComponentConfiguration&gt; compMap = agentConf.getChannelConfigMap();<a name="line.132"></a>
-<FONT color="green">133</FONT>            for (String chName : channels) {<a name="line.133"></a>
-<FONT color="green">134</FONT>                ComponentConfiguration comp = compMap.get(chName);<a name="line.134"></a>
-<FONT color="green">135</FONT>                if (comp != null) {<a name="line.135"></a>
-<FONT color="green">136</FONT>                    Channel channel = channelFactory.create(comp.getComponentName(), comp.getType());<a name="line.136"></a>
-<FONT color="green">137</FONT>    <a name="line.137"></a>
-<FONT color="green">138</FONT>                    Configurables.configure(channel, comp);<a name="line.138"></a>
-<FONT color="green">139</FONT>    <a name="line.139"></a>
-<FONT color="green">140</FONT>                    conf.getChannels().put(comp.getComponentName(), channel);<a name="line.140"></a>
-<FONT color="green">141</FONT>                }<a name="line.141"></a>
-<FONT color="green">142</FONT>            }<a name="line.142"></a>
-<FONT color="green">143</FONT>    <a name="line.143"></a>
-<FONT color="green">144</FONT>            for (String ch : channels) {<a name="line.144"></a>
-<FONT color="green">145</FONT>                Context context = agentConf.getChannelContext().get(ch);<a name="line.145"></a>
-<FONT color="green">146</FONT>                if (context != null) {<a name="line.146"></a>
-<FONT color="green">147</FONT>                    Channel channel = channelFactory.create(ch, context.getString(BasicConfigurationConstants.CONFIG_TYPE));<a name="line.147"></a>
-<FONT color="green">148</FONT>                    Configurables.configure(channel, context);<a name="line.148"></a>
-<FONT color="green">149</FONT>                    conf.getChannels().put(ch, channel);<a name="line.149"></a>
-<FONT color="green">150</FONT>                    LOGGER.info("created channel " + ch);<a name="line.150"></a>
-<FONT color="green">151</FONT>                }<a name="line.151"></a>
-<FONT color="green">152</FONT>            }<a name="line.152"></a>
-<FONT color="green">153</FONT>        }<a name="line.153"></a>
-<FONT color="green">154</FONT>    <a name="line.154"></a>
-<FONT color="green">155</FONT>        protected void loadSources(FlumeConfiguration.AgentConfiguration agentConf, NodeConfiguration conf) {<a name="line.155"></a>
-<FONT color="green">156</FONT>    <a name="line.156"></a>
-<FONT color="green">157</FONT>            Set&lt;String&gt; sources = agentConf.getSourceSet();<a name="line.157"></a>
-<FONT color="green">158</FONT>            Map&lt;String, ComponentConfiguration&gt; compMap = agentConf.getSourceConfigMap();<a name="line.158"></a>
-<FONT color="green">159</FONT>            for (String sourceName : sources) {<a name="line.159"></a>
-<FONT color="green">160</FONT>                ComponentConfiguration comp = compMap.get(sourceName);<a name="line.160"></a>
-<FONT color="green">161</FONT>                if (comp != null) {<a name="line.161"></a>
-<FONT color="green">162</FONT>                    SourceConfiguration config = (SourceConfiguration) comp;<a name="line.162"></a>
-<FONT color="green">163</FONT>    <a name="line.163"></a>
-<FONT color="green">164</FONT>                    Source source = sourceFactory.create(comp.getComponentName(), comp.getType());<a name="line.164"></a>
-<FONT color="green">165</FONT>    <a name="line.165"></a>
-<FONT color="green">166</FONT>                    Configurables.configure(source, config);<a name="line.166"></a>
-<FONT color="green">167</FONT>                    Set&lt;String&gt; channelNames = config.getChannels();<a name="line.167"></a>
-<FONT color="green">168</FONT>                    List&lt;Channel&gt; channels = new ArrayList&lt;Channel&gt;();<a name="line.168"></a>
-<FONT color="green">169</FONT>                    for (String chName : channelNames) {<a name="line.169"></a>
-<FONT color="green">170</FONT>                        channels.add(conf.getChannels().get(chName));<a name="line.170"></a>
-<FONT color="green">171</FONT>                    }<a name="line.171"></a>
-<FONT color="green">172</FONT>    <a name="line.172"></a>
-<FONT color="green">173</FONT>                    ChannelSelectorConfiguration selectorConfig = config.getSelectorConfiguration();<a name="line.173"></a>
-<FONT color="green">174</FONT>    <a name="line.174"></a>
-<FONT color="green">175</FONT>                    ChannelSelector selector = ChannelSelectorFactory.create(channels, selectorConfig);<a name="line.175"></a>
+<FONT color="green">099</FONT>                }<a name="line.99"></a>
+<FONT color="green">100</FONT>            } catch (RuntimeException ex) {<a name="line.100"></a>
+<FONT color="green">101</FONT>                printProps(props);<a name="line.101"></a>
+<FONT color="green">102</FONT>                throw ex;<a name="line.102"></a>
+<FONT color="green">103</FONT>            }<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>            FlumeConfiguration.AgentConfiguration agentConf = fconfig.getConfigurationFor(name);<a name="line.105"></a>
+<FONT color="green">106</FONT>    <a name="line.106"></a>
+<FONT color="green">107</FONT>            if (agentConf != null) {<a name="line.107"></a>
+<FONT color="green">108</FONT>    <a name="line.108"></a>
+<FONT color="green">109</FONT>                loadChannels(agentConf, conf);<a name="line.109"></a>
+<FONT color="green">110</FONT>                loadSources(agentConf, conf);<a name="line.110"></a>
+<FONT color="green">111</FONT>                loadSinks(agentConf, conf);<a name="line.111"></a>
+<FONT color="green">112</FONT>    <a name="line.112"></a>
+<FONT color="green">113</FONT>                configurationAware.startAllComponents(conf);<a name="line.113"></a>
+<FONT color="green">114</FONT>            } else {<a name="line.114"></a>
+<FONT color="green">115</FONT>                LOGGER.warn("No configuration found for: {}", name);<a name="line.115"></a>
+<FONT color="green">116</FONT>            }<a name="line.116"></a>
+<FONT color="green">117</FONT>            return conf;<a name="line.117"></a>
+<FONT color="green">118</FONT>        }<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>        private void printProps(Properties props) {<a name="line.120"></a>
+<FONT color="green">121</FONT>            for (String key : new TreeSet&lt;String&gt;(props.stringPropertyNames())) {<a name="line.121"></a>
+<FONT color="green">122</FONT>                LOGGER.error(key + "=" + props.getProperty(key));<a name="line.122"></a>
+<FONT color="green">123</FONT>            }<a name="line.123"></a>
+<FONT color="green">124</FONT>        }<a name="line.124"></a>
+<FONT color="green">125</FONT>    <a name="line.125"></a>
+<FONT color="green">126</FONT>        protected void loadChannels(FlumeConfiguration.AgentConfiguration agentConf, NodeConfiguration conf) {<a name="line.126"></a>
+<FONT color="green">127</FONT>            LOGGER.info("Creating channels");<a name="line.127"></a>
+<FONT color="green">128</FONT>            Set&lt;String&gt; channels = agentConf.getChannelSet();<a name="line.128"></a>
+<FONT color="green">129</FONT>            Map&lt;String, ComponentConfiguration&gt; compMap = agentConf.getChannelConfigMap();<a name="line.129"></a>
+<FONT color="green">130</FONT>            for (String chName : channels) {<a name="line.130"></a>
+<FONT color="green">131</FONT>                ComponentConfiguration comp = compMap.get(chName);<a name="line.131"></a>
+<FONT color="green">132</FONT>                if (comp != null) {<a name="line.132"></a>
+<FONT color="green">133</FONT>                    Channel channel = channelFactory.create(comp.getComponentName(), comp.getType());<a name="line.133"></a>
+<FONT color="green">134</FONT>    <a name="line.134"></a>
+<FONT color="green">135</FONT>                    Configurables.configure(channel, comp);<a name="line.135"></a>
+<FONT color="green">136</FONT>    <a name="line.136"></a>
+<FONT color="green">137</FONT>                    conf.getChannels().put(comp.getComponentName(), channel);<a name="line.137"></a>
+<FONT color="green">138</FONT>                }<a name="line.138"></a>
+<FONT color="green">139</FONT>            }<a name="line.139"></a>
+<FONT color="green">140</FONT>    <a name="line.140"></a>
+<FONT color="green">141</FONT>            for (String ch : channels) {<a name="line.141"></a>
+<FONT color="green">142</FONT>                Context context = agentConf.getChannelContext().get(ch);<a name="line.142"></a>
+<FONT color="green">143</FONT>                if (context != null) {<a name="line.143"></a>
+<FONT color="green">144</FONT>                    Channel channel = channelFactory.create(ch, context.getString(BasicConfigurationConstants.CONFIG_TYPE));<a name="line.144"></a>
+<FONT color="green">145</FONT>                    Configurables.configure(channel, context);<a name="line.145"></a>
+<FONT color="green">146</FONT>                    conf.getChannels().put(ch, channel);<a name="line.146"></a>
+<FONT color="green">147</FONT>                    LOGGER.info("created channel " + ch);<a name="line.147"></a>
+<FONT color="green">148</FONT>                }<a name="line.148"></a>
+<FONT color="green">149</FONT>            }<a name="line.149"></a>
+<FONT color="green">150</FONT>        }<a name="line.150"></a>
+<FONT color="green">151</FONT>    <a name="line.151"></a>
+<FONT color="green">152</FONT>        protected void loadSources(FlumeConfiguration.AgentConfiguration agentConf, NodeConfiguration conf) {<a name="line.152"></a>
+<FONT color="green">153</FONT>    <a name="line.153"></a>
+<FONT color="green">154</FONT>            Set&lt;String&gt; sources = agentConf.getSourceSet();<a name="line.154"></a>
+<FONT color="green">155</FONT>            Map&lt;String, ComponentConfiguration&gt; compMap = agentConf.getSourceConfigMap();<a name="line.155"></a>
+<FONT color="green">156</FONT>            for (String sourceName : sources) {<a name="line.156"></a>
+<FONT color="green">157</FONT>                ComponentConfiguration comp = compMap.get(sourceName);<a name="line.157"></a>
+<FONT color="green">158</FONT>                if (comp != null) {<a name="line.158"></a>
+<FONT color="green">159</FONT>                    SourceConfiguration config = (SourceConfiguration) comp;<a name="line.159"></a>
+<FONT color="green">160</FONT>    <a name="line.160"></a>
+<FONT color="green">161</FONT>                    Source source = sourceFactory.create(comp.getComponentName(), comp.getType());<a name="line.161"></a>
+<FONT color="green">162</FONT>    <a name="line.162"></a>
+<FONT color="green">163</FONT>                    Configurables.configure(source, config);<a name="line.163"></a>
+<FONT color="green">164</FONT>                    Set&lt;String&gt; channelNames = config.getChannels();<a name="line.164"></a>
+<FONT color="green">165</FONT>                    List&lt;Channel&gt; channels = new ArrayList&lt;Channel&gt;();<a name="line.165"></a>
+<FONT color="green">166</FONT>                    for (String chName : channelNames) {<a name="line.166"></a>
+<FONT color="green">167</FONT>                        channels.add(conf.getChannels().get(chName));<a name="line.167"></a>
+<FONT color="green">168</FONT>                    }<a name="line.168"></a>
+<FONT color="green">169</FONT>    <a name="line.169"></a>
+<FONT color="green">170</FONT>                    ChannelSelectorConfiguration selectorConfig = config.getSelectorConfiguration();<a name="line.170"></a>
+<FONT color="green">171</FONT>    <a name="line.171"></a>
+<FONT color="green">172</FONT>                    ChannelSelector selector = ChannelSelectorFactory.create(channels, selectorConfig);<a name="line.172"></a>
+<FONT color="green">173</FONT>    <a name="line.173"></a>
+<FONT color="green">174</FONT>                    ChannelProcessor channelProcessor = new ChannelProcessor(selector);<a name="line.174"></a>
+<FONT color="green">175</FONT>                    Configurables.configure(channelProcessor, config);<a name="line.175"></a>
 <FONT color="green">176</FONT>    <a name="line.176"></a>
-<FONT color="green">177</FONT>                    ChannelProcessor channelProcessor = new ChannelProcessor(selector);<a name="line.177"></a>
-<FONT color="green">178</FONT>                    Configurables.configure(channelProcessor, config);<a name="line.178"></a>
-<FONT color="green">179</FONT>    <a name="line.179"></a>
-<FONT color="green">180</FONT>                    source.setChannelProcessor(channelProcessor);<a name="line.180"></a>
-<FONT color="green">181</FONT>                    conf.getSourceRunners().put(comp.getComponentName(), SourceRunner.forSource(source));<a name="line.181"></a>
-<FONT color="green">182</FONT>                }<a name="line.182"></a>
-<FONT color="green">183</FONT>            }<a name="line.183"></a>
-<FONT color="green">184</FONT>            Map&lt;String, Context&gt; sourceContexts = agentConf.getSourceContext();<a name="line.184"></a>
-<FONT color="green">185</FONT>    <a name="line.185"></a>
-<FONT color="green">186</FONT>            for (String src : sources) {<a name="line.186"></a>
-<FONT color="green">187</FONT>                Context context = sourceContexts.get(src);<a name="line.187"></a>
-<FONT color="green">188</FONT>                if (context != null){<a name="line.188"></a>
-<FONT color="green">189</FONT>                    Source source = sourceFactory.create(src, context.getString(BasicConfigurationConstants.CONFIG_TYPE));<a name="line.189"></a>
-<FONT color="green">190</FONT>                    List&lt;Channel&gt; channels = new ArrayList&lt;Channel&gt;();<a name="line.190"></a>
-<FONT color="green">191</FONT>                    Configurables.configure(source, context);<a name="line.191"></a>
-<FONT color="green">192</FONT>                    String[] channelNames = context.getString(BasicConfigurationConstants.CONFIG_CHANNELS).split("\\s+");<a name="line.192"></a>
-<FONT color="green">193</FONT>                    for (String chName : channelNames) {<a name="line.193"></a>
-<FONT color="green">194</FONT>                        channels.add(conf.getChannels().get(chName));<a name="line.194"></a>
-<FONT color="green">195</FONT>                    }<a name="line.195"></a>
+<FONT color="green">177</FONT>                    source.setChannelProcessor(channelProcessor);<a name="line.177"></a>
+<FONT color="green">178</FONT>                    conf.getSourceRunners().put(comp.getComponentName(), SourceRunner.forSource(source));<a name="line.178"></a>
+<FONT color="green">179</FONT>                }<a name="line.179"></a>
+<FONT color="green">180</FONT>            }<a name="line.180"></a>
+<FONT color="green">181</FONT>            Map&lt;String, Context&gt; sourceContexts = agentConf.getSourceContext();<a name="line.181"></a>
+<FONT color="green">182</FONT>    <a name="line.182"></a>
+<FONT color="green">183</FONT>            for (String src : sources) {<a name="line.183"></a>
+<FONT color="green">184</FONT>                Context context = sourceContexts.get(src);<a name="line.184"></a>
+<FONT color="green">185</FONT>                if (context != null){<a name="line.185"></a>
+<FONT color="green">186</FONT>                    Source source = sourceFactory.create(src, context.getString(BasicConfigurationConstants.CONFIG_TYPE));<a name="line.186"></a>
+<FONT color="green">187</FONT>                    List&lt;Channel&gt; channels = new ArrayList&lt;Channel&gt;();<a name="line.187"></a>
+<FONT color="green">188</FONT>                    Configurables.configure(source, context);<a name="line.188"></a>
+<FONT color="green">189</FONT>                    String[] channelNames = context.getString(BasicConfigurationConstants.CONFIG_CHANNELS).split("\\s+");<a name="line.189"></a>
+<FONT color="green">190</FONT>                    for (String chName : channelNames) {<a name="line.190"></a>
+<FONT color="green">191</FONT>                        channels.add(conf.getChannels().get(chName));<a name="line.191"></a>
+<FONT color="green">192</FONT>                    }<a name="line.192"></a>
+<FONT color="green">193</FONT>    <a name="line.193"></a>
+<FONT color="green">194</FONT>                    Map&lt;String, String&gt; selectorConfig = context.getSubProperties(<a name="line.194"></a>
+<FONT color="green">195</FONT>                        BasicConfigurationConstants.CONFIG_SOURCE_CHANNELSELECTOR_PREFIX);<a name="line.195"></a>
 <FONT color="green">196</FONT>    <a name="line.196"></a>
-<FONT color="green">197</FONT>                    Map&lt;String, String&gt; selectorConfig = context.getSubProperties(<a name="line.197"></a>
-<FONT color="green">198</FONT>                        BasicConfigurationConstants.CONFIG_SOURCE_CHANNELSELECTOR_PREFIX);<a name="line.198"></a>
-<FONT color="green">199</FONT>    <a name="line.199"></a>
-<FONT color="green">200</FONT>                    ChannelSelector selector = ChannelSelectorFactory.create(channels, selectorConfig);<a name="line.200"></a>
+<FONT color="green">197</FONT>                    ChannelSelector selector = ChannelSelectorFactory.create(channels, selectorConfig);<a name="line.197"></a>
+<FONT color="green">198</FONT>    <a name="line.198"></a>
+<FONT color="green">199</FONT>                    ChannelProcessor channelProcessor = new ChannelProcessor(selector);<a name="line.199"></a>
+<FONT color="green">200</FONT>                    Configurables.configure(channelProcessor, context);<a name="line.200"></a>
 <FONT color="green">201</FONT>    <a name="line.201"></a>
-<FONT color="green">202</FONT>                    ChannelProcessor channelProcessor = new ChannelProcessor(selector);<a name="line.202"></a>
-<FONT color="green">203</FONT>                    Configurables.configure(channelProcessor, context);<a name="line.203"></a>
-<FONT color="green">204</FONT>    <a name="line.204"></a>
-<FONT color="green">205</FONT>                    source.setChannelProcessor(channelProcessor);<a name="line.205"></a>
-<FONT color="green">206</FONT>                    conf.getSourceRunners().put(src, SourceRunner.forSource(source));<a name="line.206"></a>
-<FONT color="green">207</FONT>                }<a name="line.207"></a>
-<FONT color="green">208</FONT>            }<a name="line.208"></a>
-<FONT color="green">209</FONT>        }<a name="line.209"></a>
-<FONT color="green">210</FONT>    <a name="line.210"></a>
-<FONT color="green">211</FONT>        protected void loadSinks(FlumeConfiguration.AgentConfiguration agentConf, NodeConfiguration conf) {<a name="line.211"></a>
-<FONT color="green">212</FONT>            Set&lt;String&gt; sinkNames = agentConf.getSinkSet();<a name="line.212"></a>
-<FONT color="green">213</FONT>            Map&lt;String, ComponentConfiguration&gt; compMap = agentConf.getSinkConfigMap();<a name="line.213"></a>
-<FONT color="green">214</FONT>            Map&lt;String, Sink&gt; sinks = new HashMap&lt;String, Sink&gt;();<a name="line.214"></a>
-<FONT color="green">215</FONT>            for (String sinkName : sinkNames) {<a name="line.215"></a>
-<FONT color="green">216</FONT>                ComponentConfiguration comp = compMap.get(sinkName);<a name="line.216"></a>
-<FONT color="green">217</FONT>                if (comp != null) {<a name="line.217"></a>
-<FONT color="green">218</FONT>                    SinkConfiguration config = (SinkConfiguration) comp;<a name="line.218"></a>
-<FONT color="green">219</FONT>                    Sink sink = sinkFactory.create(comp.getComponentName(), comp.getType());<a name="line.219"></a>
-<FONT color="green">220</FONT>    <a name="line.220"></a>
-<FONT color="green">221</FONT>                    Configurables.configure(sink, config);<a name="line.221"></a>
-<FONT color="green">222</FONT>    <a name="line.222"></a>
-<FONT color="green">223</FONT>                    sink.setChannel(conf.getChannels().get(config.getChannel()));<a name="line.223"></a>
-<FONT color="green">224</FONT>                    sinks.put(comp.getComponentName(), sink);<a name="line.224"></a>
-<FONT color="green">225</FONT>                }<a name="line.225"></a>
-<FONT color="green">226</FONT>            }<a name="line.226"></a>
-<FONT color="green">227</FONT>    <a name="line.227"></a>
-<FONT color="green">228</FONT>            Map&lt;String, Context&gt; sinkContexts = agentConf.getSinkContext();<a name="line.228"></a>
-<FONT color="green">229</FONT>            for (String sinkName : sinkNames) {<a name="line.229"></a>
-<FONT color="green">230</FONT>                Context context = sinkContexts.get(sinkName);<a name="line.230"></a>
-<FONT color="green">231</FONT>                if (context != null) {<a name="line.231"></a>
-<FONT color="green">232</FONT>                    Sink sink = sinkFactory.create(sinkName, context.getString(BasicConfigurationConstants.CONFIG_TYPE));<a name="line.232"></a>
-<FONT color="green">233</FONT>                    Configurables.configure(sink, context);<a name="line.233"></a>
-<FONT color="green">234</FONT>    <a name="line.234"></a>
-<FONT color="green">235</FONT>                    sink.setChannel(conf.getChannels().get(context.getString(BasicConfigurationConstants.CONFIG_CHANNEL)));<a name="line.235"></a>
-<FONT color="green">236</FONT>                    sinks.put(sinkName, sink);<a name="line.236"></a>
-<FONT color="green">237</FONT>                }<a name="line.237"></a>
-<FONT color="green">238</FONT>            }<a name="line.238"></a>
+<FONT color="green">202</FONT>                    source.setChannelProcessor(channelProcessor);<a name="line.202"></a>
+<FONT color="green">203</FONT>                    conf.getSourceRunners().put(src, SourceRunner.forSource(source));<a name="line.203"></a>
+<FONT color="green">204</FONT>                }<a name="line.204"></a>
+<FONT color="green">205</FONT>            }<a name="line.205"></a>
+<FONT color="green">206</FONT>        }<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>        protected void loadSinks(FlumeConfiguration.AgentConfiguration agentConf, NodeConfiguration conf) {<a name="line.208"></a>
+<FONT color="green">209</FONT>            Set&lt;String&gt; sinkNames = agentConf.getSinkSet();<a name="line.209"></a>
+<FONT color="green">210</FONT>            Map&lt;String, ComponentConfiguration&gt; compMap = agentConf.getSinkConfigMap();<a name="line.210"></a>
+<FONT color="green">211</FONT>            Map&lt;String, Sink&gt; sinks = new HashMap&lt;String, Sink&gt;();<a name="line.211"></a>
+<FONT color="green">212</FONT>            for (String sinkName : sinkNames) {<a name="line.212"></a>
+<FONT color="green">213</FONT>                ComponentConfiguration comp = compMap.get(sinkName);<a name="line.213"></a>
+<FONT color="green">214</FONT>                if (comp != null) {<a name="line.214"></a>
+<FONT color="green">215</FONT>                    SinkConfiguration config = (SinkConfiguration) comp;<a name="line.215"></a>
+<FONT color="green">216</FONT>                    Sink sink = sinkFactory.create(comp.getComponentName(), comp.getType());<a name="line.216"></a>
+<FONT color="green">217</FONT>    <a name="line.217"></a>
+<FONT color="green">218</FONT>                    Configurables.configure(sink, config);<a name="line.218"></a>
+<FONT color="green">219</FONT>    <a name="line.219"></a>
+<FONT color="green">220</FONT>                    sink.setChannel(conf.getChannels().get(config.getChannel()));<a name="line.220"></a>
+<FONT color="green">221</FONT>                    sinks.put(comp.getComponentName(), sink);<a name="line.221"></a>
+<FONT color="green">222</FONT>                }<a name="line.222"></a>
+<FONT color="green">223</FONT>            }<a name="line.223"></a>
+<FONT color="green">224</FONT>    <a name="line.224"></a>
+<FONT color="green">225</FONT>            Map&lt;String, Context&gt; sinkContexts = agentConf.getSinkContext();<a name="line.225"></a>
+<FONT color="green">226</FONT>            for (String sinkName : sinkNames) {<a name="line.226"></a>
+<FONT color="green">227</FONT>                Context context = sinkContexts.get(sinkName);<a name="line.227"></a>
+<FONT color="green">228</FONT>                if (context != null) {<a name="line.228"></a>
+<FONT color="green">229</FONT>                    Sink sink = sinkFactory.create(sinkName, context.getString(BasicConfigurationConstants.CONFIG_TYPE));<a name="line.229"></a>
+<FONT color="green">230</FONT>                    Configurables.configure(sink, context);<a name="line.230"></a>
+<FONT color="green">231</FONT>    <a name="line.231"></a>
+<FONT color="green">232</FONT>                    sink.setChannel(conf.getChannels().get(context.getString(BasicConfigurationConstants.CONFIG_CHANNEL)));<a name="line.232"></a>
+<FONT color="green">233</FONT>                    sinks.put(sinkName, sink);<a name="line.233"></a>
+<FONT color="green">234</FONT>                }<a name="line.234"></a>
+<FONT color="green">235</FONT>            }<a name="line.235"></a>
+<FONT color="green">236</FONT>    <a name="line.236"></a>
+<FONT color="green">237</FONT>            loadSinkGroups(agentConf, sinks, conf);<a name="line.237"></a>
+<FONT color="green">238</FONT>        }<a name="line.238"></a>
 <FONT color="green">239</FONT>    <a name="line.239"></a>
-<FONT color="green">240</FONT>            loadSinkGroups(agentConf, sinks, conf);<a name="line.240"></a>
-<FONT color="green">241</FONT>        }<a name="line.241"></a>
-<FONT color="green">242</FONT>    <a name="line.242"></a>
-<FONT color="green">243</FONT>        protected void loadSinkGroups(FlumeConfiguration.AgentConfiguration agentConf,<a name="line.243"></a>
-<FONT color="green">244</FONT>                                      Map&lt;String, Sink&gt; sinks, NodeConfiguration conf) {<a name="line.244"></a>
-<FONT color="green">245</FONT>            Set&lt;String&gt; sinkgroupNames = agentConf.getSinkgroupSet();<a name="line.245"></a>
-<FONT color="green">246</FONT>            Map&lt;String, ComponentConfiguration&gt; compMap = agentConf.getSinkGroupConfigMap();<a name="line.246"></a>
-<FONT color="green">247</FONT>            Map&lt;String, String&gt; usedSinks = new HashMap&lt;String, String&gt;();<a name="line.247"></a>
-<FONT color="green">248</FONT>            for (String groupName : sinkgroupNames) {<a name="line.248"></a>
-<FONT color="green">249</FONT>                ComponentConfiguration comp = compMap.get(groupName);<a name="line.249"></a>
-<FONT color="green">250</FONT>                if (comp != null) {<a name="line.250"></a>
-<FONT color="green">251</FONT>                    SinkGroupConfiguration groupConf = (SinkGroupConfiguration) comp;<a name="line.251"></a>
-<FONT color="green">252</FONT>                    List&lt;String&gt; groupSinkList = groupConf.getSinks();<a name="line.252"></a>
-<FONT color="green">253</FONT>                    List&lt;Sink&gt; groupSinks = new ArrayList&lt;Sink&gt;();<a name="line.253"></a>
-<FONT color="green">254</FONT>                    for (String sink : groupSinkList) {<a name="line.254"></a>
-<FONT color="green">255</FONT>                        Sink s = sinks.remove(sink);<a name="line.255"></a>
-<FONT color="green">256</FONT>                        if (s == null) {<a name="line.256"></a>
-<FONT color="green">257</FONT>                            String sinkUser = usedSinks.get(sink);<a name="line.257"></a>
-<FONT color="green">258</FONT>                            if (sinkUser != null) {<a name="line.258"></a>
+<FONT color="green">240</FONT>        protected void loadSinkGroups(FlumeConfiguration.AgentConfiguration agentConf,<a name="line.240"></a>
+<FONT color="green">241</FONT>                                      Map&lt;String, Sink&gt; sinks, NodeConfiguration conf) {<a name="line.241"></a>
+<FONT color="green">242</FONT>            Set&lt;String&gt; sinkgroupNames = agentConf.getSinkgroupSet();<a name="line.242"></a>
+<FONT color="green">243</FONT>            Map&lt;String, ComponentConfiguration&gt; compMap = agentConf.getSinkGroupConfigMap();<a name="line.243"></a>
+<FONT color="green">244</FONT>            Map&lt;String, String&gt; usedSinks = new HashMap&lt;String, String&gt;();<a name="line.244"></a>
+<FONT color="green">245</FONT>            for (String groupName : sinkgroupNames) {<a name="line.245"></a>
+<FONT color="green">246</FONT>                ComponentConfiguration comp = compMap.get(groupName);<a name="line.246"></a>
+<FONT color="green">247</FONT>                if (comp != null) {<a name="line.247"></a>
+<FONT color="green">248</FONT>                    SinkGroupConfiguration groupConf = (SinkGroupConfiguration) comp;<a name="line.248"></a>
+<FONT color="green">249</FONT>                    List&lt;String&gt; groupSinkList = groupConf.getSinks();<a name="line.249"></a>
+<FONT color="green">250</FONT>                    List&lt;Sink&gt; groupSinks = new ArrayList&lt;Sink&gt;();<a name="line.250"></a>
+<FONT color="green">251</FONT>                    for (String sink : groupSinkList) {<a name="line.251"></a>
+<FONT color="green">252</FONT>                        Sink s = sinks.remove(sink);<a name="line.252"></a>
+<FONT color="green">253</FONT>                        if (s == null) {<a name="line.253"></a>
+<FONT color="green">254</FONT>                            String sinkUser = usedSinks.get(sink);<a name="line.254"></a>
+<FONT color="green">255</FONT>                            if (sinkUser != null) {<a name="line.255"></a>
+<FONT color="green">256</FONT>                                throw new ConfigurationException(String.format(<a name="line.256"></a>
+<FONT color="green">257</FONT>                                    "Sink %s of group %s already in use by group %s", sink, groupName, sinkUser));<a name="line.257"></a>
+<FONT color="green">258</FONT>                            } else {<a name="line.258"></a>
 <FONT color="green">259</FONT>                                throw new ConfigurationException(String.format(<a name="line.259"></a>
-<FONT color="green">260</FONT>                                    "Sink %s of group %s already in use by group %s", sink, groupName, sinkUser));<a name="line.260"></a>
-<FONT color="green">261</FONT>                            } else {<a name="line.261"></a>
-<FONT color="green">262</FONT>                                throw new ConfigurationException(String.format(<a name="line.262"></a>
-<FONT color="green">263</FONT>                                    "Sink %s of group %s does not exist or is not properly configured", sink,<a name="line.263"></a>
-<FONT color="green">264</FONT>                                    groupName));<a name="line.264"></a>
-<FONT color="green">265</FONT>                            }<a name="line.265"></a>
-<FONT color="green">266</FONT>                        }<a name="line.266"></a>
-<FONT color="green">267</FONT>                        groupSinks.add(s);<a name="line.267"></a>
-<FONT color="green">268</FONT>                        usedSinks.put(sink, groupName);<a name="line.268"></a>
-<FONT color="green">269</FONT>                    }<a name="line.269"></a>
-<FONT color="green">270</FONT>                    SinkGroup group = new SinkGroup(groupSinks);<a name="line.270"></a>
-<FONT color="green">271</FONT>                    Configurables.configure(group, groupConf);<a name="line.271"></a>
-<FONT color="green">272</FONT>                    conf.getSinkRunners().put(comp.getComponentName(), new SinkRunner(group.getProcessor()));<a name="line.272"></a>
-<FONT color="green">273</FONT>                }<a name="line.273"></a>
-<FONT color="green">274</FONT>            }<a name="line.274"></a>
-<FONT color="green">275</FONT>            // add any unasigned sinks to solo collectors<a name="line.275"></a>
-<FONT color="green">276</FONT>            for (Map.Entry&lt;String, Sink&gt; entry : sinks.entrySet()) {<a name="line.276"></a>
-<FONT color="green">277</FONT>                if (!usedSinks.containsValue(entry.getKey())) {<a name="line.277"></a>
-<FONT color="green">278</FONT>                    SinkProcessor pr = new DefaultSinkProcessor();<a name="line.278"></a>
-<FONT color="green">279</FONT>                    List&lt;Sink&gt; sinkMap = new ArrayList&lt;Sink&gt;();<a name="line.279"></a>
-<FONT color="green">280</FONT>                    sinkMap.add(entry.getValue());<a name="line.280"></a>
-<FONT color="green">281</FONT>                    pr.setSinks(sinkMap);<a name="line.281"></a>
-<FONT color="green">282</FONT>                    Configurables.configure(pr, new Context());<a name="line.282"></a>
-<FONT color="green">283</FONT>                    conf.getSinkRunners().put(entry.getKey(), new SinkRunner(pr));<a name="line.283"></a>
-<FONT color="green">284</FONT>                }<a name="line.284"></a>
-<FONT color="green">285</FONT>            }<a name="line.285"></a>
-<FONT color="green">286</FONT>        }<a name="line.286"></a>
-<FONT color="green">287</FONT>    }<a name="line.287"></a>
+<FONT color="green">260</FONT>                                    "Sink %s of group %s does not exist or is not properly configured", sink,<a name="line.260"></a>
+<FONT color="green">261</FONT>                                    groupName));<a name="line.261"></a>
+<FONT color="green">262</FONT>                            }<a name="line.262"></a>
+<FONT color="green">263</FONT>                        }<a name="line.263"></a>
+<FONT color="green">264</FONT>                        groupSinks.add(s);<a name="line.264"></a>
+<FONT color="green">265</FONT>                        usedSinks.put(sink, groupName);<a name="line.265"></a>
+<FONT color="green">266</FONT>                    }<a name="line.266"></a>
+<FONT color="green">267</FONT>                    SinkGroup group = new SinkGroup(groupSinks);<a name="line.267"></a>
+<FONT color="green">268</FONT>                    Configurables.configure(group, groupConf);<a name="line.268"></a>
+<FONT color="green">269</FONT>                    conf.getSinkRunners().put(comp.getComponentName(), new SinkRunner(group.getProcessor()));<a name="line.269"></a>
+<FONT color="green">270</FONT>                }<a name="line.270"></a>
+<FONT color="green">271</FONT>            }<a name="line.271"></a>
+<FONT color="green">272</FONT>            // add any unasigned sinks to solo collectors<a name="line.272"></a>
+<FONT color="green">273</FONT>            for (Map.Entry&lt;String, Sink&gt; entry : sinks.entrySet()) {<a name="line.273"></a>
+<FONT color="green">274</FONT>                if (!usedSinks.containsValue(entry.getKey())) {<a name="line.274"></a>
+<FONT color="green">275</FONT>                    SinkProcessor pr = new DefaultSinkProcessor();<a name="line.275"></a>
+<FONT color="green">276</FONT>                    List&lt;Sink&gt; sinkMap = new ArrayList&lt;Sink&gt;();<a name="line.276"></a>
+<FONT color="green">277</FONT>                    sinkMap.add(entry.getValue());<a name="line.277"></a>
+<FONT color="green">278</FONT>                    pr.setSinks(sinkMap);<a name="line.278"></a>
+<FONT color="green">279</FONT>                    Configurables.configure(pr, new Context());<a name="line.279"></a>
+<FONT color="green">280</FONT>                    conf.getSinkRunners().put(entry.getKey(), new SinkRunner(pr));<a name="line.280"></a>
+<FONT color="green">281</FONT>                }<a name="line.281"></a>
+<FONT color="green">282</FONT>            }<a name="line.282"></a>
+<FONT color="green">283</FONT>        }<a name="line.283"></a>
+<FONT color="green">284</FONT>    }<a name="line.284"></a>
 
 
 

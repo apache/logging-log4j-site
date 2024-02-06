@@ -79,89 +79,88 @@
 <FONT color="green">076</FONT>                    }<a name="line.76"></a>
 <FONT color="green">077</FONT>                }<a name="line.77"></a>
 <FONT color="green">078</FONT>            }<a name="line.78"></a>
-<FONT color="green">079</FONT>            newMap.putAll(map);<a name="line.79"></a>
-<FONT color="green">080</FONT>            MapMessage message = ((MapMessage) msg).newInstance(newMap);<a name="line.80"></a>
-<FONT color="green">081</FONT>            return new Log4jLogEvent(source.getLoggerName(), source.getMarker(), source.getFQCN(), source.getLevel(),<a name="line.81"></a>
-<FONT color="green">082</FONT>                message, source.getThrown(), source.getContextMap(), source.getContextStack(), source.getThreadName(),<a name="line.82"></a>
-<FONT color="green">083</FONT>                source.getSource(), source.getMillis());<a name="line.83"></a>
-<FONT color="green">084</FONT>        }<a name="line.84"></a>
-<FONT color="green">085</FONT>    <a name="line.85"></a>
-<FONT color="green">086</FONT>        /**<a name="line.86"></a>
-<FONT color="green">087</FONT>         * An enumeration to identify whether keys not in the MapMessage should be added or whether only existing<a name="line.87"></a>
-<FONT color="green">088</FONT>         * keys should be updated.<a name="line.88"></a>
-<FONT color="green">089</FONT>         */<a name="line.89"></a>
-<FONT color="green">090</FONT>        public enum Mode {<a name="line.90"></a>
-<FONT color="green">091</FONT>            /**<a name="line.91"></a>
-<FONT color="green">092</FONT>             * Keys should be added.<a name="line.92"></a>
-<FONT color="green">093</FONT>             */<a name="line.93"></a>
-<FONT color="green">094</FONT>            Add,<a name="line.94"></a>
-<FONT color="green">095</FONT>            /**<a name="line.95"></a>
-<FONT color="green">096</FONT>             * Keys should be updated.<a name="line.96"></a>
-<FONT color="green">097</FONT>             */<a name="line.97"></a>
-<FONT color="green">098</FONT>            Update<a name="line.98"></a>
-<FONT color="green">099</FONT>        }<a name="line.99"></a>
-<FONT color="green">100</FONT>    <a name="line.100"></a>
-<FONT color="green">101</FONT>        @Override<a name="line.101"></a>
-<FONT color="green">102</FONT>        public String toString() {<a name="line.102"></a>
-<FONT color="green">103</FONT>            StringBuilder sb = new StringBuilder();<a name="line.103"></a>
-<FONT color="green">104</FONT>            sb.append("mode=").append(mode);<a name="line.104"></a>
-<FONT color="green">105</FONT>            sb.append(" {");<a name="line.105"></a>
-<FONT color="green">106</FONT>            boolean first = true;<a name="line.106"></a>
-<FONT color="green">107</FONT>            for (Map.Entry&lt;String, String&gt; entry : map.entrySet()) {<a name="line.107"></a>
-<FONT color="green">108</FONT>                if (!first) {<a name="line.108"></a>
-<FONT color="green">109</FONT>                    sb.append(", ");<a name="line.109"></a>
-<FONT color="green">110</FONT>                }<a name="line.110"></a>
-<FONT color="green">111</FONT>                sb.append(entry.getKey()).append("=").append(entry.getValue());<a name="line.111"></a>
-<FONT color="green">112</FONT>                first = false;<a name="line.112"></a>
-<FONT color="green">113</FONT>            }<a name="line.113"></a>
-<FONT color="green">114</FONT>            sb.append("}");<a name="line.114"></a>
-<FONT color="green">115</FONT>            return sb.toString();<a name="line.115"></a>
-<FONT color="green">116</FONT>        }<a name="line.116"></a>
-<FONT color="green">117</FONT>    <a name="line.117"></a>
-<FONT color="green">118</FONT>        /**<a name="line.118"></a>
-<FONT color="green">119</FONT>         * The factory method to create the MapRewritePolicy.<a name="line.119"></a>
-<FONT color="green">120</FONT>         * @param mode The string representation of the Mode.<a name="line.120"></a>
-<FONT color="green">121</FONT>         * @param pairs key/value pairs for the new Map keys and values.<a name="line.121"></a>
-<FONT color="green">122</FONT>         * @return The MapRewritePolicy.<a name="line.122"></a>
-<FONT color="green">123</FONT>         */<a name="line.123"></a>
-<FONT color="green">124</FONT>        @PluginFactory<a name="line.124"></a>
-<FONT color="green">125</FONT>        public static MapRewritePolicy createPolicy(@PluginAttr("mode") String mode,<a name="line.125"></a>
-<FONT color="green">126</FONT>                                                    @PluginElement("KeyValuePair") KeyValuePair[] pairs) {<a name="line.126"></a>
-<FONT color="green">127</FONT>            Mode op;<a name="line.127"></a>
-<FONT color="green">128</FONT>            if (mode == null) {<a name="line.128"></a>
-<FONT color="green">129</FONT>                op = Mode.Add;<a name="line.129"></a>
-<FONT color="green">130</FONT>            } else {<a name="line.130"></a>
-<FONT color="green">131</FONT>                op = Mode.valueOf(mode);<a name="line.131"></a>
-<FONT color="green">132</FONT>                if (op == null) {<a name="line.132"></a>
-<FONT color="green">133</FONT>                    LOGGER.error("Undefined mode " + mode);<a name="line.133"></a>
-<FONT color="green">134</FONT>                    return null;<a name="line.134"></a>
-<FONT color="green">135</FONT>                }<a name="line.135"></a>
-<FONT color="green">136</FONT>            }<a name="line.136"></a>
-<FONT color="green">137</FONT>            if (pairs == null || pairs.length == 0) {<a name="line.137"></a>
-<FONT color="green">138</FONT>                LOGGER.error("keys and values must be specified for the MapRewritePolicy");<a name="line.138"></a>
-<FONT color="green">139</FONT>                return null;<a name="line.139"></a>
-<FONT color="green">140</FONT>            }<a name="line.140"></a>
-<FONT color="green">141</FONT>            Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();<a name="line.141"></a>
-<FONT color="green">142</FONT>            for (KeyValuePair pair : pairs) {<a name="line.142"></a>
-<FONT color="green">143</FONT>                String key = pair.getKey();<a name="line.143"></a>
-<FONT color="green">144</FONT>                if (key == null) {<a name="line.144"></a>
-<FONT color="green">145</FONT>                    LOGGER.error("A null key is not valid in MapRewritePolicy");<a name="line.145"></a>
-<FONT color="green">146</FONT>                    continue;<a name="line.146"></a>
-<FONT color="green">147</FONT>                }<a name="line.147"></a>
-<FONT color="green">148</FONT>                String value = pair.getValue();<a name="line.148"></a>
-<FONT color="green">149</FONT>                if (value == null) {<a name="line.149"></a>
-<FONT color="green">150</FONT>                    LOGGER.error("A null value for key " + key + " is not allowed in MapRewritePolicy");<a name="line.150"></a>
-<FONT color="green">151</FONT>                    continue;<a name="line.151"></a>
-<FONT color="green">152</FONT>                }<a name="line.152"></a>
-<FONT color="green">153</FONT>                map.put(pair.getKey(), pair.getValue());<a name="line.153"></a>
-<FONT color="green">154</FONT>            }<a name="line.154"></a>
-<FONT color="green">155</FONT>            if (map.size() == 0) {<a name="line.155"></a>
-<FONT color="green">156</FONT>                LOGGER.error("MapRewritePolicy is not configured with any valid key value pairs");<a name="line.156"></a>
-<FONT color="green">157</FONT>                return null;<a name="line.157"></a>
-<FONT color="green">158</FONT>            }<a name="line.158"></a>
-<FONT color="green">159</FONT>            return new MapRewritePolicy(map, op);<a name="line.159"></a>
-<FONT color="green">160</FONT>        }<a name="line.160"></a>
-<FONT color="green">161</FONT>    }<a name="line.161"></a>
+<FONT color="green">079</FONT>            MapMessage message = ((MapMessage) msg).newInstance(newMap);<a name="line.79"></a>
+<FONT color="green">080</FONT>            return new Log4jLogEvent(source.getLoggerName(), source.getMarker(), source.getFQCN(), source.getLevel(),<a name="line.80"></a>
+<FONT color="green">081</FONT>                message, source.getThrown(), source.getContextMap(), source.getContextStack(), source.getThreadName(),<a name="line.81"></a>
+<FONT color="green">082</FONT>                source.getSource(), source.getMillis());<a name="line.82"></a>
+<FONT color="green">083</FONT>        }<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>        /**<a name="line.85"></a>
+<FONT color="green">086</FONT>         * An enumeration to identify whether keys not in the MapMessage should be added or whether only existing<a name="line.86"></a>
+<FONT color="green">087</FONT>         * keys should be updated.<a name="line.87"></a>
+<FONT color="green">088</FONT>         */<a name="line.88"></a>
+<FONT color="green">089</FONT>        public enum Mode {<a name="line.89"></a>
+<FONT color="green">090</FONT>            /**<a name="line.90"></a>
+<FONT color="green">091</FONT>             * Keys should be added.<a name="line.91"></a>
+<FONT color="green">092</FONT>             */<a name="line.92"></a>
+<FONT color="green">093</FONT>            Add,<a name="line.93"></a>
+<FONT color="green">094</FONT>            /**<a name="line.94"></a>
+<FONT color="green">095</FONT>             * Keys should be updated.<a name="line.95"></a>
+<FONT color="green">096</FONT>             */<a name="line.96"></a>
+<FONT color="green">097</FONT>            Update<a name="line.97"></a>
+<FONT color="green">098</FONT>        }<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>        @Override<a name="line.100"></a>
+<FONT color="green">101</FONT>        public String toString() {<a name="line.101"></a>
+<FONT color="green">102</FONT>            StringBuilder sb = new StringBuilder();<a name="line.102"></a>
+<FONT color="green">103</FONT>            sb.append("mode=").append(mode);<a name="line.103"></a>
+<FONT color="green">104</FONT>            sb.append(" {");<a name="line.104"></a>
+<FONT color="green">105</FONT>            boolean first = true;<a name="line.105"></a>
+<FONT color="green">106</FONT>            for (Map.Entry&lt;String, String&gt; entry : map.entrySet()) {<a name="line.106"></a>
+<FONT color="green">107</FONT>                if (!first) {<a name="line.107"></a>
+<FONT color="green">108</FONT>                    sb.append(", ");<a name="line.108"></a>
+<FONT color="green">109</FONT>                }<a name="line.109"></a>
+<FONT color="green">110</FONT>                sb.append(entry.getKey()).append("=").append(entry.getValue());<a name="line.110"></a>
+<FONT color="green">111</FONT>                first = false;<a name="line.111"></a>
+<FONT color="green">112</FONT>            }<a name="line.112"></a>
+<FONT color="green">113</FONT>            sb.append("}");<a name="line.113"></a>
+<FONT color="green">114</FONT>            return sb.toString();<a name="line.114"></a>
+<FONT color="green">115</FONT>        }<a name="line.115"></a>
+<FONT color="green">116</FONT>    <a name="line.116"></a>
+<FONT color="green">117</FONT>        /**<a name="line.117"></a>
+<FONT color="green">118</FONT>         * The factory method to create the MapRewritePolicy.<a name="line.118"></a>
+<FONT color="green">119</FONT>         * @param mode The string representation of the Mode.<a name="line.119"></a>
+<FONT color="green">120</FONT>         * @param pairs key/value pairs for the new Map keys and values.<a name="line.120"></a>
+<FONT color="green">121</FONT>         * @return The MapRewritePolicy.<a name="line.121"></a>
+<FONT color="green">122</FONT>         */<a name="line.122"></a>
+<FONT color="green">123</FONT>        @PluginFactory<a name="line.123"></a>
+<FONT color="green">124</FONT>        public static MapRewritePolicy createPolicy(@PluginAttr("mode") String mode,<a name="line.124"></a>
+<FONT color="green">125</FONT>                                                    @PluginElement("KeyValuePair") KeyValuePair[] pairs) {<a name="line.125"></a>
+<FONT color="green">126</FONT>            Mode op;<a name="line.126"></a>
+<FONT color="green">127</FONT>            if (mode == null) {<a name="line.127"></a>
+<FONT color="green">128</FONT>                op = Mode.Add;<a name="line.128"></a>
+<FONT color="green">129</FONT>            } else {<a name="line.129"></a>
+<FONT color="green">130</FONT>                op = Mode.valueOf(mode);<a name="line.130"></a>
+<FONT color="green">131</FONT>                if (op == null) {<a name="line.131"></a>
+<FONT color="green">132</FONT>                    LOGGER.error("Undefined mode " + mode);<a name="line.132"></a>
+<FONT color="green">133</FONT>                    return null;<a name="line.133"></a>
+<FONT color="green">134</FONT>                }<a name="line.134"></a>
+<FONT color="green">135</FONT>            }<a name="line.135"></a>
+<FONT color="green">136</FONT>            if (pairs == null || pairs.length == 0) {<a name="line.136"></a>
+<FONT color="green">137</FONT>                LOGGER.error("keys and values must be specified for the MapRewritePolicy");<a name="line.137"></a>
+<FONT color="green">138</FONT>                return null;<a name="line.138"></a>
+<FONT color="green">139</FONT>            }<a name="line.139"></a>
+<FONT color="green">140</FONT>            Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();<a name="line.140"></a>
+<FONT color="green">141</FONT>            for (KeyValuePair pair : pairs) {<a name="line.141"></a>
+<FONT color="green">142</FONT>                String key = pair.getKey();<a name="line.142"></a>
+<FONT color="green">143</FONT>                if (key == null) {<a name="line.143"></a>
+<FONT color="green">144</FONT>                    LOGGER.error("A null key is not valid in MapRewritePolicy");<a name="line.144"></a>
+<FONT color="green">145</FONT>                    continue;<a name="line.145"></a>
+<FONT color="green">146</FONT>                }<a name="line.146"></a>
+<FONT color="green">147</FONT>                String value = pair.getValue();<a name="line.147"></a>
+<FONT color="green">148</FONT>                if (value == null) {<a name="line.148"></a>
+<FONT color="green">149</FONT>                    LOGGER.error("A null value for key " + key + " is not allowed in MapRewritePolicy");<a name="line.149"></a>
+<FONT color="green">150</FONT>                    continue;<a name="line.150"></a>
+<FONT color="green">151</FONT>                }<a name="line.151"></a>
+<FONT color="green">152</FONT>                map.put(pair.getKey(), pair.getValue());<a name="line.152"></a>
+<FONT color="green">153</FONT>            }<a name="line.153"></a>
+<FONT color="green">154</FONT>            if (map.size() == 0) {<a name="line.154"></a>
+<FONT color="green">155</FONT>                LOGGER.error("MapRewritePolicy is not configured with any valid key value pairs");<a name="line.155"></a>
+<FONT color="green">156</FONT>                return null;<a name="line.156"></a>
+<FONT color="green">157</FONT>            }<a name="line.157"></a>
+<FONT color="green">158</FONT>            return new MapRewritePolicy(map, op);<a name="line.158"></a>
+<FONT color="green">159</FONT>        }<a name="line.159"></a>
+<FONT color="green">160</FONT>    }<a name="line.160"></a>
 
 
 

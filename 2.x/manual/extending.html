@@ -1,5 +1,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements. See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License. You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<!--
  | (Unfortunately) copied from the Fluido skin to allow the footer to be centered.
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -17,7 +33,7 @@
 
     
             <meta name="author" content="Ralph Goers" />
-                    <meta name="Date-Revision-yyyymmdd" content="20121007" />
+                    <meta name="Date-Revision-yyyymmdd" content="20121111" />
                 <meta http-equiv="Content-Language" content="en" />
                 </head>
         <body class="topBarDisabled">
@@ -43,8 +59,8 @@
         <ul class="breadcrumb">
                         
                         
-                            <li id="publishDate">Last Published: 2012-10-07</li>
-                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta2</li>
+                            <li id="publishDate">Last Published: 2012-11-11</li>
+                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-beta3</li>
                                     
                         
                         
@@ -175,7 +191,7 @@
                                                 <a href="../log4j-jcl/index.html" title="Commons Logging Bridge">Commons Logging Bridge</a>
                     </li>
                   <li class="none">
-                                                <a href="../slf4j-impl/index.html" title="SLF4J Binding">SLF4J Binding</a>
+                                                <a href="../log4j-slf4j-impl/index.html" title="SLF4J Binding">SLF4J Binding</a>
                     </li>
                   <li class="none">
                                                 <a href="../log4j-flume-ng/index.html" title="Apache Flume">Apache Flume</a>
@@ -237,10 +253,25 @@
               locates a LoggerContextFactory by locating all instances of META-INF/log4j-provider.xml, a
               file that conforms to the java.util.Properties DTD, and then inspecting each to verify that it
               specifies a value for the &quot;Log4jAPIVersion&quot; property that conforms to the version required by the
-              LogManager. If more than one valid implementation is located an exception will be thrown.
+              LogManager. If more than one valid implementation is located the value for &quot;FactoryPriority&quot; will
+              be used to identify the factory with the highest priority.
               Finally, the value of the &quot;LoggerContextFactory&quot; property will be used to locate the
               LoggerContextFactory. In Log4j 2 this is provided by Log4jContextFactory.
             </p>
+            <p>
+              Applications may change the LoggerContextFactory that will be used by
+              </p><ol style="list-style-type: decimal">
+                <li>Implementing a new LoggerContextFactory and creating a log4j-provider.xml to reference it making
+                  sure that it has the highest priority.</li>
+                <li>Create a new log4j-provider.xml and configure it with the desired LoggerContextFactory making
+                  sure that it has the highest priority.</li>
+                <li>Setting the system property &quot;log4j2.LoggerContextFactory&quot; to the name of the LoggerContextFactory
+                  class to use.</li>
+                <li>Setting the property &quot;log4j2.LoggerContextFactory&quot; in a properties file named
+                  &quot;log4j2.LogManager.properties&quot; to the name of the LoggerContextFactory class to use. The properties
+                  file must be on the classpath.</li>
+              </ol>
+            
           </div>
           <div class="section"><h3>ContextSelector<a name="ContextSelector"></a></h3>
             <p>
@@ -478,7 +509,8 @@ public final class ThresholdFilter extends FilterBase {
 @Plugin(name = &quot;Stub&quot;, type = &quot;Core&quot;, elementType = &quot;appender&quot;, printObject = true)
 public final class StubAppender extends OutputStreamAppender {
 
-    private StubAppender(String name, Layout layout, Filter filter, StubManager manager, boolean handleExceptions) {
+    private StubAppender(String name, Layout layout, Filter filter, StubManager manager,
+                         boolean handleExceptions) {
     }
 
     @PluginFactory
@@ -524,7 +556,8 @@ public final class StubAppender extends OutputStreamAppender {
 @Plugin(name = &quot;SampleLayout&quot;, type = &quot;Core&quot;, elementType = &quot;layout&quot;, printObject = true)
 public class SampleLayout extends AbstractStringLayout {
 
-    protected SampleLayout(boolean locationInfo, boolean properties, boolean complete, Charset charset) {
+    protected SampleLayout(boolean locationInfo, boolean properties, boolean complete,
+                           Charset charset) {
     }
 
     @PluginFactory
@@ -532,12 +565,14 @@ public class SampleLayout extends AbstractStringLayout {
                                             @PluginAttr(&quot;properties&quot;) String properties,
                                             @PluginAttr(&quot;complete&quot;) String complete,
                                             @PluginAttr(&quot;charset&quot;) String charset) {
-        Charset c = Charset.isSupported(&quot;UTF-8&quot;) ? Charset.forName(&quot;UTF-8&quot;) : Charset.defaultCharset();
+        Charset c = Charset.isSupported(&quot;UTF-8&quot;) ?
+                    Charset.forName(&quot;UTF-8&quot;) : Charset.defaultCharset();
         if (charset != null) {
             if (Charset.isSupported(charset)) {
                 c = Charset.forName(charset);
             } else {
-                LOGGER.error(&quot;Charset &quot; + charset + &quot; is not supported for layout, using &quot; + c.displayName());
+                LOGGER.error(&quot;Charset &quot; + charset + &quot; is not supported for layout, using &quot; +
+                             c.displayName());
             }
         }
         boolean info = locationInfo == null ? false : Boolean.valueOf(locationInfo);

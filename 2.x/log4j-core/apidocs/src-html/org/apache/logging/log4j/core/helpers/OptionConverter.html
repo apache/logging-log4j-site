@@ -22,334 +22,335 @@
 <FONT color="green">019</FONT>    import org.apache.logging.log4j.Logger;<a name="line.19"></a>
 <FONT color="green">020</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.20"></a>
 <FONT color="green">021</FONT>    <a name="line.21"></a>
-<FONT color="green">022</FONT>    import java.util.Properties;<a name="line.22"></a>
-<FONT color="green">023</FONT>    <a name="line.23"></a>
-<FONT color="green">024</FONT>    /**<a name="line.24"></a>
-<FONT color="green">025</FONT>     * A convenience class to convert property values to specific types.<a name="line.25"></a>
-<FONT color="green">026</FONT>     */<a name="line.26"></a>
-<FONT color="green">027</FONT>    public final class OptionConverter {<a name="line.27"></a>
-<FONT color="green">028</FONT>    <a name="line.28"></a>
-<FONT color="green">029</FONT>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.29"></a>
-<FONT color="green">030</FONT>    <a name="line.30"></a>
-<FONT color="green">031</FONT>        private static final String DELIM_START = "${";<a name="line.31"></a>
-<FONT color="green">032</FONT>        private static final char DELIM_STOP = '}';<a name="line.32"></a>
-<FONT color="green">033</FONT>        private static final int DELIM_START_LEN = 2;<a name="line.33"></a>
-<FONT color="green">034</FONT>        private static final int DELIM_STOP_LEN = 1;<a name="line.34"></a>
-<FONT color="green">035</FONT>        private static final int ONE_K = 1024;<a name="line.35"></a>
-<FONT color="green">036</FONT>    <a name="line.36"></a>
-<FONT color="green">037</FONT>        /**<a name="line.37"></a>
-<FONT color="green">038</FONT>         * OptionConverter is a static class.<a name="line.38"></a>
-<FONT color="green">039</FONT>         */<a name="line.39"></a>
-<FONT color="green">040</FONT>        private OptionConverter() {<a name="line.40"></a>
-<FONT color="green">041</FONT>        }<a name="line.41"></a>
-<FONT color="green">042</FONT>    <a name="line.42"></a>
-<FONT color="green">043</FONT>        public static String[] concatanateArrays(String[] l, String[] r) {<a name="line.43"></a>
-<FONT color="green">044</FONT>            int len = l.length + r.length;<a name="line.44"></a>
-<FONT color="green">045</FONT>            String[] a = new String[len];<a name="line.45"></a>
-<FONT color="green">046</FONT>    <a name="line.46"></a>
-<FONT color="green">047</FONT>            System.arraycopy(l, 0, a, 0, l.length);<a name="line.47"></a>
-<FONT color="green">048</FONT>            System.arraycopy(r, 0, a, l.length, r.length);<a name="line.48"></a>
-<FONT color="green">049</FONT>    <a name="line.49"></a>
-<FONT color="green">050</FONT>            return a;<a name="line.50"></a>
-<FONT color="green">051</FONT>        }<a name="line.51"></a>
-<FONT color="green">052</FONT>    <a name="line.52"></a>
-<FONT color="green">053</FONT>        public static String convertSpecialChars(String s) {<a name="line.53"></a>
-<FONT color="green">054</FONT>            char c;<a name="line.54"></a>
-<FONT color="green">055</FONT>            int len = s.length();<a name="line.55"></a>
-<FONT color="green">056</FONT>            StringBuffer sbuf = new StringBuffer(len);<a name="line.56"></a>
-<FONT color="green">057</FONT>    <a name="line.57"></a>
-<FONT color="green">058</FONT>            int i = 0;<a name="line.58"></a>
-<FONT color="green">059</FONT>            while (i &lt; len) {<a name="line.59"></a>
-<FONT color="green">060</FONT>                c = s.charAt(i++);<a name="line.60"></a>
-<FONT color="green">061</FONT>                if (c == '\\') {<a name="line.61"></a>
-<FONT color="green">062</FONT>                    c = s.charAt(i++);<a name="line.62"></a>
-<FONT color="green">063</FONT>                    if (c == 'n') {<a name="line.63"></a>
-<FONT color="green">064</FONT>                        c = '\n';<a name="line.64"></a>
-<FONT color="green">065</FONT>                    } else if (c == 'r') {<a name="line.65"></a>
-<FONT color="green">066</FONT>                        c = '\r';<a name="line.66"></a>
-<FONT color="green">067</FONT>                    } else if (c == 't') {<a name="line.67"></a>
-<FONT color="green">068</FONT>                        c = '\t';<a name="line.68"></a>
-<FONT color="green">069</FONT>                    } else if (c == 'f') {<a name="line.69"></a>
-<FONT color="green">070</FONT>                        c = '\f';<a name="line.70"></a>
-<FONT color="green">071</FONT>                    } else if (c == '\b') {<a name="line.71"></a>
-<FONT color="green">072</FONT>                        c = '\b';<a name="line.72"></a>
-<FONT color="green">073</FONT>                    } else if (c == '\"') {<a name="line.73"></a>
-<FONT color="green">074</FONT>                        c = '\"';<a name="line.74"></a>
-<FONT color="green">075</FONT>                    } else if (c == '\'') {<a name="line.75"></a>
-<FONT color="green">076</FONT>                        c = '\'';<a name="line.76"></a>
-<FONT color="green">077</FONT>                    } else if (c == '\\') {<a name="line.77"></a>
-<FONT color="green">078</FONT>                        c = '\\';<a name="line.78"></a>
-<FONT color="green">079</FONT>                    }<a name="line.79"></a>
-<FONT color="green">080</FONT>                }<a name="line.80"></a>
-<FONT color="green">081</FONT>                sbuf.append(c);<a name="line.81"></a>
-<FONT color="green">082</FONT>            }<a name="line.82"></a>
-<FONT color="green">083</FONT>            return sbuf.toString();<a name="line.83"></a>
-<FONT color="green">084</FONT>        }<a name="line.84"></a>
-<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">022</FONT>    import java.util.Locale;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Properties;<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>    /**<a name="line.25"></a>
+<FONT color="green">026</FONT>     * A convenience class to convert property values to specific types.<a name="line.26"></a>
+<FONT color="green">027</FONT>     */<a name="line.27"></a>
+<FONT color="green">028</FONT>    public final class OptionConverter {<a name="line.28"></a>
+<FONT color="green">029</FONT>    <a name="line.29"></a>
+<FONT color="green">030</FONT>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>        private static final String DELIM_START = "${";<a name="line.32"></a>
+<FONT color="green">033</FONT>        private static final char DELIM_STOP = '}';<a name="line.33"></a>
+<FONT color="green">034</FONT>        private static final int DELIM_START_LEN = 2;<a name="line.34"></a>
+<FONT color="green">035</FONT>        private static final int DELIM_STOP_LEN = 1;<a name="line.35"></a>
+<FONT color="green">036</FONT>        private static final int ONE_K = 1024;<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>        /**<a name="line.38"></a>
+<FONT color="green">039</FONT>         * OptionConverter is a static class.<a name="line.39"></a>
+<FONT color="green">040</FONT>         */<a name="line.40"></a>
+<FONT color="green">041</FONT>        private OptionConverter() {<a name="line.41"></a>
+<FONT color="green">042</FONT>        }<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>        public static String[] concatanateArrays(String[] l, String[] r) {<a name="line.44"></a>
+<FONT color="green">045</FONT>            int len = l.length + r.length;<a name="line.45"></a>
+<FONT color="green">046</FONT>            String[] a = new String[len];<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>            System.arraycopy(l, 0, a, 0, l.length);<a name="line.48"></a>
+<FONT color="green">049</FONT>            System.arraycopy(r, 0, a, l.length, r.length);<a name="line.49"></a>
+<FONT color="green">050</FONT>    <a name="line.50"></a>
+<FONT color="green">051</FONT>            return a;<a name="line.51"></a>
+<FONT color="green">052</FONT>        }<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>        public static String convertSpecialChars(String s) {<a name="line.54"></a>
+<FONT color="green">055</FONT>            char c;<a name="line.55"></a>
+<FONT color="green">056</FONT>            int len = s.length();<a name="line.56"></a>
+<FONT color="green">057</FONT>            StringBuffer sbuf = new StringBuffer(len);<a name="line.57"></a>
+<FONT color="green">058</FONT>    <a name="line.58"></a>
+<FONT color="green">059</FONT>            int i = 0;<a name="line.59"></a>
+<FONT color="green">060</FONT>            while (i &lt; len) {<a name="line.60"></a>
+<FONT color="green">061</FONT>                c = s.charAt(i++);<a name="line.61"></a>
+<FONT color="green">062</FONT>                if (c == '\\') {<a name="line.62"></a>
+<FONT color="green">063</FONT>                    c = s.charAt(i++);<a name="line.63"></a>
+<FONT color="green">064</FONT>                    if (c == 'n') {<a name="line.64"></a>
+<FONT color="green">065</FONT>                        c = '\n';<a name="line.65"></a>
+<FONT color="green">066</FONT>                    } else if (c == 'r') {<a name="line.66"></a>
+<FONT color="green">067</FONT>                        c = '\r';<a name="line.67"></a>
+<FONT color="green">068</FONT>                    } else if (c == 't') {<a name="line.68"></a>
+<FONT color="green">069</FONT>                        c = '\t';<a name="line.69"></a>
+<FONT color="green">070</FONT>                    } else if (c == 'f') {<a name="line.70"></a>
+<FONT color="green">071</FONT>                        c = '\f';<a name="line.71"></a>
+<FONT color="green">072</FONT>                    } else if (c == '\b') {<a name="line.72"></a>
+<FONT color="green">073</FONT>                        c = '\b';<a name="line.73"></a>
+<FONT color="green">074</FONT>                    } else if (c == '\"') {<a name="line.74"></a>
+<FONT color="green">075</FONT>                        c = '\"';<a name="line.75"></a>
+<FONT color="green">076</FONT>                    } else if (c == '\'') {<a name="line.76"></a>
+<FONT color="green">077</FONT>                        c = '\'';<a name="line.77"></a>
+<FONT color="green">078</FONT>                    } else if (c == '\\') {<a name="line.78"></a>
+<FONT color="green">079</FONT>                        c = '\\';<a name="line.79"></a>
+<FONT color="green">080</FONT>                    }<a name="line.80"></a>
+<FONT color="green">081</FONT>                }<a name="line.81"></a>
+<FONT color="green">082</FONT>                sbuf.append(c);<a name="line.82"></a>
+<FONT color="green">083</FONT>            }<a name="line.83"></a>
+<FONT color="green">084</FONT>            return sbuf.toString();<a name="line.84"></a>
+<FONT color="green">085</FONT>        }<a name="line.85"></a>
 <FONT color="green">086</FONT>    <a name="line.86"></a>
-<FONT color="green">087</FONT>        /**<a name="line.87"></a>
-<FONT color="green">088</FONT>         * Very similar to &lt;code&gt;System.getProperty&lt;/code&gt; except<a name="line.88"></a>
-<FONT color="green">089</FONT>         * that the {@link SecurityException} is hidden.<a name="line.89"></a>
-<FONT color="green">090</FONT>         *<a name="line.90"></a>
-<FONT color="green">091</FONT>         * @param key The key to search for.<a name="line.91"></a>
-<FONT color="green">092</FONT>         * @param def The default value to return.<a name="line.92"></a>
-<FONT color="green">093</FONT>         * @return the string value of the system property, or the default<a name="line.93"></a>
-<FONT color="green">094</FONT>         *         value if there is no property with that key.<a name="line.94"></a>
-<FONT color="green">095</FONT>         */<a name="line.95"></a>
-<FONT color="green">096</FONT>        public static String getSystemProperty(String key, String def) {<a name="line.96"></a>
-<FONT color="green">097</FONT>            try {<a name="line.97"></a>
-<FONT color="green">098</FONT>                return System.getProperty(key, def);<a name="line.98"></a>
-<FONT color="green">099</FONT>            } catch (Throwable e) { // MS-Java throws com.ms.security.SecurityExceptionEx<a name="line.99"></a>
-<FONT color="green">100</FONT>                LOGGER.debug("Was not allowed to read system property \"" + key + "\".");<a name="line.100"></a>
-<FONT color="green">101</FONT>                return def;<a name="line.101"></a>
-<FONT color="green">102</FONT>            }<a name="line.102"></a>
-<FONT color="green">103</FONT>        }<a name="line.103"></a>
-<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">087</FONT>    <a name="line.87"></a>
+<FONT color="green">088</FONT>        /**<a name="line.88"></a>
+<FONT color="green">089</FONT>         * Very similar to &lt;code&gt;System.getProperty&lt;/code&gt; except<a name="line.89"></a>
+<FONT color="green">090</FONT>         * that the {@link SecurityException} is hidden.<a name="line.90"></a>
+<FONT color="green">091</FONT>         *<a name="line.91"></a>
+<FONT color="green">092</FONT>         * @param key The key to search for.<a name="line.92"></a>
+<FONT color="green">093</FONT>         * @param def The default value to return.<a name="line.93"></a>
+<FONT color="green">094</FONT>         * @return the string value of the system property, or the default<a name="line.94"></a>
+<FONT color="green">095</FONT>         *         value if there is no property with that key.<a name="line.95"></a>
+<FONT color="green">096</FONT>         */<a name="line.96"></a>
+<FONT color="green">097</FONT>        public static String getSystemProperty(String key, String def) {<a name="line.97"></a>
+<FONT color="green">098</FONT>            try {<a name="line.98"></a>
+<FONT color="green">099</FONT>                return System.getProperty(key, def);<a name="line.99"></a>
+<FONT color="green">100</FONT>            } catch (Throwable e) { // MS-Java throws com.ms.security.SecurityExceptionEx<a name="line.100"></a>
+<FONT color="green">101</FONT>                LOGGER.debug("Was not allowed to read system property \"" + key + "\".");<a name="line.101"></a>
+<FONT color="green">102</FONT>                return def;<a name="line.102"></a>
+<FONT color="green">103</FONT>            }<a name="line.103"></a>
+<FONT color="green">104</FONT>        }<a name="line.104"></a>
 <FONT color="green">105</FONT>    <a name="line.105"></a>
-<FONT color="green">106</FONT>        public static Object instantiateByKey(Properties props, String key, Class superClass,<a name="line.106"></a>
-<FONT color="green">107</FONT>                                       Object defaultValue) {<a name="line.107"></a>
-<FONT color="green">108</FONT>    <a name="line.108"></a>
-<FONT color="green">109</FONT>            // Get the value of the property in string form<a name="line.109"></a>
-<FONT color="green">110</FONT>            String className = findAndSubst(key, props);<a name="line.110"></a>
-<FONT color="green">111</FONT>            if (className == null) {<a name="line.111"></a>
-<FONT color="green">112</FONT>                LOGGER.error("Could not find value for key " + key);<a name="line.112"></a>
-<FONT color="green">113</FONT>                return defaultValue;<a name="line.113"></a>
-<FONT color="green">114</FONT>            }<a name="line.114"></a>
-<FONT color="green">115</FONT>            // Trim className to avoid trailing spaces that cause problems.<a name="line.115"></a>
-<FONT color="green">116</FONT>            return OptionConverter.instantiateByClassName(className.trim(), superClass,<a name="line.116"></a>
-<FONT color="green">117</FONT>                defaultValue);<a name="line.117"></a>
-<FONT color="green">118</FONT>        }<a name="line.118"></a>
-<FONT color="green">119</FONT>    <a name="line.119"></a>
-<FONT color="green">120</FONT>        /**<a name="line.120"></a>
-<FONT color="green">121</FONT>         * If &lt;code&gt;value&lt;/code&gt; is "true", then &lt;code&gt;true&lt;/code&gt; is<a name="line.121"></a>
-<FONT color="green">122</FONT>         * returned. If &lt;code&gt;value&lt;/code&gt; is "false", then<a name="line.122"></a>
-<FONT color="green">123</FONT>         * &lt;code&gt;true&lt;/code&gt; is returned. Otherwise, &lt;code&gt;default&lt;/code&gt; is<a name="line.123"></a>
-<FONT color="green">124</FONT>         * returned.<a name="line.124"></a>
-<FONT color="green">125</FONT>         * &lt;p/&gt;<a name="line.125"></a>
-<FONT color="green">126</FONT>         * &lt;p&gt;Case of value is unimportant.<a name="line.126"></a>
-<FONT color="green">127</FONT>         * @param value The value to convert.<a name="line.127"></a>
-<FONT color="green">128</FONT>         * @param dEfault The default value.<a name="line.128"></a>
-<FONT color="green">129</FONT>         * @return true or false, depending on the value and/or default.<a name="line.129"></a>
-<FONT color="green">130</FONT>         */<a name="line.130"></a>
-<FONT color="green">131</FONT>        public static boolean toBoolean(String value, boolean dEfault) {<a name="line.131"></a>
-<FONT color="green">132</FONT>            if (value == null) {<a name="line.132"></a>
-<FONT color="green">133</FONT>                return dEfault;<a name="line.133"></a>
-<FONT color="green">134</FONT>            }<a name="line.134"></a>
-<FONT color="green">135</FONT>            String trimmedVal = value.trim();<a name="line.135"></a>
-<FONT color="green">136</FONT>            if ("true".equalsIgnoreCase(trimmedVal)) {<a name="line.136"></a>
-<FONT color="green">137</FONT>                return true;<a name="line.137"></a>
-<FONT color="green">138</FONT>            }<a name="line.138"></a>
-<FONT color="green">139</FONT>            if ("false".equalsIgnoreCase(trimmedVal)) {<a name="line.139"></a>
-<FONT color="green">140</FONT>                return false;<a name="line.140"></a>
-<FONT color="green">141</FONT>            }<a name="line.141"></a>
-<FONT color="green">142</FONT>            return dEfault;<a name="line.142"></a>
-<FONT color="green">143</FONT>        }<a name="line.143"></a>
-<FONT color="green">144</FONT>    <a name="line.144"></a>
-<FONT color="green">145</FONT>        /**<a name="line.145"></a>
-<FONT color="green">146</FONT>         * Convert the String value to an int.<a name="line.146"></a>
-<FONT color="green">147</FONT>         * @param value The value as a String.<a name="line.147"></a>
-<FONT color="green">148</FONT>         * @param dEfault The default value.<a name="line.148"></a>
-<FONT color="green">149</FONT>         * @return The value as an int.<a name="line.149"></a>
-<FONT color="green">150</FONT>         */<a name="line.150"></a>
-<FONT color="green">151</FONT>        public static int toInt(String value, int dEfault) {<a name="line.151"></a>
-<FONT color="green">152</FONT>            if (value != null) {<a name="line.152"></a>
-<FONT color="green">153</FONT>                String s = value.trim();<a name="line.153"></a>
-<FONT color="green">154</FONT>                try {<a name="line.154"></a>
-<FONT color="green">155</FONT>                    return Integer.valueOf(s);<a name="line.155"></a>
-<FONT color="green">156</FONT>                } catch (NumberFormatException e) {<a name="line.156"></a>
-<FONT color="green">157</FONT>                    LOGGER.error("[" + s + "] is not in proper int form.");<a name="line.157"></a>
-<FONT color="green">158</FONT>                    e.printStackTrace();<a name="line.158"></a>
-<FONT color="green">159</FONT>                }<a name="line.159"></a>
-<FONT color="green">160</FONT>            }<a name="line.160"></a>
-<FONT color="green">161</FONT>            return dEfault;<a name="line.161"></a>
-<FONT color="green">162</FONT>        }<a name="line.162"></a>
-<FONT color="green">163</FONT>    <a name="line.163"></a>
-<FONT color="green">164</FONT>        /**<a name="line.164"></a>
-<FONT color="green">165</FONT>         *<a name="line.165"></a>
-<FONT color="green">166</FONT>         * @param value The size of the file as a String.<a name="line.166"></a>
-<FONT color="green">167</FONT>         * @param dEfault The default value.<a name="line.167"></a>
-<FONT color="green">168</FONT>         * @return The size of the file as a long.<a name="line.168"></a>
-<FONT color="green">169</FONT>         */<a name="line.169"></a>
-<FONT color="green">170</FONT>        public static long toFileSize(String value, long dEfault) {<a name="line.170"></a>
-<FONT color="green">171</FONT>            if (value == null) {<a name="line.171"></a>
-<FONT color="green">172</FONT>                return dEfault;<a name="line.172"></a>
-<FONT color="green">173</FONT>            }<a name="line.173"></a>
-<FONT color="green">174</FONT>    <a name="line.174"></a>
-<FONT color="green">175</FONT>            String s = value.trim().toUpperCase();<a name="line.175"></a>
-<FONT color="green">176</FONT>            long multiplier = 1;<a name="line.176"></a>
-<FONT color="green">177</FONT>            int index;<a name="line.177"></a>
-<FONT color="green">178</FONT>    <a name="line.178"></a>
-<FONT color="green">179</FONT>            if ((index = s.indexOf("KB")) != -1) {<a name="line.179"></a>
-<FONT color="green">180</FONT>                multiplier = ONE_K;<a name="line.180"></a>
-<FONT color="green">181</FONT>                s = s.substring(0, index);<a name="line.181"></a>
-<FONT color="green">182</FONT>            } else if ((index = s.indexOf("MB")) != -1) {<a name="line.182"></a>
-<FONT color="green">183</FONT>                multiplier = ONE_K * ONE_K;<a name="line.183"></a>
-<FONT color="green">184</FONT>                s = s.substring(0, index);<a name="line.184"></a>
-<FONT color="green">185</FONT>            } else if ((index = s.indexOf("GB")) != -1) {<a name="line.185"></a>
-<FONT color="green">186</FONT>                multiplier = ONE_K * ONE_K * ONE_K;<a name="line.186"></a>
-<FONT color="green">187</FONT>                s = s.substring(0, index);<a name="line.187"></a>
-<FONT color="green">188</FONT>            }<a name="line.188"></a>
-<FONT color="green">189</FONT>            if (s != null) {<a name="line.189"></a>
-<FONT color="green">190</FONT>                try {<a name="line.190"></a>
-<FONT color="green">191</FONT>                    return Long.valueOf(s) * multiplier;<a name="line.191"></a>
-<FONT color="green">192</FONT>                } catch (NumberFormatException e) {<a name="line.192"></a>
-<FONT color="green">193</FONT>                    LOGGER.error("[" + s + "] is not in proper int form.");<a name="line.193"></a>
-<FONT color="green">194</FONT>                    LOGGER.error("[" + value + "] not in expected format.", e);<a name="line.194"></a>
-<FONT color="green">195</FONT>                }<a name="line.195"></a>
-<FONT color="green">196</FONT>            }<a name="line.196"></a>
-<FONT color="green">197</FONT>            return dEfault;<a name="line.197"></a>
-<FONT color="green">198</FONT>        }<a name="line.198"></a>
-<FONT color="green">199</FONT>    <a name="line.199"></a>
-<FONT color="green">200</FONT>        /**<a name="line.200"></a>
-<FONT color="green">201</FONT>         * Find the value corresponding to &lt;code&gt;key&lt;/code&gt; in<a name="line.201"></a>
-<FONT color="green">202</FONT>         * &lt;code&gt;props&lt;/code&gt;. Then perform variable substitution on the<a name="line.202"></a>
-<FONT color="green">203</FONT>         * found value.<a name="line.203"></a>
-<FONT color="green">204</FONT>         * @param key The key to locate.<a name="line.204"></a>
-<FONT color="green">205</FONT>         * @param props The properties.<a name="line.205"></a>
-<FONT color="green">206</FONT>         * @return The String after substitution.<a name="line.206"></a>
-<FONT color="green">207</FONT>         */<a name="line.207"></a>
-<FONT color="green">208</FONT>        public static String findAndSubst(String key, Properties props) {<a name="line.208"></a>
-<FONT color="green">209</FONT>            String value = props.getProperty(key);<a name="line.209"></a>
-<FONT color="green">210</FONT>            if (value == null) {<a name="line.210"></a>
-<FONT color="green">211</FONT>                return null;<a name="line.211"></a>
-<FONT color="green">212</FONT>            }<a name="line.212"></a>
-<FONT color="green">213</FONT>    <a name="line.213"></a>
-<FONT color="green">214</FONT>            try {<a name="line.214"></a>
-<FONT color="green">215</FONT>                return substVars(value, props);<a name="line.215"></a>
-<FONT color="green">216</FONT>            } catch (IllegalArgumentException e) {<a name="line.216"></a>
-<FONT color="green">217</FONT>                LOGGER.error("Bad option value [" + value + "].", e);<a name="line.217"></a>
-<FONT color="green">218</FONT>                return value;<a name="line.218"></a>
-<FONT color="green">219</FONT>            }<a name="line.219"></a>
-<FONT color="green">220</FONT>        }<a name="line.220"></a>
-<FONT color="green">221</FONT>    <a name="line.221"></a>
-<FONT color="green">222</FONT>        /**<a name="line.222"></a>
-<FONT color="green">223</FONT>         * Instantiate an object given a class name. Check that the<a name="line.223"></a>
-<FONT color="green">224</FONT>         * &lt;code&gt;className&lt;/code&gt; is a subclass of<a name="line.224"></a>
-<FONT color="green">225</FONT>         * &lt;code&gt;superClass&lt;/code&gt;. If that test fails or the object could<a name="line.225"></a>
-<FONT color="green">226</FONT>         * not be instantiated, then &lt;code&gt;defaultValue&lt;/code&gt; is returned.<a name="line.226"></a>
-<FONT color="green">227</FONT>         *<a name="line.227"></a>
-<FONT color="green">228</FONT>         * @param className    The fully qualified class name of the object to instantiate.<a name="line.228"></a>
-<FONT color="green">229</FONT>         * @param superClass   The class to which the new object should belong.<a name="line.229"></a>
-<FONT color="green">230</FONT>         * @param defaultValue The object to return in case of non-fulfillment<a name="line.230"></a>
-<FONT color="green">231</FONT>         * @return The created object.<a name="line.231"></a>
-<FONT color="green">232</FONT>         */<a name="line.232"></a>
-<FONT color="green">233</FONT>        public static Object instantiateByClassName(String className, Class superClass,<a name="line.233"></a>
-<FONT color="green">234</FONT>                                             Object defaultValue) {<a name="line.234"></a>
-<FONT color="green">235</FONT>            if (className != null) {<a name="line.235"></a>
-<FONT color="green">236</FONT>                try {<a name="line.236"></a>
-<FONT color="green">237</FONT>                    Class classObj = Loader.loadClass(className);<a name="line.237"></a>
-<FONT color="green">238</FONT>                    if (!superClass.isAssignableFrom(classObj)) {<a name="line.238"></a>
-<FONT color="green">239</FONT>                        LOGGER.error("A \"" + className + "\" object is not assignable to a \"" +<a name="line.239"></a>
-<FONT color="green">240</FONT>                            superClass.getName() + "\" variable.");<a name="line.240"></a>
-<FONT color="green">241</FONT>                        LOGGER.error("The class \"" + superClass.getName() + "\" was loaded by ");<a name="line.241"></a>
-<FONT color="green">242</FONT>                        LOGGER.error("[" + superClass.getClassLoader() + "] whereas object of type ");<a name="line.242"></a>
-<FONT color="green">243</FONT>                        LOGGER.error("\"" + classObj.getName() + "\" was loaded by ["<a name="line.243"></a>
-<FONT color="green">244</FONT>                            + classObj.getClassLoader() + "].");<a name="line.244"></a>
-<FONT color="green">245</FONT>                        return defaultValue;<a name="line.245"></a>
-<FONT color="green">246</FONT>                    }<a name="line.246"></a>
-<FONT color="green">247</FONT>                    return classObj.newInstance();<a name="line.247"></a>
-<FONT color="green">248</FONT>                } catch (ClassNotFoundException e) {<a name="line.248"></a>
-<FONT color="green">249</FONT>                    LOGGER.error("Could not instantiate class [" + className + "].", e);<a name="line.249"></a>
-<FONT color="green">250</FONT>                } catch (IllegalAccessException e) {<a name="line.250"></a>
-<FONT color="green">251</FONT>                    LOGGER.error("Could not instantiate class [" + className + "].", e);<a name="line.251"></a>
-<FONT color="green">252</FONT>                } catch (InstantiationException e) {<a name="line.252"></a>
-<FONT color="green">253</FONT>                    LOGGER.error("Could not instantiate class [" + className + "].", e);<a name="line.253"></a>
-<FONT color="green">254</FONT>                } catch (RuntimeException e) {<a name="line.254"></a>
-<FONT color="green">255</FONT>                    LOGGER.error("Could not instantiate class [" + className + "].", e);<a name="line.255"></a>
-<FONT color="green">256</FONT>                }<a name="line.256"></a>
-<FONT color="green">257</FONT>            }<a name="line.257"></a>
-<FONT color="green">258</FONT>            return defaultValue;<a name="line.258"></a>
-<FONT color="green">259</FONT>        }<a name="line.259"></a>
-<FONT color="green">260</FONT>    <a name="line.260"></a>
+<FONT color="green">106</FONT>    <a name="line.106"></a>
+<FONT color="green">107</FONT>        public static Object instantiateByKey(Properties props, String key, Class&lt;?&gt; superClass,<a name="line.107"></a>
+<FONT color="green">108</FONT>                                       Object defaultValue) {<a name="line.108"></a>
+<FONT color="green">109</FONT>    <a name="line.109"></a>
+<FONT color="green">110</FONT>            // Get the value of the property in string form<a name="line.110"></a>
+<FONT color="green">111</FONT>            String className = findAndSubst(key, props);<a name="line.111"></a>
+<FONT color="green">112</FONT>            if (className == null) {<a name="line.112"></a>
+<FONT color="green">113</FONT>                LOGGER.error("Could not find value for key " + key);<a name="line.113"></a>
+<FONT color="green">114</FONT>                return defaultValue;<a name="line.114"></a>
+<FONT color="green">115</FONT>            }<a name="line.115"></a>
+<FONT color="green">116</FONT>            // Trim className to avoid trailing spaces that cause problems.<a name="line.116"></a>
+<FONT color="green">117</FONT>            return OptionConverter.instantiateByClassName(className.trim(), superClass,<a name="line.117"></a>
+<FONT color="green">118</FONT>                defaultValue);<a name="line.118"></a>
+<FONT color="green">119</FONT>        }<a name="line.119"></a>
+<FONT color="green">120</FONT>    <a name="line.120"></a>
+<FONT color="green">121</FONT>        /**<a name="line.121"></a>
+<FONT color="green">122</FONT>         * If &lt;code&gt;value&lt;/code&gt; is "true", then {@code true} is<a name="line.122"></a>
+<FONT color="green">123</FONT>         * returned. If &lt;code&gt;value&lt;/code&gt; is "false", then<a name="line.123"></a>
+<FONT color="green">124</FONT>         * {@code true} is returned. Otherwise, &lt;code&gt;default&lt;/code&gt; is<a name="line.124"></a>
+<FONT color="green">125</FONT>         * returned.<a name="line.125"></a>
+<FONT color="green">126</FONT>         * &lt;p/&gt;<a name="line.126"></a>
+<FONT color="green">127</FONT>         * &lt;p&gt;Case of value is unimportant.<a name="line.127"></a>
+<FONT color="green">128</FONT>         * @param value The value to convert.<a name="line.128"></a>
+<FONT color="green">129</FONT>         * @param dEfault The default value.<a name="line.129"></a>
+<FONT color="green">130</FONT>         * @return true or false, depending on the value and/or default.<a name="line.130"></a>
+<FONT color="green">131</FONT>         */<a name="line.131"></a>
+<FONT color="green">132</FONT>        public static boolean toBoolean(String value, boolean dEfault) {<a name="line.132"></a>
+<FONT color="green">133</FONT>            if (value == null) {<a name="line.133"></a>
+<FONT color="green">134</FONT>                return dEfault;<a name="line.134"></a>
+<FONT color="green">135</FONT>            }<a name="line.135"></a>
+<FONT color="green">136</FONT>            String trimmedVal = value.trim();<a name="line.136"></a>
+<FONT color="green">137</FONT>            if ("true".equalsIgnoreCase(trimmedVal)) {<a name="line.137"></a>
+<FONT color="green">138</FONT>                return true;<a name="line.138"></a>
+<FONT color="green">139</FONT>            }<a name="line.139"></a>
+<FONT color="green">140</FONT>            if ("false".equalsIgnoreCase(trimmedVal)) {<a name="line.140"></a>
+<FONT color="green">141</FONT>                return false;<a name="line.141"></a>
+<FONT color="green">142</FONT>            }<a name="line.142"></a>
+<FONT color="green">143</FONT>            return dEfault;<a name="line.143"></a>
+<FONT color="green">144</FONT>        }<a name="line.144"></a>
+<FONT color="green">145</FONT>    <a name="line.145"></a>
+<FONT color="green">146</FONT>        /**<a name="line.146"></a>
+<FONT color="green">147</FONT>         * Convert the String value to an int.<a name="line.147"></a>
+<FONT color="green">148</FONT>         * @param value The value as a String.<a name="line.148"></a>
+<FONT color="green">149</FONT>         * @param dEfault The default value.<a name="line.149"></a>
+<FONT color="green">150</FONT>         * @return The value as an int.<a name="line.150"></a>
+<FONT color="green">151</FONT>         */<a name="line.151"></a>
+<FONT color="green">152</FONT>        public static int toInt(String value, int dEfault) {<a name="line.152"></a>
+<FONT color="green">153</FONT>            if (value != null) {<a name="line.153"></a>
+<FONT color="green">154</FONT>                String s = value.trim();<a name="line.154"></a>
+<FONT color="green">155</FONT>                try {<a name="line.155"></a>
+<FONT color="green">156</FONT>                    return Integer.valueOf(s);<a name="line.156"></a>
+<FONT color="green">157</FONT>                } catch (NumberFormatException e) {<a name="line.157"></a>
+<FONT color="green">158</FONT>                    LOGGER.error("[" + s + "] is not in proper int form.");<a name="line.158"></a>
+<FONT color="green">159</FONT>                    e.printStackTrace();<a name="line.159"></a>
+<FONT color="green">160</FONT>                }<a name="line.160"></a>
+<FONT color="green">161</FONT>            }<a name="line.161"></a>
+<FONT color="green">162</FONT>            return dEfault;<a name="line.162"></a>
+<FONT color="green">163</FONT>        }<a name="line.163"></a>
+<FONT color="green">164</FONT>    <a name="line.164"></a>
+<FONT color="green">165</FONT>        /**<a name="line.165"></a>
+<FONT color="green">166</FONT>         *<a name="line.166"></a>
+<FONT color="green">167</FONT>         * @param value The size of the file as a String.<a name="line.167"></a>
+<FONT color="green">168</FONT>         * @param defaultValue The default value.<a name="line.168"></a>
+<FONT color="green">169</FONT>         * @return The size of the file as a long.<a name="line.169"></a>
+<FONT color="green">170</FONT>         */<a name="line.170"></a>
+<FONT color="green">171</FONT>        public static long toFileSize(String value, long defaultValue) {<a name="line.171"></a>
+<FONT color="green">172</FONT>            if (value == null) {<a name="line.172"></a>
+<FONT color="green">173</FONT>                return defaultValue;<a name="line.173"></a>
+<FONT color="green">174</FONT>            }<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>            String s = value.trim().toUpperCase(Locale.ENGLISH);<a name="line.176"></a>
+<FONT color="green">177</FONT>            long multiplier = 1;<a name="line.177"></a>
+<FONT color="green">178</FONT>            int index;<a name="line.178"></a>
+<FONT color="green">179</FONT>    <a name="line.179"></a>
+<FONT color="green">180</FONT>            if ((index = s.indexOf("KB")) != -1) {<a name="line.180"></a>
+<FONT color="green">181</FONT>                multiplier = ONE_K;<a name="line.181"></a>
+<FONT color="green">182</FONT>                s = s.substring(0, index);<a name="line.182"></a>
+<FONT color="green">183</FONT>            } else if ((index = s.indexOf("MB")) != -1) {<a name="line.183"></a>
+<FONT color="green">184</FONT>                multiplier = ONE_K * ONE_K;<a name="line.184"></a>
+<FONT color="green">185</FONT>                s = s.substring(0, index);<a name="line.185"></a>
+<FONT color="green">186</FONT>            } else if ((index = s.indexOf("GB")) != -1) {<a name="line.186"></a>
+<FONT color="green">187</FONT>                multiplier = ONE_K * ONE_K * ONE_K;<a name="line.187"></a>
+<FONT color="green">188</FONT>                s = s.substring(0, index);<a name="line.188"></a>
+<FONT color="green">189</FONT>            }<a name="line.189"></a>
+<FONT color="green">190</FONT>            if (s != null) {<a name="line.190"></a>
+<FONT color="green">191</FONT>                try {<a name="line.191"></a>
+<FONT color="green">192</FONT>                    return Long.valueOf(s) * multiplier;<a name="line.192"></a>
+<FONT color="green">193</FONT>                } catch (NumberFormatException e) {<a name="line.193"></a>
+<FONT color="green">194</FONT>                    LOGGER.error("[" + s + "] is not in proper int form.");<a name="line.194"></a>
+<FONT color="green">195</FONT>                    LOGGER.error("[" + value + "] not in expected format.", e);<a name="line.195"></a>
+<FONT color="green">196</FONT>                }<a name="line.196"></a>
+<FONT color="green">197</FONT>            }<a name="line.197"></a>
+<FONT color="green">198</FONT>            return defaultValue;<a name="line.198"></a>
+<FONT color="green">199</FONT>        }<a name="line.199"></a>
+<FONT color="green">200</FONT>    <a name="line.200"></a>
+<FONT color="green">201</FONT>        /**<a name="line.201"></a>
+<FONT color="green">202</FONT>         * Find the value corresponding to &lt;code&gt;key&lt;/code&gt; in<a name="line.202"></a>
+<FONT color="green">203</FONT>         * &lt;code&gt;props&lt;/code&gt;. Then perform variable substitution on the<a name="line.203"></a>
+<FONT color="green">204</FONT>         * found value.<a name="line.204"></a>
+<FONT color="green">205</FONT>         * @param key The key to locate.<a name="line.205"></a>
+<FONT color="green">206</FONT>         * @param props The properties.<a name="line.206"></a>
+<FONT color="green">207</FONT>         * @return The String after substitution.<a name="line.207"></a>
+<FONT color="green">208</FONT>         */<a name="line.208"></a>
+<FONT color="green">209</FONT>        public static String findAndSubst(String key, Properties props) {<a name="line.209"></a>
+<FONT color="green">210</FONT>            String value = props.getProperty(key);<a name="line.210"></a>
+<FONT color="green">211</FONT>            if (value == null) {<a name="line.211"></a>
+<FONT color="green">212</FONT>                return null;<a name="line.212"></a>
+<FONT color="green">213</FONT>            }<a name="line.213"></a>
+<FONT color="green">214</FONT>    <a name="line.214"></a>
+<FONT color="green">215</FONT>            try {<a name="line.215"></a>
+<FONT color="green">216</FONT>                return substVars(value, props);<a name="line.216"></a>
+<FONT color="green">217</FONT>            } catch (IllegalArgumentException e) {<a name="line.217"></a>
+<FONT color="green">218</FONT>                LOGGER.error("Bad option value [" + value + "].", e);<a name="line.218"></a>
+<FONT color="green">219</FONT>                return value;<a name="line.219"></a>
+<FONT color="green">220</FONT>            }<a name="line.220"></a>
+<FONT color="green">221</FONT>        }<a name="line.221"></a>
+<FONT color="green">222</FONT>    <a name="line.222"></a>
+<FONT color="green">223</FONT>        /**<a name="line.223"></a>
+<FONT color="green">224</FONT>         * Instantiate an object given a class name. Check that the<a name="line.224"></a>
+<FONT color="green">225</FONT>         * &lt;code&gt;className&lt;/code&gt; is a subclass of<a name="line.225"></a>
+<FONT color="green">226</FONT>         * &lt;code&gt;superClass&lt;/code&gt;. If that test fails or the object could<a name="line.226"></a>
+<FONT color="green">227</FONT>         * not be instantiated, then &lt;code&gt;defaultValue&lt;/code&gt; is returned.<a name="line.227"></a>
+<FONT color="green">228</FONT>         *<a name="line.228"></a>
+<FONT color="green">229</FONT>         * @param className    The fully qualified class name of the object to instantiate.<a name="line.229"></a>
+<FONT color="green">230</FONT>         * @param superClass   The class to which the new object should belong.<a name="line.230"></a>
+<FONT color="green">231</FONT>         * @param defaultValue The object to return in case of non-fulfillment<a name="line.231"></a>
+<FONT color="green">232</FONT>         * @return The created object.<a name="line.232"></a>
+<FONT color="green">233</FONT>         */<a name="line.233"></a>
+<FONT color="green">234</FONT>        public static Object instantiateByClassName(String className, Class&lt;?&gt; superClass,<a name="line.234"></a>
+<FONT color="green">235</FONT>                                             Object defaultValue) {<a name="line.235"></a>
+<FONT color="green">236</FONT>            if (className != null) {<a name="line.236"></a>
+<FONT color="green">237</FONT>                try {<a name="line.237"></a>
+<FONT color="green">238</FONT>                    Class&lt;?&gt; classObj = Loader.loadClass(className);<a name="line.238"></a>
+<FONT color="green">239</FONT>                    if (!superClass.isAssignableFrom(classObj)) {<a name="line.239"></a>
+<FONT color="green">240</FONT>                        LOGGER.error("A \"" + className + "\" object is not assignable to a \"" +<a name="line.240"></a>
+<FONT color="green">241</FONT>                            superClass.getName() + "\" variable.");<a name="line.241"></a>
+<FONT color="green">242</FONT>                        LOGGER.error("The class \"" + superClass.getName() + "\" was loaded by ");<a name="line.242"></a>
+<FONT color="green">243</FONT>                        LOGGER.error("[" + superClass.getClassLoader() + "] whereas object of type ");<a name="line.243"></a>
+<FONT color="green">244</FONT>                        LOGGER.error("\"" + classObj.getName() + "\" was loaded by ["<a name="line.244"></a>
+<FONT color="green">245</FONT>                            + classObj.getClassLoader() + "].");<a name="line.245"></a>
+<FONT color="green">246</FONT>                        return defaultValue;<a name="line.246"></a>
+<FONT color="green">247</FONT>                    }<a name="line.247"></a>
+<FONT color="green">248</FONT>                    return classObj.newInstance();<a name="line.248"></a>
+<FONT color="green">249</FONT>                } catch (ClassNotFoundException e) {<a name="line.249"></a>
+<FONT color="green">250</FONT>                    LOGGER.error("Could not instantiate class [" + className + "].", e);<a name="line.250"></a>
+<FONT color="green">251</FONT>                } catch (IllegalAccessException e) {<a name="line.251"></a>
+<FONT color="green">252</FONT>                    LOGGER.error("Could not instantiate class [" + className + "].", e);<a name="line.252"></a>
+<FONT color="green">253</FONT>                } catch (InstantiationException e) {<a name="line.253"></a>
+<FONT color="green">254</FONT>                    LOGGER.error("Could not instantiate class [" + className + "].", e);<a name="line.254"></a>
+<FONT color="green">255</FONT>                } catch (RuntimeException e) {<a name="line.255"></a>
+<FONT color="green">256</FONT>                    LOGGER.error("Could not instantiate class [" + className + "].", e);<a name="line.256"></a>
+<FONT color="green">257</FONT>                }<a name="line.257"></a>
+<FONT color="green">258</FONT>            }<a name="line.258"></a>
+<FONT color="green">259</FONT>            return defaultValue;<a name="line.259"></a>
+<FONT color="green">260</FONT>        }<a name="line.260"></a>
 <FONT color="green">261</FONT>    <a name="line.261"></a>
-<FONT color="green">262</FONT>        /**<a name="line.262"></a>
-<FONT color="green">263</FONT>         * Perform variable substitution in string &lt;code&gt;val&lt;/code&gt; from the<a name="line.263"></a>
-<FONT color="green">264</FONT>         * values of keys found in the system propeties.<a name="line.264"></a>
-<FONT color="green">265</FONT>         * &lt;p/&gt;<a name="line.265"></a>
-<FONT color="green">266</FONT>         * &lt;p&gt;The variable substitution delimeters are &lt;b&gt;${&lt;/b&gt; and &lt;b&gt;}&lt;/b&gt;.<a name="line.266"></a>
-<FONT color="green">267</FONT>         * &lt;p/&gt;<a name="line.267"></a>
-<FONT color="green">268</FONT>         * &lt;p&gt;For example, if the System properties contains "key=value", then<a name="line.268"></a>
-<FONT color="green">269</FONT>         * the call<a name="line.269"></a>
-<FONT color="green">270</FONT>         * &lt;pre&gt;<a name="line.270"></a>
-<FONT color="green">271</FONT>         * String s = OptionConverter.substituteVars("Value of key is ${key}.");<a name="line.271"></a>
-<FONT color="green">272</FONT>         * &lt;/pre&gt;<a name="line.272"></a>
-<FONT color="green">273</FONT>         * &lt;p/&gt;<a name="line.273"></a>
-<FONT color="green">274</FONT>         * will set the variable &lt;code&gt;s&lt;/code&gt; to "Value of key is value.".<a name="line.274"></a>
-<FONT color="green">275</FONT>         * &lt;p/&gt;<a name="line.275"></a>
-<FONT color="green">276</FONT>         * &lt;p&gt;If no value could be found for the specified key, then the<a name="line.276"></a>
-<FONT color="green">277</FONT>         * &lt;code&gt;props&lt;/code&gt; parameter is searched, if the value could not<a name="line.277"></a>
-<FONT color="green">278</FONT>         * be found there, then substitution defaults to the empty string.<a name="line.278"></a>
-<FONT color="green">279</FONT>         * &lt;p/&gt;<a name="line.279"></a>
-<FONT color="green">280</FONT>         * &lt;p&gt;For example, if system propeties contains no value for the key<a name="line.280"></a>
-<FONT color="green">281</FONT>         * "inexistentKey", then the call<a name="line.281"></a>
-<FONT color="green">282</FONT>         * &lt;p/&gt;<a name="line.282"></a>
-<FONT color="green">283</FONT>         * &lt;pre&gt;<a name="line.283"></a>
-<FONT color="green">284</FONT>         * String s = OptionConverter.subsVars("Value of inexistentKey is [${inexistentKey}]");<a name="line.284"></a>
-<FONT color="green">285</FONT>         * &lt;/pre&gt;<a name="line.285"></a>
-<FONT color="green">286</FONT>         * will set &lt;code&gt;s&lt;/code&gt; to "Value of inexistentKey is []"<a name="line.286"></a>
-<FONT color="green">287</FONT>         * &lt;p/&gt;<a name="line.287"></a>
-<FONT color="green">288</FONT>         * &lt;p&gt;An {@link java.lang.IllegalArgumentException} is thrown if<a name="line.288"></a>
-<FONT color="green">289</FONT>         * &lt;code&gt;val&lt;/code&gt; contains a start delimeter "${" which is not<a name="line.289"></a>
-<FONT color="green">290</FONT>         * balanced by a stop delimeter "}". &lt;/p&gt;<a name="line.290"></a>
-<FONT color="green">291</FONT>         * &lt;p/&gt;<a name="line.291"></a>
-<FONT color="green">292</FONT>         * &lt;p&gt;&lt;b&gt;Author&lt;/b&gt; Avy Sharell&lt;/a&gt;&lt;/p&gt;<a name="line.292"></a>
-<FONT color="green">293</FONT>         *<a name="line.293"></a>
-<FONT color="green">294</FONT>         * @param val The string on which variable substitution is performed.<a name="line.294"></a>
-<FONT color="green">295</FONT>         * @param props The properties to use for substitution.<a name="line.295"></a>
-<FONT color="green">296</FONT>         * @return The String after substitution.<a name="line.296"></a>
-<FONT color="green">297</FONT>         * @throws IllegalArgumentException if &lt;code&gt;val&lt;/code&gt; is malformed.<a name="line.297"></a>
-<FONT color="green">298</FONT>         */<a name="line.298"></a>
-<FONT color="green">299</FONT>        public static String substVars(String val, Properties props) throws<a name="line.299"></a>
-<FONT color="green">300</FONT>            IllegalArgumentException {<a name="line.300"></a>
-<FONT color="green">301</FONT>    <a name="line.301"></a>
-<FONT color="green">302</FONT>            StringBuilder sbuf = new StringBuilder();<a name="line.302"></a>
-<FONT color="green">303</FONT>    <a name="line.303"></a>
-<FONT color="green">304</FONT>            int i = 0;<a name="line.304"></a>
-<FONT color="green">305</FONT>            int j;<a name="line.305"></a>
-<FONT color="green">306</FONT>            int k;<a name="line.306"></a>
-<FONT color="green">307</FONT>    <a name="line.307"></a>
-<FONT color="green">308</FONT>            while (true) {<a name="line.308"></a>
-<FONT color="green">309</FONT>                j = val.indexOf(DELIM_START, i);<a name="line.309"></a>
-<FONT color="green">310</FONT>                if (j == -1) {<a name="line.310"></a>
-<FONT color="green">311</FONT>                    // no more variables<a name="line.311"></a>
-<FONT color="green">312</FONT>                    if (i == 0) { // this is a simple string<a name="line.312"></a>
-<FONT color="green">313</FONT>                        return val;<a name="line.313"></a>
-<FONT color="green">314</FONT>                    } else { // add the tail string which contails no variables and return the result.<a name="line.314"></a>
-<FONT color="green">315</FONT>                        sbuf.append(val.substring(i, val.length()));<a name="line.315"></a>
-<FONT color="green">316</FONT>                        return sbuf.toString();<a name="line.316"></a>
-<FONT color="green">317</FONT>                    }<a name="line.317"></a>
-<FONT color="green">318</FONT>                } else {<a name="line.318"></a>
-<FONT color="green">319</FONT>                    sbuf.append(val.substring(i, j));<a name="line.319"></a>
-<FONT color="green">320</FONT>                    k = val.indexOf(DELIM_STOP, j);<a name="line.320"></a>
-<FONT color="green">321</FONT>                    if (k == -1) {<a name="line.321"></a>
-<FONT color="green">322</FONT>                        throw new IllegalArgumentException('"' + val +<a name="line.322"></a>
-<FONT color="green">323</FONT>                            "\" has no closing brace. Opening brace at position " + j<a name="line.323"></a>
-<FONT color="green">324</FONT>                            + '.');<a name="line.324"></a>
-<FONT color="green">325</FONT>                    } else {<a name="line.325"></a>
-<FONT color="green">326</FONT>                        j += DELIM_START_LEN;<a name="line.326"></a>
-<FONT color="green">327</FONT>                        String key = val.substring(j, k);<a name="line.327"></a>
-<FONT color="green">328</FONT>                        // first try in System properties<a name="line.328"></a>
-<FONT color="green">329</FONT>                        String replacement = getSystemProperty(key, null);<a name="line.329"></a>
-<FONT color="green">330</FONT>                        // then try props parameter<a name="line.330"></a>
-<FONT color="green">331</FONT>                        if (replacement == null &amp;&amp; props != null) {<a name="line.331"></a>
-<FONT color="green">332</FONT>                            replacement = props.getProperty(key);<a name="line.332"></a>
-<FONT color="green">333</FONT>                        }<a name="line.333"></a>
-<FONT color="green">334</FONT>    <a name="line.334"></a>
-<FONT color="green">335</FONT>                        if (replacement != null) {<a name="line.335"></a>
-<FONT color="green">336</FONT>                            // Do variable substitution on the replacement string<a name="line.336"></a>
-<FONT color="green">337</FONT>                            // such that we can solve "Hello ${x2}" as "Hello p1"<a name="line.337"></a>
-<FONT color="green">338</FONT>                            // the where the properties are<a name="line.338"></a>
-<FONT color="green">339</FONT>                            // x1=p1<a name="line.339"></a>
-<FONT color="green">340</FONT>                            // x2=${x1}<a name="line.340"></a>
-<FONT color="green">341</FONT>                            String recursiveReplacement = substVars(replacement, props);<a name="line.341"></a>
-<FONT color="green">342</FONT>                            sbuf.append(recursiveReplacement);<a name="line.342"></a>
-<FONT color="green">343</FONT>                        }<a name="line.343"></a>
-<FONT color="green">344</FONT>                        i = k + DELIM_STOP_LEN;<a name="line.344"></a>
-<FONT color="green">345</FONT>                    }<a name="line.345"></a>
-<FONT color="green">346</FONT>                }<a name="line.346"></a>
-<FONT color="green">347</FONT>            }<a name="line.347"></a>
-<FONT color="green">348</FONT>        }<a name="line.348"></a>
-<FONT color="green">349</FONT>    }<a name="line.349"></a>
+<FONT color="green">262</FONT>    <a name="line.262"></a>
+<FONT color="green">263</FONT>        /**<a name="line.263"></a>
+<FONT color="green">264</FONT>         * Perform variable substitution in string &lt;code&gt;val&lt;/code&gt; from the<a name="line.264"></a>
+<FONT color="green">265</FONT>         * values of keys found in the system propeties.<a name="line.265"></a>
+<FONT color="green">266</FONT>         * &lt;p/&gt;<a name="line.266"></a>
+<FONT color="green">267</FONT>         * &lt;p&gt;The variable substitution delimeters are &lt;b&gt;${&lt;/b&gt; and &lt;b&gt;}&lt;/b&gt;.<a name="line.267"></a>
+<FONT color="green">268</FONT>         * &lt;p/&gt;<a name="line.268"></a>
+<FONT color="green">269</FONT>         * &lt;p&gt;For example, if the System properties contains "key=value", then<a name="line.269"></a>
+<FONT color="green">270</FONT>         * the call<a name="line.270"></a>
+<FONT color="green">271</FONT>         * &lt;pre&gt;<a name="line.271"></a>
+<FONT color="green">272</FONT>         * String s = OptionConverter.substituteVars("Value of key is ${key}.");<a name="line.272"></a>
+<FONT color="green">273</FONT>         * &lt;/pre&gt;<a name="line.273"></a>
+<FONT color="green">274</FONT>         * &lt;p/&gt;<a name="line.274"></a>
+<FONT color="green">275</FONT>         * will set the variable &lt;code&gt;s&lt;/code&gt; to "Value of key is value.".<a name="line.275"></a>
+<FONT color="green">276</FONT>         * &lt;p/&gt;<a name="line.276"></a>
+<FONT color="green">277</FONT>         * &lt;p&gt;If no value could be found for the specified key, then the<a name="line.277"></a>
+<FONT color="green">278</FONT>         * &lt;code&gt;props&lt;/code&gt; parameter is searched, if the value could not<a name="line.278"></a>
+<FONT color="green">279</FONT>         * be found there, then substitution defaults to the empty string.<a name="line.279"></a>
+<FONT color="green">280</FONT>         * &lt;p/&gt;<a name="line.280"></a>
+<FONT color="green">281</FONT>         * &lt;p&gt;For example, if system propeties contains no value for the key<a name="line.281"></a>
+<FONT color="green">282</FONT>         * "inexistentKey", then the call<a name="line.282"></a>
+<FONT color="green">283</FONT>         * &lt;p/&gt;<a name="line.283"></a>
+<FONT color="green">284</FONT>         * &lt;pre&gt;<a name="line.284"></a>
+<FONT color="green">285</FONT>         * String s = OptionConverter.subsVars("Value of inexistentKey is [${inexistentKey}]");<a name="line.285"></a>
+<FONT color="green">286</FONT>         * &lt;/pre&gt;<a name="line.286"></a>
+<FONT color="green">287</FONT>         * will set &lt;code&gt;s&lt;/code&gt; to "Value of inexistentKey is []"<a name="line.287"></a>
+<FONT color="green">288</FONT>         * &lt;p/&gt;<a name="line.288"></a>
+<FONT color="green">289</FONT>         * &lt;p&gt;An {@link java.lang.IllegalArgumentException} is thrown if<a name="line.289"></a>
+<FONT color="green">290</FONT>         * &lt;code&gt;val&lt;/code&gt; contains a start delimeter "${" which is not<a name="line.290"></a>
+<FONT color="green">291</FONT>         * balanced by a stop delimeter "}". &lt;/p&gt;<a name="line.291"></a>
+<FONT color="green">292</FONT>         * &lt;p/&gt;<a name="line.292"></a>
+<FONT color="green">293</FONT>         * &lt;p&gt;&lt;b&gt;Author&lt;/b&gt; Avy Sharell&lt;/a&gt;&lt;/p&gt;<a name="line.293"></a>
+<FONT color="green">294</FONT>         *<a name="line.294"></a>
+<FONT color="green">295</FONT>         * @param val The string on which variable substitution is performed.<a name="line.295"></a>
+<FONT color="green">296</FONT>         * @param props The properties to use for substitution.<a name="line.296"></a>
+<FONT color="green">297</FONT>         * @return The String after substitution.<a name="line.297"></a>
+<FONT color="green">298</FONT>         * @throws IllegalArgumentException if &lt;code&gt;val&lt;/code&gt; is malformed.<a name="line.298"></a>
+<FONT color="green">299</FONT>         */<a name="line.299"></a>
+<FONT color="green">300</FONT>        public static String substVars(String val, Properties props) throws<a name="line.300"></a>
+<FONT color="green">301</FONT>            IllegalArgumentException {<a name="line.301"></a>
+<FONT color="green">302</FONT>    <a name="line.302"></a>
+<FONT color="green">303</FONT>            StringBuilder sbuf = new StringBuilder();<a name="line.303"></a>
+<FONT color="green">304</FONT>    <a name="line.304"></a>
+<FONT color="green">305</FONT>            int i = 0;<a name="line.305"></a>
+<FONT color="green">306</FONT>            int j;<a name="line.306"></a>
+<FONT color="green">307</FONT>            int k;<a name="line.307"></a>
+<FONT color="green">308</FONT>    <a name="line.308"></a>
+<FONT color="green">309</FONT>            while (true) {<a name="line.309"></a>
+<FONT color="green">310</FONT>                j = val.indexOf(DELIM_START, i);<a name="line.310"></a>
+<FONT color="green">311</FONT>                if (j == -1) {<a name="line.311"></a>
+<FONT color="green">312</FONT>                    // no more variables<a name="line.312"></a>
+<FONT color="green">313</FONT>                    if (i == 0) { // this is a simple string<a name="line.313"></a>
+<FONT color="green">314</FONT>                        return val;<a name="line.314"></a>
+<FONT color="green">315</FONT>                    } else { // add the tail string which contails no variables and return the result.<a name="line.315"></a>
+<FONT color="green">316</FONT>                        sbuf.append(val.substring(i, val.length()));<a name="line.316"></a>
+<FONT color="green">317</FONT>                        return sbuf.toString();<a name="line.317"></a>
+<FONT color="green">318</FONT>                    }<a name="line.318"></a>
+<FONT color="green">319</FONT>                } else {<a name="line.319"></a>
+<FONT color="green">320</FONT>                    sbuf.append(val.substring(i, j));<a name="line.320"></a>
+<FONT color="green">321</FONT>                    k = val.indexOf(DELIM_STOP, j);<a name="line.321"></a>
+<FONT color="green">322</FONT>                    if (k == -1) {<a name="line.322"></a>
+<FONT color="green">323</FONT>                        throw new IllegalArgumentException('"' + val +<a name="line.323"></a>
+<FONT color="green">324</FONT>                            "\" has no closing brace. Opening brace at position " + j<a name="line.324"></a>
+<FONT color="green">325</FONT>                            + '.');<a name="line.325"></a>
+<FONT color="green">326</FONT>                    } else {<a name="line.326"></a>
+<FONT color="green">327</FONT>                        j += DELIM_START_LEN;<a name="line.327"></a>
+<FONT color="green">328</FONT>                        String key = val.substring(j, k);<a name="line.328"></a>
+<FONT color="green">329</FONT>                        // first try in System properties<a name="line.329"></a>
+<FONT color="green">330</FONT>                        String replacement = getSystemProperty(key, null);<a name="line.330"></a>
+<FONT color="green">331</FONT>                        // then try props parameter<a name="line.331"></a>
+<FONT color="green">332</FONT>                        if (replacement == null &amp;&amp; props != null) {<a name="line.332"></a>
+<FONT color="green">333</FONT>                            replacement = props.getProperty(key);<a name="line.333"></a>
+<FONT color="green">334</FONT>                        }<a name="line.334"></a>
+<FONT color="green">335</FONT>    <a name="line.335"></a>
+<FONT color="green">336</FONT>                        if (replacement != null) {<a name="line.336"></a>
+<FONT color="green">337</FONT>                            // Do variable substitution on the replacement string<a name="line.337"></a>
+<FONT color="green">338</FONT>                            // such that we can solve "Hello ${x2}" as "Hello p1"<a name="line.338"></a>
+<FONT color="green">339</FONT>                            // the where the properties are<a name="line.339"></a>
+<FONT color="green">340</FONT>                            // x1=p1<a name="line.340"></a>
+<FONT color="green">341</FONT>                            // x2=${x1}<a name="line.341"></a>
+<FONT color="green">342</FONT>                            String recursiveReplacement = substVars(replacement, props);<a name="line.342"></a>
+<FONT color="green">343</FONT>                            sbuf.append(recursiveReplacement);<a name="line.343"></a>
+<FONT color="green">344</FONT>                        }<a name="line.344"></a>
+<FONT color="green">345</FONT>                        i = k + DELIM_STOP_LEN;<a name="line.345"></a>
+<FONT color="green">346</FONT>                    }<a name="line.346"></a>
+<FONT color="green">347</FONT>                }<a name="line.347"></a>
+<FONT color="green">348</FONT>            }<a name="line.348"></a>
+<FONT color="green">349</FONT>        }<a name="line.349"></a>
+<FONT color="green">350</FONT>    }<a name="line.350"></a>
 
 
 
