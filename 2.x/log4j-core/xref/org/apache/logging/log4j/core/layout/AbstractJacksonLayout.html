@@ -42,12 +42,12 @@
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> compact;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> complete;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/AbstractJacksonLayout.html">AbstractJacksonLayout</a>(<strong class="jxr_keyword">final</strong> ObjectWriter objectWriter, <strong class="jxr_keyword">final</strong> Charset charset, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> compact, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> complete) {
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/layout/AbstractJacksonLayout.html">AbstractJacksonLayout</a>(<strong class="jxr_keyword">final</strong> ObjectWriter objectWriter, <strong class="jxr_keyword">final</strong> Charset charset, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> compact, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> complete, <strong class="jxr_keyword">boolean</strong> eventEol) {
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>          <strong class="jxr_keyword">super</strong>(charset);
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>          <strong class="jxr_keyword">this</strong>.objectWriter = objectWriter;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>          <strong class="jxr_keyword">this</strong>.compact = compact;
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">this</strong>.complete = complete;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>          <strong class="jxr_keyword">this</strong>.eol = compact ? COMPACT_EOL : DEFAULT_EOL;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>          <strong class="jxr_keyword">this</strong>.eol = compact &amp;&amp; !eventEol ? COMPACT_EOL : DEFAULT_EOL;
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>      }
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      <em class="jxr_javadoccomment">/**</em>
@@ -59,7 +59,7 @@
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      @Override
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">public</strong> String toSerializable(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.objectWriter.writeValueAsString(event);
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.objectWriter.writeValueAsString(event) + eol;
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> JsonProcessingException e) {
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>              <em class="jxr_comment">// Should this be an ISE or IAE?</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>              LOGGER.error(e);
@@ -70,6 +70,6 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2014 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

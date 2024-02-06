@@ -802,12 +802,12 @@
 <FONT color="green">799</FONT>        private static final long serialVersionUID = 1L;<a name="line.799"></a>
 <FONT color="green">800</FONT>    <a name="line.800"></a>
 <FONT color="green">801</FONT>        protected JsonLayout(final boolean locationInfo, final boolean properties, final boolean complete, final boolean compact,<a name="line.801"></a>
-<FONT color="green">802</FONT>                final Charset charset) {<a name="line.802"></a>
-<FONT color="green">803</FONT>            super(new JacksonFactory.JSON().newWriter(locationInfo, properties, compact), charset, compact, complete);<a name="line.803"></a>
+<FONT color="green">802</FONT>                boolean eventEol, final Charset charset) {<a name="line.802"></a>
+<FONT color="green">803</FONT>            super(new JacksonFactory.JSON().newWriter(locationInfo, properties, compact), charset, compact, complete, eventEol);<a name="line.803"></a>
 <FONT color="green">804</FONT>        }<a name="line.804"></a>
 <FONT color="green">805</FONT>    <a name="line.805"></a>
 <FONT color="green">806</FONT>        /**<a name="line.806"></a>
-<FONT color="green">807</FONT>         * Returns appropriate JSON headers.<a name="line.807"></a>
+<FONT color="green">807</FONT>         * Returns appropriate JSON header.<a name="line.807"></a>
 <FONT color="green">808</FONT>         *<a name="line.808"></a>
 <FONT color="green">809</FONT>         * @return a byte array containing the header, opening the JSON array.<a name="line.809"></a>
 <FONT color="green">810</FONT>         */<a name="line.810"></a>
@@ -819,7 +819,7 @@
 <FONT color="green">816</FONT>            final StringBuilder buf = new StringBuilder();<a name="line.816"></a>
 <FONT color="green">817</FONT>            buf.append('[');<a name="line.817"></a>
 <FONT color="green">818</FONT>            buf.append(this.eol);<a name="line.818"></a>
-<FONT color="green">819</FONT>            return buf.toString().getBytes(this.getCharset());<a name="line.819"></a>
+<FONT color="green">819</FONT>            return getBytes(buf.toString());<a name="line.819"></a>
 <FONT color="green">820</FONT>        }<a name="line.820"></a>
 <FONT color="green">821</FONT>    <a name="line.821"></a>
 <FONT color="green">822</FONT>        /**<a name="line.822"></a>
@@ -832,7 +832,7 @@
 <FONT color="green">829</FONT>            if (!this.complete) {<a name="line.829"></a>
 <FONT color="green">830</FONT>                return null;<a name="line.830"></a>
 <FONT color="green">831</FONT>            }<a name="line.831"></a>
-<FONT color="green">832</FONT>            return (this.eol + ']' + this.eol).getBytes(this.getCharset());<a name="line.832"></a>
+<FONT color="green">832</FONT>            return getBytes(this.eol + ']' + this.eol);<a name="line.832"></a>
 <FONT color="green">833</FONT>        }<a name="line.833"></a>
 <FONT color="green">834</FONT>    <a name="line.834"></a>
 <FONT color="green">835</FONT>        @Override<a name="line.835"></a>
@@ -853,35 +853,44 @@
 <FONT color="green">850</FONT>        /**<a name="line.850"></a>
 <FONT color="green">851</FONT>         * Creates a JSON Layout.<a name="line.851"></a>
 <FONT color="green">852</FONT>         *<a name="line.852"></a>
-<FONT color="green">853</FONT>         * @param locationInfo If "true", includes the location information in the generated JSON.<a name="line.853"></a>
-<FONT color="green">854</FONT>         * @param properties If "true", includes the thread context in the generated JSON.<a name="line.854"></a>
-<FONT color="green">855</FONT>         * @param complete If "true", includes the JSON header and footer, defaults to "false".<a name="line.855"></a>
-<FONT color="green">856</FONT>         * @param compact If "true", does not use end-of-lines and indentation, defaults to "false".<a name="line.856"></a>
-<FONT color="green">857</FONT>         * @param charset The character set to use, if {@code null}, uses "UTF-8".<a name="line.857"></a>
-<FONT color="green">858</FONT>         * @return A JSON Layout.<a name="line.858"></a>
-<FONT color="green">859</FONT>         */<a name="line.859"></a>
-<FONT color="green">860</FONT>        @PluginFactory<a name="line.860"></a>
-<FONT color="green">861</FONT>        public static AbstractJacksonLayout createLayout(<a name="line.861"></a>
-<FONT color="green">862</FONT>                // @formatter:off<a name="line.862"></a>
-<FONT color="green">863</FONT>                @PluginAttribute(value = "locationInfo", defaultBoolean = false) final boolean locationInfo,<a name="line.863"></a>
-<FONT color="green">864</FONT>                @PluginAttribute(value = "properties", defaultBoolean = false) final boolean properties,<a name="line.864"></a>
-<FONT color="green">865</FONT>                @PluginAttribute(value = "complete", defaultBoolean = false) final boolean complete,<a name="line.865"></a>
-<FONT color="green">866</FONT>                @PluginAttribute(value = "compact", defaultBoolean = false) final boolean compact,<a name="line.866"></a>
-<FONT color="green">867</FONT>                @PluginAttribute(value = "charset", defaultString = "UTF-8") final Charset charset<a name="line.867"></a>
-<FONT color="green">868</FONT>                // @formatter:on<a name="line.868"></a>
-<FONT color="green">869</FONT>        ) {<a name="line.869"></a>
-<FONT color="green">870</FONT>            return new JsonLayout(locationInfo, properties, complete, compact, charset);<a name="line.870"></a>
-<FONT color="green">871</FONT>        }<a name="line.871"></a>
-<FONT color="green">872</FONT>    <a name="line.872"></a>
-<FONT color="green">873</FONT>        /**<a name="line.873"></a>
-<FONT color="green">874</FONT>         * Creates a JSON Layout using the default settings.<a name="line.874"></a>
-<FONT color="green">875</FONT>         *<a name="line.875"></a>
-<FONT color="green">876</FONT>         * @return A JSON Layout.<a name="line.876"></a>
-<FONT color="green">877</FONT>         */<a name="line.877"></a>
-<FONT color="green">878</FONT>        public static AbstractJacksonLayout createDefaultLayout() {<a name="line.878"></a>
-<FONT color="green">879</FONT>            return new JsonLayout(false, false, false, false, Charsets.UTF_8);<a name="line.879"></a>
+<FONT color="green">853</FONT>         * @param locationInfo<a name="line.853"></a>
+<FONT color="green">854</FONT>         *        If "true", includes the location information in the generated JSON.<a name="line.854"></a>
+<FONT color="green">855</FONT>         * @param properties<a name="line.855"></a>
+<FONT color="green">856</FONT>         *        If "true", includes the thread context in the generated JSON.<a name="line.856"></a>
+<FONT color="green">857</FONT>         * @param complete<a name="line.857"></a>
+<FONT color="green">858</FONT>         *        If "true", includes the JSON header and footer, defaults to "false".<a name="line.858"></a>
+<FONT color="green">859</FONT>         * @param compact<a name="line.859"></a>
+<FONT color="green">860</FONT>         *        If "true", does not use end-of-lines and indentation, defaults to "false".<a name="line.860"></a>
+<FONT color="green">861</FONT>         * @param eventEol<a name="line.861"></a>
+<FONT color="green">862</FONT>         *        If "true", forces an EOL after each log event (even if compact is "true"), defaults to "false". This<a name="line.862"></a>
+<FONT color="green">863</FONT>         *        allows one even per line, even in compact mode.<a name="line.863"></a>
+<FONT color="green">864</FONT>         * @param charset<a name="line.864"></a>
+<FONT color="green">865</FONT>         *        The character set to use, if {@code null}, uses "UTF-8".<a name="line.865"></a>
+<FONT color="green">866</FONT>         * @return A JSON Layout.<a name="line.866"></a>
+<FONT color="green">867</FONT>         */<a name="line.867"></a>
+<FONT color="green">868</FONT>        @PluginFactory<a name="line.868"></a>
+<FONT color="green">869</FONT>        public static AbstractJacksonLayout createLayout(<a name="line.869"></a>
+<FONT color="green">870</FONT>                // @formatter:off<a name="line.870"></a>
+<FONT color="green">871</FONT>                @PluginAttribute(value = "locationInfo", defaultBoolean = false) final boolean locationInfo,<a name="line.871"></a>
+<FONT color="green">872</FONT>                @PluginAttribute(value = "properties", defaultBoolean = false) final boolean properties,<a name="line.872"></a>
+<FONT color="green">873</FONT>                @PluginAttribute(value = "complete", defaultBoolean = false) final boolean complete,<a name="line.873"></a>
+<FONT color="green">874</FONT>                @PluginAttribute(value = "compact", defaultBoolean = false) final boolean compact,<a name="line.874"></a>
+<FONT color="green">875</FONT>                @PluginAttribute(value = "eventEol", defaultBoolean = false) final boolean eventEol,<a name="line.875"></a>
+<FONT color="green">876</FONT>                @PluginAttribute(value = "charset", defaultString = "UTF-8") final Charset charset<a name="line.876"></a>
+<FONT color="green">877</FONT>                // @formatter:on<a name="line.877"></a>
+<FONT color="green">878</FONT>        ) {<a name="line.878"></a>
+<FONT color="green">879</FONT>            return new JsonLayout(locationInfo, properties, complete, compact, eventEol, charset);<a name="line.879"></a>
 <FONT color="green">880</FONT>        }<a name="line.880"></a>
-<FONT color="green">881</FONT>    }<a name="line.881"></a>
+<FONT color="green">881</FONT>    <a name="line.881"></a>
+<FONT color="green">882</FONT>        /**<a name="line.882"></a>
+<FONT color="green">883</FONT>         * Creates a JSON Layout using the default settings.<a name="line.883"></a>
+<FONT color="green">884</FONT>         *<a name="line.884"></a>
+<FONT color="green">885</FONT>         * @return A JSON Layout.<a name="line.885"></a>
+<FONT color="green">886</FONT>         */<a name="line.886"></a>
+<FONT color="green">887</FONT>        public static AbstractJacksonLayout createDefaultLayout() {<a name="line.887"></a>
+<FONT color="green">888</FONT>            return new JsonLayout(false, false, false, false, false, Charsets.UTF_8);<a name="line.888"></a>
+<FONT color="green">889</FONT>        }<a name="line.889"></a>
+<FONT color="green">890</FONT>    }<a name="line.890"></a>
 
 
 

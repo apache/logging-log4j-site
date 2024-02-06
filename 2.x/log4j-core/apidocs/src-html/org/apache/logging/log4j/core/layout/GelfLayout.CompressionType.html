@@ -46,10 +46,10 @@
 <FONT color="green">043</FONT>    import com.fasterxml.jackson.core.io.JsonStringEncoder;<a name="line.43"></a>
 <FONT color="green">044</FONT>    <a name="line.44"></a>
 <FONT color="green">045</FONT>    /**<a name="line.45"></a>
-<FONT color="green">046</FONT>     * Lays out Graylog Extended Log Format (GELF) 1.1 log events.<a name="line.46"></a>
+<FONT color="green">046</FONT>     * Lays out events in the Graylog Extended Log Format (GELF) 1.1.<a name="line.46"></a>
 <FONT color="green">047</FONT>     * &lt;p&gt;<a name="line.47"></a>
-<FONT color="green">048</FONT>     * Compresses (compressionType = "GZIP" or "ZLIB") the JSON if log event data is larger than 1024 bytes (the<a name="line.48"></a>
-<FONT color="green">049</FONT>     * compressionThreshold). Does not implement chunking.<a name="line.49"></a>
+<FONT color="green">048</FONT>     * This layout compresses JSON to GZIP or ZLIB (the {@code compressionType}) if log event data is larger than 1024 bytes<a name="line.48"></a>
+<FONT color="green">049</FONT>     * (the {@code compressionThreshold}). This layout does not implement chunking.<a name="line.49"></a>
 <FONT color="green">050</FONT>     * &lt;/p&gt;<a name="line.50"></a>
 <FONT color="green">051</FONT>     * &lt;p&gt;<a name="line.51"></a>
 <FONT color="green">052</FONT>     * Configure as follows to send to a Graylog2 server:<a name="line.52"></a>
@@ -184,7 +184,7 @@
 <FONT color="green">181</FONT>    <a name="line.181"></a>
 <FONT color="green">182</FONT>        @Override<a name="line.182"></a>
 <FONT color="green">183</FONT>        public byte[] toByteArray(final LogEvent event) {<a name="line.183"></a>
-<FONT color="green">184</FONT>            final byte[] bytes = toSerializable(event).getBytes(getCharset());<a name="line.184"></a>
+<FONT color="green">184</FONT>            final byte[] bytes = getBytes(toSerializable(event));<a name="line.184"></a>
 <FONT color="green">185</FONT>            return bytes.length &gt; compressionThreshold ? compress(bytes) : bytes;<a name="line.185"></a>
 <FONT color="green">186</FONT>        }<a name="line.186"></a>
 <FONT color="green">187</FONT>    <a name="line.187"></a>
