@@ -93,85 +93,89 @@
 <FONT color="green">090</FONT>            this.stream = stream;<a name="line.90"></a>
 <FONT color="green">091</FONT>        }<a name="line.91"></a>
 <FONT color="green">092</FONT>    <a name="line.92"></a>
-<FONT color="green">093</FONT>        public void setLevel(final Level level) {<a name="line.93"></a>
-<FONT color="green">094</FONT>            if (level != null) {<a name="line.94"></a>
-<FONT color="green">095</FONT>                this.level = level;<a name="line.95"></a>
-<FONT color="green">096</FONT>            }<a name="line.96"></a>
-<FONT color="green">097</FONT>        }<a name="line.97"></a>
-<FONT color="green">098</FONT>    <a name="line.98"></a>
-<FONT color="green">099</FONT>        @Override<a name="line.99"></a>
-<FONT color="green">100</FONT>        public void log(final Marker marker, final String fqcn, final Level level, final Message msg,<a name="line.100"></a>
-<FONT color="green">101</FONT>                        final Throwable throwable) {<a name="line.101"></a>
-<FONT color="green">102</FONT>            final StringBuilder sb = new StringBuilder();<a name="line.102"></a>
-<FONT color="green">103</FONT>            // Append date-time if so configured<a name="line.103"></a>
-<FONT color="green">104</FONT>            if (showDateTime) {<a name="line.104"></a>
-<FONT color="green">105</FONT>                final Date now = new Date();<a name="line.105"></a>
-<FONT color="green">106</FONT>                String dateText;<a name="line.106"></a>
-<FONT color="green">107</FONT>                synchronized (dateFormatter) {<a name="line.107"></a>
-<FONT color="green">108</FONT>                    dateText = dateFormatter.format(now);<a name="line.108"></a>
-<FONT color="green">109</FONT>                }<a name="line.109"></a>
-<FONT color="green">110</FONT>                sb.append(dateText);<a name="line.110"></a>
-<FONT color="green">111</FONT>                sb.append(" ");<a name="line.111"></a>
-<FONT color="green">112</FONT>            }<a name="line.112"></a>
-<FONT color="green">113</FONT>    <a name="line.113"></a>
-<FONT color="green">114</FONT>            sb.append(level.toString());<a name="line.114"></a>
-<FONT color="green">115</FONT>            sb.append(" ");<a name="line.115"></a>
-<FONT color="green">116</FONT>            if (logName != null &amp;&amp; logName.length() &gt; 0) {<a name="line.116"></a>
-<FONT color="green">117</FONT>                sb.append(logName);<a name="line.117"></a>
-<FONT color="green">118</FONT>                sb.append(" ");<a name="line.118"></a>
-<FONT color="green">119</FONT>            }<a name="line.119"></a>
-<FONT color="green">120</FONT>            sb.append(msg.getFormattedMessage());<a name="line.120"></a>
-<FONT color="green">121</FONT>            if (showContextMap) {<a name="line.121"></a>
-<FONT color="green">122</FONT>                final Map&lt;String, String&gt; mdc = ThreadContext.getContext();<a name="line.122"></a>
-<FONT color="green">123</FONT>                if (mdc.size() &gt; 0) {<a name="line.123"></a>
-<FONT color="green">124</FONT>                    sb.append(" ");<a name="line.124"></a>
-<FONT color="green">125</FONT>                    sb.append(mdc.toString());<a name="line.125"></a>
-<FONT color="green">126</FONT>                    sb.append(" ");<a name="line.126"></a>
-<FONT color="green">127</FONT>                }<a name="line.127"></a>
-<FONT color="green">128</FONT>            }<a name="line.128"></a>
-<FONT color="green">129</FONT>            final Object[] params = msg.getParameters();<a name="line.129"></a>
-<FONT color="green">130</FONT>            Throwable t;<a name="line.130"></a>
-<FONT color="green">131</FONT>            if (throwable == null &amp;&amp; params != null &amp;&amp; params[params.length - 1] instanceof Throwable) {<a name="line.131"></a>
-<FONT color="green">132</FONT>                t = (Throwable) params[params.length - 1];<a name="line.132"></a>
-<FONT color="green">133</FONT>            } else {<a name="line.133"></a>
-<FONT color="green">134</FONT>                t = throwable;<a name="line.134"></a>
-<FONT color="green">135</FONT>            }<a name="line.135"></a>
-<FONT color="green">136</FONT>            if (t != null) {<a name="line.136"></a>
-<FONT color="green">137</FONT>                sb.append(" ");<a name="line.137"></a>
-<FONT color="green">138</FONT>                final ByteArrayOutputStream baos = new ByteArrayOutputStream();<a name="line.138"></a>
-<FONT color="green">139</FONT>                t.printStackTrace(new PrintStream(baos));<a name="line.139"></a>
-<FONT color="green">140</FONT>                sb.append(baos.toString());<a name="line.140"></a>
-<FONT color="green">141</FONT>            }<a name="line.141"></a>
-<FONT color="green">142</FONT>            stream.println(sb.toString());<a name="line.142"></a>
-<FONT color="green">143</FONT>        }<a name="line.143"></a>
-<FONT color="green">144</FONT>    <a name="line.144"></a>
-<FONT color="green">145</FONT>        @Override<a name="line.145"></a>
-<FONT color="green">146</FONT>        protected boolean isEnabled(final Level level, final Marker marker, final String msg) {<a name="line.146"></a>
-<FONT color="green">147</FONT>            return this.level.intLevel() &gt;= level.intLevel();<a name="line.147"></a>
-<FONT color="green">148</FONT>        }<a name="line.148"></a>
-<FONT color="green">149</FONT>    <a name="line.149"></a>
-<FONT color="green">150</FONT>    <a name="line.150"></a>
-<FONT color="green">151</FONT>        @Override<a name="line.151"></a>
-<FONT color="green">152</FONT>        protected boolean isEnabled(final Level level, final Marker marker, final String msg, final Throwable t) {<a name="line.152"></a>
-<FONT color="green">153</FONT>            return this.level.intLevel() &gt;= level.intLevel();<a name="line.153"></a>
-<FONT color="green">154</FONT>        }<a name="line.154"></a>
-<FONT color="green">155</FONT>    <a name="line.155"></a>
-<FONT color="green">156</FONT>        @Override<a name="line.156"></a>
-<FONT color="green">157</FONT>        protected boolean isEnabled(final Level level, final Marker marker, final String msg, final Object... p1) {<a name="line.157"></a>
-<FONT color="green">158</FONT>            return this.level.intLevel() &gt;= level.intLevel();<a name="line.158"></a>
-<FONT color="green">159</FONT>        }<a name="line.159"></a>
-<FONT color="green">160</FONT>    <a name="line.160"></a>
-<FONT color="green">161</FONT>        @Override<a name="line.161"></a>
-<FONT color="green">162</FONT>        protected boolean isEnabled(final Level level, final Marker marker, final Object msg, final Throwable t) {<a name="line.162"></a>
-<FONT color="green">163</FONT>            return this.level.intLevel() &gt;= level.intLevel();<a name="line.163"></a>
-<FONT color="green">164</FONT>        }<a name="line.164"></a>
-<FONT color="green">165</FONT>    <a name="line.165"></a>
-<FONT color="green">166</FONT>        @Override<a name="line.166"></a>
-<FONT color="green">167</FONT>        protected boolean isEnabled(final Level level, final Marker marker, final Message msg, final Throwable t) {<a name="line.167"></a>
-<FONT color="green">168</FONT>            return this.level.intLevel() &gt;= level.intLevel();<a name="line.168"></a>
-<FONT color="green">169</FONT>        }<a name="line.169"></a>
-<FONT color="green">170</FONT>    <a name="line.170"></a>
-<FONT color="green">171</FONT>    }<a name="line.171"></a>
+<FONT color="green">093</FONT>        public Level getLevel() {<a name="line.93"></a>
+<FONT color="green">094</FONT>            return level;<a name="line.94"></a>
+<FONT color="green">095</FONT>        }<a name="line.95"></a>
+<FONT color="green">096</FONT>    <a name="line.96"></a>
+<FONT color="green">097</FONT>        public void setLevel(final Level level) {<a name="line.97"></a>
+<FONT color="green">098</FONT>            if (level != null) {<a name="line.98"></a>
+<FONT color="green">099</FONT>                this.level = level;<a name="line.99"></a>
+<FONT color="green">100</FONT>            }<a name="line.100"></a>
+<FONT color="green">101</FONT>        }<a name="line.101"></a>
+<FONT color="green">102</FONT>    <a name="line.102"></a>
+<FONT color="green">103</FONT>        @Override<a name="line.103"></a>
+<FONT color="green">104</FONT>        public void log(final Marker marker, final String fqcn, final Level level, final Message msg,<a name="line.104"></a>
+<FONT color="green">105</FONT>                        final Throwable throwable) {<a name="line.105"></a>
+<FONT color="green">106</FONT>            final StringBuilder sb = new StringBuilder();<a name="line.106"></a>
+<FONT color="green">107</FONT>            // Append date-time if so configured<a name="line.107"></a>
+<FONT color="green">108</FONT>            if (showDateTime) {<a name="line.108"></a>
+<FONT color="green">109</FONT>                final Date now = new Date();<a name="line.109"></a>
+<FONT color="green">110</FONT>                String dateText;<a name="line.110"></a>
+<FONT color="green">111</FONT>                synchronized (dateFormatter) {<a name="line.111"></a>
+<FONT color="green">112</FONT>                    dateText = dateFormatter.format(now);<a name="line.112"></a>
+<FONT color="green">113</FONT>                }<a name="line.113"></a>
+<FONT color="green">114</FONT>                sb.append(dateText);<a name="line.114"></a>
+<FONT color="green">115</FONT>                sb.append(" ");<a name="line.115"></a>
+<FONT color="green">116</FONT>            }<a name="line.116"></a>
+<FONT color="green">117</FONT>    <a name="line.117"></a>
+<FONT color="green">118</FONT>            sb.append(level.toString());<a name="line.118"></a>
+<FONT color="green">119</FONT>            sb.append(" ");<a name="line.119"></a>
+<FONT color="green">120</FONT>            if (logName != null &amp;&amp; logName.length() &gt; 0) {<a name="line.120"></a>
+<FONT color="green">121</FONT>                sb.append(logName);<a name="line.121"></a>
+<FONT color="green">122</FONT>                sb.append(" ");<a name="line.122"></a>
+<FONT color="green">123</FONT>            }<a name="line.123"></a>
+<FONT color="green">124</FONT>            sb.append(msg.getFormattedMessage());<a name="line.124"></a>
+<FONT color="green">125</FONT>            if (showContextMap) {<a name="line.125"></a>
+<FONT color="green">126</FONT>                final Map&lt;String, String&gt; mdc = ThreadContext.getContext();<a name="line.126"></a>
+<FONT color="green">127</FONT>                if (mdc.size() &gt; 0) {<a name="line.127"></a>
+<FONT color="green">128</FONT>                    sb.append(" ");<a name="line.128"></a>
+<FONT color="green">129</FONT>                    sb.append(mdc.toString());<a name="line.129"></a>
+<FONT color="green">130</FONT>                    sb.append(" ");<a name="line.130"></a>
+<FONT color="green">131</FONT>                }<a name="line.131"></a>
+<FONT color="green">132</FONT>            }<a name="line.132"></a>
+<FONT color="green">133</FONT>            final Object[] params = msg.getParameters();<a name="line.133"></a>
+<FONT color="green">134</FONT>            Throwable t;<a name="line.134"></a>
+<FONT color="green">135</FONT>            if (throwable == null &amp;&amp; params != null &amp;&amp; params[params.length - 1] instanceof Throwable) {<a name="line.135"></a>
+<FONT color="green">136</FONT>                t = (Throwable) params[params.length - 1];<a name="line.136"></a>
+<FONT color="green">137</FONT>            } else {<a name="line.137"></a>
+<FONT color="green">138</FONT>                t = throwable;<a name="line.138"></a>
+<FONT color="green">139</FONT>            }<a name="line.139"></a>
+<FONT color="green">140</FONT>            if (t != null) {<a name="line.140"></a>
+<FONT color="green">141</FONT>                sb.append(" ");<a name="line.141"></a>
+<FONT color="green">142</FONT>                final ByteArrayOutputStream baos = new ByteArrayOutputStream();<a name="line.142"></a>
+<FONT color="green">143</FONT>                t.printStackTrace(new PrintStream(baos));<a name="line.143"></a>
+<FONT color="green">144</FONT>                sb.append(baos.toString());<a name="line.144"></a>
+<FONT color="green">145</FONT>            }<a name="line.145"></a>
+<FONT color="green">146</FONT>            stream.println(sb.toString());<a name="line.146"></a>
+<FONT color="green">147</FONT>        }<a name="line.147"></a>
+<FONT color="green">148</FONT>    <a name="line.148"></a>
+<FONT color="green">149</FONT>        @Override<a name="line.149"></a>
+<FONT color="green">150</FONT>        protected boolean isEnabled(final Level level, final Marker marker, final String msg) {<a name="line.150"></a>
+<FONT color="green">151</FONT>            return this.level.intLevel() &gt;= level.intLevel();<a name="line.151"></a>
+<FONT color="green">152</FONT>        }<a name="line.152"></a>
+<FONT color="green">153</FONT>    <a name="line.153"></a>
+<FONT color="green">154</FONT>    <a name="line.154"></a>
+<FONT color="green">155</FONT>        @Override<a name="line.155"></a>
+<FONT color="green">156</FONT>        protected boolean isEnabled(final Level level, final Marker marker, final String msg, final Throwable t) {<a name="line.156"></a>
+<FONT color="green">157</FONT>            return this.level.intLevel() &gt;= level.intLevel();<a name="line.157"></a>
+<FONT color="green">158</FONT>        }<a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>        @Override<a name="line.160"></a>
+<FONT color="green">161</FONT>        protected boolean isEnabled(final Level level, final Marker marker, final String msg, final Object... p1) {<a name="line.161"></a>
+<FONT color="green">162</FONT>            return this.level.intLevel() &gt;= level.intLevel();<a name="line.162"></a>
+<FONT color="green">163</FONT>        }<a name="line.163"></a>
+<FONT color="green">164</FONT>    <a name="line.164"></a>
+<FONT color="green">165</FONT>        @Override<a name="line.165"></a>
+<FONT color="green">166</FONT>        protected boolean isEnabled(final Level level, final Marker marker, final Object msg, final Throwable t) {<a name="line.166"></a>
+<FONT color="green">167</FONT>            return this.level.intLevel() &gt;= level.intLevel();<a name="line.167"></a>
+<FONT color="green">168</FONT>        }<a name="line.168"></a>
+<FONT color="green">169</FONT>    <a name="line.169"></a>
+<FONT color="green">170</FONT>        @Override<a name="line.170"></a>
+<FONT color="green">171</FONT>        protected boolean isEnabled(final Level level, final Marker marker, final Message msg, final Throwable t) {<a name="line.171"></a>
+<FONT color="green">172</FONT>            return this.level.intLevel() &gt;= level.intLevel();<a name="line.172"></a>
+<FONT color="green">173</FONT>        }<a name="line.173"></a>
+<FONT color="green">174</FONT>    <a name="line.174"></a>
+<FONT color="green">175</FONT>    }<a name="line.175"></a>
 
 
 

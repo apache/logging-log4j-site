@@ -237,121 +237,123 @@
 <FONT color="green">234</FONT>         * The binding between a Logger and its configuration.<a name="line.234"></a>
 <FONT color="green">235</FONT>         */<a name="line.235"></a>
 <FONT color="green">236</FONT>        protected class PrivateConfig {<a name="line.236"></a>
-<FONT color="green">237</FONT>            private final LoggerConfig loggerConfig;<a name="line.237"></a>
-<FONT color="green">238</FONT>            private final Configuration config;<a name="line.238"></a>
-<FONT color="green">239</FONT>            private final Level level;<a name="line.239"></a>
-<FONT color="green">240</FONT>            private final int intLevel;<a name="line.240"></a>
-<FONT color="green">241</FONT>            private final Logger logger;<a name="line.241"></a>
-<FONT color="green">242</FONT>    <a name="line.242"></a>
-<FONT color="green">243</FONT>            public PrivateConfig(final Configuration config, final Logger logger) {<a name="line.243"></a>
-<FONT color="green">244</FONT>                this.config = config;<a name="line.244"></a>
-<FONT color="green">245</FONT>                this.loggerConfig = config.getLoggerConfig(getName());<a name="line.245"></a>
-<FONT color="green">246</FONT>                this.level = this.loggerConfig.getLevel();<a name="line.246"></a>
-<FONT color="green">247</FONT>                this.intLevel = this.level.intLevel();<a name="line.247"></a>
-<FONT color="green">248</FONT>                this.logger = logger;<a name="line.248"></a>
-<FONT color="green">249</FONT>            }<a name="line.249"></a>
-<FONT color="green">250</FONT>    <a name="line.250"></a>
-<FONT color="green">251</FONT>            public PrivateConfig(final PrivateConfig pc, final Level level) {<a name="line.251"></a>
-<FONT color="green">252</FONT>                this.config = pc.config;<a name="line.252"></a>
-<FONT color="green">253</FONT>                this.loggerConfig = pc.loggerConfig;<a name="line.253"></a>
-<FONT color="green">254</FONT>                this.level = level;<a name="line.254"></a>
-<FONT color="green">255</FONT>                this.intLevel = this.level.intLevel();<a name="line.255"></a>
-<FONT color="green">256</FONT>                this.logger = pc.logger;<a name="line.256"></a>
-<FONT color="green">257</FONT>            }<a name="line.257"></a>
-<FONT color="green">258</FONT>    <a name="line.258"></a>
-<FONT color="green">259</FONT>            public PrivateConfig(final PrivateConfig pc, final LoggerConfig lc) {<a name="line.259"></a>
-<FONT color="green">260</FONT>                this.config = pc.config;<a name="line.260"></a>
-<FONT color="green">261</FONT>                this.loggerConfig = lc;<a name="line.261"></a>
-<FONT color="green">262</FONT>                this.level = lc.getLevel();<a name="line.262"></a>
-<FONT color="green">263</FONT>                this.intLevel = this.level.intLevel();<a name="line.263"></a>
-<FONT color="green">264</FONT>                this.logger = pc.logger;<a name="line.264"></a>
-<FONT color="green">265</FONT>            }<a name="line.265"></a>
-<FONT color="green">266</FONT>    <a name="line.266"></a>
-<FONT color="green">267</FONT>            protected void logEvent(final LogEvent event) {<a name="line.267"></a>
-<FONT color="green">268</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.268"></a>
-<FONT color="green">269</FONT>                loggerConfig.log(event);<a name="line.269"></a>
-<FONT color="green">270</FONT>            }<a name="line.270"></a>
-<FONT color="green">271</FONT>    <a name="line.271"></a>
-<FONT color="green">272</FONT>            boolean filter(final Level level, final Marker marker, final String msg) {<a name="line.272"></a>
-<FONT color="green">273</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.273"></a>
-<FONT color="green">274</FONT>                final Filter filter = config.getFilter();<a name="line.274"></a>
-<FONT color="green">275</FONT>                if (filter != null) {<a name="line.275"></a>
-<FONT color="green">276</FONT>                    final Filter.Result r = filter.filter(logger, level, marker, msg);<a name="line.276"></a>
-<FONT color="green">277</FONT>                    if (r != Filter.Result.NEUTRAL) {<a name="line.277"></a>
-<FONT color="green">278</FONT>                        return r == Filter.Result.ACCEPT;<a name="line.278"></a>
-<FONT color="green">279</FONT>                    }<a name="line.279"></a>
-<FONT color="green">280</FONT>                }<a name="line.280"></a>
-<FONT color="green">281</FONT>    <a name="line.281"></a>
-<FONT color="green">282</FONT>                return intLevel &gt;= level.intLevel();<a name="line.282"></a>
-<FONT color="green">283</FONT>            }<a name="line.283"></a>
-<FONT color="green">284</FONT>    <a name="line.284"></a>
-<FONT color="green">285</FONT>            boolean filter(final Level level, final Marker marker, final String msg, final Throwable t) {<a name="line.285"></a>
-<FONT color="green">286</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.286"></a>
-<FONT color="green">287</FONT>                final Filter filter = config.getFilter();<a name="line.287"></a>
-<FONT color="green">288</FONT>                if (filter != null) {<a name="line.288"></a>
-<FONT color="green">289</FONT>                    final Filter.Result r = filter.filter(logger, level, marker, msg, t);<a name="line.289"></a>
-<FONT color="green">290</FONT>                    if (r != Filter.Result.NEUTRAL) {<a name="line.290"></a>
-<FONT color="green">291</FONT>                        return r == Filter.Result.ACCEPT;<a name="line.291"></a>
-<FONT color="green">292</FONT>                    }<a name="line.292"></a>
-<FONT color="green">293</FONT>                }<a name="line.293"></a>
-<FONT color="green">294</FONT>    <a name="line.294"></a>
-<FONT color="green">295</FONT>                return intLevel &gt;= level.intLevel();<a name="line.295"></a>
-<FONT color="green">296</FONT>            }<a name="line.296"></a>
-<FONT color="green">297</FONT>    <a name="line.297"></a>
-<FONT color="green">298</FONT>            boolean filter(final Level level, final Marker marker, final String msg, final Object... p1) {<a name="line.298"></a>
-<FONT color="green">299</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.299"></a>
-<FONT color="green">300</FONT>                final Filter filter = config.getFilter();<a name="line.300"></a>
-<FONT color="green">301</FONT>                if (filter != null) {<a name="line.301"></a>
-<FONT color="green">302</FONT>                    final Filter.Result r = filter.filter(logger, level, marker, msg, p1);<a name="line.302"></a>
-<FONT color="green">303</FONT>                    if (r != Filter.Result.NEUTRAL) {<a name="line.303"></a>
-<FONT color="green">304</FONT>                        return r == Filter.Result.ACCEPT;<a name="line.304"></a>
-<FONT color="green">305</FONT>                    }<a name="line.305"></a>
-<FONT color="green">306</FONT>                }<a name="line.306"></a>
-<FONT color="green">307</FONT>    <a name="line.307"></a>
-<FONT color="green">308</FONT>                return intLevel &gt;= level.intLevel();<a name="line.308"></a>
-<FONT color="green">309</FONT>            }<a name="line.309"></a>
-<FONT color="green">310</FONT>    <a name="line.310"></a>
-<FONT color="green">311</FONT>            boolean filter(final Level level, final Marker marker, final Object msg, final Throwable t) {<a name="line.311"></a>
-<FONT color="green">312</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.312"></a>
-<FONT color="green">313</FONT>                final Filter filter = config.getFilter();<a name="line.313"></a>
-<FONT color="green">314</FONT>                if (filter != null) {<a name="line.314"></a>
-<FONT color="green">315</FONT>                    final Filter.Result r = filter.filter(logger, level, marker, msg, t);<a name="line.315"></a>
-<FONT color="green">316</FONT>                    if (r != Filter.Result.NEUTRAL) {<a name="line.316"></a>
-<FONT color="green">317</FONT>                        return r == Filter.Result.ACCEPT;<a name="line.317"></a>
-<FONT color="green">318</FONT>                    }<a name="line.318"></a>
-<FONT color="green">319</FONT>                }<a name="line.319"></a>
-<FONT color="green">320</FONT>    <a name="line.320"></a>
-<FONT color="green">321</FONT>                return intLevel &gt;= level.intLevel();<a name="line.321"></a>
-<FONT color="green">322</FONT>            }<a name="line.322"></a>
-<FONT color="green">323</FONT>    <a name="line.323"></a>
-<FONT color="green">324</FONT>            boolean filter(final Level level, final Marker marker, final Message msg, final Throwable t) {<a name="line.324"></a>
-<FONT color="green">325</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.325"></a>
-<FONT color="green">326</FONT>                final Filter filter = config.getFilter();<a name="line.326"></a>
-<FONT color="green">327</FONT>                if (filter != null) {<a name="line.327"></a>
-<FONT color="green">328</FONT>                    final Filter.Result r = filter.filter(logger, level, marker, msg, t);<a name="line.328"></a>
-<FONT color="green">329</FONT>                    if (r != Filter.Result.NEUTRAL) {<a name="line.329"></a>
-<FONT color="green">330</FONT>                        return r == Filter.Result.ACCEPT;<a name="line.330"></a>
-<FONT color="green">331</FONT>                    }<a name="line.331"></a>
-<FONT color="green">332</FONT>                }<a name="line.332"></a>
-<FONT color="green">333</FONT>    <a name="line.333"></a>
-<FONT color="green">334</FONT>                return intLevel &gt;= level.intLevel();<a name="line.334"></a>
-<FONT color="green">335</FONT>            }<a name="line.335"></a>
-<FONT color="green">336</FONT>        }<a name="line.336"></a>
-<FONT color="green">337</FONT>    <a name="line.337"></a>
-<FONT color="green">338</FONT>        /**<a name="line.338"></a>
-<FONT color="green">339</FONT>         * Returns a String representation of this instance in the form {@code "name:level[ in context_name]"}.<a name="line.339"></a>
-<FONT color="green">340</FONT>         * @return A String describing this Logger instance.<a name="line.340"></a>
-<FONT color="green">341</FONT>         */<a name="line.341"></a>
-<FONT color="green">342</FONT>        @Override<a name="line.342"></a>
-<FONT color="green">343</FONT>        public String toString() {<a name="line.343"></a>
-<FONT color="green">344</FONT>            final String nameLevel = "" + getName() + ":" + getLevel();<a name="line.344"></a>
-<FONT color="green">345</FONT>            if (context == null) {<a name="line.345"></a>
-<FONT color="green">346</FONT>                return nameLevel;<a name="line.346"></a>
-<FONT color="green">347</FONT>            }<a name="line.347"></a>
-<FONT color="green">348</FONT>            final String contextName = context.getName();<a name="line.348"></a>
-<FONT color="green">349</FONT>            return contextName == null ? nameLevel : nameLevel + " in " + contextName;<a name="line.349"></a>
-<FONT color="green">350</FONT>        }<a name="line.350"></a>
-<FONT color="green">351</FONT>    }<a name="line.351"></a>
+<FONT color="green">237</FONT>            // config fields are public to make them visible to Logger subclasses<a name="line.237"></a>
+<FONT color="green">238</FONT>            public final LoggerConfig loggerConfig;<a name="line.238"></a>
+<FONT color="green">239</FONT>            public final Configuration config;<a name="line.239"></a>
+<FONT color="green">240</FONT>            private final Level level;<a name="line.240"></a>
+<FONT color="green">241</FONT>            private final int intLevel;<a name="line.241"></a>
+<FONT color="green">242</FONT>            private final Logger logger;<a name="line.242"></a>
+<FONT color="green">243</FONT>    <a name="line.243"></a>
+<FONT color="green">244</FONT>            public PrivateConfig(final Configuration config, final Logger logger) {<a name="line.244"></a>
+<FONT color="green">245</FONT>                this.config = config;<a name="line.245"></a>
+<FONT color="green">246</FONT>                this.loggerConfig = config.getLoggerConfig(getName());<a name="line.246"></a>
+<FONT color="green">247</FONT>                this.level = this.loggerConfig.getLevel();<a name="line.247"></a>
+<FONT color="green">248</FONT>                this.intLevel = this.level.intLevel();<a name="line.248"></a>
+<FONT color="green">249</FONT>                this.logger = logger;<a name="line.249"></a>
+<FONT color="green">250</FONT>            }<a name="line.250"></a>
+<FONT color="green">251</FONT>    <a name="line.251"></a>
+<FONT color="green">252</FONT>            public PrivateConfig(final PrivateConfig pc, final Level level) {<a name="line.252"></a>
+<FONT color="green">253</FONT>                this.config = pc.config;<a name="line.253"></a>
+<FONT color="green">254</FONT>                this.loggerConfig = pc.loggerConfig;<a name="line.254"></a>
+<FONT color="green">255</FONT>                this.level = level;<a name="line.255"></a>
+<FONT color="green">256</FONT>                this.intLevel = this.level.intLevel();<a name="line.256"></a>
+<FONT color="green">257</FONT>                this.logger = pc.logger;<a name="line.257"></a>
+<FONT color="green">258</FONT>            }<a name="line.258"></a>
+<FONT color="green">259</FONT>    <a name="line.259"></a>
+<FONT color="green">260</FONT>            public PrivateConfig(final PrivateConfig pc, final LoggerConfig lc) {<a name="line.260"></a>
+<FONT color="green">261</FONT>                this.config = pc.config;<a name="line.261"></a>
+<FONT color="green">262</FONT>                this.loggerConfig = lc;<a name="line.262"></a>
+<FONT color="green">263</FONT>                this.level = lc.getLevel();<a name="line.263"></a>
+<FONT color="green">264</FONT>                this.intLevel = this.level.intLevel();<a name="line.264"></a>
+<FONT color="green">265</FONT>                this.logger = pc.logger;<a name="line.265"></a>
+<FONT color="green">266</FONT>            }<a name="line.266"></a>
+<FONT color="green">267</FONT>    <a name="line.267"></a>
+<FONT color="green">268</FONT>            // LOG4J2-151: changed visibility to public<a name="line.268"></a>
+<FONT color="green">269</FONT>            public void logEvent(LogEvent event) {<a name="line.269"></a>
+<FONT color="green">270</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.270"></a>
+<FONT color="green">271</FONT>                loggerConfig.log(event);<a name="line.271"></a>
+<FONT color="green">272</FONT>            }<a name="line.272"></a>
+<FONT color="green">273</FONT>    <a name="line.273"></a>
+<FONT color="green">274</FONT>            boolean filter(final Level level, final Marker marker, final String msg) {<a name="line.274"></a>
+<FONT color="green">275</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.275"></a>
+<FONT color="green">276</FONT>                final Filter filter = config.getFilter();<a name="line.276"></a>
+<FONT color="green">277</FONT>                if (filter != null) {<a name="line.277"></a>
+<FONT color="green">278</FONT>                    final Filter.Result r = filter.filter(logger, level, marker, msg);<a name="line.278"></a>
+<FONT color="green">279</FONT>                    if (r != Filter.Result.NEUTRAL) {<a name="line.279"></a>
+<FONT color="green">280</FONT>                        return r == Filter.Result.ACCEPT;<a name="line.280"></a>
+<FONT color="green">281</FONT>                    }<a name="line.281"></a>
+<FONT color="green">282</FONT>                }<a name="line.282"></a>
+<FONT color="green">283</FONT>    <a name="line.283"></a>
+<FONT color="green">284</FONT>                return intLevel &gt;= level.intLevel();<a name="line.284"></a>
+<FONT color="green">285</FONT>            }<a name="line.285"></a>
+<FONT color="green">286</FONT>    <a name="line.286"></a>
+<FONT color="green">287</FONT>            boolean filter(final Level level, final Marker marker, final String msg, final Throwable t) {<a name="line.287"></a>
+<FONT color="green">288</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.288"></a>
+<FONT color="green">289</FONT>                final Filter filter = config.getFilter();<a name="line.289"></a>
+<FONT color="green">290</FONT>                if (filter != null) {<a name="line.290"></a>
+<FONT color="green">291</FONT>                    final Filter.Result r = filter.filter(logger, level, marker, msg, t);<a name="line.291"></a>
+<FONT color="green">292</FONT>                    if (r != Filter.Result.NEUTRAL) {<a name="line.292"></a>
+<FONT color="green">293</FONT>                        return r == Filter.Result.ACCEPT;<a name="line.293"></a>
+<FONT color="green">294</FONT>                    }<a name="line.294"></a>
+<FONT color="green">295</FONT>                }<a name="line.295"></a>
+<FONT color="green">296</FONT>    <a name="line.296"></a>
+<FONT color="green">297</FONT>                return intLevel &gt;= level.intLevel();<a name="line.297"></a>
+<FONT color="green">298</FONT>            }<a name="line.298"></a>
+<FONT color="green">299</FONT>    <a name="line.299"></a>
+<FONT color="green">300</FONT>            boolean filter(final Level level, final Marker marker, final String msg, final Object... p1) {<a name="line.300"></a>
+<FONT color="green">301</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.301"></a>
+<FONT color="green">302</FONT>                final Filter filter = config.getFilter();<a name="line.302"></a>
+<FONT color="green">303</FONT>                if (filter != null) {<a name="line.303"></a>
+<FONT color="green">304</FONT>                    final Filter.Result r = filter.filter(logger, level, marker, msg, p1);<a name="line.304"></a>
+<FONT color="green">305</FONT>                    if (r != Filter.Result.NEUTRAL) {<a name="line.305"></a>
+<FONT color="green">306</FONT>                        return r == Filter.Result.ACCEPT;<a name="line.306"></a>
+<FONT color="green">307</FONT>                    }<a name="line.307"></a>
+<FONT color="green">308</FONT>                }<a name="line.308"></a>
+<FONT color="green">309</FONT>    <a name="line.309"></a>
+<FONT color="green">310</FONT>                return intLevel &gt;= level.intLevel();<a name="line.310"></a>
+<FONT color="green">311</FONT>            }<a name="line.311"></a>
+<FONT color="green">312</FONT>    <a name="line.312"></a>
+<FONT color="green">313</FONT>            boolean filter(final Level level, final Marker marker, final Object msg, final Throwable t) {<a name="line.313"></a>
+<FONT color="green">314</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.314"></a>
+<FONT color="green">315</FONT>                final Filter filter = config.getFilter();<a name="line.315"></a>
+<FONT color="green">316</FONT>                if (filter != null) {<a name="line.316"></a>
+<FONT color="green">317</FONT>                    final Filter.Result r = filter.filter(logger, level, marker, msg, t);<a name="line.317"></a>
+<FONT color="green">318</FONT>                    if (r != Filter.Result.NEUTRAL) {<a name="line.318"></a>
+<FONT color="green">319</FONT>                        return r == Filter.Result.ACCEPT;<a name="line.319"></a>
+<FONT color="green">320</FONT>                    }<a name="line.320"></a>
+<FONT color="green">321</FONT>                }<a name="line.321"></a>
+<FONT color="green">322</FONT>    <a name="line.322"></a>
+<FONT color="green">323</FONT>                return intLevel &gt;= level.intLevel();<a name="line.323"></a>
+<FONT color="green">324</FONT>            }<a name="line.324"></a>
+<FONT color="green">325</FONT>    <a name="line.325"></a>
+<FONT color="green">326</FONT>            boolean filter(final Level level, final Marker marker, final Message msg, final Throwable t) {<a name="line.326"></a>
+<FONT color="green">327</FONT>                config.getConfigurationMonitor().checkConfiguration();<a name="line.327"></a>
+<FONT color="green">328</FONT>                final Filter filter = config.getFilter();<a name="line.328"></a>
+<FONT color="green">329</FONT>                if (filter != null) {<a name="line.329"></a>
+<FONT color="green">330</FONT>                    final Filter.Result r = filter.filter(logger, level, marker, msg, t);<a name="line.330"></a>
+<FONT color="green">331</FONT>                    if (r != Filter.Result.NEUTRAL) {<a name="line.331"></a>
+<FONT color="green">332</FONT>                        return r == Filter.Result.ACCEPT;<a name="line.332"></a>
+<FONT color="green">333</FONT>                    }<a name="line.333"></a>
+<FONT color="green">334</FONT>                }<a name="line.334"></a>
+<FONT color="green">335</FONT>    <a name="line.335"></a>
+<FONT color="green">336</FONT>                return intLevel &gt;= level.intLevel();<a name="line.336"></a>
+<FONT color="green">337</FONT>            }<a name="line.337"></a>
+<FONT color="green">338</FONT>        }<a name="line.338"></a>
+<FONT color="green">339</FONT>    <a name="line.339"></a>
+<FONT color="green">340</FONT>        /**<a name="line.340"></a>
+<FONT color="green">341</FONT>         * Returns a String representation of this instance in the form {@code "name:level[ in context_name]"}.<a name="line.341"></a>
+<FONT color="green">342</FONT>         * @return A String describing this Logger instance.<a name="line.342"></a>
+<FONT color="green">343</FONT>         */<a name="line.343"></a>
+<FONT color="green">344</FONT>        @Override<a name="line.344"></a>
+<FONT color="green">345</FONT>        public String toString() {<a name="line.345"></a>
+<FONT color="green">346</FONT>            final String nameLevel = "" + getName() + ":" + getLevel();<a name="line.346"></a>
+<FONT color="green">347</FONT>            if (context == null) {<a name="line.347"></a>
+<FONT color="green">348</FONT>                return nameLevel;<a name="line.348"></a>
+<FONT color="green">349</FONT>            }<a name="line.349"></a>
+<FONT color="green">350</FONT>            final String contextName = context.getName();<a name="line.350"></a>
+<FONT color="green">351</FONT>            return contextName == null ? nameLevel : nameLevel + " in " + contextName;<a name="line.351"></a>
+<FONT color="green">352</FONT>        }<a name="line.352"></a>
+<FONT color="green">353</FONT>    }<a name="line.353"></a>
 
 
 

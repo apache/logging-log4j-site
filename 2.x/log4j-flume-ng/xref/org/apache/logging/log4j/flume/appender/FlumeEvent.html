@@ -64,7 +64,7 @@
 <a class="jxr_linenumber" name="54" href="#54">54</a>  
 <a class="jxr_linenumber" name="55" href="#55">55</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EVENT_ID = <span class="jxr_string">"eventId"</span>;
 <a class="jxr_linenumber" name="56" href="#56">56</a>  
-<a class="jxr_linenumber" name="57" href="#57">57</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String GUID = <span class="jxr_string">"guId"</span>;
+<a class="jxr_linenumber" name="57" href="#57">57</a>      <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String GUID = <span class="jxr_string">"guId"</span>;
 <a class="jxr_linenumber" name="58" href="#58">58</a>  
 <a class="jxr_linenumber" name="59" href="#59">59</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TIMESTAMP = <span class="jxr_string">"timeStamp"</span>;;
 <a class="jxr_linenumber" name="60" href="#60">60</a>  
@@ -135,17 +135,17 @@
 <a class="jxr_linenumber" name="125" href="#125">125</a>                 }
 <a class="jxr_linenumber" name="126" href="#126">126</a>             }
 <a class="jxr_linenumber" name="127" href="#127">127</a>         }
-<a class="jxr_linenumber" name="128" href="#128">128</a>         <strong class="jxr_keyword">final</strong> Message message = event.getMessage();
-<a class="jxr_linenumber" name="129" href="#129">129</a>         <strong class="jxr_keyword">if</strong> (message instanceof MapMessage) {
-<a class="jxr_linenumber" name="130" href="#130">130</a>             <strong class="jxr_keyword">if</strong> (message instanceof StructuredDataMessage) {
-<a class="jxr_linenumber" name="131" href="#131">131</a>                 addStructuredData(eventPrefix, headers, (StructuredDataMessage) message);
-<a class="jxr_linenumber" name="132" href="#132">132</a>             }
-<a class="jxr_linenumber" name="133" href="#133">133</a>             addMapData(eventPrefix, headers, (MapMessage) message);
-<a class="jxr_linenumber" name="134" href="#134">134</a>         }
-<a class="jxr_linenumber" name="135" href="#135">135</a> 
-<a class="jxr_linenumber" name="136" href="#136">136</a>         addContextData(mdcPrefix, headers, ctx);
+<a class="jxr_linenumber" name="128" href="#128">128</a>         <strong class="jxr_keyword">final</strong> String guid =  UUIDUtil.getTimeBasedUUID().toString();
+<a class="jxr_linenumber" name="129" href="#129">129</a>         <strong class="jxr_keyword">final</strong> Message message = event.getMessage();
+<a class="jxr_linenumber" name="130" href="#130">130</a>         <strong class="jxr_keyword">if</strong> (message instanceof MapMessage) {
+<a class="jxr_linenumber" name="131" href="#131">131</a>             ((MapMessage) message).put(GUID, guid);
+<a class="jxr_linenumber" name="132" href="#132">132</a>             <strong class="jxr_keyword">if</strong> (message instanceof StructuredDataMessage) {
+<a class="jxr_linenumber" name="133" href="#133">133</a>                 addStructuredData(eventPrefix, headers, (StructuredDataMessage) message);
+<a class="jxr_linenumber" name="134" href="#134">134</a>             }
+<a class="jxr_linenumber" name="135" href="#135">135</a>             addMapData(eventPrefix, headers, (MapMessage) message);
+<a class="jxr_linenumber" name="136" href="#136">136</a>         }
 <a class="jxr_linenumber" name="137" href="#137">137</a> 
-<a class="jxr_linenumber" name="138" href="#138">138</a>         addGuid(headers);
+<a class="jxr_linenumber" name="138" href="#138">138</a>         addContextData(mdcPrefix, headers, ctx);
 <a class="jxr_linenumber" name="139" href="#139">139</a>     }
 <a class="jxr_linenumber" name="140" href="#140">140</a> 
 <a class="jxr_linenumber" name="141" href="#141">141</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> addStructuredData(<strong class="jxr_keyword">final</strong> String prefix, <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; fields,
@@ -171,123 +171,139 @@
 <a class="jxr_linenumber" name="161" href="#161">161</a>         }
 <a class="jxr_linenumber" name="162" href="#162">162</a>     }
 <a class="jxr_linenumber" name="163" href="#163">163</a> 
-<a class="jxr_linenumber" name="164" href="#164">164</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> addGuid(<strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; fields) {
-<a class="jxr_linenumber" name="165" href="#165">165</a>         fields.put(GUID, UUIDUtil.getTimeBasedUUID().toString());
-<a class="jxr_linenumber" name="166" href="#166">166</a>     }
-<a class="jxr_linenumber" name="167" href="#167">167</a> 
-<a class="jxr_linenumber" name="168" href="#168">168</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     * Set the body in the event.</em>
-<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     * @param body The body to add to the event.</em>
-<a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="172" href="#172">172</a>     @Override
-<a class="jxr_linenumber" name="173" href="#173">173</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setBody(<strong class="jxr_keyword">final</strong> byte[] body) {
-<a class="jxr_linenumber" name="174" href="#174">174</a>         <strong class="jxr_keyword">if</strong> (body == <strong class="jxr_keyword">null</strong> || body.length == 0) {
-<a class="jxr_linenumber" name="175" href="#175">175</a>             <strong class="jxr_keyword">super</strong>.setBody(<strong class="jxr_keyword">new</strong> byte[0]);
-<a class="jxr_linenumber" name="176" href="#176">176</a>             <strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="177" href="#177">177</a>         }
-<a class="jxr_linenumber" name="178" href="#178">178</a>         <strong class="jxr_keyword">if</strong> (compress) {
-<a class="jxr_linenumber" name="179" href="#179">179</a>             <strong class="jxr_keyword">final</strong> ByteArrayOutputStream baos = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
-<a class="jxr_linenumber" name="180" href="#180">180</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="181" href="#181">181</a>                 <strong class="jxr_keyword">final</strong> GZIPOutputStream os = <strong class="jxr_keyword">new</strong> GZIPOutputStream(baos);
-<a class="jxr_linenumber" name="182" href="#182">182</a>                 os.write(body);
-<a class="jxr_linenumber" name="183" href="#183">183</a>                 os.close();
-<a class="jxr_linenumber" name="184" href="#184">184</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioe) {
-<a class="jxr_linenumber" name="185" href="#185">185</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> LoggingException(<span class="jxr_string">"Unable to compress message"</span>, ioe);
-<a class="jxr_linenumber" name="186" href="#186">186</a>             }
-<a class="jxr_linenumber" name="187" href="#187">187</a>             <strong class="jxr_keyword">super</strong>.setBody(baos.toByteArray());
-<a class="jxr_linenumber" name="188" href="#188">188</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="189" href="#189">189</a>             <strong class="jxr_keyword">super</strong>.setBody(body);
-<a class="jxr_linenumber" name="190" href="#190">190</a>         }
-<a class="jxr_linenumber" name="191" href="#191">191</a>     }
-<a class="jxr_linenumber" name="192" href="#192">192</a> 
-<a class="jxr_linenumber" name="193" href="#193">193</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="194" href="#194">194</a> <em class="jxr_javadoccomment">     * Get the Frequently Qualified Class Name.</em>
-<a class="jxr_linenumber" name="195" href="#195">195</a> <em class="jxr_javadoccomment">     * @return the FQCN String.</em>
-<a class="jxr_linenumber" name="196" href="#196">196</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="197" href="#197">197</a>     <strong class="jxr_keyword">public</strong> String getFQCN() {
-<a class="jxr_linenumber" name="198" href="#198">198</a>         <strong class="jxr_keyword">return</strong> event.getFQCN();
-<a class="jxr_linenumber" name="199" href="#199">199</a>     }
-<a class="jxr_linenumber" name="200" href="#200">200</a> 
-<a class="jxr_linenumber" name="201" href="#201">201</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="202" href="#202">202</a> <em class="jxr_javadoccomment">     * Returns the logging Level.</em>
-<a class="jxr_linenumber" name="203" href="#203">203</a> <em class="jxr_javadoccomment">     * @return the Level.</em>
-<a class="jxr_linenumber" name="204" href="#204">204</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="205" href="#205">205</a>     <strong class="jxr_keyword">public</strong> Level getLevel() {
-<a class="jxr_linenumber" name="206" href="#206">206</a>         <strong class="jxr_keyword">return</strong> event.getLevel();
-<a class="jxr_linenumber" name="207" href="#207">207</a>     }
-<a class="jxr_linenumber" name="208" href="#208">208</a> 
-<a class="jxr_linenumber" name="209" href="#209">209</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="210" href="#210">210</a> <em class="jxr_javadoccomment">     * Returns the logger name.</em>
-<a class="jxr_linenumber" name="211" href="#211">211</a> <em class="jxr_javadoccomment">     * @return the logger name.</em>
-<a class="jxr_linenumber" name="212" href="#212">212</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="213" href="#213">213</a>     <strong class="jxr_keyword">public</strong> String getLoggerName() {
-<a class="jxr_linenumber" name="214" href="#214">214</a>         <strong class="jxr_keyword">return</strong> event.getLoggerName();
-<a class="jxr_linenumber" name="215" href="#215">215</a>     }
-<a class="jxr_linenumber" name="216" href="#216">216</a> 
-<a class="jxr_linenumber" name="217" href="#217">217</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="218" href="#218">218</a> <em class="jxr_javadoccomment">     * Returns the StackTraceElement for the caller of the logging API.</em>
-<a class="jxr_linenumber" name="219" href="#219">219</a> <em class="jxr_javadoccomment">     * @return the StackTraceElement of the caller.</em>
-<a class="jxr_linenumber" name="220" href="#220">220</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="221" href="#221">221</a>     <strong class="jxr_keyword">public</strong> StackTraceElement getSource() {
-<a class="jxr_linenumber" name="222" href="#222">222</a>         <strong class="jxr_keyword">return</strong> event.getSource();
-<a class="jxr_linenumber" name="223" href="#223">223</a>     }
-<a class="jxr_linenumber" name="224" href="#224">224</a> 
-<a class="jxr_linenumber" name="225" href="#225">225</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="226" href="#226">226</a> <em class="jxr_javadoccomment">     * Returns the Message.</em>
-<a class="jxr_linenumber" name="227" href="#227">227</a> <em class="jxr_javadoccomment">     * @return the Message.</em>
-<a class="jxr_linenumber" name="228" href="#228">228</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="229" href="#229">229</a>     <strong class="jxr_keyword">public</strong> Message getMessage() {
-<a class="jxr_linenumber" name="230" href="#230">230</a>         <strong class="jxr_keyword">return</strong> event.getMessage();
-<a class="jxr_linenumber" name="231" href="#231">231</a>     }
-<a class="jxr_linenumber" name="232" href="#232">232</a> 
-<a class="jxr_linenumber" name="233" href="#233">233</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="234" href="#234">234</a> <em class="jxr_javadoccomment">     * Returns the Marker.</em>
-<a class="jxr_linenumber" name="235" href="#235">235</a> <em class="jxr_javadoccomment">     * @return the Marker.</em>
-<a class="jxr_linenumber" name="236" href="#236">236</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="237" href="#237">237</a>     <strong class="jxr_keyword">public</strong> Marker getMarker() {
-<a class="jxr_linenumber" name="238" href="#238">238</a>         <strong class="jxr_keyword">return</strong> event.getMarker();
-<a class="jxr_linenumber" name="239" href="#239">239</a>     }
-<a class="jxr_linenumber" name="240" href="#240">240</a> 
-<a class="jxr_linenumber" name="241" href="#241">241</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="242" href="#242">242</a> <em class="jxr_javadoccomment">     * Returns the name of the Thread.</em>
-<a class="jxr_linenumber" name="243" href="#243">243</a> <em class="jxr_javadoccomment">     * @return the name of the Thread.</em>
-<a class="jxr_linenumber" name="244" href="#244">244</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="245" href="#245">245</a>     <strong class="jxr_keyword">public</strong> String getThreadName() {
-<a class="jxr_linenumber" name="246" href="#246">246</a>         <strong class="jxr_keyword">return</strong> event.getThreadName();
-<a class="jxr_linenumber" name="247" href="#247">247</a>     }
-<a class="jxr_linenumber" name="248" href="#248">248</a> 
-<a class="jxr_linenumber" name="249" href="#249">249</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="250" href="#250">250</a> <em class="jxr_javadoccomment">     * Returns the event timestamp.</em>
-<a class="jxr_linenumber" name="251" href="#251">251</a> <em class="jxr_javadoccomment">     * @return the event timestamp.</em>
-<a class="jxr_linenumber" name="252" href="#252">252</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="253" href="#253">253</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getMillis() {
-<a class="jxr_linenumber" name="254" href="#254">254</a>         <strong class="jxr_keyword">return</strong> event.getMillis();
-<a class="jxr_linenumber" name="255" href="#255">255</a>     }
-<a class="jxr_linenumber" name="256" href="#256">256</a> 
-<a class="jxr_linenumber" name="257" href="#257">257</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="258" href="#258">258</a> <em class="jxr_javadoccomment">     * Returns the Throwable associated with the event, if any.</em>
-<a class="jxr_linenumber" name="259" href="#259">259</a> <em class="jxr_javadoccomment">     * @return the Throwable.</em>
-<a class="jxr_linenumber" name="260" href="#260">260</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="261" href="#261">261</a>     <strong class="jxr_keyword">public</strong> Throwable getThrown() {
-<a class="jxr_linenumber" name="262" href="#262">262</a>         <strong class="jxr_keyword">return</strong> event.getThrown();
-<a class="jxr_linenumber" name="263" href="#263">263</a>     }
-<a class="jxr_linenumber" name="264" href="#264">264</a> 
-<a class="jxr_linenumber" name="265" href="#265">265</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="266" href="#266">266</a> <em class="jxr_javadoccomment">     * Returns a copy of the context Map.</em>
-<a class="jxr_linenumber" name="267" href="#267">267</a> <em class="jxr_javadoccomment">     * @return a copy of the context Map.</em>
-<a class="jxr_linenumber" name="268" href="#268">268</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="269" href="#269">269</a>     <strong class="jxr_keyword">public</strong> Map&lt;String, String&gt; getContextMap() {
-<a class="jxr_linenumber" name="270" href="#270">270</a>         <strong class="jxr_keyword">return</strong> ctx;
-<a class="jxr_linenumber" name="271" href="#271">271</a>     }
-<a class="jxr_linenumber" name="272" href="#272">272</a> 
-<a class="jxr_linenumber" name="273" href="#273">273</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="274" href="#274">274</a> <em class="jxr_javadoccomment">     * Returns a copy of the context stack.</em>
-<a class="jxr_linenumber" name="275" href="#275">275</a> <em class="jxr_javadoccomment">     * @return a copy of the context stack.</em>
-<a class="jxr_linenumber" name="276" href="#276">276</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="277" href="#277">277</a>     <strong class="jxr_keyword">public</strong> ThreadContext.ContextStack getContextStack() {
-<a class="jxr_linenumber" name="278" href="#278">278</a>         <strong class="jxr_keyword">return</strong> event.getContextStack();
-<a class="jxr_linenumber" name="279" href="#279">279</a>     }
-<a class="jxr_linenumber" name="280" href="#280">280</a> }
+<a class="jxr_linenumber" name="164" href="#164">164</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     * Set the body in the event.</em>
+<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     * @param body The body to add to the event.</em>
+<a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="168" href="#168">168</a>     @Override
+<a class="jxr_linenumber" name="169" href="#169">169</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setBody(<strong class="jxr_keyword">final</strong> byte[] body) {
+<a class="jxr_linenumber" name="170" href="#170">170</a>         <strong class="jxr_keyword">if</strong> (body == <strong class="jxr_keyword">null</strong> || body.length == 0) {
+<a class="jxr_linenumber" name="171" href="#171">171</a>             <strong class="jxr_keyword">super</strong>.setBody(<strong class="jxr_keyword">new</strong> byte[0]);
+<a class="jxr_linenumber" name="172" href="#172">172</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="173" href="#173">173</a>         }
+<a class="jxr_linenumber" name="174" href="#174">174</a>         <strong class="jxr_keyword">if</strong> (compress) {
+<a class="jxr_linenumber" name="175" href="#175">175</a>             <strong class="jxr_keyword">final</strong> ByteArrayOutputStream baos = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
+<a class="jxr_linenumber" name="176" href="#176">176</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="177" href="#177">177</a>                 <strong class="jxr_keyword">final</strong> GZIPOutputStream os = <strong class="jxr_keyword">new</strong> GZIPOutputStream(baos);
+<a class="jxr_linenumber" name="178" href="#178">178</a>                 os.write(body);
+<a class="jxr_linenumber" name="179" href="#179">179</a>                 os.close();
+<a class="jxr_linenumber" name="180" href="#180">180</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioe) {
+<a class="jxr_linenumber" name="181" href="#181">181</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> LoggingException(<span class="jxr_string">"Unable to compress message"</span>, ioe);
+<a class="jxr_linenumber" name="182" href="#182">182</a>             }
+<a class="jxr_linenumber" name="183" href="#183">183</a>             <strong class="jxr_keyword">super</strong>.setBody(baos.toByteArray());
+<a class="jxr_linenumber" name="184" href="#184">184</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="185" href="#185">185</a>             <strong class="jxr_keyword">super</strong>.setBody(body);
+<a class="jxr_linenumber" name="186" href="#186">186</a>         }
+<a class="jxr_linenumber" name="187" href="#187">187</a>     }
+<a class="jxr_linenumber" name="188" href="#188">188</a> 
+<a class="jxr_linenumber" name="189" href="#189">189</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="190" href="#190">190</a> <em class="jxr_javadoccomment">     * Get the Frequently Qualified Class Name.</em>
+<a class="jxr_linenumber" name="191" href="#191">191</a> <em class="jxr_javadoccomment">     * @return the FQCN String.</em>
+<a class="jxr_linenumber" name="192" href="#192">192</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="193" href="#193">193</a>     <strong class="jxr_keyword">public</strong> String getFQCN() {
+<a class="jxr_linenumber" name="194" href="#194">194</a>         <strong class="jxr_keyword">return</strong> event.getFQCN();
+<a class="jxr_linenumber" name="195" href="#195">195</a>     }
+<a class="jxr_linenumber" name="196" href="#196">196</a> 
+<a class="jxr_linenumber" name="197" href="#197">197</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="198" href="#198">198</a> <em class="jxr_javadoccomment">     * Returns the logging Level.</em>
+<a class="jxr_linenumber" name="199" href="#199">199</a> <em class="jxr_javadoccomment">     * @return the Level.</em>
+<a class="jxr_linenumber" name="200" href="#200">200</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="201" href="#201">201</a>     <strong class="jxr_keyword">public</strong> Level getLevel() {
+<a class="jxr_linenumber" name="202" href="#202">202</a>         <strong class="jxr_keyword">return</strong> event.getLevel();
+<a class="jxr_linenumber" name="203" href="#203">203</a>     }
+<a class="jxr_linenumber" name="204" href="#204">204</a> 
+<a class="jxr_linenumber" name="205" href="#205">205</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="206" href="#206">206</a> <em class="jxr_javadoccomment">     * Returns the logger name.</em>
+<a class="jxr_linenumber" name="207" href="#207">207</a> <em class="jxr_javadoccomment">     * @return the logger name.</em>
+<a class="jxr_linenumber" name="208" href="#208">208</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="209" href="#209">209</a>     <strong class="jxr_keyword">public</strong> String getLoggerName() {
+<a class="jxr_linenumber" name="210" href="#210">210</a>         <strong class="jxr_keyword">return</strong> event.getLoggerName();
+<a class="jxr_linenumber" name="211" href="#211">211</a>     }
+<a class="jxr_linenumber" name="212" href="#212">212</a> 
+<a class="jxr_linenumber" name="213" href="#213">213</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="214" href="#214">214</a> <em class="jxr_javadoccomment">     * Returns the StackTraceElement for the caller of the logging API.</em>
+<a class="jxr_linenumber" name="215" href="#215">215</a> <em class="jxr_javadoccomment">     * @return the StackTraceElement of the caller.</em>
+<a class="jxr_linenumber" name="216" href="#216">216</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="217" href="#217">217</a>     <strong class="jxr_keyword">public</strong> StackTraceElement getSource() {
+<a class="jxr_linenumber" name="218" href="#218">218</a>         <strong class="jxr_keyword">return</strong> event.getSource();
+<a class="jxr_linenumber" name="219" href="#219">219</a>     }
+<a class="jxr_linenumber" name="220" href="#220">220</a> 
+<a class="jxr_linenumber" name="221" href="#221">221</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="222" href="#222">222</a> <em class="jxr_javadoccomment">     * Returns the Message.</em>
+<a class="jxr_linenumber" name="223" href="#223">223</a> <em class="jxr_javadoccomment">     * @return the Message.</em>
+<a class="jxr_linenumber" name="224" href="#224">224</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="225" href="#225">225</a>     <strong class="jxr_keyword">public</strong> Message getMessage() {
+<a class="jxr_linenumber" name="226" href="#226">226</a>         <strong class="jxr_keyword">return</strong> event.getMessage();
+<a class="jxr_linenumber" name="227" href="#227">227</a>     }
+<a class="jxr_linenumber" name="228" href="#228">228</a> 
+<a class="jxr_linenumber" name="229" href="#229">229</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="230" href="#230">230</a> <em class="jxr_javadoccomment">     * Returns the Marker.</em>
+<a class="jxr_linenumber" name="231" href="#231">231</a> <em class="jxr_javadoccomment">     * @return the Marker.</em>
+<a class="jxr_linenumber" name="232" href="#232">232</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="233" href="#233">233</a>     <strong class="jxr_keyword">public</strong> Marker getMarker() {
+<a class="jxr_linenumber" name="234" href="#234">234</a>         <strong class="jxr_keyword">return</strong> event.getMarker();
+<a class="jxr_linenumber" name="235" href="#235">235</a>     }
+<a class="jxr_linenumber" name="236" href="#236">236</a> 
+<a class="jxr_linenumber" name="237" href="#237">237</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="238" href="#238">238</a> <em class="jxr_javadoccomment">     * Returns the name of the Thread.</em>
+<a class="jxr_linenumber" name="239" href="#239">239</a> <em class="jxr_javadoccomment">     * @return the name of the Thread.</em>
+<a class="jxr_linenumber" name="240" href="#240">240</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="241" href="#241">241</a>     <strong class="jxr_keyword">public</strong> String getThreadName() {
+<a class="jxr_linenumber" name="242" href="#242">242</a>         <strong class="jxr_keyword">return</strong> event.getThreadName();
+<a class="jxr_linenumber" name="243" href="#243">243</a>     }
+<a class="jxr_linenumber" name="244" href="#244">244</a> 
+<a class="jxr_linenumber" name="245" href="#245">245</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="246" href="#246">246</a> <em class="jxr_javadoccomment">     * Returns the event timestamp.</em>
+<a class="jxr_linenumber" name="247" href="#247">247</a> <em class="jxr_javadoccomment">     * @return the event timestamp.</em>
+<a class="jxr_linenumber" name="248" href="#248">248</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="249" href="#249">249</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getMillis() {
+<a class="jxr_linenumber" name="250" href="#250">250</a>         <strong class="jxr_keyword">return</strong> event.getMillis();
+<a class="jxr_linenumber" name="251" href="#251">251</a>     }
+<a class="jxr_linenumber" name="252" href="#252">252</a> 
+<a class="jxr_linenumber" name="253" href="#253">253</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="254" href="#254">254</a> <em class="jxr_javadoccomment">     * Returns the Throwable associated with the event, if any.</em>
+<a class="jxr_linenumber" name="255" href="#255">255</a> <em class="jxr_javadoccomment">     * @return the Throwable.</em>
+<a class="jxr_linenumber" name="256" href="#256">256</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="257" href="#257">257</a>     <strong class="jxr_keyword">public</strong> Throwable getThrown() {
+<a class="jxr_linenumber" name="258" href="#258">258</a>         <strong class="jxr_keyword">return</strong> event.getThrown();
+<a class="jxr_linenumber" name="259" href="#259">259</a>     }
+<a class="jxr_linenumber" name="260" href="#260">260</a> 
+<a class="jxr_linenumber" name="261" href="#261">261</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="262" href="#262">262</a> <em class="jxr_javadoccomment">     * Returns a copy of the context Map.</em>
+<a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">     * @return a copy of the context Map.</em>
+<a class="jxr_linenumber" name="264" href="#264">264</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="265" href="#265">265</a>     <strong class="jxr_keyword">public</strong> Map&lt;String, String&gt; getContextMap() {
+<a class="jxr_linenumber" name="266" href="#266">266</a>         <strong class="jxr_keyword">return</strong> ctx;
+<a class="jxr_linenumber" name="267" href="#267">267</a>     }
+<a class="jxr_linenumber" name="268" href="#268">268</a> 
+<a class="jxr_linenumber" name="269" href="#269">269</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="270" href="#270">270</a> <em class="jxr_javadoccomment">     * Returns a copy of the context stack.</em>
+<a class="jxr_linenumber" name="271" href="#271">271</a> <em class="jxr_javadoccomment">     * @return a copy of the context stack.</em>
+<a class="jxr_linenumber" name="272" href="#272">272</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="273" href="#273">273</a>     <strong class="jxr_keyword">public</strong> ThreadContext.ContextStack getContextStack() {
+<a class="jxr_linenumber" name="274" href="#274">274</a>         <strong class="jxr_keyword">return</strong> event.getContextStack();
+<a class="jxr_linenumber" name="275" href="#275">275</a>     }
+<a class="jxr_linenumber" name="276" href="#276">276</a> 
+<a class="jxr_linenumber" name="277" href="#277">277</a>     @Override
+<a class="jxr_linenumber" name="278" href="#278">278</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isIncludeLocation() {
+<a class="jxr_linenumber" name="279" href="#279">279</a>         <strong class="jxr_keyword">return</strong> event.isIncludeLocation();
+<a class="jxr_linenumber" name="280" href="#280">280</a>     }
+<a class="jxr_linenumber" name="281" href="#281">281</a> 
+<a class="jxr_linenumber" name="282" href="#282">282</a>     @Override
+<a class="jxr_linenumber" name="283" href="#283">283</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setIncludeLocation(<strong class="jxr_keyword">boolean</strong> includeLocation) {
+<a class="jxr_linenumber" name="284" href="#284">284</a>         event.setIncludeLocation(includeLocation);
+<a class="jxr_linenumber" name="285" href="#285">285</a>     }
+<a class="jxr_linenumber" name="286" href="#286">286</a> 
+<a class="jxr_linenumber" name="287" href="#287">287</a>     @Override
+<a class="jxr_linenumber" name="288" href="#288">288</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isEndOfBatch() {
+<a class="jxr_linenumber" name="289" href="#289">289</a>         <strong class="jxr_keyword">return</strong> event.isEndOfBatch();
+<a class="jxr_linenumber" name="290" href="#290">290</a>     }
+<a class="jxr_linenumber" name="291" href="#291">291</a> 
+<a class="jxr_linenumber" name="292" href="#292">292</a>     @Override
+<a class="jxr_linenumber" name="293" href="#293">293</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setEndOfBatch(<strong class="jxr_keyword">boolean</strong> endOfBatch) {
+<a class="jxr_linenumber" name="294" href="#294">294</a>         event.setEndOfBatch(endOfBatch);
+<a class="jxr_linenumber" name="295" href="#295">295</a>     }
+<a class="jxr_linenumber" name="296" href="#296">296</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
