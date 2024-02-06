@@ -147,43 +147,38 @@
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>             <strong class="jxr_keyword">final</strong> String level, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> bufferedIo, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize, <strong class="jxr_keyword">final</strong> String datePattern,
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>             <strong class="jxr_keyword">final</strong> T configuration) {
 <a class="jxr_linenumber" name="L141" href="#L141">141</a> 
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>         org.apache.logging.log4j.core.Layout&lt;?&gt; fileLayout = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>         org.apache.logging.log4j.core.Layout&lt;?&gt; fileLayout = LayoutAdapter.adapt(layout);
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">if</strong> (bufferedIo) {
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>             immediateFlush = false;
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>         }
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>         <strong class="jxr_keyword">if</strong> (layout instanceof <a name="LayoutWrapper" href="../../../../../org/apache/log4j/bridge/LayoutWrapper.html#LayoutWrapper">LayoutWrapper</a>) {
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>             fileLayout = ((<a name="LayoutWrapper" href="../../../../../org/apache/log4j/bridge/LayoutWrapper.html#LayoutWrapper">LayoutWrapper</a>) layout).getLayout();
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (layout != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>             fileLayout = <strong class="jxr_keyword">new</strong> <a name="LayoutAdapter" href="../../../../../org/apache/log4j/bridge/LayoutAdapter.html#LayoutAdapter">LayoutAdapter</a>(layout);
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>         <strong class="jxr_keyword">final</strong> org.apache.logging.log4j.core.Filter fileFilter = buildFilters(level, filter);
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">if</strong> (fileName == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>             LOGGER.error(<span class="jxr_string">"Unable to create DailyRollingFileAppender, no file name provided"</span>);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         }
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">final</strong> org.apache.logging.log4j.core.Filter fileFilter = buildFilters(level, filter);
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">if</strong> (fileName == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>             LOGGER.warn(<span class="jxr_string">"Unable to create File Appender, no file name provided"</span>);
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>         }
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">final</strong> String filePattern = fileName + <span class="jxr_string">"%d{"</span> + datePattern + <span class="jxr_string">"}"</span>;
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">final</strong> TriggeringPolicy timePolicy = TimeBasedTriggeringPolicy.newBuilder().withModulate(<strong class="jxr_keyword">true</strong>).build();
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>         <strong class="jxr_keyword">final</strong> TriggeringPolicy policy = CompositeTriggeringPolicy.createPolicy(timePolicy);
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>         <strong class="jxr_keyword">final</strong> RolloverStrategy strategy = DefaultRolloverStrategy.newBuilder()
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>                 .withConfig(configuration)
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>                 .withMax(Integer.toString(Integer.MAX_VALUE))
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>                 .build();
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="AppenderWrapper" href="../../../../../org/apache/log4j/bridge/AppenderWrapper.html#AppenderWrapper">AppenderWrapper</a>(RollingFileAppender.newBuilder()
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>                 .setName(name)
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>                 .setConfiguration(configuration)
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>                 .setLayout(fileLayout)
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>                 .setFilter(fileFilter)
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>                 .withFileName(fileName)
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>                 .withAppend(append)
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 .setBufferedIo(bufferedIo)
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>                 .setBufferSize(bufferSize)
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>                 .setImmediateFlush(immediateFlush)
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>                 .withFilePattern(filePattern)
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>                 .withPolicy(policy)
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>                 .withStrategy(strategy)
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 .build());
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>     }
-<a class="jxr_linenumber" name="L178" href="#L178">178</a> }
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">final</strong> String filePattern = fileName + <span class="jxr_string">"%d{"</span> + datePattern + <span class="jxr_string">"}"</span>;
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">final</strong> TriggeringPolicy timePolicy = TimeBasedTriggeringPolicy.newBuilder().withModulate(<strong class="jxr_keyword">true</strong>).build();
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">final</strong> TriggeringPolicy policy = CompositeTriggeringPolicy.createPolicy(timePolicy);
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> RolloverStrategy strategy = DefaultRolloverStrategy.newBuilder()
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>                 .withConfig(configuration)
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>                 .withMax(Integer.toString(Integer.MAX_VALUE))
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 .build();
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         <strong class="jxr_keyword">return</strong> AppenderWrapper.adapt(RollingFileAppender.newBuilder()
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>                 .setName(name)
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>                 .setConfiguration(configuration)
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>                 .setLayout(fileLayout)
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>                 .setFilter(fileFilter)
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>                 .withFileName(fileName)
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>                 .withAppend(append)
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>                 .setBufferedIo(bufferedIo)
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>                 .setBufferSize(bufferSize)
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>                 .setImmediateFlush(immediateFlush)
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>                 .withFilePattern(filePattern)
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>                 .withPolicy(policy)
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 .withStrategy(strategy)
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>                 .build());
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>     }
+<a class="jxr_linenumber" name="L173" href="#L173">173</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2022 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>

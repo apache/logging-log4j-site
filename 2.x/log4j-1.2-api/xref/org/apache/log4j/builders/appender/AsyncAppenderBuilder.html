@@ -127,12 +127,12 @@
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">final</strong> String level = getProperty(THRESHOLD_PARAM);
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize = getIntegerProperty(BUFFER_SIZE_PARAM, 1024);
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         <strong class="jxr_keyword">if</strong> (appenderRef == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>             LOGGER.warn(<span class="jxr_string">"No appender references configured for AsyncAppender {}"</span>, name);
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>             LOGGER.error(<span class="jxr_string">"No appender references configured for AsyncAppender {}"</span>, name);
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>         }
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>         <strong class="jxr_keyword">final</strong> <a name="Appender" href="../../../../../org/apache/log4j/Appender.html#Appender">Appender</a> appender = configuration.parseAppender(props, appenderRef);
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">if</strong> (appender == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>             LOGGER.warn(<span class="jxr_string">"Cannot locate Appender {}"</span>, appenderRef);
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>             LOGGER.error(<span class="jxr_string">"Cannot locate Appender {}"</span>, appenderRef);
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>         }
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>         <strong class="jxr_keyword">return</strong> createAppender(name, level, <strong class="jxr_keyword">new</strong> String[]{appenderRef}, blocking, bufferSize, includeLocation, filter,
@@ -142,24 +142,28 @@
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>     <strong class="jxr_keyword">private</strong> &lt;T <strong class="jxr_keyword">extends</strong> Log4j1Configuration&gt; <a name="Appender" href="../../../../../org/apache/log4j/Appender.html#Appender">Appender</a> createAppender(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> String level,
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>             <strong class="jxr_keyword">final</strong> String[] appenderRefs, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> blocking, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> includeLocation,
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>             <strong class="jxr_keyword">final</strong> <a name="Filter" href="../../../../../org/apache/log4j/spi/Filter.html#Filter">Filter</a> filter, <strong class="jxr_keyword">final</strong> T configuration) {
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>         <strong class="jxr_keyword">final</strong> org.apache.logging.log4j.Level logLevel = OptionConverter.convertLevel(level,
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>                 org.apache.logging.log4j.Level.TRACE);
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>         <strong class="jxr_keyword">final</strong> AppenderRef[] refs = <strong class="jxr_keyword">new</strong> AppenderRef[appenderRefs.length];
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">int</strong> index = 0;
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String appenderRef : appenderRefs) {
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>             refs[index++] = AppenderRef.createAppenderRef(appenderRef, logLevel, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>         }
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>         <a name="Builder" href="../../../../../org/apache/log4j/builders/Builder.html#Builder">Builder</a> builder = AsyncAppender.newBuilder();
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>         builder.setFilter(FilterAdapter.convertFilter(filter));
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="AppenderWrapper" href="../../../../../org/apache/log4j/bridge/AppenderWrapper.html#AppenderWrapper">AppenderWrapper</a>(builder.setName(name)
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>                 .setAppenderRefs(refs)
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>                 .setBlocking(blocking)
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>                 .setBufferSize(bufferSize)
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>                 .setIncludeLocation(includeLocation)
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>                 .setConfiguration(configuration)
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>                 .build());
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>     }
-<a class="jxr_linenumber" name="L154" href="#L154">154</a> }
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>         <strong class="jxr_keyword">if</strong> (appenderRefs.length == 0) {
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>             LOGGER.error(<span class="jxr_string">"No appender references configured for AsyncAppender {}"</span>, name);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         }
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">final</strong> org.apache.logging.log4j.Level logLevel = OptionConverter.convertLevel(level,
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>                 org.apache.logging.log4j.Level.TRACE);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">final</strong> AppenderRef[] refs = <strong class="jxr_keyword">new</strong> AppenderRef[appenderRefs.length];
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>         <strong class="jxr_keyword">int</strong> index = 0;
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String appenderRef : appenderRefs) {
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>             refs[index++] = AppenderRef.createAppenderRef(appenderRef, logLevel, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         }
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>         <a name="Builder" href="../../../../../org/apache/log4j/builders/Builder.html#Builder">Builder</a> builder = AsyncAppender.newBuilder();
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         builder.setFilter(FilterAdapter.adapt(filter));
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">return</strong> AppenderWrapper.adapt(builder.setName(name)
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>                 .setAppenderRefs(refs)
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>                 .setBlocking(blocking)
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>                 .setBufferSize(bufferSize)
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>                 .setIncludeLocation(includeLocation)
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>                 .setConfiguration(configuration)
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>                 .build());
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>     }
+<a class="jxr_linenumber" name="L158" href="#L158">158</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2022 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>

@@ -87,30 +87,32 @@
 <span class="sourceLineNo">079</span>        return createLayout(pattern, config);<a name="line.79"></a>
 <span class="sourceLineNo">080</span>    }<a name="line.80"></a>
 <span class="sourceLineNo">081</span><a name="line.81"></a>
-<span class="sourceLineNo">082</span>    private Layout createLayout(String pattern, final Log4j1Configuration config) {<a name="line.82"></a>
+<span class="sourceLineNo">082</span>    Layout createLayout(String pattern, final Log4j1Configuration config) {<a name="line.82"></a>
 <span class="sourceLineNo">083</span>        if (pattern == null) {<a name="line.83"></a>
 <span class="sourceLineNo">084</span>            LOGGER.info("No pattern provided for pattern layout, using default pattern");<a name="line.84"></a>
 <span class="sourceLineNo">085</span>            pattern = PatternLayout.DEFAULT_CONVERSION_PATTERN;<a name="line.85"></a>
 <span class="sourceLineNo">086</span>        }<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        return new LayoutWrapper(PatternLayout.newBuilder()<a name="line.87"></a>
+<span class="sourceLineNo">087</span>        return LayoutWrapper.adapt(PatternLayout.newBuilder()<a name="line.87"></a>
 <span class="sourceLineNo">088</span>                .withPattern(pattern<a name="line.88"></a>
-<span class="sourceLineNo">089</span>                        // Log4j 2's %x (NDC) is not compatible with Log4j 1's<a name="line.89"></a>
-<span class="sourceLineNo">090</span>                        // %x<a name="line.90"></a>
-<span class="sourceLineNo">091</span>                        // Log4j 1: "foo bar baz"<a name="line.91"></a>
-<span class="sourceLineNo">092</span>                        // Log4j 2: "[foo, bar, baz]"<a name="line.92"></a>
-<span class="sourceLineNo">093</span>                        // Use %ndc to get the Log4j 1 format<a name="line.93"></a>
-<span class="sourceLineNo">094</span>                        .replace("%x", "%ndc")<a name="line.94"></a>
-<span class="sourceLineNo">095</span><a name="line.95"></a>
-<span class="sourceLineNo">096</span>                        // Log4j 2's %X (MDC) is not compatible with Log4j 1's<a name="line.96"></a>
-<span class="sourceLineNo">097</span>                        // %X<a name="line.97"></a>
-<span class="sourceLineNo">098</span>                        // Log4j 1: "{{foo,bar}{hoo,boo}}"<a name="line.98"></a>
-<span class="sourceLineNo">099</span>                        // Log4j 2: "{foo=bar,hoo=boo}"<a name="line.99"></a>
-<span class="sourceLineNo">100</span>                        // Use %properties to get the Log4j 1 format<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                        .replace("%X", "%properties"))<a name="line.101"></a>
-<span class="sourceLineNo">102</span>                .withConfiguration(config)<a name="line.102"></a>
-<span class="sourceLineNo">103</span>                .build());<a name="line.103"></a>
-<span class="sourceLineNo">104</span>    }<a name="line.104"></a>
-<span class="sourceLineNo">105</span>}<a name="line.105"></a>
+<span class="sourceLineNo">089</span>                        // Log4j 2 and Log4j 1 level names differ for custom levels<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                        .replaceAll("%([-\\.\\d]*)p(?!\\w)", "%$1v1Level")<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                        // Log4j 2's %x (NDC) is not compatible with Log4j 1's<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                        // %x<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                        // Log4j 1: "foo bar baz"<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                        // Log4j 2: "[foo, bar, baz]"<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                        // Use %ndc to get the Log4j 1 format<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                        .replaceAll("%([-\\.\\d]*)x(?!\\w)", "%$1ndc")<a name="line.96"></a>
+<span class="sourceLineNo">097</span><a name="line.97"></a>
+<span class="sourceLineNo">098</span>                        // Log4j 2's %X (MDC) is not compatible with Log4j 1's<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                        // %X<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                        // Log4j 1: "{{foo,bar}{hoo,boo}}"<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                        // Log4j 2: "{foo=bar,hoo=boo}"<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                        // Use %properties to get the Log4j 1 format<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                        .replaceAll("%([-\\.\\d]*)X(?!\\w)", "%$1properties"))<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                .withConfiguration(config)<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                .build());<a name="line.105"></a>
+<span class="sourceLineNo">106</span>    }<a name="line.106"></a>
+<span class="sourceLineNo">107</span>}<a name="line.107"></a>
 
 
 

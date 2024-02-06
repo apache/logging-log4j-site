@@ -422,7 +422,7 @@
 <span class="sourceLineNo">414</span>    private int purgeAscending(final int lowIndex, final int highIndex, final RollingFileManager manager) {<a name="line.414"></a>
 <span class="sourceLineNo">415</span>        final SortedMap&lt;Integer, Path&gt; eligibleFiles = getEligibleFiles(manager);<a name="line.415"></a>
 <span class="sourceLineNo">416</span>        final int maxFiles = highIndex - lowIndex + 1;<a name="line.416"></a>
-<span class="sourceLineNo">417</span><a name="line.417"></a>
+<span class="sourceLineNo">417</span>        LOGGER.debug("Eligible files: {}", eligibleFiles);<a name="line.417"></a>
 <span class="sourceLineNo">418</span>        boolean renameFiles = !eligibleFiles.isEmpty() &amp;&amp; eligibleFiles.lastKey() &gt;= maxIndex;<a name="line.418"></a>
 <span class="sourceLineNo">419</span>        while (eligibleFiles.size() &gt;= maxFiles) {<a name="line.419"></a>
 <span class="sourceLineNo">420</span>            try {<a name="line.420"></a>
@@ -483,136 +483,137 @@
 <span class="sourceLineNo">475</span>        while (eligibleFiles.size() &gt;= maxFiles) {<a name="line.475"></a>
 <span class="sourceLineNo">476</span>            try {<a name="line.476"></a>
 <span class="sourceLineNo">477</span>                final Integer key = eligibleFiles.firstKey();<a name="line.477"></a>
-<span class="sourceLineNo">478</span>                Files.delete(eligibleFiles.get(key));<a name="line.478"></a>
-<span class="sourceLineNo">479</span>                eligibleFiles.remove(key);<a name="line.479"></a>
-<span class="sourceLineNo">480</span>            } catch (final IOException ioe) {<a name="line.480"></a>
-<span class="sourceLineNo">481</span>                LOGGER.error("Unable to delete {}, {}", eligibleFiles.firstKey(), ioe.getMessage(), ioe);<a name="line.481"></a>
-<span class="sourceLineNo">482</span>                break;<a name="line.482"></a>
-<span class="sourceLineNo">483</span>            }<a name="line.483"></a>
-<span class="sourceLineNo">484</span>        }<a name="line.484"></a>
-<span class="sourceLineNo">485</span>        final StringBuilder buf = new StringBuilder();<a name="line.485"></a>
-<span class="sourceLineNo">486</span>        for (final Map.Entry&lt;Integer, Path&gt; entry : eligibleFiles.entrySet()) {<a name="line.486"></a>
-<span class="sourceLineNo">487</span>            buf.setLength(0);<a name="line.487"></a>
-<span class="sourceLineNo">488</span>            // LOG4J2-531: directory scan &amp; rollover must use same format<a name="line.488"></a>
-<span class="sourceLineNo">489</span>            manager.getPatternProcessor().formatFileName(strSubstitutor, buf, entry.getKey() + 1);<a name="line.489"></a>
-<span class="sourceLineNo">490</span>            final String currentName = entry.getValue().toFile().getName();<a name="line.490"></a>
-<span class="sourceLineNo">491</span>            String renameTo = buf.toString();<a name="line.491"></a>
-<span class="sourceLineNo">492</span>            final int suffixLength = suffixLength(renameTo);<a name="line.492"></a>
-<span class="sourceLineNo">493</span>            if (suffixLength &gt; 0 &amp;&amp; suffixLength(currentName) == 0) {<a name="line.493"></a>
-<span class="sourceLineNo">494</span>                renameTo = renameTo.substring(0, renameTo.length() - suffixLength);<a name="line.494"></a>
-<span class="sourceLineNo">495</span>            }<a name="line.495"></a>
-<span class="sourceLineNo">496</span>            final Action action = new FileRenameAction(entry.getValue().toFile(), new File(renameTo), true);<a name="line.496"></a>
-<span class="sourceLineNo">497</span>            try {<a name="line.497"></a>
-<span class="sourceLineNo">498</span>                LOGGER.debug("DefaultRolloverStrategy.purgeDescending executing {}", action);<a name="line.498"></a>
-<span class="sourceLineNo">499</span>                if (!action.execute()) {<a name="line.499"></a>
-<span class="sourceLineNo">500</span>                    return -1;<a name="line.500"></a>
-<span class="sourceLineNo">501</span>                }<a name="line.501"></a>
-<span class="sourceLineNo">502</span>            } catch (final Exception ex) {<a name="line.502"></a>
-<span class="sourceLineNo">503</span>                LOGGER.warn("Exception during purge in RollingFileAppender", ex);<a name="line.503"></a>
-<span class="sourceLineNo">504</span>                return -1;<a name="line.504"></a>
-<span class="sourceLineNo">505</span>            }<a name="line.505"></a>
-<span class="sourceLineNo">506</span>        }<a name="line.506"></a>
-<span class="sourceLineNo">507</span><a name="line.507"></a>
-<span class="sourceLineNo">508</span>        return lowIndex;<a name="line.508"></a>
-<span class="sourceLineNo">509</span>    }<a name="line.509"></a>
-<span class="sourceLineNo">510</span><a name="line.510"></a>
-<span class="sourceLineNo">511</span>    /**<a name="line.511"></a>
-<span class="sourceLineNo">512</span>     * Performs the rollover.<a name="line.512"></a>
-<span class="sourceLineNo">513</span>     *<a name="line.513"></a>
-<span class="sourceLineNo">514</span>     * @param manager The RollingFileManager name for current active log file.<a name="line.514"></a>
-<span class="sourceLineNo">515</span>     * @return A RolloverDescription.<a name="line.515"></a>
-<span class="sourceLineNo">516</span>     * @throws SecurityException if an error occurs.<a name="line.516"></a>
-<span class="sourceLineNo">517</span>     */<a name="line.517"></a>
-<span class="sourceLineNo">518</span>    @Override<a name="line.518"></a>
-<span class="sourceLineNo">519</span>    public RolloverDescription rollover(final RollingFileManager manager) throws SecurityException {<a name="line.519"></a>
-<span class="sourceLineNo">520</span>        int fileIndex;<a name="line.520"></a>
-<span class="sourceLineNo">521</span>                final StringBuilder buf = new StringBuilder(255);<a name="line.521"></a>
-<span class="sourceLineNo">522</span>        if (minIndex == Integer.MIN_VALUE) {<a name="line.522"></a>
-<span class="sourceLineNo">523</span>            final SortedMap&lt;Integer, Path&gt; eligibleFiles = getEligibleFiles(manager);<a name="line.523"></a>
-<span class="sourceLineNo">524</span>            fileIndex = eligibleFiles.size() &gt; 0 ? eligibleFiles.lastKey() + 1 : 1;<a name="line.524"></a>
-<span class="sourceLineNo">525</span>                        manager.getPatternProcessor().formatFileName(strSubstitutor, buf, fileIndex);<a name="line.525"></a>
-<span class="sourceLineNo">526</span>        } else {<a name="line.526"></a>
-<span class="sourceLineNo">527</span>            if (maxIndex &lt; 0) {<a name="line.527"></a>
-<span class="sourceLineNo">528</span>                return null;<a name="line.528"></a>
-<span class="sourceLineNo">529</span>            }<a name="line.529"></a>
-<span class="sourceLineNo">530</span>            final long startNanos = System.nanoTime();<a name="line.530"></a>
-<span class="sourceLineNo">531</span>            fileIndex = purge(minIndex, maxIndex, manager);<a name="line.531"></a>
-<span class="sourceLineNo">532</span>            if (fileIndex &lt; 0) {<a name="line.532"></a>
-<span class="sourceLineNo">533</span>                return null;<a name="line.533"></a>
-<span class="sourceLineNo">534</span>            }<a name="line.534"></a>
-<span class="sourceLineNo">535</span>                        manager.getPatternProcessor().formatFileName(strSubstitutor, buf, fileIndex);<a name="line.535"></a>
-<span class="sourceLineNo">536</span>            if (LOGGER.isTraceEnabled()) {<a name="line.536"></a>
-<span class="sourceLineNo">537</span>                final double durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);<a name="line.537"></a>
-<span class="sourceLineNo">538</span>                LOGGER.trace("DefaultRolloverStrategy.purge() took {} milliseconds", durationMillis);<a name="line.538"></a>
-<span class="sourceLineNo">539</span>            }<a name="line.539"></a>
-<span class="sourceLineNo">540</span>        }<a name="line.540"></a>
-<span class="sourceLineNo">541</span><a name="line.541"></a>
-<span class="sourceLineNo">542</span>        final String currentFileName = manager.getFileName();<a name="line.542"></a>
-<span class="sourceLineNo">543</span><a name="line.543"></a>
-<span class="sourceLineNo">544</span>        String renameTo = buf.toString();<a name="line.544"></a>
-<span class="sourceLineNo">545</span>        final String compressedName = renameTo;<a name="line.545"></a>
-<span class="sourceLineNo">546</span>        Action compressAction = null;<a name="line.546"></a>
-<span class="sourceLineNo">547</span><a name="line.547"></a>
-<span class="sourceLineNo">548</span>        final FileExtension fileExtension = manager.getFileExtension();<a name="line.548"></a>
-<span class="sourceLineNo">549</span>        if (fileExtension != null) {<a name="line.549"></a>
-<span class="sourceLineNo">550</span>            final File renameToFile = new File(renameTo);<a name="line.550"></a>
-<span class="sourceLineNo">551</span>            renameTo = renameTo.substring(0, renameTo.length() - fileExtension.length());<a name="line.551"></a>
-<span class="sourceLineNo">552</span>            if (tempCompressedFilePattern != null) {<a name="line.552"></a>
-<span class="sourceLineNo">553</span>                buf.delete(0, buf.length());<a name="line.553"></a>
-<span class="sourceLineNo">554</span>                tempCompressedFilePattern.formatFileName(strSubstitutor, buf, fileIndex);<a name="line.554"></a>
-<span class="sourceLineNo">555</span>                final String tmpCompressedName = buf.toString();<a name="line.555"></a>
-<span class="sourceLineNo">556</span>                final File tmpCompressedNameFile = new File(tmpCompressedName);<a name="line.556"></a>
-<span class="sourceLineNo">557</span>                final File parentFile = tmpCompressedNameFile.getParentFile();<a name="line.557"></a>
-<span class="sourceLineNo">558</span>                if (parentFile != null) {<a name="line.558"></a>
-<span class="sourceLineNo">559</span>                    parentFile.mkdirs();<a name="line.559"></a>
-<span class="sourceLineNo">560</span>                }<a name="line.560"></a>
-<span class="sourceLineNo">561</span>                compressAction = new CompositeAction(<a name="line.561"></a>
-<span class="sourceLineNo">562</span>                        Arrays.asList(fileExtension.createCompressAction(renameTo, tmpCompressedName,<a name="line.562"></a>
-<span class="sourceLineNo">563</span>                                true, compressionLevel),<a name="line.563"></a>
-<span class="sourceLineNo">564</span>                                new FileRenameAction(tmpCompressedNameFile,<a name="line.564"></a>
-<span class="sourceLineNo">565</span>                                        renameToFile, true)),<a name="line.565"></a>
-<span class="sourceLineNo">566</span>                        true);<a name="line.566"></a>
-<span class="sourceLineNo">567</span>            } else {<a name="line.567"></a>
-<span class="sourceLineNo">568</span>                compressAction = fileExtension.createCompressAction(renameTo, compressedName,<a name="line.568"></a>
-<span class="sourceLineNo">569</span>                        true, compressionLevel);<a name="line.569"></a>
-<span class="sourceLineNo">570</span>            }<a name="line.570"></a>
-<span class="sourceLineNo">571</span>        }<a name="line.571"></a>
-<span class="sourceLineNo">572</span><a name="line.572"></a>
-<span class="sourceLineNo">573</span>        if (currentFileName.equals(renameTo)) {<a name="line.573"></a>
-<span class="sourceLineNo">574</span>            LOGGER.warn("Attempt to rename file {} to itself will be ignored", currentFileName);<a name="line.574"></a>
-<span class="sourceLineNo">575</span>            return new RolloverDescriptionImpl(currentFileName, false, null, null);<a name="line.575"></a>
-<span class="sourceLineNo">576</span>        }<a name="line.576"></a>
-<span class="sourceLineNo">577</span><a name="line.577"></a>
-<span class="sourceLineNo">578</span>        if (compressAction != null &amp;&amp; manager.isAttributeViewEnabled()) {<a name="line.578"></a>
-<span class="sourceLineNo">579</span>            // Propagate POSIX attribute view to compressed file<a name="line.579"></a>
-<span class="sourceLineNo">580</span>            // @formatter:off<a name="line.580"></a>
-<span class="sourceLineNo">581</span>            final Action posixAttributeViewAction = PosixViewAttributeAction.newBuilder()<a name="line.581"></a>
-<span class="sourceLineNo">582</span>                                                        .withBasePath(compressedName)<a name="line.582"></a>
-<span class="sourceLineNo">583</span>                                                        .withFollowLinks(false)<a name="line.583"></a>
-<span class="sourceLineNo">584</span>                                                        .withMaxDepth(1)<a name="line.584"></a>
-<span class="sourceLineNo">585</span>                                                        .withPathConditions(PathCondition.EMPTY_ARRAY)<a name="line.585"></a>
-<span class="sourceLineNo">586</span>                                                        .withSubst(getStrSubstitutor())<a name="line.586"></a>
-<span class="sourceLineNo">587</span>                                                        .withFilePermissions(manager.getFilePermissions())<a name="line.587"></a>
-<span class="sourceLineNo">588</span>                                                        .withFileOwner(manager.getFileOwner())<a name="line.588"></a>
-<span class="sourceLineNo">589</span>                                                        .withFileGroup(manager.getFileGroup())<a name="line.589"></a>
-<span class="sourceLineNo">590</span>                                                        .build();<a name="line.590"></a>
-<span class="sourceLineNo">591</span>            // @formatter:on<a name="line.591"></a>
-<span class="sourceLineNo">592</span>            compressAction = new CompositeAction(Arrays.asList(compressAction, posixAttributeViewAction), false);<a name="line.592"></a>
-<span class="sourceLineNo">593</span>        }<a name="line.593"></a>
-<span class="sourceLineNo">594</span><a name="line.594"></a>
-<span class="sourceLineNo">595</span>        final FileRenameAction renameAction = new FileRenameAction(new File(currentFileName), new File(renameTo),<a name="line.595"></a>
-<span class="sourceLineNo">596</span>                    manager.isRenameEmptyFiles());<a name="line.596"></a>
-<span class="sourceLineNo">597</span><a name="line.597"></a>
-<span class="sourceLineNo">598</span>        final Action asyncAction = merge(compressAction, customActions, stopCustomActionsOnError);<a name="line.598"></a>
-<span class="sourceLineNo">599</span>        return new RolloverDescriptionImpl(currentFileName, false, renameAction, asyncAction);<a name="line.599"></a>
-<span class="sourceLineNo">600</span>    }<a name="line.600"></a>
-<span class="sourceLineNo">601</span><a name="line.601"></a>
-<span class="sourceLineNo">602</span>    @Override<a name="line.602"></a>
-<span class="sourceLineNo">603</span>    public String toString() {<a name="line.603"></a>
-<span class="sourceLineNo">604</span>        return "DefaultRolloverStrategy(min=" + minIndex + ", max=" + maxIndex + ", useMax=" + useMax + ")";<a name="line.604"></a>
-<span class="sourceLineNo">605</span>    }<a name="line.605"></a>
-<span class="sourceLineNo">606</span><a name="line.606"></a>
-<span class="sourceLineNo">607</span>}<a name="line.607"></a>
+<span class="sourceLineNo">478</span>                LOGGER.debug("Deleting {}", eligibleFiles.get(key).toFile().getAbsolutePath());<a name="line.478"></a>
+<span class="sourceLineNo">479</span>                Files.delete(eligibleFiles.get(key));<a name="line.479"></a>
+<span class="sourceLineNo">480</span>                eligibleFiles.remove(key);<a name="line.480"></a>
+<span class="sourceLineNo">481</span>            } catch (final IOException ioe) {<a name="line.481"></a>
+<span class="sourceLineNo">482</span>                LOGGER.error("Unable to delete {}, {}", eligibleFiles.firstKey(), ioe.getMessage(), ioe);<a name="line.482"></a>
+<span class="sourceLineNo">483</span>                break;<a name="line.483"></a>
+<span class="sourceLineNo">484</span>            }<a name="line.484"></a>
+<span class="sourceLineNo">485</span>        }<a name="line.485"></a>
+<span class="sourceLineNo">486</span>        final StringBuilder buf = new StringBuilder();<a name="line.486"></a>
+<span class="sourceLineNo">487</span>        for (final Map.Entry&lt;Integer, Path&gt; entry : eligibleFiles.entrySet()) {<a name="line.487"></a>
+<span class="sourceLineNo">488</span>            buf.setLength(0);<a name="line.488"></a>
+<span class="sourceLineNo">489</span>            // LOG4J2-531: directory scan &amp; rollover must use same format<a name="line.489"></a>
+<span class="sourceLineNo">490</span>            manager.getPatternProcessor().formatFileName(strSubstitutor, buf, entry.getKey() + 1);<a name="line.490"></a>
+<span class="sourceLineNo">491</span>            final String currentName = entry.getValue().toFile().getName();<a name="line.491"></a>
+<span class="sourceLineNo">492</span>            String renameTo = buf.toString();<a name="line.492"></a>
+<span class="sourceLineNo">493</span>            final int suffixLength = suffixLength(renameTo);<a name="line.493"></a>
+<span class="sourceLineNo">494</span>            if (suffixLength &gt; 0 &amp;&amp; suffixLength(currentName) == 0) {<a name="line.494"></a>
+<span class="sourceLineNo">495</span>                renameTo = renameTo.substring(0, renameTo.length() - suffixLength);<a name="line.495"></a>
+<span class="sourceLineNo">496</span>            }<a name="line.496"></a>
+<span class="sourceLineNo">497</span>            final Action action = new FileRenameAction(entry.getValue().toFile(), new File(renameTo), true);<a name="line.497"></a>
+<span class="sourceLineNo">498</span>            try {<a name="line.498"></a>
+<span class="sourceLineNo">499</span>                LOGGER.debug("DefaultRolloverStrategy.purgeDescending executing {}", action);<a name="line.499"></a>
+<span class="sourceLineNo">500</span>                if (!action.execute()) {<a name="line.500"></a>
+<span class="sourceLineNo">501</span>                    return -1;<a name="line.501"></a>
+<span class="sourceLineNo">502</span>                }<a name="line.502"></a>
+<span class="sourceLineNo">503</span>            } catch (final Exception ex) {<a name="line.503"></a>
+<span class="sourceLineNo">504</span>                LOGGER.warn("Exception during purge in RollingFileAppender", ex);<a name="line.504"></a>
+<span class="sourceLineNo">505</span>                return -1;<a name="line.505"></a>
+<span class="sourceLineNo">506</span>            }<a name="line.506"></a>
+<span class="sourceLineNo">507</span>        }<a name="line.507"></a>
+<span class="sourceLineNo">508</span><a name="line.508"></a>
+<span class="sourceLineNo">509</span>        return lowIndex;<a name="line.509"></a>
+<span class="sourceLineNo">510</span>    }<a name="line.510"></a>
+<span class="sourceLineNo">511</span><a name="line.511"></a>
+<span class="sourceLineNo">512</span>    /**<a name="line.512"></a>
+<span class="sourceLineNo">513</span>     * Performs the rollover.<a name="line.513"></a>
+<span class="sourceLineNo">514</span>     *<a name="line.514"></a>
+<span class="sourceLineNo">515</span>     * @param manager The RollingFileManager name for current active log file.<a name="line.515"></a>
+<span class="sourceLineNo">516</span>     * @return A RolloverDescription.<a name="line.516"></a>
+<span class="sourceLineNo">517</span>     * @throws SecurityException if an error occurs.<a name="line.517"></a>
+<span class="sourceLineNo">518</span>     */<a name="line.518"></a>
+<span class="sourceLineNo">519</span>    @Override<a name="line.519"></a>
+<span class="sourceLineNo">520</span>    public RolloverDescription rollover(final RollingFileManager manager) throws SecurityException {<a name="line.520"></a>
+<span class="sourceLineNo">521</span>        int fileIndex;<a name="line.521"></a>
+<span class="sourceLineNo">522</span>                final StringBuilder buf = new StringBuilder(255);<a name="line.522"></a>
+<span class="sourceLineNo">523</span>        if (minIndex == Integer.MIN_VALUE) {<a name="line.523"></a>
+<span class="sourceLineNo">524</span>            final SortedMap&lt;Integer, Path&gt; eligibleFiles = getEligibleFiles(manager);<a name="line.524"></a>
+<span class="sourceLineNo">525</span>            fileIndex = eligibleFiles.size() &gt; 0 ? eligibleFiles.lastKey() + 1 : 1;<a name="line.525"></a>
+<span class="sourceLineNo">526</span>                        manager.getPatternProcessor().formatFileName(strSubstitutor, buf, fileIndex);<a name="line.526"></a>
+<span class="sourceLineNo">527</span>        } else {<a name="line.527"></a>
+<span class="sourceLineNo">528</span>            if (maxIndex &lt; 0) {<a name="line.528"></a>
+<span class="sourceLineNo">529</span>                return null;<a name="line.529"></a>
+<span class="sourceLineNo">530</span>            }<a name="line.530"></a>
+<span class="sourceLineNo">531</span>            final long startNanos = System.nanoTime();<a name="line.531"></a>
+<span class="sourceLineNo">532</span>            fileIndex = purge(minIndex, maxIndex, manager);<a name="line.532"></a>
+<span class="sourceLineNo">533</span>            if (fileIndex &lt; 0) {<a name="line.533"></a>
+<span class="sourceLineNo">534</span>                return null;<a name="line.534"></a>
+<span class="sourceLineNo">535</span>            }<a name="line.535"></a>
+<span class="sourceLineNo">536</span>                        manager.getPatternProcessor().formatFileName(strSubstitutor, buf, fileIndex);<a name="line.536"></a>
+<span class="sourceLineNo">537</span>            if (LOGGER.isTraceEnabled()) {<a name="line.537"></a>
+<span class="sourceLineNo">538</span>                final double durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);<a name="line.538"></a>
+<span class="sourceLineNo">539</span>                LOGGER.trace("DefaultRolloverStrategy.purge() took {} milliseconds", durationMillis);<a name="line.539"></a>
+<span class="sourceLineNo">540</span>            }<a name="line.540"></a>
+<span class="sourceLineNo">541</span>        }<a name="line.541"></a>
+<span class="sourceLineNo">542</span><a name="line.542"></a>
+<span class="sourceLineNo">543</span>        final String currentFileName = manager.getFileName();<a name="line.543"></a>
+<span class="sourceLineNo">544</span><a name="line.544"></a>
+<span class="sourceLineNo">545</span>        String renameTo = buf.toString();<a name="line.545"></a>
+<span class="sourceLineNo">546</span>        final String compressedName = renameTo;<a name="line.546"></a>
+<span class="sourceLineNo">547</span>        Action compressAction = null;<a name="line.547"></a>
+<span class="sourceLineNo">548</span><a name="line.548"></a>
+<span class="sourceLineNo">549</span>        final FileExtension fileExtension = manager.getFileExtension();<a name="line.549"></a>
+<span class="sourceLineNo">550</span>        if (fileExtension != null) {<a name="line.550"></a>
+<span class="sourceLineNo">551</span>            final File renameToFile = new File(renameTo);<a name="line.551"></a>
+<span class="sourceLineNo">552</span>            renameTo = renameTo.substring(0, renameTo.length() - fileExtension.length());<a name="line.552"></a>
+<span class="sourceLineNo">553</span>            if (tempCompressedFilePattern != null) {<a name="line.553"></a>
+<span class="sourceLineNo">554</span>                buf.delete(0, buf.length());<a name="line.554"></a>
+<span class="sourceLineNo">555</span>                tempCompressedFilePattern.formatFileName(strSubstitutor, buf, fileIndex);<a name="line.555"></a>
+<span class="sourceLineNo">556</span>                final String tmpCompressedName = buf.toString();<a name="line.556"></a>
+<span class="sourceLineNo">557</span>                final File tmpCompressedNameFile = new File(tmpCompressedName);<a name="line.557"></a>
+<span class="sourceLineNo">558</span>                final File parentFile = tmpCompressedNameFile.getParentFile();<a name="line.558"></a>
+<span class="sourceLineNo">559</span>                if (parentFile != null) {<a name="line.559"></a>
+<span class="sourceLineNo">560</span>                    parentFile.mkdirs();<a name="line.560"></a>
+<span class="sourceLineNo">561</span>                }<a name="line.561"></a>
+<span class="sourceLineNo">562</span>                compressAction = new CompositeAction(<a name="line.562"></a>
+<span class="sourceLineNo">563</span>                        Arrays.asList(fileExtension.createCompressAction(renameTo, tmpCompressedName,<a name="line.563"></a>
+<span class="sourceLineNo">564</span>                                true, compressionLevel),<a name="line.564"></a>
+<span class="sourceLineNo">565</span>                                new FileRenameAction(tmpCompressedNameFile,<a name="line.565"></a>
+<span class="sourceLineNo">566</span>                                        renameToFile, true)),<a name="line.566"></a>
+<span class="sourceLineNo">567</span>                        true);<a name="line.567"></a>
+<span class="sourceLineNo">568</span>            } else {<a name="line.568"></a>
+<span class="sourceLineNo">569</span>                compressAction = fileExtension.createCompressAction(renameTo, compressedName,<a name="line.569"></a>
+<span class="sourceLineNo">570</span>                        true, compressionLevel);<a name="line.570"></a>
+<span class="sourceLineNo">571</span>            }<a name="line.571"></a>
+<span class="sourceLineNo">572</span>        }<a name="line.572"></a>
+<span class="sourceLineNo">573</span><a name="line.573"></a>
+<span class="sourceLineNo">574</span>        if (currentFileName.equals(renameTo)) {<a name="line.574"></a>
+<span class="sourceLineNo">575</span>            LOGGER.warn("Attempt to rename file {} to itself will be ignored", currentFileName);<a name="line.575"></a>
+<span class="sourceLineNo">576</span>            return new RolloverDescriptionImpl(currentFileName, false, null, null);<a name="line.576"></a>
+<span class="sourceLineNo">577</span>        }<a name="line.577"></a>
+<span class="sourceLineNo">578</span><a name="line.578"></a>
+<span class="sourceLineNo">579</span>        if (compressAction != null &amp;&amp; manager.isAttributeViewEnabled()) {<a name="line.579"></a>
+<span class="sourceLineNo">580</span>            // Propagate POSIX attribute view to compressed file<a name="line.580"></a>
+<span class="sourceLineNo">581</span>            // @formatter:off<a name="line.581"></a>
+<span class="sourceLineNo">582</span>            final Action posixAttributeViewAction = PosixViewAttributeAction.newBuilder()<a name="line.582"></a>
+<span class="sourceLineNo">583</span>                                                        .withBasePath(compressedName)<a name="line.583"></a>
+<span class="sourceLineNo">584</span>                                                        .withFollowLinks(false)<a name="line.584"></a>
+<span class="sourceLineNo">585</span>                                                        .withMaxDepth(1)<a name="line.585"></a>
+<span class="sourceLineNo">586</span>                                                        .withPathConditions(PathCondition.EMPTY_ARRAY)<a name="line.586"></a>
+<span class="sourceLineNo">587</span>                                                        .withSubst(getStrSubstitutor())<a name="line.587"></a>
+<span class="sourceLineNo">588</span>                                                        .withFilePermissions(manager.getFilePermissions())<a name="line.588"></a>
+<span class="sourceLineNo">589</span>                                                        .withFileOwner(manager.getFileOwner())<a name="line.589"></a>
+<span class="sourceLineNo">590</span>                                                        .withFileGroup(manager.getFileGroup())<a name="line.590"></a>
+<span class="sourceLineNo">591</span>                                                        .build();<a name="line.591"></a>
+<span class="sourceLineNo">592</span>            // @formatter:on<a name="line.592"></a>
+<span class="sourceLineNo">593</span>            compressAction = new CompositeAction(Arrays.asList(compressAction, posixAttributeViewAction), false);<a name="line.593"></a>
+<span class="sourceLineNo">594</span>        }<a name="line.594"></a>
+<span class="sourceLineNo">595</span><a name="line.595"></a>
+<span class="sourceLineNo">596</span>        final FileRenameAction renameAction = new FileRenameAction(new File(currentFileName), new File(renameTo),<a name="line.596"></a>
+<span class="sourceLineNo">597</span>                    manager.isRenameEmptyFiles());<a name="line.597"></a>
+<span class="sourceLineNo">598</span><a name="line.598"></a>
+<span class="sourceLineNo">599</span>        final Action asyncAction = merge(compressAction, customActions, stopCustomActionsOnError);<a name="line.599"></a>
+<span class="sourceLineNo">600</span>        return new RolloverDescriptionImpl(currentFileName, false, renameAction, asyncAction);<a name="line.600"></a>
+<span class="sourceLineNo">601</span>    }<a name="line.601"></a>
+<span class="sourceLineNo">602</span><a name="line.602"></a>
+<span class="sourceLineNo">603</span>    @Override<a name="line.603"></a>
+<span class="sourceLineNo">604</span>    public String toString() {<a name="line.604"></a>
+<span class="sourceLineNo">605</span>        return "DefaultRolloverStrategy(min=" + minIndex + ", max=" + maxIndex + ", useMax=" + useMax + ")";<a name="line.605"></a>
+<span class="sourceLineNo">606</span>    }<a name="line.606"></a>
+<span class="sourceLineNo">607</span><a name="line.607"></a>
+<span class="sourceLineNo">608</span>}<a name="line.608"></a>
 
 
 

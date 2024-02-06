@@ -83,7 +83,7 @@
 <span class="sourceLineNo">075</span><a name="line.75"></a>
 <span class="sourceLineNo">076</span>    @Override<a name="line.76"></a>
 <span class="sourceLineNo">077</span>    public void send(final Layout&lt;?&gt; layout, final LogEvent event) throws IOException {<a name="line.77"></a>
-<span class="sourceLineNo">078</span>        final HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();<a name="line.78"></a>
+<span class="sourceLineNo">078</span>        final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();<a name="line.78"></a>
 <span class="sourceLineNo">079</span>        urlConnection.setAllowUserInteraction(false);<a name="line.79"></a>
 <span class="sourceLineNo">080</span>        urlConnection.setDoOutput(true);<a name="line.80"></a>
 <span class="sourceLineNo">081</span>        urlConnection.setDoInput(true);<a name="line.81"></a>
@@ -98,53 +98,51 @@
 <span class="sourceLineNo">090</span>            urlConnection.setRequestProperty("Content-Type", layout.getContentType());<a name="line.90"></a>
 <span class="sourceLineNo">091</span>        }<a name="line.91"></a>
 <span class="sourceLineNo">092</span>        for (final Property header : headers) {<a name="line.92"></a>
-<span class="sourceLineNo">093</span>            urlConnection.setRequestProperty(<a name="line.93"></a>
-<span class="sourceLineNo">094</span>                header.getName(),<a name="line.94"></a>
-<span class="sourceLineNo">095</span>                header.evaluate(getConfiguration().getStrSubstitutor()));<a name="line.95"></a>
-<span class="sourceLineNo">096</span>        }<a name="line.96"></a>
-<span class="sourceLineNo">097</span>        if (sslConfiguration != null) {<a name="line.97"></a>
-<span class="sourceLineNo">098</span>            ((HttpsURLConnection)urlConnection).setSSLSocketFactory(sslConfiguration.getSslSocketFactory());<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        }<a name="line.99"></a>
-<span class="sourceLineNo">100</span>        if (isHttps &amp;&amp; !verifyHostname) {<a name="line.100"></a>
-<span class="sourceLineNo">101</span>            ((HttpsURLConnection)urlConnection).setHostnameVerifier(LaxHostnameVerifier.INSTANCE);<a name="line.101"></a>
-<span class="sourceLineNo">102</span>        }<a name="line.102"></a>
-<span class="sourceLineNo">103</span><a name="line.103"></a>
-<span class="sourceLineNo">104</span>        final byte[] msg = layout.toByteArray(event);<a name="line.104"></a>
-<span class="sourceLineNo">105</span>        urlConnection.setFixedLengthStreamingMode(msg.length);<a name="line.105"></a>
-<span class="sourceLineNo">106</span>        urlConnection.connect();<a name="line.106"></a>
-<span class="sourceLineNo">107</span>        try (OutputStream os = urlConnection.getOutputStream()) {<a name="line.107"></a>
-<span class="sourceLineNo">108</span>            os.write(msg);<a name="line.108"></a>
-<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
-<span class="sourceLineNo">110</span><a name="line.110"></a>
-<span class="sourceLineNo">111</span>        final byte[] buffer = new byte[1024];<a name="line.111"></a>
-<span class="sourceLineNo">112</span>        try (InputStream is = urlConnection.getInputStream()) {<a name="line.112"></a>
-<span class="sourceLineNo">113</span>            while (IOUtils.EOF != is.read(buffer)) {<a name="line.113"></a>
-<span class="sourceLineNo">114</span>                // empty<a name="line.114"></a>
-<span class="sourceLineNo">115</span>            }<a name="line.115"></a>
-<span class="sourceLineNo">116</span>        } catch (final IOException e) {<a name="line.116"></a>
-<span class="sourceLineNo">117</span>            final StringBuilder errorMessage = new StringBuilder();<a name="line.117"></a>
-<span class="sourceLineNo">118</span>            try (InputStream es = urlConnection.getErrorStream()) {<a name="line.118"></a>
-<span class="sourceLineNo">119</span>                errorMessage.append(urlConnection.getResponseCode());<a name="line.119"></a>
-<span class="sourceLineNo">120</span>                if (urlConnection.getResponseMessage() != null) {<a name="line.120"></a>
-<span class="sourceLineNo">121</span>                    errorMessage.append(' ').append(urlConnection.getResponseMessage());<a name="line.121"></a>
-<span class="sourceLineNo">122</span>                }<a name="line.122"></a>
-<span class="sourceLineNo">123</span>                if (es != null) {<a name="line.123"></a>
-<span class="sourceLineNo">124</span>                    errorMessage.append(" - ");<a name="line.124"></a>
-<span class="sourceLineNo">125</span>                    int n;<a name="line.125"></a>
-<span class="sourceLineNo">126</span>                    while (IOUtils.EOF != (n = es.read(buffer))) {<a name="line.126"></a>
-<span class="sourceLineNo">127</span>                        errorMessage.append(new String(buffer, 0, n, CHARSET));<a name="line.127"></a>
-<span class="sourceLineNo">128</span>                    }<a name="line.128"></a>
-<span class="sourceLineNo">129</span>                }<a name="line.129"></a>
-<span class="sourceLineNo">130</span>            }<a name="line.130"></a>
-<span class="sourceLineNo">131</span>            if (urlConnection.getResponseCode() &gt; -1) {<a name="line.131"></a>
-<span class="sourceLineNo">132</span>                throw new IOException(errorMessage.toString());<a name="line.132"></a>
-<span class="sourceLineNo">133</span>            } else {<a name="line.133"></a>
-<span class="sourceLineNo">134</span>                throw e;<a name="line.134"></a>
-<span class="sourceLineNo">135</span>            }<a name="line.135"></a>
-<span class="sourceLineNo">136</span>        }<a name="line.136"></a>
-<span class="sourceLineNo">137</span>    }<a name="line.137"></a>
-<span class="sourceLineNo">138</span><a name="line.138"></a>
-<span class="sourceLineNo">139</span>}<a name="line.139"></a>
+<span class="sourceLineNo">093</span>            urlConnection.setRequestProperty(header.getName(), header.evaluate(getConfiguration().getStrSubstitutor()));<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        }<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        if (sslConfiguration != null) {<a name="line.95"></a>
+<span class="sourceLineNo">096</span>            ((HttpsURLConnection) urlConnection).setSSLSocketFactory(sslConfiguration.getSslSocketFactory());<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        }<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        if (isHttps &amp;&amp; !verifyHostname) {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>            ((HttpsURLConnection) urlConnection).setHostnameVerifier(LaxHostnameVerifier.INSTANCE);<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        }<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>        final byte[] msg = layout.toByteArray(event);<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        urlConnection.setFixedLengthStreamingMode(msg.length);<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        urlConnection.connect();<a name="line.104"></a>
+<span class="sourceLineNo">105</span>        try (OutputStream os = urlConnection.getOutputStream()) {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>            os.write(msg);<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        }<a name="line.107"></a>
+<span class="sourceLineNo">108</span><a name="line.108"></a>
+<span class="sourceLineNo">109</span>        final byte[] buffer = new byte[1024];<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        try (InputStream is = urlConnection.getInputStream()) {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>            while (IOUtils.EOF != is.read(buffer)) {<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                // empty<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            }<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        } catch (final IOException e) {<a name="line.114"></a>
+<span class="sourceLineNo">115</span>            final StringBuilder errorMessage = new StringBuilder();<a name="line.115"></a>
+<span class="sourceLineNo">116</span>            try (InputStream es = urlConnection.getErrorStream()) {<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                errorMessage.append(urlConnection.getResponseCode());<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                if (urlConnection.getResponseMessage() != null) {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                    errorMessage.append(' ').append(urlConnection.getResponseMessage());<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                }<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                if (es != null) {<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                    errorMessage.append(" - ");<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                    int n;<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                    while (IOUtils.EOF != (n = es.read(buffer))) {<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                        errorMessage.append(new String(buffer, 0, n, CHARSET));<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                    }<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                }<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            }<a name="line.128"></a>
+<span class="sourceLineNo">129</span>            if (urlConnection.getResponseCode() &gt; -1) {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                throw new IOException(errorMessage.toString());<a name="line.130"></a>
+<span class="sourceLineNo">131</span>            } else {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                throw e;<a name="line.132"></a>
+<span class="sourceLineNo">133</span>            }<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        }<a name="line.134"></a>
+<span class="sourceLineNo">135</span>    }<a name="line.135"></a>
+<span class="sourceLineNo">136</span><a name="line.136"></a>
+<span class="sourceLineNo">137</span>}<a name="line.137"></a>
 
 
 

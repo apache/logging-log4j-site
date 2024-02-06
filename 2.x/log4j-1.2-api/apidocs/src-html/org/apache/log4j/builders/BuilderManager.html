@@ -32,118 +32,151 @@
 <span class="sourceLineNo">024</span><a name="line.24"></a>
 <span class="sourceLineNo">025</span>import org.apache.log4j.Appender;<a name="line.25"></a>
 <span class="sourceLineNo">026</span>import org.apache.log4j.Layout;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import org.apache.log4j.builders.appender.AppenderBuilder;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import org.apache.log4j.builders.filter.FilterBuilder;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import org.apache.log4j.builders.layout.LayoutBuilder;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>import org.apache.log4j.builders.rewrite.RewritePolicyBuilder;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>import org.apache.log4j.config.PropertiesConfiguration;<a name="line.31"></a>
-<span class="sourceLineNo">032</span>import org.apache.log4j.rewrite.RewritePolicy;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>import org.apache.log4j.spi.Filter;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>import org.apache.log4j.xml.XmlConfiguration;<a name="line.34"></a>
-<span class="sourceLineNo">035</span>import org.apache.logging.log4j.Logger;<a name="line.35"></a>
-<span class="sourceLineNo">036</span>import org.apache.logging.log4j.core.config.plugins.util.PluginManager;<a name="line.36"></a>
-<span class="sourceLineNo">037</span>import org.apache.logging.log4j.core.config.plugins.util.PluginType;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.38"></a>
-<span class="sourceLineNo">039</span>import org.apache.logging.log4j.util.LoaderUtil;<a name="line.39"></a>
-<span class="sourceLineNo">040</span>import org.w3c.dom.Element;<a name="line.40"></a>
-<span class="sourceLineNo">041</span><a name="line.41"></a>
-<span class="sourceLineNo">042</span>/**<a name="line.42"></a>
-<span class="sourceLineNo">043</span> *<a name="line.43"></a>
-<span class="sourceLineNo">044</span> */<a name="line.44"></a>
-<span class="sourceLineNo">045</span>public class BuilderManager {<a name="line.45"></a>
-<span class="sourceLineNo">046</span><a name="line.46"></a>
-<span class="sourceLineNo">047</span>    /** Plugin category. */<a name="line.47"></a>
-<span class="sourceLineNo">048</span>    public static final String CATEGORY = "Log4j Builder";<a name="line.48"></a>
-<span class="sourceLineNo">049</span><a name="line.49"></a>
-<span class="sourceLineNo">050</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.50"></a>
-<span class="sourceLineNo">051</span>    private static Class&lt;?&gt;[] CONSTRUCTOR_PARAMS = new Class[] {String.class, Properties.class};<a name="line.51"></a>
-<span class="sourceLineNo">052</span>    private final Map&lt;String, PluginType&lt;?&gt;&gt; plugins;<a name="line.52"></a>
-<span class="sourceLineNo">053</span><a name="line.53"></a>
-<span class="sourceLineNo">054</span>    /**<a name="line.54"></a>
-<span class="sourceLineNo">055</span>     * Constructs a new instance.<a name="line.55"></a>
-<span class="sourceLineNo">056</span>     */<a name="line.56"></a>
-<span class="sourceLineNo">057</span>    public BuilderManager() {<a name="line.57"></a>
-<span class="sourceLineNo">058</span>        final PluginManager manager = new PluginManager(CATEGORY);<a name="line.58"></a>
-<span class="sourceLineNo">059</span>        manager.collectPlugins();<a name="line.59"></a>
-<span class="sourceLineNo">060</span>        plugins = manager.getPlugins();<a name="line.60"></a>
-<span class="sourceLineNo">061</span>    }<a name="line.61"></a>
-<span class="sourceLineNo">062</span><a name="line.62"></a>
-<span class="sourceLineNo">063</span>    private &lt;T extends Builder&lt;U&gt;, U&gt; T createBuilder(final PluginType&lt;T&gt; plugin, final String prefix, final Properties props) {<a name="line.63"></a>
-<span class="sourceLineNo">064</span>        if (plugin == null) {<a name="line.64"></a>
-<span class="sourceLineNo">065</span>            return null;<a name="line.65"></a>
-<span class="sourceLineNo">066</span>        }<a name="line.66"></a>
-<span class="sourceLineNo">067</span>        try {<a name="line.67"></a>
-<span class="sourceLineNo">068</span>            final Class&lt;T&gt; clazz = plugin.getPluginClass();<a name="line.68"></a>
-<span class="sourceLineNo">069</span>            if (AbstractBuilder.class.isAssignableFrom(clazz)) {<a name="line.69"></a>
-<span class="sourceLineNo">070</span>                return clazz.getConstructor(CONSTRUCTOR_PARAMS).newInstance(prefix, props);<a name="line.70"></a>
-<span class="sourceLineNo">071</span>            }<a name="line.71"></a>
-<span class="sourceLineNo">072</span>            final T builder = LoaderUtil.newInstanceOf(clazz);<a name="line.72"></a>
-<span class="sourceLineNo">073</span>            // Reasonable message instead of `ClassCastException`<a name="line.73"></a>
-<span class="sourceLineNo">074</span>            if (!Builder.class.isAssignableFrom(clazz)) {<a name="line.74"></a>
-<span class="sourceLineNo">075</span>                LOGGER.warn("Unable to load plugin: builder {} does not implement {}", clazz, Builder.class);<a name="line.75"></a>
-<span class="sourceLineNo">076</span>                return null;<a name="line.76"></a>
-<span class="sourceLineNo">077</span>            }<a name="line.77"></a>
-<span class="sourceLineNo">078</span>            return builder;<a name="line.78"></a>
-<span class="sourceLineNo">079</span>        } catch (final ReflectiveOperationException ex) {<a name="line.79"></a>
-<span class="sourceLineNo">080</span>            LOGGER.warn("Unable to load plugin: {} due to: {}", plugin.getKey(), ex.getMessage());<a name="line.80"></a>
-<span class="sourceLineNo">081</span>            return null;<a name="line.81"></a>
-<span class="sourceLineNo">082</span>        }<a name="line.82"></a>
-<span class="sourceLineNo">083</span>    }<a name="line.83"></a>
-<span class="sourceLineNo">084</span><a name="line.84"></a>
-<span class="sourceLineNo">085</span>    @SuppressWarnings("unchecked")<a name="line.85"></a>
-<span class="sourceLineNo">086</span>    private &lt;T&gt; PluginType&lt;T&gt; getPlugin(final String className) {<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        Objects.requireNonNull(plugins, "plugins");<a name="line.87"></a>
-<span class="sourceLineNo">088</span>        Objects.requireNonNull(className, "className");<a name="line.88"></a>
-<span class="sourceLineNo">089</span>        final String key = className.toLowerCase(Locale.ROOT).trim();<a name="line.89"></a>
-<span class="sourceLineNo">090</span>        final PluginType&lt;?&gt; pluginType = plugins.get(key);<a name="line.90"></a>
-<span class="sourceLineNo">091</span>        if (pluginType == null) {<a name="line.91"></a>
-<span class="sourceLineNo">092</span>            LOGGER.warn("Unable to load plugin class name {} with key {}", className, key);<a name="line.92"></a>
-<span class="sourceLineNo">093</span>        }<a name="line.93"></a>
-<span class="sourceLineNo">094</span>        return (PluginType&lt;T&gt;) pluginType;<a name="line.94"></a>
-<span class="sourceLineNo">095</span>    }<a name="line.95"></a>
-<span class="sourceLineNo">096</span><a name="line.96"></a>
-<span class="sourceLineNo">097</span>    private &lt;T extends Builder&lt;U&gt;, U&gt; U newInstance(final PluginType&lt;T&gt; plugin, final Function&lt;T, U&gt; consumer) {<a name="line.97"></a>
-<span class="sourceLineNo">098</span>        if (plugin != null) {<a name="line.98"></a>
-<span class="sourceLineNo">099</span>            try {<a name="line.99"></a>
-<span class="sourceLineNo">100</span>                final T builder = LoaderUtil.newInstanceOf(plugin.getPluginClass());<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                if (builder != null) {<a name="line.101"></a>
-<span class="sourceLineNo">102</span>                    return consumer.apply(builder);<a name="line.102"></a>
-<span class="sourceLineNo">103</span>                }<a name="line.103"></a>
-<span class="sourceLineNo">104</span>            } catch (final ReflectiveOperationException ex) {<a name="line.104"></a>
-<span class="sourceLineNo">105</span>                LOGGER.warn("Unable to load plugin: {} due to: {}", plugin.getKey(), ex.getMessage());<a name="line.105"></a>
-<span class="sourceLineNo">106</span>            }<a name="line.106"></a>
-<span class="sourceLineNo">107</span>        }<a name="line.107"></a>
-<span class="sourceLineNo">108</span>        return null;<a name="line.108"></a>
-<span class="sourceLineNo">109</span>    }<a name="line.109"></a>
-<span class="sourceLineNo">110</span><a name="line.110"></a>
-<span class="sourceLineNo">111</span>    public &lt;P extends Parser&lt;T&gt;, T&gt; T parse(final String className, final String prefix, final Properties props, final PropertiesConfiguration config) {<a name="line.111"></a>
-<span class="sourceLineNo">112</span>        final P parser = createBuilder(getPlugin(className), prefix, props);<a name="line.112"></a>
-<span class="sourceLineNo">113</span>        return parser != null ? parser.parse(config) : null;<a name="line.113"></a>
-<span class="sourceLineNo">114</span>    }<a name="line.114"></a>
-<span class="sourceLineNo">115</span><a name="line.115"></a>
-<span class="sourceLineNo">116</span>    public Appender parseAppender(final String className, final Element appenderElement, final XmlConfiguration config) {<a name="line.116"></a>
-<span class="sourceLineNo">117</span>        return newInstance(this.&lt;AppenderBuilder&lt;Appender&gt;&gt;getPlugin(className), b -&gt; b.parseAppender(appenderElement, config));<a name="line.117"></a>
-<span class="sourceLineNo">118</span>    }<a name="line.118"></a>
-<span class="sourceLineNo">119</span><a name="line.119"></a>
-<span class="sourceLineNo">120</span>    public Appender parseAppender(final String name, final String className, final String prefix, final String layoutPrefix, final String filterPrefix,<a name="line.120"></a>
-<span class="sourceLineNo">121</span>        final Properties props, final PropertiesConfiguration config) {<a name="line.121"></a>
-<span class="sourceLineNo">122</span>        final AppenderBuilder&lt;Appender&gt; builder = createBuilder(getPlugin(className), prefix, props);<a name="line.122"></a>
-<span class="sourceLineNo">123</span>        return builder != null ? builder.parseAppender(name, prefix, layoutPrefix, filterPrefix, props, config) : null;<a name="line.123"></a>
-<span class="sourceLineNo">124</span>    }<a name="line.124"></a>
-<span class="sourceLineNo">125</span><a name="line.125"></a>
-<span class="sourceLineNo">126</span>    public Filter parseFilter(final String className, final Element filterElement, final XmlConfiguration config) {<a name="line.126"></a>
-<span class="sourceLineNo">127</span>        return newInstance(this.&lt;FilterBuilder&gt;getPlugin(className), b -&gt; b.parse(filterElement, config));<a name="line.127"></a>
-<span class="sourceLineNo">128</span>    }<a name="line.128"></a>
-<span class="sourceLineNo">129</span><a name="line.129"></a>
-<span class="sourceLineNo">130</span>    public Layout parseLayout(final String className, final Element layoutElement, final XmlConfiguration config) {<a name="line.130"></a>
-<span class="sourceLineNo">131</span>        return newInstance(this.&lt;LayoutBuilder&gt;getPlugin(className), b -&gt; b.parse(layoutElement, config));<a name="line.131"></a>
+<span class="sourceLineNo">027</span>import org.apache.log4j.bridge.AppenderWrapper;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.log4j.bridge.FilterWrapper;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.apache.log4j.bridge.LayoutWrapper;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.log4j.bridge.RewritePolicyWrapper;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.log4j.builders.appender.AppenderBuilder;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.apache.log4j.builders.filter.FilterBuilder;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.log4j.builders.layout.LayoutBuilder;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.apache.log4j.builders.rewrite.RewritePolicyBuilder;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.apache.log4j.builders.rolling.TriggeringPolicyBuilder;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.apache.log4j.config.PropertiesConfiguration;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.apache.log4j.rewrite.RewritePolicy;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.apache.log4j.spi.Filter;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.apache.log4j.xml.XmlConfiguration;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.apache.logging.log4j.Logger;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.apache.logging.log4j.core.appender.rolling.TriggeringPolicy;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.apache.logging.log4j.core.config.plugins.util.PluginManager;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.apache.logging.log4j.core.config.plugins.util.PluginType;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import org.apache.logging.log4j.util.LoaderUtil;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import org.w3c.dom.Element;<a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span>/**<a name="line.48"></a>
+<span class="sourceLineNo">049</span> *<a name="line.49"></a>
+<span class="sourceLineNo">050</span> */<a name="line.50"></a>
+<span class="sourceLineNo">051</span>public class BuilderManager {<a name="line.51"></a>
+<span class="sourceLineNo">052</span><a name="line.52"></a>
+<span class="sourceLineNo">053</span>    /** Plugin category. */<a name="line.53"></a>
+<span class="sourceLineNo">054</span>    public static final String CATEGORY = "Log4j Builder";<a name="line.54"></a>
+<span class="sourceLineNo">055</span>    public static final Appender INVALID_APPENDER = new AppenderWrapper(null);<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    public static final Filter INVALID_FILTER = new FilterWrapper(null);<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    public static final Layout INVALID_LAYOUT = new LayoutWrapper(null);<a name="line.57"></a>
+<span class="sourceLineNo">058</span>    public static final RewritePolicy INVALID_REWRITE_POLICY = new RewritePolicyWrapper(null);<a name="line.58"></a>
+<span class="sourceLineNo">059</span><a name="line.59"></a>
+<span class="sourceLineNo">060</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    private static Class&lt;?&gt;[] CONSTRUCTOR_PARAMS = new Class[] {String.class, Properties.class};<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    private final Map&lt;String, PluginType&lt;?&gt;&gt; plugins;<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span>    /**<a name="line.64"></a>
+<span class="sourceLineNo">065</span>     * Constructs a new instance.<a name="line.65"></a>
+<span class="sourceLineNo">066</span>     */<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    public BuilderManager() {<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        final PluginManager manager = new PluginManager(CATEGORY);<a name="line.68"></a>
+<span class="sourceLineNo">069</span>        manager.collectPlugins();<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        plugins = manager.getPlugins();<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    }<a name="line.71"></a>
+<span class="sourceLineNo">072</span><a name="line.72"></a>
+<span class="sourceLineNo">073</span>    private &lt;T extends Builder&lt;U&gt;, U&gt; T createBuilder(final PluginType&lt;T&gt; plugin, final String prefix, final Properties props) {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        if (plugin == null) {<a name="line.74"></a>
+<span class="sourceLineNo">075</span>            return null;<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        }<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        try {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>            final Class&lt;T&gt; clazz = plugin.getPluginClass();<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            if (AbstractBuilder.class.isAssignableFrom(clazz)) {<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                return clazz.getConstructor(CONSTRUCTOR_PARAMS).newInstance(prefix, props);<a name="line.80"></a>
+<span class="sourceLineNo">081</span>            }<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            final T builder = LoaderUtil.newInstanceOf(clazz);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            // Reasonable message instead of `ClassCastException`<a name="line.83"></a>
+<span class="sourceLineNo">084</span>            if (!Builder.class.isAssignableFrom(clazz)) {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                LOGGER.warn("Unable to load plugin: builder {} does not implement {}", clazz, Builder.class);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                return null;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>            }<a name="line.87"></a>
+<span class="sourceLineNo">088</span>            return builder;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        } catch (final ReflectiveOperationException ex) {<a name="line.89"></a>
+<span class="sourceLineNo">090</span>            LOGGER.warn("Unable to load plugin: {} due to: {}", plugin.getKey(), ex.getMessage());<a name="line.90"></a>
+<span class="sourceLineNo">091</span>            return null;<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        }<a name="line.92"></a>
+<span class="sourceLineNo">093</span>    }<a name="line.93"></a>
+<span class="sourceLineNo">094</span><a name="line.94"></a>
+<span class="sourceLineNo">095</span>    @SuppressWarnings("unchecked")<a name="line.95"></a>
+<span class="sourceLineNo">096</span>    private &lt;T&gt; PluginType&lt;T&gt; getPlugin(final String className) {<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        Objects.requireNonNull(plugins, "plugins");<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        Objects.requireNonNull(className, "className");<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        final String key = className.toLowerCase(Locale.ROOT).trim();<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        final PluginType&lt;?&gt; pluginType = plugins.get(key);<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        if (pluginType == null) {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>            LOGGER.warn("Unable to load plugin class name {} with key {}", className, key);<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        }<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        return (PluginType&lt;T&gt;) pluginType;<a name="line.104"></a>
+<span class="sourceLineNo">105</span>    }<a name="line.105"></a>
+<span class="sourceLineNo">106</span><a name="line.106"></a>
+<span class="sourceLineNo">107</span>    private &lt;T extends Builder&lt;U&gt;, U&gt; U newInstance(final PluginType&lt;T&gt; plugin, final Function&lt;T, U&gt; consumer,<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            final U invalidValue) {<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        if (plugin != null) {<a name="line.109"></a>
+<span class="sourceLineNo">110</span>            try {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                final T builder = LoaderUtil.newInstanceOf(plugin.getPluginClass());<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                if (builder != null) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                    U result = consumer.apply(builder);<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                    // returning an empty wrapper is short for "we support this legacy class, but it has validation errors"<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                    return result != null ? result : invalidValue;<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                }<a name="line.116"></a>
+<span class="sourceLineNo">117</span>            } catch (final ReflectiveOperationException ex) {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                LOGGER.warn("Unable to load plugin: {} due to: {}", plugin.getKey(), ex.getMessage());<a name="line.118"></a>
+<span class="sourceLineNo">119</span>            }<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        }<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        return null;<a name="line.121"></a>
+<span class="sourceLineNo">122</span>    }<a name="line.122"></a>
+<span class="sourceLineNo">123</span><a name="line.123"></a>
+<span class="sourceLineNo">124</span>    public &lt;P extends Parser&lt;T&gt;, T&gt; T parse(final String className, final String prefix, final Properties props,<a name="line.124"></a>
+<span class="sourceLineNo">125</span>            final PropertiesConfiguration config, T invalidValue) {<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        final P parser = createBuilder(getPlugin(className), prefix, props);<a name="line.126"></a>
+<span class="sourceLineNo">127</span>        if (parser != null) {<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            final T value = parser.parse(config);<a name="line.128"></a>
+<span class="sourceLineNo">129</span>            return value != null ? value : invalidValue;<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        }<a name="line.130"></a>
+<span class="sourceLineNo">131</span>        return null;<a name="line.131"></a>
 <span class="sourceLineNo">132</span>    }<a name="line.132"></a>
 <span class="sourceLineNo">133</span><a name="line.133"></a>
-<span class="sourceLineNo">134</span>    public RewritePolicy parseRewritePolicy(final String className, final Element rewriteElement, final XmlConfiguration config) {<a name="line.134"></a>
-<span class="sourceLineNo">135</span>        return newInstance(this.&lt;RewritePolicyBuilder&gt;getPlugin(className), b -&gt; b.parse(rewriteElement, config));<a name="line.135"></a>
-<span class="sourceLineNo">136</span>    }<a name="line.136"></a>
-<span class="sourceLineNo">137</span><a name="line.137"></a>
-<span class="sourceLineNo">138</span>}<a name="line.138"></a>
+<span class="sourceLineNo">134</span>    public Appender parseAppender(final String className, final Element appenderElement,<a name="line.134"></a>
+<span class="sourceLineNo">135</span>            final XmlConfiguration config) {<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        return newInstance(this.&lt;AppenderBuilder&lt;Appender&gt;&gt;getPlugin(className),<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                b -&gt; b.parseAppender(appenderElement, config), INVALID_APPENDER);<a name="line.137"></a>
+<span class="sourceLineNo">138</span>    }<a name="line.138"></a>
+<span class="sourceLineNo">139</span><a name="line.139"></a>
+<span class="sourceLineNo">140</span>    public Appender parseAppender(final String name, final String className, final String prefix, final String layoutPrefix, final String filterPrefix,<a name="line.140"></a>
+<span class="sourceLineNo">141</span>        final Properties props, final PropertiesConfiguration config) {<a name="line.141"></a>
+<span class="sourceLineNo">142</span>        final AppenderBuilder&lt;Appender&gt; builder = createBuilder(getPlugin(className), prefix, props);<a name="line.142"></a>
+<span class="sourceLineNo">143</span>        if (builder != null) {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>            final Appender appender = builder.parseAppender(name, prefix, layoutPrefix, filterPrefix, props, config);<a name="line.144"></a>
+<span class="sourceLineNo">145</span>            return appender != null ? appender : INVALID_APPENDER;<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        }<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        return null;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>    }<a name="line.148"></a>
+<span class="sourceLineNo">149</span><a name="line.149"></a>
+<span class="sourceLineNo">150</span>    public Filter parseFilter(final String className, final Element filterElement, final XmlConfiguration config) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        return newInstance(this.&lt;FilterBuilder&gt;getPlugin(className), b -&gt; b.parse(filterElement, config),<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                INVALID_FILTER);<a name="line.152"></a>
+<span class="sourceLineNo">153</span>    }<a name="line.153"></a>
+<span class="sourceLineNo">154</span><a name="line.154"></a>
+<span class="sourceLineNo">155</span>    public Layout parseLayout(final String className, final Element layoutElement, final XmlConfiguration config) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        return newInstance(this.&lt;LayoutBuilder&gt;getPlugin(className), b -&gt; b.parse(layoutElement, config),<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                INVALID_LAYOUT);<a name="line.157"></a>
+<span class="sourceLineNo">158</span>    }<a name="line.158"></a>
+<span class="sourceLineNo">159</span><a name="line.159"></a>
+<span class="sourceLineNo">160</span>    public RewritePolicy parseRewritePolicy(final String className, final Element rewriteElement,<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            final XmlConfiguration config) {<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        return newInstance(this.&lt;RewritePolicyBuilder&gt;getPlugin(className), b -&gt; b.parse(rewriteElement, config),<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                INVALID_REWRITE_POLICY);<a name="line.163"></a>
+<span class="sourceLineNo">164</span>    }<a name="line.164"></a>
+<span class="sourceLineNo">165</span><a name="line.165"></a>
+<span class="sourceLineNo">166</span>    public TriggeringPolicy parseTriggeringPolicy(final String className, final Element policyElement,<a name="line.166"></a>
+<span class="sourceLineNo">167</span>            final XmlConfiguration config) {<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        return newInstance(this.&lt;TriggeringPolicyBuilder&gt;getPlugin(className), b -&gt; b.parse(policyElement, config),<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                (TriggeringPolicy) null);<a name="line.169"></a>
+<span class="sourceLineNo">170</span>    }<a name="line.170"></a>
+<span class="sourceLineNo">171</span>}<a name="line.171"></a>
 
 
 

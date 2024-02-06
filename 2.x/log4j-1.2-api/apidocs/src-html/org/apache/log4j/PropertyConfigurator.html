@@ -39,650 +39,651 @@
 <span class="sourceLineNo">031</span>import java.util.Vector;<a name="line.31"></a>
 <span class="sourceLineNo">032</span><a name="line.32"></a>
 <span class="sourceLineNo">033</span>import org.apache.log4j.bridge.FilterAdapter;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>import org.apache.log4j.config.PropertiesConfiguration;<a name="line.34"></a>
-<span class="sourceLineNo">035</span>import org.apache.log4j.config.PropertySetter;<a name="line.35"></a>
-<span class="sourceLineNo">036</span>import org.apache.log4j.helpers.FileWatchdog;<a name="line.36"></a>
-<span class="sourceLineNo">037</span>import org.apache.log4j.helpers.LogLog;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import org.apache.log4j.helpers.OptionConverter;<a name="line.38"></a>
-<span class="sourceLineNo">039</span>import org.apache.log4j.or.RendererMap;<a name="line.39"></a>
-<span class="sourceLineNo">040</span>import org.apache.log4j.spi.Configurator;<a name="line.40"></a>
-<span class="sourceLineNo">041</span>import org.apache.log4j.spi.ErrorHandler;<a name="line.41"></a>
-<span class="sourceLineNo">042</span>import org.apache.log4j.spi.Filter;<a name="line.42"></a>
-<span class="sourceLineNo">043</span>import org.apache.log4j.spi.LoggerFactory;<a name="line.43"></a>
-<span class="sourceLineNo">044</span>import org.apache.log4j.spi.LoggerRepository;<a name="line.44"></a>
-<span class="sourceLineNo">045</span>import org.apache.log4j.spi.OptionHandler;<a name="line.45"></a>
-<span class="sourceLineNo">046</span>import org.apache.log4j.spi.RendererSupport;<a name="line.46"></a>
-<span class="sourceLineNo">047</span>import org.apache.log4j.spi.ThrowableRenderer;<a name="line.47"></a>
-<span class="sourceLineNo">048</span>import org.apache.log4j.spi.ThrowableRendererSupport;<a name="line.48"></a>
-<span class="sourceLineNo">049</span>import org.apache.logging.log4j.core.config.Configuration;<a name="line.49"></a>
-<span class="sourceLineNo">050</span>import org.apache.logging.log4j.util.StackLocatorUtil;<a name="line.50"></a>
-<span class="sourceLineNo">051</span><a name="line.51"></a>
-<span class="sourceLineNo">052</span>/**<a name="line.52"></a>
-<span class="sourceLineNo">053</span> * Configures Log4j from properties.<a name="line.53"></a>
-<span class="sourceLineNo">054</span> */<a name="line.54"></a>
-<span class="sourceLineNo">055</span>public class PropertyConfigurator implements Configurator {<a name="line.55"></a>
-<span class="sourceLineNo">056</span><a name="line.56"></a>
-<span class="sourceLineNo">057</span>    static class NameValue {<a name="line.57"></a>
-<span class="sourceLineNo">058</span>        String key, value;<a name="line.58"></a>
-<span class="sourceLineNo">059</span><a name="line.59"></a>
-<span class="sourceLineNo">060</span>        public NameValue(final String key, final String value) {<a name="line.60"></a>
-<span class="sourceLineNo">061</span>            this.key = key;<a name="line.61"></a>
-<span class="sourceLineNo">062</span>            this.value = value;<a name="line.62"></a>
-<span class="sourceLineNo">063</span>        }<a name="line.63"></a>
-<span class="sourceLineNo">064</span><a name="line.64"></a>
-<span class="sourceLineNo">065</span>        @Override<a name="line.65"></a>
-<span class="sourceLineNo">066</span>        public String toString() {<a name="line.66"></a>
-<span class="sourceLineNo">067</span>            return key + "=" + value;<a name="line.67"></a>
-<span class="sourceLineNo">068</span>        }<a name="line.68"></a>
-<span class="sourceLineNo">069</span>    }<a name="line.69"></a>
-<span class="sourceLineNo">070</span><a name="line.70"></a>
-<span class="sourceLineNo">071</span>    static class PropertyWatchdog extends FileWatchdog {<a name="line.71"></a>
+<span class="sourceLineNo">034</span>import org.apache.log4j.config.Log4j1Configuration;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.apache.log4j.config.PropertiesConfiguration;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.apache.log4j.config.PropertySetter;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.apache.log4j.helpers.FileWatchdog;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.apache.log4j.helpers.LogLog;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.apache.log4j.helpers.OptionConverter;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.apache.log4j.or.RendererMap;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.apache.log4j.spi.Configurator;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.apache.log4j.spi.ErrorHandler;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.apache.log4j.spi.Filter;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.apache.log4j.spi.LoggerFactory;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import org.apache.log4j.spi.LoggerRepository;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import org.apache.log4j.spi.OptionHandler;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>import org.apache.log4j.spi.RendererSupport;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>import org.apache.log4j.spi.ThrowableRenderer;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>import org.apache.log4j.spi.ThrowableRendererSupport;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>import org.apache.logging.log4j.core.config.Configuration;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>import org.apache.logging.log4j.core.net.UrlConnectionFactory;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>import org.apache.logging.log4j.util.StackLocatorUtil;<a name="line.52"></a>
+<span class="sourceLineNo">053</span><a name="line.53"></a>
+<span class="sourceLineNo">054</span>/**<a name="line.54"></a>
+<span class="sourceLineNo">055</span> * Configures Log4j from properties.<a name="line.55"></a>
+<span class="sourceLineNo">056</span> */<a name="line.56"></a>
+<span class="sourceLineNo">057</span>public class PropertyConfigurator implements Configurator {<a name="line.57"></a>
+<span class="sourceLineNo">058</span><a name="line.58"></a>
+<span class="sourceLineNo">059</span>    static class NameValue {<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        String key, value;<a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span>        public NameValue(final String key, final String value) {<a name="line.62"></a>
+<span class="sourceLineNo">063</span>            this.key = key;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>            this.value = value;<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        }<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>        @Override<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        public String toString() {<a name="line.68"></a>
+<span class="sourceLineNo">069</span>            return key + "=" + value;<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        }<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    }<a name="line.71"></a>
 <span class="sourceLineNo">072</span><a name="line.72"></a>
-<span class="sourceLineNo">073</span>        private final ClassLoader classLoader;<a name="line.73"></a>
+<span class="sourceLineNo">073</span>    static class PropertyWatchdog extends FileWatchdog {<a name="line.73"></a>
 <span class="sourceLineNo">074</span><a name="line.74"></a>
-<span class="sourceLineNo">075</span>        PropertyWatchdog(final String fileName, final ClassLoader classLoader) {<a name="line.75"></a>
-<span class="sourceLineNo">076</span>            super(fileName);<a name="line.76"></a>
-<span class="sourceLineNo">077</span>            this.classLoader = classLoader;<a name="line.77"></a>
-<span class="sourceLineNo">078</span>        }<a name="line.78"></a>
-<span class="sourceLineNo">079</span><a name="line.79"></a>
-<span class="sourceLineNo">080</span>        /**<a name="line.80"></a>
-<span class="sourceLineNo">081</span>         * Call {@link PropertyConfigurator#configure(String)} with the &lt;code&gt;filename&lt;/code&gt; to reconfigure log4j.<a name="line.81"></a>
-<span class="sourceLineNo">082</span>         */<a name="line.82"></a>
-<span class="sourceLineNo">083</span>        @Override<a name="line.83"></a>
-<span class="sourceLineNo">084</span>        public void doOnChange() {<a name="line.84"></a>
-<span class="sourceLineNo">085</span>            new PropertyConfigurator().doConfigure(filename, LogManager.getLoggerRepository(), classLoader);<a name="line.85"></a>
-<span class="sourceLineNo">086</span>        }<a name="line.86"></a>
-<span class="sourceLineNo">087</span>    }<a name="line.87"></a>
-<span class="sourceLineNo">088</span><a name="line.88"></a>
-<span class="sourceLineNo">089</span>    class SortedKeyEnumeration implements Enumeration {<a name="line.89"></a>
+<span class="sourceLineNo">075</span>        private final ClassLoader classLoader;<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>        PropertyWatchdog(final String fileName, final ClassLoader classLoader) {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>            super(fileName);<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            this.classLoader = classLoader;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        }<a name="line.80"></a>
+<span class="sourceLineNo">081</span><a name="line.81"></a>
+<span class="sourceLineNo">082</span>        /**<a name="line.82"></a>
+<span class="sourceLineNo">083</span>         * Call {@link PropertyConfigurator#configure(String)} with the &lt;code&gt;filename&lt;/code&gt; to reconfigure log4j.<a name="line.83"></a>
+<span class="sourceLineNo">084</span>         */<a name="line.84"></a>
+<span class="sourceLineNo">085</span>        @Override<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        public void doOnChange() {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>            new PropertyConfigurator().doConfigure(filename, LogManager.getLoggerRepository(), classLoader);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        }<a name="line.88"></a>
+<span class="sourceLineNo">089</span>    }<a name="line.89"></a>
 <span class="sourceLineNo">090</span><a name="line.90"></a>
-<span class="sourceLineNo">091</span>        private final Enumeration e;<a name="line.91"></a>
+<span class="sourceLineNo">091</span>    class SortedKeyEnumeration implements Enumeration {<a name="line.91"></a>
 <span class="sourceLineNo">092</span><a name="line.92"></a>
-<span class="sourceLineNo">093</span>        public SortedKeyEnumeration(final Hashtable ht) {<a name="line.93"></a>
-<span class="sourceLineNo">094</span>            final Enumeration f = ht.keys();<a name="line.94"></a>
-<span class="sourceLineNo">095</span>            final Vector keys = new Vector(ht.size());<a name="line.95"></a>
-<span class="sourceLineNo">096</span>            for (int i, last = 0; f.hasMoreElements(); ++last) {<a name="line.96"></a>
-<span class="sourceLineNo">097</span>                final String key = (String) f.nextElement();<a name="line.97"></a>
-<span class="sourceLineNo">098</span>                for (i = 0; i &lt; last; ++i) {<a name="line.98"></a>
-<span class="sourceLineNo">099</span>                    final String s = (String) keys.get(i);<a name="line.99"></a>
-<span class="sourceLineNo">100</span>                    if (key.compareTo(s) &lt;= 0) {<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                        break;<a name="line.101"></a>
-<span class="sourceLineNo">102</span>                    }<a name="line.102"></a>
-<span class="sourceLineNo">103</span>                }<a name="line.103"></a>
-<span class="sourceLineNo">104</span>                keys.add(i, key);<a name="line.104"></a>
-<span class="sourceLineNo">105</span>            }<a name="line.105"></a>
-<span class="sourceLineNo">106</span>            e = keys.elements();<a name="line.106"></a>
-<span class="sourceLineNo">107</span>        }<a name="line.107"></a>
-<span class="sourceLineNo">108</span><a name="line.108"></a>
-<span class="sourceLineNo">109</span>        @Override<a name="line.109"></a>
-<span class="sourceLineNo">110</span>        public boolean hasMoreElements() {<a name="line.110"></a>
-<span class="sourceLineNo">111</span>            return e.hasMoreElements();<a name="line.111"></a>
-<span class="sourceLineNo">112</span>        }<a name="line.112"></a>
-<span class="sourceLineNo">113</span><a name="line.113"></a>
-<span class="sourceLineNo">114</span>        @Override<a name="line.114"></a>
-<span class="sourceLineNo">115</span>        public Object nextElement() {<a name="line.115"></a>
-<span class="sourceLineNo">116</span>            return e.nextElement();<a name="line.116"></a>
-<span class="sourceLineNo">117</span>        }<a name="line.117"></a>
-<span class="sourceLineNo">118</span>    }<a name="line.118"></a>
-<span class="sourceLineNo">119</span><a name="line.119"></a>
-<span class="sourceLineNo">120</span>    static final String CATEGORY_PREFIX = "log4j.category.";<a name="line.120"></a>
-<span class="sourceLineNo">121</span>    static final String LOGGER_PREFIX = "log4j.logger.";<a name="line.121"></a>
-<span class="sourceLineNo">122</span>    static final String FACTORY_PREFIX = "log4j.factory";<a name="line.122"></a>
-<span class="sourceLineNo">123</span>    static final String ADDITIVITY_PREFIX = "log4j.additivity.";<a name="line.123"></a>
-<span class="sourceLineNo">124</span>    static final String ROOT_CATEGORY_PREFIX = "log4j.rootCategory";<a name="line.124"></a>
-<span class="sourceLineNo">125</span>    static final String ROOT_LOGGER_PREFIX = "log4j.rootLogger";<a name="line.125"></a>
-<span class="sourceLineNo">126</span>    static final String APPENDER_PREFIX = "log4j.appender.";<a name="line.126"></a>
-<span class="sourceLineNo">127</span>    static final String RENDERER_PREFIX = "log4j.renderer.";<a name="line.127"></a>
-<span class="sourceLineNo">128</span>    static final String THRESHOLD_PREFIX = "log4j.threshold";<a name="line.128"></a>
-<span class="sourceLineNo">129</span><a name="line.129"></a>
-<span class="sourceLineNo">130</span>    private static final String THROWABLE_RENDERER_PREFIX = "log4j.throwableRenderer";<a name="line.130"></a>
-<span class="sourceLineNo">131</span>    private static final String LOGGER_REF = "logger-ref";<a name="line.131"></a>
-<span class="sourceLineNo">132</span>    private static final String ROOT_REF = "root-ref";<a name="line.132"></a>
-<span class="sourceLineNo">133</span>    private static final String APPENDER_REF_TAG = "appender-ref";<a name="line.133"></a>
-<span class="sourceLineNo">134</span><a name="line.134"></a>
-<span class="sourceLineNo">135</span>    /**<a name="line.135"></a>
-<span class="sourceLineNo">136</span>     * Key for specifying the {@link org.apache.log4j.spi.LoggerFactory LoggerFactory}. Currently set to<a name="line.136"></a>
-<span class="sourceLineNo">137</span>     * "&lt;code&gt;log4j.loggerFactory&lt;/code&gt;".<a name="line.137"></a>
-<span class="sourceLineNo">138</span>     */<a name="line.138"></a>
-<span class="sourceLineNo">139</span>    public static final String LOGGER_FACTORY_KEY = "log4j.loggerFactory";<a name="line.139"></a>
-<span class="sourceLineNo">140</span><a name="line.140"></a>
-<span class="sourceLineNo">141</span>    /**<a name="line.141"></a>
-<span class="sourceLineNo">142</span>     * If property set to true, then hierarchy will be reset before configuration.<a name="line.142"></a>
-<span class="sourceLineNo">143</span>     */<a name="line.143"></a>
-<span class="sourceLineNo">144</span>    private static final String RESET_KEY = "log4j.reset";<a name="line.144"></a>
-<span class="sourceLineNo">145</span><a name="line.145"></a>
-<span class="sourceLineNo">146</span>    static final private String INTERNAL_ROOT_NAME = "root";<a name="line.146"></a>
+<span class="sourceLineNo">093</span>        private final Enumeration e;<a name="line.93"></a>
+<span class="sourceLineNo">094</span><a name="line.94"></a>
+<span class="sourceLineNo">095</span>        public SortedKeyEnumeration(final Hashtable ht) {<a name="line.95"></a>
+<span class="sourceLineNo">096</span>            final Enumeration f = ht.keys();<a name="line.96"></a>
+<span class="sourceLineNo">097</span>            final Vector keys = new Vector(ht.size());<a name="line.97"></a>
+<span class="sourceLineNo">098</span>            for (int i, last = 0; f.hasMoreElements(); ++last) {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                final String key = (String) f.nextElement();<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                for (i = 0; i &lt; last; ++i) {<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                    final String s = (String) keys.get(i);<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                    if (key.compareTo(s) &lt;= 0) {<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                        break;<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                    }<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                }<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                keys.add(i, key);<a name="line.106"></a>
+<span class="sourceLineNo">107</span>            }<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            e = keys.elements();<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
+<span class="sourceLineNo">110</span><a name="line.110"></a>
+<span class="sourceLineNo">111</span>        @Override<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        public boolean hasMoreElements() {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            return e.hasMoreElements();<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>        @Override<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        public Object nextElement() {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            return e.nextElement();<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        }<a name="line.119"></a>
+<span class="sourceLineNo">120</span>    }<a name="line.120"></a>
+<span class="sourceLineNo">121</span><a name="line.121"></a>
+<span class="sourceLineNo">122</span>    static final String CATEGORY_PREFIX = "log4j.category.";<a name="line.122"></a>
+<span class="sourceLineNo">123</span>    static final String LOGGER_PREFIX = "log4j.logger.";<a name="line.123"></a>
+<span class="sourceLineNo">124</span>    static final String FACTORY_PREFIX = "log4j.factory";<a name="line.124"></a>
+<span class="sourceLineNo">125</span>    static final String ADDITIVITY_PREFIX = "log4j.additivity.";<a name="line.125"></a>
+<span class="sourceLineNo">126</span>    static final String ROOT_CATEGORY_PREFIX = "log4j.rootCategory";<a name="line.126"></a>
+<span class="sourceLineNo">127</span>    static final String ROOT_LOGGER_PREFIX = "log4j.rootLogger";<a name="line.127"></a>
+<span class="sourceLineNo">128</span>    static final String APPENDER_PREFIX = "log4j.appender.";<a name="line.128"></a>
+<span class="sourceLineNo">129</span>    static final String RENDERER_PREFIX = "log4j.renderer.";<a name="line.129"></a>
+<span class="sourceLineNo">130</span>    static final String THRESHOLD_PREFIX = "log4j.threshold";<a name="line.130"></a>
+<span class="sourceLineNo">131</span><a name="line.131"></a>
+<span class="sourceLineNo">132</span>    private static final String THROWABLE_RENDERER_PREFIX = "log4j.throwableRenderer";<a name="line.132"></a>
+<span class="sourceLineNo">133</span>    private static final String LOGGER_REF = "logger-ref";<a name="line.133"></a>
+<span class="sourceLineNo">134</span>    private static final String ROOT_REF = "root-ref";<a name="line.134"></a>
+<span class="sourceLineNo">135</span>    private static final String APPENDER_REF_TAG = "appender-ref";<a name="line.135"></a>
+<span class="sourceLineNo">136</span><a name="line.136"></a>
+<span class="sourceLineNo">137</span>    /**<a name="line.137"></a>
+<span class="sourceLineNo">138</span>     * Key for specifying the {@link org.apache.log4j.spi.LoggerFactory LoggerFactory}. Currently set to<a name="line.138"></a>
+<span class="sourceLineNo">139</span>     * "&lt;code&gt;log4j.loggerFactory&lt;/code&gt;".<a name="line.139"></a>
+<span class="sourceLineNo">140</span>     */<a name="line.140"></a>
+<span class="sourceLineNo">141</span>    public static final String LOGGER_FACTORY_KEY = "log4j.loggerFactory";<a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>    /**<a name="line.143"></a>
+<span class="sourceLineNo">144</span>     * If property set to true, then hierarchy will be reset before configuration.<a name="line.144"></a>
+<span class="sourceLineNo">145</span>     */<a name="line.145"></a>
+<span class="sourceLineNo">146</span>    private static final String RESET_KEY = "log4j.reset";<a name="line.146"></a>
 <span class="sourceLineNo">147</span><a name="line.147"></a>
-<span class="sourceLineNo">148</span>    /**<a name="line.148"></a>
-<span class="sourceLineNo">149</span>     * Reads configuration options from an InputStream.<a name="line.149"></a>
-<span class="sourceLineNo">150</span>     *<a name="line.150"></a>
-<span class="sourceLineNo">151</span>     * @param inputStream The input stream<a name="line.151"></a>
-<span class="sourceLineNo">152</span>     */<a name="line.152"></a>
-<span class="sourceLineNo">153</span>    public static void configure(final InputStream inputStream) {<a name="line.153"></a>
-<span class="sourceLineNo">154</span>        new PropertyConfigurator().doConfigure(inputStream, LogManager.getLoggerRepository(), StackLocatorUtil.getCallerClassLoader(2));<a name="line.154"></a>
-<span class="sourceLineNo">155</span>    }<a name="line.155"></a>
-<span class="sourceLineNo">156</span><a name="line.156"></a>
-<span class="sourceLineNo">157</span>    /**<a name="line.157"></a>
-<span class="sourceLineNo">158</span>     * Reads configuration options from &lt;code&gt;properties&lt;/code&gt;.<a name="line.158"></a>
-<span class="sourceLineNo">159</span>     *<a name="line.159"></a>
-<span class="sourceLineNo">160</span>     * See {@link #doConfigure(String, LoggerRepository)} for the expected format.<a name="line.160"></a>
+<span class="sourceLineNo">148</span>    static final private String INTERNAL_ROOT_NAME = "root";<a name="line.148"></a>
+<span class="sourceLineNo">149</span><a name="line.149"></a>
+<span class="sourceLineNo">150</span>    /**<a name="line.150"></a>
+<span class="sourceLineNo">151</span>     * Reads configuration options from an InputStream.<a name="line.151"></a>
+<span class="sourceLineNo">152</span>     *<a name="line.152"></a>
+<span class="sourceLineNo">153</span>     * @param inputStream The input stream<a name="line.153"></a>
+<span class="sourceLineNo">154</span>     */<a name="line.154"></a>
+<span class="sourceLineNo">155</span>    public static void configure(final InputStream inputStream) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        new PropertyConfigurator().doConfigure(inputStream, LogManager.getLoggerRepository(), StackLocatorUtil.getCallerClassLoader(2));<a name="line.156"></a>
+<span class="sourceLineNo">157</span>    }<a name="line.157"></a>
+<span class="sourceLineNo">158</span><a name="line.158"></a>
+<span class="sourceLineNo">159</span>    /**<a name="line.159"></a>
+<span class="sourceLineNo">160</span>     * Reads configuration options from &lt;code&gt;properties&lt;/code&gt;.<a name="line.160"></a>
 <span class="sourceLineNo">161</span>     *<a name="line.161"></a>
-<span class="sourceLineNo">162</span>     * @param properties The properties<a name="line.162"></a>
-<span class="sourceLineNo">163</span>     */<a name="line.163"></a>
-<span class="sourceLineNo">164</span>    public static void configure(final Properties properties) {<a name="line.164"></a>
-<span class="sourceLineNo">165</span>        new PropertyConfigurator().doConfigure(properties, LogManager.getLoggerRepository(), StackLocatorUtil.getCallerClassLoader(2));<a name="line.165"></a>
-<span class="sourceLineNo">166</span>    }<a name="line.166"></a>
-<span class="sourceLineNo">167</span><a name="line.167"></a>
-<span class="sourceLineNo">168</span>    /**<a name="line.168"></a>
-<span class="sourceLineNo">169</span>     * Reads configuration options from configuration file.<a name="line.169"></a>
-<span class="sourceLineNo">170</span>     *<a name="line.170"></a>
-<span class="sourceLineNo">171</span>     * @param fileName The configuration file.<a name="line.171"></a>
-<span class="sourceLineNo">172</span>     */<a name="line.172"></a>
-<span class="sourceLineNo">173</span>    public static void configure(final String fileName) {<a name="line.173"></a>
-<span class="sourceLineNo">174</span>        new PropertyConfigurator().doConfigure(fileName, LogManager.getLoggerRepository(), StackLocatorUtil.getCallerClassLoader(2));<a name="line.174"></a>
-<span class="sourceLineNo">175</span>    }<a name="line.175"></a>
-<span class="sourceLineNo">176</span><a name="line.176"></a>
-<span class="sourceLineNo">177</span>    /**<a name="line.177"></a>
-<span class="sourceLineNo">178</span>     * Reads configuration options from url &lt;code&gt;configURL&lt;/code&gt;.<a name="line.178"></a>
-<span class="sourceLineNo">179</span>     *<a name="line.179"></a>
-<span class="sourceLineNo">180</span>     * @param configURL The configuration URL<a name="line.180"></a>
-<span class="sourceLineNo">181</span>     */<a name="line.181"></a>
-<span class="sourceLineNo">182</span>    public static void configure(final URL configURL) {<a name="line.182"></a>
-<span class="sourceLineNo">183</span>        new PropertyConfigurator().doConfigure(configURL, LogManager.getLoggerRepository(), StackLocatorUtil.getCallerClassLoader(2));<a name="line.183"></a>
-<span class="sourceLineNo">184</span>    }<a name="line.184"></a>
-<span class="sourceLineNo">185</span><a name="line.185"></a>
-<span class="sourceLineNo">186</span>    /**<a name="line.186"></a>
-<span class="sourceLineNo">187</span>     * Like {@link #configureAndWatch(String, long)} except that the default delay as defined by FileWatchdog.DEFAULT_DELAY<a name="line.187"></a>
-<span class="sourceLineNo">188</span>     * is used.<a name="line.188"></a>
-<span class="sourceLineNo">189</span>     *<a name="line.189"></a>
-<span class="sourceLineNo">190</span>     * @param configFilename A file in key=value format.<a name="line.190"></a>
-<span class="sourceLineNo">191</span>     */<a name="line.191"></a>
-<span class="sourceLineNo">192</span>    public static void configureAndWatch(final String configFilename) {<a name="line.192"></a>
-<span class="sourceLineNo">193</span>        configureAndWatch(configFilename, FileWatchdog.DEFAULT_DELAY, StackLocatorUtil.getCallerClassLoader(2));<a name="line.193"></a>
-<span class="sourceLineNo">194</span>    }<a name="line.194"></a>
-<span class="sourceLineNo">195</span><a name="line.195"></a>
-<span class="sourceLineNo">196</span>    /**<a name="line.196"></a>
-<span class="sourceLineNo">197</span>     * Reads the configuration file &lt;code&gt;configFilename&lt;/code&gt; if it exists. Moreover, a thread will be created that will<a name="line.197"></a>
-<span class="sourceLineNo">198</span>     * periodically check if &lt;code&gt;configFilename&lt;/code&gt; has been created or modified. The period is determined by the<a name="line.198"></a>
-<span class="sourceLineNo">199</span>     * &lt;code&gt;delay&lt;/code&gt; argument. If a change or file creation is detected, then &lt;code&gt;configFilename&lt;/code&gt; is read to<a name="line.199"></a>
-<span class="sourceLineNo">200</span>     * configure log4j.<a name="line.200"></a>
-<span class="sourceLineNo">201</span>     *<a name="line.201"></a>
-<span class="sourceLineNo">202</span>     * @param configFilename A file in key=value format.<a name="line.202"></a>
-<span class="sourceLineNo">203</span>     * @param delayMillis The delay in milliseconds to wait between each check.<a name="line.203"></a>
-<span class="sourceLineNo">204</span>     */<a name="line.204"></a>
-<span class="sourceLineNo">205</span>    public static void configureAndWatch(final String configFilename, final long delayMillis) {<a name="line.205"></a>
-<span class="sourceLineNo">206</span>        configureAndWatch(configFilename, delayMillis, StackLocatorUtil.getCallerClassLoader(2));<a name="line.206"></a>
-<span class="sourceLineNo">207</span>    }<a name="line.207"></a>
-<span class="sourceLineNo">208</span><a name="line.208"></a>
-<span class="sourceLineNo">209</span>    static void configureAndWatch(final String configFilename, final long delay, final ClassLoader classLoader) {<a name="line.209"></a>
-<span class="sourceLineNo">210</span>        final PropertyWatchdog watchdog = new PropertyWatchdog(configFilename, classLoader);<a name="line.210"></a>
-<span class="sourceLineNo">211</span>        watchdog.setDelay(delay);<a name="line.211"></a>
-<span class="sourceLineNo">212</span>        watchdog.start();<a name="line.212"></a>
-<span class="sourceLineNo">213</span>    }<a name="line.213"></a>
-<span class="sourceLineNo">214</span><a name="line.214"></a>
-<span class="sourceLineNo">215</span>    private static Configuration reconfigure(final Configuration configuration) {<a name="line.215"></a>
-<span class="sourceLineNo">216</span>        org.apache.logging.log4j.core.config.Configurator.reconfigure(configuration);<a name="line.216"></a>
-<span class="sourceLineNo">217</span>        return configuration;<a name="line.217"></a>
-<span class="sourceLineNo">218</span>    }<a name="line.218"></a>
-<span class="sourceLineNo">219</span><a name="line.219"></a>
-<span class="sourceLineNo">220</span>    /**<a name="line.220"></a>
-<span class="sourceLineNo">221</span>     * Used internally to keep track of configured appenders.<a name="line.221"></a>
-<span class="sourceLineNo">222</span>     */<a name="line.222"></a>
-<span class="sourceLineNo">223</span>    protected Hashtable registry = new Hashtable(11);<a name="line.223"></a>
-<span class="sourceLineNo">224</span><a name="line.224"></a>
-<span class="sourceLineNo">225</span>    private LoggerRepository repository;<a name="line.225"></a>
+<span class="sourceLineNo">162</span>     * See {@link #doConfigure(String, LoggerRepository)} for the expected format.<a name="line.162"></a>
+<span class="sourceLineNo">163</span>     *<a name="line.163"></a>
+<span class="sourceLineNo">164</span>     * @param properties The properties<a name="line.164"></a>
+<span class="sourceLineNo">165</span>     */<a name="line.165"></a>
+<span class="sourceLineNo">166</span>    public static void configure(final Properties properties) {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        new PropertyConfigurator().doConfigure(properties, LogManager.getLoggerRepository(), StackLocatorUtil.getCallerClassLoader(2));<a name="line.167"></a>
+<span class="sourceLineNo">168</span>    }<a name="line.168"></a>
+<span class="sourceLineNo">169</span><a name="line.169"></a>
+<span class="sourceLineNo">170</span>    /**<a name="line.170"></a>
+<span class="sourceLineNo">171</span>     * Reads configuration options from configuration file.<a name="line.171"></a>
+<span class="sourceLineNo">172</span>     *<a name="line.172"></a>
+<span class="sourceLineNo">173</span>     * @param fileName The configuration file.<a name="line.173"></a>
+<span class="sourceLineNo">174</span>     */<a name="line.174"></a>
+<span class="sourceLineNo">175</span>    public static void configure(final String fileName) {<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        new PropertyConfigurator().doConfigure(fileName, LogManager.getLoggerRepository(), StackLocatorUtil.getCallerClassLoader(2));<a name="line.176"></a>
+<span class="sourceLineNo">177</span>    }<a name="line.177"></a>
+<span class="sourceLineNo">178</span><a name="line.178"></a>
+<span class="sourceLineNo">179</span>    /**<a name="line.179"></a>
+<span class="sourceLineNo">180</span>     * Reads configuration options from url &lt;code&gt;configURL&lt;/code&gt;.<a name="line.180"></a>
+<span class="sourceLineNo">181</span>     *<a name="line.181"></a>
+<span class="sourceLineNo">182</span>     * @param configURL The configuration URL<a name="line.182"></a>
+<span class="sourceLineNo">183</span>     */<a name="line.183"></a>
+<span class="sourceLineNo">184</span>    public static void configure(final URL configURL) {<a name="line.184"></a>
+<span class="sourceLineNo">185</span>        new PropertyConfigurator().doConfigure(configURL, LogManager.getLoggerRepository(), StackLocatorUtil.getCallerClassLoader(2));<a name="line.185"></a>
+<span class="sourceLineNo">186</span>    }<a name="line.186"></a>
+<span class="sourceLineNo">187</span><a name="line.187"></a>
+<span class="sourceLineNo">188</span>    /**<a name="line.188"></a>
+<span class="sourceLineNo">189</span>     * Like {@link #configureAndWatch(String, long)} except that the default delay as defined by FileWatchdog.DEFAULT_DELAY<a name="line.189"></a>
+<span class="sourceLineNo">190</span>     * is used.<a name="line.190"></a>
+<span class="sourceLineNo">191</span>     *<a name="line.191"></a>
+<span class="sourceLineNo">192</span>     * @param configFilename A file in key=value format.<a name="line.192"></a>
+<span class="sourceLineNo">193</span>     */<a name="line.193"></a>
+<span class="sourceLineNo">194</span>    public static void configureAndWatch(final String configFilename) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>        configureAndWatch(configFilename, FileWatchdog.DEFAULT_DELAY, StackLocatorUtil.getCallerClassLoader(2));<a name="line.195"></a>
+<span class="sourceLineNo">196</span>    }<a name="line.196"></a>
+<span class="sourceLineNo">197</span><a name="line.197"></a>
+<span class="sourceLineNo">198</span>    /**<a name="line.198"></a>
+<span class="sourceLineNo">199</span>     * Reads the configuration file &lt;code&gt;configFilename&lt;/code&gt; if it exists. Moreover, a thread will be created that will<a name="line.199"></a>
+<span class="sourceLineNo">200</span>     * periodically check if &lt;code&gt;configFilename&lt;/code&gt; has been created or modified. The period is determined by the<a name="line.200"></a>
+<span class="sourceLineNo">201</span>     * &lt;code&gt;delay&lt;/code&gt; argument. If a change or file creation is detected, then &lt;code&gt;configFilename&lt;/code&gt; is read to<a name="line.201"></a>
+<span class="sourceLineNo">202</span>     * configure log4j.<a name="line.202"></a>
+<span class="sourceLineNo">203</span>     *<a name="line.203"></a>
+<span class="sourceLineNo">204</span>     * @param configFilename A file in key=value format.<a name="line.204"></a>
+<span class="sourceLineNo">205</span>     * @param delayMillis The delay in milliseconds to wait between each check.<a name="line.205"></a>
+<span class="sourceLineNo">206</span>     */<a name="line.206"></a>
+<span class="sourceLineNo">207</span>    public static void configureAndWatch(final String configFilename, final long delayMillis) {<a name="line.207"></a>
+<span class="sourceLineNo">208</span>        configureAndWatch(configFilename, delayMillis, StackLocatorUtil.getCallerClassLoader(2));<a name="line.208"></a>
+<span class="sourceLineNo">209</span>    }<a name="line.209"></a>
+<span class="sourceLineNo">210</span><a name="line.210"></a>
+<span class="sourceLineNo">211</span>    static void configureAndWatch(final String configFilename, final long delay, final ClassLoader classLoader) {<a name="line.211"></a>
+<span class="sourceLineNo">212</span>        final PropertyWatchdog watchdog = new PropertyWatchdog(configFilename, classLoader);<a name="line.212"></a>
+<span class="sourceLineNo">213</span>        watchdog.setDelay(delay);<a name="line.213"></a>
+<span class="sourceLineNo">214</span>        watchdog.start();<a name="line.214"></a>
+<span class="sourceLineNo">215</span>    }<a name="line.215"></a>
+<span class="sourceLineNo">216</span><a name="line.216"></a>
+<span class="sourceLineNo">217</span>    private static Configuration reconfigure(final Configuration configuration) {<a name="line.217"></a>
+<span class="sourceLineNo">218</span>        org.apache.logging.log4j.core.config.Configurator.reconfigure(configuration);<a name="line.218"></a>
+<span class="sourceLineNo">219</span>        return configuration;<a name="line.219"></a>
+<span class="sourceLineNo">220</span>    }<a name="line.220"></a>
+<span class="sourceLineNo">221</span><a name="line.221"></a>
+<span class="sourceLineNo">222</span>    /**<a name="line.222"></a>
+<span class="sourceLineNo">223</span>     * Used internally to keep track of configured appenders.<a name="line.223"></a>
+<span class="sourceLineNo">224</span>     */<a name="line.224"></a>
+<span class="sourceLineNo">225</span>    protected Hashtable registry = new Hashtable(11);<a name="line.225"></a>
 <span class="sourceLineNo">226</span><a name="line.226"></a>
-<span class="sourceLineNo">227</span>    protected LoggerFactory loggerFactory = new DefaultCategoryFactory();<a name="line.227"></a>
+<span class="sourceLineNo">227</span>    private LoggerRepository repository;<a name="line.227"></a>
 <span class="sourceLineNo">228</span><a name="line.228"></a>
-<span class="sourceLineNo">229</span>    /**<a name="line.229"></a>
-<span class="sourceLineNo">230</span>     * Checks the provided &lt;code&gt;Properties&lt;/code&gt; object for a {@link org.apache.log4j.spi.LoggerFactory LoggerFactory}<a name="line.230"></a>
-<span class="sourceLineNo">231</span>     * entry specified by {@link #LOGGER_FACTORY_KEY}. If such an entry exists, an attempt is made to create an instance<a name="line.231"></a>
-<span class="sourceLineNo">232</span>     * using the default constructor. This instance is used for subsequent Category creations within this configurator.<a name="line.232"></a>
-<span class="sourceLineNo">233</span>     *<a name="line.233"></a>
-<span class="sourceLineNo">234</span>     * @see #parseCatsAndRenderers<a name="line.234"></a>
-<span class="sourceLineNo">235</span>     */<a name="line.235"></a>
-<span class="sourceLineNo">236</span>    protected void configureLoggerFactory(final Properties properties) {<a name="line.236"></a>
-<span class="sourceLineNo">237</span>        final String factoryClassName = OptionConverter.findAndSubst(LOGGER_FACTORY_KEY, properties);<a name="line.237"></a>
-<span class="sourceLineNo">238</span>        if (factoryClassName != null) {<a name="line.238"></a>
-<span class="sourceLineNo">239</span>            LogLog.debug("Setting category factory to [" + factoryClassName + "].");<a name="line.239"></a>
-<span class="sourceLineNo">240</span>            loggerFactory = (LoggerFactory) OptionConverter.instantiateByClassName(factoryClassName, LoggerFactory.class, loggerFactory);<a name="line.240"></a>
-<span class="sourceLineNo">241</span>            PropertySetter.setProperties(loggerFactory, properties, FACTORY_PREFIX + ".");<a name="line.241"></a>
-<span class="sourceLineNo">242</span>        }<a name="line.242"></a>
-<span class="sourceLineNo">243</span>    }<a name="line.243"></a>
-<span class="sourceLineNo">244</span><a name="line.244"></a>
-<span class="sourceLineNo">245</span>    void configureRootCategory(final Properties properties, final LoggerRepository loggerRepository) {<a name="line.245"></a>
-<span class="sourceLineNo">246</span>        String effectiveFrefix = ROOT_LOGGER_PREFIX;<a name="line.246"></a>
-<span class="sourceLineNo">247</span>        String value = OptionConverter.findAndSubst(ROOT_LOGGER_PREFIX, properties);<a name="line.247"></a>
-<span class="sourceLineNo">248</span><a name="line.248"></a>
-<span class="sourceLineNo">249</span>        if (value == null) {<a name="line.249"></a>
-<span class="sourceLineNo">250</span>            value = OptionConverter.findAndSubst(ROOT_CATEGORY_PREFIX, properties);<a name="line.250"></a>
-<span class="sourceLineNo">251</span>            effectiveFrefix = ROOT_CATEGORY_PREFIX;<a name="line.251"></a>
-<span class="sourceLineNo">252</span>        }<a name="line.252"></a>
-<span class="sourceLineNo">253</span><a name="line.253"></a>
-<span class="sourceLineNo">254</span>        if (value == null) {<a name="line.254"></a>
-<span class="sourceLineNo">255</span>            LogLog.debug("Could not find root logger information. Is this OK?");<a name="line.255"></a>
-<span class="sourceLineNo">256</span>        } else {<a name="line.256"></a>
-<span class="sourceLineNo">257</span>            final Logger root = loggerRepository.getRootLogger();<a name="line.257"></a>
-<span class="sourceLineNo">258</span>            synchronized (root) {<a name="line.258"></a>
-<span class="sourceLineNo">259</span>                parseCategory(properties, root, effectiveFrefix, INTERNAL_ROOT_NAME, value);<a name="line.259"></a>
-<span class="sourceLineNo">260</span>            }<a name="line.260"></a>
-<span class="sourceLineNo">261</span>        }<a name="line.261"></a>
-<span class="sourceLineNo">262</span>    }<a name="line.262"></a>
-<span class="sourceLineNo">263</span><a name="line.263"></a>
-<span class="sourceLineNo">264</span>    /**<a name="line.264"></a>
-<span class="sourceLineNo">265</span>     * Reads configuration options from an InputStream.<a name="line.265"></a>
-<span class="sourceLineNo">266</span>     *<a name="line.266"></a>
-<span class="sourceLineNo">267</span>     * @param inputStream The input stream<a name="line.267"></a>
-<span class="sourceLineNo">268</span>     * @param loggerRepository The hierarchy<a name="line.268"></a>
-<span class="sourceLineNo">269</span>     */<a name="line.269"></a>
-<span class="sourceLineNo">270</span>    @Override<a name="line.270"></a>
-<span class="sourceLineNo">271</span>    public void doConfigure(final InputStream inputStream, final LoggerRepository loggerRepository) {<a name="line.271"></a>
-<span class="sourceLineNo">272</span>        doConfigure(inputStream, loggerRepository, StackLocatorUtil.getCallerClassLoader(2));<a name="line.272"></a>
-<span class="sourceLineNo">273</span>    }<a name="line.273"></a>
-<span class="sourceLineNo">274</span><a name="line.274"></a>
-<span class="sourceLineNo">275</span>    Configuration doConfigure(final InputStream inputStream, final LoggerRepository loggerRepository, final ClassLoader classLoader) {<a name="line.275"></a>
-<span class="sourceLineNo">276</span>        return doConfigure(loadProperties(inputStream), loggerRepository, classLoader);<a name="line.276"></a>
-<span class="sourceLineNo">277</span>    }<a name="line.277"></a>
-<span class="sourceLineNo">278</span><a name="line.278"></a>
-<span class="sourceLineNo">279</span>    /**<a name="line.279"></a>
-<span class="sourceLineNo">280</span>     * Reads configuration options from &lt;code&gt;properties&lt;/code&gt;.<a name="line.280"></a>
-<span class="sourceLineNo">281</span>     *<a name="line.281"></a>
-<span class="sourceLineNo">282</span>     * See {@link #doConfigure(String, LoggerRepository)} for the expected format.<a name="line.282"></a>
+<span class="sourceLineNo">229</span>    protected LoggerFactory loggerFactory = new DefaultCategoryFactory();<a name="line.229"></a>
+<span class="sourceLineNo">230</span><a name="line.230"></a>
+<span class="sourceLineNo">231</span>    /**<a name="line.231"></a>
+<span class="sourceLineNo">232</span>     * Checks the provided &lt;code&gt;Properties&lt;/code&gt; object for a {@link org.apache.log4j.spi.LoggerFactory LoggerFactory}<a name="line.232"></a>
+<span class="sourceLineNo">233</span>     * entry specified by {@link #LOGGER_FACTORY_KEY}. If such an entry exists, an attempt is made to create an instance<a name="line.233"></a>
+<span class="sourceLineNo">234</span>     * using the default constructor. This instance is used for subsequent Category creations within this configurator.<a name="line.234"></a>
+<span class="sourceLineNo">235</span>     *<a name="line.235"></a>
+<span class="sourceLineNo">236</span>     * @see #parseCatsAndRenderers<a name="line.236"></a>
+<span class="sourceLineNo">237</span>     */<a name="line.237"></a>
+<span class="sourceLineNo">238</span>    protected void configureLoggerFactory(final Properties properties) {<a name="line.238"></a>
+<span class="sourceLineNo">239</span>        final String factoryClassName = OptionConverter.findAndSubst(LOGGER_FACTORY_KEY, properties);<a name="line.239"></a>
+<span class="sourceLineNo">240</span>        if (factoryClassName != null) {<a name="line.240"></a>
+<span class="sourceLineNo">241</span>            LogLog.debug("Setting category factory to [" + factoryClassName + "].");<a name="line.241"></a>
+<span class="sourceLineNo">242</span>            loggerFactory = (LoggerFactory) OptionConverter.instantiateByClassName(factoryClassName, LoggerFactory.class, loggerFactory);<a name="line.242"></a>
+<span class="sourceLineNo">243</span>            PropertySetter.setProperties(loggerFactory, properties, FACTORY_PREFIX + ".");<a name="line.243"></a>
+<span class="sourceLineNo">244</span>        }<a name="line.244"></a>
+<span class="sourceLineNo">245</span>    }<a name="line.245"></a>
+<span class="sourceLineNo">246</span><a name="line.246"></a>
+<span class="sourceLineNo">247</span>    void configureRootCategory(final Properties properties, final LoggerRepository loggerRepository) {<a name="line.247"></a>
+<span class="sourceLineNo">248</span>        String effectiveFrefix = ROOT_LOGGER_PREFIX;<a name="line.248"></a>
+<span class="sourceLineNo">249</span>        String value = OptionConverter.findAndSubst(ROOT_LOGGER_PREFIX, properties);<a name="line.249"></a>
+<span class="sourceLineNo">250</span><a name="line.250"></a>
+<span class="sourceLineNo">251</span>        if (value == null) {<a name="line.251"></a>
+<span class="sourceLineNo">252</span>            value = OptionConverter.findAndSubst(ROOT_CATEGORY_PREFIX, properties);<a name="line.252"></a>
+<span class="sourceLineNo">253</span>            effectiveFrefix = ROOT_CATEGORY_PREFIX;<a name="line.253"></a>
+<span class="sourceLineNo">254</span>        }<a name="line.254"></a>
+<span class="sourceLineNo">255</span><a name="line.255"></a>
+<span class="sourceLineNo">256</span>        if (value == null) {<a name="line.256"></a>
+<span class="sourceLineNo">257</span>            LogLog.debug("Could not find root logger information. Is this OK?");<a name="line.257"></a>
+<span class="sourceLineNo">258</span>        } else {<a name="line.258"></a>
+<span class="sourceLineNo">259</span>            final Logger root = loggerRepository.getRootLogger();<a name="line.259"></a>
+<span class="sourceLineNo">260</span>            synchronized (root) {<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                parseCategory(properties, root, effectiveFrefix, INTERNAL_ROOT_NAME, value);<a name="line.261"></a>
+<span class="sourceLineNo">262</span>            }<a name="line.262"></a>
+<span class="sourceLineNo">263</span>        }<a name="line.263"></a>
+<span class="sourceLineNo">264</span>    }<a name="line.264"></a>
+<span class="sourceLineNo">265</span><a name="line.265"></a>
+<span class="sourceLineNo">266</span>    /**<a name="line.266"></a>
+<span class="sourceLineNo">267</span>     * Reads configuration options from an InputStream.<a name="line.267"></a>
+<span class="sourceLineNo">268</span>     *<a name="line.268"></a>
+<span class="sourceLineNo">269</span>     * @param inputStream The input stream<a name="line.269"></a>
+<span class="sourceLineNo">270</span>     * @param loggerRepository The hierarchy<a name="line.270"></a>
+<span class="sourceLineNo">271</span>     */<a name="line.271"></a>
+<span class="sourceLineNo">272</span>    @Override<a name="line.272"></a>
+<span class="sourceLineNo">273</span>    public void doConfigure(final InputStream inputStream, final LoggerRepository loggerRepository) {<a name="line.273"></a>
+<span class="sourceLineNo">274</span>        doConfigure(inputStream, loggerRepository, StackLocatorUtil.getCallerClassLoader(2));<a name="line.274"></a>
+<span class="sourceLineNo">275</span>    }<a name="line.275"></a>
+<span class="sourceLineNo">276</span><a name="line.276"></a>
+<span class="sourceLineNo">277</span>    Configuration doConfigure(final InputStream inputStream, final LoggerRepository loggerRepository, final ClassLoader classLoader) {<a name="line.277"></a>
+<span class="sourceLineNo">278</span>        return doConfigure(loadProperties(inputStream), loggerRepository, classLoader);<a name="line.278"></a>
+<span class="sourceLineNo">279</span>    }<a name="line.279"></a>
+<span class="sourceLineNo">280</span><a name="line.280"></a>
+<span class="sourceLineNo">281</span>    /**<a name="line.281"></a>
+<span class="sourceLineNo">282</span>     * Reads configuration options from &lt;code&gt;properties&lt;/code&gt;.<a name="line.282"></a>
 <span class="sourceLineNo">283</span>     *<a name="line.283"></a>
-<span class="sourceLineNo">284</span>     * @param properties The properties<a name="line.284"></a>
-<span class="sourceLineNo">285</span>     * @param loggerRepository The hierarchy<a name="line.285"></a>
-<span class="sourceLineNo">286</span>     */<a name="line.286"></a>
-<span class="sourceLineNo">287</span>    public void doConfigure(final Properties properties, final LoggerRepository loggerRepository) {<a name="line.287"></a>
-<span class="sourceLineNo">288</span>        doConfigure(properties, loggerRepository, StackLocatorUtil.getCallerClassLoader(2));<a name="line.288"></a>
-<span class="sourceLineNo">289</span>    }<a name="line.289"></a>
-<span class="sourceLineNo">290</span><a name="line.290"></a>
-<span class="sourceLineNo">291</span>    /**<a name="line.291"></a>
-<span class="sourceLineNo">292</span>     * Reads configuration options from &lt;code&gt;properties&lt;/code&gt;.<a name="line.292"></a>
-<span class="sourceLineNo">293</span>     *<a name="line.293"></a>
-<span class="sourceLineNo">294</span>     * See {@link #doConfigure(String, LoggerRepository)} for the expected format.<a name="line.294"></a>
+<span class="sourceLineNo">284</span>     * See {@link #doConfigure(String, LoggerRepository)} for the expected format.<a name="line.284"></a>
+<span class="sourceLineNo">285</span>     *<a name="line.285"></a>
+<span class="sourceLineNo">286</span>     * @param properties The properties<a name="line.286"></a>
+<span class="sourceLineNo">287</span>     * @param loggerRepository The hierarchy<a name="line.287"></a>
+<span class="sourceLineNo">288</span>     */<a name="line.288"></a>
+<span class="sourceLineNo">289</span>    public void doConfigure(final Properties properties, final LoggerRepository loggerRepository) {<a name="line.289"></a>
+<span class="sourceLineNo">290</span>        doConfigure(properties, loggerRepository, StackLocatorUtil.getCallerClassLoader(2));<a name="line.290"></a>
+<span class="sourceLineNo">291</span>    }<a name="line.291"></a>
+<span class="sourceLineNo">292</span><a name="line.292"></a>
+<span class="sourceLineNo">293</span>    /**<a name="line.293"></a>
+<span class="sourceLineNo">294</span>     * Reads configuration options from &lt;code&gt;properties&lt;/code&gt;.<a name="line.294"></a>
 <span class="sourceLineNo">295</span>     *<a name="line.295"></a>
-<span class="sourceLineNo">296</span>     * @param properties The properties<a name="line.296"></a>
-<span class="sourceLineNo">297</span>     * @param loggerRepository The hierarchy<a name="line.297"></a>
-<span class="sourceLineNo">298</span>     */<a name="line.298"></a>
-<span class="sourceLineNo">299</span>    Configuration doConfigure(final Properties properties, final LoggerRepository loggerRepository, final ClassLoader classLoader) {<a name="line.299"></a>
-<span class="sourceLineNo">300</span>        final PropertiesConfiguration configuration = new PropertiesConfiguration(LogManager.getContext(classLoader), properties);<a name="line.300"></a>
-<span class="sourceLineNo">301</span>        configuration.doConfigure();<a name="line.301"></a>
-<span class="sourceLineNo">302</span><a name="line.302"></a>
-<span class="sourceLineNo">303</span>        repository = loggerRepository;<a name="line.303"></a>
-<span class="sourceLineNo">304</span>//      String value = properties.getProperty(LogLog.DEBUG_KEY);<a name="line.304"></a>
-<span class="sourceLineNo">305</span>//      if (value == null) {<a name="line.305"></a>
-<span class="sourceLineNo">306</span>//          value = properties.getProperty("log4j.configDebug");<a name="line.306"></a>
-<span class="sourceLineNo">307</span>//          if (value != null) {<a name="line.307"></a>
-<span class="sourceLineNo">308</span>//              LogLog.warn("[log4j.configDebug] is deprecated. Use [log4j.debug] instead.");<a name="line.308"></a>
-<span class="sourceLineNo">309</span>//          }<a name="line.309"></a>
-<span class="sourceLineNo">310</span>//      }<a name="line.310"></a>
-<span class="sourceLineNo">311</span>//<a name="line.311"></a>
-<span class="sourceLineNo">312</span>//      if (value != null) {<a name="line.312"></a>
-<span class="sourceLineNo">313</span>//          LogLog.setInternalDebugging(OptionConverter.toBoolean(value, true));<a name="line.313"></a>
-<span class="sourceLineNo">314</span>//      }<a name="line.314"></a>
-<span class="sourceLineNo">315</span>//<a name="line.315"></a>
-<span class="sourceLineNo">316</span>//      //<a name="line.316"></a>
-<span class="sourceLineNo">317</span>//      // if log4j.reset=true then<a name="line.317"></a>
-<span class="sourceLineNo">318</span>//      // reset hierarchy<a name="line.318"></a>
-<span class="sourceLineNo">319</span>//      final String reset = properties.getProperty(RESET_KEY);<a name="line.319"></a>
-<span class="sourceLineNo">320</span>//      if (reset != null &amp;&amp; OptionConverter.toBoolean(reset, false)) {<a name="line.320"></a>
-<span class="sourceLineNo">321</span>//          hierarchy.resetConfiguration();<a name="line.321"></a>
-<span class="sourceLineNo">322</span>//      }<a name="line.322"></a>
-<span class="sourceLineNo">323</span>//<a name="line.323"></a>
-<span class="sourceLineNo">324</span>//      final String thresholdStr = OptionConverter.findAndSubst(THRESHOLD_PREFIX, properties);<a name="line.324"></a>
-<span class="sourceLineNo">325</span>//      if (thresholdStr != null) {<a name="line.325"></a>
-<span class="sourceLineNo">326</span>//          hierarchy.setThreshold(OptionConverter.toLevel(thresholdStr, (Level) Level.ALL));<a name="line.326"></a>
-<span class="sourceLineNo">327</span>//          LogLog.debug("Hierarchy threshold set to [" + hierarchy.getThreshold() + "].");<a name="line.327"></a>
-<span class="sourceLineNo">328</span>//      }<a name="line.328"></a>
-<span class="sourceLineNo">329</span>//<a name="line.329"></a>
-<span class="sourceLineNo">330</span>//      configureRootCategory(properties, hierarchy);<a name="line.330"></a>
-<span class="sourceLineNo">331</span>//      configureLoggerFactory(properties);<a name="line.331"></a>
-<span class="sourceLineNo">332</span>//      parseCatsAndRenderers(properties, hierarchy);<a name="line.332"></a>
-<span class="sourceLineNo">333</span>//<a name="line.333"></a>
-<span class="sourceLineNo">334</span>        // We don't want to hold references to appenders preventing their<a name="line.334"></a>
-<span class="sourceLineNo">335</span>        // garbage collection.<a name="line.335"></a>
-<span class="sourceLineNo">336</span>        registry.clear();<a name="line.336"></a>
-<span class="sourceLineNo">337</span><a name="line.337"></a>
-<span class="sourceLineNo">338</span>        return reconfigure(configuration);<a name="line.338"></a>
-<span class="sourceLineNo">339</span>    }<a name="line.339"></a>
-<span class="sourceLineNo">340</span><a name="line.340"></a>
-<span class="sourceLineNo">341</span>    /**<a name="line.341"></a>
-<span class="sourceLineNo">342</span>     * Reads configuration options from configuration file.<a name="line.342"></a>
-<span class="sourceLineNo">343</span>     *<a name="line.343"></a>
-<span class="sourceLineNo">344</span>     * @param fileName The configuration file<a name="line.344"></a>
-<span class="sourceLineNo">345</span>     * @param loggerRepository The hierarchy<a name="line.345"></a>
-<span class="sourceLineNo">346</span>     */<a name="line.346"></a>
-<span class="sourceLineNo">347</span>    public void doConfigure(final String fileName, final LoggerRepository loggerRepository) {<a name="line.347"></a>
-<span class="sourceLineNo">348</span>        doConfigure(fileName, loggerRepository, StackLocatorUtil.getCallerClassLoader(2));<a name="line.348"></a>
-<span class="sourceLineNo">349</span>    }<a name="line.349"></a>
-<span class="sourceLineNo">350</span><a name="line.350"></a>
-<span class="sourceLineNo">351</span>    /**<a name="line.351"></a>
-<span class="sourceLineNo">352</span>     * Reads configuration options from configuration file.<a name="line.352"></a>
-<span class="sourceLineNo">353</span>     *<a name="line.353"></a>
-<span class="sourceLineNo">354</span>     * @param fileName The configuration file<a name="line.354"></a>
-<span class="sourceLineNo">355</span>     * @param loggerRepository The hierarchy<a name="line.355"></a>
-<span class="sourceLineNo">356</span>     */<a name="line.356"></a>
-<span class="sourceLineNo">357</span>    Configuration doConfigure(final String fileName, final LoggerRepository loggerRepository, final ClassLoader classLoader) {<a name="line.357"></a>
-<span class="sourceLineNo">358</span>        try (InputStream inputStream = Files.newInputStream(Paths.get(fileName))) {<a name="line.358"></a>
-<span class="sourceLineNo">359</span>            return doConfigure(inputStream, loggerRepository, classLoader);<a name="line.359"></a>
-<span class="sourceLineNo">360</span>        } catch (final Exception e) {<a name="line.360"></a>
-<span class="sourceLineNo">361</span>            if (e instanceof InterruptedIOException || e instanceof InterruptedException) {<a name="line.361"></a>
-<span class="sourceLineNo">362</span>                Thread.currentThread().interrupt();<a name="line.362"></a>
-<span class="sourceLineNo">363</span>            }<a name="line.363"></a>
-<span class="sourceLineNo">364</span>            LogLog.error("Could not read configuration file [" + fileName + "].", e);<a name="line.364"></a>
-<span class="sourceLineNo">365</span>            LogLog.error("Ignoring configuration file [" + fileName + "].");<a name="line.365"></a>
-<span class="sourceLineNo">366</span>            return null;<a name="line.366"></a>
-<span class="sourceLineNo">367</span>        }<a name="line.367"></a>
-<span class="sourceLineNo">368</span>    }<a name="line.368"></a>
-<span class="sourceLineNo">369</span><a name="line.369"></a>
-<span class="sourceLineNo">370</span>    /**<a name="line.370"></a>
-<span class="sourceLineNo">371</span>     * Read configuration options from url &lt;code&gt;configURL&lt;/code&gt;.<a name="line.371"></a>
-<span class="sourceLineNo">372</span>     *<a name="line.372"></a>
-<span class="sourceLineNo">373</span>     * @param url The configuration URL<a name="line.373"></a>
-<span class="sourceLineNo">374</span>     * @param loggerRepository The hierarchy<a name="line.374"></a>
-<span class="sourceLineNo">375</span>     */<a name="line.375"></a>
-<span class="sourceLineNo">376</span>    @Override<a name="line.376"></a>
-<span class="sourceLineNo">377</span>    public void doConfigure(final URL url, final LoggerRepository loggerRepository) {<a name="line.377"></a>
-<span class="sourceLineNo">378</span>        doConfigure(url, loggerRepository, StackLocatorUtil.getCallerClassLoader(2));<a name="line.378"></a>
-<span class="sourceLineNo">379</span>    }<a name="line.379"></a>
-<span class="sourceLineNo">380</span><a name="line.380"></a>
-<span class="sourceLineNo">381</span>    Configuration doConfigure(final URL url, final LoggerRepository loggerRepository, final ClassLoader classLoader) {<a name="line.381"></a>
-<span class="sourceLineNo">382</span>        LogLog.debug("Reading configuration from URL " + url);<a name="line.382"></a>
-<span class="sourceLineNo">383</span>        try {<a name="line.383"></a>
-<span class="sourceLineNo">384</span>            final URLConnection urlConnection = url.openConnection();<a name="line.384"></a>
-<span class="sourceLineNo">385</span>            urlConnection.setUseCaches(false);<a name="line.385"></a>
-<span class="sourceLineNo">386</span>            try (InputStream inputStream = urlConnection.getInputStream()) {<a name="line.386"></a>
-<span class="sourceLineNo">387</span>                return doConfigure(inputStream, loggerRepository, classLoader);<a name="line.387"></a>
-<span class="sourceLineNo">388</span>            }<a name="line.388"></a>
-<span class="sourceLineNo">389</span>        } catch (final IOException e) {<a name="line.389"></a>
-<span class="sourceLineNo">390</span>            LogLog.error("Could not read configuration file from URL [" + url + "].", e);<a name="line.390"></a>
-<span class="sourceLineNo">391</span>            LogLog.error("Ignoring configuration file [" + url + "].");<a name="line.391"></a>
-<span class="sourceLineNo">392</span>            return null;<a name="line.392"></a>
-<span class="sourceLineNo">393</span>        }<a name="line.393"></a>
-<span class="sourceLineNo">394</span><a name="line.394"></a>
-<span class="sourceLineNo">395</span>    }<a name="line.395"></a>
-<span class="sourceLineNo">396</span><a name="line.396"></a>
-<span class="sourceLineNo">397</span>    private Properties loadProperties(final InputStream inputStream) {<a name="line.397"></a>
-<span class="sourceLineNo">398</span>        final Properties loaded = new Properties();<a name="line.398"></a>
-<span class="sourceLineNo">399</span>        try {<a name="line.399"></a>
-<span class="sourceLineNo">400</span>            loaded.load(inputStream);<a name="line.400"></a>
-<span class="sourceLineNo">401</span>        } catch (final IOException | IllegalArgumentException e) {<a name="line.401"></a>
-<span class="sourceLineNo">402</span>            if (e instanceof InterruptedIOException) {<a name="line.402"></a>
-<span class="sourceLineNo">403</span>                Thread.currentThread().interrupt();<a name="line.403"></a>
-<span class="sourceLineNo">404</span>            }<a name="line.404"></a>
-<span class="sourceLineNo">405</span>            LogLog.error("Could not read configuration file from InputStream [" + inputStream + "].", e);<a name="line.405"></a>
-<span class="sourceLineNo">406</span>            LogLog.error("Ignoring configuration InputStream [" + inputStream + "].");<a name="line.406"></a>
-<span class="sourceLineNo">407</span>            return null;<a name="line.407"></a>
-<span class="sourceLineNo">408</span>        }<a name="line.408"></a>
-<span class="sourceLineNo">409</span>        return loaded;<a name="line.409"></a>
-<span class="sourceLineNo">410</span>    }<a name="line.410"></a>
-<span class="sourceLineNo">411</span><a name="line.411"></a>
-<span class="sourceLineNo">412</span>    /**<a name="line.412"></a>
-<span class="sourceLineNo">413</span>     * Parse the additivity option for a non-root category.<a name="line.413"></a>
-<span class="sourceLineNo">414</span>     */<a name="line.414"></a>
-<span class="sourceLineNo">415</span>    void parseAdditivityForLogger(final Properties properties, final Logger logger, final String loggerName) {<a name="line.415"></a>
-<span class="sourceLineNo">416</span>        final String value = OptionConverter.findAndSubst(ADDITIVITY_PREFIX + loggerName, properties);<a name="line.416"></a>
-<span class="sourceLineNo">417</span>        LogLog.debug("Handling " + ADDITIVITY_PREFIX + loggerName + "=[" + value + "]");<a name="line.417"></a>
-<span class="sourceLineNo">418</span>        // touch additivity only if necessary<a name="line.418"></a>
-<span class="sourceLineNo">419</span>        if ((value != null) &amp;&amp; (!value.equals(""))) {<a name="line.419"></a>
-<span class="sourceLineNo">420</span>            final boolean additivity = OptionConverter.toBoolean(value, true);<a name="line.420"></a>
-<span class="sourceLineNo">421</span>            LogLog.debug("Setting additivity for \"" + loggerName + "\" to " + additivity);<a name="line.421"></a>
-<span class="sourceLineNo">422</span>            logger.setAdditivity(additivity);<a name="line.422"></a>
-<span class="sourceLineNo">423</span>        }<a name="line.423"></a>
-<span class="sourceLineNo">424</span>    }<a name="line.424"></a>
-<span class="sourceLineNo">425</span><a name="line.425"></a>
-<span class="sourceLineNo">426</span>    Appender parseAppender(final Properties properties, final String appenderName) {<a name="line.426"></a>
-<span class="sourceLineNo">427</span>        Appender appender = registryGet(appenderName);<a name="line.427"></a>
-<span class="sourceLineNo">428</span>        if ((appender != null)) {<a name="line.428"></a>
-<span class="sourceLineNo">429</span>            LogLog.debug("Appender \"" + appenderName + "\" was already parsed.");<a name="line.429"></a>
-<span class="sourceLineNo">430</span>            return appender;<a name="line.430"></a>
-<span class="sourceLineNo">431</span>        }<a name="line.431"></a>
-<span class="sourceLineNo">432</span>        // Appender was not previously initialized.<a name="line.432"></a>
-<span class="sourceLineNo">433</span>        final String prefix = APPENDER_PREFIX + appenderName;<a name="line.433"></a>
-<span class="sourceLineNo">434</span>        final String layoutPrefix = prefix + ".layout";<a name="line.434"></a>
-<span class="sourceLineNo">435</span><a name="line.435"></a>
-<span class="sourceLineNo">436</span>        appender = (Appender) OptionConverter.instantiateByKey(properties, prefix, org.apache.log4j.Appender.class, null);<a name="line.436"></a>
-<span class="sourceLineNo">437</span>        if (appender == null) {<a name="line.437"></a>
-<span class="sourceLineNo">438</span>            LogLog.error("Could not instantiate appender named \"" + appenderName + "\".");<a name="line.438"></a>
-<span class="sourceLineNo">439</span>            return null;<a name="line.439"></a>
-<span class="sourceLineNo">440</span>        }<a name="line.440"></a>
-<span class="sourceLineNo">441</span>        appender.setName(appenderName);<a name="line.441"></a>
-<span class="sourceLineNo">442</span><a name="line.442"></a>
-<span class="sourceLineNo">443</span>        if (appender instanceof OptionHandler) {<a name="line.443"></a>
-<span class="sourceLineNo">444</span>            if (appender.requiresLayout()) {<a name="line.444"></a>
-<span class="sourceLineNo">445</span>                final Layout layout = (Layout) OptionConverter.instantiateByKey(properties, layoutPrefix, Layout.class, null);<a name="line.445"></a>
-<span class="sourceLineNo">446</span>                if (layout != null) {<a name="line.446"></a>
-<span class="sourceLineNo">447</span>                    appender.setLayout(layout);<a name="line.447"></a>
-<span class="sourceLineNo">448</span>                    LogLog.debug("Parsing layout options for \"" + appenderName + "\".");<a name="line.448"></a>
-<span class="sourceLineNo">449</span>                    // configureOptionHandler(layout, layoutPrefix + ".", props);<a name="line.449"></a>
-<span class="sourceLineNo">450</span>                    PropertySetter.setProperties(layout, properties, layoutPrefix + ".");<a name="line.450"></a>
-<span class="sourceLineNo">451</span>                    LogLog.debug("End of parsing for \"" + appenderName + "\".");<a name="line.451"></a>
-<span class="sourceLineNo">452</span>                }<a name="line.452"></a>
-<span class="sourceLineNo">453</span>            }<a name="line.453"></a>
-<span class="sourceLineNo">454</span>            final String errorHandlerPrefix = prefix + ".errorhandler";<a name="line.454"></a>
-<span class="sourceLineNo">455</span>            final String errorHandlerClass = OptionConverter.findAndSubst(errorHandlerPrefix, properties);<a name="line.455"></a>
-<span class="sourceLineNo">456</span>            if (errorHandlerClass != null) {<a name="line.456"></a>
-<span class="sourceLineNo">457</span>                final ErrorHandler eh = (ErrorHandler) OptionConverter.instantiateByKey(properties, errorHandlerPrefix, ErrorHandler.class, null);<a name="line.457"></a>
-<span class="sourceLineNo">458</span>                if (eh != null) {<a name="line.458"></a>
-<span class="sourceLineNo">459</span>                    appender.setErrorHandler(eh);<a name="line.459"></a>
-<span class="sourceLineNo">460</span>                    LogLog.debug("Parsing errorhandler options for \"" + appenderName + "\".");<a name="line.460"></a>
-<span class="sourceLineNo">461</span>                    parseErrorHandler(eh, errorHandlerPrefix, properties, repository);<a name="line.461"></a>
-<span class="sourceLineNo">462</span>                    final Properties edited = new Properties();<a name="line.462"></a>
-<span class="sourceLineNo">463</span>                    final String[] keys = new String[] {errorHandlerPrefix + "." + ROOT_REF, errorHandlerPrefix + "." + LOGGER_REF,<a name="line.463"></a>
-<span class="sourceLineNo">464</span>                        errorHandlerPrefix + "." + APPENDER_REF_TAG};<a name="line.464"></a>
-<span class="sourceLineNo">465</span>                    for (final Object element : properties.entrySet()) {<a name="line.465"></a>
-<span class="sourceLineNo">466</span>                        final Map.Entry entry = (Map.Entry) element;<a name="line.466"></a>
-<span class="sourceLineNo">467</span>                        int i = 0;<a name="line.467"></a>
-<span class="sourceLineNo">468</span>                        for (; i &lt; keys.length; i++) {<a name="line.468"></a>
-<span class="sourceLineNo">469</span>                            if (keys[i].equals(entry.getKey())) {<a name="line.469"></a>
-<span class="sourceLineNo">470</span>                                break;<a name="line.470"></a>
-<span class="sourceLineNo">471</span>                            }<a name="line.471"></a>
-<span class="sourceLineNo">472</span>                        }<a name="line.472"></a>
-<span class="sourceLineNo">473</span>                        if (i == keys.length) {<a name="line.473"></a>
-<span class="sourceLineNo">474</span>                            edited.put(entry.getKey(), entry.getValue());<a name="line.474"></a>
-<span class="sourceLineNo">475</span>                        }<a name="line.475"></a>
-<span class="sourceLineNo">476</span>                    }<a name="line.476"></a>
-<span class="sourceLineNo">477</span>                    PropertySetter.setProperties(eh, edited, errorHandlerPrefix + ".");<a name="line.477"></a>
-<span class="sourceLineNo">478</span>                    LogLog.debug("End of errorhandler parsing for \"" + appenderName + "\".");<a name="line.478"></a>
-<span class="sourceLineNo">479</span>                }<a name="line.479"></a>
-<span class="sourceLineNo">480</span><a name="line.480"></a>
-<span class="sourceLineNo">481</span>            }<a name="line.481"></a>
-<span class="sourceLineNo">482</span>            // configureOptionHandler((OptionHandler) appender, prefix + ".", props);<a name="line.482"></a>
-<span class="sourceLineNo">483</span>            PropertySetter.setProperties(appender, properties, prefix + ".");<a name="line.483"></a>
-<span class="sourceLineNo">484</span>            LogLog.debug("Parsed \"" + appenderName + "\" options.");<a name="line.484"></a>
-<span class="sourceLineNo">485</span>        }<a name="line.485"></a>
-<span class="sourceLineNo">486</span>        parseAppenderFilters(properties, appenderName, appender);<a name="line.486"></a>
-<span class="sourceLineNo">487</span>        registryPut(appender);<a name="line.487"></a>
-<span class="sourceLineNo">488</span>        return appender;<a name="line.488"></a>
-<span class="sourceLineNo">489</span>    }<a name="line.489"></a>
-<span class="sourceLineNo">490</span><a name="line.490"></a>
-<span class="sourceLineNo">491</span>    void parseAppenderFilters(final Properties properties, final String appenderName, final Appender appender) {<a name="line.491"></a>
-<span class="sourceLineNo">492</span>        // extract filters and filter options from props into a hashtable mapping<a name="line.492"></a>
-<span class="sourceLineNo">493</span>        // the property name defining the filter class to a list of pre-parsed<a name="line.493"></a>
-<span class="sourceLineNo">494</span>        // name-value pairs associated to that filter<a name="line.494"></a>
-<span class="sourceLineNo">495</span>        final String filterPrefix = APPENDER_PREFIX + appenderName + ".filter.";<a name="line.495"></a>
-<span class="sourceLineNo">496</span>        final int fIdx = filterPrefix.length();<a name="line.496"></a>
-<span class="sourceLineNo">497</span>        final Hashtable filters = new Hashtable();<a name="line.497"></a>
-<span class="sourceLineNo">498</span>        final Enumeration e = properties.keys();<a name="line.498"></a>
-<span class="sourceLineNo">499</span>        String name = "";<a name="line.499"></a>
-<span class="sourceLineNo">500</span>        while (e.hasMoreElements()) {<a name="line.500"></a>
-<span class="sourceLineNo">501</span>            final String key = (String) e.nextElement();<a name="line.501"></a>
-<span class="sourceLineNo">502</span>            if (key.startsWith(filterPrefix)) {<a name="line.502"></a>
-<span class="sourceLineNo">503</span>                final int dotIdx = key.indexOf('.', fIdx);<a name="line.503"></a>
-<span class="sourceLineNo">504</span>                String filterKey = key;<a name="line.504"></a>
-<span class="sourceLineNo">505</span>                if (dotIdx != -1) {<a name="line.505"></a>
-<span class="sourceLineNo">506</span>                    filterKey = key.substring(0, dotIdx);<a name="line.506"></a>
-<span class="sourceLineNo">507</span>                    name = key.substring(dotIdx + 1);<a name="line.507"></a>
-<span class="sourceLineNo">508</span>                }<a name="line.508"></a>
-<span class="sourceLineNo">509</span>                Vector filterOpts = (Vector) filters.get(filterKey);<a name="line.509"></a>
-<span class="sourceLineNo">510</span>                if (filterOpts == null) {<a name="line.510"></a>
-<span class="sourceLineNo">511</span>                    filterOpts = new Vector();<a name="line.511"></a>
-<span class="sourceLineNo">512</span>                    filters.put(filterKey, filterOpts);<a name="line.512"></a>
-<span class="sourceLineNo">513</span>                }<a name="line.513"></a>
-<span class="sourceLineNo">514</span>                if (dotIdx != -1) {<a name="line.514"></a>
-<span class="sourceLineNo">515</span>                    final String value = OptionConverter.findAndSubst(key, properties);<a name="line.515"></a>
-<span class="sourceLineNo">516</span>                    filterOpts.add(new NameValue(name, value));<a name="line.516"></a>
-<span class="sourceLineNo">517</span>                }<a name="line.517"></a>
-<span class="sourceLineNo">518</span>            }<a name="line.518"></a>
-<span class="sourceLineNo">519</span>        }<a name="line.519"></a>
-<span class="sourceLineNo">520</span><a name="line.520"></a>
-<span class="sourceLineNo">521</span>        // sort filters by IDs, insantiate filters, set filter options,<a name="line.521"></a>
-<span class="sourceLineNo">522</span>        // add filters to the appender<a name="line.522"></a>
-<span class="sourceLineNo">523</span>        final Enumeration g = new SortedKeyEnumeration(filters);<a name="line.523"></a>
-<span class="sourceLineNo">524</span>        Filter head = null;<a name="line.524"></a>
-<span class="sourceLineNo">525</span>        while (g.hasMoreElements()) {<a name="line.525"></a>
-<span class="sourceLineNo">526</span>            final String key = (String) g.nextElement();<a name="line.526"></a>
-<span class="sourceLineNo">527</span>            final String clazz = properties.getProperty(key);<a name="line.527"></a>
-<span class="sourceLineNo">528</span>            if (clazz != null) {<a name="line.528"></a>
-<span class="sourceLineNo">529</span>                LogLog.debug("Filter key: [" + key + "] class: [" + properties.getProperty(key) + "] props: " + filters.get(key));<a name="line.529"></a>
-<span class="sourceLineNo">530</span>                final Filter filter = (Filter) OptionConverter.instantiateByClassName(clazz, Filter.class, null);<a name="line.530"></a>
-<span class="sourceLineNo">531</span>                if (filter != null) {<a name="line.531"></a>
-<span class="sourceLineNo">532</span>                    final PropertySetter propSetter = new PropertySetter(filter);<a name="line.532"></a>
-<span class="sourceLineNo">533</span>                    final Vector v = (Vector) filters.get(key);<a name="line.533"></a>
-<span class="sourceLineNo">534</span>                    final Enumeration filterProps = v.elements();<a name="line.534"></a>
-<span class="sourceLineNo">535</span>                    while (filterProps.hasMoreElements()) {<a name="line.535"></a>
-<span class="sourceLineNo">536</span>                        final NameValue kv = (NameValue) filterProps.nextElement();<a name="line.536"></a>
-<span class="sourceLineNo">537</span>                        propSetter.setProperty(kv.key, kv.value);<a name="line.537"></a>
-<span class="sourceLineNo">538</span>                    }<a name="line.538"></a>
-<span class="sourceLineNo">539</span>                    propSetter.activate();<a name="line.539"></a>
-<span class="sourceLineNo">540</span>                    LogLog.debug("Adding filter of type [" + filter.getClass() + "] to appender named [" + appender.getName() + "].");<a name="line.540"></a>
-<span class="sourceLineNo">541</span>                    head = FilterAdapter.addFilter(head, filter);<a name="line.541"></a>
-<span class="sourceLineNo">542</span>                }<a name="line.542"></a>
-<span class="sourceLineNo">543</span>            } else {<a name="line.543"></a>
-<span class="sourceLineNo">544</span>                LogLog.warn("Missing class definition for filter: [" + key + "]");<a name="line.544"></a>
-<span class="sourceLineNo">545</span>            }<a name="line.545"></a>
-<span class="sourceLineNo">546</span>        }<a name="line.546"></a>
-<span class="sourceLineNo">547</span>        appender.addFilter(head);<a name="line.547"></a>
-<span class="sourceLineNo">548</span>    }<a name="line.548"></a>
-<span class="sourceLineNo">549</span><a name="line.549"></a>
-<span class="sourceLineNo">550</span>    /**<a name="line.550"></a>
-<span class="sourceLineNo">551</span>     * This method must work for the root category as well.<a name="line.551"></a>
-<span class="sourceLineNo">552</span>     */<a name="line.552"></a>
-<span class="sourceLineNo">553</span>    void parseCategory(final Properties properties, final Logger logger, final String optionKey, final String loggerName, final String value) {<a name="line.553"></a>
-<span class="sourceLineNo">554</span><a name="line.554"></a>
-<span class="sourceLineNo">555</span>        LogLog.debug("Parsing for [" + loggerName + "] with value=[" + value + "].");<a name="line.555"></a>
-<span class="sourceLineNo">556</span>        // We must skip over ',' but not white space<a name="line.556"></a>
-<span class="sourceLineNo">557</span>        final StringTokenizer st = new StringTokenizer(value, ",");<a name="line.557"></a>
-<span class="sourceLineNo">558</span><a name="line.558"></a>
-<span class="sourceLineNo">559</span>        // If value is not in the form ", appender.." or "", then we should set<a name="line.559"></a>
-<span class="sourceLineNo">560</span>        // the level of the loggeregory.<a name="line.560"></a>
-<span class="sourceLineNo">561</span><a name="line.561"></a>
-<span class="sourceLineNo">562</span>        if (!(value.startsWith(",") || value.equals(""))) {<a name="line.562"></a>
-<span class="sourceLineNo">563</span><a name="line.563"></a>
-<span class="sourceLineNo">564</span>            // just to be on the safe side...<a name="line.564"></a>
-<span class="sourceLineNo">565</span>            if (!st.hasMoreTokens()) {<a name="line.565"></a>
-<span class="sourceLineNo">566</span>                return;<a name="line.566"></a>
-<span class="sourceLineNo">567</span>            }<a name="line.567"></a>
-<span class="sourceLineNo">568</span><a name="line.568"></a>
-<span class="sourceLineNo">569</span>            final String levelStr = st.nextToken();<a name="line.569"></a>
-<span class="sourceLineNo">570</span>            LogLog.debug("Level token is [" + levelStr + "].");<a name="line.570"></a>
-<span class="sourceLineNo">571</span><a name="line.571"></a>
-<span class="sourceLineNo">572</span>            // If the level value is inherited, set category level value to<a name="line.572"></a>
-<span class="sourceLineNo">573</span>            // null. We also check that the user has not specified inherited for the<a name="line.573"></a>
-<span class="sourceLineNo">574</span>            // root category.<a name="line.574"></a>
-<span class="sourceLineNo">575</span>            if (INHERITED.equalsIgnoreCase(levelStr) || NULL.equalsIgnoreCase(levelStr)) {<a name="line.575"></a>
-<span class="sourceLineNo">576</span>                if (loggerName.equals(INTERNAL_ROOT_NAME)) {<a name="line.576"></a>
-<span class="sourceLineNo">577</span>                    LogLog.warn("The root logger cannot be set to null.");<a name="line.577"></a>
-<span class="sourceLineNo">578</span>                } else {<a name="line.578"></a>
-<span class="sourceLineNo">579</span>                    logger.setLevel(null);<a name="line.579"></a>
-<span class="sourceLineNo">580</span>                }<a name="line.580"></a>
-<span class="sourceLineNo">581</span>            } else {<a name="line.581"></a>
-<span class="sourceLineNo">582</span>                logger.setLevel(OptionConverter.toLevel(levelStr, (Level) Level.DEBUG));<a name="line.582"></a>
-<span class="sourceLineNo">583</span>            }<a name="line.583"></a>
-<span class="sourceLineNo">584</span>            LogLog.debug("Category " + loggerName + " set to " + logger.getLevel());<a name="line.584"></a>
-<span class="sourceLineNo">585</span>        }<a name="line.585"></a>
-<span class="sourceLineNo">586</span><a name="line.586"></a>
-<span class="sourceLineNo">587</span>        // Begin by removing all existing appenders.<a name="line.587"></a>
-<span class="sourceLineNo">588</span>        logger.removeAllAppenders();<a name="line.588"></a>
-<span class="sourceLineNo">589</span><a name="line.589"></a>
-<span class="sourceLineNo">590</span>        Appender appender;<a name="line.590"></a>
-<span class="sourceLineNo">591</span>        String appenderName;<a name="line.591"></a>
-<span class="sourceLineNo">592</span>        while (st.hasMoreTokens()) {<a name="line.592"></a>
-<span class="sourceLineNo">593</span>            appenderName = st.nextToken().trim();<a name="line.593"></a>
-<span class="sourceLineNo">594</span>            if (appenderName == null || appenderName.equals(",")) {<a name="line.594"></a>
-<span class="sourceLineNo">595</span>                continue;<a name="line.595"></a>
-<span class="sourceLineNo">596</span>            }<a name="line.596"></a>
-<span class="sourceLineNo">597</span>            LogLog.debug("Parsing appender named \"" + appenderName + "\".");<a name="line.597"></a>
-<span class="sourceLineNo">598</span>            appender = parseAppender(properties, appenderName);<a name="line.598"></a>
-<span class="sourceLineNo">599</span>            if (appender != null) {<a name="line.599"></a>
-<span class="sourceLineNo">600</span>                logger.addAppender(appender);<a name="line.600"></a>
-<span class="sourceLineNo">601</span>            }<a name="line.601"></a>
-<span class="sourceLineNo">602</span>        }<a name="line.602"></a>
-<span class="sourceLineNo">603</span>    }<a name="line.603"></a>
-<span class="sourceLineNo">604</span><a name="line.604"></a>
-<span class="sourceLineNo">605</span>    /**<a name="line.605"></a>
-<span class="sourceLineNo">606</span>     * Parse non-root elements, such non-root categories and renderers.<a name="line.606"></a>
-<span class="sourceLineNo">607</span>     */<a name="line.607"></a>
-<span class="sourceLineNo">608</span>    protected void parseCatsAndRenderers(final Properties properties, final LoggerRepository loggerRepository) {<a name="line.608"></a>
-<span class="sourceLineNo">609</span>        final Enumeration enumeration = properties.propertyNames();<a name="line.609"></a>
-<span class="sourceLineNo">610</span>        while (enumeration.hasMoreElements()) {<a name="line.610"></a>
-<span class="sourceLineNo">611</span>            final String key = (String) enumeration.nextElement();<a name="line.611"></a>
-<span class="sourceLineNo">612</span>            if (key.startsWith(CATEGORY_PREFIX) || key.startsWith(LOGGER_PREFIX)) {<a name="line.612"></a>
-<span class="sourceLineNo">613</span>                String loggerName = null;<a name="line.613"></a>
-<span class="sourceLineNo">614</span>                if (key.startsWith(CATEGORY_PREFIX)) {<a name="line.614"></a>
-<span class="sourceLineNo">615</span>                    loggerName = key.substring(CATEGORY_PREFIX.length());<a name="line.615"></a>
-<span class="sourceLineNo">616</span>                } else if (key.startsWith(LOGGER_PREFIX)) {<a name="line.616"></a>
-<span class="sourceLineNo">617</span>                    loggerName = key.substring(LOGGER_PREFIX.length());<a name="line.617"></a>
-<span class="sourceLineNo">618</span>                }<a name="line.618"></a>
-<span class="sourceLineNo">619</span>                final String value = OptionConverter.findAndSubst(key, properties);<a name="line.619"></a>
-<span class="sourceLineNo">620</span>                final Logger logger = loggerRepository.getLogger(loggerName, loggerFactory);<a name="line.620"></a>
-<span class="sourceLineNo">621</span>                synchronized (logger) {<a name="line.621"></a>
-<span class="sourceLineNo">622</span>                    parseCategory(properties, logger, key, loggerName, value);<a name="line.622"></a>
-<span class="sourceLineNo">623</span>                    parseAdditivityForLogger(properties, logger, loggerName);<a name="line.623"></a>
-<span class="sourceLineNo">624</span>                }<a name="line.624"></a>
-<span class="sourceLineNo">625</span>            } else if (key.startsWith(RENDERER_PREFIX)) {<a name="line.625"></a>
-<span class="sourceLineNo">626</span>                final String renderedClass = key.substring(RENDERER_PREFIX.length());<a name="line.626"></a>
-<span class="sourceLineNo">627</span>                final String renderingClass = OptionConverter.findAndSubst(key, properties);<a name="line.627"></a>
-<span class="sourceLineNo">628</span>                if (loggerRepository instanceof RendererSupport) {<a name="line.628"></a>
-<span class="sourceLineNo">629</span>                    RendererMap.addRenderer((RendererSupport) loggerRepository, renderedClass, renderingClass);<a name="line.629"></a>
-<span class="sourceLineNo">630</span>                }<a name="line.630"></a>
-<span class="sourceLineNo">631</span>            } else if (key.equals(THROWABLE_RENDERER_PREFIX)) {<a name="line.631"></a>
-<span class="sourceLineNo">632</span>                if (loggerRepository instanceof ThrowableRendererSupport) {<a name="line.632"></a>
-<span class="sourceLineNo">633</span>                    final ThrowableRenderer tr = (ThrowableRenderer) OptionConverter.instantiateByKey(properties, THROWABLE_RENDERER_PREFIX,<a name="line.633"></a>
-<span class="sourceLineNo">634</span>                        org.apache.log4j.spi.ThrowableRenderer.class, null);<a name="line.634"></a>
-<span class="sourceLineNo">635</span>                    if (tr == null) {<a name="line.635"></a>
-<span class="sourceLineNo">636</span>                        LogLog.error("Could not instantiate throwableRenderer.");<a name="line.636"></a>
-<span class="sourceLineNo">637</span>                    } else {<a name="line.637"></a>
-<span class="sourceLineNo">638</span>                        final PropertySetter setter = new PropertySetter(tr);<a name="line.638"></a>
-<span class="sourceLineNo">639</span>                        setter.setProperties(properties, THROWABLE_RENDERER_PREFIX + ".");<a name="line.639"></a>
-<span class="sourceLineNo">640</span>                        ((ThrowableRendererSupport) loggerRepository).setThrowableRenderer(tr);<a name="line.640"></a>
-<span class="sourceLineNo">641</span><a name="line.641"></a>
-<span class="sourceLineNo">642</span>                    }<a name="line.642"></a>
-<span class="sourceLineNo">643</span>                }<a name="line.643"></a>
-<span class="sourceLineNo">644</span>            }<a name="line.644"></a>
-<span class="sourceLineNo">645</span>        }<a name="line.645"></a>
-<span class="sourceLineNo">646</span>    }<a name="line.646"></a>
-<span class="sourceLineNo">647</span><a name="line.647"></a>
-<span class="sourceLineNo">648</span>    private void parseErrorHandler(final ErrorHandler errorHandler, final String errorHandlerPrefix, final Properties props,<a name="line.648"></a>
-<span class="sourceLineNo">649</span>        final LoggerRepository loggerRepository) {<a name="line.649"></a>
-<span class="sourceLineNo">650</span>        if (errorHandler != null &amp;&amp; loggerRepository != null) {<a name="line.650"></a>
-<span class="sourceLineNo">651</span>            final boolean rootRef = OptionConverter.toBoolean(OptionConverter.findAndSubst(errorHandlerPrefix + ROOT_REF, props), false);<a name="line.651"></a>
-<span class="sourceLineNo">652</span>            if (rootRef) {<a name="line.652"></a>
-<span class="sourceLineNo">653</span>                errorHandler.setLogger(loggerRepository.getRootLogger());<a name="line.653"></a>
-<span class="sourceLineNo">654</span>            }<a name="line.654"></a>
-<span class="sourceLineNo">655</span>            final String loggerName = OptionConverter.findAndSubst(errorHandlerPrefix + LOGGER_REF, props);<a name="line.655"></a>
-<span class="sourceLineNo">656</span>            if (loggerName != null) {<a name="line.656"></a>
-<span class="sourceLineNo">657</span>                final Logger logger = loggerFactory == null ? loggerRepository.getLogger(loggerName) : loggerRepository.getLogger(loggerName, loggerFactory);<a name="line.657"></a>
-<span class="sourceLineNo">658</span>                errorHandler.setLogger(logger);<a name="line.658"></a>
-<span class="sourceLineNo">659</span>            }<a name="line.659"></a>
-<span class="sourceLineNo">660</span>            final String appenderName = OptionConverter.findAndSubst(errorHandlerPrefix + APPENDER_REF_TAG, props);<a name="line.660"></a>
-<span class="sourceLineNo">661</span>            if (appenderName != null) {<a name="line.661"></a>
-<span class="sourceLineNo">662</span>                final Appender backup = parseAppender(props, appenderName);<a name="line.662"></a>
-<span class="sourceLineNo">663</span>                if (backup != null) {<a name="line.663"></a>
-<span class="sourceLineNo">664</span>                    errorHandler.setBackupAppender(backup);<a name="line.664"></a>
-<span class="sourceLineNo">665</span>                }<a name="line.665"></a>
-<span class="sourceLineNo">666</span>            }<a name="line.666"></a>
-<span class="sourceLineNo">667</span>        }<a name="line.667"></a>
-<span class="sourceLineNo">668</span>    }<a name="line.668"></a>
-<span class="sourceLineNo">669</span><a name="line.669"></a>
-<span class="sourceLineNo">670</span>    Appender registryGet(final String name) {<a name="line.670"></a>
-<span class="sourceLineNo">671</span>        return (Appender) registry.get(name);<a name="line.671"></a>
-<span class="sourceLineNo">672</span>    }<a name="line.672"></a>
-<span class="sourceLineNo">673</span><a name="line.673"></a>
-<span class="sourceLineNo">674</span>    void registryPut(final Appender appender) {<a name="line.674"></a>
-<span class="sourceLineNo">675</span>        registry.put(appender.getName(), appender);<a name="line.675"></a>
-<span class="sourceLineNo">676</span>    }<a name="line.676"></a>
-<span class="sourceLineNo">677</span>}<a name="line.677"></a>
+<span class="sourceLineNo">296</span>     * See {@link #doConfigure(String, LoggerRepository)} for the expected format.<a name="line.296"></a>
+<span class="sourceLineNo">297</span>     *<a name="line.297"></a>
+<span class="sourceLineNo">298</span>     * @param properties The properties<a name="line.298"></a>
+<span class="sourceLineNo">299</span>     * @param loggerRepository The hierarchy<a name="line.299"></a>
+<span class="sourceLineNo">300</span>     */<a name="line.300"></a>
+<span class="sourceLineNo">301</span>    Configuration doConfigure(final Properties properties, final LoggerRepository loggerRepository, final ClassLoader classLoader) {<a name="line.301"></a>
+<span class="sourceLineNo">302</span>        final PropertiesConfiguration configuration = new PropertiesConfiguration(LogManager.getContext(classLoader), properties);<a name="line.302"></a>
+<span class="sourceLineNo">303</span>        configuration.doConfigure();<a name="line.303"></a>
+<span class="sourceLineNo">304</span><a name="line.304"></a>
+<span class="sourceLineNo">305</span>        repository = loggerRepository;<a name="line.305"></a>
+<span class="sourceLineNo">306</span>//      String value = properties.getProperty(LogLog.DEBUG_KEY);<a name="line.306"></a>
+<span class="sourceLineNo">307</span>//      if (value == null) {<a name="line.307"></a>
+<span class="sourceLineNo">308</span>//          value = properties.getProperty("log4j.configDebug");<a name="line.308"></a>
+<span class="sourceLineNo">309</span>//          if (value != null) {<a name="line.309"></a>
+<span class="sourceLineNo">310</span>//              LogLog.warn("[log4j.configDebug] is deprecated. Use [log4j.debug] instead.");<a name="line.310"></a>
+<span class="sourceLineNo">311</span>//          }<a name="line.311"></a>
+<span class="sourceLineNo">312</span>//      }<a name="line.312"></a>
+<span class="sourceLineNo">313</span>//<a name="line.313"></a>
+<span class="sourceLineNo">314</span>//      if (value != null) {<a name="line.314"></a>
+<span class="sourceLineNo">315</span>//          LogLog.setInternalDebugging(OptionConverter.toBoolean(value, true));<a name="line.315"></a>
+<span class="sourceLineNo">316</span>//      }<a name="line.316"></a>
+<span class="sourceLineNo">317</span>//<a name="line.317"></a>
+<span class="sourceLineNo">318</span>//      //<a name="line.318"></a>
+<span class="sourceLineNo">319</span>//      // if log4j.reset=true then<a name="line.319"></a>
+<span class="sourceLineNo">320</span>//      // reset hierarchy<a name="line.320"></a>
+<span class="sourceLineNo">321</span>//      final String reset = properties.getProperty(RESET_KEY);<a name="line.321"></a>
+<span class="sourceLineNo">322</span>//      if (reset != null &amp;&amp; OptionConverter.toBoolean(reset, false)) {<a name="line.322"></a>
+<span class="sourceLineNo">323</span>//          hierarchy.resetConfiguration();<a name="line.323"></a>
+<span class="sourceLineNo">324</span>//      }<a name="line.324"></a>
+<span class="sourceLineNo">325</span>//<a name="line.325"></a>
+<span class="sourceLineNo">326</span>//      final String thresholdStr = OptionConverter.findAndSubst(THRESHOLD_PREFIX, properties);<a name="line.326"></a>
+<span class="sourceLineNo">327</span>//      if (thresholdStr != null) {<a name="line.327"></a>
+<span class="sourceLineNo">328</span>//          hierarchy.setThreshold(OptionConverter.toLevel(thresholdStr, (Level) Level.ALL));<a name="line.328"></a>
+<span class="sourceLineNo">329</span>//          LogLog.debug("Hierarchy threshold set to [" + hierarchy.getThreshold() + "].");<a name="line.329"></a>
+<span class="sourceLineNo">330</span>//      }<a name="line.330"></a>
+<span class="sourceLineNo">331</span>//<a name="line.331"></a>
+<span class="sourceLineNo">332</span>//      configureRootCategory(properties, hierarchy);<a name="line.332"></a>
+<span class="sourceLineNo">333</span>//      configureLoggerFactory(properties);<a name="line.333"></a>
+<span class="sourceLineNo">334</span>//      parseCatsAndRenderers(properties, hierarchy);<a name="line.334"></a>
+<span class="sourceLineNo">335</span>//<a name="line.335"></a>
+<span class="sourceLineNo">336</span>        // We don't want to hold references to appenders preventing their<a name="line.336"></a>
+<span class="sourceLineNo">337</span>        // garbage collection.<a name="line.337"></a>
+<span class="sourceLineNo">338</span>        registry.clear();<a name="line.338"></a>
+<span class="sourceLineNo">339</span><a name="line.339"></a>
+<span class="sourceLineNo">340</span>        return reconfigure(configuration);<a name="line.340"></a>
+<span class="sourceLineNo">341</span>    }<a name="line.341"></a>
+<span class="sourceLineNo">342</span><a name="line.342"></a>
+<span class="sourceLineNo">343</span>    /**<a name="line.343"></a>
+<span class="sourceLineNo">344</span>     * Reads configuration options from configuration file.<a name="line.344"></a>
+<span class="sourceLineNo">345</span>     *<a name="line.345"></a>
+<span class="sourceLineNo">346</span>     * @param fileName The configuration file<a name="line.346"></a>
+<span class="sourceLineNo">347</span>     * @param loggerRepository The hierarchy<a name="line.347"></a>
+<span class="sourceLineNo">348</span>     */<a name="line.348"></a>
+<span class="sourceLineNo">349</span>    public void doConfigure(final String fileName, final LoggerRepository loggerRepository) {<a name="line.349"></a>
+<span class="sourceLineNo">350</span>        doConfigure(fileName, loggerRepository, StackLocatorUtil.getCallerClassLoader(2));<a name="line.350"></a>
+<span class="sourceLineNo">351</span>    }<a name="line.351"></a>
+<span class="sourceLineNo">352</span><a name="line.352"></a>
+<span class="sourceLineNo">353</span>    /**<a name="line.353"></a>
+<span class="sourceLineNo">354</span>     * Reads configuration options from configuration file.<a name="line.354"></a>
+<span class="sourceLineNo">355</span>     *<a name="line.355"></a>
+<span class="sourceLineNo">356</span>     * @param fileName The configuration file<a name="line.356"></a>
+<span class="sourceLineNo">357</span>     * @param loggerRepository The hierarchy<a name="line.357"></a>
+<span class="sourceLineNo">358</span>     */<a name="line.358"></a>
+<span class="sourceLineNo">359</span>    Configuration doConfigure(final String fileName, final LoggerRepository loggerRepository, final ClassLoader classLoader) {<a name="line.359"></a>
+<span class="sourceLineNo">360</span>        try (InputStream inputStream = Files.newInputStream(Paths.get(fileName))) {<a name="line.360"></a>
+<span class="sourceLineNo">361</span>            return doConfigure(inputStream, loggerRepository, classLoader);<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        } catch (final Exception e) {<a name="line.362"></a>
+<span class="sourceLineNo">363</span>            if (e instanceof InterruptedIOException || e instanceof InterruptedException) {<a name="line.363"></a>
+<span class="sourceLineNo">364</span>                Thread.currentThread().interrupt();<a name="line.364"></a>
+<span class="sourceLineNo">365</span>            }<a name="line.365"></a>
+<span class="sourceLineNo">366</span>            LogLog.error("Could not read configuration file [" + fileName + "].", e);<a name="line.366"></a>
+<span class="sourceLineNo">367</span>            LogLog.error("Ignoring configuration file [" + fileName + "].");<a name="line.367"></a>
+<span class="sourceLineNo">368</span>            return null;<a name="line.368"></a>
+<span class="sourceLineNo">369</span>        }<a name="line.369"></a>
+<span class="sourceLineNo">370</span>    }<a name="line.370"></a>
+<span class="sourceLineNo">371</span><a name="line.371"></a>
+<span class="sourceLineNo">372</span>    /**<a name="line.372"></a>
+<span class="sourceLineNo">373</span>     * Read configuration options from url &lt;code&gt;configURL&lt;/code&gt;.<a name="line.373"></a>
+<span class="sourceLineNo">374</span>     *<a name="line.374"></a>
+<span class="sourceLineNo">375</span>     * @param url The configuration URL<a name="line.375"></a>
+<span class="sourceLineNo">376</span>     * @param loggerRepository The hierarchy<a name="line.376"></a>
+<span class="sourceLineNo">377</span>     */<a name="line.377"></a>
+<span class="sourceLineNo">378</span>    @Override<a name="line.378"></a>
+<span class="sourceLineNo">379</span>    public void doConfigure(final URL url, final LoggerRepository loggerRepository) {<a name="line.379"></a>
+<span class="sourceLineNo">380</span>        doConfigure(url, loggerRepository, StackLocatorUtil.getCallerClassLoader(2));<a name="line.380"></a>
+<span class="sourceLineNo">381</span>    }<a name="line.381"></a>
+<span class="sourceLineNo">382</span><a name="line.382"></a>
+<span class="sourceLineNo">383</span>    Configuration doConfigure(final URL url, final LoggerRepository loggerRepository, final ClassLoader classLoader) {<a name="line.383"></a>
+<span class="sourceLineNo">384</span>        LogLog.debug("Reading configuration from URL " + url);<a name="line.384"></a>
+<span class="sourceLineNo">385</span>        try {<a name="line.385"></a>
+<span class="sourceLineNo">386</span>            final URLConnection urlConnection = UrlConnectionFactory.createConnection(url);<a name="line.386"></a>
+<span class="sourceLineNo">387</span>            try (InputStream inputStream = urlConnection.getInputStream()) {<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                return doConfigure(inputStream, loggerRepository, classLoader);<a name="line.388"></a>
+<span class="sourceLineNo">389</span>            }<a name="line.389"></a>
+<span class="sourceLineNo">390</span>        } catch (final IOException e) {<a name="line.390"></a>
+<span class="sourceLineNo">391</span>            LogLog.error("Could not read configuration file from URL [" + url + "].", e);<a name="line.391"></a>
+<span class="sourceLineNo">392</span>            LogLog.error("Ignoring configuration file [" + url + "].");<a name="line.392"></a>
+<span class="sourceLineNo">393</span>            return null;<a name="line.393"></a>
+<span class="sourceLineNo">394</span>        }<a name="line.394"></a>
+<span class="sourceLineNo">395</span><a name="line.395"></a>
+<span class="sourceLineNo">396</span>    }<a name="line.396"></a>
+<span class="sourceLineNo">397</span><a name="line.397"></a>
+<span class="sourceLineNo">398</span>    private Properties loadProperties(final InputStream inputStream) {<a name="line.398"></a>
+<span class="sourceLineNo">399</span>        final Properties loaded = new Properties();<a name="line.399"></a>
+<span class="sourceLineNo">400</span>        try {<a name="line.400"></a>
+<span class="sourceLineNo">401</span>            loaded.load(inputStream);<a name="line.401"></a>
+<span class="sourceLineNo">402</span>        } catch (final IOException | IllegalArgumentException e) {<a name="line.402"></a>
+<span class="sourceLineNo">403</span>            if (e instanceof InterruptedIOException) {<a name="line.403"></a>
+<span class="sourceLineNo">404</span>                Thread.currentThread().interrupt();<a name="line.404"></a>
+<span class="sourceLineNo">405</span>            }<a name="line.405"></a>
+<span class="sourceLineNo">406</span>            LogLog.error("Could not read configuration file from InputStream [" + inputStream + "].", e);<a name="line.406"></a>
+<span class="sourceLineNo">407</span>            LogLog.error("Ignoring configuration InputStream [" + inputStream + "].");<a name="line.407"></a>
+<span class="sourceLineNo">408</span>            return null;<a name="line.408"></a>
+<span class="sourceLineNo">409</span>        }<a name="line.409"></a>
+<span class="sourceLineNo">410</span>        return loaded;<a name="line.410"></a>
+<span class="sourceLineNo">411</span>    }<a name="line.411"></a>
+<span class="sourceLineNo">412</span><a name="line.412"></a>
+<span class="sourceLineNo">413</span>    /**<a name="line.413"></a>
+<span class="sourceLineNo">414</span>     * Parse the additivity option for a non-root category.<a name="line.414"></a>
+<span class="sourceLineNo">415</span>     */<a name="line.415"></a>
+<span class="sourceLineNo">416</span>    void parseAdditivityForLogger(final Properties properties, final Logger logger, final String loggerName) {<a name="line.416"></a>
+<span class="sourceLineNo">417</span>        final String value = OptionConverter.findAndSubst(ADDITIVITY_PREFIX + loggerName, properties);<a name="line.417"></a>
+<span class="sourceLineNo">418</span>        LogLog.debug("Handling " + ADDITIVITY_PREFIX + loggerName + "=[" + value + "]");<a name="line.418"></a>
+<span class="sourceLineNo">419</span>        // touch additivity only if necessary<a name="line.419"></a>
+<span class="sourceLineNo">420</span>        if ((value != null) &amp;&amp; (!value.equals(""))) {<a name="line.420"></a>
+<span class="sourceLineNo">421</span>            final boolean additivity = OptionConverter.toBoolean(value, true);<a name="line.421"></a>
+<span class="sourceLineNo">422</span>            LogLog.debug("Setting additivity for \"" + loggerName + "\" to " + additivity);<a name="line.422"></a>
+<span class="sourceLineNo">423</span>            logger.setAdditivity(additivity);<a name="line.423"></a>
+<span class="sourceLineNo">424</span>        }<a name="line.424"></a>
+<span class="sourceLineNo">425</span>    }<a name="line.425"></a>
+<span class="sourceLineNo">426</span><a name="line.426"></a>
+<span class="sourceLineNo">427</span>    Appender parseAppender(final Properties properties, final String appenderName) {<a name="line.427"></a>
+<span class="sourceLineNo">428</span>        Appender appender = registryGet(appenderName);<a name="line.428"></a>
+<span class="sourceLineNo">429</span>        if ((appender != null)) {<a name="line.429"></a>
+<span class="sourceLineNo">430</span>            LogLog.debug("Appender \"" + appenderName + "\" was already parsed.");<a name="line.430"></a>
+<span class="sourceLineNo">431</span>            return appender;<a name="line.431"></a>
+<span class="sourceLineNo">432</span>        }<a name="line.432"></a>
+<span class="sourceLineNo">433</span>        // Appender was not previously initialized.<a name="line.433"></a>
+<span class="sourceLineNo">434</span>        final String prefix = APPENDER_PREFIX + appenderName;<a name="line.434"></a>
+<span class="sourceLineNo">435</span>        final String layoutPrefix = prefix + ".layout";<a name="line.435"></a>
+<span class="sourceLineNo">436</span><a name="line.436"></a>
+<span class="sourceLineNo">437</span>        appender = (Appender) OptionConverter.instantiateByKey(properties, prefix, org.apache.log4j.Appender.class, null);<a name="line.437"></a>
+<span class="sourceLineNo">438</span>        if (appender == null) {<a name="line.438"></a>
+<span class="sourceLineNo">439</span>            LogLog.error("Could not instantiate appender named \"" + appenderName + "\".");<a name="line.439"></a>
+<span class="sourceLineNo">440</span>            return null;<a name="line.440"></a>
+<span class="sourceLineNo">441</span>        }<a name="line.441"></a>
+<span class="sourceLineNo">442</span>        appender.setName(appenderName);<a name="line.442"></a>
+<span class="sourceLineNo">443</span><a name="line.443"></a>
+<span class="sourceLineNo">444</span>        if (appender instanceof OptionHandler) {<a name="line.444"></a>
+<span class="sourceLineNo">445</span>            if (appender.requiresLayout()) {<a name="line.445"></a>
+<span class="sourceLineNo">446</span>                final Layout layout = (Layout) OptionConverter.instantiateByKey(properties, layoutPrefix, Layout.class, null);<a name="line.446"></a>
+<span class="sourceLineNo">447</span>                if (layout != null) {<a name="line.447"></a>
+<span class="sourceLineNo">448</span>                    appender.setLayout(layout);<a name="line.448"></a>
+<span class="sourceLineNo">449</span>                    LogLog.debug("Parsing layout options for \"" + appenderName + "\".");<a name="line.449"></a>
+<span class="sourceLineNo">450</span>                    // configureOptionHandler(layout, layoutPrefix + ".", props);<a name="line.450"></a>
+<span class="sourceLineNo">451</span>                    PropertySetter.setProperties(layout, properties, layoutPrefix + ".");<a name="line.451"></a>
+<span class="sourceLineNo">452</span>                    LogLog.debug("End of parsing for \"" + appenderName + "\".");<a name="line.452"></a>
+<span class="sourceLineNo">453</span>                }<a name="line.453"></a>
+<span class="sourceLineNo">454</span>            }<a name="line.454"></a>
+<span class="sourceLineNo">455</span>            final String errorHandlerPrefix = prefix + ".errorhandler";<a name="line.455"></a>
+<span class="sourceLineNo">456</span>            final String errorHandlerClass = OptionConverter.findAndSubst(errorHandlerPrefix, properties);<a name="line.456"></a>
+<span class="sourceLineNo">457</span>            if (errorHandlerClass != null) {<a name="line.457"></a>
+<span class="sourceLineNo">458</span>                final ErrorHandler eh = (ErrorHandler) OptionConverter.instantiateByKey(properties, errorHandlerPrefix, ErrorHandler.class, null);<a name="line.458"></a>
+<span class="sourceLineNo">459</span>                if (eh != null) {<a name="line.459"></a>
+<span class="sourceLineNo">460</span>                    appender.setErrorHandler(eh);<a name="line.460"></a>
+<span class="sourceLineNo">461</span>                    LogLog.debug("Parsing errorhandler options for \"" + appenderName + "\".");<a name="line.461"></a>
+<span class="sourceLineNo">462</span>                    parseErrorHandler(eh, errorHandlerPrefix, properties, repository);<a name="line.462"></a>
+<span class="sourceLineNo">463</span>                    final Properties edited = new Properties();<a name="line.463"></a>
+<span class="sourceLineNo">464</span>                    final String[] keys = new String[] {errorHandlerPrefix + "." + ROOT_REF, errorHandlerPrefix + "." + LOGGER_REF,<a name="line.464"></a>
+<span class="sourceLineNo">465</span>                        errorHandlerPrefix + "." + APPENDER_REF_TAG};<a name="line.465"></a>
+<span class="sourceLineNo">466</span>                    for (final Object element : properties.entrySet()) {<a name="line.466"></a>
+<span class="sourceLineNo">467</span>                        final Map.Entry entry = (Map.Entry) element;<a name="line.467"></a>
+<span class="sourceLineNo">468</span>                        int i = 0;<a name="line.468"></a>
+<span class="sourceLineNo">469</span>                        for (; i &lt; keys.length; i++) {<a name="line.469"></a>
+<span class="sourceLineNo">470</span>                            if (keys[i].equals(entry.getKey())) {<a name="line.470"></a>
+<span class="sourceLineNo">471</span>                                break;<a name="line.471"></a>
+<span class="sourceLineNo">472</span>                            }<a name="line.472"></a>
+<span class="sourceLineNo">473</span>                        }<a name="line.473"></a>
+<span class="sourceLineNo">474</span>                        if (i == keys.length) {<a name="line.474"></a>
+<span class="sourceLineNo">475</span>                            edited.put(entry.getKey(), entry.getValue());<a name="line.475"></a>
+<span class="sourceLineNo">476</span>                        }<a name="line.476"></a>
+<span class="sourceLineNo">477</span>                    }<a name="line.477"></a>
+<span class="sourceLineNo">478</span>                    PropertySetter.setProperties(eh, edited, errorHandlerPrefix + ".");<a name="line.478"></a>
+<span class="sourceLineNo">479</span>                    LogLog.debug("End of errorhandler parsing for \"" + appenderName + "\".");<a name="line.479"></a>
+<span class="sourceLineNo">480</span>                }<a name="line.480"></a>
+<span class="sourceLineNo">481</span><a name="line.481"></a>
+<span class="sourceLineNo">482</span>            }<a name="line.482"></a>
+<span class="sourceLineNo">483</span>            // configureOptionHandler((OptionHandler) appender, prefix + ".", props);<a name="line.483"></a>
+<span class="sourceLineNo">484</span>            PropertySetter.setProperties(appender, properties, prefix + ".");<a name="line.484"></a>
+<span class="sourceLineNo">485</span>            LogLog.debug("Parsed \"" + appenderName + "\" options.");<a name="line.485"></a>
+<span class="sourceLineNo">486</span>        }<a name="line.486"></a>
+<span class="sourceLineNo">487</span>        parseAppenderFilters(properties, appenderName, appender);<a name="line.487"></a>
+<span class="sourceLineNo">488</span>        registryPut(appender);<a name="line.488"></a>
+<span class="sourceLineNo">489</span>        return appender;<a name="line.489"></a>
+<span class="sourceLineNo">490</span>    }<a name="line.490"></a>
+<span class="sourceLineNo">491</span><a name="line.491"></a>
+<span class="sourceLineNo">492</span>    void parseAppenderFilters(final Properties properties, final String appenderName, final Appender appender) {<a name="line.492"></a>
+<span class="sourceLineNo">493</span>        // extract filters and filter options from props into a hashtable mapping<a name="line.493"></a>
+<span class="sourceLineNo">494</span>        // the property name defining the filter class to a list of pre-parsed<a name="line.494"></a>
+<span class="sourceLineNo">495</span>        // name-value pairs associated to that filter<a name="line.495"></a>
+<span class="sourceLineNo">496</span>        final String filterPrefix = APPENDER_PREFIX + appenderName + ".filter.";<a name="line.496"></a>
+<span class="sourceLineNo">497</span>        final int fIdx = filterPrefix.length();<a name="line.497"></a>
+<span class="sourceLineNo">498</span>        final Hashtable filters = new Hashtable();<a name="line.498"></a>
+<span class="sourceLineNo">499</span>        final Enumeration e = properties.keys();<a name="line.499"></a>
+<span class="sourceLineNo">500</span>        String name = "";<a name="line.500"></a>
+<span class="sourceLineNo">501</span>        while (e.hasMoreElements()) {<a name="line.501"></a>
+<span class="sourceLineNo">502</span>            final String key = (String) e.nextElement();<a name="line.502"></a>
+<span class="sourceLineNo">503</span>            if (key.startsWith(filterPrefix)) {<a name="line.503"></a>
+<span class="sourceLineNo">504</span>                final int dotIdx = key.indexOf('.', fIdx);<a name="line.504"></a>
+<span class="sourceLineNo">505</span>                String filterKey = key;<a name="line.505"></a>
+<span class="sourceLineNo">506</span>                if (dotIdx != -1) {<a name="line.506"></a>
+<span class="sourceLineNo">507</span>                    filterKey = key.substring(0, dotIdx);<a name="line.507"></a>
+<span class="sourceLineNo">508</span>                    name = key.substring(dotIdx + 1);<a name="line.508"></a>
+<span class="sourceLineNo">509</span>                }<a name="line.509"></a>
+<span class="sourceLineNo">510</span>                Vector filterOpts = (Vector) filters.get(filterKey);<a name="line.510"></a>
+<span class="sourceLineNo">511</span>                if (filterOpts == null) {<a name="line.511"></a>
+<span class="sourceLineNo">512</span>                    filterOpts = new Vector();<a name="line.512"></a>
+<span class="sourceLineNo">513</span>                    filters.put(filterKey, filterOpts);<a name="line.513"></a>
+<span class="sourceLineNo">514</span>                }<a name="line.514"></a>
+<span class="sourceLineNo">515</span>                if (dotIdx != -1) {<a name="line.515"></a>
+<span class="sourceLineNo">516</span>                    final String value = OptionConverter.findAndSubst(key, properties);<a name="line.516"></a>
+<span class="sourceLineNo">517</span>                    filterOpts.add(new NameValue(name, value));<a name="line.517"></a>
+<span class="sourceLineNo">518</span>                }<a name="line.518"></a>
+<span class="sourceLineNo">519</span>            }<a name="line.519"></a>
+<span class="sourceLineNo">520</span>        }<a name="line.520"></a>
+<span class="sourceLineNo">521</span><a name="line.521"></a>
+<span class="sourceLineNo">522</span>        // sort filters by IDs, insantiate filters, set filter options,<a name="line.522"></a>
+<span class="sourceLineNo">523</span>        // add filters to the appender<a name="line.523"></a>
+<span class="sourceLineNo">524</span>        final Enumeration g = new SortedKeyEnumeration(filters);<a name="line.524"></a>
+<span class="sourceLineNo">525</span>        Filter head = null;<a name="line.525"></a>
+<span class="sourceLineNo">526</span>        while (g.hasMoreElements()) {<a name="line.526"></a>
+<span class="sourceLineNo">527</span>            final String key = (String) g.nextElement();<a name="line.527"></a>
+<span class="sourceLineNo">528</span>            final String clazz = properties.getProperty(key);<a name="line.528"></a>
+<span class="sourceLineNo">529</span>            if (clazz != null) {<a name="line.529"></a>
+<span class="sourceLineNo">530</span>                LogLog.debug("Filter key: [" + key + "] class: [" + properties.getProperty(key) + "] props: " + filters.get(key));<a name="line.530"></a>
+<span class="sourceLineNo">531</span>                final Filter filter = (Filter) OptionConverter.instantiateByClassName(clazz, Filter.class, null);<a name="line.531"></a>
+<span class="sourceLineNo">532</span>                if (filter != null) {<a name="line.532"></a>
+<span class="sourceLineNo">533</span>                    final PropertySetter propSetter = new PropertySetter(filter);<a name="line.533"></a>
+<span class="sourceLineNo">534</span>                    final Vector v = (Vector) filters.get(key);<a name="line.534"></a>
+<span class="sourceLineNo">535</span>                    final Enumeration filterProps = v.elements();<a name="line.535"></a>
+<span class="sourceLineNo">536</span>                    while (filterProps.hasMoreElements()) {<a name="line.536"></a>
+<span class="sourceLineNo">537</span>                        final NameValue kv = (NameValue) filterProps.nextElement();<a name="line.537"></a>
+<span class="sourceLineNo">538</span>                        propSetter.setProperty(kv.key, kv.value);<a name="line.538"></a>
+<span class="sourceLineNo">539</span>                    }<a name="line.539"></a>
+<span class="sourceLineNo">540</span>                    propSetter.activate();<a name="line.540"></a>
+<span class="sourceLineNo">541</span>                    LogLog.debug("Adding filter of type [" + filter.getClass() + "] to appender named [" + appender.getName() + "].");<a name="line.541"></a>
+<span class="sourceLineNo">542</span>                    head = FilterAdapter.addFilter(head, filter);<a name="line.542"></a>
+<span class="sourceLineNo">543</span>                }<a name="line.543"></a>
+<span class="sourceLineNo">544</span>            } else {<a name="line.544"></a>
+<span class="sourceLineNo">545</span>                LogLog.warn("Missing class definition for filter: [" + key + "]");<a name="line.545"></a>
+<span class="sourceLineNo">546</span>            }<a name="line.546"></a>
+<span class="sourceLineNo">547</span>        }<a name="line.547"></a>
+<span class="sourceLineNo">548</span>        appender.addFilter(head);<a name="line.548"></a>
+<span class="sourceLineNo">549</span>    }<a name="line.549"></a>
+<span class="sourceLineNo">550</span><a name="line.550"></a>
+<span class="sourceLineNo">551</span>    /**<a name="line.551"></a>
+<span class="sourceLineNo">552</span>     * This method must work for the root category as well.<a name="line.552"></a>
+<span class="sourceLineNo">553</span>     */<a name="line.553"></a>
+<span class="sourceLineNo">554</span>    void parseCategory(final Properties properties, final Logger logger, final String optionKey, final String loggerName, final String value) {<a name="line.554"></a>
+<span class="sourceLineNo">555</span><a name="line.555"></a>
+<span class="sourceLineNo">556</span>        LogLog.debug("Parsing for [" + loggerName + "] with value=[" + value + "].");<a name="line.556"></a>
+<span class="sourceLineNo">557</span>        // We must skip over ',' but not white space<a name="line.557"></a>
+<span class="sourceLineNo">558</span>        final StringTokenizer st = new StringTokenizer(value, ",");<a name="line.558"></a>
+<span class="sourceLineNo">559</span><a name="line.559"></a>
+<span class="sourceLineNo">560</span>        // If value is not in the form ", appender.." or "", then we should set<a name="line.560"></a>
+<span class="sourceLineNo">561</span>        // the level of the loggeregory.<a name="line.561"></a>
+<span class="sourceLineNo">562</span><a name="line.562"></a>
+<span class="sourceLineNo">563</span>        if (!(value.startsWith(",") || value.equals(""))) {<a name="line.563"></a>
+<span class="sourceLineNo">564</span><a name="line.564"></a>
+<span class="sourceLineNo">565</span>            // just to be on the safe side...<a name="line.565"></a>
+<span class="sourceLineNo">566</span>            if (!st.hasMoreTokens()) {<a name="line.566"></a>
+<span class="sourceLineNo">567</span>                return;<a name="line.567"></a>
+<span class="sourceLineNo">568</span>            }<a name="line.568"></a>
+<span class="sourceLineNo">569</span><a name="line.569"></a>
+<span class="sourceLineNo">570</span>            final String levelStr = st.nextToken();<a name="line.570"></a>
+<span class="sourceLineNo">571</span>            LogLog.debug("Level token is [" + levelStr + "].");<a name="line.571"></a>
+<span class="sourceLineNo">572</span><a name="line.572"></a>
+<span class="sourceLineNo">573</span>            // If the level value is inherited, set category level value to<a name="line.573"></a>
+<span class="sourceLineNo">574</span>            // null. We also check that the user has not specified inherited for the<a name="line.574"></a>
+<span class="sourceLineNo">575</span>            // root category.<a name="line.575"></a>
+<span class="sourceLineNo">576</span>            if (INHERITED.equalsIgnoreCase(levelStr) || NULL.equalsIgnoreCase(levelStr)) {<a name="line.576"></a>
+<span class="sourceLineNo">577</span>                if (loggerName.equals(INTERNAL_ROOT_NAME)) {<a name="line.577"></a>
+<span class="sourceLineNo">578</span>                    LogLog.warn("The root logger cannot be set to null.");<a name="line.578"></a>
+<span class="sourceLineNo">579</span>                } else {<a name="line.579"></a>
+<span class="sourceLineNo">580</span>                    logger.setLevel(null);<a name="line.580"></a>
+<span class="sourceLineNo">581</span>                }<a name="line.581"></a>
+<span class="sourceLineNo">582</span>            } else {<a name="line.582"></a>
+<span class="sourceLineNo">583</span>                logger.setLevel(OptionConverter.toLevel(levelStr, Log4j1Configuration.DEFAULT_LEVEL));<a name="line.583"></a>
+<span class="sourceLineNo">584</span>            }<a name="line.584"></a>
+<span class="sourceLineNo">585</span>            LogLog.debug("Category " + loggerName + " set to " + logger.getLevel());<a name="line.585"></a>
+<span class="sourceLineNo">586</span>        }<a name="line.586"></a>
+<span class="sourceLineNo">587</span><a name="line.587"></a>
+<span class="sourceLineNo">588</span>        // Begin by removing all existing appenders.<a name="line.588"></a>
+<span class="sourceLineNo">589</span>        logger.removeAllAppenders();<a name="line.589"></a>
+<span class="sourceLineNo">590</span><a name="line.590"></a>
+<span class="sourceLineNo">591</span>        Appender appender;<a name="line.591"></a>
+<span class="sourceLineNo">592</span>        String appenderName;<a name="line.592"></a>
+<span class="sourceLineNo">593</span>        while (st.hasMoreTokens()) {<a name="line.593"></a>
+<span class="sourceLineNo">594</span>            appenderName = st.nextToken().trim();<a name="line.594"></a>
+<span class="sourceLineNo">595</span>            if (appenderName == null || appenderName.equals(",")) {<a name="line.595"></a>
+<span class="sourceLineNo">596</span>                continue;<a name="line.596"></a>
+<span class="sourceLineNo">597</span>            }<a name="line.597"></a>
+<span class="sourceLineNo">598</span>            LogLog.debug("Parsing appender named \"" + appenderName + "\".");<a name="line.598"></a>
+<span class="sourceLineNo">599</span>            appender = parseAppender(properties, appenderName);<a name="line.599"></a>
+<span class="sourceLineNo">600</span>            if (appender != null) {<a name="line.600"></a>
+<span class="sourceLineNo">601</span>                logger.addAppender(appender);<a name="line.601"></a>
+<span class="sourceLineNo">602</span>            }<a name="line.602"></a>
+<span class="sourceLineNo">603</span>        }<a name="line.603"></a>
+<span class="sourceLineNo">604</span>    }<a name="line.604"></a>
+<span class="sourceLineNo">605</span><a name="line.605"></a>
+<span class="sourceLineNo">606</span>    /**<a name="line.606"></a>
+<span class="sourceLineNo">607</span>     * Parse non-root elements, such non-root categories and renderers.<a name="line.607"></a>
+<span class="sourceLineNo">608</span>     */<a name="line.608"></a>
+<span class="sourceLineNo">609</span>    protected void parseCatsAndRenderers(final Properties properties, final LoggerRepository loggerRepository) {<a name="line.609"></a>
+<span class="sourceLineNo">610</span>        final Enumeration enumeration = properties.propertyNames();<a name="line.610"></a>
+<span class="sourceLineNo">611</span>        while (enumeration.hasMoreElements()) {<a name="line.611"></a>
+<span class="sourceLineNo">612</span>            final String key = (String) enumeration.nextElement();<a name="line.612"></a>
+<span class="sourceLineNo">613</span>            if (key.startsWith(CATEGORY_PREFIX) || key.startsWith(LOGGER_PREFIX)) {<a name="line.613"></a>
+<span class="sourceLineNo">614</span>                String loggerName = null;<a name="line.614"></a>
+<span class="sourceLineNo">615</span>                if (key.startsWith(CATEGORY_PREFIX)) {<a name="line.615"></a>
+<span class="sourceLineNo">616</span>                    loggerName = key.substring(CATEGORY_PREFIX.length());<a name="line.616"></a>
+<span class="sourceLineNo">617</span>                } else if (key.startsWith(LOGGER_PREFIX)) {<a name="line.617"></a>
+<span class="sourceLineNo">618</span>                    loggerName = key.substring(LOGGER_PREFIX.length());<a name="line.618"></a>
+<span class="sourceLineNo">619</span>                }<a name="line.619"></a>
+<span class="sourceLineNo">620</span>                final String value = OptionConverter.findAndSubst(key, properties);<a name="line.620"></a>
+<span class="sourceLineNo">621</span>                final Logger logger = loggerRepository.getLogger(loggerName, loggerFactory);<a name="line.621"></a>
+<span class="sourceLineNo">622</span>                synchronized (logger) {<a name="line.622"></a>
+<span class="sourceLineNo">623</span>                    parseCategory(properties, logger, key, loggerName, value);<a name="line.623"></a>
+<span class="sourceLineNo">624</span>                    parseAdditivityForLogger(properties, logger, loggerName);<a name="line.624"></a>
+<span class="sourceLineNo">625</span>                }<a name="line.625"></a>
+<span class="sourceLineNo">626</span>            } else if (key.startsWith(RENDERER_PREFIX)) {<a name="line.626"></a>
+<span class="sourceLineNo">627</span>                final String renderedClass = key.substring(RENDERER_PREFIX.length());<a name="line.627"></a>
+<span class="sourceLineNo">628</span>                final String renderingClass = OptionConverter.findAndSubst(key, properties);<a name="line.628"></a>
+<span class="sourceLineNo">629</span>                if (loggerRepository instanceof RendererSupport) {<a name="line.629"></a>
+<span class="sourceLineNo">630</span>                    RendererMap.addRenderer((RendererSupport) loggerRepository, renderedClass, renderingClass);<a name="line.630"></a>
+<span class="sourceLineNo">631</span>                }<a name="line.631"></a>
+<span class="sourceLineNo">632</span>            } else if (key.equals(THROWABLE_RENDERER_PREFIX)) {<a name="line.632"></a>
+<span class="sourceLineNo">633</span>                if (loggerRepository instanceof ThrowableRendererSupport) {<a name="line.633"></a>
+<span class="sourceLineNo">634</span>                    final ThrowableRenderer tr = (ThrowableRenderer) OptionConverter.instantiateByKey(properties, THROWABLE_RENDERER_PREFIX,<a name="line.634"></a>
+<span class="sourceLineNo">635</span>                        org.apache.log4j.spi.ThrowableRenderer.class, null);<a name="line.635"></a>
+<span class="sourceLineNo">636</span>                    if (tr == null) {<a name="line.636"></a>
+<span class="sourceLineNo">637</span>                        LogLog.error("Could not instantiate throwableRenderer.");<a name="line.637"></a>
+<span class="sourceLineNo">638</span>                    } else {<a name="line.638"></a>
+<span class="sourceLineNo">639</span>                        final PropertySetter setter = new PropertySetter(tr);<a name="line.639"></a>
+<span class="sourceLineNo">640</span>                        setter.setProperties(properties, THROWABLE_RENDERER_PREFIX + ".");<a name="line.640"></a>
+<span class="sourceLineNo">641</span>                        ((ThrowableRendererSupport) loggerRepository).setThrowableRenderer(tr);<a name="line.641"></a>
+<span class="sourceLineNo">642</span><a name="line.642"></a>
+<span class="sourceLineNo">643</span>                    }<a name="line.643"></a>
+<span class="sourceLineNo">644</span>                }<a name="line.644"></a>
+<span class="sourceLineNo">645</span>            }<a name="line.645"></a>
+<span class="sourceLineNo">646</span>        }<a name="line.646"></a>
+<span class="sourceLineNo">647</span>    }<a name="line.647"></a>
+<span class="sourceLineNo">648</span><a name="line.648"></a>
+<span class="sourceLineNo">649</span>    private void parseErrorHandler(final ErrorHandler errorHandler, final String errorHandlerPrefix, final Properties props,<a name="line.649"></a>
+<span class="sourceLineNo">650</span>        final LoggerRepository loggerRepository) {<a name="line.650"></a>
+<span class="sourceLineNo">651</span>        if (errorHandler != null &amp;&amp; loggerRepository != null) {<a name="line.651"></a>
+<span class="sourceLineNo">652</span>            final boolean rootRef = OptionConverter.toBoolean(OptionConverter.findAndSubst(errorHandlerPrefix + ROOT_REF, props), false);<a name="line.652"></a>
+<span class="sourceLineNo">653</span>            if (rootRef) {<a name="line.653"></a>
+<span class="sourceLineNo">654</span>                errorHandler.setLogger(loggerRepository.getRootLogger());<a name="line.654"></a>
+<span class="sourceLineNo">655</span>            }<a name="line.655"></a>
+<span class="sourceLineNo">656</span>            final String loggerName = OptionConverter.findAndSubst(errorHandlerPrefix + LOGGER_REF, props);<a name="line.656"></a>
+<span class="sourceLineNo">657</span>            if (loggerName != null) {<a name="line.657"></a>
+<span class="sourceLineNo">658</span>                final Logger logger = loggerFactory == null ? loggerRepository.getLogger(loggerName) : loggerRepository.getLogger(loggerName, loggerFactory);<a name="line.658"></a>
+<span class="sourceLineNo">659</span>                errorHandler.setLogger(logger);<a name="line.659"></a>
+<span class="sourceLineNo">660</span>            }<a name="line.660"></a>
+<span class="sourceLineNo">661</span>            final String appenderName = OptionConverter.findAndSubst(errorHandlerPrefix + APPENDER_REF_TAG, props);<a name="line.661"></a>
+<span class="sourceLineNo">662</span>            if (appenderName != null) {<a name="line.662"></a>
+<span class="sourceLineNo">663</span>                final Appender backup = parseAppender(props, appenderName);<a name="line.663"></a>
+<span class="sourceLineNo">664</span>                if (backup != null) {<a name="line.664"></a>
+<span class="sourceLineNo">665</span>                    errorHandler.setBackupAppender(backup);<a name="line.665"></a>
+<span class="sourceLineNo">666</span>                }<a name="line.666"></a>
+<span class="sourceLineNo">667</span>            }<a name="line.667"></a>
+<span class="sourceLineNo">668</span>        }<a name="line.668"></a>
+<span class="sourceLineNo">669</span>    }<a name="line.669"></a>
+<span class="sourceLineNo">670</span><a name="line.670"></a>
+<span class="sourceLineNo">671</span>    Appender registryGet(final String name) {<a name="line.671"></a>
+<span class="sourceLineNo">672</span>        return (Appender) registry.get(name);<a name="line.672"></a>
+<span class="sourceLineNo">673</span>    }<a name="line.673"></a>
+<span class="sourceLineNo">674</span><a name="line.674"></a>
+<span class="sourceLineNo">675</span>    void registryPut(final Appender appender) {<a name="line.675"></a>
+<span class="sourceLineNo">676</span>        registry.put(appender.getName(), appender);<a name="line.676"></a>
+<span class="sourceLineNo">677</span>    }<a name="line.677"></a>
+<span class="sourceLineNo">678</span>}<a name="line.678"></a>
 
 
 

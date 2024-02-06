@@ -138,27 +138,22 @@
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> 
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>     <strong class="jxr_keyword">private</strong> &lt;T <strong class="jxr_keyword">extends</strong> Log4j1Configuration&gt; <a name="Appender" href="../../../../../org/apache/log4j/Appender.html#Appender">Appender</a> createAppender(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a name="Layout" href="../../../../../org/apache/log4j/Layout.html#Layout">Layout</a> layout, <strong class="jxr_keyword">final</strong> <a name="Filter" href="../../../../../org/apache/log4j/spi/Filter.html#Filter">Filter</a> filter,
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>             <strong class="jxr_keyword">final</strong> String level, <strong class="jxr_keyword">final</strong> String target, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> follow, <strong class="jxr_keyword">final</strong> T configuration) {
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>         org.apache.logging.log4j.core.Layout&lt;?&gt; consoleLayout = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         org.apache.logging.log4j.core.Layout&lt;?&gt; consoleLayout = LayoutAdapter.adapt(layout);
 <a class="jxr_linenumber" name="L134" href="#L134">134</a> 
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>         <strong class="jxr_keyword">if</strong> (layout instanceof <a name="LayoutWrapper" href="../../../../../org/apache/log4j/bridge/LayoutWrapper.html#LayoutWrapper">LayoutWrapper</a>) {
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>             consoleLayout = ((<a name="LayoutWrapper" href="../../../../../org/apache/log4j/bridge/LayoutWrapper.html#LayoutWrapper">LayoutWrapper</a>) layout).getLayout();
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (layout != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>             consoleLayout = <strong class="jxr_keyword">new</strong> <a name="LayoutAdapter" href="../../../../../org/apache/log4j/bridge/LayoutAdapter.html#LayoutAdapter">LayoutAdapter</a>(layout);
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>         }
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">final</strong> org.apache.logging.log4j.core.Filter consoleFilter = buildFilters(level, filter);
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">final</strong> ConsoleAppender.Target consoleTarget = SYSTEM_ERR.equals(target)
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>                 ? ConsoleAppender.Target.SYSTEM_ERR : ConsoleAppender.Target.SYSTEM_OUT;
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="AppenderWrapper" href="../../../../../org/apache/log4j/bridge/AppenderWrapper.html#AppenderWrapper">AppenderWrapper</a>(ConsoleAppender.newBuilder()
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>                 .setName(name)
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>                 .setTarget(consoleTarget)
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>                 .setFollow(follow)
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>                 .setLayout(consoleLayout)
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>                 .setFilter(consoleFilter)
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>                 .setConfiguration(configuration)
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>                 .setImmediateFlush(immediateFlush)
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>                 .build());
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>     }
-<a class="jxr_linenumber" name="L153" href="#L153">153</a> }
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>         <strong class="jxr_keyword">final</strong> org.apache.logging.log4j.core.Filter consoleFilter = buildFilters(level, filter);
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>         <strong class="jxr_keyword">final</strong> ConsoleAppender.Target consoleTarget = SYSTEM_ERR.equals(target)
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>                 ? ConsoleAppender.Target.SYSTEM_ERR : ConsoleAppender.Target.SYSTEM_OUT;
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>         <strong class="jxr_keyword">return</strong> AppenderWrapper.adapt(ConsoleAppender.newBuilder()
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>                 .setName(name)
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>                 .setTarget(consoleTarget)
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>                 .setFollow(follow)
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>                 .setLayout(consoleLayout)
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>                 .setFilter(consoleFilter)
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>                 .setConfiguration(configuration)
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>                 .setImmediateFlush(immediateFlush)
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>                 .build());
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>     }
+<a class="jxr_linenumber" name="L148" href="#L148">148</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2022 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
