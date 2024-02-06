@@ -158,39 +158,46 @@
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> AbstractConfiguration config : configurations) {
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/ConfigurationSource.html">ConfigurationSource</a> source = config.getConfigurationSource();
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">final</strong> URI sourceURI = source.getURI();
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> currentConfig;
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> currentConfig = config;
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>             <strong class="jxr_keyword">if</strong> (sourceURI == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>                 LOGGER.warn(<span class="jxr_string">"Unable to determine URI for configuration {}, changes to it will be ignored"</span>,
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>                         config.getName());
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 currentConfig = factory.getConfiguration(getLoggerContext(), config.getName(), sourceURI);
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>                 <strong class="jxr_keyword">if</strong> (currentConfig == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>                     LOGGER.warn(<span class="jxr_string">"Unable to reload configuration {}, changes to it will be ignored"</span>, config.getName());
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>                     currentConfig = config;
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>                 currentConfig = factory.getConfiguration(getLoggerContext(), config.getName(), sourceURI);
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>                 <strong class="jxr_keyword">if</strong> (currentConfig == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>                     LOGGER.warn(<span class="jxr_string">"Unable to reload configuration {}, changes to it will be ignored"</span>, config.getName());
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>                 }
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>                 currentConfig = config;
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>             }
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>             configs.add((AbstractConfiguration) currentConfig);
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>             }
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>             configs.add((AbstractConfiguration) currentConfig);
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> 
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         }
 <a class="jxr_linenumber" name="L166" href="#L166">166</a> 
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         }
-<a class="jxr_linenumber" name="L168" href="#L168">168</a> 
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/composite/CompositeConfiguration.html">CompositeConfiguration</a>(configs);
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>     }
-<a class="jxr_linenumber" name="L171" href="#L171">171</a> 
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> staffChildConfiguration(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/AbstractConfiguration.html">AbstractConfiguration</a> childConfiguration) {
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>         childConfiguration.setPluginManager(pluginManager);
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>         childConfiguration.setScriptManager(scriptManager);
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>         childConfiguration.setup();
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>     }
-<a class="jxr_linenumber" name="L177" href="#L177">177</a> 
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> printNodes(<strong class="jxr_keyword">final</strong> String indent, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> node, <strong class="jxr_keyword">final</strong> StringBuilder sb) {
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>         sb.append(indent).append(node.getName()).append(<span class="jxr_string">" type: "</span>).append(node.getType()).append(<span class="jxr_string">"\n"</span>);
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>         sb.append(indent).append(node.getAttributes().toString()).append(<span class="jxr_string">"\n"</span>);
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Node child : node.getChildren()) {
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>             printNodes(indent + <span class="jxr_string">"  "</span>, child, sb);
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>         }
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>     }
-<a class="jxr_linenumber" name="L185" href="#L185">185</a> }
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/composite/CompositeConfiguration.html">CompositeConfiguration</a>(configs);
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>     }
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> 
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> staffChildConfiguration(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/AbstractConfiguration.html">AbstractConfiguration</a> childConfiguration) {
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>         childConfiguration.setPluginManager(pluginManager);
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>         childConfiguration.setScriptManager(scriptManager);
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>         childConfiguration.setup();
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>     }
+<a class="jxr_linenumber" name="L175" href="#L175">175</a> 
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> printNodes(<strong class="jxr_keyword">final</strong> String indent, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> node, <strong class="jxr_keyword">final</strong> StringBuilder sb) {
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>         sb.append(indent).append(node.getName()).append(<span class="jxr_string">" type: "</span>).append(node.getType()).append(<span class="jxr_string">"\n"</span>);
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>         sb.append(indent).append(node.getAttributes().toString()).append(<span class="jxr_string">"\n"</span>);
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Node child : node.getChildren()) {
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>             printNodes(indent + <span class="jxr_string">"  "</span>, child, sb);
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>         }
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>     }
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> 
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     @Override
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>         <strong class="jxr_keyword">return</strong> getClass().getName() + <span class="jxr_string">"@"</span> + Integer.toHexString(hashCode()) + <span class="jxr_string">" [configurations="</span> + configurations
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>                 + <span class="jxr_string">", mergeStrategy="</span> + mergeStrategy + <span class="jxr_string">", rootNode="</span> + rootNode + <span class="jxr_string">", listeners="</span> + listeners
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>                 + <span class="jxr_string">", pluginPackages="</span> + pluginPackages + <span class="jxr_string">", pluginManager="</span> + pluginManager + <span class="jxr_string">", isShutdownHookEnabled="</span>
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>                 + isShutdownHookEnabled + <span class="jxr_string">", shutdownTimeoutMillis="</span> + shutdownTimeoutMillis + <span class="jxr_string">", scriptManager="</span>
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>                 + scriptManager + <span class="jxr_string">"]"</span>;
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>     }
+<a class="jxr_linenumber" name="L192" href="#L192">192</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>

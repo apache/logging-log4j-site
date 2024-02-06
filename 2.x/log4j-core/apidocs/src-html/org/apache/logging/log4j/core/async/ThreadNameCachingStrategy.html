@@ -56,18 +56,23 @@
 <span class="sourceLineNo">048</span>    abstract String getThreadName();<a name="line.48"></a>
 <span class="sourceLineNo">049</span><a name="line.49"></a>
 <span class="sourceLineNo">050</span>    public static ThreadNameCachingStrategy create() {<a name="line.50"></a>
-<span class="sourceLineNo">051</span>        final String name = PropertiesUtil.getProperties().getStringProperty("AsyncLogger.ThreadNameStrategy",<a name="line.51"></a>
-<span class="sourceLineNo">052</span>                CACHED.name());<a name="line.52"></a>
-<span class="sourceLineNo">053</span>        try {<a name="line.53"></a>
-<span class="sourceLineNo">054</span>            final ThreadNameCachingStrategy result = ThreadNameCachingStrategy.valueOf(name);<a name="line.54"></a>
-<span class="sourceLineNo">055</span>            LOGGER.debug("AsyncLogger.ThreadNameStrategy={}", result);<a name="line.55"></a>
-<span class="sourceLineNo">056</span>            return result;<a name="line.56"></a>
-<span class="sourceLineNo">057</span>        } catch (final Exception ex) {<a name="line.57"></a>
-<span class="sourceLineNo">058</span>            LOGGER.debug("Using AsyncLogger.ThreadNameStrategy.CACHED: '{}' not valid: {}", name, ex.toString());<a name="line.58"></a>
-<span class="sourceLineNo">059</span>            return CACHED;<a name="line.59"></a>
-<span class="sourceLineNo">060</span>        }<a name="line.60"></a>
-<span class="sourceLineNo">061</span>    }<a name="line.61"></a>
-<span class="sourceLineNo">062</span>}<a name="line.62"></a>
+<span class="sourceLineNo">051</span>        final String defaultStrategy = System.getProperty("java.version").compareTo("1.8.0_102") &lt; 0<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                ? "CACHED" // LOG4J2-2052 JDK 8u102 removed the String allocation in Thread.getName()<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                : "UNCACHED";<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        final String name = PropertiesUtil.getProperties().getStringProperty("AsyncLogger.ThreadNameStrategy");<a name="line.54"></a>
+<span class="sourceLineNo">055</span>        try {<a name="line.55"></a>
+<span class="sourceLineNo">056</span>            final ThreadNameCachingStrategy result = ThreadNameCachingStrategy.valueOf(<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                    name != null ? name : defaultStrategy);<a name="line.57"></a>
+<span class="sourceLineNo">058</span>            LOGGER.debug("AsyncLogger.ThreadNameStrategy={} (user specified {}, default is {})",<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                    result, name, defaultStrategy);<a name="line.59"></a>
+<span class="sourceLineNo">060</span>            return result;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        } catch (final Exception ex) {<a name="line.61"></a>
+<span class="sourceLineNo">062</span>            LOGGER.debug("Using AsyncLogger.ThreadNameStrategy.{}: '{}' not valid: {}",<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                    defaultStrategy, name, ex.toString());<a name="line.63"></a>
+<span class="sourceLineNo">064</span>            return ThreadNameCachingStrategy.valueOf(defaultStrategy);<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        }<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    }<a name="line.66"></a>
+<span class="sourceLineNo">067</span>}<a name="line.67"></a>
 
 
 

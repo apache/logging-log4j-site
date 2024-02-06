@@ -28,7 +28,7 @@
 <span class="sourceLineNo">020</span>import java.util.Map;<a name="line.20"></a>
 <span class="sourceLineNo">021</span><a name="line.21"></a>
 <span class="sourceLineNo">022</span>import org.apache.logging.log4j.util.EnglishEnums;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import org.apache.logging.log4j.util.StringBuilderFormattable;<a name="line.23"></a>
+<span class="sourceLineNo">023</span>import org.apache.logging.log4j.util.MultiFormatStringBuilderFormattable;<a name="line.23"></a>
 <span class="sourceLineNo">024</span>import org.apache.logging.log4j.util.StringBuilders;<a name="line.24"></a>
 <span class="sourceLineNo">025</span><a name="line.25"></a>
 <span class="sourceLineNo">026</span>/**<a name="line.26"></a>
@@ -43,7 +43,7 @@
 <span class="sourceLineNo">035</span> * @see &lt;a href="https://tools.ietf.org/html/rfc5424"&gt;RFC 5424&lt;/a&gt;<a name="line.35"></a>
 <span class="sourceLineNo">036</span> */<a name="line.36"></a>
 <span class="sourceLineNo">037</span>@AsynchronouslyFormattable<a name="line.37"></a>
-<span class="sourceLineNo">038</span>public class StructuredDataMessage extends MapMessage&lt;StructuredDataMessage, String&gt; implements StringBuilderFormattable {<a name="line.38"></a>
+<span class="sourceLineNo">038</span>public class StructuredDataMessage extends MapMessage&lt;StructuredDataMessage, String&gt; implements MultiFormatStringBuilderFormattable {<a name="line.38"></a>
 <span class="sourceLineNo">039</span><a name="line.39"></a>
 <span class="sourceLineNo">040</span>    private static final long serialVersionUID = 1703221292892071920L;<a name="line.40"></a>
 <span class="sourceLineNo">041</span>    private static final int MAX_LENGTH = 32;<a name="line.41"></a>
@@ -261,284 +261,291 @@
 <span class="sourceLineNo">253</span>        asString(Format.FULL, null, buffer);<a name="line.253"></a>
 <span class="sourceLineNo">254</span>    }<a name="line.254"></a>
 <span class="sourceLineNo">255</span><a name="line.255"></a>
-<span class="sourceLineNo">256</span>    /**<a name="line.256"></a>
-<span class="sourceLineNo">257</span>     * Returns the message.<a name="line.257"></a>
-<span class="sourceLineNo">258</span>     * @return the message.<a name="line.258"></a>
-<span class="sourceLineNo">259</span>     */<a name="line.259"></a>
-<span class="sourceLineNo">260</span>    @Override<a name="line.260"></a>
-<span class="sourceLineNo">261</span>    public String getFormat() {<a name="line.261"></a>
-<span class="sourceLineNo">262</span>        return message;<a name="line.262"></a>
-<span class="sourceLineNo">263</span>    }<a name="line.263"></a>
-<span class="sourceLineNo">264</span><a name="line.264"></a>
-<span class="sourceLineNo">265</span>    protected void setMessageFormat(final String msg) {<a name="line.265"></a>
-<span class="sourceLineNo">266</span>        this.message = msg;<a name="line.266"></a>
-<span class="sourceLineNo">267</span>    }<a name="line.267"></a>
-<span class="sourceLineNo">268</span><a name="line.268"></a>
-<span class="sourceLineNo">269</span>    /**<a name="line.269"></a>
-<span class="sourceLineNo">270</span>     * Formats the structured data as described in RFC 5424.<a name="line.270"></a>
-<span class="sourceLineNo">271</span>     *<a name="line.271"></a>
-<span class="sourceLineNo">272</span>     * @return The formatted String.<a name="line.272"></a>
-<span class="sourceLineNo">273</span>     */<a name="line.273"></a>
-<span class="sourceLineNo">274</span>    @Override<a name="line.274"></a>
-<span class="sourceLineNo">275</span>    public String asString() {<a name="line.275"></a>
-<span class="sourceLineNo">276</span>        return asString(Format.FULL, null);<a name="line.276"></a>
-<span class="sourceLineNo">277</span>    }<a name="line.277"></a>
-<span class="sourceLineNo">278</span><a name="line.278"></a>
-<span class="sourceLineNo">279</span>    /**<a name="line.279"></a>
-<span class="sourceLineNo">280</span>     * Formats the structured data as described in RFC 5424.<a name="line.280"></a>
-<span class="sourceLineNo">281</span>     *<a name="line.281"></a>
-<span class="sourceLineNo">282</span>     * @param format The format identifier. Ignored in this implementation.<a name="line.282"></a>
-<span class="sourceLineNo">283</span>     * @return The formatted String.<a name="line.283"></a>
-<span class="sourceLineNo">284</span>     */<a name="line.284"></a>
-<span class="sourceLineNo">285</span><a name="line.285"></a>
-<span class="sourceLineNo">286</span>    @Override<a name="line.286"></a>
-<span class="sourceLineNo">287</span>    public String asString(final String format) {<a name="line.287"></a>
-<span class="sourceLineNo">288</span>        try {<a name="line.288"></a>
-<span class="sourceLineNo">289</span>            return asString(EnglishEnums.valueOf(Format.class, format), null);<a name="line.289"></a>
-<span class="sourceLineNo">290</span>        } catch (final IllegalArgumentException ex) {<a name="line.290"></a>
-<span class="sourceLineNo">291</span>            return asString();<a name="line.291"></a>
-<span class="sourceLineNo">292</span>        }<a name="line.292"></a>
-<span class="sourceLineNo">293</span>    }<a name="line.293"></a>
-<span class="sourceLineNo">294</span><a name="line.294"></a>
-<span class="sourceLineNo">295</span>    /**<a name="line.295"></a>
-<span class="sourceLineNo">296</span>     * Formats the structured data as described in RFC 5424.<a name="line.296"></a>
-<span class="sourceLineNo">297</span>     *<a name="line.297"></a>
-<span class="sourceLineNo">298</span>     * @param format           "full" will include the type and message. null will return only the STRUCTURED-DATA as<a name="line.298"></a>
-<span class="sourceLineNo">299</span>     *                         described in RFC 5424<a name="line.299"></a>
-<span class="sourceLineNo">300</span>     * @param structuredDataId The SD-ID as described in RFC 5424. If null the value in the StructuredData<a name="line.300"></a>
-<span class="sourceLineNo">301</span>     *                         will be used.<a name="line.301"></a>
-<span class="sourceLineNo">302</span>     * @return The formatted String.<a name="line.302"></a>
-<span class="sourceLineNo">303</span>     */<a name="line.303"></a>
-<span class="sourceLineNo">304</span>    public final String asString(final Format format, final StructuredDataId structuredDataId) {<a name="line.304"></a>
-<span class="sourceLineNo">305</span>        final StringBuilder sb = new StringBuilder();<a name="line.305"></a>
-<span class="sourceLineNo">306</span>        asString(format, structuredDataId, sb);<a name="line.306"></a>
-<span class="sourceLineNo">307</span>        return sb.toString();<a name="line.307"></a>
-<span class="sourceLineNo">308</span>    }<a name="line.308"></a>
-<span class="sourceLineNo">309</span><a name="line.309"></a>
-<span class="sourceLineNo">310</span>    /**<a name="line.310"></a>
-<span class="sourceLineNo">311</span>     * Formats the structured data as described in RFC 5424.<a name="line.311"></a>
-<span class="sourceLineNo">312</span>     *<a name="line.312"></a>
-<span class="sourceLineNo">313</span>     * @param format           "full" will include the type and message. null will return only the STRUCTURED-DATA as<a name="line.313"></a>
-<span class="sourceLineNo">314</span>     *                         described in RFC 5424<a name="line.314"></a>
-<span class="sourceLineNo">315</span>     * @param structuredDataId The SD-ID as described in RFC 5424. If null the value in the StructuredData<a name="line.315"></a>
-<span class="sourceLineNo">316</span>     *                         will be used.<a name="line.316"></a>
-<span class="sourceLineNo">317</span>     * @param sb The StringBuilder to append the formatted message to.<a name="line.317"></a>
-<span class="sourceLineNo">318</span>     */<a name="line.318"></a>
-<span class="sourceLineNo">319</span>    public final void asString(final Format format, final StructuredDataId structuredDataId, final StringBuilder sb) {<a name="line.319"></a>
-<span class="sourceLineNo">320</span>        final boolean full = Format.FULL.equals(format);<a name="line.320"></a>
-<span class="sourceLineNo">321</span>        if (full) {<a name="line.321"></a>
-<span class="sourceLineNo">322</span>            final String myType = getType();<a name="line.322"></a>
-<span class="sourceLineNo">323</span>            if (myType == null) {<a name="line.323"></a>
-<span class="sourceLineNo">324</span>                return;<a name="line.324"></a>
-<span class="sourceLineNo">325</span>            }<a name="line.325"></a>
-<span class="sourceLineNo">326</span>            sb.append(getType()).append(' ');<a name="line.326"></a>
-<span class="sourceLineNo">327</span>        }<a name="line.327"></a>
-<span class="sourceLineNo">328</span>        StructuredDataId sdId = getId();<a name="line.328"></a>
-<span class="sourceLineNo">329</span>        if (sdId != null) {<a name="line.329"></a>
-<span class="sourceLineNo">330</span>            sdId = sdId.makeId(structuredDataId); // returns sdId if structuredDataId is null<a name="line.330"></a>
-<span class="sourceLineNo">331</span>        } else {<a name="line.331"></a>
-<span class="sourceLineNo">332</span>            sdId = structuredDataId;<a name="line.332"></a>
-<span class="sourceLineNo">333</span>        }<a name="line.333"></a>
-<span class="sourceLineNo">334</span>        if (sdId == null || sdId.getName() == null) {<a name="line.334"></a>
-<span class="sourceLineNo">335</span>            return;<a name="line.335"></a>
-<span class="sourceLineNo">336</span>        }<a name="line.336"></a>
-<span class="sourceLineNo">337</span>        sb.append('[');<a name="line.337"></a>
-<span class="sourceLineNo">338</span>        StringBuilders.appendValue(sb, sdId); // avoids toString if implements StringBuilderFormattable<a name="line.338"></a>
-<span class="sourceLineNo">339</span>        sb.append(' ');<a name="line.339"></a>
-<span class="sourceLineNo">340</span>        appendMap(sb);<a name="line.340"></a>
-<span class="sourceLineNo">341</span>        sb.append(']');<a name="line.341"></a>
-<span class="sourceLineNo">342</span>        if (full) {<a name="line.342"></a>
-<span class="sourceLineNo">343</span>            final String msg = getFormat();<a name="line.343"></a>
-<span class="sourceLineNo">344</span>            if (msg != null) {<a name="line.344"></a>
-<span class="sourceLineNo">345</span>                sb.append(' ').append(msg);<a name="line.345"></a>
-<span class="sourceLineNo">346</span>            }<a name="line.346"></a>
-<span class="sourceLineNo">347</span>        }<a name="line.347"></a>
-<span class="sourceLineNo">348</span>    }<a name="line.348"></a>
-<span class="sourceLineNo">349</span><a name="line.349"></a>
-<span class="sourceLineNo">350</span>    /**<a name="line.350"></a>
-<span class="sourceLineNo">351</span>     * Formats the message and return it.<a name="line.351"></a>
-<span class="sourceLineNo">352</span>     * @return the formatted message.<a name="line.352"></a>
-<span class="sourceLineNo">353</span>     */<a name="line.353"></a>
-<span class="sourceLineNo">354</span>    @Override<a name="line.354"></a>
-<span class="sourceLineNo">355</span>    public String getFormattedMessage() {<a name="line.355"></a>
-<span class="sourceLineNo">356</span>        return asString(Format.FULL, null);<a name="line.356"></a>
+<span class="sourceLineNo">256</span>    @Override<a name="line.256"></a>
+<span class="sourceLineNo">257</span>    public void formatTo(String[] formats, StringBuilder buffer) {<a name="line.257"></a>
+<span class="sourceLineNo">258</span>        asString(getFormat(formats), null, buffer);<a name="line.258"></a>
+<span class="sourceLineNo">259</span>    }<a name="line.259"></a>
+<span class="sourceLineNo">260</span><a name="line.260"></a>
+<span class="sourceLineNo">261</span>    /**<a name="line.261"></a>
+<span class="sourceLineNo">262</span>     * Returns the message.<a name="line.262"></a>
+<span class="sourceLineNo">263</span>     * @return the message.<a name="line.263"></a>
+<span class="sourceLineNo">264</span>     */<a name="line.264"></a>
+<span class="sourceLineNo">265</span>    @Override<a name="line.265"></a>
+<span class="sourceLineNo">266</span>    public String getFormat() {<a name="line.266"></a>
+<span class="sourceLineNo">267</span>        return message;<a name="line.267"></a>
+<span class="sourceLineNo">268</span>    }<a name="line.268"></a>
+<span class="sourceLineNo">269</span><a name="line.269"></a>
+<span class="sourceLineNo">270</span>    protected void setMessageFormat(final String msg) {<a name="line.270"></a>
+<span class="sourceLineNo">271</span>        this.message = msg;<a name="line.271"></a>
+<span class="sourceLineNo">272</span>    }<a name="line.272"></a>
+<span class="sourceLineNo">273</span><a name="line.273"></a>
+<span class="sourceLineNo">274</span>    /**<a name="line.274"></a>
+<span class="sourceLineNo">275</span>     * Formats the structured data as described in RFC 5424.<a name="line.275"></a>
+<span class="sourceLineNo">276</span>     *<a name="line.276"></a>
+<span class="sourceLineNo">277</span>     * @return The formatted String.<a name="line.277"></a>
+<span class="sourceLineNo">278</span>     */<a name="line.278"></a>
+<span class="sourceLineNo">279</span>    @Override<a name="line.279"></a>
+<span class="sourceLineNo">280</span>    public String asString() {<a name="line.280"></a>
+<span class="sourceLineNo">281</span>        return asString(Format.FULL, null);<a name="line.281"></a>
+<span class="sourceLineNo">282</span>    }<a name="line.282"></a>
+<span class="sourceLineNo">283</span><a name="line.283"></a>
+<span class="sourceLineNo">284</span>    /**<a name="line.284"></a>
+<span class="sourceLineNo">285</span>     * Formats the structured data as described in RFC 5424.<a name="line.285"></a>
+<span class="sourceLineNo">286</span>     *<a name="line.286"></a>
+<span class="sourceLineNo">287</span>     * @param format The format identifier. Ignored in this implementation.<a name="line.287"></a>
+<span class="sourceLineNo">288</span>     * @return The formatted String.<a name="line.288"></a>
+<span class="sourceLineNo">289</span>     */<a name="line.289"></a>
+<span class="sourceLineNo">290</span><a name="line.290"></a>
+<span class="sourceLineNo">291</span>    @Override<a name="line.291"></a>
+<span class="sourceLineNo">292</span>    public String asString(final String format) {<a name="line.292"></a>
+<span class="sourceLineNo">293</span>        try {<a name="line.293"></a>
+<span class="sourceLineNo">294</span>            return asString(EnglishEnums.valueOf(Format.class, format), null);<a name="line.294"></a>
+<span class="sourceLineNo">295</span>        } catch (final IllegalArgumentException ex) {<a name="line.295"></a>
+<span class="sourceLineNo">296</span>            return asString();<a name="line.296"></a>
+<span class="sourceLineNo">297</span>        }<a name="line.297"></a>
+<span class="sourceLineNo">298</span>    }<a name="line.298"></a>
+<span class="sourceLineNo">299</span><a name="line.299"></a>
+<span class="sourceLineNo">300</span>    /**<a name="line.300"></a>
+<span class="sourceLineNo">301</span>     * Formats the structured data as described in RFC 5424.<a name="line.301"></a>
+<span class="sourceLineNo">302</span>     *<a name="line.302"></a>
+<span class="sourceLineNo">303</span>     * @param format           "full" will include the type and message. null will return only the STRUCTURED-DATA as<a name="line.303"></a>
+<span class="sourceLineNo">304</span>     *                         described in RFC 5424<a name="line.304"></a>
+<span class="sourceLineNo">305</span>     * @param structuredDataId The SD-ID as described in RFC 5424. If null the value in the StructuredData<a name="line.305"></a>
+<span class="sourceLineNo">306</span>     *                         will be used.<a name="line.306"></a>
+<span class="sourceLineNo">307</span>     * @return The formatted String.<a name="line.307"></a>
+<span class="sourceLineNo">308</span>     */<a name="line.308"></a>
+<span class="sourceLineNo">309</span>    public final String asString(final Format format, final StructuredDataId structuredDataId) {<a name="line.309"></a>
+<span class="sourceLineNo">310</span>        final StringBuilder sb = new StringBuilder();<a name="line.310"></a>
+<span class="sourceLineNo">311</span>        asString(format, structuredDataId, sb);<a name="line.311"></a>
+<span class="sourceLineNo">312</span>        return sb.toString();<a name="line.312"></a>
+<span class="sourceLineNo">313</span>    }<a name="line.313"></a>
+<span class="sourceLineNo">314</span><a name="line.314"></a>
+<span class="sourceLineNo">315</span>    /**<a name="line.315"></a>
+<span class="sourceLineNo">316</span>     * Formats the structured data as described in RFC 5424.<a name="line.316"></a>
+<span class="sourceLineNo">317</span>     *<a name="line.317"></a>
+<span class="sourceLineNo">318</span>     * @param format           "full" will include the type and message. null will return only the STRUCTURED-DATA as<a name="line.318"></a>
+<span class="sourceLineNo">319</span>     *                         described in RFC 5424<a name="line.319"></a>
+<span class="sourceLineNo">320</span>     * @param structuredDataId The SD-ID as described in RFC 5424. If null the value in the StructuredData<a name="line.320"></a>
+<span class="sourceLineNo">321</span>     *                         will be used.<a name="line.321"></a>
+<span class="sourceLineNo">322</span>     * @param sb The StringBuilder to append the formatted message to.<a name="line.322"></a>
+<span class="sourceLineNo">323</span>     */<a name="line.323"></a>
+<span class="sourceLineNo">324</span>    public final void asString(final Format format, final StructuredDataId structuredDataId, final StringBuilder sb) {<a name="line.324"></a>
+<span class="sourceLineNo">325</span>        final boolean full = Format.FULL.equals(format);<a name="line.325"></a>
+<span class="sourceLineNo">326</span>        if (full) {<a name="line.326"></a>
+<span class="sourceLineNo">327</span>            final String myType = getType();<a name="line.327"></a>
+<span class="sourceLineNo">328</span>            if (myType == null) {<a name="line.328"></a>
+<span class="sourceLineNo">329</span>                return;<a name="line.329"></a>
+<span class="sourceLineNo">330</span>            }<a name="line.330"></a>
+<span class="sourceLineNo">331</span>            sb.append(getType()).append(' ');<a name="line.331"></a>
+<span class="sourceLineNo">332</span>        }<a name="line.332"></a>
+<span class="sourceLineNo">333</span>        StructuredDataId sdId = getId();<a name="line.333"></a>
+<span class="sourceLineNo">334</span>        if (sdId != null) {<a name="line.334"></a>
+<span class="sourceLineNo">335</span>            sdId = sdId.makeId(structuredDataId); // returns sdId if structuredDataId is null<a name="line.335"></a>
+<span class="sourceLineNo">336</span>        } else {<a name="line.336"></a>
+<span class="sourceLineNo">337</span>            sdId = structuredDataId;<a name="line.337"></a>
+<span class="sourceLineNo">338</span>        }<a name="line.338"></a>
+<span class="sourceLineNo">339</span>        if (sdId == null || sdId.getName() == null) {<a name="line.339"></a>
+<span class="sourceLineNo">340</span>            return;<a name="line.340"></a>
+<span class="sourceLineNo">341</span>        }<a name="line.341"></a>
+<span class="sourceLineNo">342</span>        if (Format.XML.equals(format)) {<a name="line.342"></a>
+<span class="sourceLineNo">343</span>            asXml(sdId, sb);<a name="line.343"></a>
+<span class="sourceLineNo">344</span>            return;<a name="line.344"></a>
+<span class="sourceLineNo">345</span>        }<a name="line.345"></a>
+<span class="sourceLineNo">346</span>        sb.append('[');<a name="line.346"></a>
+<span class="sourceLineNo">347</span>        StringBuilders.appendValue(sb, sdId); // avoids toString if implements StringBuilderFormattable<a name="line.347"></a>
+<span class="sourceLineNo">348</span>        sb.append(' ');<a name="line.348"></a>
+<span class="sourceLineNo">349</span>        appendMap(sb);<a name="line.349"></a>
+<span class="sourceLineNo">350</span>        sb.append(']');<a name="line.350"></a>
+<span class="sourceLineNo">351</span>        if (full) {<a name="line.351"></a>
+<span class="sourceLineNo">352</span>            final String msg = getFormat();<a name="line.352"></a>
+<span class="sourceLineNo">353</span>            if (msg != null) {<a name="line.353"></a>
+<span class="sourceLineNo">354</span>                sb.append(' ').append(msg);<a name="line.354"></a>
+<span class="sourceLineNo">355</span>            }<a name="line.355"></a>
+<span class="sourceLineNo">356</span>        }<a name="line.356"></a>
 <span class="sourceLineNo">357</span>    }<a name="line.357"></a>
 <span class="sourceLineNo">358</span><a name="line.358"></a>
-<span class="sourceLineNo">359</span>    /**<a name="line.359"></a>
-<span class="sourceLineNo">360</span>     * Formats the message according the the specified format.<a name="line.360"></a>
-<span class="sourceLineNo">361</span>     * @param formats An array of Strings that provide extra information about how to format the message.<a name="line.361"></a>
-<span class="sourceLineNo">362</span>     * StructuredDataMessage accepts only a format of "FULL" which will cause the event type to be<a name="line.362"></a>
-<span class="sourceLineNo">363</span>     * prepended and the event message to be appended. Specifying any other value will cause only the<a name="line.363"></a>
-<span class="sourceLineNo">364</span>     * StructuredData to be included. The default is "FULL".<a name="line.364"></a>
-<span class="sourceLineNo">365</span>     *<a name="line.365"></a>
-<span class="sourceLineNo">366</span>     * @return the formatted message.<a name="line.366"></a>
-<span class="sourceLineNo">367</span>     */<a name="line.367"></a>
-<span class="sourceLineNo">368</span>    @Override<a name="line.368"></a>
-<span class="sourceLineNo">369</span>    public String getFormattedMessage(final String[] formats) {<a name="line.369"></a>
-<span class="sourceLineNo">370</span>        if (formats != null &amp;&amp; formats.length &gt; 0) {<a name="line.370"></a>
-<span class="sourceLineNo">371</span>            for (int i = 0; i &lt; formats.length; i++) {<a name="line.371"></a>
-<span class="sourceLineNo">372</span>                final String format = formats[i];<a name="line.372"></a>
-<span class="sourceLineNo">373</span>                if (Format.XML.name().equalsIgnoreCase(format)) {<a name="line.373"></a>
-<span class="sourceLineNo">374</span>                    return asXml();<a name="line.374"></a>
-<span class="sourceLineNo">375</span>                } else if (Format.FULL.name().equalsIgnoreCase(format)) {<a name="line.375"></a>
-<span class="sourceLineNo">376</span>                    return asString(Format.FULL, null);<a name="line.376"></a>
-<span class="sourceLineNo">377</span>                }<a name="line.377"></a>
-<span class="sourceLineNo">378</span>            }<a name="line.378"></a>
-<span class="sourceLineNo">379</span>            return asString(null, null);<a name="line.379"></a>
-<span class="sourceLineNo">380</span>        }<a name="line.380"></a>
-<span class="sourceLineNo">381</span>        return asString(Format.FULL, null);<a name="line.381"></a>
-<span class="sourceLineNo">382</span>    }<a name="line.382"></a>
-<span class="sourceLineNo">383</span><a name="line.383"></a>
-<span class="sourceLineNo">384</span>    private String asXml() {<a name="line.384"></a>
-<span class="sourceLineNo">385</span>        final StringBuilder sb = new StringBuilder();<a name="line.385"></a>
-<span class="sourceLineNo">386</span>        final StructuredDataId sdId = getId();<a name="line.386"></a>
-<span class="sourceLineNo">387</span>        if (sdId == null || sdId.getName() == null || type == null) {<a name="line.387"></a>
-<span class="sourceLineNo">388</span>            return sb.toString();<a name="line.388"></a>
-<span class="sourceLineNo">389</span>        }<a name="line.389"></a>
-<span class="sourceLineNo">390</span>        sb.append("&lt;StructuredData&gt;\n");<a name="line.390"></a>
-<span class="sourceLineNo">391</span>        sb.append("&lt;type&gt;").append(type).append("&lt;/type&gt;\n");<a name="line.391"></a>
-<span class="sourceLineNo">392</span>        sb.append("&lt;id&gt;").append(sdId).append("&lt;/id&gt;\n");<a name="line.392"></a>
-<span class="sourceLineNo">393</span>        super.asXml(sb);<a name="line.393"></a>
-<span class="sourceLineNo">394</span>        sb.append("&lt;/StructuredData&gt;\n");<a name="line.394"></a>
-<span class="sourceLineNo">395</span>        return sb.toString();<a name="line.395"></a>
-<span class="sourceLineNo">396</span>    }<a name="line.396"></a>
-<span class="sourceLineNo">397</span><a name="line.397"></a>
-<span class="sourceLineNo">398</span>    @Override<a name="line.398"></a>
-<span class="sourceLineNo">399</span>    public String toString() {<a name="line.399"></a>
-<span class="sourceLineNo">400</span>        return asString(null, null);<a name="line.400"></a>
-<span class="sourceLineNo">401</span>    }<a name="line.401"></a>
-<span class="sourceLineNo">402</span><a name="line.402"></a>
-<span class="sourceLineNo">403</span><a name="line.403"></a>
-<span class="sourceLineNo">404</span>    @Override<a name="line.404"></a>
-<span class="sourceLineNo">405</span>    public StructuredDataMessage newInstance(final Map&lt;String, String&gt; map) {<a name="line.405"></a>
-<span class="sourceLineNo">406</span>        return new StructuredDataMessage(this, map);<a name="line.406"></a>
-<span class="sourceLineNo">407</span>    }<a name="line.407"></a>
-<span class="sourceLineNo">408</span><a name="line.408"></a>
-<span class="sourceLineNo">409</span>    @Override<a name="line.409"></a>
-<span class="sourceLineNo">410</span>    public boolean equals(final Object o) {<a name="line.410"></a>
-<span class="sourceLineNo">411</span>        if (this == o) {<a name="line.411"></a>
-<span class="sourceLineNo">412</span>            return true;<a name="line.412"></a>
-<span class="sourceLineNo">413</span>        }<a name="line.413"></a>
-<span class="sourceLineNo">414</span>        if (o == null || getClass() != o.getClass()) {<a name="line.414"></a>
-<span class="sourceLineNo">415</span>            return false;<a name="line.415"></a>
-<span class="sourceLineNo">416</span>        }<a name="line.416"></a>
-<span class="sourceLineNo">417</span><a name="line.417"></a>
-<span class="sourceLineNo">418</span>        final StructuredDataMessage that = (StructuredDataMessage) o;<a name="line.418"></a>
-<span class="sourceLineNo">419</span><a name="line.419"></a>
-<span class="sourceLineNo">420</span>        if (!super.equals(o)) {<a name="line.420"></a>
-<span class="sourceLineNo">421</span>            return false;<a name="line.421"></a>
-<span class="sourceLineNo">422</span>        }<a name="line.422"></a>
-<span class="sourceLineNo">423</span>        if (type != null ? !type.equals(that.type) : that.type != null) {<a name="line.423"></a>
-<span class="sourceLineNo">424</span>            return false;<a name="line.424"></a>
-<span class="sourceLineNo">425</span>        }<a name="line.425"></a>
-<span class="sourceLineNo">426</span>        if (id != null ? !id.equals(that.id) : that.id != null) {<a name="line.426"></a>
-<span class="sourceLineNo">427</span>            return false;<a name="line.427"></a>
-<span class="sourceLineNo">428</span>        }<a name="line.428"></a>
-<span class="sourceLineNo">429</span>        if (message != null ? !message.equals(that.message) : that.message != null) {<a name="line.429"></a>
-<span class="sourceLineNo">430</span>            return false;<a name="line.430"></a>
-<span class="sourceLineNo">431</span>        }<a name="line.431"></a>
-<span class="sourceLineNo">432</span><a name="line.432"></a>
-<span class="sourceLineNo">433</span>        return true;<a name="line.433"></a>
-<span class="sourceLineNo">434</span>    }<a name="line.434"></a>
-<span class="sourceLineNo">435</span><a name="line.435"></a>
-<span class="sourceLineNo">436</span>    @Override<a name="line.436"></a>
-<span class="sourceLineNo">437</span>    public int hashCode() {<a name="line.437"></a>
-<span class="sourceLineNo">438</span>        int result = super.hashCode();<a name="line.438"></a>
-<span class="sourceLineNo">439</span>        result = HASHVAL * result + (type != null ? type.hashCode() : 0);<a name="line.439"></a>
-<span class="sourceLineNo">440</span>        result = HASHVAL * result + (id != null ? id.hashCode() : 0);<a name="line.440"></a>
-<span class="sourceLineNo">441</span>        result = HASHVAL * result + (message != null ? message.hashCode() : 0);<a name="line.441"></a>
-<span class="sourceLineNo">442</span>        return result;<a name="line.442"></a>
-<span class="sourceLineNo">443</span>    }<a name="line.443"></a>
-<span class="sourceLineNo">444</span><a name="line.444"></a>
-<span class="sourceLineNo">445</span>    @Override<a name="line.445"></a>
-<span class="sourceLineNo">446</span>    protected void validate(final String key, final boolean value) {<a name="line.446"></a>
-<span class="sourceLineNo">447</span>        validateKey(key);<a name="line.447"></a>
-<span class="sourceLineNo">448</span>    }<a name="line.448"></a>
-<span class="sourceLineNo">449</span><a name="line.449"></a>
-<span class="sourceLineNo">450</span>    /**<a name="line.450"></a>
-<span class="sourceLineNo">451</span>     * @since 2.9<a name="line.451"></a>
-<span class="sourceLineNo">452</span>     */<a name="line.452"></a>
-<span class="sourceLineNo">453</span>    @Override<a name="line.453"></a>
-<span class="sourceLineNo">454</span>    protected void validate(final String key, final byte value) {<a name="line.454"></a>
-<span class="sourceLineNo">455</span>        validateKey(key);<a name="line.455"></a>
-<span class="sourceLineNo">456</span>    }<a name="line.456"></a>
-<span class="sourceLineNo">457</span><a name="line.457"></a>
-<span class="sourceLineNo">458</span>    /**<a name="line.458"></a>
-<span class="sourceLineNo">459</span>     * @since 2.9<a name="line.459"></a>
-<span class="sourceLineNo">460</span>     */<a name="line.460"></a>
-<span class="sourceLineNo">461</span>    @Override<a name="line.461"></a>
-<span class="sourceLineNo">462</span>    protected void validate(final String key, final char value) {<a name="line.462"></a>
-<span class="sourceLineNo">463</span>        validateKey(key);<a name="line.463"></a>
-<span class="sourceLineNo">464</span>    }<a name="line.464"></a>
-<span class="sourceLineNo">465</span>    <a name="line.465"></a>
-<span class="sourceLineNo">466</span>    /**<a name="line.466"></a>
-<span class="sourceLineNo">467</span>     * @since 2.9<a name="line.467"></a>
-<span class="sourceLineNo">468</span>     */<a name="line.468"></a>
-<span class="sourceLineNo">469</span>    @Override<a name="line.469"></a>
-<span class="sourceLineNo">470</span>    protected void validate(final String key, final double value) {<a name="line.470"></a>
-<span class="sourceLineNo">471</span>        validateKey(key);<a name="line.471"></a>
-<span class="sourceLineNo">472</span>    }<a name="line.472"></a>
-<span class="sourceLineNo">473</span>    <a name="line.473"></a>
-<span class="sourceLineNo">474</span>    /**<a name="line.474"></a>
-<span class="sourceLineNo">475</span>     * @since 2.9<a name="line.475"></a>
-<span class="sourceLineNo">476</span>     */<a name="line.476"></a>
-<span class="sourceLineNo">477</span>    @Override<a name="line.477"></a>
-<span class="sourceLineNo">478</span>    protected void validate(final String key, final float value) {<a name="line.478"></a>
-<span class="sourceLineNo">479</span>        validateKey(key);<a name="line.479"></a>
-<span class="sourceLineNo">480</span>    }<a name="line.480"></a>
-<span class="sourceLineNo">481</span><a name="line.481"></a>
-<span class="sourceLineNo">482</span>    /**<a name="line.482"></a>
-<span class="sourceLineNo">483</span>     * @since 2.9<a name="line.483"></a>
-<span class="sourceLineNo">484</span>     */<a name="line.484"></a>
-<span class="sourceLineNo">485</span>    @Override<a name="line.485"></a>
-<span class="sourceLineNo">486</span>    protected void validate(final String key, final int value) {<a name="line.486"></a>
-<span class="sourceLineNo">487</span>        validateKey(key);<a name="line.487"></a>
-<span class="sourceLineNo">488</span>    }<a name="line.488"></a>
-<span class="sourceLineNo">489</span><a name="line.489"></a>
-<span class="sourceLineNo">490</span>    /**<a name="line.490"></a>
-<span class="sourceLineNo">491</span>     * @since 2.9<a name="line.491"></a>
-<span class="sourceLineNo">492</span>     */<a name="line.492"></a>
-<span class="sourceLineNo">493</span>    @Override<a name="line.493"></a>
-<span class="sourceLineNo">494</span>    protected void validate(final String key, final long value) {<a name="line.494"></a>
-<span class="sourceLineNo">495</span>        validateKey(key);<a name="line.495"></a>
-<span class="sourceLineNo">496</span>    }<a name="line.496"></a>
-<span class="sourceLineNo">497</span><a name="line.497"></a>
-<span class="sourceLineNo">498</span>    /**<a name="line.498"></a>
-<span class="sourceLineNo">499</span>     * @since 2.9<a name="line.499"></a>
-<span class="sourceLineNo">500</span>     */<a name="line.500"></a>
-<span class="sourceLineNo">501</span>    @Override<a name="line.501"></a>
-<span class="sourceLineNo">502</span>    protected void validate(final String key, final Object value) {<a name="line.502"></a>
-<span class="sourceLineNo">503</span>        validateKey(key);<a name="line.503"></a>
-<span class="sourceLineNo">504</span>    }<a name="line.504"></a>
-<span class="sourceLineNo">505</span><a name="line.505"></a>
-<span class="sourceLineNo">506</span>    /**<a name="line.506"></a>
-<span class="sourceLineNo">507</span>     * @since 2.9<a name="line.507"></a>
-<span class="sourceLineNo">508</span>     */<a name="line.508"></a>
-<span class="sourceLineNo">509</span>    @Override<a name="line.509"></a>
-<span class="sourceLineNo">510</span>    protected void validate(final String key, final short value) {<a name="line.510"></a>
-<span class="sourceLineNo">511</span>        validateKey(key);<a name="line.511"></a>
-<span class="sourceLineNo">512</span>    }<a name="line.512"></a>
-<span class="sourceLineNo">513</span><a name="line.513"></a>
-<span class="sourceLineNo">514</span>    @Override<a name="line.514"></a>
-<span class="sourceLineNo">515</span>    protected void validate(final String key, final String value) {<a name="line.515"></a>
-<span class="sourceLineNo">516</span>        validateKey(key);<a name="line.516"></a>
-<span class="sourceLineNo">517</span>    }<a name="line.517"></a>
-<span class="sourceLineNo">518</span><a name="line.518"></a>
-<span class="sourceLineNo">519</span>    protected void validateKey(final String key) {<a name="line.519"></a>
-<span class="sourceLineNo">520</span>        if (maxLength &gt; 0 &amp;&amp; key.length() &gt; maxLength) {<a name="line.520"></a>
-<span class="sourceLineNo">521</span>            throw new IllegalArgumentException("Structured data keys are limited to " + maxLength +<a name="line.521"></a>
-<span class="sourceLineNo">522</span>                    " characters. key: " + key);<a name="line.522"></a>
-<span class="sourceLineNo">523</span>        }<a name="line.523"></a>
-<span class="sourceLineNo">524</span>        for (int i = 0; i &lt; key.length(); i++) {<a name="line.524"></a>
-<span class="sourceLineNo">525</span>            final char c = key.charAt(i);<a name="line.525"></a>
-<span class="sourceLineNo">526</span>            if (c &lt; '!' || c &gt; '~' || c == '=' || c == ']' || c == '"') {<a name="line.526"></a>
-<span class="sourceLineNo">527</span>                throw new IllegalArgumentException("Structured data keys must contain printable US ASCII characters" +<a name="line.527"></a>
-<span class="sourceLineNo">528</span>                        "and may not contain a space, =, ], or \"");<a name="line.528"></a>
-<span class="sourceLineNo">529</span>            }<a name="line.529"></a>
+<span class="sourceLineNo">359</span>    private void asXml(StructuredDataId structuredDataId, StringBuilder sb) {<a name="line.359"></a>
+<span class="sourceLineNo">360</span>        sb.append("&lt;StructuredData&gt;\n");<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        sb.append("&lt;type&gt;").append(type).append("&lt;/type&gt;\n");<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        sb.append("&lt;id&gt;").append(structuredDataId).append("&lt;/id&gt;\n");<a name="line.362"></a>
+<span class="sourceLineNo">363</span>        super.asXml(sb);<a name="line.363"></a>
+<span class="sourceLineNo">364</span>        sb.append("\n&lt;/StructuredData&gt;\n");<a name="line.364"></a>
+<span class="sourceLineNo">365</span>    }<a name="line.365"></a>
+<span class="sourceLineNo">366</span><a name="line.366"></a>
+<span class="sourceLineNo">367</span>    /**<a name="line.367"></a>
+<span class="sourceLineNo">368</span>     * Formats the message and return it.<a name="line.368"></a>
+<span class="sourceLineNo">369</span>     * @return the formatted message.<a name="line.369"></a>
+<span class="sourceLineNo">370</span>     */<a name="line.370"></a>
+<span class="sourceLineNo">371</span>    @Override<a name="line.371"></a>
+<span class="sourceLineNo">372</span>    public String getFormattedMessage() {<a name="line.372"></a>
+<span class="sourceLineNo">373</span>        return asString(Format.FULL, null);<a name="line.373"></a>
+<span class="sourceLineNo">374</span>    }<a name="line.374"></a>
+<span class="sourceLineNo">375</span><a name="line.375"></a>
+<span class="sourceLineNo">376</span>    /**<a name="line.376"></a>
+<span class="sourceLineNo">377</span>     * Formats the message according the the specified format.<a name="line.377"></a>
+<span class="sourceLineNo">378</span>     * @param formats An array of Strings that provide extra information about how to format the message.<a name="line.378"></a>
+<span class="sourceLineNo">379</span>     * StructuredDataMessage accepts only a format of "FULL" which will cause the event type to be<a name="line.379"></a>
+<span class="sourceLineNo">380</span>     * prepended and the event message to be appended. Specifying any other value will cause only the<a name="line.380"></a>
+<span class="sourceLineNo">381</span>     * StructuredData to be included. The default is "FULL".<a name="line.381"></a>
+<span class="sourceLineNo">382</span>     *<a name="line.382"></a>
+<span class="sourceLineNo">383</span>     * @return the formatted message.<a name="line.383"></a>
+<span class="sourceLineNo">384</span>     */<a name="line.384"></a>
+<span class="sourceLineNo">385</span>    @Override<a name="line.385"></a>
+<span class="sourceLineNo">386</span>    public String getFormattedMessage(final String[] formats) {<a name="line.386"></a>
+<span class="sourceLineNo">387</span>        return asString(getFormat(formats), null);<a name="line.387"></a>
+<span class="sourceLineNo">388</span>    }<a name="line.388"></a>
+<span class="sourceLineNo">389</span><a name="line.389"></a>
+<span class="sourceLineNo">390</span>    private Format getFormat(String[] formats) {<a name="line.390"></a>
+<span class="sourceLineNo">391</span>        if (formats != null &amp;&amp; formats.length &gt; 0) {<a name="line.391"></a>
+<span class="sourceLineNo">392</span>            for (int i = 0; i &lt; formats.length; i++) {<a name="line.392"></a>
+<span class="sourceLineNo">393</span>                final String format = formats[i];<a name="line.393"></a>
+<span class="sourceLineNo">394</span>                if (Format.XML.name().equalsIgnoreCase(format)) {<a name="line.394"></a>
+<span class="sourceLineNo">395</span>                    return Format.XML;<a name="line.395"></a>
+<span class="sourceLineNo">396</span>                } else if (Format.FULL.name().equalsIgnoreCase(format)) {<a name="line.396"></a>
+<span class="sourceLineNo">397</span>                    return Format.FULL;<a name="line.397"></a>
+<span class="sourceLineNo">398</span>                }<a name="line.398"></a>
+<span class="sourceLineNo">399</span>            }<a name="line.399"></a>
+<span class="sourceLineNo">400</span>            return null;<a name="line.400"></a>
+<span class="sourceLineNo">401</span>        }<a name="line.401"></a>
+<span class="sourceLineNo">402</span>        return Format.FULL;<a name="line.402"></a>
+<span class="sourceLineNo">403</span>    }<a name="line.403"></a>
+<span class="sourceLineNo">404</span><a name="line.404"></a>
+<span class="sourceLineNo">405</span>    @Override<a name="line.405"></a>
+<span class="sourceLineNo">406</span>    public String toString() {<a name="line.406"></a>
+<span class="sourceLineNo">407</span>        return asString(null, null);<a name="line.407"></a>
+<span class="sourceLineNo">408</span>    }<a name="line.408"></a>
+<span class="sourceLineNo">409</span><a name="line.409"></a>
+<span class="sourceLineNo">410</span><a name="line.410"></a>
+<span class="sourceLineNo">411</span>    @Override<a name="line.411"></a>
+<span class="sourceLineNo">412</span>    public StructuredDataMessage newInstance(final Map&lt;String, String&gt; map) {<a name="line.412"></a>
+<span class="sourceLineNo">413</span>        return new StructuredDataMessage(this, map);<a name="line.413"></a>
+<span class="sourceLineNo">414</span>    }<a name="line.414"></a>
+<span class="sourceLineNo">415</span><a name="line.415"></a>
+<span class="sourceLineNo">416</span>    @Override<a name="line.416"></a>
+<span class="sourceLineNo">417</span>    public boolean equals(final Object o) {<a name="line.417"></a>
+<span class="sourceLineNo">418</span>        if (this == o) {<a name="line.418"></a>
+<span class="sourceLineNo">419</span>            return true;<a name="line.419"></a>
+<span class="sourceLineNo">420</span>        }<a name="line.420"></a>
+<span class="sourceLineNo">421</span>        if (o == null || getClass() != o.getClass()) {<a name="line.421"></a>
+<span class="sourceLineNo">422</span>            return false;<a name="line.422"></a>
+<span class="sourceLineNo">423</span>        }<a name="line.423"></a>
+<span class="sourceLineNo">424</span><a name="line.424"></a>
+<span class="sourceLineNo">425</span>        final StructuredDataMessage that = (StructuredDataMessage) o;<a name="line.425"></a>
+<span class="sourceLineNo">426</span><a name="line.426"></a>
+<span class="sourceLineNo">427</span>        if (!super.equals(o)) {<a name="line.427"></a>
+<span class="sourceLineNo">428</span>            return false;<a name="line.428"></a>
+<span class="sourceLineNo">429</span>        }<a name="line.429"></a>
+<span class="sourceLineNo">430</span>        if (type != null ? !type.equals(that.type) : that.type != null) {<a name="line.430"></a>
+<span class="sourceLineNo">431</span>            return false;<a name="line.431"></a>
+<span class="sourceLineNo">432</span>        }<a name="line.432"></a>
+<span class="sourceLineNo">433</span>        if (id != null ? !id.equals(that.id) : that.id != null) {<a name="line.433"></a>
+<span class="sourceLineNo">434</span>            return false;<a name="line.434"></a>
+<span class="sourceLineNo">435</span>        }<a name="line.435"></a>
+<span class="sourceLineNo">436</span>        if (message != null ? !message.equals(that.message) : that.message != null) {<a name="line.436"></a>
+<span class="sourceLineNo">437</span>            return false;<a name="line.437"></a>
+<span class="sourceLineNo">438</span>        }<a name="line.438"></a>
+<span class="sourceLineNo">439</span><a name="line.439"></a>
+<span class="sourceLineNo">440</span>        return true;<a name="line.440"></a>
+<span class="sourceLineNo">441</span>    }<a name="line.441"></a>
+<span class="sourceLineNo">442</span><a name="line.442"></a>
+<span class="sourceLineNo">443</span>    @Override<a name="line.443"></a>
+<span class="sourceLineNo">444</span>    public int hashCode() {<a name="line.444"></a>
+<span class="sourceLineNo">445</span>        int result = super.hashCode();<a name="line.445"></a>
+<span class="sourceLineNo">446</span>        result = HASHVAL * result + (type != null ? type.hashCode() : 0);<a name="line.446"></a>
+<span class="sourceLineNo">447</span>        result = HASHVAL * result + (id != null ? id.hashCode() : 0);<a name="line.447"></a>
+<span class="sourceLineNo">448</span>        result = HASHVAL * result + (message != null ? message.hashCode() : 0);<a name="line.448"></a>
+<span class="sourceLineNo">449</span>        return result;<a name="line.449"></a>
+<span class="sourceLineNo">450</span>    }<a name="line.450"></a>
+<span class="sourceLineNo">451</span><a name="line.451"></a>
+<span class="sourceLineNo">452</span>    @Override<a name="line.452"></a>
+<span class="sourceLineNo">453</span>    protected void validate(final String key, final boolean value) {<a name="line.453"></a>
+<span class="sourceLineNo">454</span>        validateKey(key);<a name="line.454"></a>
+<span class="sourceLineNo">455</span>    }<a name="line.455"></a>
+<span class="sourceLineNo">456</span><a name="line.456"></a>
+<span class="sourceLineNo">457</span>    /**<a name="line.457"></a>
+<span class="sourceLineNo">458</span>     * @since 2.9<a name="line.458"></a>
+<span class="sourceLineNo">459</span>     */<a name="line.459"></a>
+<span class="sourceLineNo">460</span>    @Override<a name="line.460"></a>
+<span class="sourceLineNo">461</span>    protected void validate(final String key, final byte value) {<a name="line.461"></a>
+<span class="sourceLineNo">462</span>        validateKey(key);<a name="line.462"></a>
+<span class="sourceLineNo">463</span>    }<a name="line.463"></a>
+<span class="sourceLineNo">464</span><a name="line.464"></a>
+<span class="sourceLineNo">465</span>    /**<a name="line.465"></a>
+<span class="sourceLineNo">466</span>     * @since 2.9<a name="line.466"></a>
+<span class="sourceLineNo">467</span>     */<a name="line.467"></a>
+<span class="sourceLineNo">468</span>    @Override<a name="line.468"></a>
+<span class="sourceLineNo">469</span>    protected void validate(final String key, final char value) {<a name="line.469"></a>
+<span class="sourceLineNo">470</span>        validateKey(key);<a name="line.470"></a>
+<span class="sourceLineNo">471</span>    }<a name="line.471"></a>
+<span class="sourceLineNo">472</span>    <a name="line.472"></a>
+<span class="sourceLineNo">473</span>    /**<a name="line.473"></a>
+<span class="sourceLineNo">474</span>     * @since 2.9<a name="line.474"></a>
+<span class="sourceLineNo">475</span>     */<a name="line.475"></a>
+<span class="sourceLineNo">476</span>    @Override<a name="line.476"></a>
+<span class="sourceLineNo">477</span>    protected void validate(final String key, final double value) {<a name="line.477"></a>
+<span class="sourceLineNo">478</span>        validateKey(key);<a name="line.478"></a>
+<span class="sourceLineNo">479</span>    }<a name="line.479"></a>
+<span class="sourceLineNo">480</span>    <a name="line.480"></a>
+<span class="sourceLineNo">481</span>    /**<a name="line.481"></a>
+<span class="sourceLineNo">482</span>     * @since 2.9<a name="line.482"></a>
+<span class="sourceLineNo">483</span>     */<a name="line.483"></a>
+<span class="sourceLineNo">484</span>    @Override<a name="line.484"></a>
+<span class="sourceLineNo">485</span>    protected void validate(final String key, final float value) {<a name="line.485"></a>
+<span class="sourceLineNo">486</span>        validateKey(key);<a name="line.486"></a>
+<span class="sourceLineNo">487</span>    }<a name="line.487"></a>
+<span class="sourceLineNo">488</span><a name="line.488"></a>
+<span class="sourceLineNo">489</span>    /**<a name="line.489"></a>
+<span class="sourceLineNo">490</span>     * @since 2.9<a name="line.490"></a>
+<span class="sourceLineNo">491</span>     */<a name="line.491"></a>
+<span class="sourceLineNo">492</span>    @Override<a name="line.492"></a>
+<span class="sourceLineNo">493</span>    protected void validate(final String key, final int value) {<a name="line.493"></a>
+<span class="sourceLineNo">494</span>        validateKey(key);<a name="line.494"></a>
+<span class="sourceLineNo">495</span>    }<a name="line.495"></a>
+<span class="sourceLineNo">496</span><a name="line.496"></a>
+<span class="sourceLineNo">497</span>    /**<a name="line.497"></a>
+<span class="sourceLineNo">498</span>     * @since 2.9<a name="line.498"></a>
+<span class="sourceLineNo">499</span>     */<a name="line.499"></a>
+<span class="sourceLineNo">500</span>    @Override<a name="line.500"></a>
+<span class="sourceLineNo">501</span>    protected void validate(final String key, final long value) {<a name="line.501"></a>
+<span class="sourceLineNo">502</span>        validateKey(key);<a name="line.502"></a>
+<span class="sourceLineNo">503</span>    }<a name="line.503"></a>
+<span class="sourceLineNo">504</span><a name="line.504"></a>
+<span class="sourceLineNo">505</span>    /**<a name="line.505"></a>
+<span class="sourceLineNo">506</span>     * @since 2.9<a name="line.506"></a>
+<span class="sourceLineNo">507</span>     */<a name="line.507"></a>
+<span class="sourceLineNo">508</span>    @Override<a name="line.508"></a>
+<span class="sourceLineNo">509</span>    protected void validate(final String key, final Object value) {<a name="line.509"></a>
+<span class="sourceLineNo">510</span>        validateKey(key);<a name="line.510"></a>
+<span class="sourceLineNo">511</span>    }<a name="line.511"></a>
+<span class="sourceLineNo">512</span><a name="line.512"></a>
+<span class="sourceLineNo">513</span>    /**<a name="line.513"></a>
+<span class="sourceLineNo">514</span>     * @since 2.9<a name="line.514"></a>
+<span class="sourceLineNo">515</span>     */<a name="line.515"></a>
+<span class="sourceLineNo">516</span>    @Override<a name="line.516"></a>
+<span class="sourceLineNo">517</span>    protected void validate(final String key, final short value) {<a name="line.517"></a>
+<span class="sourceLineNo">518</span>        validateKey(key);<a name="line.518"></a>
+<span class="sourceLineNo">519</span>    }<a name="line.519"></a>
+<span class="sourceLineNo">520</span><a name="line.520"></a>
+<span class="sourceLineNo">521</span>    @Override<a name="line.521"></a>
+<span class="sourceLineNo">522</span>    protected void validate(final String key, final String value) {<a name="line.522"></a>
+<span class="sourceLineNo">523</span>        validateKey(key);<a name="line.523"></a>
+<span class="sourceLineNo">524</span>    }<a name="line.524"></a>
+<span class="sourceLineNo">525</span><a name="line.525"></a>
+<span class="sourceLineNo">526</span>    protected void validateKey(final String key) {<a name="line.526"></a>
+<span class="sourceLineNo">527</span>        if (maxLength &gt; 0 &amp;&amp; key.length() &gt; maxLength) {<a name="line.527"></a>
+<span class="sourceLineNo">528</span>            throw new IllegalArgumentException("Structured data keys are limited to " + maxLength +<a name="line.528"></a>
+<span class="sourceLineNo">529</span>                    " characters. key: " + key);<a name="line.529"></a>
 <span class="sourceLineNo">530</span>        }<a name="line.530"></a>
-<span class="sourceLineNo">531</span>    }<a name="line.531"></a>
-<span class="sourceLineNo">532</span><a name="line.532"></a>
-<span class="sourceLineNo">533</span>}<a name="line.533"></a>
+<span class="sourceLineNo">531</span>        for (int i = 0; i &lt; key.length(); i++) {<a name="line.531"></a>
+<span class="sourceLineNo">532</span>            final char c = key.charAt(i);<a name="line.532"></a>
+<span class="sourceLineNo">533</span>            if (c &lt; '!' || c &gt; '~' || c == '=' || c == ']' || c == '"') {<a name="line.533"></a>
+<span class="sourceLineNo">534</span>                throw new IllegalArgumentException("Structured data keys must contain printable US ASCII characters" +<a name="line.534"></a>
+<span class="sourceLineNo">535</span>                        "and may not contain a space, =, ], or \"");<a name="line.535"></a>
+<span class="sourceLineNo">536</span>            }<a name="line.536"></a>
+<span class="sourceLineNo">537</span>        }<a name="line.537"></a>
+<span class="sourceLineNo">538</span>    }<a name="line.538"></a>
+<span class="sourceLineNo">539</span><a name="line.539"></a>
+<span class="sourceLineNo">540</span>}<a name="line.540"></a>
 
 
 

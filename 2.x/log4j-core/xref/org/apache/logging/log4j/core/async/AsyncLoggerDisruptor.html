@@ -211,10 +211,10 @@
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>     }
 <a class="jxr_linenumber" name="L204" href="#L204">204</a> 
 <a class="jxr_linenumber" name="L205" href="#L205">205</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> tryPublish(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator) {
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <em class="jxr_comment">// LOG4J2-639: catch NPE if disruptor field was set to null in stop()</em>
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>             <strong class="jxr_keyword">return</strong> disruptor.getRingBuffer().tryPublishEvent(translator);
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NullPointerException npe) {
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>             <strong class="jxr_keyword">return</strong> disruptor.getRingBuffer().tryPublishEvent(translator);
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NullPointerException npe) {
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>             <em class="jxr_comment">// LOG4J2-639: catch NPE if disruptor field was set to null in stop()</em>
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>             LOGGER.warn(<span class="jxr_string">"[{}] Ignoring log event after log4j was shut down: {} [{}] {}"</span>, contextName,
 <a class="jxr_linenumber" name="L211" href="#L211">211</a>                     translator.level, translator.loggerName, translator.message.getFormattedMessage()
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>                             + (translator.thrown == <strong class="jxr_keyword">null</strong> ? <span class="jxr_string">""</span> : Throwables.toStringList(translator.thrown)));
@@ -223,13 +223,13 @@
 <a class="jxr_linenumber" name="L215" href="#L215">215</a>     }
 <a class="jxr_linenumber" name="L216" href="#L216">216</a> 
 <a class="jxr_linenumber" name="L217" href="#L217">217</a>     <strong class="jxr_keyword">void</strong> enqueueLogMessageInfo(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> translator) {
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>         <em class="jxr_comment">// LOG4J2-639: catch NPE if disruptor field was set to null in stop()</em>
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>             <em class="jxr_comment">// Note: we deliberately access the volatile disruptor field afresh here.</em>
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>             <em class="jxr_comment">// Avoiding this and using an older reference could result in adding a log event to the disruptor after it</em>
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>             <em class="jxr_comment">// was shut down, which could cause the publishEvent method to hang and never return.</em>
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>             disruptor.publishEvent(translator);
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NullPointerException npe) {
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>             <em class="jxr_comment">// Note: we deliberately access the volatile disruptor field afresh here.</em>
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>             <em class="jxr_comment">// Avoiding this and using an older reference could result in adding a log event to the disruptor after it</em>
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>             <em class="jxr_comment">// was shut down, which could cause the publishEvent method to hang and never return.</em>
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>             disruptor.publishEvent(translator);
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NullPointerException npe) {
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>             <em class="jxr_comment">// LOG4J2-639: catch NPE if disruptor field was set to null in stop()</em>
 <a class="jxr_linenumber" name="L225" href="#L225">225</a>             LOGGER.warn(<span class="jxr_string">"[{}] Ignoring log event after log4j was shut down: {} [{}] {}"</span>, contextName,
 <a class="jxr_linenumber" name="L226" href="#L226">226</a>                     translator.level, translator.loggerName, translator.message.getFormattedMessage()
 <a class="jxr_linenumber" name="L227" href="#L227">227</a>                             + (translator.thrown == <strong class="jxr_keyword">null</strong> ? <span class="jxr_string">""</span> : Throwables.toStringList(translator.thrown)));
