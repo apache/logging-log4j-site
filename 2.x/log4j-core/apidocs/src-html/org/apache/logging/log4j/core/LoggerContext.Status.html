@@ -153,7 +153,7 @@
 <FONT color="green">150</FONT>                        shutdownThread = new ShutdownThread(this);<a name="line.150"></a>
 <FONT color="green">151</FONT>                        try {<a name="line.151"></a>
 <FONT color="green">152</FONT>                            Runtime.getRuntime().addShutdownHook(shutdownThread);<a name="line.152"></a>
-<FONT color="green">153</FONT>                        } catch (SecurityException se) {<a name="line.153"></a>
+<FONT color="green">153</FONT>                        } catch (final SecurityException se) {<a name="line.153"></a>
 <FONT color="green">154</FONT>                            LOGGER.warn("Unable to register shutdown hook due to security restrictions");<a name="line.154"></a>
 <FONT color="green">155</FONT>                            shutdownThread = null;<a name="line.155"></a>
 <FONT color="green">156</FONT>                        }<a name="line.156"></a>
@@ -176,7 +176,7 @@
 <FONT color="green">173</FONT>                        shutdownThread = new ShutdownThread(this);<a name="line.173"></a>
 <FONT color="green">174</FONT>                        try {<a name="line.174"></a>
 <FONT color="green">175</FONT>                            Runtime.getRuntime().addShutdownHook(shutdownThread);<a name="line.175"></a>
-<FONT color="green">176</FONT>                        } catch (SecurityException se) {<a name="line.176"></a>
+<FONT color="green">176</FONT>                        } catch (final SecurityException se) {<a name="line.176"></a>
 <FONT color="green">177</FONT>                            LOGGER.warn("Unable to register shutdown hook due to security restrictions");<a name="line.177"></a>
 <FONT color="green">178</FONT>                            shutdownThread = null;<a name="line.178"></a>
 <FONT color="green">179</FONT>                        }<a name="line.179"></a>
@@ -201,7 +201,7 @@
 <FONT color="green">198</FONT>                    Runtime.getRuntime().removeShutdownHook(shutdownThread);<a name="line.198"></a>
 <FONT color="green">199</FONT>                    shutdownThread = null;<a name="line.199"></a>
 <FONT color="green">200</FONT>                }<a name="line.200"></a>
-<FONT color="green">201</FONT>                Configuration prev = config;<a name="line.201"></a>
+<FONT color="green">201</FONT>                final Configuration prev = config;<a name="line.201"></a>
 <FONT color="green">202</FONT>                config = new NullConfiguration();<a name="line.202"></a>
 <FONT color="green">203</FONT>                updateLoggers();<a name="line.203"></a>
 <FONT color="green">204</FONT>                prev.stop();<a name="line.204"></a>
@@ -340,18 +340,18 @@
 <FONT color="green">337</FONT>            }<a name="line.337"></a>
 <FONT color="green">338</FONT>    <a name="line.338"></a>
 <FONT color="green">339</FONT>            // notify listeners<a name="line.339"></a>
-<FONT color="green">340</FONT>            PropertyChangeEvent evt = new PropertyChangeEvent(this, PROPERTY_CONFIG, prev, config);<a name="line.340"></a>
-<FONT color="green">341</FONT>            for (PropertyChangeListener listener : propertyChangeListeners) {<a name="line.341"></a>
+<FONT color="green">340</FONT>            final PropertyChangeEvent evt = new PropertyChangeEvent(this, PROPERTY_CONFIG, prev, config);<a name="line.340"></a>
+<FONT color="green">341</FONT>            for (final PropertyChangeListener listener : propertyChangeListeners) {<a name="line.341"></a>
 <FONT color="green">342</FONT>                listener.propertyChange(evt);<a name="line.342"></a>
 <FONT color="green">343</FONT>            }<a name="line.343"></a>
 <FONT color="green">344</FONT>            return prev;<a name="line.344"></a>
 <FONT color="green">345</FONT>        }<a name="line.345"></a>
 <FONT color="green">346</FONT>    <a name="line.346"></a>
-<FONT color="green">347</FONT>        public void addPropertyChangeListener(PropertyChangeListener listener) {<a name="line.347"></a>
+<FONT color="green">347</FONT>        public void addPropertyChangeListener(final PropertyChangeListener listener) {<a name="line.347"></a>
 <FONT color="green">348</FONT>            propertyChangeListeners.add(Assert.isNotNull(listener, "listener"));<a name="line.348"></a>
 <FONT color="green">349</FONT>        }<a name="line.349"></a>
 <FONT color="green">350</FONT>    <a name="line.350"></a>
-<FONT color="green">351</FONT>        public void removePropertyChangeListener(PropertyChangeListener listener) {<a name="line.351"></a>
+<FONT color="green">351</FONT>        public void removePropertyChangeListener(final PropertyChangeListener listener) {<a name="line.351"></a>
 <FONT color="green">352</FONT>            propertyChangeListeners.remove(listener);<a name="line.352"></a>
 <FONT color="green">353</FONT>        }<a name="line.353"></a>
 <FONT color="green">354</FONT>    <a name="line.354"></a>
@@ -359,7 +359,7 @@
 <FONT color="green">356</FONT>            return configLocation;<a name="line.356"></a>
 <FONT color="green">357</FONT>        }<a name="line.357"></a>
 <FONT color="green">358</FONT>    <a name="line.358"></a>
-<FONT color="green">359</FONT>        public synchronized void setConfigLocation(URI configLocation) {<a name="line.359"></a>
+<FONT color="green">359</FONT>        public synchronized void setConfigLocation(final URI configLocation) {<a name="line.359"></a>
 <FONT color="green">360</FONT>            this.configLocation = configLocation;<a name="line.360"></a>
 <FONT color="green">361</FONT>            reconfigure();<a name="line.361"></a>
 <FONT color="green">362</FONT>        }<a name="line.362"></a>
@@ -422,7 +422,7 @@
 <FONT color="green">419</FONT>    <a name="line.419"></a>
 <FONT color="green">420</FONT>            private final LoggerContext context;<a name="line.420"></a>
 <FONT color="green">421</FONT>    <a name="line.421"></a>
-<FONT color="green">422</FONT>            public ShutdownThread(LoggerContext context) {<a name="line.422"></a>
+<FONT color="green">422</FONT>            public ShutdownThread(final LoggerContext context) {<a name="line.422"></a>
 <FONT color="green">423</FONT>                this.context = context;<a name="line.423"></a>
 <FONT color="green">424</FONT>            }<a name="line.424"></a>
 <FONT color="green">425</FONT>    <a name="line.425"></a>

@@ -26,26 +26,26 @@
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.core.helpers;
 <a class="jxr_linenumber" name="18" href="#18">18</a>  
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.PropertiesUtil;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.lang.reflect.Method;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.net.InetAddress;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.net.NetworkInterface;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> java.net.UnknownHostException;
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> java.nio.ByteBuffer;
-<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> java.security.SecureRandom;
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> java.util.Enumeration;
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> java.util.Random;
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> java.util.UUID;
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.atomic.AtomicInteger;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.lang.reflect.Method;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> java.net.InetAddress;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.net.NetworkInterface;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.net.UnknownHostException;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.nio.ByteBuffer;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> java.security.SecureRandom;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> java.util.Enumeration;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> java.util.Random;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> java.util.UUID;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.atomic.AtomicInteger;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.PropertiesUtil;
 <a class="jxr_linenumber" name="31" href="#31">31</a>  
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment"> * Generates a unique id. The generated UUID will be unique for approximately 8,925 years so long as</em>
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment"> * less than 4095 ids are generated per millisecond on the same device (as identified by its MAC adddress).</em>
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment"> * Generates a unique ID. The generated UUID will be unique for approximately 8,925 years so long as</em>
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment"> * less than 10,000 IDs are generated per millisecond on the same device (as identified by its MAC address).</em>
 <a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/helpers/UUIDUtil.html">UUIDUtil</a> {
 <a class="jxr_linenumber" name="37" href="#37">37</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">     * System property that may be used to seed the uuid generation with an integer value.</em>
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">     * System property that may be used to seed the UUID generation with an integer value.</em>
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String UUID_SEQUENCE = <span class="jxr_string">"org.apache.logging.log4j.uuidSequence"</span>;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  
@@ -150,52 +150,53 @@
 <a class="jxr_linenumber" name="140" href="#140">140</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> sequence : sequences) {
 <a class="jxr_linenumber" name="141" href="#141">141</a>                     <strong class="jxr_keyword">if</strong> (sequence == rand) {
 <a class="jxr_linenumber" name="142" href="#142">142</a>                         duplicate = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="143" href="#143">143</a>                     }
-<a class="jxr_linenumber" name="144" href="#144">144</a>                 }
-<a class="jxr_linenumber" name="145" href="#145">145</a>                 <strong class="jxr_keyword">if</strong> (duplicate) {
-<a class="jxr_linenumber" name="146" href="#146">146</a>                     rand = (rand + 1) &amp; SEQUENCE_MASK;
-<a class="jxr_linenumber" name="147" href="#147">147</a>                 }
-<a class="jxr_linenumber" name="148" href="#148">148</a>             } <strong class="jxr_keyword">while</strong> (duplicate);
-<a class="jxr_linenumber" name="149" href="#149">149</a>             assigned = assigned == <strong class="jxr_keyword">null</strong> ? Long.toString(rand) : assigned + <span class="jxr_string">","</span> + Long.toString(rand);
-<a class="jxr_linenumber" name="150" href="#150">150</a>             System.setProperty(ASSIGNED_SEQUENCES, assigned);
-<a class="jxr_linenumber" name="151" href="#151">151</a>         }
-<a class="jxr_linenumber" name="152" href="#152">152</a> 
-<a class="jxr_linenumber" name="153" href="#153">153</a>         least = buf.getLong() | rand &lt;&lt; SHIFT_6;
-<a class="jxr_linenumber" name="154" href="#154">154</a>     }
-<a class="jxr_linenumber" name="155" href="#155">155</a> 
+<a class="jxr_linenumber" name="143" href="#143">143</a>                         <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="144" href="#144">144</a>                     }
+<a class="jxr_linenumber" name="145" href="#145">145</a>                 }
+<a class="jxr_linenumber" name="146" href="#146">146</a>                 <strong class="jxr_keyword">if</strong> (duplicate) {
+<a class="jxr_linenumber" name="147" href="#147">147</a>                     rand = (rand + 1) &amp; SEQUENCE_MASK;
+<a class="jxr_linenumber" name="148" href="#148">148</a>                 }
+<a class="jxr_linenumber" name="149" href="#149">149</a>             } <strong class="jxr_keyword">while</strong> (duplicate);
+<a class="jxr_linenumber" name="150" href="#150">150</a>             assigned = assigned == <strong class="jxr_keyword">null</strong> ? Long.toString(rand) : assigned + <span class="jxr_string">","</span> + Long.toString(rand);
+<a class="jxr_linenumber" name="151" href="#151">151</a>             System.setProperty(ASSIGNED_SEQUENCES, assigned);
+<a class="jxr_linenumber" name="152" href="#152">152</a>         }
+<a class="jxr_linenumber" name="153" href="#153">153</a> 
+<a class="jxr_linenumber" name="154" href="#154">154</a>         least = buf.getLong() | rand &lt;&lt; SHIFT_6;
+<a class="jxr_linenumber" name="155" href="#155">155</a>     }
 <a class="jxr_linenumber" name="156" href="#156">156</a> 
-<a class="jxr_linenumber" name="157" href="#157">157</a>     <em class="jxr_comment">/*<em class="jxr_comment"> This class cannot be instantiated */</em></em>
-<a class="jxr_linenumber" name="158" href="#158">158</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/helpers/UUIDUtil.html">UUIDUtil</a>() {
-<a class="jxr_linenumber" name="159" href="#159">159</a>     }
-<a class="jxr_linenumber" name="160" href="#160">160</a> 
-<a class="jxr_linenumber" name="161" href="#161">161</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="162" href="#162">162</a> <em class="jxr_javadoccomment">     * Generates Type 1 UUID. The time contains the number of 100NS intervals that have occurred</em>
-<a class="jxr_linenumber" name="163" href="#163">163</a> <em class="jxr_javadoccomment">     * since 00:00:00.00 UTC, 10 October 1582. Each UUID on a particular machine is unique to the 100NS interval</em>
-<a class="jxr_linenumber" name="164" href="#164">164</a> <em class="jxr_javadoccomment">     * until they rollover around 3400 A.D.</em>
-<a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     * &lt;ol&gt;</em>
-<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digits 1-12 are the lower 48 bits of the number of 100 ns increments since the start of the UUID</em>
-<a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     * epoch.&lt;/li&gt;</em>
-<a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digit 13 is the version (with a value of 1).&lt;/li&gt;</em>
-<a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digits 14-16 are a sequence number that is incremented each time a UUID is generated.&lt;/li&gt;</em>
-<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digit 17 is the variant (with a value of binary 10) and 10 bits of the sequence number&lt;/li&gt;</em>
-<a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digit 18 is final 16 bits of the sequence number.&lt;/li&gt;</em>
-<a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digits 19-32 represent the system the application is running on.</em>
-<a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     * &lt;/ol&gt;</em>
-<a class="jxr_linenumber" name="174" href="#174">174</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="175" href="#175">175</a> <em class="jxr_javadoccomment">     * @return universally unique identifiers (UUID)</em>
-<a class="jxr_linenumber" name="176" href="#176">176</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="177" href="#177">177</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> UUID getTimeBasedUUID() {
-<a class="jxr_linenumber" name="178" href="#178">178</a> 
-<a class="jxr_linenumber" name="179" href="#179">179</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time = ((System.currentTimeMillis() * HUNDRED_NANOS_PER_MILLI) +
-<a class="jxr_linenumber" name="180" href="#180">180</a>             NUM_100NS_INTERVALS_SINCE_UUID_EPOCH) + (count.incrementAndGet() % HUNDRED_NANOS_PER_MILLI);
-<a class="jxr_linenumber" name="181" href="#181">181</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeLow = (time &amp; LOW_MASK) &lt;&lt; SHIFT_4;
-<a class="jxr_linenumber" name="182" href="#182">182</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeMid = (time &amp; MID_MASK) &gt;&gt; SHIFT_2;
-<a class="jxr_linenumber" name="183" href="#183">183</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeHi = (time &amp; HIGH_MASK) &gt;&gt; SHIFT_6;
-<a class="jxr_linenumber" name="184" href="#184">184</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> most = timeLow | timeMid | TYPE1 | timeHi;
-<a class="jxr_linenumber" name="185" href="#185">185</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> UUID(most, least);
-<a class="jxr_linenumber" name="186" href="#186">186</a>     }
-<a class="jxr_linenumber" name="187" href="#187">187</a> }
-<a class="jxr_linenumber" name="188" href="#188">188</a> 
+<a class="jxr_linenumber" name="157" href="#157">157</a> 
+<a class="jxr_linenumber" name="158" href="#158">158</a>     <em class="jxr_comment">/*<em class="jxr_comment"> This class cannot be instantiated */</em></em>
+<a class="jxr_linenumber" name="159" href="#159">159</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/helpers/UUIDUtil.html">UUIDUtil</a>() {
+<a class="jxr_linenumber" name="160" href="#160">160</a>     }
+<a class="jxr_linenumber" name="161" href="#161">161</a> 
+<a class="jxr_linenumber" name="162" href="#162">162</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="163" href="#163">163</a> <em class="jxr_javadoccomment">     * Generates Type 1 UUID. The time contains the number of 100NS intervals that have occurred</em>
+<a class="jxr_linenumber" name="164" href="#164">164</a> <em class="jxr_javadoccomment">     * since 00:00:00.00 UTC, 10 October 1582. Each UUID on a particular machine is unique to the 100NS interval</em>
+<a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     * until they rollover around 3400 A.D.</em>
+<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     * &lt;ol&gt;</em>
+<a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digits 1-12 are the lower 48 bits of the number of 100 ns increments since the start of the UUID</em>
+<a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_javadoccomment">     * epoch.&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digit 13 is the version (with a value of 1).&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digits 14-16 are a sequence number that is incremented each time a UUID is generated.&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digit 17 is the variant (with a value of binary 10) and 10 bits of the sequence number&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digit 18 is final 16 bits of the sequence number.&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Digits 19-32 represent the system the application is running on.</em>
+<a class="jxr_linenumber" name="174" href="#174">174</a> <em class="jxr_javadoccomment">     * &lt;/ol&gt;</em>
+<a class="jxr_linenumber" name="175" href="#175">175</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="176" href="#176">176</a> <em class="jxr_javadoccomment">     * @return universally unique identifiers (UUID)</em>
+<a class="jxr_linenumber" name="177" href="#177">177</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="178" href="#178">178</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> UUID getTimeBasedUUID() {
+<a class="jxr_linenumber" name="179" href="#179">179</a> 
+<a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time = ((System.currentTimeMillis() * HUNDRED_NANOS_PER_MILLI) +
+<a class="jxr_linenumber" name="181" href="#181">181</a>             NUM_100NS_INTERVALS_SINCE_UUID_EPOCH) + (count.incrementAndGet() % HUNDRED_NANOS_PER_MILLI);
+<a class="jxr_linenumber" name="182" href="#182">182</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeLow = (time &amp; LOW_MASK) &lt;&lt; SHIFT_4;
+<a class="jxr_linenumber" name="183" href="#183">183</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeMid = (time &amp; MID_MASK) &gt;&gt; SHIFT_2;
+<a class="jxr_linenumber" name="184" href="#184">184</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeHi = (time &amp; HIGH_MASK) &gt;&gt; SHIFT_6;
+<a class="jxr_linenumber" name="185" href="#185">185</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> most = timeLow | timeMid | TYPE1 | timeHi;
+<a class="jxr_linenumber" name="186" href="#186">186</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> UUID(most, least);
+<a class="jxr_linenumber" name="187" href="#187">187</a>     }
+<a class="jxr_linenumber" name="188" href="#188">188</a> }
+<a class="jxr_linenumber" name="189" href="#189">189</a> 
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

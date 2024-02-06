@@ -19,12 +19,12 @@
 <FONT color="green">016</FONT>     */<a name="line.16"></a>
 <FONT color="green">017</FONT>    package org.apache.logging.log4j.core.helpers;<a name="line.17"></a>
 <FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    import org.apache.logging.log4j.Logger;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.21"></a>
-<FONT color="green">022</FONT>    <a name="line.22"></a>
-<FONT color="green">023</FONT>    import java.util.Locale;<a name="line.23"></a>
-<FONT color="green">024</FONT>    import java.util.Properties;<a name="line.24"></a>
+<FONT color="green">019</FONT>    import java.util.Locale;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.Properties;<a name="line.20"></a>
+<FONT color="green">021</FONT>    <a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.apache.logging.log4j.Logger;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.24"></a>
 <FONT color="green">025</FONT>    <a name="line.25"></a>
 <FONT color="green">026</FONT>    /**<a name="line.26"></a>
 <FONT color="green">027</FONT>     * A convenience class to convert property values to specific types.<a name="line.27"></a>
@@ -58,7 +58,7 @@
 <FONT color="green">055</FONT>        public static String convertSpecialChars(final String s) {<a name="line.55"></a>
 <FONT color="green">056</FONT>            char c;<a name="line.56"></a>
 <FONT color="green">057</FONT>            final int len = s.length();<a name="line.57"></a>
-<FONT color="green">058</FONT>            final StringBuffer sbuf = new StringBuffer(len);<a name="line.58"></a>
+<FONT color="green">058</FONT>            final StringBuilder sbuf = new StringBuilder(len);<a name="line.58"></a>
 <FONT color="green">059</FONT>    <a name="line.59"></a>
 <FONT color="green">060</FONT>            int i = 0;<a name="line.60"></a>
 <FONT color="green">061</FONT>            while (i &lt; len) {<a name="line.61"></a>
@@ -110,12 +110,12 @@
 <FONT color="green">107</FONT>         * &lt;p/&gt;<a name="line.107"></a>
 <FONT color="green">108</FONT>         * &lt;p&gt;Case of value is unimportant.<a name="line.108"></a>
 <FONT color="green">109</FONT>         * @param value The value to convert.<a name="line.109"></a>
-<FONT color="green">110</FONT>         * @param dEfault The default value.<a name="line.110"></a>
+<FONT color="green">110</FONT>         * @param defaultValue The default value.<a name="line.110"></a>
 <FONT color="green">111</FONT>         * @return true or false, depending on the value and/or default.<a name="line.111"></a>
 <FONT color="green">112</FONT>         */<a name="line.112"></a>
-<FONT color="green">113</FONT>        public static boolean toBoolean(final String value, final boolean dEfault) {<a name="line.113"></a>
+<FONT color="green">113</FONT>        public static boolean toBoolean(final String value, final boolean defaultValue) {<a name="line.113"></a>
 <FONT color="green">114</FONT>            if (value == null) {<a name="line.114"></a>
-<FONT color="green">115</FONT>                return dEfault;<a name="line.115"></a>
+<FONT color="green">115</FONT>                return defaultValue;<a name="line.115"></a>
 <FONT color="green">116</FONT>            }<a name="line.116"></a>
 <FONT color="green">117</FONT>            final String trimmedVal = value.trim();<a name="line.117"></a>
 <FONT color="green">118</FONT>            if ("true".equalsIgnoreCase(trimmedVal)) {<a name="line.118"></a>
@@ -124,16 +124,16 @@
 <FONT color="green">121</FONT>            if ("false".equalsIgnoreCase(trimmedVal)) {<a name="line.121"></a>
 <FONT color="green">122</FONT>                return false;<a name="line.122"></a>
 <FONT color="green">123</FONT>            }<a name="line.123"></a>
-<FONT color="green">124</FONT>            return dEfault;<a name="line.124"></a>
+<FONT color="green">124</FONT>            return defaultValue;<a name="line.124"></a>
 <FONT color="green">125</FONT>        }<a name="line.125"></a>
 <FONT color="green">126</FONT>    <a name="line.126"></a>
 <FONT color="green">127</FONT>        /**<a name="line.127"></a>
 <FONT color="green">128</FONT>         * Convert the String value to an int.<a name="line.128"></a>
 <FONT color="green">129</FONT>         * @param value The value as a String.<a name="line.129"></a>
-<FONT color="green">130</FONT>         * @param dEfault The default value.<a name="line.130"></a>
+<FONT color="green">130</FONT>         * @param defaultValue The default value.<a name="line.130"></a>
 <FONT color="green">131</FONT>         * @return The value as an int.<a name="line.131"></a>
 <FONT color="green">132</FONT>         */<a name="line.132"></a>
-<FONT color="green">133</FONT>        public static int toInt(final String value, final int dEfault) {<a name="line.133"></a>
+<FONT color="green">133</FONT>        public static int toInt(final String value, final int defaultValue) {<a name="line.133"></a>
 <FONT color="green">134</FONT>            if (value != null) {<a name="line.134"></a>
 <FONT color="green">135</FONT>                final String s = value.trim();<a name="line.135"></a>
 <FONT color="green">136</FONT>                try {<a name="line.136"></a>
@@ -143,7 +143,7 @@
 <FONT color="green">140</FONT>                    e.printStackTrace();<a name="line.140"></a>
 <FONT color="green">141</FONT>                }<a name="line.141"></a>
 <FONT color="green">142</FONT>            }<a name="line.142"></a>
-<FONT color="green">143</FONT>            return dEfault;<a name="line.143"></a>
+<FONT color="green">143</FONT>            return defaultValue;<a name="line.143"></a>
 <FONT color="green">144</FONT>        }<a name="line.144"></a>
 <FONT color="green">145</FONT>    <a name="line.145"></a>
 <FONT color="green">146</FONT>        /**<a name="line.146"></a>
@@ -274,64 +274,63 @@
 <FONT color="green">271</FONT>         * &lt;code&gt;val&lt;/code&gt; contains a start delimeter "${" which is not<a name="line.271"></a>
 <FONT color="green">272</FONT>         * balanced by a stop delimeter "}". &lt;/p&gt;<a name="line.272"></a>
 <FONT color="green">273</FONT>         * &lt;p/&gt;<a name="line.273"></a>
-<FONT color="green">274</FONT>         * &lt;p&gt;&lt;b&gt;Author&lt;/b&gt; Avy Sharell&lt;/a&gt;&lt;/p&gt;<a name="line.274"></a>
-<FONT color="green">275</FONT>         *<a name="line.275"></a>
-<FONT color="green">276</FONT>         * @param val The string on which variable substitution is performed.<a name="line.276"></a>
-<FONT color="green">277</FONT>         * @param props The properties to use for substitution.<a name="line.277"></a>
-<FONT color="green">278</FONT>         * @return The String after substitution.<a name="line.278"></a>
-<FONT color="green">279</FONT>         * @throws IllegalArgumentException if &lt;code&gt;val&lt;/code&gt; is malformed.<a name="line.279"></a>
-<FONT color="green">280</FONT>         */<a name="line.280"></a>
-<FONT color="green">281</FONT>        public static String substVars(final String val, final Properties props) throws<a name="line.281"></a>
-<FONT color="green">282</FONT>            IllegalArgumentException {<a name="line.282"></a>
-<FONT color="green">283</FONT>    <a name="line.283"></a>
-<FONT color="green">284</FONT>            final StringBuilder sbuf = new StringBuilder();<a name="line.284"></a>
-<FONT color="green">285</FONT>    <a name="line.285"></a>
-<FONT color="green">286</FONT>            int i = 0;<a name="line.286"></a>
-<FONT color="green">287</FONT>            int j;<a name="line.287"></a>
-<FONT color="green">288</FONT>            int k;<a name="line.288"></a>
-<FONT color="green">289</FONT>    <a name="line.289"></a>
-<FONT color="green">290</FONT>            while (true) {<a name="line.290"></a>
-<FONT color="green">291</FONT>                j = val.indexOf(DELIM_START, i);<a name="line.291"></a>
-<FONT color="green">292</FONT>                if (j == -1) {<a name="line.292"></a>
-<FONT color="green">293</FONT>                    // no more variables<a name="line.293"></a>
-<FONT color="green">294</FONT>                    if (i == 0) { // this is a simple string<a name="line.294"></a>
-<FONT color="green">295</FONT>                        return val;<a name="line.295"></a>
-<FONT color="green">296</FONT>                    } else { // add the tail string which contails no variables and return the result.<a name="line.296"></a>
-<FONT color="green">297</FONT>                        sbuf.append(val.substring(i, val.length()));<a name="line.297"></a>
-<FONT color="green">298</FONT>                        return sbuf.toString();<a name="line.298"></a>
-<FONT color="green">299</FONT>                    }<a name="line.299"></a>
-<FONT color="green">300</FONT>                } else {<a name="line.300"></a>
-<FONT color="green">301</FONT>                    sbuf.append(val.substring(i, j));<a name="line.301"></a>
-<FONT color="green">302</FONT>                    k = val.indexOf(DELIM_STOP, j);<a name="line.302"></a>
-<FONT color="green">303</FONT>                    if (k == -1) {<a name="line.303"></a>
-<FONT color="green">304</FONT>                        throw new IllegalArgumentException('"' + val +<a name="line.304"></a>
-<FONT color="green">305</FONT>                            "\" has no closing brace. Opening brace at position " + j<a name="line.305"></a>
-<FONT color="green">306</FONT>                            + '.');<a name="line.306"></a>
-<FONT color="green">307</FONT>                    } else {<a name="line.307"></a>
-<FONT color="green">308</FONT>                        j += DELIM_START_LEN;<a name="line.308"></a>
-<FONT color="green">309</FONT>                        final String key = val.substring(j, k);<a name="line.309"></a>
-<FONT color="green">310</FONT>                        // first try in System properties<a name="line.310"></a>
-<FONT color="green">311</FONT>                        String replacement = PropertiesUtil.getProperties().getStringProperty(key, null);<a name="line.311"></a>
-<FONT color="green">312</FONT>                        // then try props parameter<a name="line.312"></a>
-<FONT color="green">313</FONT>                        if (replacement == null &amp;&amp; props != null) {<a name="line.313"></a>
-<FONT color="green">314</FONT>                            replacement = props.getProperty(key);<a name="line.314"></a>
-<FONT color="green">315</FONT>                        }<a name="line.315"></a>
-<FONT color="green">316</FONT>    <a name="line.316"></a>
-<FONT color="green">317</FONT>                        if (replacement != null) {<a name="line.317"></a>
-<FONT color="green">318</FONT>                            // Do variable substitution on the replacement string<a name="line.318"></a>
-<FONT color="green">319</FONT>                            // such that we can solve "Hello ${x2}" as "Hello p1"<a name="line.319"></a>
-<FONT color="green">320</FONT>                            // the where the properties are<a name="line.320"></a>
-<FONT color="green">321</FONT>                            // x1=p1<a name="line.321"></a>
-<FONT color="green">322</FONT>                            // x2=${x1}<a name="line.322"></a>
-<FONT color="green">323</FONT>                            final String recursiveReplacement = substVars(replacement, props);<a name="line.323"></a>
-<FONT color="green">324</FONT>                            sbuf.append(recursiveReplacement);<a name="line.324"></a>
-<FONT color="green">325</FONT>                        }<a name="line.325"></a>
-<FONT color="green">326</FONT>                        i = k + DELIM_STOP_LEN;<a name="line.326"></a>
-<FONT color="green">327</FONT>                    }<a name="line.327"></a>
-<FONT color="green">328</FONT>                }<a name="line.328"></a>
-<FONT color="green">329</FONT>            }<a name="line.329"></a>
-<FONT color="green">330</FONT>        }<a name="line.330"></a>
-<FONT color="green">331</FONT>    }<a name="line.331"></a>
+<FONT color="green">274</FONT>         *<a name="line.274"></a>
+<FONT color="green">275</FONT>         * @param val The string on which variable substitution is performed.<a name="line.275"></a>
+<FONT color="green">276</FONT>         * @param props The properties to use for substitution.<a name="line.276"></a>
+<FONT color="green">277</FONT>         * @return The String after substitution.<a name="line.277"></a>
+<FONT color="green">278</FONT>         * @throws IllegalArgumentException if &lt;code&gt;val&lt;/code&gt; is malformed.<a name="line.278"></a>
+<FONT color="green">279</FONT>         */<a name="line.279"></a>
+<FONT color="green">280</FONT>        public static String substVars(final String val, final Properties props) throws<a name="line.280"></a>
+<FONT color="green">281</FONT>            IllegalArgumentException {<a name="line.281"></a>
+<FONT color="green">282</FONT>    <a name="line.282"></a>
+<FONT color="green">283</FONT>            final StringBuilder sbuf = new StringBuilder();<a name="line.283"></a>
+<FONT color="green">284</FONT>    <a name="line.284"></a>
+<FONT color="green">285</FONT>            int i = 0;<a name="line.285"></a>
+<FONT color="green">286</FONT>            int j;<a name="line.286"></a>
+<FONT color="green">287</FONT>            int k;<a name="line.287"></a>
+<FONT color="green">288</FONT>    <a name="line.288"></a>
+<FONT color="green">289</FONT>            while (true) {<a name="line.289"></a>
+<FONT color="green">290</FONT>                j = val.indexOf(DELIM_START, i);<a name="line.290"></a>
+<FONT color="green">291</FONT>                if (j == -1) {<a name="line.291"></a>
+<FONT color="green">292</FONT>                    // no more variables<a name="line.292"></a>
+<FONT color="green">293</FONT>                    if (i == 0) { // this is a simple string<a name="line.293"></a>
+<FONT color="green">294</FONT>                        return val;<a name="line.294"></a>
+<FONT color="green">295</FONT>                    } else { // add the tail string which contails no variables and return the result.<a name="line.295"></a>
+<FONT color="green">296</FONT>                        sbuf.append(val.substring(i, val.length()));<a name="line.296"></a>
+<FONT color="green">297</FONT>                        return sbuf.toString();<a name="line.297"></a>
+<FONT color="green">298</FONT>                    }<a name="line.298"></a>
+<FONT color="green">299</FONT>                } else {<a name="line.299"></a>
+<FONT color="green">300</FONT>                    sbuf.append(val.substring(i, j));<a name="line.300"></a>
+<FONT color="green">301</FONT>                    k = val.indexOf(DELIM_STOP, j);<a name="line.301"></a>
+<FONT color="green">302</FONT>                    if (k == -1) {<a name="line.302"></a>
+<FONT color="green">303</FONT>                        throw new IllegalArgumentException('"' + val +<a name="line.303"></a>
+<FONT color="green">304</FONT>                            "\" has no closing brace. Opening brace at position " + j<a name="line.304"></a>
+<FONT color="green">305</FONT>                            + '.');<a name="line.305"></a>
+<FONT color="green">306</FONT>                    } else {<a name="line.306"></a>
+<FONT color="green">307</FONT>                        j += DELIM_START_LEN;<a name="line.307"></a>
+<FONT color="green">308</FONT>                        final String key = val.substring(j, k);<a name="line.308"></a>
+<FONT color="green">309</FONT>                        // first try in System properties<a name="line.309"></a>
+<FONT color="green">310</FONT>                        String replacement = PropertiesUtil.getProperties().getStringProperty(key, null);<a name="line.310"></a>
+<FONT color="green">311</FONT>                        // then try props parameter<a name="line.311"></a>
+<FONT color="green">312</FONT>                        if (replacement == null &amp;&amp; props != null) {<a name="line.312"></a>
+<FONT color="green">313</FONT>                            replacement = props.getProperty(key);<a name="line.313"></a>
+<FONT color="green">314</FONT>                        }<a name="line.314"></a>
+<FONT color="green">315</FONT>    <a name="line.315"></a>
+<FONT color="green">316</FONT>                        if (replacement != null) {<a name="line.316"></a>
+<FONT color="green">317</FONT>                            // Do variable substitution on the replacement string<a name="line.317"></a>
+<FONT color="green">318</FONT>                            // such that we can solve "Hello ${x2}" as "Hello p1"<a name="line.318"></a>
+<FONT color="green">319</FONT>                            // the where the properties are<a name="line.319"></a>
+<FONT color="green">320</FONT>                            // x1=p1<a name="line.320"></a>
+<FONT color="green">321</FONT>                            // x2=${x1}<a name="line.321"></a>
+<FONT color="green">322</FONT>                            final String recursiveReplacement = substVars(replacement, props);<a name="line.322"></a>
+<FONT color="green">323</FONT>                            sbuf.append(recursiveReplacement);<a name="line.323"></a>
+<FONT color="green">324</FONT>                        }<a name="line.324"></a>
+<FONT color="green">325</FONT>                        i = k + DELIM_STOP_LEN;<a name="line.325"></a>
+<FONT color="green">326</FONT>                    }<a name="line.326"></a>
+<FONT color="green">327</FONT>                }<a name="line.327"></a>
+<FONT color="green">328</FONT>            }<a name="line.328"></a>
+<FONT color="green">329</FONT>        }<a name="line.329"></a>
+<FONT color="green">330</FONT>    }<a name="line.330"></a>
 
 
 

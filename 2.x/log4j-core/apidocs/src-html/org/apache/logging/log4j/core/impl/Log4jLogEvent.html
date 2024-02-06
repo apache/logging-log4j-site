@@ -19,27 +19,27 @@
 <FONT color="green">016</FONT>     */<a name="line.16"></a>
 <FONT color="green">017</FONT>    package org.apache.logging.log4j.core.impl;<a name="line.17"></a>
 <FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    import org.apache.logging.log4j.Level;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import org.apache.logging.log4j.ThreadContext;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import org.apache.logging.log4j.Marker;<a name="line.21"></a>
-<FONT color="green">022</FONT>    import org.apache.logging.log4j.core.LogEvent;<a name="line.22"></a>
-<FONT color="green">023</FONT>    import org.apache.logging.log4j.core.config.Property;<a name="line.23"></a>
-<FONT color="green">024</FONT>    import org.apache.logging.log4j.message.LoggerNameAwareMessage;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import org.apache.logging.log4j.message.Message;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import org.apache.logging.log4j.message.TimestampMessage;<a name="line.26"></a>
-<FONT color="green">027</FONT>    <a name="line.27"></a>
-<FONT color="green">028</FONT>    import java.io.InvalidObjectException;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import java.io.ObjectInputStream;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import java.io.Serializable;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import java.util.Collections;<a name="line.31"></a>
-<FONT color="green">032</FONT>    import java.util.HashMap;<a name="line.32"></a>
-<FONT color="green">033</FONT>    import java.util.List;<a name="line.33"></a>
-<FONT color="green">034</FONT>    import java.util.Map;<a name="line.34"></a>
+<FONT color="green">019</FONT>    import java.io.InvalidObjectException;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.io.ObjectInputStream;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.io.Serializable;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.Collections;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.HashMap;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.List;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.util.Map;<a name="line.25"></a>
+<FONT color="green">026</FONT>    <a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.apache.logging.log4j.Level;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.apache.logging.log4j.Marker;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.apache.logging.log4j.ThreadContext;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.apache.logging.log4j.core.LogEvent;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.apache.logging.log4j.core.config.Property;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.apache.logging.log4j.message.LoggerNameAwareMessage;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.apache.logging.log4j.message.Message;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.apache.logging.log4j.message.TimestampMessage;<a name="line.34"></a>
 <FONT color="green">035</FONT>    <a name="line.35"></a>
 <FONT color="green">036</FONT>    /**<a name="line.36"></a>
 <FONT color="green">037</FONT>     * Implementation of a LogEvent.<a name="line.37"></a>
 <FONT color="green">038</FONT>     */<a name="line.38"></a>
-<FONT color="green">039</FONT>    public class Log4jLogEvent implements LogEvent, Serializable {<a name="line.39"></a>
+<FONT color="green">039</FONT>    public class Log4jLogEvent implements LogEvent {<a name="line.39"></a>
 <FONT color="green">040</FONT>    <a name="line.40"></a>
 <FONT color="green">041</FONT>        private static final long serialVersionUID = -1351367343806656055L;<a name="line.41"></a>
 <FONT color="green">042</FONT>        private static final String NOT_AVAIL = "?";<a name="line.42"></a>
@@ -251,7 +251,7 @@
 <FONT color="green">248</FONT>            return location;<a name="line.248"></a>
 <FONT color="green">249</FONT>        }<a name="line.249"></a>
 <FONT color="green">250</FONT>    <a name="line.250"></a>
-<FONT color="green">251</FONT>        public static StackTraceElement calcLocation(String fqcnOfLogger) {<a name="line.251"></a>
+<FONT color="green">251</FONT>        public static StackTraceElement calcLocation(final String fqcnOfLogger) {<a name="line.251"></a>
 <FONT color="green">252</FONT>            if (fqcnOfLogger == null) {<a name="line.252"></a>
 <FONT color="green">253</FONT>                return null;<a name="line.253"></a>
 <FONT color="green">254</FONT>            }<a name="line.254"></a>
@@ -281,7 +281,7 @@
 <FONT color="green">278</FONT>        }<a name="line.278"></a>
 <FONT color="green">279</FONT>    <a name="line.279"></a>
 <FONT color="green">280</FONT>        @Override<a name="line.280"></a>
-<FONT color="green">281</FONT>        public void setIncludeLocation(boolean includeLocation) {<a name="line.281"></a>
+<FONT color="green">281</FONT>        public void setIncludeLocation(final boolean includeLocation) {<a name="line.281"></a>
 <FONT color="green">282</FONT>            this.includeLocation = includeLocation;<a name="line.282"></a>
 <FONT color="green">283</FONT>        }<a name="line.283"></a>
 <FONT color="green">284</FONT>    <a name="line.284"></a>
@@ -291,7 +291,7 @@
 <FONT color="green">288</FONT>        }<a name="line.288"></a>
 <FONT color="green">289</FONT>    <a name="line.289"></a>
 <FONT color="green">290</FONT>        @Override<a name="line.290"></a>
-<FONT color="green">291</FONT>        public void setEndOfBatch(boolean endOfBatch) {<a name="line.291"></a>
+<FONT color="green">291</FONT>        public void setEndOfBatch(final boolean endOfBatch) {<a name="line.291"></a>
 <FONT color="green">292</FONT>            this.endOfBatch = endOfBatch;<a name="line.292"></a>
 <FONT color="green">293</FONT>        }<a name="line.293"></a>
 <FONT color="green">294</FONT>    <a name="line.294"></a>
@@ -314,7 +314,7 @@
 <FONT color="green">311</FONT>            }<a name="line.311"></a>
 <FONT color="green">312</FONT>            if (event instanceof LogEventProxy) {<a name="line.312"></a>
 <FONT color="green">313</FONT>                final LogEventProxy proxy = (LogEventProxy) event;<a name="line.313"></a>
-<FONT color="green">314</FONT>                Log4jLogEvent result = new Log4jLogEvent(proxy.name, proxy.marker,<a name="line.314"></a>
+<FONT color="green">314</FONT>                final Log4jLogEvent result = new Log4jLogEvent(proxy.name, proxy.marker,<a name="line.314"></a>
 <FONT color="green">315</FONT>                        proxy.fqcnOfLogger, proxy.level, proxy.message,<a name="line.315"></a>
 <FONT color="green">316</FONT>                        proxy.throwable, proxy.mdc, proxy.ndc, proxy.threadName,<a name="line.316"></a>
 <FONT color="green">317</FONT>                        proxy.location, proxy.timestamp);<a name="line.317"></a>
@@ -332,7 +332,7 @@
 <FONT color="green">329</FONT>        @Override<a name="line.329"></a>
 <FONT color="green">330</FONT>        public String toString() {<a name="line.330"></a>
 <FONT color="green">331</FONT>            final StringBuilder sb = new StringBuilder();<a name="line.331"></a>
-<FONT color="green">332</FONT>            final String n = name.length() == 0 ? "root" : name;<a name="line.332"></a>
+<FONT color="green">332</FONT>            final String n = name.isEmpty() ? "root" : name;<a name="line.332"></a>
 <FONT color="green">333</FONT>            sb.append("Logger=").append(n);<a name="line.333"></a>
 <FONT color="green">334</FONT>            sb.append(" Level=").append(level.name());<a name="line.334"></a>
 <FONT color="green">335</FONT>            sb.append(" Message=").append(message.getFormattedMessage());<a name="line.335"></a>
@@ -359,7 +359,7 @@
 <FONT color="green">356</FONT>            private final boolean isLocationRequired;<a name="line.356"></a>
 <FONT color="green">357</FONT>            private final boolean isEndOfBatch;<a name="line.357"></a>
 <FONT color="green">358</FONT>    <a name="line.358"></a>
-<FONT color="green">359</FONT>            public LogEventProxy(final Log4jLogEvent event, boolean includeLocation) {<a name="line.359"></a>
+<FONT color="green">359</FONT>            public LogEventProxy(final Log4jLogEvent event, final boolean includeLocation) {<a name="line.359"></a>
 <FONT color="green">360</FONT>                this.fqcnOfLogger = event.fqcnOfLogger;<a name="line.360"></a>
 <FONT color="green">361</FONT>                this.marker = event.marker;<a name="line.361"></a>
 <FONT color="green">362</FONT>                this.level = event.level;<a name="line.362"></a>
@@ -380,7 +380,7 @@
 <FONT color="green">377</FONT>             * @return Log4jLogEvent.<a name="line.377"></a>
 <FONT color="green">378</FONT>             */<a name="line.378"></a>
 <FONT color="green">379</FONT>            protected Object readResolve() {<a name="line.379"></a>
-<FONT color="green">380</FONT>                Log4jLogEvent result = new Log4jLogEvent(name, marker, fqcnOfLogger,<a name="line.380"></a>
+<FONT color="green">380</FONT>                final Log4jLogEvent result = new Log4jLogEvent(name, marker, fqcnOfLogger,<a name="line.380"></a>
 <FONT color="green">381</FONT>                        level, message, throwable, mdc, ndc, threadName, location,<a name="line.381"></a>
 <FONT color="green">382</FONT>                        timestamp);<a name="line.382"></a>
 <FONT color="green">383</FONT>                result.setEndOfBatch(isEndOfBatch);<a name="line.383"></a>

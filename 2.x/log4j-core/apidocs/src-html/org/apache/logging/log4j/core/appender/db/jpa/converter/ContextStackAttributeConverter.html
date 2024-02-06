@@ -35,21 +35,25 @@
 <FONT color="green">032</FONT>    public class ContextStackAttributeConverter implements AttributeConverter&lt;ThreadContext.ContextStack, String&gt; {<a name="line.32"></a>
 <FONT color="green">033</FONT>        @Override<a name="line.33"></a>
 <FONT color="green">034</FONT>        public String convertToDatabaseColumn(final ThreadContext.ContextStack contextStack) {<a name="line.34"></a>
-<FONT color="green">035</FONT>            StringBuilder builder = new StringBuilder();<a name="line.35"></a>
-<FONT color="green">036</FONT>            for (String value : contextStack.asList()) {<a name="line.36"></a>
-<FONT color="green">037</FONT>                if (builder.length() &gt; 0) {<a name="line.37"></a>
-<FONT color="green">038</FONT>                    builder.append('\n');<a name="line.38"></a>
-<FONT color="green">039</FONT>                }<a name="line.39"></a>
-<FONT color="green">040</FONT>                builder.append(value);<a name="line.40"></a>
-<FONT color="green">041</FONT>            }<a name="line.41"></a>
-<FONT color="green">042</FONT>            return builder.toString();<a name="line.42"></a>
-<FONT color="green">043</FONT>        }<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>        @Override<a name="line.45"></a>
-<FONT color="green">046</FONT>        public ThreadContext.ContextStack convertToEntityAttribute(final String s) {<a name="line.46"></a>
-<FONT color="green">047</FONT>            throw new UnsupportedOperationException("Log events can only be persisted, not extracted.");<a name="line.47"></a>
-<FONT color="green">048</FONT>        }<a name="line.48"></a>
-<FONT color="green">049</FONT>    }<a name="line.49"></a>
+<FONT color="green">035</FONT>            if (contextStack == null) {<a name="line.35"></a>
+<FONT color="green">036</FONT>                return null;<a name="line.36"></a>
+<FONT color="green">037</FONT>            }<a name="line.37"></a>
+<FONT color="green">038</FONT>    <a name="line.38"></a>
+<FONT color="green">039</FONT>            final StringBuilder builder = new StringBuilder();<a name="line.39"></a>
+<FONT color="green">040</FONT>            for (final String value : contextStack.asList()) {<a name="line.40"></a>
+<FONT color="green">041</FONT>                if (builder.length() &gt; 0) {<a name="line.41"></a>
+<FONT color="green">042</FONT>                    builder.append('\n');<a name="line.42"></a>
+<FONT color="green">043</FONT>                }<a name="line.43"></a>
+<FONT color="green">044</FONT>                builder.append(value);<a name="line.44"></a>
+<FONT color="green">045</FONT>            }<a name="line.45"></a>
+<FONT color="green">046</FONT>            return builder.toString();<a name="line.46"></a>
+<FONT color="green">047</FONT>        }<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>        @Override<a name="line.49"></a>
+<FONT color="green">050</FONT>        public ThreadContext.ContextStack convertToEntityAttribute(final String s) {<a name="line.50"></a>
+<FONT color="green">051</FONT>            throw new UnsupportedOperationException("Log events can only be persisted, not extracted.");<a name="line.51"></a>
+<FONT color="green">052</FONT>        }<a name="line.52"></a>
+<FONT color="green">053</FONT>    }<a name="line.53"></a>
 
 
 

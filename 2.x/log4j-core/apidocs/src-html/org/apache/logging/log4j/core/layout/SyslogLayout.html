@@ -19,24 +19,24 @@
 <FONT color="green">016</FONT>     */<a name="line.16"></a>
 <FONT color="green">017</FONT>    package org.apache.logging.log4j.core.layout;<a name="line.17"></a>
 <FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    import java.util.HashMap;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import java.util.Map;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import org.apache.logging.log4j.core.LogEvent;<a name="line.21"></a>
-<FONT color="green">022</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.22"></a>
-<FONT color="green">023</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttr;<a name="line.23"></a>
-<FONT color="green">024</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import org.apache.logging.log4j.core.helpers.Charsets;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import org.apache.logging.log4j.core.net.Facility;<a name="line.26"></a>
-<FONT color="green">027</FONT>    import org.apache.logging.log4j.core.net.Priority;<a name="line.27"></a>
-<FONT color="green">028</FONT>    <a name="line.28"></a>
-<FONT color="green">029</FONT>    import java.net.InetAddress;<a name="line.29"></a>
-<FONT color="green">030</FONT>    import java.net.UnknownHostException;<a name="line.30"></a>
-<FONT color="green">031</FONT>    import java.nio.charset.Charset;<a name="line.31"></a>
-<FONT color="green">032</FONT>    import java.text.SimpleDateFormat;<a name="line.32"></a>
-<FONT color="green">033</FONT>    import java.util.Date;<a name="line.33"></a>
-<FONT color="green">034</FONT>    import java.util.Locale;<a name="line.34"></a>
-<FONT color="green">035</FONT>    import java.util.regex.Matcher;<a name="line.35"></a>
-<FONT color="green">036</FONT>    import java.util.regex.Pattern;<a name="line.36"></a>
+<FONT color="green">019</FONT>    import java.net.InetAddress;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.net.UnknownHostException;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.nio.charset.Charset;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.text.SimpleDateFormat;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Date;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.HashMap;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.util.Locale;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import java.util.Map;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import java.util.regex.Matcher;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import java.util.regex.Pattern;<a name="line.28"></a>
+<FONT color="green">029</FONT>    <a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.apache.logging.log4j.core.LogEvent;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginAttr;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.apache.logging.log4j.core.config.plugins.PluginFactory;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.apache.logging.log4j.core.helpers.Charsets;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.apache.logging.log4j.core.net.Facility;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.apache.logging.log4j.core.net.Priority;<a name="line.36"></a>
 <FONT color="green">037</FONT>    <a name="line.37"></a>
 <FONT color="green">038</FONT>    <a name="line.38"></a>
 <FONT color="green">039</FONT>    /**<a name="line.39"></a>
@@ -138,7 +138,7 @@
 <FONT color="green">135</FONT>        @Override<a name="line.135"></a>
 <FONT color="green">136</FONT>        public Map&lt;String, String&gt; getContentFormat()<a name="line.136"></a>
 <FONT color="green">137</FONT>        {<a name="line.137"></a>
-<FONT color="green">138</FONT>            Map&lt;String, String&gt; result = new HashMap&lt;String, String&gt;();<a name="line.138"></a>
+<FONT color="green">138</FONT>            final Map&lt;String, String&gt; result = new HashMap&lt;String, String&gt;();<a name="line.138"></a>
 <FONT color="green">139</FONT>            result.put("structured", "false");<a name="line.139"></a>
 <FONT color="green">140</FONT>            result.put("formatType", "logfilepatternreceiver");<a name="line.140"></a>
 <FONT color="green">141</FONT>            result.put("dateFormat", dateFormat.toPattern());<a name="line.141"></a>
@@ -160,7 +160,7 @@
 <FONT color="green">157</FONT>                                                @PluginAttr("newLineEscape") final String escapeNL,<a name="line.157"></a>
 <FONT color="green">158</FONT>                                                @PluginAttr("charset") final String charsetName) {<a name="line.158"></a>
 <FONT color="green">159</FONT>            final Charset charset = Charsets.getSupportedCharset(charsetName);<a name="line.159"></a>
-<FONT color="green">160</FONT>            final boolean includeNewLine = includeNL == null ? false : Boolean.valueOf(includeNL);<a name="line.160"></a>
+<FONT color="green">160</FONT>            final boolean includeNewLine = Boolean.parseBoolean(includeNL);<a name="line.160"></a>
 <FONT color="green">161</FONT>            final Facility f = Facility.toFacility(facility, Facility.LOCAL0);<a name="line.161"></a>
 <FONT color="green">162</FONT>            return new SyslogLayout(f, includeNewLine, escapeNL, charset);<a name="line.162"></a>
 <FONT color="green">163</FONT>        }<a name="line.163"></a>

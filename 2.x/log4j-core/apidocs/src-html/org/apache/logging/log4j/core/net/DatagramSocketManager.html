@@ -19,15 +19,15 @@
 <FONT color="green">016</FONT>     */<a name="line.16"></a>
 <FONT color="green">017</FONT>    package org.apache.logging.log4j.core.net;<a name="line.17"></a>
 <FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    import java.net.InetAddress;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import java.net.UnknownHostException;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import java.util.HashMap;<a name="line.21"></a>
-<FONT color="green">022</FONT>    import java.util.Map;<a name="line.22"></a>
-<FONT color="green">023</FONT>    <a name="line.23"></a>
-<FONT color="green">024</FONT>    import org.apache.logging.log4j.core.Layout;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import org.apache.logging.log4j.core.appender.ManagerFactory;<a name="line.25"></a>
-<FONT color="green">026</FONT>    <a name="line.26"></a>
-<FONT color="green">027</FONT>    import java.io.OutputStream;<a name="line.27"></a>
+<FONT color="green">019</FONT>    import java.io.OutputStream;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.net.InetAddress;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.net.UnknownHostException;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.HashMap;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Map;<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.apache.logging.log4j.core.Layout;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.apache.logging.log4j.core.appender.ManagerFactory;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.apache.logging.log4j.core.helpers.Strings;<a name="line.27"></a>
 <FONT color="green">028</FONT>    <a name="line.28"></a>
 <FONT color="green">029</FONT>    /**<a name="line.29"></a>
 <FONT color="green">030</FONT>     * Socket Manager for UDP connections.<a name="line.30"></a>
@@ -45,7 +45,7 @@
 <FONT color="green">042</FONT>         * @param port The port on the host.<a name="line.42"></a>
 <FONT color="green">043</FONT>         * @param layout The layout<a name="line.43"></a>
 <FONT color="green">044</FONT>         */<a name="line.44"></a>
-<FONT color="green">045</FONT>        protected DatagramSocketManager(final String name, final OutputStream os, InetAddress address, final String host,<a name="line.45"></a>
+<FONT color="green">045</FONT>        protected DatagramSocketManager(final String name, final OutputStream os, final InetAddress address, final String host,<a name="line.45"></a>
 <FONT color="green">046</FONT>                                        final int port, final Layout layout) {<a name="line.46"></a>
 <FONT color="green">047</FONT>            super(name, os, address, host, port, layout);<a name="line.47"></a>
 <FONT color="green">048</FONT>        }<a name="line.48"></a>
@@ -58,7 +58,7 @@
 <FONT color="green">055</FONT>         * @return A DatagramSocketManager.<a name="line.55"></a>
 <FONT color="green">056</FONT>         */<a name="line.56"></a>
 <FONT color="green">057</FONT>        public static DatagramSocketManager getSocketManager(final String host, final int port, final Layout layout) {<a name="line.57"></a>
-<FONT color="green">058</FONT>            if (host == null || host.length() == 0) {<a name="line.58"></a>
+<FONT color="green">058</FONT>            if (Strings.isEmpty(host)) {<a name="line.58"></a>
 <FONT color="green">059</FONT>                throw new IllegalArgumentException("A host name is required");<a name="line.59"></a>
 <FONT color="green">060</FONT>            }<a name="line.60"></a>
 <FONT color="green">061</FONT>            if (port &lt;= 0) {<a name="line.61"></a>
@@ -77,7 +77,7 @@
 <FONT color="green">074</FONT>        @Override<a name="line.74"></a>
 <FONT color="green">075</FONT>        public Map&lt;String, String&gt; getContentFormat()<a name="line.75"></a>
 <FONT color="green">076</FONT>        {<a name="line.76"></a>
-<FONT color="green">077</FONT>            Map&lt;String, String&gt; result = new HashMap&lt;String, String&gt;(super.getContentFormat());<a name="line.77"></a>
+<FONT color="green">077</FONT>            final Map&lt;String, String&gt; result = new HashMap&lt;String, String&gt;(super.getContentFormat());<a name="line.77"></a>
 <FONT color="green">078</FONT>            result.put("protocol", "udp");<a name="line.78"></a>
 <FONT color="green">079</FONT>            result.put("direction", "out");<a name="line.79"></a>
 <FONT color="green">080</FONT>    <a name="line.80"></a>

@@ -26,11 +26,11 @@
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.core.impl;
 <a class="jxr_linenumber" name="18" href="#18">18</a>  
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.helpers.Constants;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.util.Scanner;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.util.Scanner;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.helpers.Constants;
 <a class="jxr_linenumber" name="24" href="#24">24</a>  
 <a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment"> * Contains options which control how a {@code throwable} pattern is formatted.</em>
@@ -161,12 +161,12 @@
 <a class="jxr_linenumber" name="151" href="#151">151</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="152" href="#152">152</a>     @Override
 <a class="jxr_linenumber" name="153" href="#153">153</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="154" href="#154">154</a>         StringBuilder s = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="154" href="#154">154</a>         <strong class="jxr_keyword">final</strong> StringBuilder s = <strong class="jxr_keyword">new</strong> StringBuilder();
 <a class="jxr_linenumber" name="155" href="#155">155</a>         s.append(<span class="jxr_string">"{"</span>).append(allLines() ? FULL : <strong class="jxr_keyword">this</strong>.lines == 2 ? SHORT : anyLines() ? String.valueOf(<strong class="jxr_keyword">this</strong>.lines) : NONE).append(<span class="jxr_string">"}"</span>);
 <a class="jxr_linenumber" name="156" href="#156">156</a>         s.append(<span class="jxr_string">"{separator("</span>).append(<strong class="jxr_keyword">this</strong>.separator).append(<span class="jxr_string">")}"</span>);
 <a class="jxr_linenumber" name="157" href="#157">157</a>         <strong class="jxr_keyword">if</strong> (hasPackages()) {
 <a class="jxr_linenumber" name="158" href="#158">158</a>             s.append(<span class="jxr_string">"{filters("</span>);
-<a class="jxr_linenumber" name="159" href="#159">159</a>             <strong class="jxr_keyword">for</strong> (String p : <strong class="jxr_keyword">this</strong>.packages) {
+<a class="jxr_linenumber" name="159" href="#159">159</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String p : <strong class="jxr_keyword">this</strong>.packages) {
 <a class="jxr_linenumber" name="160" href="#160">160</a>                 s.append(p).append(<span class="jxr_string">","</span>);
 <a class="jxr_linenumber" name="161" href="#161">161</a>             }
 <a class="jxr_linenumber" name="162" href="#162">162</a>             s.deleteCharAt(s.length() - 1);
@@ -201,10 +201,10 @@
 <a class="jxr_linenumber" name="191" href="#191">191</a>             <strong class="jxr_keyword">int</strong> lines = DEFAULT.lines;
 <a class="jxr_linenumber" name="192" href="#192">192</a>             String separator = DEFAULT.separator;
 <a class="jxr_linenumber" name="193" href="#193">193</a>             List&lt;String&gt; packages = DEFAULT.packages;
-<a class="jxr_linenumber" name="194" href="#194">194</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; options.length; i++) {
-<a class="jxr_linenumber" name="195" href="#195">195</a>                 <strong class="jxr_keyword">if</strong> (options[i] != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="196" href="#196">196</a>                     <strong class="jxr_keyword">final</strong> String option = options[i].trim();
-<a class="jxr_linenumber" name="197" href="#197">197</a>                     <strong class="jxr_keyword">if</strong> (option.length() == 0) {
+<a class="jxr_linenumber" name="194" href="#194">194</a>             <strong class="jxr_keyword">for</strong> (String rawOption : options) {
+<a class="jxr_linenumber" name="195" href="#195">195</a>                 <strong class="jxr_keyword">if</strong> (rawOption != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="196" href="#196">196</a>                     <strong class="jxr_keyword">final</strong> String option = rawOption.trim();
+<a class="jxr_linenumber" name="197" href="#197">197</a>                     <strong class="jxr_keyword">if</strong> (option.isEmpty()) {
 <a class="jxr_linenumber" name="198" href="#198">198</a>                         <em class="jxr_comment">// continue;</em>
 <a class="jxr_linenumber" name="199" href="#199">199</a>                     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (option.startsWith(<span class="jxr_string">"separator("</span>) &amp;&amp; option.endsWith(<span class="jxr_string">")"</span>)) {
 <a class="jxr_linenumber" name="200" href="#200">200</a>                         separator = option.substring(<span class="jxr_string">"separator("</span>.length(), option.length() - 1);

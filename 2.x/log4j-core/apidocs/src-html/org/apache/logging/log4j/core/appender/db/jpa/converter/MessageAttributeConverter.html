@@ -22,27 +22,36 @@
 <FONT color="green">019</FONT>    import javax.persistence.AttributeConverter;<a name="line.19"></a>
 <FONT color="green">020</FONT>    import javax.persistence.Converter;<a name="line.20"></a>
 <FONT color="green">021</FONT>    <a name="line.21"></a>
-<FONT color="green">022</FONT>    import org.apache.logging.log4j.message.Message;<a name="line.22"></a>
-<FONT color="green">023</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.23"></a>
-<FONT color="green">024</FONT>    <a name="line.24"></a>
-<FONT color="green">025</FONT>    /**<a name="line.25"></a>
-<FONT color="green">026</FONT>     * A JPA 2.1 attribute converter for {@link Message}s in {@link org.apache.logging.log4j.core.LogEvent}s. This<a name="line.26"></a>
-<FONT color="green">027</FONT>     * converter is capable of converting both to and from {@link String}s.<a name="line.27"></a>
-<FONT color="green">028</FONT>     */<a name="line.28"></a>
-<FONT color="green">029</FONT>    @Converter(autoApply = false)<a name="line.29"></a>
-<FONT color="green">030</FONT>    public class MessageAttributeConverter implements AttributeConverter&lt;Message, String&gt; {<a name="line.30"></a>
-<FONT color="green">031</FONT>        private static final StatusLogger log = StatusLogger.getLogger();<a name="line.31"></a>
-<FONT color="green">032</FONT>    <a name="line.32"></a>
-<FONT color="green">033</FONT>        @Override<a name="line.33"></a>
-<FONT color="green">034</FONT>        public String convertToDatabaseColumn(final Message message) {<a name="line.34"></a>
-<FONT color="green">035</FONT>            return message.getFormattedMessage();<a name="line.35"></a>
-<FONT color="green">036</FONT>        }<a name="line.36"></a>
-<FONT color="green">037</FONT>    <a name="line.37"></a>
-<FONT color="green">038</FONT>        @Override<a name="line.38"></a>
-<FONT color="green">039</FONT>        public Message convertToEntityAttribute(final String s) {<a name="line.39"></a>
-<FONT color="green">040</FONT>            return log.getMessageFactory().newMessage(s);<a name="line.40"></a>
+<FONT color="green">022</FONT>    import org.apache.logging.log4j.core.helpers.Strings;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.apache.logging.log4j.message.Message;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>    /**<a name="line.26"></a>
+<FONT color="green">027</FONT>     * A JPA 2.1 attribute converter for {@link Message}s in {@link org.apache.logging.log4j.core.LogEvent}s. This<a name="line.27"></a>
+<FONT color="green">028</FONT>     * converter is capable of converting both to and from {@link String}s.<a name="line.28"></a>
+<FONT color="green">029</FONT>     */<a name="line.29"></a>
+<FONT color="green">030</FONT>    @Converter(autoApply = false)<a name="line.30"></a>
+<FONT color="green">031</FONT>    public class MessageAttributeConverter implements AttributeConverter&lt;Message, String&gt; {<a name="line.31"></a>
+<FONT color="green">032</FONT>        private static final StatusLogger log = StatusLogger.getLogger();<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>        @Override<a name="line.34"></a>
+<FONT color="green">035</FONT>        public String convertToDatabaseColumn(final Message message) {<a name="line.35"></a>
+<FONT color="green">036</FONT>            if (message == null) {<a name="line.36"></a>
+<FONT color="green">037</FONT>                return null;<a name="line.37"></a>
+<FONT color="green">038</FONT>            }<a name="line.38"></a>
+<FONT color="green">039</FONT>    <a name="line.39"></a>
+<FONT color="green">040</FONT>            return message.getFormattedMessage();<a name="line.40"></a>
 <FONT color="green">041</FONT>        }<a name="line.41"></a>
-<FONT color="green">042</FONT>    }<a name="line.42"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>        @Override<a name="line.43"></a>
+<FONT color="green">044</FONT>        public Message convertToEntityAttribute(final String s) {<a name="line.44"></a>
+<FONT color="green">045</FONT>            if (Strings.isEmpty(s)) {<a name="line.45"></a>
+<FONT color="green">046</FONT>                return null;<a name="line.46"></a>
+<FONT color="green">047</FONT>            }<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>            return log.getMessageFactory().newMessage(s);<a name="line.49"></a>
+<FONT color="green">050</FONT>        }<a name="line.50"></a>
+<FONT color="green">051</FONT>    }<a name="line.51"></a>
 
 
 

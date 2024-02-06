@@ -26,12 +26,12 @@
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.core.config;
 <a class="jxr_linenumber" name="18" href="#18">18</a>  
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.LogManager;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.LoggerContext;
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.status.StatusLogger;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> java.net.URISyntaxException;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> java.net.URISyntaxException;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.LogManager;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.LoggerContext;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.status.StatusLogger;
 <a class="jxr_linenumber" name="25" href="#25">25</a>  
 <a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment"> * Initializes and configure the Logging system.</em>
@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="61" href="#61">61</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> initialize(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> ClassLoader loader, <strong class="jxr_keyword">final</strong> URI configLocation) {
 <a class="jxr_linenumber" name="62" href="#62">62</a>  
 <a class="jxr_linenumber" name="63" href="#63">63</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="64" href="#64">64</a>              org.apache.logging.log4j.spi.LoggerContext context = LogManager.getContext(loader, false, configLocation);
+<a class="jxr_linenumber" name="64" href="#64">64</a>              <strong class="jxr_keyword">final</strong> org.apache.logging.log4j.spi.LoggerContext context = LogManager.getContext(loader, false, configLocation);
 <a class="jxr_linenumber" name="65" href="#65">65</a>              <strong class="jxr_keyword">if</strong> (context instanceof LoggerContext) {
 <a class="jxr_linenumber" name="66" href="#66">66</a>                  <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx = (LoggerContext) context;
 <a class="jxr_linenumber" name="67" href="#67">67</a>                  <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = ConfigurationFactory.getInstance().getConfiguration(name, configLocation);
@@ -100,10 +100,10 @@
 <a class="jxr_linenumber" name="90" href="#90">90</a>              URI configLocation = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="91" href="#91">91</a>              <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="92" href="#92">92</a>                  configLocation = source.getLocation() == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong> : <strong class="jxr_keyword">new</strong> URI(source.getLocation());
-<a class="jxr_linenumber" name="93" href="#93">93</a>              } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="93" href="#93">93</a>              } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="94" href="#94">94</a>                  <em class="jxr_comment">// Invalid source location.</em>
 <a class="jxr_linenumber" name="95" href="#95">95</a>              }
-<a class="jxr_linenumber" name="96" href="#96">96</a>              org.apache.logging.log4j.spi.LoggerContext context = LogManager.getContext(loader, false, configLocation);
+<a class="jxr_linenumber" name="96" href="#96">96</a>              <strong class="jxr_keyword">final</strong> org.apache.logging.log4j.spi.LoggerContext context = LogManager.getContext(loader, false, configLocation);
 <a class="jxr_linenumber" name="97" href="#97">97</a>              <strong class="jxr_keyword">if</strong> (context instanceof LoggerContext) {
 <a class="jxr_linenumber" name="98" href="#98">98</a>                  <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx = (LoggerContext) context;
 <a class="jxr_linenumber" name="99" href="#99">99</a>                  <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config = ConfigurationFactory.getInstance().getConfiguration(source);

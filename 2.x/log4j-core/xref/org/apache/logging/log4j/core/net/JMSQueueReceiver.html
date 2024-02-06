@@ -26,19 +26,19 @@
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.core.net;
 <a class="jxr_linenumber" name="18" href="#18">18</a>  
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> javax.jms.JMSException;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> javax.jms.Queue;
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> javax.jms.QueueConnection;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> javax.jms.QueueConnectionFactory;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> javax.jms.QueueReceiver;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> javax.jms.QueueSession;
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> javax.jms.Session;
-<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> javax.naming.Context;
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> javax.naming.InitialContext;
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> javax.naming.NamingException;
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> java.io.BufferedReader;
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> java.io.InputStreamReader;
-<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> java.nio.charset.Charset;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.io.BufferedReader;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> java.io.InputStreamReader;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.nio.charset.Charset;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> javax.jms.JMSException;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> javax.jms.Queue;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> javax.jms.QueueConnection;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> javax.jms.QueueConnectionFactory;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> javax.jms.QueueReceiver;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> javax.jms.QueueSession;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> javax.jms.Session;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> javax.naming.Context;
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> javax.naming.InitialContext;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> javax.naming.NamingException;
 <a class="jxr_linenumber" name="32" href="#32">32</a>  
 <a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment"> * Receives Log Events over a JMS Queue. This implementation expects that all messages will</em>
@@ -97,8 +97,8 @@
 <a class="jxr_linenumber" name="87" href="#87">87</a>          <em class="jxr_comment">// Loop until the word "exit" is typed</em>
 <a class="jxr_linenumber" name="88" href="#88">88</a>          System.out.println(<span class="jxr_string">"Type \&quot;exit\&quot; to quit JMSQueueReceiver."</span>);
 <a class="jxr_linenumber" name="89" href="#89">89</a>          <strong class="jxr_keyword">while</strong> (<strong class="jxr_keyword">true</strong>) {
-<a class="jxr_linenumber" name="90" href="#90">90</a>              <strong class="jxr_keyword">final</strong> String s = stdin.readLine();
-<a class="jxr_linenumber" name="91" href="#91">91</a>              <strong class="jxr_keyword">if</strong> (s.equalsIgnoreCase(<span class="jxr_string">"exit"</span>)) {
+<a class="jxr_linenumber" name="90" href="#90">90</a>              <strong class="jxr_keyword">final</strong> String line = stdin.readLine();
+<a class="jxr_linenumber" name="91" href="#91">91</a>              <strong class="jxr_keyword">if</strong> (line == <strong class="jxr_keyword">null</strong> || line.equalsIgnoreCase(<span class="jxr_string">"exit"</span>)) {
 <a class="jxr_linenumber" name="92" href="#92">92</a>                  System.out.println(<span class="jxr_string">"Exiting. Kill the application if it does not exit "</span>
 <a class="jxr_linenumber" name="93" href="#93">93</a>                      + <span class="jxr_string">"due to daemon threads."</span>);
 <a class="jxr_linenumber" name="94" href="#94">94</a>                  <strong class="jxr_keyword">return</strong>;
