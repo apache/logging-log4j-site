@@ -41,11 +41,11 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.ReflectionUtil;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> * This ContextSelector chooses a LoggerContext based upon the ClassLoader of the caller. This allows Loggers</em>
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment"> * assigned to static variables to be released along with the classes that own then. Other ContextSelectors</em>
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment"> * will generally cause Loggers associated with classes loaded from different ClassLoaders to be co-mingled.</em>
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * This is a problem if, for example, a web application is undeployed as some of the Loggers being released may be</em>
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * associated with a Class in a parent ClassLoader, which will generally have negative consequences.</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> * This ContextSelector chooses a LoggerContext based upon the ClassLoader of the caller. This allows Loggers assigned</em>
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment"> * to static variables to be released along with the classes that own then. Other ContextSelectors will generally cause</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment"> * Loggers associated with classes loaded from different ClassLoaders to be co-mingled. This is a problem if, for</em>
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * example, a web application is undeployed as some of the Loggers being released may be associated with a Class in a</em>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * parent ClassLoader, which will generally have negative consequences.</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> * The main downside to this ContextSelector is that Configuration is more challenging.</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment"> *</em>
@@ -53,12 +53,12 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/selector/ClassLoaderContextSelector.html">ClassLoaderContextSelector</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../../org/apache/logging/log4j/core/selector/ContextSelector.html">ContextSelector</a> {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> AtomicReference&lt;LoggerContext&gt; CONTEXT = <strong class="jxr_keyword">new</strong> AtomicReference&lt;&gt;();
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> AtomicReference&lt;LoggerContext&gt; DEFAULT_CONTEXT = <strong class="jxr_keyword">new</strong> AtomicReference&lt;&gt;();
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> StatusLogger LOGGER = StatusLogger.getLogger();
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> ConcurrentMap&lt;String, AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt;&gt; CONTEXT_MAP =
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>          <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>              <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      @Override
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> getContext(<strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> ClassLoader loader, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> currentContext) {
@@ -67,7 +67,7 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      @Override
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> getContext(<strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> ClassLoader loader, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> currentContext,
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>                                      <strong class="jxr_keyword">final</strong> URI configLocation) {
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>              <strong class="jxr_keyword">final</strong> URI configLocation) {
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">if</strong> (currentContext) {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>              <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx = ContextAnchor.THREAD_CONTEXT.get();
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>              <strong class="jxr_keyword">if</strong> (ctx != <strong class="jxr_keyword">null</strong>) {
@@ -150,46 +150,52 @@
 <a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_comment">                    } */</em>
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>                 }
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>             }
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>             <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a>(name, <strong class="jxr_keyword">null</strong>, configLocation);
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>             <strong class="jxr_keyword">final</strong> AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt; r =
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>                 <strong class="jxr_keyword">new</strong> AtomicReference&lt;&gt;();
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>             r.set(<strong class="jxr_keyword">new</strong> WeakReference&lt;&gt;(ctx));
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>             CONTEXT_MAP.putIfAbsent(name, r);
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>             ctx = CONTEXT_MAP.get(name).get().get();
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>             <strong class="jxr_keyword">return</strong> ctx;
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         }
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">final</strong> WeakReference&lt;LoggerContext&gt; weakRef = ref.get();
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx = weakRef.get();
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>         <strong class="jxr_keyword">if</strong> (ctx != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>             <strong class="jxr_keyword">if</strong> (ctx.getConfigLocation() == <strong class="jxr_keyword">null</strong> &amp;&amp; configLocation != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 LOGGER.debug(<span class="jxr_string">"Setting configuration to {}"</span>, configLocation);
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>                 ctx.setConfigLocation(configLocation);
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (ctx.getConfigLocation() != <strong class="jxr_keyword">null</strong> &amp;&amp; configLocation != <strong class="jxr_keyword">null</strong> &amp;&amp;
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>                 !ctx.getConfigLocation().equals(configLocation)) {
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>                 LOGGER.warn(<span class="jxr_string">"locateContext called with URI {}. Existing LoggerContext has URI {}"</span>, configLocation,
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>                     ctx.getConfigLocation());
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>             }
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>             <strong class="jxr_keyword">return</strong> ctx;
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>         }
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>         ctx = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a>(name, <strong class="jxr_keyword">null</strong>, configLocation);
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         ref.compareAndSet(weakRef, <strong class="jxr_keyword">new</strong> WeakReference&lt;&gt;(ctx));
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">return</strong> ctx;
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>     }
-<a class="jxr_linenumber" name="L170" href="#L170">170</a> 
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>     <strong class="jxr_keyword">private</strong> String toContextMapKey(<strong class="jxr_keyword">final</strong> ClassLoader loader) {
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>         <strong class="jxr_keyword">return</strong> String.valueOf(System.identityHashCode(loader));
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>     }
-<a class="jxr_linenumber" name="L174" href="#L174">174</a> 
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> getDefault() {
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx = CONTEXT.get();
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">if</strong> (ctx != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>             <strong class="jxr_keyword">return</strong> ctx;
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>         }
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>         CONTEXT.compareAndSet(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a>(<span class="jxr_string">"Default"</span>));
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>         <strong class="jxr_keyword">return</strong> CONTEXT.get();
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>     }
-<a class="jxr_linenumber" name="L183" href="#L183">183</a> 
-<a class="jxr_linenumber" name="L184" href="#L184">184</a> }
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>             <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx = createContext(name, configLocation);
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>             <strong class="jxr_keyword">final</strong> AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt; r = <strong class="jxr_keyword">new</strong> AtomicReference&lt;&gt;();
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>             r.set(<strong class="jxr_keyword">new</strong> WeakReference&lt;&gt;(ctx));
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>             CONTEXT_MAP.putIfAbsent(name, r);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>             ctx = CONTEXT_MAP.get(name).get().get();
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>             <strong class="jxr_keyword">return</strong> ctx;
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         }
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">final</strong> WeakReference&lt;LoggerContext&gt; weakRef = ref.get();
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx = weakRef.get();
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">if</strong> (ctx != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">if</strong> (ctx.getConfigLocation() == <strong class="jxr_keyword">null</strong> &amp;&amp; configLocation != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>                 LOGGER.debug(<span class="jxr_string">"Setting configuration to {}"</span>, configLocation);
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 ctx.setConfigLocation(configLocation);
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (ctx.getConfigLocation() != <strong class="jxr_keyword">null</strong> &amp;&amp; configLocation != <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>                     &amp;&amp; !ctx.getConfigLocation().equals(configLocation)) {
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>                 LOGGER.warn(<span class="jxr_string">"locateContext called with URI {}. Existing LoggerContext has URI {}"</span>, configLocation,
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>                         ctx.getConfigLocation());
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>             }
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>             <strong class="jxr_keyword">return</strong> ctx;
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>         }
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         ctx = createContext(name, configLocation);
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>         ref.compareAndSet(weakRef, <strong class="jxr_keyword">new</strong> WeakReference&lt;&gt;(ctx));
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">return</strong> ctx;
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>     }
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> 
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> createContext(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> URI configLocation) {
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a>(name, <strong class="jxr_keyword">null</strong>, configLocation);
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>     }
+<a class="jxr_linenumber" name="L173" href="#L173">173</a> 
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>     <strong class="jxr_keyword">protected</strong> String toContextMapKey(<strong class="jxr_keyword">final</strong> ClassLoader loader) {
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         <strong class="jxr_keyword">return</strong> Integer.toHexString(System.identityHashCode(loader));
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>     }
+<a class="jxr_linenumber" name="L177" href="#L177">177</a> 
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> getDefault() {
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LoggerContext.html">LoggerContext</a> ctx = DEFAULT_CONTEXT.get();
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         <strong class="jxr_keyword">if</strong> (ctx != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>             <strong class="jxr_keyword">return</strong> ctx;
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         }
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>         DEFAULT_CONTEXT.compareAndSet(<strong class="jxr_keyword">null</strong>, createContext(defaultContextName(), <strong class="jxr_keyword">null</strong>));
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>         <strong class="jxr_keyword">return</strong> DEFAULT_CONTEXT.get();
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     }
+<a class="jxr_linenumber" name="L186" href="#L186">186</a> 
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>     <strong class="jxr_keyword">protected</strong> String defaultContextName() {
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>         <strong class="jxr_keyword">return</strong> <span class="jxr_string">"Default"</span>;
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>     }
+<a class="jxr_linenumber" name="L190" href="#L190">190</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>

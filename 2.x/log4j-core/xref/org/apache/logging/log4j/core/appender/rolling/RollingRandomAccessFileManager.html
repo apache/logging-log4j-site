@@ -80,8 +80,8 @@
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>              <em class="jxr_comment">// write to the file, not to the buffer: the buffer may not be empty</em>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>              randomAccessFile.write(header, 0, header.length);
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioe) {
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>              LOGGER.error(<span class="jxr_string">"Unable to write header"</span>, ioe);
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException e) {
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>              logError(<span class="jxr_string">"unable to write header"</span>, e);
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          }
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  
@@ -147,8 +147,8 @@
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>         flush();
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>             randomAccessFile.close();
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ex) {
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>             LOGGER.error(<span class="jxr_string">"Unable to close RandomAccessFile "</span> + getName() + <span class="jxr_string">". "</span> + ex);
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException e) {
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>             logError(<span class="jxr_string">"unable to close RandomAccessFile"</span>, e);
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>         }
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>     }
 <a class="jxr_linenumber" name="L146" href="#L146">146</a> 
@@ -176,7 +176,7 @@
 <a class="jxr_linenumber" name="L168" href="#L168">168</a> <em class="jxr_javadoccomment">         * @return a RollingFileManager.</em>
 <a class="jxr_linenumber" name="L169" href="#L169">169</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>         @Override
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingRandomAccessFileManager.html">RollingRandomAccessFileManager</a> createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a> data) {
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingRandomAccessFileManager.html">RollingRandomAccessFileManager</a> createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a> data) {
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>             <strong class="jxr_keyword">final</strong> File file = <strong class="jxr_keyword">new</strong> File(name);
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>             <strong class="jxr_keyword">final</strong> File parent = file.getParentFile();
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>             <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">null</strong> != parent &amp;&amp; !parent.exists()) {
@@ -221,7 +221,7 @@
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L214" href="#L214">214</a> <em class="jxr_javadoccomment">     * Factory data.</em>
 <a class="jxr_linenumber" name="L215" href="#L215">215</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a> {
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a> {
 <a class="jxr_linenumber" name="L217" href="#L217">217</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String pattern;
 <a class="jxr_linenumber" name="L218" href="#L218">218</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> append;
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush;
@@ -243,7 +243,7 @@
 <a class="jxr_linenumber" name="L235" href="#L235">235</a> <em class="jxr_javadoccomment">         * @param advertiseURI</em>
 <a class="jxr_linenumber" name="L236" href="#L236">236</a> <em class="jxr_javadoccomment">         * @param layout</em>
 <a class="jxr_linenumber" name="L237" href="#L237">237</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/RandomAccessFileManager.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> String pattern, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> append, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush,
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a>(<strong class="jxr_keyword">final</strong> String pattern, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> append, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush,
 <a class="jxr_linenumber" name="L239" href="#L239">239</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/TriggeringPolicy.html">TriggeringPolicy</a> policy, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RolloverStrategy.html">RolloverStrategy</a> strategy,
 <a class="jxr_linenumber" name="L240" href="#L240">240</a>                 <strong class="jxr_keyword">final</strong> String advertiseURI, <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout) {
 <a class="jxr_linenumber" name="L241" href="#L241">241</a>             <strong class="jxr_keyword">this</strong>.pattern = pattern;
@@ -255,9 +255,26 @@
 <a class="jxr_linenumber" name="L247" href="#L247">247</a>             <strong class="jxr_keyword">this</strong>.advertiseURI = advertiseURI;
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>             <strong class="jxr_keyword">this</strong>.layout = layout;
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>         }
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>     }
-<a class="jxr_linenumber" name="L251" href="#L251">251</a> 
-<a class="jxr_linenumber" name="L252" href="#L252">252</a> }
+<a class="jxr_linenumber" name="L250" href="#L250">250</a> 
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/TriggeringPolicy.html">TriggeringPolicy</a> getTriggeringPolicy()
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>         {
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.policy;
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>         }
+<a class="jxr_linenumber" name="L255" href="#L255">255</a> 
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RolloverStrategy.html">RolloverStrategy</a> getRolloverStrategy()
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>         {
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.strategy;
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>         }
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>     }
+<a class="jxr_linenumber" name="L261" href="#L261">261</a> 
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>     @Override
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> updateData(<strong class="jxr_keyword">final</strong> Object data)
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>     {
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/WriterAppender.html">FactoryData</a> factoryData = (FactoryData) data;
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>         setRolloverStrategy(factoryData.getRolloverStrategy());
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>         setTriggeringPolicy(factoryData.getTriggeringPolicy());
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>     }
+<a class="jxr_linenumber" name="L269" href="#L269">269</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>

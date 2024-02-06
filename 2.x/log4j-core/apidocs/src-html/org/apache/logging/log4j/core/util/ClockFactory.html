@@ -73,25 +73,25 @@
 <span class="sourceLineNo">065</span>    private static Clock createClock() {<a name="line.65"></a>
 <span class="sourceLineNo">066</span>        final String userRequest = PropertiesUtil.getProperties().getStringProperty(PROPERTY_NAME);<a name="line.66"></a>
 <span class="sourceLineNo">067</span>        if (userRequest == null || "SystemClock".equals(userRequest)) {<a name="line.67"></a>
-<span class="sourceLineNo">068</span>            LOGGER.debug("Using default SystemClock for timestamps");<a name="line.68"></a>
+<span class="sourceLineNo">068</span>            LOGGER.trace("Using default SystemClock for timestamps.");<a name="line.68"></a>
 <span class="sourceLineNo">069</span>            return new SystemClock();<a name="line.69"></a>
 <span class="sourceLineNo">070</span>        }<a name="line.70"></a>
 <span class="sourceLineNo">071</span>        if (CachedClock.class.getName().equals(userRequest)<a name="line.71"></a>
 <span class="sourceLineNo">072</span>                || "CachedClock".equals(userRequest)) {<a name="line.72"></a>
-<span class="sourceLineNo">073</span>            LOGGER.debug("Using specified CachedClock for timestamps");<a name="line.73"></a>
+<span class="sourceLineNo">073</span>            LOGGER.trace("Using specified CachedClock for timestamps.");<a name="line.73"></a>
 <span class="sourceLineNo">074</span>            return CachedClock.instance();<a name="line.74"></a>
 <span class="sourceLineNo">075</span>        }<a name="line.75"></a>
 <span class="sourceLineNo">076</span>        if (CoarseCachedClock.class.getName().equals(userRequest)<a name="line.76"></a>
 <span class="sourceLineNo">077</span>                || "CoarseCachedClock".equals(userRequest)) {<a name="line.77"></a>
-<span class="sourceLineNo">078</span>            LOGGER.debug("Using specified CoarseCachedClock for timestamps");<a name="line.78"></a>
+<span class="sourceLineNo">078</span>            LOGGER.trace("Using specified CoarseCachedClock for timestamps.");<a name="line.78"></a>
 <span class="sourceLineNo">079</span>            return CoarseCachedClock.instance();<a name="line.79"></a>
 <span class="sourceLineNo">080</span>        }<a name="line.80"></a>
 <span class="sourceLineNo">081</span>        try {<a name="line.81"></a>
 <span class="sourceLineNo">082</span>            final Clock result = Loader.newCheckedInstanceOf(userRequest, Clock.class);<a name="line.82"></a>
-<span class="sourceLineNo">083</span>            LOGGER.debug("Using {} for timestamps", result.getClass().getName());<a name="line.83"></a>
+<span class="sourceLineNo">083</span>            LOGGER.trace("Using {} for timestamps.", result.getClass().getName());<a name="line.83"></a>
 <span class="sourceLineNo">084</span>            return result;<a name="line.84"></a>
 <span class="sourceLineNo">085</span>        } catch (final Exception e) {<a name="line.85"></a>
-<span class="sourceLineNo">086</span>            final String fmt = "Could not create {}: {}, using default SystemClock for timestamps";<a name="line.86"></a>
+<span class="sourceLineNo">086</span>            final String fmt = "Could not create {}: {}, using default SystemClock for timestamps.";<a name="line.86"></a>
 <span class="sourceLineNo">087</span>            LOGGER.error(fmt, userRequest, e);<a name="line.87"></a>
 <span class="sourceLineNo">088</span>            return new SystemClock();<a name="line.88"></a>
 <span class="sourceLineNo">089</span>        }<a name="line.89"></a>

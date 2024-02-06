@@ -37,14 +37,14 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  @Plugin(name = <span class="jxr_string">"Policies"</span>, category = <span class="jxr_string">"Core"</span>, printObject = <strong class="jxr_keyword">true</strong>)
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/CompositeTriggeringPolicy.html">CompositeTriggeringPolicy</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/TriggeringPolicy.html">TriggeringPolicy</a> {
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/TriggeringPolicy.html">TriggeringPolicy</a>[] policies;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/TriggeringPolicy.html">TriggeringPolicy</a>[] triggeringPolicy;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/CompositeTriggeringPolicy.html">CompositeTriggeringPolicy</a>(<strong class="jxr_keyword">final</strong> TriggeringPolicy... policies) {
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>          <strong class="jxr_keyword">this</strong>.policies = policies;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>          <strong class="jxr_keyword">this</strong>.triggeringPolicy = policies;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      }
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/TriggeringPolicy.html">TriggeringPolicy</a>[] getTriggeringPolicies() {
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>          <strong class="jxr_keyword">return</strong> policies;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>          <strong class="jxr_keyword">return</strong> triggeringPolicy;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>      }
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      <em class="jxr_javadoccomment">/**</em>
@@ -53,7 +53,7 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      @Override
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initialize(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> manager) {
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> TriggeringPolicy policy : policies) {
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> TriggeringPolicy policy : triggeringPolicy) {
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>              policy.initialize(manager);
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>          }
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      }
@@ -65,7 +65,7 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      @Override
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isTriggeringEvent(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> TriggeringPolicy policy : policies) {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> TriggeringPolicy policy : triggeringPolicy) {
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">if</strong> (policy.isTriggeringEvent(event)) {
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>              }
@@ -86,7 +86,7 @@
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>      @Override
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">return</strong> <span class="jxr_string">"CompositeTriggeringPolicy(policies="</span> + Arrays.toString(policies) + <span class="jxr_string">")"</span>;
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">return</strong> <span class="jxr_string">"CompositeTriggeringPolicy(policies="</span> + Arrays.toString(triggeringPolicy) + <span class="jxr_string">")"</span>;
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      }
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  }

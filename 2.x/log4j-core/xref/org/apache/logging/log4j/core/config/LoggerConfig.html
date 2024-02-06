@@ -146,7 +146,7 @@
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>             <strong class="jxr_keyword">this</strong>.properties = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>         }
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">this</strong>.reliabilityStrategy = config.getConfigurationMonitor().getReliabilityStrategy(<strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">this</strong>.reliabilityStrategy = config.getReliabilityStrategy(<strong class="jxr_keyword">this</strong>);
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>     }
 <a class="jxr_linenumber" name="L143" href="#L143">143</a> 
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>     @Override
@@ -441,38 +441,41 @@
 <a class="jxr_linenumber" name="L433" href="#L433">433</a>     <em class="jxr_comment">// for synchronous loggers, includeLocation default is TRUE.</em>
 <a class="jxr_linenumber" name="L434" href="#L434">434</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> includeLocation(<strong class="jxr_keyword">final</strong> String includeLocationConfigValue) {
 <a class="jxr_linenumber" name="L435" href="#L435">435</a>         <strong class="jxr_keyword">if</strong> (includeLocationConfigValue == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> sync = !AsyncLoggerContextSelector.<strong class="jxr_keyword">class</strong>.getName().equals(
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>                     PropertiesUtil.getProperties().getStringProperty(Constants.LOG4J_CONTEXT_SELECTOR));
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>             <strong class="jxr_keyword">return</strong> sync;
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>         }
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>         <strong class="jxr_keyword">return</strong> Boolean.parseBoolean(includeLocationConfigValue);
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>     }
-<a class="jxr_linenumber" name="L442" href="#L442">442</a> 
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L444" href="#L444">444</a> <em class="jxr_javadoccomment">     * The root Logger.</em>
-<a class="jxr_linenumber" name="L445" href="#L445">445</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>     @Plugin(name = ROOT, category = <span class="jxr_string">"Core"</span>, printObject = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLoggerConfig.html">RootLogger</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> {
-<a class="jxr_linenumber" name="L448" href="#L448">448</a> 
-<a class="jxr_linenumber" name="L449" href="#L449">449</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 1L;
-<a class="jxr_linenumber" name="L450" href="#L450">450</a> 
-<a class="jxr_linenumber" name="L451" href="#L451">451</a>         @PluginFactory
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> createLogger(@PluginAttribute(<span class="jxr_string">"additivity"</span>) <strong class="jxr_keyword">final</strong> String additivity,
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>                 @PluginAttribute(<span class="jxr_string">"level"</span>) <strong class="jxr_keyword">final</strong> Level level,
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>                 @PluginAttribute(<span class="jxr_string">"includeLocation"</span>) <strong class="jxr_keyword">final</strong> String includeLocation,
-<a class="jxr_linenumber" name="L455" href="#L455">455</a>                 @PluginElement(<span class="jxr_string">"AppenderRef"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/AppenderRef.html">AppenderRef</a>[] refs,
-<a class="jxr_linenumber" name="L456" href="#L456">456</a>                 @PluginElement(<span class="jxr_string">"Properties"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Property.html">Property</a>[] properties,
-<a class="jxr_linenumber" name="L457" href="#L457">457</a>                 @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, @PluginElement(<span class="jxr_string">"Filter"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter) {
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>             <strong class="jxr_keyword">final</strong> List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>             <strong class="jxr_keyword">final</strong> Level actualLevel = level == <strong class="jxr_keyword">null</strong> ? Level.ERROR : level;
-<a class="jxr_linenumber" name="L460" href="#L460">460</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> additive = Booleans.parseBoolean(additivity, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L461" href="#L461">461</a> 
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a>(LogManager.ROOT_LOGGER_NAME, appenderRefs, filter, actualLevel, additive,
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>                     properties, config, includeLocation(includeLocation));
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>         }
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>     }
-<a class="jxr_linenumber" name="L466" href="#L466">466</a> 
-<a class="jxr_linenumber" name="L467" href="#L467">467</a> }
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> sync = !AsyncLoggerContextSelector.isSelected();
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>             <strong class="jxr_keyword">return</strong> sync;
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>         }
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>         <strong class="jxr_keyword">return</strong> Boolean.parseBoolean(includeLocationConfigValue);
+<a class="jxr_linenumber" name="L440" href="#L440">440</a>     }
+<a class="jxr_linenumber" name="L441" href="#L441">441</a> 
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L443" href="#L443">443</a> <em class="jxr_javadoccomment">     * The root Logger.</em>
+<a class="jxr_linenumber" name="L444" href="#L444">444</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>     @Plugin(name = ROOT, category = <span class="jxr_string">"Core"</span>, printObject = <strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLoggerConfig.html">RootLogger</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> {
+<a class="jxr_linenumber" name="L447" href="#L447">447</a> 
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 1L;
+<a class="jxr_linenumber" name="L449" href="#L449">449</a> 
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>         @PluginFactory
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> createLogger(
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>                 <em class="jxr_comment">// @formatter:off</em>
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>                 @PluginAttribute(<span class="jxr_string">"additivity"</span>) <strong class="jxr_keyword">final</strong> String additivity,
+<a class="jxr_linenumber" name="L454" href="#L454">454</a>                 @PluginAttribute(<span class="jxr_string">"level"</span>) <strong class="jxr_keyword">final</strong> Level level,
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>                 @PluginAttribute(<span class="jxr_string">"includeLocation"</span>) <strong class="jxr_keyword">final</strong> String includeLocation,
+<a class="jxr_linenumber" name="L456" href="#L456">456</a>                 @PluginElement(<span class="jxr_string">"AppenderRef"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/AppenderRef.html">AppenderRef</a>[] refs,
+<a class="jxr_linenumber" name="L457" href="#L457">457</a>                 @PluginElement(<span class="jxr_string">"Properties"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Property.html">Property</a>[] properties,
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>                 @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config, 
+<a class="jxr_linenumber" name="L459" href="#L459">459</a>                 @PluginElement(<span class="jxr_string">"Filter"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter) {
+<a class="jxr_linenumber" name="L460" href="#L460">460</a>                 <em class="jxr_comment">// @formatter:on</em>
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>             <strong class="jxr_keyword">final</strong> List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>             <strong class="jxr_keyword">final</strong> Level actualLevel = level == <strong class="jxr_keyword">null</strong> ? Level.ERROR : level;
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> additive = Booleans.parseBoolean(additivity, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L464" href="#L464">464</a> 
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a>(LogManager.ROOT_LOGGER_NAME, appenderRefs, filter, actualLevel, additive,
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>                     properties, config, includeLocation(includeLocation));
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>         }
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>     }
+<a class="jxr_linenumber" name="L469" href="#L469">469</a> 
+<a class="jxr_linenumber" name="L470" href="#L470">470</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
