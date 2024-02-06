@@ -1,29 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
-<duplication lines="13" tokens="142">
-<file line="70" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
-<file line="88" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
-<codefragment>
-<![CDATA[
-            for (Map.Entry<String, String> entry : rootNode.getAttributes().entrySet()) {
-                if ("status".equalsIgnoreCase(entry.getKey())) {
-                    status = Level.toLevel(entry.getValue().toUpperCase(), Level.OFF);
-                } else if ("verbose".equalsIgnoreCase(entry.getKey())) {
-                    verbose = Boolean.parseBoolean(entry.getValue());
-                } else if ("packages".equalsIgnoreCase(entry.getKey())) {
-                    String[] packages = entry.getValue().split(",");
-                    for (String p : packages) {
-                        PluginManager.addPackage(p);
-                    }
-                } else if ("name".equalsIgnoreCase(entry.getKey())) {
-                    setName(entry.getValue());
-                } else if ("monitorInterval".equalsIgnoreCase(entry.getKey())) {
-]]>
-</codefragment>
-</duplication>
 <duplication lines="23" tokens="133">
-<file line="150" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/layout/HTMLLayout.java"/>
-<file line="194" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/layout/XMLLayout.java"/>
+<file line="150" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/layout/HTMLLayout.java"/>
+<file line="194" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/layout/XMLLayout.java"/>
 <codefragment>
 <![CDATA[
     private void appendThrowableAsHTML(Throwable throwable, StringBuilder sbuf) {
@@ -53,8 +32,8 @@
 </codefragment>
 </duplication>
 <duplication lines="39" tokens="121">
-<file line="57" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/GZCompressAction.java"/>
-<file line="58" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/ZipCompressAction.java"/>
+<file line="57" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/GZCompressAction.java"/>
+<file line="58" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/ZipCompressAction.java"/>
 <codefragment>
 <![CDATA[
     public GZCompressAction(final File source, final File destination, final boolean deleteSource) {
@@ -99,9 +78,27 @@
 ]]>
 </codefragment>
 </duplication>
+<duplication lines="10" tokens="115">
+<file line="72" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
+<file line="90" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
+<codefragment>
+<![CDATA[
+            for (Map.Entry<String, String> entry : rootNode.getAttributes().entrySet()) {
+                if ("status".equalsIgnoreCase(entry.getKey())) {
+                    status = Level.toLevel(getSubst().replace(entry.getValue()).toUpperCase(), null);
+                    if (status == null) {
+                        status = Level.ERROR;
+                        messages.add("Invalid status specified: " + entry.getValue() + ". Defaulting to ERROR");
+                    }
+                } else if ("verbose".equalsIgnoreCase(entry.getKey())) {
+                    verbose = Boolean.parseBoolean(getSubst().replace(entry.getValue()));
+                } else if ("packages".equalsIgnoreCase(entry.getKey())) {
+]]>
+</codefragment>
+</duplication>
 <duplication lines="19" tokens="115">
-<file line="66" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java"/>
-<file line="67" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java"/>
+<file line="66" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java"/>
+<file line="67" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java"/>
 <codefragment>
 <![CDATA[
             String trace = t.getExtendedStackTrace();
@@ -127,9 +124,9 @@
 </codefragment>
 </duplication>
 <duplication lines="27" tokens="109">
-<file line="87" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/filter/BurstFilter.java"/>
-<file line="55" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/filter/DynamicThresholdFilter.java"/>
-<file line="44" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/filter/ThresholdFilter.java"/>
+<file line="87" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/filter/BurstFilter.java"/>
+<file line="55" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/filter/DynamicThresholdFilter.java"/>
+<file line="44" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/filter/ThresholdFilter.java"/>
 <codefragment>
 <![CDATA[
     }
@@ -159,6 +156,33 @@
      * @return The onMatch value if the filter passes, onMismatch otherwise.
      */
     private Result filter(Level level) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="19" tokens="105">
+<file line="99" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
+<file line="120" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha2/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
+<codefragment>
+<![CDATA[
+                StatusListener listener = statusIter.next();
+                if (listener instanceof StatusConsoleListener) {
+                    found = true;
+                    ((StatusConsoleListener) listener).setLevel(status);
+                    if (!verbose) {
+                        ((StatusConsoleListener) listener).setFilters(VERBOSE_CLASSES);
+                    }
+                }
+            }
+            if (!found && status != Level.OFF) {
+                StatusConsoleListener listener = new StatusConsoleListener(status);
+                if (!verbose) {
+                    listener.setFilters(VERBOSE_CLASSES);
+                }
+                ((StatusLogger) LOGGER).registerListener(listener);
+                for (String msg : messages) {
+                    LOGGER.error(msg);
+                }
+            }
 ]]>
 </codefragment>
 </duplication>

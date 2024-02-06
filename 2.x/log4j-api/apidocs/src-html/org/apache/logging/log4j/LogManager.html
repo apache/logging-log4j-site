@@ -133,86 +133,95 @@
 <FONT color="green">130</FONT>        }<a name="line.130"></a>
 <FONT color="green">131</FONT>    <a name="line.131"></a>
 <FONT color="green">132</FONT>        /**<a name="line.132"></a>
-<FONT color="green">133</FONT>         * Return a Logger with the specified name.<a name="line.133"></a>
-<FONT color="green">134</FONT>         *<a name="line.134"></a>
-<FONT color="green">135</FONT>         * @param fqcn The fully qualified class name of the class that this method is a member of.<a name="line.135"></a>
-<FONT color="green">136</FONT>         * @param name The logger name.<a name="line.136"></a>
-<FONT color="green">137</FONT>         * @return The Logger.<a name="line.137"></a>
-<FONT color="green">138</FONT>         */<a name="line.138"></a>
-<FONT color="green">139</FONT>        protected static Logger getLogger(String fqcn, String name) {<a name="line.139"></a>
+<FONT color="green">133</FONT>         * Return a Logger using the fully qualified name of the Class as the Logger name.<a name="line.133"></a>
+<FONT color="green">134</FONT>         * @param clazz The Class whose name should be used as the Logger name.<a name="line.134"></a>
+<FONT color="green">135</FONT>         * @return The Logger.<a name="line.135"></a>
+<FONT color="green">136</FONT>         */<a name="line.136"></a>
+<FONT color="green">137</FONT>        public static Logger getLogger(Class clazz) {<a name="line.137"></a>
+<FONT color="green">138</FONT>            return factory.getContext(LogManager.class.getName(), false).getLogger(clazz.getName());<a name="line.138"></a>
+<FONT color="green">139</FONT>        }<a name="line.139"></a>
 <FONT color="green">140</FONT>    <a name="line.140"></a>
-<FONT color="green">141</FONT>            return factory.getContext(fqcn, false).getLogger(name);<a name="line.141"></a>
-<FONT color="green">142</FONT>        }<a name="line.142"></a>
-<FONT color="green">143</FONT>    <a name="line.143"></a>
-<FONT color="green">144</FONT>        /**<a name="line.144"></a>
-<FONT color="green">145</FONT>         * Returns the current LoggerContext.<a name="line.145"></a>
-<FONT color="green">146</FONT>         * &lt;p&gt;<a name="line.146"></a>
-<FONT color="green">147</FONT>         * WARNING - The LoggerContext returned by this method may not be the LoggerContext used to create a Logger<a name="line.147"></a>
-<FONT color="green">148</FONT>         * for the calling class.<a name="line.148"></a>
-<FONT color="green">149</FONT>         * @return  The current LoggerContext.<a name="line.149"></a>
-<FONT color="green">150</FONT>         */<a name="line.150"></a>
-<FONT color="green">151</FONT>        public static LoggerContext getContext() {<a name="line.151"></a>
-<FONT color="green">152</FONT>            return factory.getContext(LogManager.class.getName(), true);<a name="line.152"></a>
-<FONT color="green">153</FONT>        }<a name="line.153"></a>
-<FONT color="green">154</FONT>    <a name="line.154"></a>
-<FONT color="green">155</FONT>        /**<a name="line.155"></a>
-<FONT color="green">156</FONT>         * Returns a LoggerContext.<a name="line.156"></a>
-<FONT color="green">157</FONT>         *<a name="line.157"></a>
-<FONT color="green">158</FONT>         * @param currentContext if false the LoggerContext appropriate for the caller of this method is returned. For<a name="line.158"></a>
-<FONT color="green">159</FONT>         * example, in a web application if the caller is a class in WEB-INF/lib then one LoggerContext may be<a name="line.159"></a>
-<FONT color="green">160</FONT>         * returned and if the caller is a class in the container's classpath then a different LoggerContext may be<a name="line.160"></a>
-<FONT color="green">161</FONT>         * returned. If true then only a single LoggerContext will be returned.<a name="line.161"></a>
-<FONT color="green">162</FONT>         * @return a LoggerContext.<a name="line.162"></a>
-<FONT color="green">163</FONT>         */<a name="line.163"></a>
-<FONT color="green">164</FONT>        public static LoggerContext getContext(boolean currentContext) {<a name="line.164"></a>
-<FONT color="green">165</FONT>            return factory.getContext(LogManager.class.getName(), currentContext);<a name="line.165"></a>
-<FONT color="green">166</FONT>        }<a name="line.166"></a>
-<FONT color="green">167</FONT>    <a name="line.167"></a>
-<FONT color="green">168</FONT>        /**<a name="line.168"></a>
-<FONT color="green">169</FONT>         * Returns a LoggerContext<a name="line.169"></a>
-<FONT color="green">170</FONT>         * @param fqcn The fully qualified class name of the Class that this method is a member of.<a name="line.170"></a>
-<FONT color="green">171</FONT>         * @param currentContext if false the LoggerContext appropriate for the caller of this method is returned. For<a name="line.171"></a>
-<FONT color="green">172</FONT>         * example, in a web application if the caller is a class in WEB-INF/lib then one LoggerContext may be<a name="line.172"></a>
-<FONT color="green">173</FONT>         * returned and if the caller is a class in the container's classpath then a different LoggerContext may be<a name="line.173"></a>
-<FONT color="green">174</FONT>         * returned. If true then only a single LoggerContext will be returned.<a name="line.174"></a>
-<FONT color="green">175</FONT>         * @return a LoggerContext.<a name="line.175"></a>
-<FONT color="green">176</FONT>         */<a name="line.176"></a>
-<FONT color="green">177</FONT>        protected static LoggerContext getContext(String fqcn, boolean currentContext) {<a name="line.177"></a>
-<FONT color="green">178</FONT>            return factory.getContext(fqcn, currentContext);<a name="line.178"></a>
-<FONT color="green">179</FONT>        }<a name="line.179"></a>
-<FONT color="green">180</FONT>    <a name="line.180"></a>
-<FONT color="green">181</FONT>        private static ClassLoader findClassLoader() {<a name="line.181"></a>
-<FONT color="green">182</FONT>            ClassLoader cl;<a name="line.182"></a>
-<FONT color="green">183</FONT>            if (System.getSecurityManager() == null) {<a name="line.183"></a>
-<FONT color="green">184</FONT>                cl = Thread.currentThread().getContextClassLoader();<a name="line.184"></a>
-<FONT color="green">185</FONT>            } else {<a name="line.185"></a>
-<FONT color="green">186</FONT>                cl = (ClassLoader) java.security.AccessController.doPrivileged(<a name="line.186"></a>
-<FONT color="green">187</FONT>                    new java.security.PrivilegedAction() {<a name="line.187"></a>
-<FONT color="green">188</FONT>                        public Object run() {<a name="line.188"></a>
-<FONT color="green">189</FONT>                            return Thread.currentThread().getContextClassLoader();<a name="line.189"></a>
-<FONT color="green">190</FONT>                        }<a name="line.190"></a>
-<FONT color="green">191</FONT>                    }<a name="line.191"></a>
-<FONT color="green">192</FONT>                );<a name="line.192"></a>
-<FONT color="green">193</FONT>            }<a name="line.193"></a>
-<FONT color="green">194</FONT>            if (cl == null) {<a name="line.194"></a>
-<FONT color="green">195</FONT>                cl = LogManager.class.getClassLoader();<a name="line.195"></a>
-<FONT color="green">196</FONT>            }<a name="line.196"></a>
-<FONT color="green">197</FONT>    <a name="line.197"></a>
-<FONT color="green">198</FONT>            return cl;<a name="line.198"></a>
-<FONT color="green">199</FONT>        }<a name="line.199"></a>
-<FONT color="green">200</FONT>    <a name="line.200"></a>
-<FONT color="green">201</FONT>        private static boolean validVersion(String version) {<a name="line.201"></a>
-<FONT color="green">202</FONT>            for (String v : COMPATIBLE_API_VERSIONS) {<a name="line.202"></a>
-<FONT color="green">203</FONT>                if (version.startsWith(v)) {<a name="line.203"></a>
-<FONT color="green">204</FONT>                    return true;<a name="line.204"></a>
-<FONT color="green">205</FONT>                }<a name="line.205"></a>
-<FONT color="green">206</FONT>            }<a name="line.206"></a>
-<FONT color="green">207</FONT>            return false;<a name="line.207"></a>
+<FONT color="green">141</FONT>        /**<a name="line.141"></a>
+<FONT color="green">142</FONT>         * Return a Logger with the specified name.<a name="line.142"></a>
+<FONT color="green">143</FONT>         *<a name="line.143"></a>
+<FONT color="green">144</FONT>         * @param fqcn The fully qualified class name of the class that this method is a member of.<a name="line.144"></a>
+<FONT color="green">145</FONT>         * @param name The logger name.<a name="line.145"></a>
+<FONT color="green">146</FONT>         * @return The Logger.<a name="line.146"></a>
+<FONT color="green">147</FONT>         */<a name="line.147"></a>
+<FONT color="green">148</FONT>        protected static Logger getLogger(String fqcn, String name) {<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>            return factory.getContext(fqcn, false).getLogger(name);<a name="line.150"></a>
+<FONT color="green">151</FONT>        }<a name="line.151"></a>
+<FONT color="green">152</FONT>    <a name="line.152"></a>
+<FONT color="green">153</FONT>        /**<a name="line.153"></a>
+<FONT color="green">154</FONT>         * Returns the current LoggerContext.<a name="line.154"></a>
+<FONT color="green">155</FONT>         * &lt;p&gt;<a name="line.155"></a>
+<FONT color="green">156</FONT>         * WARNING - The LoggerContext returned by this method may not be the LoggerContext used to create a Logger<a name="line.156"></a>
+<FONT color="green">157</FONT>         * for the calling class.<a name="line.157"></a>
+<FONT color="green">158</FONT>         * @return  The current LoggerContext.<a name="line.158"></a>
+<FONT color="green">159</FONT>         */<a name="line.159"></a>
+<FONT color="green">160</FONT>        public static LoggerContext getContext() {<a name="line.160"></a>
+<FONT color="green">161</FONT>            return factory.getContext(LogManager.class.getName(), true);<a name="line.161"></a>
+<FONT color="green">162</FONT>        }<a name="line.162"></a>
+<FONT color="green">163</FONT>    <a name="line.163"></a>
+<FONT color="green">164</FONT>        /**<a name="line.164"></a>
+<FONT color="green">165</FONT>         * Returns a LoggerContext.<a name="line.165"></a>
+<FONT color="green">166</FONT>         *<a name="line.166"></a>
+<FONT color="green">167</FONT>         * @param currentContext if false the LoggerContext appropriate for the caller of this method is returned. For<a name="line.167"></a>
+<FONT color="green">168</FONT>         * example, in a web application if the caller is a class in WEB-INF/lib then one LoggerContext may be<a name="line.168"></a>
+<FONT color="green">169</FONT>         * returned and if the caller is a class in the container's classpath then a different LoggerContext may be<a name="line.169"></a>
+<FONT color="green">170</FONT>         * returned. If true then only a single LoggerContext will be returned.<a name="line.170"></a>
+<FONT color="green">171</FONT>         * @return a LoggerContext.<a name="line.171"></a>
+<FONT color="green">172</FONT>         */<a name="line.172"></a>
+<FONT color="green">173</FONT>        public static LoggerContext getContext(boolean currentContext) {<a name="line.173"></a>
+<FONT color="green">174</FONT>            return factory.getContext(LogManager.class.getName(), currentContext);<a name="line.174"></a>
+<FONT color="green">175</FONT>        }<a name="line.175"></a>
+<FONT color="green">176</FONT>    <a name="line.176"></a>
+<FONT color="green">177</FONT>        /**<a name="line.177"></a>
+<FONT color="green">178</FONT>         * Returns a LoggerContext<a name="line.178"></a>
+<FONT color="green">179</FONT>         * @param fqcn The fully qualified class name of the Class that this method is a member of.<a name="line.179"></a>
+<FONT color="green">180</FONT>         * @param currentContext if false the LoggerContext appropriate for the caller of this method is returned. For<a name="line.180"></a>
+<FONT color="green">181</FONT>         * example, in a web application if the caller is a class in WEB-INF/lib then one LoggerContext may be<a name="line.181"></a>
+<FONT color="green">182</FONT>         * returned and if the caller is a class in the container's classpath then a different LoggerContext may be<a name="line.182"></a>
+<FONT color="green">183</FONT>         * returned. If true then only a single LoggerContext will be returned.<a name="line.183"></a>
+<FONT color="green">184</FONT>         * @return a LoggerContext.<a name="line.184"></a>
+<FONT color="green">185</FONT>         */<a name="line.185"></a>
+<FONT color="green">186</FONT>        protected static LoggerContext getContext(String fqcn, boolean currentContext) {<a name="line.186"></a>
+<FONT color="green">187</FONT>            return factory.getContext(fqcn, currentContext);<a name="line.187"></a>
+<FONT color="green">188</FONT>        }<a name="line.188"></a>
+<FONT color="green">189</FONT>    <a name="line.189"></a>
+<FONT color="green">190</FONT>        private static ClassLoader findClassLoader() {<a name="line.190"></a>
+<FONT color="green">191</FONT>            ClassLoader cl;<a name="line.191"></a>
+<FONT color="green">192</FONT>            if (System.getSecurityManager() == null) {<a name="line.192"></a>
+<FONT color="green">193</FONT>                cl = Thread.currentThread().getContextClassLoader();<a name="line.193"></a>
+<FONT color="green">194</FONT>            } else {<a name="line.194"></a>
+<FONT color="green">195</FONT>                cl = (ClassLoader) java.security.AccessController.doPrivileged(<a name="line.195"></a>
+<FONT color="green">196</FONT>                    new java.security.PrivilegedAction() {<a name="line.196"></a>
+<FONT color="green">197</FONT>                        public Object run() {<a name="line.197"></a>
+<FONT color="green">198</FONT>                            return Thread.currentThread().getContextClassLoader();<a name="line.198"></a>
+<FONT color="green">199</FONT>                        }<a name="line.199"></a>
+<FONT color="green">200</FONT>                    }<a name="line.200"></a>
+<FONT color="green">201</FONT>                );<a name="line.201"></a>
+<FONT color="green">202</FONT>            }<a name="line.202"></a>
+<FONT color="green">203</FONT>            if (cl == null) {<a name="line.203"></a>
+<FONT color="green">204</FONT>                cl = LogManager.class.getClassLoader();<a name="line.204"></a>
+<FONT color="green">205</FONT>            }<a name="line.205"></a>
+<FONT color="green">206</FONT>    <a name="line.206"></a>
+<FONT color="green">207</FONT>            return cl;<a name="line.207"></a>
 <FONT color="green">208</FONT>        }<a name="line.208"></a>
 <FONT color="green">209</FONT>    <a name="line.209"></a>
-<FONT color="green">210</FONT>    <a name="line.210"></a>
-<FONT color="green">211</FONT>    <a name="line.211"></a>
-<FONT color="green">212</FONT>    }<a name="line.212"></a>
+<FONT color="green">210</FONT>        private static boolean validVersion(String version) {<a name="line.210"></a>
+<FONT color="green">211</FONT>            for (String v : COMPATIBLE_API_VERSIONS) {<a name="line.211"></a>
+<FONT color="green">212</FONT>                if (version.startsWith(v)) {<a name="line.212"></a>
+<FONT color="green">213</FONT>                    return true;<a name="line.213"></a>
+<FONT color="green">214</FONT>                }<a name="line.214"></a>
+<FONT color="green">215</FONT>            }<a name="line.215"></a>
+<FONT color="green">216</FONT>            return false;<a name="line.216"></a>
+<FONT color="green">217</FONT>        }<a name="line.217"></a>
+<FONT color="green">218</FONT>    <a name="line.218"></a>
+<FONT color="green">219</FONT>    <a name="line.219"></a>
+<FONT color="green">220</FONT>    <a name="line.220"></a>
+<FONT color="green">221</FONT>    }<a name="line.221"></a>
 
 
 

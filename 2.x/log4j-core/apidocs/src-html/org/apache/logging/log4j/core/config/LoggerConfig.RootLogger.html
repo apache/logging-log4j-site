@@ -363,33 +363,45 @@
 <FONT color="green">360</FONT>            }<a name="line.360"></a>
 <FONT color="green">361</FONT>    <a name="line.361"></a>
 <FONT color="green">362</FONT>            List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.362"></a>
-<FONT color="green">363</FONT>            Level level = loggerLevel == null ? Level.ERROR : Level.valueOf(loggerLevel.toUpperCase());<a name="line.363"></a>
-<FONT color="green">364</FONT>            String name = loggerName.equals("root") ? "" : loggerName;<a name="line.364"></a>
-<FONT color="green">365</FONT>            boolean additive = additivity == null ? true : Boolean.parseBoolean(additivity);<a name="line.365"></a>
-<FONT color="green">366</FONT>    <a name="line.366"></a>
-<FONT color="green">367</FONT>            return new LoggerConfig(name, appenderRefs, filter, level, additive);<a name="line.367"></a>
-<FONT color="green">368</FONT>        }<a name="line.368"></a>
-<FONT color="green">369</FONT>    <a name="line.369"></a>
-<FONT color="green">370</FONT>        /**<a name="line.370"></a>
-<FONT color="green">371</FONT>         * The root Logger.<a name="line.371"></a>
-<FONT color="green">372</FONT>         */<a name="line.372"></a>
-<FONT color="green">373</FONT>        @Plugin(name = "root", type = "Core", printObject = true)<a name="line.373"></a>
-<FONT color="green">374</FONT>        public static class RootLogger extends LoggerConfig {<a name="line.374"></a>
+<FONT color="green">363</FONT>            Level level;<a name="line.363"></a>
+<FONT color="green">364</FONT>            try {<a name="line.364"></a>
+<FONT color="green">365</FONT>                level = loggerLevel == null ? Level.ERROR : Level.valueOf(loggerLevel.toUpperCase());<a name="line.365"></a>
+<FONT color="green">366</FONT>            } catch (Exception ex) {<a name="line.366"></a>
+<FONT color="green">367</FONT>                LOGGER.error("Invalid Log level specified: {}. Defaulting to Error", loggerLevel);<a name="line.367"></a>
+<FONT color="green">368</FONT>                level = Level.ERROR;<a name="line.368"></a>
+<FONT color="green">369</FONT>            }<a name="line.369"></a>
+<FONT color="green">370</FONT>            String name = loggerName.equals("root") ? "" : loggerName;<a name="line.370"></a>
+<FONT color="green">371</FONT>            boolean additive = additivity == null ? true : Boolean.parseBoolean(additivity);<a name="line.371"></a>
+<FONT color="green">372</FONT>    <a name="line.372"></a>
+<FONT color="green">373</FONT>            return new LoggerConfig(name, appenderRefs, filter, level, additive);<a name="line.373"></a>
+<FONT color="green">374</FONT>        }<a name="line.374"></a>
 <FONT color="green">375</FONT>    <a name="line.375"></a>
-<FONT color="green">376</FONT>            @PluginFactory<a name="line.376"></a>
-<FONT color="green">377</FONT>            public static LoggerConfig createLogger(@PluginAttr("additivity") String additivity,<a name="line.377"></a>
-<FONT color="green">378</FONT>                                                @PluginAttr("level") String loggerLevel,<a name="line.378"></a>
-<FONT color="green">379</FONT>                                                @PluginElement("appender-ref") AppenderRef[] refs,<a name="line.379"></a>
-<FONT color="green">380</FONT>                                                @PluginElement("filters") Filter filter) {<a name="line.380"></a>
-<FONT color="green">381</FONT>                List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.381"></a>
-<FONT color="green">382</FONT>                Level level = loggerLevel == null ? Level.ERROR : Level.valueOf(loggerLevel.toUpperCase());<a name="line.382"></a>
-<FONT color="green">383</FONT>                boolean additive = additivity == null ? true : Boolean.parseBoolean(additivity);<a name="line.383"></a>
-<FONT color="green">384</FONT>    <a name="line.384"></a>
-<FONT color="green">385</FONT>                return new LoggerConfig(LogManager.ROOT_LOGGER_NAME, appenderRefs, filter, level, additive);<a name="line.385"></a>
-<FONT color="green">386</FONT>            }<a name="line.386"></a>
-<FONT color="green">387</FONT>        }<a name="line.387"></a>
-<FONT color="green">388</FONT>    <a name="line.388"></a>
-<FONT color="green">389</FONT>    }<a name="line.389"></a>
+<FONT color="green">376</FONT>        /**<a name="line.376"></a>
+<FONT color="green">377</FONT>         * The root Logger.<a name="line.377"></a>
+<FONT color="green">378</FONT>         */<a name="line.378"></a>
+<FONT color="green">379</FONT>        @Plugin(name = "root", type = "Core", printObject = true)<a name="line.379"></a>
+<FONT color="green">380</FONT>        public static class RootLogger extends LoggerConfig {<a name="line.380"></a>
+<FONT color="green">381</FONT>    <a name="line.381"></a>
+<FONT color="green">382</FONT>            @PluginFactory<a name="line.382"></a>
+<FONT color="green">383</FONT>            public static LoggerConfig createLogger(@PluginAttr("additivity") String additivity,<a name="line.383"></a>
+<FONT color="green">384</FONT>                                                @PluginAttr("level") String loggerLevel,<a name="line.384"></a>
+<FONT color="green">385</FONT>                                                @PluginElement("appender-ref") AppenderRef[] refs,<a name="line.385"></a>
+<FONT color="green">386</FONT>                                                @PluginElement("filters") Filter filter) {<a name="line.386"></a>
+<FONT color="green">387</FONT>                List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);<a name="line.387"></a>
+<FONT color="green">388</FONT>                Level level;<a name="line.388"></a>
+<FONT color="green">389</FONT>                try {<a name="line.389"></a>
+<FONT color="green">390</FONT>                    level = loggerLevel == null ? Level.ERROR : Level.valueOf(loggerLevel.toUpperCase());<a name="line.390"></a>
+<FONT color="green">391</FONT>                } catch (Exception ex) {<a name="line.391"></a>
+<FONT color="green">392</FONT>                    LOGGER.error("Invalid Log level specified: {}. Defaulting to Error", loggerLevel);<a name="line.392"></a>
+<FONT color="green">393</FONT>                    level = Level.ERROR;<a name="line.393"></a>
+<FONT color="green">394</FONT>                }<a name="line.394"></a>
+<FONT color="green">395</FONT>                boolean additive = additivity == null ? true : Boolean.parseBoolean(additivity);<a name="line.395"></a>
+<FONT color="green">396</FONT>    <a name="line.396"></a>
+<FONT color="green">397</FONT>                return new LoggerConfig(LogManager.ROOT_LOGGER_NAME, appenderRefs, filter, level, additive);<a name="line.397"></a>
+<FONT color="green">398</FONT>            }<a name="line.398"></a>
+<FONT color="green">399</FONT>        }<a name="line.399"></a>
+<FONT color="green">400</FONT>    <a name="line.400"></a>
+<FONT color="green">401</FONT>    }<a name="line.401"></a>
 
 
 

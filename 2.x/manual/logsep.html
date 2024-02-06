@@ -17,7 +17,7 @@
 
     
             <meta name="author" content="Ralph Goers" />
-                    <meta name="Date-Revision-yyyymmdd" content="20120729" />
+                    <meta name="Date-Revision-yyyymmdd" content="20120824" />
                 <meta http-equiv="Content-Language" content="en" />
                 </head>
         <body class="topBarDisabled">
@@ -43,8 +43,8 @@
         <ul class="breadcrumb">
                         
                         
-                            <li id="publishDate">Last Published: 2012-07-29</li>
-                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-alpha1</li>
+                            <li id="publishDate">Last Published: 2012-08-24</li>
+                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-alpha2</li>
                                     
                         
                         
@@ -200,7 +200,62 @@
     See the License for the specific language governing permissions and
     limitations under the License. -->
     
-      Log4J2
+      <div class="section"><h2>Logging Separation<a name="Logging_Separation"></a></h2>
+        <p>
+          There are many well known use cases where applications may share an environment with other applications
+          and each has a need to have its own, separate logging environment. This purpose of this section is to
+          discuss some of these cases and ways to accomplish this.
+        </p>
+        <a name="Use_Cases"></a>
+        <div class="section"><h3>Use Cases<a name="Use_Cases"></a></h3>
+          <p>
+            This section describes some of the use cases where Log4j could be used and what its desired behavior
+            might be.
+          </p>
+          <div class="section"><h4>Standalone Application<a name="Standalone_Application"></a></h4>
+            <p>
+              Standalone applications are usually relatively simple. They typically have one bundled executable
+              that requires only a single logging configuration.
+            </p>
+          </div><div class="section"><h4>Web Applications<a name="Web_Applications"></a></h4>
+            <p>
+              A typical web application will be packaged as a WAR file and will include all of its dependencies in
+              WEB-INF/lib and will have its configuration file located in the class path or in a location
+              configured in the web.xml.
+            </p>
+          </div><div class="section"><h4>Java EE Applications<a name="Java_EE_Applications"></a></h4>
+            <p>
+              A Java EE application will consist of one or more WAR files and possible some EJBs, typically all
+              packaged in an EAR file. Usually, it is desirable to have a single configuration that applies to
+              all the components in the EAR. The logging classes will generally be placed in a location shared
+              across all the components and the configuration needs to also be shareable.
+            </p>
+          </div><div class="section"><h4>&quot;Shared&quot; Web Applications and REST Service Containers<a name="aShared_Web_Applications_and_REST_Service_Containers"></a></h4>
+            <p>
+              In this scenario there are multiple WAR files deployed into a single container. Each of the applications
+              should use the same logging configuration and share the same logging implementation across each of the
+              web applications. When writing to files and streams each of the applications should share them to avoid
+              the issues that can occur when multiple components try to write to the same file(s) through different
+              File objects, channels, etc.
+            </p>
+        </div></div>
+        <a name="Approaches"></a>
+        <div class="section"><h3>Approaches<a name="Approaches"></a></h3>
+          <div class="section"><h4>The Simple Approach<a name="The_Simple_Approach"></a></h4>
+            <p>
+              The simplest approach for separating logging within applications is to package each application with
+              its own copy of Log4j and to use the BasicContextSelector. While this works for standalone applications
+              and may work for web applications and possibly Java EE applications, it does not work at all in the
+              last case.  However, when this approach does work it should be used as it is ultimately the simplest
+              and most straightforward way of implementing logging.
+            </p>
+
+          </div><div class="section"><h4>Using Context Selectors<a name="Using_Context_Selectors"></a></h4>
+            <p>
+
+            </p>
+        </div></div>
+      </div>
     
 
             </div>

@@ -15,7 +15,7 @@
     <script type="text/javascript" src="./js/apache-maven-fluido.min.js"></script>
 
     
-                    <meta name="Date-Revision-yyyymmdd" content="20120729" />
+                    <meta name="Date-Revision-yyyymmdd" content="20120824" />
                 <meta http-equiv="Content-Language" content="en" />
                 </head>
         <body class="topBarDisabled">
@@ -41,8 +41,8 @@
         <ul class="breadcrumb">
                         
                         
-                            <li id="publishDate">Last Published: 2012-07-29</li>
-                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-alpha1</li>
+                            <li id="publishDate">Last Published: 2012-08-24</li>
+                        <li class="divider">|</li> <li id="projectVersion">Version: 2.0-alpha2</li>
                                     
                         
                         
@@ -214,19 +214,7 @@
     
     <div id="bodyColumn"  class="span10" >
                                 
-            <div class="section"><h2>CPD Results<a name="CPD_Results"></a></h2><p>The following document contains the results of PMD's  <a class="externalLink" href="http://pmd.sourceforge.net/cpd.html">CPD</a> 4.3.</p></div><div class="section"><h2>Duplications<a name="Duplications"></a></h2><table border="0" class="table table-striped"><tr class="a"><th>File</th><th>Line</th></tr><tr class="b"><td>org/apache/logging/log4j/core/config/JSONConfiguration.java</td><td><a href="./xref/org/apache/logging/log4j/core/config/JSONConfiguration.html#70">70</a></td></tr><tr class="a"><td>org/apache/logging/log4j/core/config/XMLConfiguration.java</td><td><a href="./xref/org/apache/logging/log4j/core/config/XMLConfiguration.html#88">88</a></td></tr><tr class="b"><td colspan='2'><div><pre>            for (Map.Entry&lt;String, String&gt; entry : rootNode.getAttributes().entrySet()) {
-                if (&quot;status&quot;.equalsIgnoreCase(entry.getKey())) {
-                    status = Level.toLevel(entry.getValue().toUpperCase(), Level.OFF);
-                } else if (&quot;verbose&quot;.equalsIgnoreCase(entry.getKey())) {
-                    verbose = Boolean.parseBoolean(entry.getValue());
-                } else if (&quot;packages&quot;.equalsIgnoreCase(entry.getKey())) {
-                    String[] packages = entry.getValue().split(&quot;,&quot;);
-                    for (String p : packages) {
-                        PluginManager.addPackage(p);
-                    }
-                } else if (&quot;name&quot;.equalsIgnoreCase(entry.getKey())) {
-                    setName(entry.getValue());
-                } else if (&quot;monitorInterval&quot;.equalsIgnoreCase(entry.getKey())) {</pre></div></td></tr></table><table border="0" class="table table-striped"><tr class="a"><th>File</th><th>Line</th></tr><tr class="b"><td>org/apache/logging/log4j/core/layout/HTMLLayout.java</td><td><a href="./xref/org/apache/logging/log4j/core/layout/HTMLLayout.html#150">150</a></td></tr><tr class="a"><td>org/apache/logging/log4j/core/layout/XMLLayout.java</td><td><a href="./xref/org/apache/logging/log4j/core/layout/XMLLayout.html#194">194</a></td></tr><tr class="b"><td colspan='2'><div><pre>    private void appendThrowableAsHTML(Throwable throwable, StringBuilder sbuf) {
+            <div class="section"><h2>CPD Results<a name="CPD_Results"></a></h2><p>The following document contains the results of PMD's  <a class="externalLink" href="http://pmd.sourceforge.net/cpd.html">CPD</a> 4.3.</p></div><div class="section"><h2>Duplications<a name="Duplications"></a></h2><table border="0" class="table table-striped"><tr class="a"><th>File</th><th>Line</th></tr><tr class="b"><td>org/apache/logging/log4j/core/layout/HTMLLayout.java</td><td><a href="./xref/org/apache/logging/log4j/core/layout/HTMLLayout.html#150">150</a></td></tr><tr class="a"><td>org/apache/logging/log4j/core/layout/XMLLayout.java</td><td><a href="./xref/org/apache/logging/log4j/core/layout/XMLLayout.html#194">194</a></td></tr><tr class="b"><td colspan='2'><div><pre>    private void appendThrowableAsHTML(Throwable throwable, StringBuilder sbuf) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         try {
@@ -286,7 +274,16 @@
         throws IOException {
         if (source.exists()) {
             FileInputStream fis = new FileInputStream(source);
-            FileOutputStream fos = new FileOutputStream(destination);</pre></div></td></tr></table><table border="0" class="table table-striped"><tr class="a"><th>File</th><th>Line</th></tr><tr class="b"><td>org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java</td><td><a href="./xref/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.html#66">66</a></td></tr><tr class="a"><td>org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java</td><td><a href="./xref/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.html#67">67</a></td></tr><tr class="b"><td colspan='2'><div><pre>            String trace = t.getExtendedStackTrace();
+            FileOutputStream fos = new FileOutputStream(destination);</pre></div></td></tr></table><table border="0" class="table table-striped"><tr class="a"><th>File</th><th>Line</th></tr><tr class="b"><td>org/apache/logging/log4j/core/config/JSONConfiguration.java</td><td><a href="./xref/org/apache/logging/log4j/core/config/JSONConfiguration.html#72">72</a></td></tr><tr class="a"><td>org/apache/logging/log4j/core/config/XMLConfiguration.java</td><td><a href="./xref/org/apache/logging/log4j/core/config/XMLConfiguration.html#90">90</a></td></tr><tr class="b"><td colspan='2'><div><pre>            for (Map.Entry&lt;String, String&gt; entry : rootNode.getAttributes().entrySet()) {
+                if (&quot;status&quot;.equalsIgnoreCase(entry.getKey())) {
+                    status = Level.toLevel(getSubst().replace(entry.getValue()).toUpperCase(), null);
+                    if (status == null) {
+                        status = Level.ERROR;
+                        messages.add(&quot;Invalid status specified: &quot; + entry.getValue() + &quot;. Defaulting to ERROR&quot;);
+                    }
+                } else if (&quot;verbose&quot;.equalsIgnoreCase(entry.getKey())) {
+                    verbose = Boolean.parseBoolean(getSubst().replace(entry.getValue()));
+                } else if (&quot;packages&quot;.equalsIgnoreCase(entry.getKey())) {</pre></div></td></tr></table><table border="0" class="table table-striped"><tr class="a"><th>File</th><th>Line</th></tr><tr class="b"><td>org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java</td><td><a href="./xref/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.html#66">66</a></td></tr><tr class="a"><td>org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java</td><td><a href="./xref/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.html#67">67</a></td></tr><tr class="b"><td colspan='2'><div><pre>            String trace = t.getExtendedStackTrace();
             int len = toAppendTo.length();
             if (len &gt; 0 &amp;&amp; !Character.isWhitespace(toAppendTo.charAt(len - 1))) {
                 toAppendTo.append(&quot; &quot;);
@@ -330,7 +327,25 @@
      * @param level The log level.
      * @return The onMatch value if the filter passes, onMismatch otherwise.
      */
-    private Result filter(Level level) {</pre></div></td></tr></table></div>
+    private Result filter(Level level) {</pre></div></td></tr></table><table border="0" class="table table-striped"><tr class="b"><th>File</th><th>Line</th></tr><tr class="a"><td>org/apache/logging/log4j/core/config/JSONConfiguration.java</td><td><a href="./xref/org/apache/logging/log4j/core/config/JSONConfiguration.html#99">99</a></td></tr><tr class="b"><td>org/apache/logging/log4j/core/config/XMLConfiguration.java</td><td><a href="./xref/org/apache/logging/log4j/core/config/XMLConfiguration.html#120">120</a></td></tr><tr class="a"><td colspan='2'><div><pre>                StatusListener listener = statusIter.next();
+                if (listener instanceof StatusConsoleListener) {
+                    found = true;
+                    ((StatusConsoleListener) listener).setLevel(status);
+                    if (!verbose) {
+                        ((StatusConsoleListener) listener).setFilters(VERBOSE_CLASSES);
+                    }
+                }
+            }
+            if (!found &amp;&amp; status != Level.OFF) {
+                StatusConsoleListener listener = new StatusConsoleListener(status);
+                if (!verbose) {
+                    listener.setFilters(VERBOSE_CLASSES);
+                }
+                ((StatusLogger) LOGGER).registerListener(listener);
+                for (String msg : messages) {
+                    LOGGER.error(msg);
+                }
+            }</pre></div></td></tr></table></div>
             </div>
         </div>
     
