@@ -32,10 +32,10 @@
 <a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 <a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 <a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginFactory;
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.helpers.Booleans;
-<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.helpers.Strings;
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.layout.PatternLayout;
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.status.StatusLogger;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.layout.PatternLayout;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Booleans;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.status.StatusLogger;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.Strings;
 <a class="jxr_linenumber" name="29" href="#29">29</a>  
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment"> * A configuration element used to configure which event properties are logged to which columns in the database table.</em>
@@ -139,16 +139,19 @@
 <a class="jxr_linenumber" name="129" href="#129">129</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/apache/logging/log4j/core/appender/db/jdbc/ColumnConfig.html">ColumnConfig</a>(name, <strong class="jxr_keyword">null</strong>, literalValue, false, false, false);
 <a class="jxr_linenumber" name="130" href="#130">130</a>         }
 <a class="jxr_linenumber" name="131" href="#131">131</a>         <strong class="jxr_keyword">if</strong> (isPattern) {
-<a class="jxr_linenumber" name="132" href="#132">132</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/apache/logging/log4j/core/appender/db/jdbc/ColumnConfig.html">ColumnConfig</a>(
-<a class="jxr_linenumber" name="133" href="#133">133</a>                     name, PatternLayout.createLayout(pattern, config, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <span class="jxr_string">"false"</span>, <strong class="jxr_keyword">null</strong>), <strong class="jxr_keyword">null</strong>, false, isUnicode,
-<a class="jxr_linenumber" name="134" href="#134">134</a>                     isClob
-<a class="jxr_linenumber" name="135" href="#135">135</a>             );
-<a class="jxr_linenumber" name="136" href="#136">136</a>         }
-<a class="jxr_linenumber" name="137" href="#137">137</a> 
-<a class="jxr_linenumber" name="138" href="#138">138</a>         LOGGER.error(<span class="jxr_string">"To configure a column you must specify a pattern or literal or set isEventDate to true."</span>);
-<a class="jxr_linenumber" name="139" href="#139">139</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="140" href="#140">140</a>     }
-<a class="jxr_linenumber" name="141" href="#141">141</a> }
+<a class="jxr_linenumber" name="132" href="#132">132</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../../../org/apache/logging/log4j/core/layout/PatternLayout.html">PatternLayout</a> layout =
+<a class="jxr_linenumber" name="133" href="#133">133</a>                 PatternLayout.newBuilder()
+<a class="jxr_linenumber" name="134" href="#134">134</a>                     .withPattern(pattern)
+<a class="jxr_linenumber" name="135" href="#135">135</a>                     .withConfiguration(config)
+<a class="jxr_linenumber" name="136" href="#136">136</a>                     .withAlwaysWriteExceptions(false)
+<a class="jxr_linenumber" name="137" href="#137">137</a>                     .build();
+<a class="jxr_linenumber" name="138" href="#138">138</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/apache/logging/log4j/core/appender/db/jdbc/ColumnConfig.html">ColumnConfig</a>(name, layout, <strong class="jxr_keyword">null</strong>, false, isUnicode, isClob);
+<a class="jxr_linenumber" name="139" href="#139">139</a>         }
+<a class="jxr_linenumber" name="140" href="#140">140</a> 
+<a class="jxr_linenumber" name="141" href="#141">141</a>         LOGGER.error(<span class="jxr_string">"To configure a column you must specify a pattern or literal or set isEventDate to true."</span>);
+<a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="143" href="#143">143</a>     }
+<a class="jxr_linenumber" name="144" href="#144">144</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

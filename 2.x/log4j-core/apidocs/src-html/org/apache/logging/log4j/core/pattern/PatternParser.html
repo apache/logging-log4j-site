@@ -1,615 +1,609 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
-<head>
-<title>Source code</title>
-<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
-</head>
-<body>
-<div class="sourceContainer">
-<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
-<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
-<span class="sourceLineNo">003</span> * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
-<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
-<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
-<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
-<span class="sourceLineNo">007</span> * the License. You may obtain a copy of the License at<a name="line.7"></a>
-<span class="sourceLineNo">008</span> *<a name="line.8"></a>
-<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
-<span class="sourceLineNo">010</span> *<a name="line.10"></a>
-<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
-<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
-<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
-<span class="sourceLineNo">014</span> * See the license for the specific language governing permissions and<a name="line.14"></a>
-<span class="sourceLineNo">015</span> * limitations under the license.<a name="line.15"></a>
-<span class="sourceLineNo">016</span> */<a name="line.16"></a>
-<span class="sourceLineNo">017</span>package org.apache.logging.log4j.core.pattern;<a name="line.17"></a>
-<span class="sourceLineNo">018</span><a name="line.18"></a>
-<span class="sourceLineNo">019</span>import java.lang.reflect.Method;<a name="line.19"></a>
-<span class="sourceLineNo">020</span>import java.lang.reflect.Modifier;<a name="line.20"></a>
-<span class="sourceLineNo">021</span>import java.util.ArrayList;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import java.util.HashMap;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import java.util.Iterator;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import java.util.List;<a name="line.24"></a>
-<span class="sourceLineNo">025</span>import java.util.Map;<a name="line.25"></a>
-<span class="sourceLineNo">026</span><a name="line.26"></a>
-<span class="sourceLineNo">027</span>import org.apache.logging.log4j.Logger;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import org.apache.logging.log4j.core.config.Configuration;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import org.apache.logging.log4j.core.config.plugins.PluginManager;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>import org.apache.logging.log4j.core.config.plugins.PluginType;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>import org.apache.logging.log4j.core.helpers.Strings;<a name="line.31"></a>
-<span class="sourceLineNo">032</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.32"></a>
-<span class="sourceLineNo">033</span><a name="line.33"></a>
-<span class="sourceLineNo">034</span>/**<a name="line.34"></a>
-<span class="sourceLineNo">035</span> * Most of the work of the {@link org.apache.logging.log4j.core.layout.PatternLayout} class is delegated to the<a name="line.35"></a>
-<span class="sourceLineNo">036</span> * PatternParser class.<a name="line.36"></a>
-<span class="sourceLineNo">037</span> * &lt;p&gt;<a name="line.37"></a>
-<span class="sourceLineNo">038</span> * It is this class that parses conversion patterns and creates a chained list of {@link PatternConverter<a name="line.38"></a>
-<span class="sourceLineNo">039</span> * PatternConverters}.<a name="line.39"></a>
-<span class="sourceLineNo">040</span> */<a name="line.40"></a>
-<span class="sourceLineNo">041</span>public final class PatternParser {<a name="line.41"></a>
-<span class="sourceLineNo">042</span>    static final String NO_CONSOLE_NO_ANSI = "noConsoleNoAnsi";<a name="line.42"></a>
-<span class="sourceLineNo">043</span><a name="line.43"></a>
-<span class="sourceLineNo">044</span>    /**<a name="line.44"></a>
-<span class="sourceLineNo">045</span>     * Escape character for format specifier.<a name="line.45"></a>
-<span class="sourceLineNo">046</span>     */<a name="line.46"></a>
-<span class="sourceLineNo">047</span>    private static final char ESCAPE_CHAR = '%';<a name="line.47"></a>
-<span class="sourceLineNo">048</span><a name="line.48"></a>
-<span class="sourceLineNo">049</span>    /**<a name="line.49"></a>
-<span class="sourceLineNo">050</span>     * The states the parser can be in while parsing the pattern.<a name="line.50"></a>
-<span class="sourceLineNo">051</span>     */<a name="line.51"></a>
-<span class="sourceLineNo">052</span>    private enum ParserState {<a name="line.52"></a>
-<span class="sourceLineNo">053</span>        /**<a name="line.53"></a>
-<span class="sourceLineNo">054</span>         * Literal state.<a name="line.54"></a>
-<span class="sourceLineNo">055</span>         */<a name="line.55"></a>
-<span class="sourceLineNo">056</span>        LITERAL_STATE,<a name="line.56"></a>
-<span class="sourceLineNo">057</span><a name="line.57"></a>
-<span class="sourceLineNo">058</span>        /**<a name="line.58"></a>
-<span class="sourceLineNo">059</span>         * In converter name state.<a name="line.59"></a>
-<span class="sourceLineNo">060</span>         */<a name="line.60"></a>
-<span class="sourceLineNo">061</span>        CONVERTER_STATE,<a name="line.61"></a>
-<span class="sourceLineNo">062</span><a name="line.62"></a>
-<span class="sourceLineNo">063</span>        /**<a name="line.63"></a>
-<span class="sourceLineNo">064</span>         * Dot state.<a name="line.64"></a>
-<span class="sourceLineNo">065</span>         */<a name="line.65"></a>
-<span class="sourceLineNo">066</span>        DOT_STATE,<a name="line.66"></a>
-<span class="sourceLineNo">067</span><a name="line.67"></a>
-<span class="sourceLineNo">068</span>        /**<a name="line.68"></a>
-<span class="sourceLineNo">069</span>         * Min state.<a name="line.69"></a>
-<span class="sourceLineNo">070</span>         */<a name="line.70"></a>
-<span class="sourceLineNo">071</span>        MIN_STATE,<a name="line.71"></a>
-<span class="sourceLineNo">072</span><a name="line.72"></a>
-<span class="sourceLineNo">073</span>        /**<a name="line.73"></a>
-<span class="sourceLineNo">074</span>         * Max state.<a name="line.74"></a>
-<span class="sourceLineNo">075</span>         */<a name="line.75"></a>
-<span class="sourceLineNo">076</span>        MAX_STATE;<a name="line.76"></a>
-<span class="sourceLineNo">077</span>    }<a name="line.77"></a>
-<span class="sourceLineNo">078</span><a name="line.78"></a>
-<span class="sourceLineNo">079</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.79"></a>
-<span class="sourceLineNo">080</span><a name="line.80"></a>
-<span class="sourceLineNo">081</span>    private static final int BUF_SIZE = 32;<a name="line.81"></a>
-<span class="sourceLineNo">082</span><a name="line.82"></a>
-<span class="sourceLineNo">083</span>    private static final int DECIMAL = 10;<a name="line.83"></a>
-<span class="sourceLineNo">084</span><a name="line.84"></a>
-<span class="sourceLineNo">085</span>    private final Configuration config;<a name="line.85"></a>
-<span class="sourceLineNo">086</span><a name="line.86"></a>
-<span class="sourceLineNo">087</span>    private final Map&lt;String, Class&lt;PatternConverter&gt;&gt; converterRules;<a name="line.87"></a>
-<span class="sourceLineNo">088</span><a name="line.88"></a>
-<span class="sourceLineNo">089</span>    /**<a name="line.89"></a>
-<span class="sourceLineNo">090</span>     * Constructor.<a name="line.90"></a>
-<span class="sourceLineNo">091</span>     * <a name="line.91"></a>
-<span class="sourceLineNo">092</span>     * @param converterKey<a name="line.92"></a>
-<span class="sourceLineNo">093</span>     *            The type of converters that will be used.<a name="line.93"></a>
-<span class="sourceLineNo">094</span>     */<a name="line.94"></a>
-<span class="sourceLineNo">095</span>    public PatternParser(final String converterKey) {<a name="line.95"></a>
-<span class="sourceLineNo">096</span>        this(null, converterKey, null, null);<a name="line.96"></a>
-<span class="sourceLineNo">097</span>    }<a name="line.97"></a>
-<span class="sourceLineNo">098</span><a name="line.98"></a>
-<span class="sourceLineNo">099</span>    /**<a name="line.99"></a>
-<span class="sourceLineNo">100</span>     * Constructor.<a name="line.100"></a>
-<span class="sourceLineNo">101</span>     * <a name="line.101"></a>
-<span class="sourceLineNo">102</span>     * @param config<a name="line.102"></a>
-<span class="sourceLineNo">103</span>     *            The current Configuration.<a name="line.103"></a>
-<span class="sourceLineNo">104</span>     * @param converterKey<a name="line.104"></a>
-<span class="sourceLineNo">105</span>     *            The key to lookup the converters.<a name="line.105"></a>
-<span class="sourceLineNo">106</span>     * @param expected<a name="line.106"></a>
-<span class="sourceLineNo">107</span>     *            The expected base Class of each Converter.<a name="line.107"></a>
-<span class="sourceLineNo">108</span>     */<a name="line.108"></a>
-<span class="sourceLineNo">109</span>    public PatternParser(final Configuration config, final String converterKey, final Class&lt;?&gt; expected) {<a name="line.109"></a>
-<span class="sourceLineNo">110</span>        this(config, converterKey, expected, null);<a name="line.110"></a>
-<span class="sourceLineNo">111</span>    }<a name="line.111"></a>
-<span class="sourceLineNo">112</span><a name="line.112"></a>
-<span class="sourceLineNo">113</span>    /**<a name="line.113"></a>
-<span class="sourceLineNo">114</span>     * Constructor.<a name="line.114"></a>
-<span class="sourceLineNo">115</span>     * <a name="line.115"></a>
-<span class="sourceLineNo">116</span>     * @param config<a name="line.116"></a>
-<span class="sourceLineNo">117</span>     *            The current Configuration.<a name="line.117"></a>
-<span class="sourceLineNo">118</span>     * @param converterKey<a name="line.118"></a>
-<span class="sourceLineNo">119</span>     *            The key to lookup the converters.<a name="line.119"></a>
-<span class="sourceLineNo">120</span>     * @param expectedClass<a name="line.120"></a>
-<span class="sourceLineNo">121</span>     *            The expected base Class of each Converter.<a name="line.121"></a>
-<span class="sourceLineNo">122</span>     * @param filterClass<a name="line.122"></a>
-<span class="sourceLineNo">123</span>     *            Filter the returned plugins after calling the plugin manager.<a name="line.123"></a>
-<span class="sourceLineNo">124</span>     */<a name="line.124"></a>
-<span class="sourceLineNo">125</span>    public PatternParser(final Configuration config, final String converterKey, final Class&lt;?&gt; expectedClass,<a name="line.125"></a>
-<span class="sourceLineNo">126</span>            final Class&lt;?&gt; filterClass) {<a name="line.126"></a>
-<span class="sourceLineNo">127</span>        this.config = config;<a name="line.127"></a>
-<span class="sourceLineNo">128</span>        final PluginManager manager = new PluginManager(converterKey, expectedClass);<a name="line.128"></a>
-<span class="sourceLineNo">129</span>        manager.collectPlugins();<a name="line.129"></a>
-<span class="sourceLineNo">130</span>        final Map&lt;String, PluginType&lt;?&gt;&gt; plugins = manager.getPlugins();<a name="line.130"></a>
-<span class="sourceLineNo">131</span>        final Map&lt;String, Class&lt;PatternConverter&gt;&gt; converters = new HashMap&lt;String, Class&lt;PatternConverter&gt;&gt;();<a name="line.131"></a>
-<span class="sourceLineNo">132</span><a name="line.132"></a>
-<span class="sourceLineNo">133</span>        for (final PluginType&lt;?&gt; type : plugins.values()) {<a name="line.133"></a>
-<span class="sourceLineNo">134</span>            try {<a name="line.134"></a>
-<span class="sourceLineNo">135</span>                @SuppressWarnings("unchecked")<a name="line.135"></a>
-<span class="sourceLineNo">136</span>                final Class&lt;PatternConverter&gt; clazz = (Class&lt;PatternConverter&gt;) type.getPluginClass();<a name="line.136"></a>
-<span class="sourceLineNo">137</span>                if (filterClass != null &amp;&amp; !filterClass.isAssignableFrom(clazz)) {<a name="line.137"></a>
-<span class="sourceLineNo">138</span>                    continue;<a name="line.138"></a>
-<span class="sourceLineNo">139</span>                }<a name="line.139"></a>
-<span class="sourceLineNo">140</span>                final ConverterKeys keys = clazz.getAnnotation(ConverterKeys.class);<a name="line.140"></a>
-<span class="sourceLineNo">141</span>                if (keys != null) {<a name="line.141"></a>
-<span class="sourceLineNo">142</span>                    for (final String key : keys.value()) {<a name="line.142"></a>
-<span class="sourceLineNo">143</span>                        converters.put(key, clazz);<a name="line.143"></a>
-<span class="sourceLineNo">144</span>                    }<a name="line.144"></a>
-<span class="sourceLineNo">145</span>                }<a name="line.145"></a>
-<span class="sourceLineNo">146</span>            } catch (final Exception ex) {<a name="line.146"></a>
-<span class="sourceLineNo">147</span>                LOGGER.error("Error processing plugin " + type.getElementName(), ex);<a name="line.147"></a>
-<span class="sourceLineNo">148</span>            }<a name="line.148"></a>
-<span class="sourceLineNo">149</span>        }<a name="line.149"></a>
-<span class="sourceLineNo">150</span>        converterRules = converters;<a name="line.150"></a>
-<span class="sourceLineNo">151</span>    }<a name="line.151"></a>
-<span class="sourceLineNo">152</span><a name="line.152"></a>
-<span class="sourceLineNo">153</span>    public List&lt;PatternFormatter&gt; parse(final String pattern) {<a name="line.153"></a>
-<span class="sourceLineNo">154</span>        return parse(pattern, false, false);<a name="line.154"></a>
-<span class="sourceLineNo">155</span>    }<a name="line.155"></a>
-<span class="sourceLineNo">156</span><a name="line.156"></a>
-<span class="sourceLineNo">157</span>    public List&lt;PatternFormatter&gt; parse(final String pattern, final boolean alwaysWriteExceptions,<a name="line.157"></a>
-<span class="sourceLineNo">158</span>            boolean noConsoleNoAnsi) {<a name="line.158"></a>
-<span class="sourceLineNo">159</span>        final List&lt;PatternFormatter&gt; list = new ArrayList&lt;PatternFormatter&gt;();<a name="line.159"></a>
-<span class="sourceLineNo">160</span>        final List&lt;PatternConverter&gt; converters = new ArrayList&lt;PatternConverter&gt;();<a name="line.160"></a>
-<span class="sourceLineNo">161</span>        final List&lt;FormattingInfo&gt; fields = new ArrayList&lt;FormattingInfo&gt;();<a name="line.161"></a>
-<span class="sourceLineNo">162</span><a name="line.162"></a>
-<span class="sourceLineNo">163</span>        parse(pattern, converters, fields, noConsoleNoAnsi);<a name="line.163"></a>
-<span class="sourceLineNo">164</span><a name="line.164"></a>
-<span class="sourceLineNo">165</span>        final Iterator&lt;FormattingInfo&gt; fieldIter = fields.iterator();<a name="line.165"></a>
-<span class="sourceLineNo">166</span>        boolean handlesThrowable = false;<a name="line.166"></a>
-<span class="sourceLineNo">167</span><a name="line.167"></a>
-<span class="sourceLineNo">168</span>        for (final PatternConverter converter : converters) {<a name="line.168"></a>
-<span class="sourceLineNo">169</span>            LogEventPatternConverter pc;<a name="line.169"></a>
-<span class="sourceLineNo">170</span>            if (converter instanceof LogEventPatternConverter) {<a name="line.170"></a>
-<span class="sourceLineNo">171</span>                pc = (LogEventPatternConverter) converter;<a name="line.171"></a>
-<span class="sourceLineNo">172</span>                handlesThrowable |= pc.handlesThrowable();<a name="line.172"></a>
-<span class="sourceLineNo">173</span>            } else {<a name="line.173"></a>
-<span class="sourceLineNo">174</span>                pc = new LiteralPatternConverter(config, "");<a name="line.174"></a>
-<span class="sourceLineNo">175</span>            }<a name="line.175"></a>
-<span class="sourceLineNo">176</span><a name="line.176"></a>
-<span class="sourceLineNo">177</span>            FormattingInfo field;<a name="line.177"></a>
-<span class="sourceLineNo">178</span>            if (fieldIter.hasNext()) {<a name="line.178"></a>
-<span class="sourceLineNo">179</span>                field = fieldIter.next();<a name="line.179"></a>
-<span class="sourceLineNo">180</span>            } else {<a name="line.180"></a>
-<span class="sourceLineNo">181</span>                field = FormattingInfo.getDefault();<a name="line.181"></a>
-<span class="sourceLineNo">182</span>            }<a name="line.182"></a>
-<span class="sourceLineNo">183</span>            list.add(new PatternFormatter(pc, field));<a name="line.183"></a>
-<span class="sourceLineNo">184</span>        }<a name="line.184"></a>
-<span class="sourceLineNo">185</span>        if (alwaysWriteExceptions &amp;&amp; !handlesThrowable) {<a name="line.185"></a>
-<span class="sourceLineNo">186</span>            final LogEventPatternConverter pc = ExtendedThrowablePatternConverter.newInstance(null);<a name="line.186"></a>
-<span class="sourceLineNo">187</span>            list.add(new PatternFormatter(pc, FormattingInfo.getDefault()));<a name="line.187"></a>
-<span class="sourceLineNo">188</span>        }<a name="line.188"></a>
-<span class="sourceLineNo">189</span>        return list;<a name="line.189"></a>
-<span class="sourceLineNo">190</span>    }<a name="line.190"></a>
-<span class="sourceLineNo">191</span><a name="line.191"></a>
-<span class="sourceLineNo">192</span>    /**<a name="line.192"></a>
-<span class="sourceLineNo">193</span>     * Extract the converter identifier found at position i.<a name="line.193"></a>
-<span class="sourceLineNo">194</span>     * &lt;p/&gt;<a name="line.194"></a>
-<span class="sourceLineNo">195</span>     * After this function returns, the variable i will point to the first char after the end of the converter<a name="line.195"></a>
-<span class="sourceLineNo">196</span>     * identifier.<a name="line.196"></a>
-<span class="sourceLineNo">197</span>     * &lt;p/&gt;<a name="line.197"></a>
-<span class="sourceLineNo">198</span>     * If i points to a char which is not a character acceptable at the start of a unicode identifier, the value null is<a name="line.198"></a>
-<span class="sourceLineNo">199</span>     * returned.<a name="line.199"></a>
-<span class="sourceLineNo">200</span>     * <a name="line.200"></a>
-<span class="sourceLineNo">201</span>     * @param lastChar<a name="line.201"></a>
-<span class="sourceLineNo">202</span>     *            last processed character.<a name="line.202"></a>
-<span class="sourceLineNo">203</span>     * @param pattern<a name="line.203"></a>
-<span class="sourceLineNo">204</span>     *            format string.<a name="line.204"></a>
-<span class="sourceLineNo">205</span>     * @param i<a name="line.205"></a>
-<span class="sourceLineNo">206</span>     *            current index into pattern format.<a name="line.206"></a>
-<span class="sourceLineNo">207</span>     * @param convBuf<a name="line.207"></a>
-<span class="sourceLineNo">208</span>     *            buffer to receive conversion specifier.<a name="line.208"></a>
-<span class="sourceLineNo">209</span>     * @param currentLiteral<a name="line.209"></a>
-<span class="sourceLineNo">210</span>     *            literal to be output in case format specifier in unrecognized.<a name="line.210"></a>
-<span class="sourceLineNo">211</span>     * @return position in pattern after converter.<a name="line.211"></a>
-<span class="sourceLineNo">212</span>     */<a name="line.212"></a>
-<span class="sourceLineNo">213</span>    private static int extractConverter(final char lastChar, final String pattern, int i, final StringBuilder convBuf,<a name="line.213"></a>
-<span class="sourceLineNo">214</span>            final StringBuilder currentLiteral) {<a name="line.214"></a>
-<span class="sourceLineNo">215</span>        convBuf.setLength(0);<a name="line.215"></a>
-<span class="sourceLineNo">216</span><a name="line.216"></a>
-<span class="sourceLineNo">217</span>        // When this method is called, lastChar points to the first character of the<a name="line.217"></a>
-<span class="sourceLineNo">218</span>        // conversion word. For example:<a name="line.218"></a>
-<span class="sourceLineNo">219</span>        // For "%hello" lastChar = 'h'<a name="line.219"></a>
-<span class="sourceLineNo">220</span>        // For "%-5hello" lastChar = 'h'<a name="line.220"></a>
-<span class="sourceLineNo">221</span>        // System.out.println("lastchar is "+lastChar);<a name="line.221"></a>
-<span class="sourceLineNo">222</span>        if (!Character.isUnicodeIdentifierStart(lastChar)) {<a name="line.222"></a>
-<span class="sourceLineNo">223</span>            return i;<a name="line.223"></a>
-<span class="sourceLineNo">224</span>        }<a name="line.224"></a>
-<span class="sourceLineNo">225</span><a name="line.225"></a>
-<span class="sourceLineNo">226</span>        convBuf.append(lastChar);<a name="line.226"></a>
-<span class="sourceLineNo">227</span><a name="line.227"></a>
-<span class="sourceLineNo">228</span>        while (i &lt; pattern.length() &amp;&amp; Character.isUnicodeIdentifierPart(pattern.charAt(i))) {<a name="line.228"></a>
-<span class="sourceLineNo">229</span>            convBuf.append(pattern.charAt(i));<a name="line.229"></a>
-<span class="sourceLineNo">230</span>            currentLiteral.append(pattern.charAt(i));<a name="line.230"></a>
-<span class="sourceLineNo">231</span>            i++;<a name="line.231"></a>
-<span class="sourceLineNo">232</span>        }<a name="line.232"></a>
-<span class="sourceLineNo">233</span><a name="line.233"></a>
-<span class="sourceLineNo">234</span>        return i;<a name="line.234"></a>
-<span class="sourceLineNo">235</span>    }<a name="line.235"></a>
-<span class="sourceLineNo">236</span><a name="line.236"></a>
-<span class="sourceLineNo">237</span>    /**<a name="line.237"></a>
-<span class="sourceLineNo">238</span>     * Extract options.<a name="line.238"></a>
-<span class="sourceLineNo">239</span>     * <a name="line.239"></a>
-<span class="sourceLineNo">240</span>     * @param pattern<a name="line.240"></a>
-<span class="sourceLineNo">241</span>     *            conversion pattern.<a name="line.241"></a>
-<span class="sourceLineNo">242</span>     * @param i<a name="line.242"></a>
-<span class="sourceLineNo">243</span>     *            start of options.<a name="line.243"></a>
-<span class="sourceLineNo">244</span>     * @param options<a name="line.244"></a>
-<span class="sourceLineNo">245</span>     *            array to receive extracted options<a name="line.245"></a>
-<span class="sourceLineNo">246</span>     * @return position in pattern after options.<a name="line.246"></a>
-<span class="sourceLineNo">247</span>     */<a name="line.247"></a>
-<span class="sourceLineNo">248</span>    private static int extractOptions(final String pattern, int i, final List&lt;String&gt; options) {<a name="line.248"></a>
-<span class="sourceLineNo">249</span>        while (i &lt; pattern.length() &amp;&amp; pattern.charAt(i) == '{') {<a name="line.249"></a>
-<span class="sourceLineNo">250</span>            final int begin = i++;<a name="line.250"></a>
-<span class="sourceLineNo">251</span>            int end;<a name="line.251"></a>
-<span class="sourceLineNo">252</span>            int depth = 0;<a name="line.252"></a>
-<span class="sourceLineNo">253</span>            do {<a name="line.253"></a>
-<span class="sourceLineNo">254</span>                end = pattern.indexOf('}', i);<a name="line.254"></a>
-<span class="sourceLineNo">255</span>                if (end != -1) {<a name="line.255"></a>
-<span class="sourceLineNo">256</span>                    final int next = pattern.indexOf("{", i);<a name="line.256"></a>
-<span class="sourceLineNo">257</span>                    if (next != -1 &amp;&amp; next &lt; end) {<a name="line.257"></a>
-<span class="sourceLineNo">258</span>                        i = end + 1;<a name="line.258"></a>
-<span class="sourceLineNo">259</span>                        ++depth;<a name="line.259"></a>
-<span class="sourceLineNo">260</span>                    } else if (depth &gt; 0) {<a name="line.260"></a>
-<span class="sourceLineNo">261</span>                        --depth;<a name="line.261"></a>
-<span class="sourceLineNo">262</span>                    }<a name="line.262"></a>
-<span class="sourceLineNo">263</span>                }<a name="line.263"></a>
-<span class="sourceLineNo">264</span>            } while (depth &gt; 0);<a name="line.264"></a>
-<span class="sourceLineNo">265</span><a name="line.265"></a>
-<span class="sourceLineNo">266</span>            if (end == -1) {<a name="line.266"></a>
-<span class="sourceLineNo">267</span>                break;<a name="line.267"></a>
-<span class="sourceLineNo">268</span>            }<a name="line.268"></a>
-<span class="sourceLineNo">269</span><a name="line.269"></a>
-<span class="sourceLineNo">270</span>            final String r = pattern.substring(begin + 1, end);<a name="line.270"></a>
-<span class="sourceLineNo">271</span>            options.add(r);<a name="line.271"></a>
-<span class="sourceLineNo">272</span>            i = end + 1;<a name="line.272"></a>
-<span class="sourceLineNo">273</span>        }<a name="line.273"></a>
-<span class="sourceLineNo">274</span><a name="line.274"></a>
-<span class="sourceLineNo">275</span>        return i;<a name="line.275"></a>
-<span class="sourceLineNo">276</span>    }<a name="line.276"></a>
-<span class="sourceLineNo">277</span><a name="line.277"></a>
-<span class="sourceLineNo">278</span>    /**<a name="line.278"></a>
-<span class="sourceLineNo">279</span>     * Parse a format specifier.<a name="line.279"></a>
-<span class="sourceLineNo">280</span>     * <a name="line.280"></a>
-<span class="sourceLineNo">281</span>     * @param pattern<a name="line.281"></a>
-<span class="sourceLineNo">282</span>     *            pattern to parse.<a name="line.282"></a>
-<span class="sourceLineNo">283</span>     * @param patternConverters<a name="line.283"></a>
-<span class="sourceLineNo">284</span>     *            list to receive pattern converters.<a name="line.284"></a>
-<span class="sourceLineNo">285</span>     * @param formattingInfos<a name="line.285"></a>
-<span class="sourceLineNo">286</span>     *            list to receive field specifiers corresponding to pattern converters.<a name="line.286"></a>
-<span class="sourceLineNo">287</span>     * @param noConsoleNoAnsi<a name="line.287"></a>
-<span class="sourceLineNo">288</span>     *            TODO<a name="line.288"></a>
-<span class="sourceLineNo">289</span>     */<a name="line.289"></a>
-<span class="sourceLineNo">290</span>    public void parse(final String pattern, final List&lt;PatternConverter&gt; patternConverters,<a name="line.290"></a>
-<span class="sourceLineNo">291</span>            final List&lt;FormattingInfo&gt; formattingInfos, final boolean noConsoleNoAnsi) {<a name="line.291"></a>
-<span class="sourceLineNo">292</span>        if (pattern == null) {<a name="line.292"></a>
-<span class="sourceLineNo">293</span>            throw new NullPointerException("pattern");<a name="line.293"></a>
-<span class="sourceLineNo">294</span>        }<a name="line.294"></a>
-<span class="sourceLineNo">295</span><a name="line.295"></a>
-<span class="sourceLineNo">296</span>        final StringBuilder currentLiteral = new StringBuilder(BUF_SIZE);<a name="line.296"></a>
-<span class="sourceLineNo">297</span><a name="line.297"></a>
-<span class="sourceLineNo">298</span>        final int patternLength = pattern.length();<a name="line.298"></a>
-<span class="sourceLineNo">299</span>        ParserState state = ParserState.LITERAL_STATE;<a name="line.299"></a>
-<span class="sourceLineNo">300</span>        char c;<a name="line.300"></a>
-<span class="sourceLineNo">301</span>        int i = 0;<a name="line.301"></a>
-<span class="sourceLineNo">302</span>        FormattingInfo formattingInfo = FormattingInfo.getDefault();<a name="line.302"></a>
-<span class="sourceLineNo">303</span><a name="line.303"></a>
-<span class="sourceLineNo">304</span>        while (i &lt; patternLength) {<a name="line.304"></a>
-<span class="sourceLineNo">305</span>            c = pattern.charAt(i++);<a name="line.305"></a>
-<span class="sourceLineNo">306</span><a name="line.306"></a>
-<span class="sourceLineNo">307</span>            switch (state) {<a name="line.307"></a>
-<span class="sourceLineNo">308</span>            case LITERAL_STATE:<a name="line.308"></a>
-<span class="sourceLineNo">309</span><a name="line.309"></a>
-<span class="sourceLineNo">310</span>                // In literal state, the last char is always a literal.<a name="line.310"></a>
-<span class="sourceLineNo">311</span>                if (i == patternLength) {<a name="line.311"></a>
-<span class="sourceLineNo">312</span>                    currentLiteral.append(c);<a name="line.312"></a>
-<span class="sourceLineNo">313</span><a name="line.313"></a>
-<span class="sourceLineNo">314</span>                    continue;<a name="line.314"></a>
-<span class="sourceLineNo">315</span>                }<a name="line.315"></a>
-<span class="sourceLineNo">316</span><a name="line.316"></a>
-<span class="sourceLineNo">317</span>                if (c == ESCAPE_CHAR) {<a name="line.317"></a>
-<span class="sourceLineNo">318</span>                    // peek at the next char.<a name="line.318"></a>
-<span class="sourceLineNo">319</span>                    switch (pattern.charAt(i)) {<a name="line.319"></a>
-<span class="sourceLineNo">320</span>                    case ESCAPE_CHAR:<a name="line.320"></a>
-<span class="sourceLineNo">321</span>                        currentLiteral.append(c);<a name="line.321"></a>
-<span class="sourceLineNo">322</span>                        i++; // move pointer<a name="line.322"></a>
-<span class="sourceLineNo">323</span><a name="line.323"></a>
-<span class="sourceLineNo">324</span>                        break;<a name="line.324"></a>
-<span class="sourceLineNo">325</span><a name="line.325"></a>
-<span class="sourceLineNo">326</span>                    default:<a name="line.326"></a>
-<span class="sourceLineNo">327</span><a name="line.327"></a>
-<span class="sourceLineNo">328</span>                        if (currentLiteral.length() != 0) {<a name="line.328"></a>
-<span class="sourceLineNo">329</span>                            patternConverters.add(new LiteralPatternConverter(config, currentLiteral.toString()));<a name="line.329"></a>
-<span class="sourceLineNo">330</span>                            formattingInfos.add(FormattingInfo.getDefault());<a name="line.330"></a>
-<span class="sourceLineNo">331</span>                        }<a name="line.331"></a>
-<span class="sourceLineNo">332</span><a name="line.332"></a>
-<span class="sourceLineNo">333</span>                        currentLiteral.setLength(0);<a name="line.333"></a>
-<span class="sourceLineNo">334</span>                        currentLiteral.append(c); // append %<a name="line.334"></a>
-<span class="sourceLineNo">335</span>                        state = ParserState.CONVERTER_STATE;<a name="line.335"></a>
-<span class="sourceLineNo">336</span>                        formattingInfo = FormattingInfo.getDefault();<a name="line.336"></a>
-<span class="sourceLineNo">337</span>                    }<a name="line.337"></a>
-<span class="sourceLineNo">338</span>                } else {<a name="line.338"></a>
-<span class="sourceLineNo">339</span>                    currentLiteral.append(c);<a name="line.339"></a>
-<span class="sourceLineNo">340</span>                }<a name="line.340"></a>
-<span class="sourceLineNo">341</span><a name="line.341"></a>
-<span class="sourceLineNo">342</span>                break;<a name="line.342"></a>
-<span class="sourceLineNo">343</span><a name="line.343"></a>
-<span class="sourceLineNo">344</span>            case CONVERTER_STATE:<a name="line.344"></a>
-<span class="sourceLineNo">345</span>                currentLiteral.append(c);<a name="line.345"></a>
-<span class="sourceLineNo">346</span><a name="line.346"></a>
-<span class="sourceLineNo">347</span>                switch (c) {<a name="line.347"></a>
-<span class="sourceLineNo">348</span>                case '-':<a name="line.348"></a>
-<span class="sourceLineNo">349</span>                    formattingInfo = new FormattingInfo(true, formattingInfo.getMinLength(),<a name="line.349"></a>
-<span class="sourceLineNo">350</span>                            formattingInfo.getMaxLength());<a name="line.350"></a>
-<span class="sourceLineNo">351</span>                    break;<a name="line.351"></a>
-<span class="sourceLineNo">352</span><a name="line.352"></a>
-<span class="sourceLineNo">353</span>                case '.':<a name="line.353"></a>
-<span class="sourceLineNo">354</span>                    state = ParserState.DOT_STATE;<a name="line.354"></a>
-<span class="sourceLineNo">355</span>                    break;<a name="line.355"></a>
-<span class="sourceLineNo">356</span><a name="line.356"></a>
-<span class="sourceLineNo">357</span>                default:<a name="line.357"></a>
-<span class="sourceLineNo">358</span><a name="line.358"></a>
-<span class="sourceLineNo">359</span>                    if (c &gt;= '0' &amp;&amp; c &lt;= '9') {<a name="line.359"></a>
-<span class="sourceLineNo">360</span>                        formattingInfo = new FormattingInfo(formattingInfo.isLeftAligned(), c - '0',<a name="line.360"></a>
-<span class="sourceLineNo">361</span>                                formattingInfo.getMaxLength());<a name="line.361"></a>
-<span class="sourceLineNo">362</span>                        state = ParserState.MIN_STATE;<a name="line.362"></a>
-<span class="sourceLineNo">363</span>                    } else {<a name="line.363"></a>
-<span class="sourceLineNo">364</span>                        i = finalizeConverter(c, pattern, i, currentLiteral, formattingInfo, converterRules,<a name="line.364"></a>
-<span class="sourceLineNo">365</span>                                patternConverters, formattingInfos, noConsoleNoAnsi);<a name="line.365"></a>
-<span class="sourceLineNo">366</span><a name="line.366"></a>
-<span class="sourceLineNo">367</span>                        // Next pattern is assumed to be a literal.<a name="line.367"></a>
-<span class="sourceLineNo">368</span>                        state = ParserState.LITERAL_STATE;<a name="line.368"></a>
-<span class="sourceLineNo">369</span>                        formattingInfo = FormattingInfo.getDefault();<a name="line.369"></a>
-<span class="sourceLineNo">370</span>                        currentLiteral.setLength(0);<a name="line.370"></a>
-<span class="sourceLineNo">371</span>                    }<a name="line.371"></a>
-<span class="sourceLineNo">372</span>                } // switch<a name="line.372"></a>
-<span class="sourceLineNo">373</span><a name="line.373"></a>
-<span class="sourceLineNo">374</span>                break;<a name="line.374"></a>
-<span class="sourceLineNo">375</span><a name="line.375"></a>
-<span class="sourceLineNo">376</span>            case MIN_STATE:<a name="line.376"></a>
-<span class="sourceLineNo">377</span>                currentLiteral.append(c);<a name="line.377"></a>
-<span class="sourceLineNo">378</span><a name="line.378"></a>
-<span class="sourceLineNo">379</span>                if (c &gt;= '0' &amp;&amp; c &lt;= '9') {<a name="line.379"></a>
-<span class="sourceLineNo">380</span>                    // Multiply the existing value and add the value of the number just encountered.<a name="line.380"></a>
-<span class="sourceLineNo">381</span>                    formattingInfo = new FormattingInfo(formattingInfo.isLeftAligned(), formattingInfo.getMinLength()<a name="line.381"></a>
-<span class="sourceLineNo">382</span>                            * DECIMAL + c - '0', formattingInfo.getMaxLength());<a name="line.382"></a>
-<span class="sourceLineNo">383</span>                } else if (c == '.') {<a name="line.383"></a>
-<span class="sourceLineNo">384</span>                    state = ParserState.DOT_STATE;<a name="line.384"></a>
-<span class="sourceLineNo">385</span>                } else {<a name="line.385"></a>
-<span class="sourceLineNo">386</span>                    i = finalizeConverter(c, pattern, i, currentLiteral, formattingInfo, converterRules,<a name="line.386"></a>
-<span class="sourceLineNo">387</span>                            patternConverters, formattingInfos, noConsoleNoAnsi);<a name="line.387"></a>
-<span class="sourceLineNo">388</span>                    state = ParserState.LITERAL_STATE;<a name="line.388"></a>
-<span class="sourceLineNo">389</span>                    formattingInfo = FormattingInfo.getDefault();<a name="line.389"></a>
-<span class="sourceLineNo">390</span>                    currentLiteral.setLength(0);<a name="line.390"></a>
-<span class="sourceLineNo">391</span>                }<a name="line.391"></a>
-<span class="sourceLineNo">392</span><a name="line.392"></a>
-<span class="sourceLineNo">393</span>                break;<a name="line.393"></a>
-<span class="sourceLineNo">394</span><a name="line.394"></a>
-<span class="sourceLineNo">395</span>            case DOT_STATE:<a name="line.395"></a>
-<span class="sourceLineNo">396</span>                currentLiteral.append(c);<a name="line.396"></a>
-<span class="sourceLineNo">397</span><a name="line.397"></a>
-<span class="sourceLineNo">398</span>                if (c &gt;= '0' &amp;&amp; c &lt;= '9') {<a name="line.398"></a>
-<span class="sourceLineNo">399</span>                    formattingInfo = new FormattingInfo(formattingInfo.isLeftAligned(), formattingInfo.getMinLength(),<a name="line.399"></a>
-<span class="sourceLineNo">400</span>                            c - '0');<a name="line.400"></a>
-<span class="sourceLineNo">401</span>                    state = ParserState.MAX_STATE;<a name="line.401"></a>
-<span class="sourceLineNo">402</span>                } else {<a name="line.402"></a>
-<span class="sourceLineNo">403</span>                    LOGGER.error("Error occurred in position " + i + ".\n Was expecting digit, instead got char \"" + c<a name="line.403"></a>
-<span class="sourceLineNo">404</span>                            + "\".");<a name="line.404"></a>
-<span class="sourceLineNo">405</span><a name="line.405"></a>
-<span class="sourceLineNo">406</span>                    state = ParserState.LITERAL_STATE;<a name="line.406"></a>
-<span class="sourceLineNo">407</span>                }<a name="line.407"></a>
-<span class="sourceLineNo">408</span><a name="line.408"></a>
-<span class="sourceLineNo">409</span>                break;<a name="line.409"></a>
-<span class="sourceLineNo">410</span><a name="line.410"></a>
-<span class="sourceLineNo">411</span>            case MAX_STATE:<a name="line.411"></a>
-<span class="sourceLineNo">412</span>                currentLiteral.append(c);<a name="line.412"></a>
-<span class="sourceLineNo">413</span><a name="line.413"></a>
-<span class="sourceLineNo">414</span>                if (c &gt;= '0' &amp;&amp; c &lt;= '9') {<a name="line.414"></a>
-<span class="sourceLineNo">415</span>                    // Multiply the existing value and add the value of the number just encountered.<a name="line.415"></a>
-<span class="sourceLineNo">416</span>                    formattingInfo = new FormattingInfo(formattingInfo.isLeftAligned(), formattingInfo.getMinLength(),<a name="line.416"></a>
-<span class="sourceLineNo">417</span>                            formattingInfo.getMaxLength() * DECIMAL + c - '0');<a name="line.417"></a>
-<span class="sourceLineNo">418</span>                } else {<a name="line.418"></a>
-<span class="sourceLineNo">419</span>                    i = finalizeConverter(c, pattern, i, currentLiteral, formattingInfo, converterRules,<a name="line.419"></a>
-<span class="sourceLineNo">420</span>                            patternConverters, formattingInfos, noConsoleNoAnsi);<a name="line.420"></a>
-<span class="sourceLineNo">421</span>                    state = ParserState.LITERAL_STATE;<a name="line.421"></a>
-<span class="sourceLineNo">422</span>                    formattingInfo = FormattingInfo.getDefault();<a name="line.422"></a>
-<span class="sourceLineNo">423</span>                    currentLiteral.setLength(0);<a name="line.423"></a>
-<span class="sourceLineNo">424</span>                }<a name="line.424"></a>
-<span class="sourceLineNo">425</span><a name="line.425"></a>
-<span class="sourceLineNo">426</span>                break;<a name="line.426"></a>
-<span class="sourceLineNo">427</span>            } // switch<a name="line.427"></a>
-<span class="sourceLineNo">428</span>        }<a name="line.428"></a>
-<span class="sourceLineNo">429</span><a name="line.429"></a>
-<span class="sourceLineNo">430</span>        // while<a name="line.430"></a>
-<span class="sourceLineNo">431</span>        if (currentLiteral.length() != 0) {<a name="line.431"></a>
-<span class="sourceLineNo">432</span>            patternConverters.add(new LiteralPatternConverter(config, currentLiteral.toString()));<a name="line.432"></a>
-<span class="sourceLineNo">433</span>            formattingInfos.add(FormattingInfo.getDefault());<a name="line.433"></a>
-<span class="sourceLineNo">434</span>        }<a name="line.434"></a>
-<span class="sourceLineNo">435</span>    }<a name="line.435"></a>
-<span class="sourceLineNo">436</span><a name="line.436"></a>
-<span class="sourceLineNo">437</span>    /**<a name="line.437"></a>
-<span class="sourceLineNo">438</span>     * Creates a new PatternConverter.<a name="line.438"></a>
-<span class="sourceLineNo">439</span>     * <a name="line.439"></a>
-<span class="sourceLineNo">440</span>     * @param converterId<a name="line.440"></a>
-<span class="sourceLineNo">441</span>     *            converterId.<a name="line.441"></a>
-<span class="sourceLineNo">442</span>     * @param currentLiteral<a name="line.442"></a>
-<span class="sourceLineNo">443</span>     *            literal to be used if converter is unrecognized or following converter if converterId contains extra<a name="line.443"></a>
-<span class="sourceLineNo">444</span>     *            characters.<a name="line.444"></a>
-<span class="sourceLineNo">445</span>     * @param rules<a name="line.445"></a>
-<span class="sourceLineNo">446</span>     *            map of stock pattern converters keyed by format specifier.<a name="line.446"></a>
-<span class="sourceLineNo">447</span>     * @param options<a name="line.447"></a>
-<span class="sourceLineNo">448</span>     *            converter options.<a name="line.448"></a>
-<span class="sourceLineNo">449</span>     * @param noConsoleNoAnsi TODO<a name="line.449"></a>
-<span class="sourceLineNo">450</span>     * @return converter or null.<a name="line.450"></a>
-<span class="sourceLineNo">451</span>     */<a name="line.451"></a>
-<span class="sourceLineNo">452</span>    private PatternConverter createConverter(final String converterId, final StringBuilder currentLiteral,<a name="line.452"></a>
-<span class="sourceLineNo">453</span>            final Map&lt;String, Class&lt;PatternConverter&gt;&gt; rules, final List&lt;String&gt; options, boolean noConsoleNoAnsi) {<a name="line.453"></a>
-<span class="sourceLineNo">454</span>        String converterName = converterId;<a name="line.454"></a>
-<span class="sourceLineNo">455</span>        Class&lt;PatternConverter&gt; converterClass = null;<a name="line.455"></a>
-<span class="sourceLineNo">456</span><a name="line.456"></a>
-<span class="sourceLineNo">457</span>        if (rules == null) {<a name="line.457"></a>
-<span class="sourceLineNo">458</span>            LOGGER.error("Null rules for [" + converterId + "]");<a name="line.458"></a>
-<span class="sourceLineNo">459</span>            return null;<a name="line.459"></a>
-<span class="sourceLineNo">460</span>        }<a name="line.460"></a>
-<span class="sourceLineNo">461</span>        for (int i = converterId.length(); i &gt; 0 &amp;&amp; converterClass == null; i--) {<a name="line.461"></a>
-<span class="sourceLineNo">462</span>            converterName = converterName.substring(0, i);<a name="line.462"></a>
-<span class="sourceLineNo">463</span>            converterClass = rules.get(converterName);<a name="line.463"></a>
-<span class="sourceLineNo">464</span>        }<a name="line.464"></a>
-<span class="sourceLineNo">465</span><a name="line.465"></a>
-<span class="sourceLineNo">466</span>        if (converterClass == null) {<a name="line.466"></a>
-<span class="sourceLineNo">467</span>            LOGGER.error("Unrecognized format specifier [" + converterId + "]");<a name="line.467"></a>
-<span class="sourceLineNo">468</span>            return null;<a name="line.468"></a>
-<span class="sourceLineNo">469</span>        }<a name="line.469"></a>
-<span class="sourceLineNo">470</span><a name="line.470"></a>
-<span class="sourceLineNo">471</span>        if (AnsiConverter.class.isAssignableFrom(converterClass)) {<a name="line.471"></a>
-<span class="sourceLineNo">472</span>            options.add(NO_CONSOLE_NO_ANSI + "=" + noConsoleNoAnsi);<a name="line.472"></a>
-<span class="sourceLineNo">473</span>        }<a name="line.473"></a>
-<span class="sourceLineNo">474</span>        // Work around the regression bug in Class.getDeclaredMethods() in Oracle Java in version &gt; 1.6.0_17:<a name="line.474"></a>
-<span class="sourceLineNo">475</span>        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6815786<a name="line.475"></a>
-<span class="sourceLineNo">476</span>        final Method[] methods = converterClass.getDeclaredMethods();<a name="line.476"></a>
-<span class="sourceLineNo">477</span>        Method newInstanceMethod = null;<a name="line.477"></a>
-<span class="sourceLineNo">478</span>        for (final Method method : methods) {<a name="line.478"></a>
-<span class="sourceLineNo">479</span>            if (Modifier.isStatic(method.getModifiers()) &amp;&amp; method.getDeclaringClass().equals(converterClass)<a name="line.479"></a>
-<span class="sourceLineNo">480</span>                    &amp;&amp; method.getName().equals("newInstance")) {<a name="line.480"></a>
-<span class="sourceLineNo">481</span>                if (newInstanceMethod == null) {<a name="line.481"></a>
-<span class="sourceLineNo">482</span>                    newInstanceMethod = method;<a name="line.482"></a>
-<span class="sourceLineNo">483</span>                } else if (method.getReturnType().equals(newInstanceMethod.getReturnType())) {<a name="line.483"></a>
-<span class="sourceLineNo">484</span>                    LOGGER.error("Class " + converterClass + " cannot contain multiple static newInstance methods");<a name="line.484"></a>
-<span class="sourceLineNo">485</span>                    return null;<a name="line.485"></a>
-<span class="sourceLineNo">486</span>                }<a name="line.486"></a>
-<span class="sourceLineNo">487</span>            }<a name="line.487"></a>
-<span class="sourceLineNo">488</span>        }<a name="line.488"></a>
-<span class="sourceLineNo">489</span>        if (newInstanceMethod == null) {<a name="line.489"></a>
-<span class="sourceLineNo">490</span>            LOGGER.error("Class " + converterClass + " does not contain a static newInstance method");<a name="line.490"></a>
-<span class="sourceLineNo">491</span>            return null;<a name="line.491"></a>
-<span class="sourceLineNo">492</span>        }<a name="line.492"></a>
-<span class="sourceLineNo">493</span><a name="line.493"></a>
-<span class="sourceLineNo">494</span>        final Class&lt;?&gt;[] parmTypes = newInstanceMethod.getParameterTypes();<a name="line.494"></a>
-<span class="sourceLineNo">495</span>        final Object[] parms = parmTypes.length &gt; 0 ? new Object[parmTypes.length] : null;<a name="line.495"></a>
-<span class="sourceLineNo">496</span><a name="line.496"></a>
-<span class="sourceLineNo">497</span>        if (parms != null) {<a name="line.497"></a>
-<span class="sourceLineNo">498</span>            int i = 0;<a name="line.498"></a>
-<span class="sourceLineNo">499</span>            boolean errors = false;<a name="line.499"></a>
-<span class="sourceLineNo">500</span>            for (final Class&lt;?&gt; clazz : parmTypes) {<a name="line.500"></a>
-<span class="sourceLineNo">501</span>                if (clazz.isArray() &amp;&amp; clazz.getName().equals("[Ljava.lang.String;")) {<a name="line.501"></a>
-<span class="sourceLineNo">502</span>                    final String[] optionsArray = options.toArray(new String[options.size()]);<a name="line.502"></a>
-<span class="sourceLineNo">503</span>                    parms[i] = optionsArray;<a name="line.503"></a>
-<span class="sourceLineNo">504</span>                } else if (clazz.isAssignableFrom(Configuration.class)) {<a name="line.504"></a>
-<span class="sourceLineNo">505</span>                    parms[i] = config;<a name="line.505"></a>
-<span class="sourceLineNo">506</span>                } else {<a name="line.506"></a>
-<span class="sourceLineNo">507</span>                    LOGGER.error("Unknown parameter type " + clazz.getName() + " for static newInstance method of "<a name="line.507"></a>
-<span class="sourceLineNo">508</span>                            + converterClass.getName());<a name="line.508"></a>
-<span class="sourceLineNo">509</span>                    errors = true;<a name="line.509"></a>
-<span class="sourceLineNo">510</span>                }<a name="line.510"></a>
-<span class="sourceLineNo">511</span>                ++i;<a name="line.511"></a>
-<span class="sourceLineNo">512</span>            }<a name="line.512"></a>
-<span class="sourceLineNo">513</span>            if (errors) {<a name="line.513"></a>
-<span class="sourceLineNo">514</span>                return null;<a name="line.514"></a>
-<span class="sourceLineNo">515</span>            }<a name="line.515"></a>
-<span class="sourceLineNo">516</span>        }<a name="line.516"></a>
-<span class="sourceLineNo">517</span><a name="line.517"></a>
-<span class="sourceLineNo">518</span>        try {<a name="line.518"></a>
-<span class="sourceLineNo">519</span>            final Object newObj = newInstanceMethod.invoke(null, parms);<a name="line.519"></a>
-<span class="sourceLineNo">520</span><a name="line.520"></a>
-<span class="sourceLineNo">521</span>            if (newObj instanceof PatternConverter) {<a name="line.521"></a>
-<span class="sourceLineNo">522</span>                currentLiteral.delete(0, currentLiteral.length() - (converterId.length() - converterName.length()));<a name="line.522"></a>
-<span class="sourceLineNo">523</span><a name="line.523"></a>
-<span class="sourceLineNo">524</span>                return (PatternConverter) newObj;<a name="line.524"></a>
-<span class="sourceLineNo">525</span>            } else {<a name="line.525"></a>
-<span class="sourceLineNo">526</span>                LOGGER.warn("Class " + converterClass.getName() + " does not extend PatternConverter.");<a name="line.526"></a>
-<span class="sourceLineNo">527</span>            }<a name="line.527"></a>
-<span class="sourceLineNo">528</span>        } catch (final Exception ex) {<a name="line.528"></a>
-<span class="sourceLineNo">529</span>            LOGGER.error("Error creating converter for " + converterId, ex);<a name="line.529"></a>
-<span class="sourceLineNo">530</span>        }<a name="line.530"></a>
-<span class="sourceLineNo">531</span><a name="line.531"></a>
-<span class="sourceLineNo">532</span>        return null;<a name="line.532"></a>
-<span class="sourceLineNo">533</span>    }<a name="line.533"></a>
-<span class="sourceLineNo">534</span><a name="line.534"></a>
-<span class="sourceLineNo">535</span>    /**<a name="line.535"></a>
-<span class="sourceLineNo">536</span>     * Processes a format specifier sequence.<a name="line.536"></a>
-<span class="sourceLineNo">537</span>     * <a name="line.537"></a>
-<span class="sourceLineNo">538</span>     * @param c<a name="line.538"></a>
-<span class="sourceLineNo">539</span>     *            initial character of format specifier.<a name="line.539"></a>
-<span class="sourceLineNo">540</span>     * @param pattern<a name="line.540"></a>
-<span class="sourceLineNo">541</span>     *            conversion pattern<a name="line.541"></a>
-<span class="sourceLineNo">542</span>     * @param i<a name="line.542"></a>
-<span class="sourceLineNo">543</span>     *            current position in conversion pattern.<a name="line.543"></a>
-<span class="sourceLineNo">544</span>     * @param currentLiteral<a name="line.544"></a>
-<span class="sourceLineNo">545</span>     *            current literal.<a name="line.545"></a>
-<span class="sourceLineNo">546</span>     * @param formattingInfo<a name="line.546"></a>
-<span class="sourceLineNo">547</span>     *            current field specifier.<a name="line.547"></a>
-<span class="sourceLineNo">548</span>     * @param rules<a name="line.548"></a>
-<span class="sourceLineNo">549</span>     *            map of stock pattern converters keyed by format specifier.<a name="line.549"></a>
-<span class="sourceLineNo">550</span>     * @param patternConverters<a name="line.550"></a>
-<span class="sourceLineNo">551</span>     *            list to receive parsed pattern converter.<a name="line.551"></a>
-<span class="sourceLineNo">552</span>     * @param formattingInfos<a name="line.552"></a>
-<span class="sourceLineNo">553</span>     *            list to receive corresponding field specifier.<a name="line.553"></a>
-<span class="sourceLineNo">554</span>     * @param noConsoleNoAnsi<a name="line.554"></a>
-<span class="sourceLineNo">555</span>     *            TODO<a name="line.555"></a>
-<span class="sourceLineNo">556</span>     * @return position after format specifier sequence.<a name="line.556"></a>
-<span class="sourceLineNo">557</span>     */<a name="line.557"></a>
-<span class="sourceLineNo">558</span>    private int finalizeConverter(final char c, final String pattern, int i, final StringBuilder currentLiteral,<a name="line.558"></a>
-<span class="sourceLineNo">559</span>            final FormattingInfo formattingInfo, final Map&lt;String, Class&lt;PatternConverter&gt;&gt; rules,<a name="line.559"></a>
-<span class="sourceLineNo">560</span>            final List&lt;PatternConverter&gt; patternConverters, final List&lt;FormattingInfo&gt; formattingInfos,<a name="line.560"></a>
-<span class="sourceLineNo">561</span>            final boolean noConsoleNoAnsi) {<a name="line.561"></a>
-<span class="sourceLineNo">562</span>        final StringBuilder convBuf = new StringBuilder();<a name="line.562"></a>
-<span class="sourceLineNo">563</span>        i = extractConverter(c, pattern, i, convBuf, currentLiteral);<a name="line.563"></a>
-<span class="sourceLineNo">564</span><a name="line.564"></a>
-<span class="sourceLineNo">565</span>        final String converterId = convBuf.toString();<a name="line.565"></a>
-<span class="sourceLineNo">566</span><a name="line.566"></a>
-<span class="sourceLineNo">567</span>        final List&lt;String&gt; options = new ArrayList&lt;String&gt;();<a name="line.567"></a>
-<span class="sourceLineNo">568</span>        i = extractOptions(pattern, i, options);<a name="line.568"></a>
-<span class="sourceLineNo">569</span><a name="line.569"></a>
-<span class="sourceLineNo">570</span>        final PatternConverter pc = createConverter(converterId, currentLiteral, rules, options, noConsoleNoAnsi);<a name="line.570"></a>
-<span class="sourceLineNo">571</span><a name="line.571"></a>
-<span class="sourceLineNo">572</span>        if (pc == null) {<a name="line.572"></a>
-<span class="sourceLineNo">573</span>            StringBuilder msg;<a name="line.573"></a>
-<span class="sourceLineNo">574</span><a name="line.574"></a>
-<span class="sourceLineNo">575</span>            if (Strings.isEmpty(converterId)) {<a name="line.575"></a>
-<span class="sourceLineNo">576</span>                msg = new StringBuilder("Empty conversion specifier starting at position ");<a name="line.576"></a>
-<span class="sourceLineNo">577</span>            } else {<a name="line.577"></a>
-<span class="sourceLineNo">578</span>                msg = new StringBuilder("Unrecognized conversion specifier [");<a name="line.578"></a>
-<span class="sourceLineNo">579</span>                msg.append(converterId);<a name="line.579"></a>
-<span class="sourceLineNo">580</span>                msg.append("] starting at position ");<a name="line.580"></a>
-<span class="sourceLineNo">581</span>            }<a name="line.581"></a>
-<span class="sourceLineNo">582</span><a name="line.582"></a>
-<span class="sourceLineNo">583</span>            msg.append(Integer.toString(i));<a name="line.583"></a>
-<span class="sourceLineNo">584</span>            msg.append(" in conversion pattern.");<a name="line.584"></a>
-<span class="sourceLineNo">585</span><a name="line.585"></a>
-<span class="sourceLineNo">586</span>            LOGGER.error(msg.toString());<a name="line.586"></a>
-<span class="sourceLineNo">587</span><a name="line.587"></a>
-<span class="sourceLineNo">588</span>            patternConverters.add(new LiteralPatternConverter(config, currentLiteral.toString()));<a name="line.588"></a>
-<span class="sourceLineNo">589</span>            formattingInfos.add(FormattingInfo.getDefault());<a name="line.589"></a>
-<span class="sourceLineNo">590</span>        } else {<a name="line.590"></a>
-<span class="sourceLineNo">591</span>            patternConverters.add(pc);<a name="line.591"></a>
-<span class="sourceLineNo">592</span>            formattingInfos.add(formattingInfo);<a name="line.592"></a>
-<span class="sourceLineNo">593</span><a name="line.593"></a>
-<span class="sourceLineNo">594</span>            if (currentLiteral.length() &gt; 0) {<a name="line.594"></a>
-<span class="sourceLineNo">595</span>                patternConverters.add(new LiteralPatternConverter(config, currentLiteral.toString()));<a name="line.595"></a>
-<span class="sourceLineNo">596</span>                formattingInfos.add(FormattingInfo.getDefault());<a name="line.596"></a>
-<span class="sourceLineNo">597</span>            }<a name="line.597"></a>
-<span class="sourceLineNo">598</span>        }<a name="line.598"></a>
-<span class="sourceLineNo">599</span><a name="line.599"></a>
-<span class="sourceLineNo">600</span>        currentLiteral.setLength(0);<a name="line.600"></a>
-<span class="sourceLineNo">601</span><a name="line.601"></a>
-<span class="sourceLineNo">602</span>        return i;<a name="line.602"></a>
-<span class="sourceLineNo">603</span>    }<a name="line.603"></a>
-<span class="sourceLineNo">604</span>}<a name="line.604"></a>
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<FONT color="green">003</FONT>     * contributor license agreements. See the NOTICE file distributed with<a name="line.3"></a>
+<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache license, Version 2.0<a name="line.5"></a>
+<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<FONT color="green">007</FONT>     * the License. You may obtain a copy of the License at<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<FONT color="green">010</FONT>     *<a name="line.10"></a>
+<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<FONT color="green">014</FONT>     * See the license for the specific language governing permissions and<a name="line.14"></a>
+<FONT color="green">015</FONT>     * limitations under the license.<a name="line.15"></a>
+<FONT color="green">016</FONT>     */<a name="line.16"></a>
+<FONT color="green">017</FONT>    package org.apache.logging.log4j.core.pattern;<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.lang.reflect.Method;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.lang.reflect.Modifier;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.ArrayList;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.HashMap;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Iterator;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.List;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.util.Map;<a name="line.25"></a>
+<FONT color="green">026</FONT>    <a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.apache.logging.log4j.Logger;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.apache.logging.log4j.core.config.Configuration;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.apache.logging.log4j.core.config.plugins.util.PluginManager;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.apache.logging.log4j.core.config.plugins.util.PluginType;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.apache.logging.log4j.util.Strings;<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>    /**<a name="line.34"></a>
+<FONT color="green">035</FONT>     * Most of the work of the {@link org.apache.logging.log4j.core.layout.PatternLayout} class is delegated to the<a name="line.35"></a>
+<FONT color="green">036</FONT>     * PatternParser class.<a name="line.36"></a>
+<FONT color="green">037</FONT>     * &lt;p&gt;<a name="line.37"></a>
+<FONT color="green">038</FONT>     * It is this class that parses conversion patterns and creates a chained list of {@link PatternConverter<a name="line.38"></a>
+<FONT color="green">039</FONT>     * PatternConverters}.<a name="line.39"></a>
+<FONT color="green">040</FONT>     */<a name="line.40"></a>
+<FONT color="green">041</FONT>    public final class PatternParser {<a name="line.41"></a>
+<FONT color="green">042</FONT>        static final String NO_CONSOLE_NO_ANSI = "noConsoleNoAnsi";<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>        /**<a name="line.44"></a>
+<FONT color="green">045</FONT>         * Escape character for format specifier.<a name="line.45"></a>
+<FONT color="green">046</FONT>         */<a name="line.46"></a>
+<FONT color="green">047</FONT>        private static final char ESCAPE_CHAR = '%';<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>        /**<a name="line.49"></a>
+<FONT color="green">050</FONT>         * The states the parser can be in while parsing the pattern.<a name="line.50"></a>
+<FONT color="green">051</FONT>         */<a name="line.51"></a>
+<FONT color="green">052</FONT>        private enum ParserState {<a name="line.52"></a>
+<FONT color="green">053</FONT>            /**<a name="line.53"></a>
+<FONT color="green">054</FONT>             * Literal state.<a name="line.54"></a>
+<FONT color="green">055</FONT>             */<a name="line.55"></a>
+<FONT color="green">056</FONT>            LITERAL_STATE,<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>            /**<a name="line.58"></a>
+<FONT color="green">059</FONT>             * In converter name state.<a name="line.59"></a>
+<FONT color="green">060</FONT>             */<a name="line.60"></a>
+<FONT color="green">061</FONT>            CONVERTER_STATE,<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>            /**<a name="line.63"></a>
+<FONT color="green">064</FONT>             * Dot state.<a name="line.64"></a>
+<FONT color="green">065</FONT>             */<a name="line.65"></a>
+<FONT color="green">066</FONT>            DOT_STATE,<a name="line.66"></a>
+<FONT color="green">067</FONT>    <a name="line.67"></a>
+<FONT color="green">068</FONT>            /**<a name="line.68"></a>
+<FONT color="green">069</FONT>             * Min state.<a name="line.69"></a>
+<FONT color="green">070</FONT>             */<a name="line.70"></a>
+<FONT color="green">071</FONT>            MIN_STATE,<a name="line.71"></a>
+<FONT color="green">072</FONT>    <a name="line.72"></a>
+<FONT color="green">073</FONT>            /**<a name="line.73"></a>
+<FONT color="green">074</FONT>             * Max state.<a name="line.74"></a>
+<FONT color="green">075</FONT>             */<a name="line.75"></a>
+<FONT color="green">076</FONT>            MAX_STATE;<a name="line.76"></a>
+<FONT color="green">077</FONT>        }<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>        private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.79"></a>
+<FONT color="green">080</FONT>    <a name="line.80"></a>
+<FONT color="green">081</FONT>        private static final int BUF_SIZE = 32;<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>        private static final int DECIMAL = 10;<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>        private final Configuration config;<a name="line.85"></a>
+<FONT color="green">086</FONT>    <a name="line.86"></a>
+<FONT color="green">087</FONT>        private final Map&lt;String, Class&lt;PatternConverter&gt;&gt; converterRules;<a name="line.87"></a>
+<FONT color="green">088</FONT>    <a name="line.88"></a>
+<FONT color="green">089</FONT>        /**<a name="line.89"></a>
+<FONT color="green">090</FONT>         * Constructor.<a name="line.90"></a>
+<FONT color="green">091</FONT>         *<a name="line.91"></a>
+<FONT color="green">092</FONT>         * @param converterKey<a name="line.92"></a>
+<FONT color="green">093</FONT>         *            The type of converters that will be used.<a name="line.93"></a>
+<FONT color="green">094</FONT>         */<a name="line.94"></a>
+<FONT color="green">095</FONT>        public PatternParser(final String converterKey) {<a name="line.95"></a>
+<FONT color="green">096</FONT>            this(null, converterKey, null, null);<a name="line.96"></a>
+<FONT color="green">097</FONT>        }<a name="line.97"></a>
+<FONT color="green">098</FONT>    <a name="line.98"></a>
+<FONT color="green">099</FONT>        /**<a name="line.99"></a>
+<FONT color="green">100</FONT>         * Constructor.<a name="line.100"></a>
+<FONT color="green">101</FONT>         *<a name="line.101"></a>
+<FONT color="green">102</FONT>         * @param config<a name="line.102"></a>
+<FONT color="green">103</FONT>         *            The current Configuration.<a name="line.103"></a>
+<FONT color="green">104</FONT>         * @param converterKey<a name="line.104"></a>
+<FONT color="green">105</FONT>         *            The key to lookup the converters.<a name="line.105"></a>
+<FONT color="green">106</FONT>         * @param expected<a name="line.106"></a>
+<FONT color="green">107</FONT>         *            The expected base Class of each Converter.<a name="line.107"></a>
+<FONT color="green">108</FONT>         */<a name="line.108"></a>
+<FONT color="green">109</FONT>        public PatternParser(final Configuration config, final String converterKey, final Class&lt;?&gt; expected) {<a name="line.109"></a>
+<FONT color="green">110</FONT>            this(config, converterKey, expected, null);<a name="line.110"></a>
+<FONT color="green">111</FONT>        }<a name="line.111"></a>
+<FONT color="green">112</FONT>    <a name="line.112"></a>
+<FONT color="green">113</FONT>        /**<a name="line.113"></a>
+<FONT color="green">114</FONT>         * Constructor.<a name="line.114"></a>
+<FONT color="green">115</FONT>         *<a name="line.115"></a>
+<FONT color="green">116</FONT>         * @param config<a name="line.116"></a>
+<FONT color="green">117</FONT>         *            The current Configuration.<a name="line.117"></a>
+<FONT color="green">118</FONT>         * @param converterKey<a name="line.118"></a>
+<FONT color="green">119</FONT>         *            The key to lookup the converters.<a name="line.119"></a>
+<FONT color="green">120</FONT>         * @param expectedClass<a name="line.120"></a>
+<FONT color="green">121</FONT>         *            The expected base Class of each Converter.<a name="line.121"></a>
+<FONT color="green">122</FONT>         * @param filterClass<a name="line.122"></a>
+<FONT color="green">123</FONT>         *            Filter the returned plugins after calling the plugin manager.<a name="line.123"></a>
+<FONT color="green">124</FONT>         */<a name="line.124"></a>
+<FONT color="green">125</FONT>        public PatternParser(final Configuration config, final String converterKey, final Class&lt;?&gt; expectedClass,<a name="line.125"></a>
+<FONT color="green">126</FONT>                final Class&lt;?&gt; filterClass) {<a name="line.126"></a>
+<FONT color="green">127</FONT>            this.config = config;<a name="line.127"></a>
+<FONT color="green">128</FONT>            final PluginManager manager = new PluginManager(converterKey);<a name="line.128"></a>
+<FONT color="green">129</FONT>            manager.collectPlugins();<a name="line.129"></a>
+<FONT color="green">130</FONT>            final Map&lt;String, PluginType&lt;?&gt;&gt; plugins = manager.getPlugins();<a name="line.130"></a>
+<FONT color="green">131</FONT>            final Map&lt;String, Class&lt;PatternConverter&gt;&gt; converters = new HashMap&lt;String, Class&lt;PatternConverter&gt;&gt;();<a name="line.131"></a>
+<FONT color="green">132</FONT>    <a name="line.132"></a>
+<FONT color="green">133</FONT>            for (final PluginType&lt;?&gt; type : plugins.values()) {<a name="line.133"></a>
+<FONT color="green">134</FONT>                try {<a name="line.134"></a>
+<FONT color="green">135</FONT>                    @SuppressWarnings("unchecked")<a name="line.135"></a>
+<FONT color="green">136</FONT>                    final Class&lt;PatternConverter&gt; clazz = (Class&lt;PatternConverter&gt;) type.getPluginClass();<a name="line.136"></a>
+<FONT color="green">137</FONT>                    if (filterClass != null &amp;&amp; !filterClass.isAssignableFrom(clazz)) {<a name="line.137"></a>
+<FONT color="green">138</FONT>                        continue;<a name="line.138"></a>
+<FONT color="green">139</FONT>                    }<a name="line.139"></a>
+<FONT color="green">140</FONT>                    final ConverterKeys keys = clazz.getAnnotation(ConverterKeys.class);<a name="line.140"></a>
+<FONT color="green">141</FONT>                    if (keys != null) {<a name="line.141"></a>
+<FONT color="green">142</FONT>                        for (final String key : keys.value()) {<a name="line.142"></a>
+<FONT color="green">143</FONT>                            converters.put(key, clazz);<a name="line.143"></a>
+<FONT color="green">144</FONT>                        }<a name="line.144"></a>
+<FONT color="green">145</FONT>                    }<a name="line.145"></a>
+<FONT color="green">146</FONT>                } catch (final Exception ex) {<a name="line.146"></a>
+<FONT color="green">147</FONT>                    LOGGER.error("Error processing plugin " + type.getElementName(), ex);<a name="line.147"></a>
+<FONT color="green">148</FONT>                }<a name="line.148"></a>
+<FONT color="green">149</FONT>            }<a name="line.149"></a>
+<FONT color="green">150</FONT>            converterRules = converters;<a name="line.150"></a>
+<FONT color="green">151</FONT>        }<a name="line.151"></a>
+<FONT color="green">152</FONT>    <a name="line.152"></a>
+<FONT color="green">153</FONT>        public List&lt;PatternFormatter&gt; parse(final String pattern) {<a name="line.153"></a>
+<FONT color="green">154</FONT>            return parse(pattern, false, false);<a name="line.154"></a>
+<FONT color="green">155</FONT>        }<a name="line.155"></a>
+<FONT color="green">156</FONT>    <a name="line.156"></a>
+<FONT color="green">157</FONT>        public List&lt;PatternFormatter&gt; parse(final String pattern, final boolean alwaysWriteExceptions,<a name="line.157"></a>
+<FONT color="green">158</FONT>                boolean noConsoleNoAnsi) {<a name="line.158"></a>
+<FONT color="green">159</FONT>            final List&lt;PatternFormatter&gt; list = new ArrayList&lt;PatternFormatter&gt;();<a name="line.159"></a>
+<FONT color="green">160</FONT>            final List&lt;PatternConverter&gt; converters = new ArrayList&lt;PatternConverter&gt;();<a name="line.160"></a>
+<FONT color="green">161</FONT>            final List&lt;FormattingInfo&gt; fields = new ArrayList&lt;FormattingInfo&gt;();<a name="line.161"></a>
+<FONT color="green">162</FONT>    <a name="line.162"></a>
+<FONT color="green">163</FONT>            parse(pattern, converters, fields, noConsoleNoAnsi);<a name="line.163"></a>
+<FONT color="green">164</FONT>    <a name="line.164"></a>
+<FONT color="green">165</FONT>            final Iterator&lt;FormattingInfo&gt; fieldIter = fields.iterator();<a name="line.165"></a>
+<FONT color="green">166</FONT>            boolean handlesThrowable = false;<a name="line.166"></a>
+<FONT color="green">167</FONT>    <a name="line.167"></a>
+<FONT color="green">168</FONT>            for (final PatternConverter converter : converters) {<a name="line.168"></a>
+<FONT color="green">169</FONT>                LogEventPatternConverter pc;<a name="line.169"></a>
+<FONT color="green">170</FONT>                if (converter instanceof LogEventPatternConverter) {<a name="line.170"></a>
+<FONT color="green">171</FONT>                    pc = (LogEventPatternConverter) converter;<a name="line.171"></a>
+<FONT color="green">172</FONT>                    handlesThrowable |= pc.handlesThrowable();<a name="line.172"></a>
+<FONT color="green">173</FONT>                } else {<a name="line.173"></a>
+<FONT color="green">174</FONT>                    pc = new LiteralPatternConverter(config, Strings.EMPTY);<a name="line.174"></a>
+<FONT color="green">175</FONT>                }<a name="line.175"></a>
+<FONT color="green">176</FONT>    <a name="line.176"></a>
+<FONT color="green">177</FONT>                FormattingInfo field;<a name="line.177"></a>
+<FONT color="green">178</FONT>                if (fieldIter.hasNext()) {<a name="line.178"></a>
+<FONT color="green">179</FONT>                    field = fieldIter.next();<a name="line.179"></a>
+<FONT color="green">180</FONT>                } else {<a name="line.180"></a>
+<FONT color="green">181</FONT>                    field = FormattingInfo.getDefault();<a name="line.181"></a>
+<FONT color="green">182</FONT>                }<a name="line.182"></a>
+<FONT color="green">183</FONT>                list.add(new PatternFormatter(pc, field));<a name="line.183"></a>
+<FONT color="green">184</FONT>            }<a name="line.184"></a>
+<FONT color="green">185</FONT>            if (alwaysWriteExceptions &amp;&amp; !handlesThrowable) {<a name="line.185"></a>
+<FONT color="green">186</FONT>                final LogEventPatternConverter pc = ExtendedThrowablePatternConverter.newInstance(null);<a name="line.186"></a>
+<FONT color="green">187</FONT>                list.add(new PatternFormatter(pc, FormattingInfo.getDefault()));<a name="line.187"></a>
+<FONT color="green">188</FONT>            }<a name="line.188"></a>
+<FONT color="green">189</FONT>            return list;<a name="line.189"></a>
+<FONT color="green">190</FONT>        }<a name="line.190"></a>
+<FONT color="green">191</FONT>    <a name="line.191"></a>
+<FONT color="green">192</FONT>        /**<a name="line.192"></a>
+<FONT color="green">193</FONT>         * Extract the converter identifier found at position i.<a name="line.193"></a>
+<FONT color="green">194</FONT>         * &lt;p/&gt;<a name="line.194"></a>
+<FONT color="green">195</FONT>         * After this function returns, the variable i will point to the first char after the end of the converter<a name="line.195"></a>
+<FONT color="green">196</FONT>         * identifier.<a name="line.196"></a>
+<FONT color="green">197</FONT>         * &lt;p/&gt;<a name="line.197"></a>
+<FONT color="green">198</FONT>         * If i points to a char which is not a character acceptable at the start of a unicode identifier, the value null is<a name="line.198"></a>
+<FONT color="green">199</FONT>         * returned.<a name="line.199"></a>
+<FONT color="green">200</FONT>         *<a name="line.200"></a>
+<FONT color="green">201</FONT>         * @param lastChar<a name="line.201"></a>
+<FONT color="green">202</FONT>         *            last processed character.<a name="line.202"></a>
+<FONT color="green">203</FONT>         * @param pattern<a name="line.203"></a>
+<FONT color="green">204</FONT>         *            format string.<a name="line.204"></a>
+<FONT color="green">205</FONT>         * @param i<a name="line.205"></a>
+<FONT color="green">206</FONT>         *            current index into pattern format.<a name="line.206"></a>
+<FONT color="green">207</FONT>         * @param convBuf<a name="line.207"></a>
+<FONT color="green">208</FONT>         *            buffer to receive conversion specifier.<a name="line.208"></a>
+<FONT color="green">209</FONT>         * @param currentLiteral<a name="line.209"></a>
+<FONT color="green">210</FONT>         *            literal to be output in case format specifier in unrecognized.<a name="line.210"></a>
+<FONT color="green">211</FONT>         * @return position in pattern after converter.<a name="line.211"></a>
+<FONT color="green">212</FONT>         */<a name="line.212"></a>
+<FONT color="green">213</FONT>        private static int extractConverter(final char lastChar, final String pattern, int i, final StringBuilder convBuf,<a name="line.213"></a>
+<FONT color="green">214</FONT>                final StringBuilder currentLiteral) {<a name="line.214"></a>
+<FONT color="green">215</FONT>            convBuf.setLength(0);<a name="line.215"></a>
+<FONT color="green">216</FONT>    <a name="line.216"></a>
+<FONT color="green">217</FONT>            // When this method is called, lastChar points to the first character of the<a name="line.217"></a>
+<FONT color="green">218</FONT>            // conversion word. For example:<a name="line.218"></a>
+<FONT color="green">219</FONT>            // For "%hello" lastChar = 'h'<a name="line.219"></a>
+<FONT color="green">220</FONT>            // For "%-5hello" lastChar = 'h'<a name="line.220"></a>
+<FONT color="green">221</FONT>            // System.out.println("lastchar is "+lastChar);<a name="line.221"></a>
+<FONT color="green">222</FONT>            if (!Character.isUnicodeIdentifierStart(lastChar)) {<a name="line.222"></a>
+<FONT color="green">223</FONT>                return i;<a name="line.223"></a>
+<FONT color="green">224</FONT>            }<a name="line.224"></a>
+<FONT color="green">225</FONT>    <a name="line.225"></a>
+<FONT color="green">226</FONT>            convBuf.append(lastChar);<a name="line.226"></a>
+<FONT color="green">227</FONT>    <a name="line.227"></a>
+<FONT color="green">228</FONT>            while (i &lt; pattern.length() &amp;&amp; Character.isUnicodeIdentifierPart(pattern.charAt(i))) {<a name="line.228"></a>
+<FONT color="green">229</FONT>                convBuf.append(pattern.charAt(i));<a name="line.229"></a>
+<FONT color="green">230</FONT>                currentLiteral.append(pattern.charAt(i));<a name="line.230"></a>
+<FONT color="green">231</FONT>                i++;<a name="line.231"></a>
+<FONT color="green">232</FONT>            }<a name="line.232"></a>
+<FONT color="green">233</FONT>    <a name="line.233"></a>
+<FONT color="green">234</FONT>            return i;<a name="line.234"></a>
+<FONT color="green">235</FONT>        }<a name="line.235"></a>
+<FONT color="green">236</FONT>    <a name="line.236"></a>
+<FONT color="green">237</FONT>        /**<a name="line.237"></a>
+<FONT color="green">238</FONT>         * Extract options.<a name="line.238"></a>
+<FONT color="green">239</FONT>         *<a name="line.239"></a>
+<FONT color="green">240</FONT>         * @param pattern<a name="line.240"></a>
+<FONT color="green">241</FONT>         *            conversion pattern.<a name="line.241"></a>
+<FONT color="green">242</FONT>         * @param i<a name="line.242"></a>
+<FONT color="green">243</FONT>         *            start of options.<a name="line.243"></a>
+<FONT color="green">244</FONT>         * @param options<a name="line.244"></a>
+<FONT color="green">245</FONT>         *            array to receive extracted options<a name="line.245"></a>
+<FONT color="green">246</FONT>         * @return position in pattern after options.<a name="line.246"></a>
+<FONT color="green">247</FONT>         */<a name="line.247"></a>
+<FONT color="green">248</FONT>        private static int extractOptions(final String pattern, int i, final List&lt;String&gt; options) {<a name="line.248"></a>
+<FONT color="green">249</FONT>            while (i &lt; pattern.length() &amp;&amp; pattern.charAt(i) == '{') {<a name="line.249"></a>
+<FONT color="green">250</FONT>                final int begin = i++;<a name="line.250"></a>
+<FONT color="green">251</FONT>                int end;<a name="line.251"></a>
+<FONT color="green">252</FONT>                int depth = 0;<a name="line.252"></a>
+<FONT color="green">253</FONT>                do {<a name="line.253"></a>
+<FONT color="green">254</FONT>                    end = pattern.indexOf('}', i);<a name="line.254"></a>
+<FONT color="green">255</FONT>                    if (end != -1) {<a name="line.255"></a>
+<FONT color="green">256</FONT>                        final int next = pattern.indexOf("{", i);<a name="line.256"></a>
+<FONT color="green">257</FONT>                        if (next != -1 &amp;&amp; next &lt; end) {<a name="line.257"></a>
+<FONT color="green">258</FONT>                            i = end + 1;<a name="line.258"></a>
+<FONT color="green">259</FONT>                            ++depth;<a name="line.259"></a>
+<FONT color="green">260</FONT>                        } else if (depth &gt; 0) {<a name="line.260"></a>
+<FONT color="green">261</FONT>                            --depth;<a name="line.261"></a>
+<FONT color="green">262</FONT>                        }<a name="line.262"></a>
+<FONT color="green">263</FONT>                    }<a name="line.263"></a>
+<FONT color="green">264</FONT>                } while (depth &gt; 0);<a name="line.264"></a>
+<FONT color="green">265</FONT>    <a name="line.265"></a>
+<FONT color="green">266</FONT>                if (end == -1) {<a name="line.266"></a>
+<FONT color="green">267</FONT>                    break;<a name="line.267"></a>
+<FONT color="green">268</FONT>                }<a name="line.268"></a>
+<FONT color="green">269</FONT>    <a name="line.269"></a>
+<FONT color="green">270</FONT>                final String r = pattern.substring(begin + 1, end);<a name="line.270"></a>
+<FONT color="green">271</FONT>                options.add(r);<a name="line.271"></a>
+<FONT color="green">272</FONT>                i = end + 1;<a name="line.272"></a>
+<FONT color="green">273</FONT>            }<a name="line.273"></a>
+<FONT color="green">274</FONT>    <a name="line.274"></a>
+<FONT color="green">275</FONT>            return i;<a name="line.275"></a>
+<FONT color="green">276</FONT>        }<a name="line.276"></a>
+<FONT color="green">277</FONT>    <a name="line.277"></a>
+<FONT color="green">278</FONT>        /**<a name="line.278"></a>
+<FONT color="green">279</FONT>         * Parse a format specifier.<a name="line.279"></a>
+<FONT color="green">280</FONT>         *<a name="line.280"></a>
+<FONT color="green">281</FONT>         * @param pattern<a name="line.281"></a>
+<FONT color="green">282</FONT>         *            pattern to parse.<a name="line.282"></a>
+<FONT color="green">283</FONT>         * @param patternConverters<a name="line.283"></a>
+<FONT color="green">284</FONT>         *            list to receive pattern converters.<a name="line.284"></a>
+<FONT color="green">285</FONT>         * @param formattingInfos<a name="line.285"></a>
+<FONT color="green">286</FONT>         *            list to receive field specifiers corresponding to pattern converters.<a name="line.286"></a>
+<FONT color="green">287</FONT>         * @param noConsoleNoAnsi<a name="line.287"></a>
+<FONT color="green">288</FONT>         *            TODO<a name="line.288"></a>
+<FONT color="green">289</FONT>         */<a name="line.289"></a>
+<FONT color="green">290</FONT>        public void parse(final String pattern, final List&lt;PatternConverter&gt; patternConverters,<a name="line.290"></a>
+<FONT color="green">291</FONT>                final List&lt;FormattingInfo&gt; formattingInfos, final boolean noConsoleNoAnsi) {<a name="line.291"></a>
+<FONT color="green">292</FONT>            if (pattern == null) {<a name="line.292"></a>
+<FONT color="green">293</FONT>                throw new NullPointerException("pattern");<a name="line.293"></a>
+<FONT color="green">294</FONT>            }<a name="line.294"></a>
+<FONT color="green">295</FONT>    <a name="line.295"></a>
+<FONT color="green">296</FONT>            final StringBuilder currentLiteral = new StringBuilder(BUF_SIZE);<a name="line.296"></a>
+<FONT color="green">297</FONT>    <a name="line.297"></a>
+<FONT color="green">298</FONT>            final int patternLength = pattern.length();<a name="line.298"></a>
+<FONT color="green">299</FONT>            ParserState state = ParserState.LITERAL_STATE;<a name="line.299"></a>
+<FONT color="green">300</FONT>            char c;<a name="line.300"></a>
+<FONT color="green">301</FONT>            int i = 0;<a name="line.301"></a>
+<FONT color="green">302</FONT>            FormattingInfo formattingInfo = FormattingInfo.getDefault();<a name="line.302"></a>
+<FONT color="green">303</FONT>    <a name="line.303"></a>
+<FONT color="green">304</FONT>            while (i &lt; patternLength) {<a name="line.304"></a>
+<FONT color="green">305</FONT>                c = pattern.charAt(i++);<a name="line.305"></a>
+<FONT color="green">306</FONT>    <a name="line.306"></a>
+<FONT color="green">307</FONT>                switch (state) {<a name="line.307"></a>
+<FONT color="green">308</FONT>                case LITERAL_STATE:<a name="line.308"></a>
+<FONT color="green">309</FONT>    <a name="line.309"></a>
+<FONT color="green">310</FONT>                    // In literal state, the last char is always a literal.<a name="line.310"></a>
+<FONT color="green">311</FONT>                    if (i == patternLength) {<a name="line.311"></a>
+<FONT color="green">312</FONT>                        currentLiteral.append(c);<a name="line.312"></a>
+<FONT color="green">313</FONT>    <a name="line.313"></a>
+<FONT color="green">314</FONT>                        continue;<a name="line.314"></a>
+<FONT color="green">315</FONT>                    }<a name="line.315"></a>
+<FONT color="green">316</FONT>    <a name="line.316"></a>
+<FONT color="green">317</FONT>                    if (c == ESCAPE_CHAR) {<a name="line.317"></a>
+<FONT color="green">318</FONT>                        // peek at the next char.<a name="line.318"></a>
+<FONT color="green">319</FONT>                        switch (pattern.charAt(i)) {<a name="line.319"></a>
+<FONT color="green">320</FONT>                        case ESCAPE_CHAR:<a name="line.320"></a>
+<FONT color="green">321</FONT>                            currentLiteral.append(c);<a name="line.321"></a>
+<FONT color="green">322</FONT>                            i++; // move pointer<a name="line.322"></a>
+<FONT color="green">323</FONT>    <a name="line.323"></a>
+<FONT color="green">324</FONT>                            break;<a name="line.324"></a>
+<FONT color="green">325</FONT>    <a name="line.325"></a>
+<FONT color="green">326</FONT>                        default:<a name="line.326"></a>
+<FONT color="green">327</FONT>    <a name="line.327"></a>
+<FONT color="green">328</FONT>                            if (currentLiteral.length() != 0) {<a name="line.328"></a>
+<FONT color="green">329</FONT>                                patternConverters.add(new LiteralPatternConverter(config, currentLiteral.toString()));<a name="line.329"></a>
+<FONT color="green">330</FONT>                                formattingInfos.add(FormattingInfo.getDefault());<a name="line.330"></a>
+<FONT color="green">331</FONT>                            }<a name="line.331"></a>
+<FONT color="green">332</FONT>    <a name="line.332"></a>
+<FONT color="green">333</FONT>                            currentLiteral.setLength(0);<a name="line.333"></a>
+<FONT color="green">334</FONT>                            currentLiteral.append(c); // append %<a name="line.334"></a>
+<FONT color="green">335</FONT>                            state = ParserState.CONVERTER_STATE;<a name="line.335"></a>
+<FONT color="green">336</FONT>                            formattingInfo = FormattingInfo.getDefault();<a name="line.336"></a>
+<FONT color="green">337</FONT>                        }<a name="line.337"></a>
+<FONT color="green">338</FONT>                    } else {<a name="line.338"></a>
+<FONT color="green">339</FONT>                        currentLiteral.append(c);<a name="line.339"></a>
+<FONT color="green">340</FONT>                    }<a name="line.340"></a>
+<FONT color="green">341</FONT>    <a name="line.341"></a>
+<FONT color="green">342</FONT>                    break;<a name="line.342"></a>
+<FONT color="green">343</FONT>    <a name="line.343"></a>
+<FONT color="green">344</FONT>                case CONVERTER_STATE:<a name="line.344"></a>
+<FONT color="green">345</FONT>                    currentLiteral.append(c);<a name="line.345"></a>
+<FONT color="green">346</FONT>    <a name="line.346"></a>
+<FONT color="green">347</FONT>                    switch (c) {<a name="line.347"></a>
+<FONT color="green">348</FONT>                    case '-':<a name="line.348"></a>
+<FONT color="green">349</FONT>                        formattingInfo = new FormattingInfo(true, formattingInfo.getMinLength(),<a name="line.349"></a>
+<FONT color="green">350</FONT>                                formattingInfo.getMaxLength());<a name="line.350"></a>
+<FONT color="green">351</FONT>                        break;<a name="line.351"></a>
+<FONT color="green">352</FONT>    <a name="line.352"></a>
+<FONT color="green">353</FONT>                    case '.':<a name="line.353"></a>
+<FONT color="green">354</FONT>                        state = ParserState.DOT_STATE;<a name="line.354"></a>
+<FONT color="green">355</FONT>                        break;<a name="line.355"></a>
+<FONT color="green">356</FONT>    <a name="line.356"></a>
+<FONT color="green">357</FONT>                    default:<a name="line.357"></a>
+<FONT color="green">358</FONT>    <a name="line.358"></a>
+<FONT color="green">359</FONT>                        if (c &gt;= '0' &amp;&amp; c &lt;= '9') {<a name="line.359"></a>
+<FONT color="green">360</FONT>                            formattingInfo = new FormattingInfo(formattingInfo.isLeftAligned(), c - '0',<a name="line.360"></a>
+<FONT color="green">361</FONT>                                    formattingInfo.getMaxLength());<a name="line.361"></a>
+<FONT color="green">362</FONT>                            state = ParserState.MIN_STATE;<a name="line.362"></a>
+<FONT color="green">363</FONT>                        } else {<a name="line.363"></a>
+<FONT color="green">364</FONT>                            i = finalizeConverter(c, pattern, i, currentLiteral, formattingInfo, converterRules,<a name="line.364"></a>
+<FONT color="green">365</FONT>                                    patternConverters, formattingInfos, noConsoleNoAnsi);<a name="line.365"></a>
+<FONT color="green">366</FONT>    <a name="line.366"></a>
+<FONT color="green">367</FONT>                            // Next pattern is assumed to be a literal.<a name="line.367"></a>
+<FONT color="green">368</FONT>                            state = ParserState.LITERAL_STATE;<a name="line.368"></a>
+<FONT color="green">369</FONT>                            formattingInfo = FormattingInfo.getDefault();<a name="line.369"></a>
+<FONT color="green">370</FONT>                            currentLiteral.setLength(0);<a name="line.370"></a>
+<FONT color="green">371</FONT>                        }<a name="line.371"></a>
+<FONT color="green">372</FONT>                    } // switch<a name="line.372"></a>
+<FONT color="green">373</FONT>    <a name="line.373"></a>
+<FONT color="green">374</FONT>                    break;<a name="line.374"></a>
+<FONT color="green">375</FONT>    <a name="line.375"></a>
+<FONT color="green">376</FONT>                case MIN_STATE:<a name="line.376"></a>
+<FONT color="green">377</FONT>                    currentLiteral.append(c);<a name="line.377"></a>
+<FONT color="green">378</FONT>    <a name="line.378"></a>
+<FONT color="green">379</FONT>                    if (c &gt;= '0' &amp;&amp; c &lt;= '9') {<a name="line.379"></a>
+<FONT color="green">380</FONT>                        // Multiply the existing value and add the value of the number just encountered.<a name="line.380"></a>
+<FONT color="green">381</FONT>                        formattingInfo = new FormattingInfo(formattingInfo.isLeftAligned(), formattingInfo.getMinLength()<a name="line.381"></a>
+<FONT color="green">382</FONT>                                * DECIMAL + c - '0', formattingInfo.getMaxLength());<a name="line.382"></a>
+<FONT color="green">383</FONT>                    } else if (c == '.') {<a name="line.383"></a>
+<FONT color="green">384</FONT>                        state = ParserState.DOT_STATE;<a name="line.384"></a>
+<FONT color="green">385</FONT>                    } else {<a name="line.385"></a>
+<FONT color="green">386</FONT>                        i = finalizeConverter(c, pattern, i, currentLiteral, formattingInfo, converterRules,<a name="line.386"></a>
+<FONT color="green">387</FONT>                                patternConverters, formattingInfos, noConsoleNoAnsi);<a name="line.387"></a>
+<FONT color="green">388</FONT>                        state = ParserState.LITERAL_STATE;<a name="line.388"></a>
+<FONT color="green">389</FONT>                        formattingInfo = FormattingInfo.getDefault();<a name="line.389"></a>
+<FONT color="green">390</FONT>                        currentLiteral.setLength(0);<a name="line.390"></a>
+<FONT color="green">391</FONT>                    }<a name="line.391"></a>
+<FONT color="green">392</FONT>    <a name="line.392"></a>
+<FONT color="green">393</FONT>                    break;<a name="line.393"></a>
+<FONT color="green">394</FONT>    <a name="line.394"></a>
+<FONT color="green">395</FONT>                case DOT_STATE:<a name="line.395"></a>
+<FONT color="green">396</FONT>                    currentLiteral.append(c);<a name="line.396"></a>
+<FONT color="green">397</FONT>    <a name="line.397"></a>
+<FONT color="green">398</FONT>                    if (c &gt;= '0' &amp;&amp; c &lt;= '9') {<a name="line.398"></a>
+<FONT color="green">399</FONT>                        formattingInfo = new FormattingInfo(formattingInfo.isLeftAligned(), formattingInfo.getMinLength(),<a name="line.399"></a>
+<FONT color="green">400</FONT>                                c - '0');<a name="line.400"></a>
+<FONT color="green">401</FONT>                        state = ParserState.MAX_STATE;<a name="line.401"></a>
+<FONT color="green">402</FONT>                    } else {<a name="line.402"></a>
+<FONT color="green">403</FONT>                        LOGGER.error("Error occurred in position " + i + ".\n Was expecting digit, instead got char \"" + c<a name="line.403"></a>
+<FONT color="green">404</FONT>                                + "\".");<a name="line.404"></a>
+<FONT color="green">405</FONT>    <a name="line.405"></a>
+<FONT color="green">406</FONT>                        state = ParserState.LITERAL_STATE;<a name="line.406"></a>
+<FONT color="green">407</FONT>                    }<a name="line.407"></a>
+<FONT color="green">408</FONT>    <a name="line.408"></a>
+<FONT color="green">409</FONT>                    break;<a name="line.409"></a>
+<FONT color="green">410</FONT>    <a name="line.410"></a>
+<FONT color="green">411</FONT>                case MAX_STATE:<a name="line.411"></a>
+<FONT color="green">412</FONT>                    currentLiteral.append(c);<a name="line.412"></a>
+<FONT color="green">413</FONT>    <a name="line.413"></a>
+<FONT color="green">414</FONT>                    if (c &gt;= '0' &amp;&amp; c &lt;= '9') {<a name="line.414"></a>
+<FONT color="green">415</FONT>                        // Multiply the existing value and add the value of the number just encountered.<a name="line.415"></a>
+<FONT color="green">416</FONT>                        formattingInfo = new FormattingInfo(formattingInfo.isLeftAligned(), formattingInfo.getMinLength(),<a name="line.416"></a>
+<FONT color="green">417</FONT>                                formattingInfo.getMaxLength() * DECIMAL + c - '0');<a name="line.417"></a>
+<FONT color="green">418</FONT>                    } else {<a name="line.418"></a>
+<FONT color="green">419</FONT>                        i = finalizeConverter(c, pattern, i, currentLiteral, formattingInfo, converterRules,<a name="line.419"></a>
+<FONT color="green">420</FONT>                                patternConverters, formattingInfos, noConsoleNoAnsi);<a name="line.420"></a>
+<FONT color="green">421</FONT>                        state = ParserState.LITERAL_STATE;<a name="line.421"></a>
+<FONT color="green">422</FONT>                        formattingInfo = FormattingInfo.getDefault();<a name="line.422"></a>
+<FONT color="green">423</FONT>                        currentLiteral.setLength(0);<a name="line.423"></a>
+<FONT color="green">424</FONT>                    }<a name="line.424"></a>
+<FONT color="green">425</FONT>    <a name="line.425"></a>
+<FONT color="green">426</FONT>                    break;<a name="line.426"></a>
+<FONT color="green">427</FONT>                } // switch<a name="line.427"></a>
+<FONT color="green">428</FONT>            }<a name="line.428"></a>
+<FONT color="green">429</FONT>    <a name="line.429"></a>
+<FONT color="green">430</FONT>            // while<a name="line.430"></a>
+<FONT color="green">431</FONT>            if (currentLiteral.length() != 0) {<a name="line.431"></a>
+<FONT color="green">432</FONT>                patternConverters.add(new LiteralPatternConverter(config, currentLiteral.toString()));<a name="line.432"></a>
+<FONT color="green">433</FONT>                formattingInfos.add(FormattingInfo.getDefault());<a name="line.433"></a>
+<FONT color="green">434</FONT>            }<a name="line.434"></a>
+<FONT color="green">435</FONT>        }<a name="line.435"></a>
+<FONT color="green">436</FONT>    <a name="line.436"></a>
+<FONT color="green">437</FONT>        /**<a name="line.437"></a>
+<FONT color="green">438</FONT>         * Creates a new PatternConverter.<a name="line.438"></a>
+<FONT color="green">439</FONT>         *<a name="line.439"></a>
+<FONT color="green">440</FONT>         * @param converterId<a name="line.440"></a>
+<FONT color="green">441</FONT>         *            converterId.<a name="line.441"></a>
+<FONT color="green">442</FONT>         * @param currentLiteral<a name="line.442"></a>
+<FONT color="green">443</FONT>         *            literal to be used if converter is unrecognized or following converter if converterId contains extra<a name="line.443"></a>
+<FONT color="green">444</FONT>         *            characters.<a name="line.444"></a>
+<FONT color="green">445</FONT>         * @param rules<a name="line.445"></a>
+<FONT color="green">446</FONT>         *            map of stock pattern converters keyed by format specifier.<a name="line.446"></a>
+<FONT color="green">447</FONT>         * @param options<a name="line.447"></a>
+<FONT color="green">448</FONT>         *            converter options.<a name="line.448"></a>
+<FONT color="green">449</FONT>         * @param noConsoleNoAnsi TODO<a name="line.449"></a>
+<FONT color="green">450</FONT>         * @return converter or null.<a name="line.450"></a>
+<FONT color="green">451</FONT>         */<a name="line.451"></a>
+<FONT color="green">452</FONT>        private PatternConverter createConverter(final String converterId, final StringBuilder currentLiteral,<a name="line.452"></a>
+<FONT color="green">453</FONT>                final Map&lt;String, Class&lt;PatternConverter&gt;&gt; rules, final List&lt;String&gt; options, boolean noConsoleNoAnsi) {<a name="line.453"></a>
+<FONT color="green">454</FONT>            String converterName = converterId;<a name="line.454"></a>
+<FONT color="green">455</FONT>            Class&lt;PatternConverter&gt; converterClass = null;<a name="line.455"></a>
+<FONT color="green">456</FONT>    <a name="line.456"></a>
+<FONT color="green">457</FONT>            if (rules == null) {<a name="line.457"></a>
+<FONT color="green">458</FONT>                LOGGER.error("Null rules for [" + converterId + ']');<a name="line.458"></a>
+<FONT color="green">459</FONT>                return null;<a name="line.459"></a>
+<FONT color="green">460</FONT>            }<a name="line.460"></a>
+<FONT color="green">461</FONT>            for (int i = converterId.length(); i &gt; 0 &amp;&amp; converterClass == null; i--) {<a name="line.461"></a>
+<FONT color="green">462</FONT>                converterName = converterName.substring(0, i);<a name="line.462"></a>
+<FONT color="green">463</FONT>                converterClass = rules.get(converterName);<a name="line.463"></a>
+<FONT color="green">464</FONT>            }<a name="line.464"></a>
+<FONT color="green">465</FONT>    <a name="line.465"></a>
+<FONT color="green">466</FONT>            if (converterClass == null) {<a name="line.466"></a>
+<FONT color="green">467</FONT>                LOGGER.error("Unrecognized format specifier [" + converterId + ']');<a name="line.467"></a>
+<FONT color="green">468</FONT>                return null;<a name="line.468"></a>
+<FONT color="green">469</FONT>            }<a name="line.469"></a>
+<FONT color="green">470</FONT>    <a name="line.470"></a>
+<FONT color="green">471</FONT>            if (AnsiConverter.class.isAssignableFrom(converterClass)) {<a name="line.471"></a>
+<FONT color="green">472</FONT>                options.add(NO_CONSOLE_NO_ANSI + '=' + noConsoleNoAnsi);<a name="line.472"></a>
+<FONT color="green">473</FONT>            }<a name="line.473"></a>
+<FONT color="green">474</FONT>            // Work around the regression bug in Class.getDeclaredMethods() in Oracle Java in version &gt; 1.6.0_17:<a name="line.474"></a>
+<FONT color="green">475</FONT>            // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6815786<a name="line.475"></a>
+<FONT color="green">476</FONT>            final Method[] methods = converterClass.getDeclaredMethods();<a name="line.476"></a>
+<FONT color="green">477</FONT>            Method newInstanceMethod = null;<a name="line.477"></a>
+<FONT color="green">478</FONT>            for (final Method method : methods) {<a name="line.478"></a>
+<FONT color="green">479</FONT>                if (Modifier.isStatic(method.getModifiers()) &amp;&amp; method.getDeclaringClass().equals(converterClass)<a name="line.479"></a>
+<FONT color="green">480</FONT>                        &amp;&amp; method.getName().equals("newInstance")) {<a name="line.480"></a>
+<FONT color="green">481</FONT>                    if (newInstanceMethod == null) {<a name="line.481"></a>
+<FONT color="green">482</FONT>                        newInstanceMethod = method;<a name="line.482"></a>
+<FONT color="green">483</FONT>                    } else if (method.getReturnType().equals(newInstanceMethod.getReturnType())) {<a name="line.483"></a>
+<FONT color="green">484</FONT>                        LOGGER.error("Class " + converterClass + " cannot contain multiple static newInstance methods");<a name="line.484"></a>
+<FONT color="green">485</FONT>                        return null;<a name="line.485"></a>
+<FONT color="green">486</FONT>                    }<a name="line.486"></a>
+<FONT color="green">487</FONT>                }<a name="line.487"></a>
+<FONT color="green">488</FONT>            }<a name="line.488"></a>
+<FONT color="green">489</FONT>            if (newInstanceMethod == null) {<a name="line.489"></a>
+<FONT color="green">490</FONT>                LOGGER.error("Class " + converterClass + " does not contain a static newInstance method");<a name="line.490"></a>
+<FONT color="green">491</FONT>                return null;<a name="line.491"></a>
+<FONT color="green">492</FONT>            }<a name="line.492"></a>
+<FONT color="green">493</FONT>    <a name="line.493"></a>
+<FONT color="green">494</FONT>            final Class&lt;?&gt;[] parmTypes = newInstanceMethod.getParameterTypes();<a name="line.494"></a>
+<FONT color="green">495</FONT>            final Object[] parms = parmTypes.length &gt; 0 ? new Object[parmTypes.length] : null;<a name="line.495"></a>
+<FONT color="green">496</FONT>    <a name="line.496"></a>
+<FONT color="green">497</FONT>            if (parms != null) {<a name="line.497"></a>
+<FONT color="green">498</FONT>                int i = 0;<a name="line.498"></a>
+<FONT color="green">499</FONT>                boolean errors = false;<a name="line.499"></a>
+<FONT color="green">500</FONT>                for (final Class&lt;?&gt; clazz : parmTypes) {<a name="line.500"></a>
+<FONT color="green">501</FONT>                    if (clazz.isArray() &amp;&amp; clazz.getName().equals("[Ljava.lang.String;")) {<a name="line.501"></a>
+<FONT color="green">502</FONT>                        final String[] optionsArray = options.toArray(new String[options.size()]);<a name="line.502"></a>
+<FONT color="green">503</FONT>                        parms[i] = optionsArray;<a name="line.503"></a>
+<FONT color="green">504</FONT>                    } else if (clazz.isAssignableFrom(Configuration.class)) {<a name="line.504"></a>
+<FONT color="green">505</FONT>                        parms[i] = config;<a name="line.505"></a>
+<FONT color="green">506</FONT>                    } else {<a name="line.506"></a>
+<FONT color="green">507</FONT>                        LOGGER.error("Unknown parameter type " + clazz.getName() + " for static newInstance method of "<a name="line.507"></a>
+<FONT color="green">508</FONT>                                + converterClass.getName());<a name="line.508"></a>
+<FONT color="green">509</FONT>                        errors = true;<a name="line.509"></a>
+<FONT color="green">510</FONT>                    }<a name="line.510"></a>
+<FONT color="green">511</FONT>                    ++i;<a name="line.511"></a>
+<FONT color="green">512</FONT>                }<a name="line.512"></a>
+<FONT color="green">513</FONT>                if (errors) {<a name="line.513"></a>
+<FONT color="green">514</FONT>                    return null;<a name="line.514"></a>
+<FONT color="green">515</FONT>                }<a name="line.515"></a>
+<FONT color="green">516</FONT>            }<a name="line.516"></a>
+<FONT color="green">517</FONT>    <a name="line.517"></a>
+<FONT color="green">518</FONT>            try {<a name="line.518"></a>
+<FONT color="green">519</FONT>                final Object newObj = newInstanceMethod.invoke(null, parms);<a name="line.519"></a>
+<FONT color="green">520</FONT>    <a name="line.520"></a>
+<FONT color="green">521</FONT>                if (newObj instanceof PatternConverter) {<a name="line.521"></a>
+<FONT color="green">522</FONT>                    currentLiteral.delete(0, currentLiteral.length() - (converterId.length() - converterName.length()));<a name="line.522"></a>
+<FONT color="green">523</FONT>    <a name="line.523"></a>
+<FONT color="green">524</FONT>                    return (PatternConverter) newObj;<a name="line.524"></a>
+<FONT color="green">525</FONT>                }<a name="line.525"></a>
+<FONT color="green">526</FONT>                LOGGER.warn("Class " + converterClass.getName() + " does not extend PatternConverter.");<a name="line.526"></a>
+<FONT color="green">527</FONT>            } catch (final Exception ex) {<a name="line.527"></a>
+<FONT color="green">528</FONT>                LOGGER.error("Error creating converter for " + converterId, ex);<a name="line.528"></a>
+<FONT color="green">529</FONT>            }<a name="line.529"></a>
+<FONT color="green">530</FONT>    <a name="line.530"></a>
+<FONT color="green">531</FONT>            return null;<a name="line.531"></a>
+<FONT color="green">532</FONT>        }<a name="line.532"></a>
+<FONT color="green">533</FONT>    <a name="line.533"></a>
+<FONT color="green">534</FONT>        /**<a name="line.534"></a>
+<FONT color="green">535</FONT>         * Processes a format specifier sequence.<a name="line.535"></a>
+<FONT color="green">536</FONT>         *<a name="line.536"></a>
+<FONT color="green">537</FONT>         * @param c<a name="line.537"></a>
+<FONT color="green">538</FONT>         *            initial character of format specifier.<a name="line.538"></a>
+<FONT color="green">539</FONT>         * @param pattern<a name="line.539"></a>
+<FONT color="green">540</FONT>         *            conversion pattern<a name="line.540"></a>
+<FONT color="green">541</FONT>         * @param i<a name="line.541"></a>
+<FONT color="green">542</FONT>         *            current position in conversion pattern.<a name="line.542"></a>
+<FONT color="green">543</FONT>         * @param currentLiteral<a name="line.543"></a>
+<FONT color="green">544</FONT>         *            current literal.<a name="line.544"></a>
+<FONT color="green">545</FONT>         * @param formattingInfo<a name="line.545"></a>
+<FONT color="green">546</FONT>         *            current field specifier.<a name="line.546"></a>
+<FONT color="green">547</FONT>         * @param rules<a name="line.547"></a>
+<FONT color="green">548</FONT>         *            map of stock pattern converters keyed by format specifier.<a name="line.548"></a>
+<FONT color="green">549</FONT>         * @param patternConverters<a name="line.549"></a>
+<FONT color="green">550</FONT>         *            list to receive parsed pattern converter.<a name="line.550"></a>
+<FONT color="green">551</FONT>         * @param formattingInfos<a name="line.551"></a>
+<FONT color="green">552</FONT>         *            list to receive corresponding field specifier.<a name="line.552"></a>
+<FONT color="green">553</FONT>         * @param noConsoleNoAnsi<a name="line.553"></a>
+<FONT color="green">554</FONT>         *            TODO<a name="line.554"></a>
+<FONT color="green">555</FONT>         * @return position after format specifier sequence.<a name="line.555"></a>
+<FONT color="green">556</FONT>         */<a name="line.556"></a>
+<FONT color="green">557</FONT>        private int finalizeConverter(final char c, final String pattern, int i, final StringBuilder currentLiteral,<a name="line.557"></a>
+<FONT color="green">558</FONT>                final FormattingInfo formattingInfo, final Map&lt;String, Class&lt;PatternConverter&gt;&gt; rules,<a name="line.558"></a>
+<FONT color="green">559</FONT>                final List&lt;PatternConverter&gt; patternConverters, final List&lt;FormattingInfo&gt; formattingInfos,<a name="line.559"></a>
+<FONT color="green">560</FONT>                final boolean noConsoleNoAnsi) {<a name="line.560"></a>
+<FONT color="green">561</FONT>            final StringBuilder convBuf = new StringBuilder();<a name="line.561"></a>
+<FONT color="green">562</FONT>            i = extractConverter(c, pattern, i, convBuf, currentLiteral);<a name="line.562"></a>
+<FONT color="green">563</FONT>    <a name="line.563"></a>
+<FONT color="green">564</FONT>            final String converterId = convBuf.toString();<a name="line.564"></a>
+<FONT color="green">565</FONT>    <a name="line.565"></a>
+<FONT color="green">566</FONT>            final List&lt;String&gt; options = new ArrayList&lt;String&gt;();<a name="line.566"></a>
+<FONT color="green">567</FONT>            i = extractOptions(pattern, i, options);<a name="line.567"></a>
+<FONT color="green">568</FONT>    <a name="line.568"></a>
+<FONT color="green">569</FONT>            final PatternConverter pc = createConverter(converterId, currentLiteral, rules, options, noConsoleNoAnsi);<a name="line.569"></a>
+<FONT color="green">570</FONT>    <a name="line.570"></a>
+<FONT color="green">571</FONT>            if (pc == null) {<a name="line.571"></a>
+<FONT color="green">572</FONT>                StringBuilder msg;<a name="line.572"></a>
+<FONT color="green">573</FONT>    <a name="line.573"></a>
+<FONT color="green">574</FONT>                if (Strings.isEmpty(converterId)) {<a name="line.574"></a>
+<FONT color="green">575</FONT>                    msg = new StringBuilder("Empty conversion specifier starting at position ");<a name="line.575"></a>
+<FONT color="green">576</FONT>                } else {<a name="line.576"></a>
+<FONT color="green">577</FONT>                    msg = new StringBuilder("Unrecognized conversion specifier [");<a name="line.577"></a>
+<FONT color="green">578</FONT>                    msg.append(converterId);<a name="line.578"></a>
+<FONT color="green">579</FONT>                    msg.append("] starting at position ");<a name="line.579"></a>
+<FONT color="green">580</FONT>                }<a name="line.580"></a>
+<FONT color="green">581</FONT>    <a name="line.581"></a>
+<FONT color="green">582</FONT>                msg.append(Integer.toString(i));<a name="line.582"></a>
+<FONT color="green">583</FONT>                msg.append(" in conversion pattern.");<a name="line.583"></a>
+<FONT color="green">584</FONT>    <a name="line.584"></a>
+<FONT color="green">585</FONT>                LOGGER.error(msg.toString());<a name="line.585"></a>
+<FONT color="green">586</FONT>    <a name="line.586"></a>
+<FONT color="green">587</FONT>                patternConverters.add(new LiteralPatternConverter(config, currentLiteral.toString()));<a name="line.587"></a>
+<FONT color="green">588</FONT>                formattingInfos.add(FormattingInfo.getDefault());<a name="line.588"></a>
+<FONT color="green">589</FONT>            } else {<a name="line.589"></a>
+<FONT color="green">590</FONT>                patternConverters.add(pc);<a name="line.590"></a>
+<FONT color="green">591</FONT>                formattingInfos.add(formattingInfo);<a name="line.591"></a>
+<FONT color="green">592</FONT>    <a name="line.592"></a>
+<FONT color="green">593</FONT>                if (currentLiteral.length() &gt; 0) {<a name="line.593"></a>
+<FONT color="green">594</FONT>                    patternConverters.add(new LiteralPatternConverter(config, currentLiteral.toString()));<a name="line.594"></a>
+<FONT color="green">595</FONT>                    formattingInfos.add(FormattingInfo.getDefault());<a name="line.595"></a>
+<FONT color="green">596</FONT>                }<a name="line.596"></a>
+<FONT color="green">597</FONT>            }<a name="line.597"></a>
+<FONT color="green">598</FONT>    <a name="line.598"></a>
+<FONT color="green">599</FONT>            currentLiteral.setLength(0);<a name="line.599"></a>
+<FONT color="green">600</FONT>    <a name="line.600"></a>
+<FONT color="green">601</FONT>            return i;<a name="line.601"></a>
+<FONT color="green">602</FONT>        }<a name="line.602"></a>
+<FONT color="green">603</FONT>    }<a name="line.603"></a>
 
 
 
@@ -670,7 +664,6 @@
 
 
 
-</pre>
-</div>
-</body>
-</html>
+</PRE>
+</BODY>
+</HTML>

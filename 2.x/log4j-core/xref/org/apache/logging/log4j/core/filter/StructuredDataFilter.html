@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginElement;
 <a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginFactory;
-<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.helpers.KeyValuePair;
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.KeyValuePair;
 <a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.message.Message;
 <a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.message.StructuredDataMessage;
 <a class="jxr_linenumber" name="35" href="#35">35</a>  
@@ -112,10 +112,10 @@
 <a class="jxr_linenumber" name="102" href="#102">102</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="103" href="#103">103</a>     @PluginFactory
 <a class="jxr_linenumber" name="104" href="#104">104</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/StructuredDataFilter.html">StructuredDataFilter</a> createFilter(
-<a class="jxr_linenumber" name="105" href="#105">105</a>             @PluginElement(<span class="jxr_string">"Pairs"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/helpers/KeyValuePair.html">KeyValuePair</a>[] pairs,
+<a class="jxr_linenumber" name="105" href="#105">105</a>             @PluginElement(<span class="jxr_string">"Pairs"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/KeyValuePair.html">KeyValuePair</a>[] pairs,
 <a class="jxr_linenumber" name="106" href="#106">106</a>             @PluginAttribute(<span class="jxr_string">"operator"</span>) <strong class="jxr_keyword">final</strong> String oper,
-<a class="jxr_linenumber" name="107" href="#107">107</a>             @PluginAttribute(<span class="jxr_string">"onMatch"</span>) <strong class="jxr_keyword">final</strong> String match,
-<a class="jxr_linenumber" name="108" href="#108">108</a>             @PluginAttribute(<span class="jxr_string">"onMismatch"</span>) <strong class="jxr_keyword">final</strong> String mismatch) {
+<a class="jxr_linenumber" name="107" href="#107">107</a>             @PluginAttribute(<span class="jxr_string">"onMatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> match,
+<a class="jxr_linenumber" name="108" href="#108">108</a>             @PluginAttribute(<span class="jxr_string">"onMismatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> mismatch) {
 <a class="jxr_linenumber" name="109" href="#109">109</a>         <strong class="jxr_keyword">if</strong> (pairs == <strong class="jxr_keyword">null</strong> || pairs.length == 0) {
 <a class="jxr_linenumber" name="110" href="#110">110</a>             LOGGER.error(<span class="jxr_string">"keys and values must be specified for the StructuredDataFilter"</span>);
 <a class="jxr_linenumber" name="111" href="#111">111</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
@@ -141,16 +141,14 @@
 <a class="jxr_linenumber" name="131" href="#131">131</a>                 map.put(pair.getKey(), list);
 <a class="jxr_linenumber" name="132" href="#132">132</a>             }
 <a class="jxr_linenumber" name="133" href="#133">133</a>         }
-<a class="jxr_linenumber" name="134" href="#134">134</a>         <strong class="jxr_keyword">if</strong> (map.size() == 0) {
+<a class="jxr_linenumber" name="134" href="#134">134</a>         <strong class="jxr_keyword">if</strong> (map.isEmpty()) {
 <a class="jxr_linenumber" name="135" href="#135">135</a>             LOGGER.error(<span class="jxr_string">"StructuredDataFilter is not configured with any valid key value pairs"</span>);
 <a class="jxr_linenumber" name="136" href="#136">136</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="137" href="#137">137</a>         }
 <a class="jxr_linenumber" name="138" href="#138">138</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAnd = oper == <strong class="jxr_keyword">null</strong> || !oper.equalsIgnoreCase(<span class="jxr_string">"or"</span>);
-<a class="jxr_linenumber" name="139" href="#139">139</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> onMatch = Result.toResult(match);
-<a class="jxr_linenumber" name="140" href="#140">140</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> onMismatch = Result.toResult(mismatch);
-<a class="jxr_linenumber" name="141" href="#141">141</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/StructuredDataFilter.html">StructuredDataFilter</a>(map, isAnd, onMatch, onMismatch);
-<a class="jxr_linenumber" name="142" href="#142">142</a>     }
-<a class="jxr_linenumber" name="143" href="#143">143</a> }
+<a class="jxr_linenumber" name="139" href="#139">139</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/StructuredDataFilter.html">StructuredDataFilter</a>(map, isAnd, match, mismatch);
+<a class="jxr_linenumber" name="140" href="#140">140</a>     }
+<a class="jxr_linenumber" name="141" href="#141">141</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

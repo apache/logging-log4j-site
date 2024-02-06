@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="71" href="#71">71</a>      @Override
 <a class="jxr_linenumber" name="72" href="#72">72</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> filter(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
 <a class="jxr_linenumber" name="73" href="#73">73</a>          <strong class="jxr_keyword">final</strong> Calendar calendar = Calendar.getInstance(timezone);
-<a class="jxr_linenumber" name="74" href="#74">74</a>          calendar.setTimeInMillis(event.getMillis());
+<a class="jxr_linenumber" name="74" href="#74">74</a>          calendar.setTimeInMillis(event.getTimeMillis());
 <a class="jxr_linenumber" name="75" href="#75">75</a>          <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="76" href="#76">76</a>          <em class="jxr_comment">//   get apparent number of milliseconds since midnight</em>
 <a class="jxr_linenumber" name="77" href="#77">77</a>          <em class="jxr_comment">//      (ignores extra or missing hour on daylight time changes).</em>
@@ -116,8 +116,8 @@
 <a class="jxr_linenumber" name="106" href="#106">106</a>             @PluginAttribute(<span class="jxr_string">"start"</span>) <strong class="jxr_keyword">final</strong> String start,
 <a class="jxr_linenumber" name="107" href="#107">107</a>             @PluginAttribute(<span class="jxr_string">"end"</span>) <strong class="jxr_keyword">final</strong> String end,
 <a class="jxr_linenumber" name="108" href="#108">108</a>             @PluginAttribute(<span class="jxr_string">"timezone"</span>) <strong class="jxr_keyword">final</strong> String tz,
-<a class="jxr_linenumber" name="109" href="#109">109</a>             @PluginAttribute(<span class="jxr_string">"onMatch"</span>) <strong class="jxr_keyword">final</strong> String match,
-<a class="jxr_linenumber" name="110" href="#110">110</a>             @PluginAttribute(<span class="jxr_string">"onMismatch"</span>) <strong class="jxr_keyword">final</strong> String mismatch) {
+<a class="jxr_linenumber" name="109" href="#109">109</a>             @PluginAttribute(<span class="jxr_string">"onMatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> match,
+<a class="jxr_linenumber" name="110" href="#110">110</a>             @PluginAttribute(<span class="jxr_string">"onMismatch"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> mismatch) {
 <a class="jxr_linenumber" name="111" href="#111">111</a>         <strong class="jxr_keyword">final</strong> SimpleDateFormat stf = <strong class="jxr_keyword">new</strong> SimpleDateFormat(<span class="jxr_string">"HH:mm:ss"</span>);
 <a class="jxr_linenumber" name="112" href="#112">112</a>         <strong class="jxr_keyword">long</strong> s = 0;
 <a class="jxr_linenumber" name="113" href="#113">113</a>         <strong class="jxr_keyword">if</strong> (start != <strong class="jxr_keyword">null</strong>) {
@@ -138,8 +138,8 @@
 <a class="jxr_linenumber" name="128" href="#128">128</a>             }
 <a class="jxr_linenumber" name="129" href="#129">129</a>         }
 <a class="jxr_linenumber" name="130" href="#130">130</a>         <strong class="jxr_keyword">final</strong> TimeZone timezone = tz == <strong class="jxr_keyword">null</strong> ? TimeZone.getDefault() : TimeZone.getTimeZone(tz);
-<a class="jxr_linenumber" name="131" href="#131">131</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> onMatch = Result.toResult(match, Result.NEUTRAL);
-<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> onMismatch = Result.toResult(mismatch, Result.DENY);
+<a class="jxr_linenumber" name="131" href="#131">131</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> onMatch = match == <strong class="jxr_keyword">null</strong> ? Result.NEUTRAL : match;
+<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> onMismatch = mismatch == <strong class="jxr_keyword">null</strong> ? Result.DENY : mismatch;
 <a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/TimeFilter.html">TimeFilter</a>(s, e, timezone, onMatch, onMismatch);
 <a class="jxr_linenumber" name="134" href="#134">134</a>     }
 <a class="jxr_linenumber" name="135" href="#135">135</a> 

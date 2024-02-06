@@ -38,10 +38,10 @@
 <a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 <a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginElement;
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginFactory;
-<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.helpers.Booleans;
-<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.helpers.Integers;
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.layout.PatternLayout;
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.net.Advertiser;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.layout.PatternLayout;
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.net.Advertiser;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Booleans;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Integers;
 <a class="jxr_linenumber" name="35" href="#35">35</a>  
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment"> * File Appender.</em>
@@ -96,68 +96,68 @@
 <a class="jxr_linenumber" name="86" href="#86">86</a>  <em class="jxr_javadoccomment">     * is "true".</em>
 <a class="jxr_linenumber" name="87" href="#87">87</a>  <em class="jxr_javadoccomment">     * @param ignore If {@code "true"} (default) exceptions encountered when appending events are logged; otherwise</em>
 <a class="jxr_linenumber" name="88" href="#88">88</a>  <em class="jxr_javadoccomment">     *               they are propagated to the caller.</em>
-<a class="jxr_linenumber" name="89" href="#89">89</a>  <em class="jxr_javadoccomment">     * @param bufferedIO "true" if I/O should be buffered, "false" otherwise. The default is "true".</em>
+<a class="jxr_linenumber" name="89" href="#89">89</a>  <em class="jxr_javadoccomment">     * @param bufferedIo "true" if I/O should be buffered, "false" otherwise. The default is "true".</em>
 <a class="jxr_linenumber" name="90" href="#90">90</a>  <em class="jxr_javadoccomment">     * @param bufferSizeStr buffer size for buffered IO (default is 8192).</em>
 <a class="jxr_linenumber" name="91" href="#91">91</a>  <em class="jxr_javadoccomment">     * @param layout The layout to use to format the event. If no layout is provided the default PatternLayout</em>
 <a class="jxr_linenumber" name="92" href="#92">92</a>  <em class="jxr_javadoccomment">     * will be used.</em>
 <a class="jxr_linenumber" name="93" href="#93">93</a>  <em class="jxr_javadoccomment">     * @param filter The filter, if any, to use.</em>
 <a class="jxr_linenumber" name="94" href="#94">94</a>  <em class="jxr_javadoccomment">     * @param advertise "true" if the appender configuration should be advertised, "false" otherwise.</em>
-<a class="jxr_linenumber" name="95" href="#95">95</a>  <em class="jxr_javadoccomment">     * @param advertiseURI The advertised URI which can be used to retrieve the file contents.</em>
+<a class="jxr_linenumber" name="95" href="#95">95</a>  <em class="jxr_javadoccomment">     * @param advertiseUri The advertised URI which can be used to retrieve the file contents.</em>
 <a class="jxr_linenumber" name="96" href="#96">96</a>  <em class="jxr_javadoccomment">     * @param config The Configuration</em>
 <a class="jxr_linenumber" name="97" href="#97">97</a>  <em class="jxr_javadoccomment">     * @return The FileAppender.</em>
 <a class="jxr_linenumber" name="98" href="#98">98</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="99" href="#99">99</a>      @PluginFactory
 <a class="jxr_linenumber" name="100" href="#100">100</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/FileAppender.html">FileAppender</a> createAppender(
-<a class="jxr_linenumber" name="101" href="#101">101</a>             @PluginAttribute(<span class="jxr_string">"fileName"</span>) <strong class="jxr_keyword">final</strong> String fileName,
-<a class="jxr_linenumber" name="102" href="#102">102</a>             @PluginAttribute(<span class="jxr_string">"append"</span>) <strong class="jxr_keyword">final</strong> String append,
-<a class="jxr_linenumber" name="103" href="#103">103</a>             @PluginAttribute(<span class="jxr_string">"locking"</span>) <strong class="jxr_keyword">final</strong> String locking,
-<a class="jxr_linenumber" name="104" href="#104">104</a>             @PluginAttribute(<span class="jxr_string">"name"</span>) <strong class="jxr_keyword">final</strong> String name,
-<a class="jxr_linenumber" name="105" href="#105">105</a>             @PluginAttribute(<span class="jxr_string">"immediateFlush"</span>) <strong class="jxr_keyword">final</strong> String immediateFlush,
-<a class="jxr_linenumber" name="106" href="#106">106</a>             @PluginAttribute(<span class="jxr_string">"ignoreExceptions"</span>) <strong class="jxr_keyword">final</strong> String ignore,
-<a class="jxr_linenumber" name="107" href="#107">107</a>             @PluginAttribute(<span class="jxr_string">"bufferedIO"</span>) <strong class="jxr_keyword">final</strong> String bufferedIO,
-<a class="jxr_linenumber" name="108" href="#108">108</a>             @PluginAttribute(<span class="jxr_string">"bufferSize"</span>) <strong class="jxr_keyword">final</strong> String bufferSizeStr,
-<a class="jxr_linenumber" name="109" href="#109">109</a>             @PluginElement(<span class="jxr_string">"Layout"</span>) Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout,
-<a class="jxr_linenumber" name="110" href="#110">110</a>             @PluginElement(<span class="jxr_string">"Filters"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter,
-<a class="jxr_linenumber" name="111" href="#111">111</a>             @PluginAttribute(<span class="jxr_string">"advertise"</span>) <strong class="jxr_keyword">final</strong> String advertise,
-<a class="jxr_linenumber" name="112" href="#112">112</a>             @PluginAttribute(<span class="jxr_string">"advertiseURI"</span>) <strong class="jxr_keyword">final</strong> String advertiseURI,
-<a class="jxr_linenumber" name="113" href="#113">113</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config) {
-<a class="jxr_linenumber" name="114" href="#114">114</a> 
-<a class="jxr_linenumber" name="115" href="#115">115</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAppend = Booleans.parseBoolean(append, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="116" href="#116">116</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isLocking = Boolean.parseBoolean(locking);
-<a class="jxr_linenumber" name="117" href="#117">117</a>         <strong class="jxr_keyword">boolean</strong> isBuffered = Booleans.parseBoolean(bufferedIO, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAdvertise = Boolean.parseBoolean(advertise);
-<a class="jxr_linenumber" name="119" href="#119">119</a>         <strong class="jxr_keyword">if</strong> (isLocking &amp;&amp; isBuffered) {
-<a class="jxr_linenumber" name="120" href="#120">120</a>             <strong class="jxr_keyword">if</strong> (bufferedIO != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="121" href="#121">121</a>                 LOGGER.warn(<span class="jxr_string">"Locking and buffering are mutually exclusive. No buffering will occur for "</span> + fileName);
-<a class="jxr_linenumber" name="122" href="#122">122</a>             }
-<a class="jxr_linenumber" name="123" href="#123">123</a>             isBuffered = false;
-<a class="jxr_linenumber" name="124" href="#124">124</a>         }
-<a class="jxr_linenumber" name="125" href="#125">125</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize = Integers.parseInt(bufferSizeStr, DEFAULT_BUFFER_SIZE);
-<a class="jxr_linenumber" name="126" href="#126">126</a>         <strong class="jxr_keyword">if</strong> (!isBuffered &amp;&amp; bufferSize &gt; 0) {
-<a class="jxr_linenumber" name="127" href="#127">127</a>             LOGGER.warn(<span class="jxr_string">"The bufferSize is set to {} but bufferedIO is not true: {}"</span>, bufferSize, bufferedIO);
-<a class="jxr_linenumber" name="128" href="#128">128</a>         }
-<a class="jxr_linenumber" name="129" href="#129">129</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isFlush = Booleans.parseBoolean(immediateFlush, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="130" href="#130">130</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> ignoreExceptions = Booleans.parseBoolean(ignore, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="131" href="#131">131</a> 
-<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">if</strong> (name == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="133" href="#133">133</a>             LOGGER.error(<span class="jxr_string">"No name provided for FileAppender"</span>);
-<a class="jxr_linenumber" name="134" href="#134">134</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="135" href="#135">135</a>         }
-<a class="jxr_linenumber" name="136" href="#136">136</a> 
-<a class="jxr_linenumber" name="137" href="#137">137</a>         <strong class="jxr_keyword">if</strong> (fileName == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="138" href="#138">138</a>             LOGGER.error(<span class="jxr_string">"No filename provided for FileAppender with name "</span>  + name);
-<a class="jxr_linenumber" name="139" href="#139">139</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="140" href="#140">140</a>         }
-<a class="jxr_linenumber" name="141" href="#141">141</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="142" href="#142">142</a>             layout = PatternLayout.createLayout(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="143" href="#143">143</a>         }
-<a class="jxr_linenumber" name="144" href="#144">144</a> 
-<a class="jxr_linenumber" name="145" href="#145">145</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/FileManager.html">FileManager</a> manager = FileManager.getFileManager(fileName, isAppend, isLocking, isBuffered, advertiseURI,
-<a class="jxr_linenumber" name="146" href="#146">146</a>             layout, bufferSize);
-<a class="jxr_linenumber" name="147" href="#147">147</a>         <strong class="jxr_keyword">if</strong> (manager == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="148" href="#148">148</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="149" href="#149">149</a>         }
-<a class="jxr_linenumber" name="150" href="#150">150</a> 
+<a class="jxr_linenumber" name="101" href="#101">101</a>             <em class="jxr_comment">// @formatter:off</em>
+<a class="jxr_linenumber" name="102" href="#102">102</a>             @PluginAttribute(<span class="jxr_string">"fileName"</span>) <strong class="jxr_keyword">final</strong> String fileName,
+<a class="jxr_linenumber" name="103" href="#103">103</a>             @PluginAttribute(<span class="jxr_string">"append"</span>) <strong class="jxr_keyword">final</strong> String append,
+<a class="jxr_linenumber" name="104" href="#104">104</a>             @PluginAttribute(<span class="jxr_string">"locking"</span>) <strong class="jxr_keyword">final</strong> String locking,
+<a class="jxr_linenumber" name="105" href="#105">105</a>             @PluginAttribute(<span class="jxr_string">"name"</span>) <strong class="jxr_keyword">final</strong> String name,
+<a class="jxr_linenumber" name="106" href="#106">106</a>             @PluginAttribute(<span class="jxr_string">"immediateFlush"</span>) <strong class="jxr_keyword">final</strong> String immediateFlush,
+<a class="jxr_linenumber" name="107" href="#107">107</a>             @PluginAttribute(<span class="jxr_string">"ignoreExceptions"</span>) <strong class="jxr_keyword">final</strong> String ignore,
+<a class="jxr_linenumber" name="108" href="#108">108</a>             @PluginAttribute(<span class="jxr_string">"bufferedIo"</span>) <strong class="jxr_keyword">final</strong> String bufferedIo,
+<a class="jxr_linenumber" name="109" href="#109">109</a>             @PluginAttribute(<span class="jxr_string">"bufferSize"</span>) <strong class="jxr_keyword">final</strong> String bufferSizeStr,
+<a class="jxr_linenumber" name="110" href="#110">110</a>             @PluginElement(<span class="jxr_string">"Layout"</span>) Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout,
+<a class="jxr_linenumber" name="111" href="#111">111</a>             @PluginElement(<span class="jxr_string">"Filters"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter,
+<a class="jxr_linenumber" name="112" href="#112">112</a>             @PluginAttribute(<span class="jxr_string">"advertise"</span>) <strong class="jxr_keyword">final</strong> String advertise,
+<a class="jxr_linenumber" name="113" href="#113">113</a>             @PluginAttribute(<span class="jxr_string">"advertiseUri"</span>) <strong class="jxr_keyword">final</strong> String advertiseUri,
+<a class="jxr_linenumber" name="114" href="#114">114</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config) {
+<a class="jxr_linenumber" name="115" href="#115">115</a>         <em class="jxr_comment">// @formatter:on</em>
+<a class="jxr_linenumber" name="116" href="#116">116</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAppend = Booleans.parseBoolean(append, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="117" href="#117">117</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isLocking = Boolean.parseBoolean(locking);
+<a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">boolean</strong> isBuffered = Booleans.parseBoolean(bufferedIo, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="119" href="#119">119</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAdvertise = Boolean.parseBoolean(advertise);
+<a class="jxr_linenumber" name="120" href="#120">120</a>         <strong class="jxr_keyword">if</strong> (isLocking &amp;&amp; isBuffered) {
+<a class="jxr_linenumber" name="121" href="#121">121</a>             <strong class="jxr_keyword">if</strong> (bufferedIo != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="122" href="#122">122</a>                 LOGGER.warn(<span class="jxr_string">"Locking and buffering are mutually exclusive. No buffering will occur for "</span> + fileName);
+<a class="jxr_linenumber" name="123" href="#123">123</a>             }
+<a class="jxr_linenumber" name="124" href="#124">124</a>             isBuffered = false;
+<a class="jxr_linenumber" name="125" href="#125">125</a>         }
+<a class="jxr_linenumber" name="126" href="#126">126</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize = Integers.parseInt(bufferSizeStr, DEFAULT_BUFFER_SIZE);
+<a class="jxr_linenumber" name="127" href="#127">127</a>         <strong class="jxr_keyword">if</strong> (!isBuffered &amp;&amp; bufferSize &gt; 0) {
+<a class="jxr_linenumber" name="128" href="#128">128</a>             LOGGER.warn(<span class="jxr_string">"The bufferSize is set to {} but bufferedIO is not true: {}"</span>, bufferSize, bufferedIo);
+<a class="jxr_linenumber" name="129" href="#129">129</a>         }
+<a class="jxr_linenumber" name="130" href="#130">130</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isFlush = Booleans.parseBoolean(immediateFlush, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="131" href="#131">131</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> ignoreExceptions = Booleans.parseBoolean(ignore, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="132" href="#132">132</a> 
+<a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">if</strong> (name == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="134" href="#134">134</a>             LOGGER.error(<span class="jxr_string">"No name provided for FileAppender"</span>);
+<a class="jxr_linenumber" name="135" href="#135">135</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="136" href="#136">136</a>         }
+<a class="jxr_linenumber" name="137" href="#137">137</a> 
+<a class="jxr_linenumber" name="138" href="#138">138</a>         <strong class="jxr_keyword">if</strong> (fileName == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="139" href="#139">139</a>             LOGGER.error(<span class="jxr_string">"No filename provided for FileAppender with name "</span>  + name);
+<a class="jxr_linenumber" name="140" href="#140">140</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="141" href="#141">141</a>         }
+<a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="143" href="#143">143</a>             layout = PatternLayout.createDefaultLayout();
+<a class="jxr_linenumber" name="144" href="#144">144</a>         }
+<a class="jxr_linenumber" name="145" href="#145">145</a> 
+<a class="jxr_linenumber" name="146" href="#146">146</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/FileManager.html">FileManager</a> manager = FileManager.getFileManager(fileName, isAppend, isLocking, isBuffered, advertiseUri,
+<a class="jxr_linenumber" name="147" href="#147">147</a>             layout, bufferSize);
+<a class="jxr_linenumber" name="148" href="#148">148</a>         <strong class="jxr_keyword">if</strong> (manager == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="149" href="#149">149</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="150" href="#150">150</a>         }
 <a class="jxr_linenumber" name="151" href="#151">151</a> 
 <a class="jxr_linenumber" name="152" href="#152">152</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/FileAppender.html">FileAppender</a>(name, layout, filter, manager, fileName, ignoreExceptions, isFlush,
 <a class="jxr_linenumber" name="153" href="#153">153</a>                 isAdvertise ? config.getAdvertiser() : <strong class="jxr_keyword">null</strong>);

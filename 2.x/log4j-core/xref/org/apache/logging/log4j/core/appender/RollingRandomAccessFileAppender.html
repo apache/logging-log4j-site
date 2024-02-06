@@ -35,8 +35,8 @@
 <a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.Layout;
 <a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.LogEvent;
 <a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.rolling.DefaultRolloverStrategy;
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.rolling.RollingRandomAccessFileManager;
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.rolling.RollingFileManager;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.rolling.RollingFileManager;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.rolling.RollingRandomAccessFileManager;
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.rolling.RolloverStrategy;
 <a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.appender.rolling.TriggeringPolicy;
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.Configuration;
@@ -45,30 +45,30 @@
 <a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginElement;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.config.plugins.PluginFactory;
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.helpers.Booleans;
-<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.layout.PatternLayout;
-<a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.net.Advertiser;
-<a class="jxr_linenumber" name="41" href="#41">41</a>  
-<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment"> * An appender that writes to random access files and can roll over at</em>
-<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment"> * intervals.</em>
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="46" href="#46">46</a>  @Plugin(name = <span class="jxr_string">"RollingRandomAccessFile"</span>, category = <span class="jxr_string">"Core"</span>, elementType = <span class="jxr_string">"appender"</span>, printObject = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RollingRandomAccessFileAppender.html">RollingRandomAccessFileAppender</a> <strong class="jxr_keyword">extends</strong> AbstractOutputStreamAppender&lt;RollingFileManager&gt; {
-<a class="jxr_linenumber" name="48" href="#48">48</a>  
-<a class="jxr_linenumber" name="49" href="#49">49</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String fileName;
-<a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String filePattern;
-<a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">private</strong> Object advertisement;
-<a class="jxr_linenumber" name="52" href="#52">52</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/Advertiser.html">Advertiser</a> advertiser;
-<a class="jxr_linenumber" name="53" href="#53">53</a>  
-<a class="jxr_linenumber" name="54" href="#54">54</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RollingRandomAccessFileAppender.html">RollingRandomAccessFileAppender</a>(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout,
-<a class="jxr_linenumber" name="55" href="#55">55</a>              <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> manager, <strong class="jxr_keyword">final</strong> String fileName,
-<a class="jxr_linenumber" name="56" href="#56">56</a>              <strong class="jxr_keyword">final</strong> String filePattern, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> ignoreExceptions,
-<a class="jxr_linenumber" name="57" href="#57">57</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/Advertiser.html">Advertiser</a> advertiser) {
-<a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">super</strong>(name, layout, filter, ignoreExceptions, immediateFlush, manager);
-<a class="jxr_linenumber" name="59" href="#59">59</a>          <strong class="jxr_keyword">if</strong> (advertiser != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="60" href="#60">60</a>              <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; configuration = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;(
-<a class="jxr_linenumber" name="61" href="#61">61</a>                      layout.getContentFormat());
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.layout.PatternLayout;
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.net.Advertiser;
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Booleans;
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Integers;
+<a class="jxr_linenumber" name="42" href="#42">42</a>  
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment"> * An appender that writes to random access files and can roll over at</em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment"> * intervals.</em>
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="47" href="#47">47</a>  @Plugin(name = <span class="jxr_string">"RollingRandomAccessFile"</span>, category = <span class="jxr_string">"Core"</span>, elementType = <span class="jxr_string">"appender"</span>, printObject = <strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RollingRandomAccessFileAppender.html">RollingRandomAccessFileAppender</a> <strong class="jxr_keyword">extends</strong> AbstractOutputStreamAppender&lt;RollingFileManager&gt; {
+<a class="jxr_linenumber" name="49" href="#49">49</a>  
+<a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String fileName;
+<a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String filePattern;
+<a class="jxr_linenumber" name="52" href="#52">52</a>      <strong class="jxr_keyword">private</strong> Object advertisement;
+<a class="jxr_linenumber" name="53" href="#53">53</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/Advertiser.html">Advertiser</a> advertiser;
+<a class="jxr_linenumber" name="54" href="#54">54</a>  
+<a class="jxr_linenumber" name="55" href="#55">55</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RollingRandomAccessFileAppender.html">RollingRandomAccessFileAppender</a>(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout,
+<a class="jxr_linenumber" name="56" href="#56">56</a>              <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> manager, <strong class="jxr_keyword">final</strong> String fileName,
+<a class="jxr_linenumber" name="57" href="#57">57</a>              <strong class="jxr_keyword">final</strong> String filePattern, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> ignoreExceptions,
+<a class="jxr_linenumber" name="58" href="#58">58</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> immediateFlush, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/Advertiser.html">Advertiser</a> advertiser) {
+<a class="jxr_linenumber" name="59" href="#59">59</a>          <strong class="jxr_keyword">super</strong>(name, layout, filter, ignoreExceptions, immediateFlush, manager);
+<a class="jxr_linenumber" name="60" href="#60">60</a>          <strong class="jxr_keyword">if</strong> (advertiser != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="61" href="#61">61</a>              <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; configuration = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;(layout.getContentFormat());
 <a class="jxr_linenumber" name="62" href="#62">62</a>              configuration.put(<span class="jxr_string">"contentType"</span>, layout.getContentType());
 <a class="jxr_linenumber" name="63" href="#63">63</a>              configuration.put(<span class="jxr_string">"name"</span>, name);
 <a class="jxr_linenumber" name="64" href="#64">64</a>              advertisement = advertiser.advertise(configuration);
@@ -123,97 +123,105 @@
 <a class="jxr_linenumber" name="113" href="#113">113</a>     <strong class="jxr_keyword">public</strong> String getFilePattern() {
 <a class="jxr_linenumber" name="114" href="#114">114</a>         <strong class="jxr_keyword">return</strong> filePattern;
 <a class="jxr_linenumber" name="115" href="#115">115</a>     }
-<a class="jxr_linenumber" name="116" href="#116">116</a> 
+<a class="jxr_linenumber" name="116" href="#116">116</a>     
 <a class="jxr_linenumber" name="117" href="#117">117</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="118" href="#118">118</a> <em class="jxr_javadoccomment">     * Create a RollingRandomAccessFileAppender.</em>
-<a class="jxr_linenumber" name="119" href="#119">119</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="120" href="#120">120</a> <em class="jxr_javadoccomment">     * @param fileName The name of the file that is actively written to.</em>
-<a class="jxr_linenumber" name="121" href="#121">121</a> <em class="jxr_javadoccomment">     *            (required).</em>
-<a class="jxr_linenumber" name="122" href="#122">122</a> <em class="jxr_javadoccomment">     * @param filePattern The pattern of the file name to use on rollover.</em>
-<a class="jxr_linenumber" name="123" href="#123">123</a> <em class="jxr_javadoccomment">     *            (required).</em>
-<a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_javadoccomment">     * @param append If true, events are appended to the file. If false, the</em>
-<a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">     *            file is overwritten when opened. Defaults to "true"</em>
-<a class="jxr_linenumber" name="126" href="#126">126</a> <em class="jxr_javadoccomment">     * @param name The name of the Appender (required).</em>
-<a class="jxr_linenumber" name="127" href="#127">127</a> <em class="jxr_javadoccomment">     * @param immediateFlush When true, events are immediately flushed. Defaults</em>
-<a class="jxr_linenumber" name="128" href="#128">128</a> <em class="jxr_javadoccomment">     *            to "true".</em>
-<a class="jxr_linenumber" name="129" href="#129">129</a> <em class="jxr_javadoccomment">     * @param policy The triggering policy. (required).</em>
-<a class="jxr_linenumber" name="130" href="#130">130</a> <em class="jxr_javadoccomment">     * @param strategy The rollover strategy. Defaults to</em>
-<a class="jxr_linenumber" name="131" href="#131">131</a> <em class="jxr_javadoccomment">     *            DefaultRolloverStrategy.</em>
-<a class="jxr_linenumber" name="132" href="#132">132</a> <em class="jxr_javadoccomment">     * @param layout The layout to use (defaults to the default PatternLayout).</em>
-<a class="jxr_linenumber" name="133" href="#133">133</a> <em class="jxr_javadoccomment">     * @param filter The Filter or null.</em>
-<a class="jxr_linenumber" name="134" href="#134">134</a> <em class="jxr_javadoccomment">     * @param ignore If {@code "true"} (default) exceptions encountered when appending events are logged; otherwise</em>
-<a class="jxr_linenumber" name="135" href="#135">135</a> <em class="jxr_javadoccomment">     *               they are propagated to the caller.</em>
-<a class="jxr_linenumber" name="136" href="#136">136</a> <em class="jxr_javadoccomment">     * @param advertise "true" if the appender configuration should be</em>
-<a class="jxr_linenumber" name="137" href="#137">137</a> <em class="jxr_javadoccomment">     *            advertised, "false" otherwise.</em>
-<a class="jxr_linenumber" name="138" href="#138">138</a> <em class="jxr_javadoccomment">     * @param advertiseURI The advertised URI which can be used to retrieve the</em>
-<a class="jxr_linenumber" name="139" href="#139">139</a> <em class="jxr_javadoccomment">     *            file contents.</em>
-<a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">     * @param config The Configuration.</em>
-<a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">     * @return A RollingRandomAccessFileAppender.</em>
-<a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="143" href="#143">143</a>     @PluginFactory
-<a class="jxr_linenumber" name="144" href="#144">144</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RollingRandomAccessFileAppender.html">RollingRandomAccessFileAppender</a> createAppender(
-<a class="jxr_linenumber" name="145" href="#145">145</a>             @PluginAttribute(<span class="jxr_string">"fileName"</span>) <strong class="jxr_keyword">final</strong> String fileName,
-<a class="jxr_linenumber" name="146" href="#146">146</a>             @PluginAttribute(<span class="jxr_string">"filePattern"</span>) <strong class="jxr_keyword">final</strong> String filePattern,
-<a class="jxr_linenumber" name="147" href="#147">147</a>             @PluginAttribute(<span class="jxr_string">"append"</span>) <strong class="jxr_keyword">final</strong> String append,
-<a class="jxr_linenumber" name="148" href="#148">148</a>             @PluginAttribute(<span class="jxr_string">"name"</span>) <strong class="jxr_keyword">final</strong> String name,
-<a class="jxr_linenumber" name="149" href="#149">149</a>             @PluginAttribute(<span class="jxr_string">"immediateFlush"</span>) <strong class="jxr_keyword">final</strong> String immediateFlush,
-<a class="jxr_linenumber" name="150" href="#150">150</a>             @PluginElement(<span class="jxr_string">"Policy"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/TriggeringPolicy.html">TriggeringPolicy</a> policy,
-<a class="jxr_linenumber" name="151" href="#151">151</a>             @PluginElement(<span class="jxr_string">"Strategy"</span>) <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/RolloverStrategy.html">RolloverStrategy</a> strategy,
-<a class="jxr_linenumber" name="152" href="#152">152</a>             @PluginElement(<span class="jxr_string">"Layout"</span>) Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout,
-<a class="jxr_linenumber" name="153" href="#153">153</a>             @PluginElement(<span class="jxr_string">"Filter"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter,
-<a class="jxr_linenumber" name="154" href="#154">154</a>             @PluginAttribute(<span class="jxr_string">"ignoreExceptions"</span>) <strong class="jxr_keyword">final</strong> String ignore,
-<a class="jxr_linenumber" name="155" href="#155">155</a>             @PluginAttribute(<span class="jxr_string">"advertise"</span>) <strong class="jxr_keyword">final</strong> String advertise,
-<a class="jxr_linenumber" name="156" href="#156">156</a>             @PluginAttribute(<span class="jxr_string">"advertiseURI"</span>) <strong class="jxr_keyword">final</strong> String advertiseURI,
-<a class="jxr_linenumber" name="157" href="#157">157</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config) {
-<a class="jxr_linenumber" name="158" href="#158">158</a> 
-<a class="jxr_linenumber" name="159" href="#159">159</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAppend = Booleans.parseBoolean(append, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="160" href="#160">160</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> ignoreExceptions = Booleans.parseBoolean(ignore, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="161" href="#161">161</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isFlush = Booleans.parseBoolean(immediateFlush, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="162" href="#162">162</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAdvertise = Boolean.parseBoolean(advertise);
-<a class="jxr_linenumber" name="163" href="#163">163</a> 
-<a class="jxr_linenumber" name="164" href="#164">164</a>         <strong class="jxr_keyword">if</strong> (name == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="165" href="#165">165</a>             LOGGER.error(<span class="jxr_string">"No name provided for FileAppender"</span>);
-<a class="jxr_linenumber" name="166" href="#166">166</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="167" href="#167">167</a>         }
+<a class="jxr_linenumber" name="118" href="#118">118</a> <em class="jxr_javadoccomment">     * Returns the size of the file manager's buffer.</em>
+<a class="jxr_linenumber" name="119" href="#119">119</a> <em class="jxr_javadoccomment">     * @return the buffer size</em>
+<a class="jxr_linenumber" name="120" href="#120">120</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="121" href="#121">121</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> getBufferSize() {
+<a class="jxr_linenumber" name="122" href="#122">122</a>         <strong class="jxr_keyword">return</strong> ((RollingRandomAccessFileManager) getManager()).getBufferSize();
+<a class="jxr_linenumber" name="123" href="#123">123</a>     }
+<a class="jxr_linenumber" name="124" href="#124">124</a> 
+<a class="jxr_linenumber" name="125" href="#125">125</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="126" href="#126">126</a> <em class="jxr_javadoccomment">     * Create a RollingRandomAccessFileAppender.</em>
+<a class="jxr_linenumber" name="127" href="#127">127</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="128" href="#128">128</a> <em class="jxr_javadoccomment">     * @param fileName The name of the file that is actively written to.</em>
+<a class="jxr_linenumber" name="129" href="#129">129</a> <em class="jxr_javadoccomment">     *            (required).</em>
+<a class="jxr_linenumber" name="130" href="#130">130</a> <em class="jxr_javadoccomment">     * @param filePattern The pattern of the file name to use on rollover.</em>
+<a class="jxr_linenumber" name="131" href="#131">131</a> <em class="jxr_javadoccomment">     *            (required).</em>
+<a class="jxr_linenumber" name="132" href="#132">132</a> <em class="jxr_javadoccomment">     * @param append If true, events are appended to the file. If false, the</em>
+<a class="jxr_linenumber" name="133" href="#133">133</a> <em class="jxr_javadoccomment">     *            file is overwritten when opened. Defaults to "true"</em>
+<a class="jxr_linenumber" name="134" href="#134">134</a> <em class="jxr_javadoccomment">     * @param name The name of the Appender (required).</em>
+<a class="jxr_linenumber" name="135" href="#135">135</a> <em class="jxr_javadoccomment">     * @param immediateFlush When true, events are immediately flushed. Defaults</em>
+<a class="jxr_linenumber" name="136" href="#136">136</a> <em class="jxr_javadoccomment">     *            to "true".</em>
+<a class="jxr_linenumber" name="137" href="#137">137</a> <em class="jxr_javadoccomment">     * @param bufferSizeStr The buffer size, defaults to {@value RollingRandomAccessFileManager#DEFAULT_BUFFER_SIZE}.</em>
+<a class="jxr_linenumber" name="138" href="#138">138</a> <em class="jxr_javadoccomment">     * @param policy The triggering policy. (required).</em>
+<a class="jxr_linenumber" name="139" href="#139">139</a> <em class="jxr_javadoccomment">     * @param strategy The rollover strategy. Defaults to</em>
+<a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">     *            DefaultRolloverStrategy.</em>
+<a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">     * @param layout The layout to use (defaults to the default PatternLayout).</em>
+<a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">     * @param filter The Filter or null.</em>
+<a class="jxr_linenumber" name="143" href="#143">143</a> <em class="jxr_javadoccomment">     * @param ignore If {@code "true"} (default) exceptions encountered when appending events are logged; otherwise</em>
+<a class="jxr_linenumber" name="144" href="#144">144</a> <em class="jxr_javadoccomment">     *               they are propagated to the caller.</em>
+<a class="jxr_linenumber" name="145" href="#145">145</a> <em class="jxr_javadoccomment">     * @param advertise "true" if the appender configuration should be</em>
+<a class="jxr_linenumber" name="146" href="#146">146</a> <em class="jxr_javadoccomment">     *            advertised, "false" otherwise.</em>
+<a class="jxr_linenumber" name="147" href="#147">147</a> <em class="jxr_javadoccomment">     * @param advertiseURI The advertised URI which can be used to retrieve the</em>
+<a class="jxr_linenumber" name="148" href="#148">148</a> <em class="jxr_javadoccomment">     *            file contents.</em>
+<a class="jxr_linenumber" name="149" href="#149">149</a> <em class="jxr_javadoccomment">     * @param config The Configuration.</em>
+<a class="jxr_linenumber" name="150" href="#150">150</a> <em class="jxr_javadoccomment">     * @return A RollingRandomAccessFileAppender.</em>
+<a class="jxr_linenumber" name="151" href="#151">151</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="152" href="#152">152</a>     @PluginFactory
+<a class="jxr_linenumber" name="153" href="#153">153</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RollingRandomAccessFileAppender.html">RollingRandomAccessFileAppender</a> createAppender(
+<a class="jxr_linenumber" name="154" href="#154">154</a>             @PluginAttribute(<span class="jxr_string">"fileName"</span>) <strong class="jxr_keyword">final</strong> String fileName,
+<a class="jxr_linenumber" name="155" href="#155">155</a>             @PluginAttribute(<span class="jxr_string">"filePattern"</span>) <strong class="jxr_keyword">final</strong> String filePattern,
+<a class="jxr_linenumber" name="156" href="#156">156</a>             @PluginAttribute(<span class="jxr_string">"append"</span>) <strong class="jxr_keyword">final</strong> String append,
+<a class="jxr_linenumber" name="157" href="#157">157</a>             @PluginAttribute(<span class="jxr_string">"name"</span>) <strong class="jxr_keyword">final</strong> String name,
+<a class="jxr_linenumber" name="158" href="#158">158</a>             @PluginAttribute(<span class="jxr_string">"immediateFlush"</span>) <strong class="jxr_keyword">final</strong> String immediateFlush,
+<a class="jxr_linenumber" name="159" href="#159">159</a>             @PluginAttribute(<span class="jxr_string">"bufferSize"</span>) <strong class="jxr_keyword">final</strong> String bufferSizeStr,
+<a class="jxr_linenumber" name="160" href="#160">160</a>             @PluginElement(<span class="jxr_string">"Policy"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/TriggeringPolicy.html">TriggeringPolicy</a> policy,
+<a class="jxr_linenumber" name="161" href="#161">161</a>             @PluginElement(<span class="jxr_string">"Strategy"</span>) <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/RolloverStrategy.html">RolloverStrategy</a> strategy,
+<a class="jxr_linenumber" name="162" href="#162">162</a>             @PluginElement(<span class="jxr_string">"Layout"</span>) Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout,
+<a class="jxr_linenumber" name="163" href="#163">163</a>             @PluginElement(<span class="jxr_string">"Filter"</span>) <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter,
+<a class="jxr_linenumber" name="164" href="#164">164</a>             @PluginAttribute(<span class="jxr_string">"ignoreExceptions"</span>) <strong class="jxr_keyword">final</strong> String ignore,
+<a class="jxr_linenumber" name="165" href="#165">165</a>             @PluginAttribute(<span class="jxr_string">"advertise"</span>) <strong class="jxr_keyword">final</strong> String advertise,
+<a class="jxr_linenumber" name="166" href="#166">166</a>             @PluginAttribute(<span class="jxr_string">"advertiseURI"</span>) <strong class="jxr_keyword">final</strong> String advertiseURI,
+<a class="jxr_linenumber" name="167" href="#167">167</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config) {
 <a class="jxr_linenumber" name="168" href="#168">168</a> 
-<a class="jxr_linenumber" name="169" href="#169">169</a>         <strong class="jxr_keyword">if</strong> (fileName == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="170" href="#170">170</a>             LOGGER.error(<span class="jxr_string">"No filename was provided for FileAppender with name "</span>
-<a class="jxr_linenumber" name="171" href="#171">171</a>                     + name);
-<a class="jxr_linenumber" name="172" href="#172">172</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="173" href="#173">173</a>         }
+<a class="jxr_linenumber" name="169" href="#169">169</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAppend = Booleans.parseBoolean(append, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="170" href="#170">170</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> ignoreExceptions = Booleans.parseBoolean(ignore, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isFlush = Booleans.parseBoolean(immediateFlush, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="172" href="#172">172</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isAdvertise = Boolean.parseBoolean(advertise);
+<a class="jxr_linenumber" name="173" href="#173">173</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize = Integers.parseInt(bufferSizeStr, RollingRandomAccessFileManager.DEFAULT_BUFFER_SIZE);
 <a class="jxr_linenumber" name="174" href="#174">174</a> 
-<a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">if</strong> (filePattern == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="176" href="#176">176</a>             LOGGER.error(<span class="jxr_string">"No filename pattern provided for FileAppender with name "</span>
-<a class="jxr_linenumber" name="177" href="#177">177</a>                     + name);
-<a class="jxr_linenumber" name="178" href="#178">178</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="179" href="#179">179</a>         }
-<a class="jxr_linenumber" name="180" href="#180">180</a> 
-<a class="jxr_linenumber" name="181" href="#181">181</a>         <strong class="jxr_keyword">if</strong> (policy == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="182" href="#182">182</a>             LOGGER.error(<span class="jxr_string">"A TriggeringPolicy must be provided"</span>);
-<a class="jxr_linenumber" name="183" href="#183">183</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="184" href="#184">184</a>         }
-<a class="jxr_linenumber" name="185" href="#185">185</a> 
-<a class="jxr_linenumber" name="186" href="#186">186</a>         <strong class="jxr_keyword">if</strong> (strategy == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="187" href="#187">187</a>             strategy = DefaultRolloverStrategy.createStrategy(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>,
-<a class="jxr_linenumber" name="188" href="#188">188</a>                     String.valueOf(Deflater.DEFAULT_COMPRESSION), config);
-<a class="jxr_linenumber" name="189" href="#189">189</a>         }
-<a class="jxr_linenumber" name="190" href="#190">190</a> 
-<a class="jxr_linenumber" name="191" href="#191">191</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="192" href="#192">192</a>             layout = PatternLayout.createLayout(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">if</strong> (name == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="176" href="#176">176</a>             LOGGER.error(<span class="jxr_string">"No name provided for FileAppender"</span>);
+<a class="jxr_linenumber" name="177" href="#177">177</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="178" href="#178">178</a>         }
+<a class="jxr_linenumber" name="179" href="#179">179</a> 
+<a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">if</strong> (fileName == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="181" href="#181">181</a>             LOGGER.error(<span class="jxr_string">"No filename was provided for FileAppender with name "</span> + name);
+<a class="jxr_linenumber" name="182" href="#182">182</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="183" href="#183">183</a>         }
+<a class="jxr_linenumber" name="184" href="#184">184</a> 
+<a class="jxr_linenumber" name="185" href="#185">185</a>         <strong class="jxr_keyword">if</strong> (filePattern == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="186" href="#186">186</a>             LOGGER.error(<span class="jxr_string">"No filename pattern provided for FileAppender with name "</span> + name);
+<a class="jxr_linenumber" name="187" href="#187">187</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="188" href="#188">188</a>         }
+<a class="jxr_linenumber" name="189" href="#189">189</a> 
+<a class="jxr_linenumber" name="190" href="#190">190</a>         <strong class="jxr_keyword">if</strong> (policy == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="191" href="#191">191</a>             LOGGER.error(<span class="jxr_string">"A TriggeringPolicy must be provided"</span>);
+<a class="jxr_linenumber" name="192" href="#192">192</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="193" href="#193">193</a>         }
 <a class="jxr_linenumber" name="194" href="#194">194</a> 
-<a class="jxr_linenumber" name="195" href="#195">195</a> 
-<a class="jxr_linenumber" name="196" href="#196">196</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingRandomAccessFileManager.html">RollingRandomAccessFileManager</a> manager = RollingRandomAccessFileManager.getRollingRandomAccessFileManager(fileName, filePattern,
-<a class="jxr_linenumber" name="197" href="#197">197</a>             isAppend, isFlush, policy, strategy, advertiseURI, layout);
-<a class="jxr_linenumber" name="198" href="#198">198</a>         <strong class="jxr_keyword">if</strong> (manager == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="199" href="#199">199</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="200" href="#200">200</a>         }
-<a class="jxr_linenumber" name="201" href="#201">201</a> 
-<a class="jxr_linenumber" name="202" href="#202">202</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RollingRandomAccessFileAppender.html">RollingRandomAccessFileAppender</a>(name, layout, filter, manager,
-<a class="jxr_linenumber" name="203" href="#203">203</a>                 fileName, filePattern, ignoreExceptions, isFlush,
-<a class="jxr_linenumber" name="204" href="#204">204</a>                 isAdvertise ? config.getAdvertiser() : <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="205" href="#205">205</a>     }
-<a class="jxr_linenumber" name="206" href="#206">206</a> }
+<a class="jxr_linenumber" name="195" href="#195">195</a>         <strong class="jxr_keyword">if</strong> (strategy == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="196" href="#196">196</a>             strategy = DefaultRolloverStrategy.createStrategy(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>,
+<a class="jxr_linenumber" name="197" href="#197">197</a>                     String.valueOf(Deflater.DEFAULT_COMPRESSION), config);
+<a class="jxr_linenumber" name="198" href="#198">198</a>         }
+<a class="jxr_linenumber" name="199" href="#199">199</a> 
+<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="201" href="#201">201</a>             layout = PatternLayout.createDefaultLayout();
+<a class="jxr_linenumber" name="202" href="#202">202</a>         }
+<a class="jxr_linenumber" name="203" href="#203">203</a> 
+<a class="jxr_linenumber" name="204" href="#204">204</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingRandomAccessFileManager.html">RollingRandomAccessFileManager</a> manager = RollingRandomAccessFileManager.getRollingRandomAccessFileManager(
+<a class="jxr_linenumber" name="205" href="#205">205</a>                 fileName, filePattern, isAppend, isFlush, bufferSize, policy, strategy, advertiseURI, layout);
+<a class="jxr_linenumber" name="206" href="#206">206</a>         <strong class="jxr_keyword">if</strong> (manager == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="207" href="#207">207</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="208" href="#208">208</a>         }
+<a class="jxr_linenumber" name="209" href="#209">209</a> 
+<a class="jxr_linenumber" name="210" href="#210">210</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/RollingRandomAccessFileAppender.html">RollingRandomAccessFileAppender</a>(name, layout, filter, manager,
+<a class="jxr_linenumber" name="211" href="#211">211</a>                 fileName, filePattern, ignoreExceptions, isFlush, bufferSize,
+<a class="jxr_linenumber" name="212" href="#212">212</a>                 isAdvertise ? config.getAdvertiser() : <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="213" href="#213">213</a>     }
+<a class="jxr_linenumber" name="214" href="#214">214</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

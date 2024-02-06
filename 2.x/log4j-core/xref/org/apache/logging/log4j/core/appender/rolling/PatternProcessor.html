@@ -173,110 +173,116 @@
 <a class="jxr_linenumber" name="163" href="#163">163</a>         <strong class="jxr_keyword">return</strong> debugGetNextTime(nextTime);
 <a class="jxr_linenumber" name="164" href="#164">164</a>     }
 <a class="jxr_linenumber" name="165" href="#165">165</a> 
-<a class="jxr_linenumber" name="166" href="#166">166</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">long</strong> debugGetNextTime(<strong class="jxr_keyword">long</strong> nextTime) {
-<a class="jxr_linenumber" name="167" href="#167">167</a>         <strong class="jxr_keyword">if</strong> (LOGGER.isTraceEnabled()) {
-<a class="jxr_linenumber" name="168" href="#168">168</a>             LOGGER.trace(<span class="jxr_string">"PatternProcessor.getNextTime returning {}, nextFileTime={}, prevFileTime={}, freq={}"</span>, <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="169" href="#169">169</a>                     format(nextTime), format(nextFileTime), format(prevFileTime), frequency);
-<a class="jxr_linenumber" name="170" href="#170">170</a>         }
-<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">return</strong> nextTime;
-<a class="jxr_linenumber" name="172" href="#172">172</a>     }
-<a class="jxr_linenumber" name="173" href="#173">173</a> 
-<a class="jxr_linenumber" name="174" href="#174">174</a>     <strong class="jxr_keyword">private</strong> String format(<strong class="jxr_keyword">long</strong> time) {
-<a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> SimpleDateFormat(<span class="jxr_string">"yyyy/MM/dd-HH:mm:ss.SSS"</span>).format(<strong class="jxr_keyword">new</strong> Date(time));
+<a class="jxr_linenumber" name="166" href="#166">166</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> updateTime() {
+<a class="jxr_linenumber" name="167" href="#167">167</a>         prevFileTime = nextFileTime;
+<a class="jxr_linenumber" name="168" href="#168">168</a>     }
+<a class="jxr_linenumber" name="169" href="#169">169</a> 
+<a class="jxr_linenumber" name="170" href="#170">170</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">long</strong> debugGetNextTime(<strong class="jxr_keyword">long</strong> nextTime) {
+<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">if</strong> (LOGGER.isTraceEnabled()) {
+<a class="jxr_linenumber" name="172" href="#172">172</a>             LOGGER.trace(<span class="jxr_string">"PatternProcessor.getNextTime returning {}, nextFileTime={}, prevFileTime={}, current={}, freq={}"</span>, <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="173" href="#173">173</a>                     format(nextTime), format(nextFileTime), format(prevFileTime), format(System.currentTimeMillis()), frequency);
+<a class="jxr_linenumber" name="174" href="#174">174</a>         }
+<a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">return</strong> nextTime;
 <a class="jxr_linenumber" name="176" href="#176">176</a>     }
 <a class="jxr_linenumber" name="177" href="#177">177</a> 
-<a class="jxr_linenumber" name="178" href="#178">178</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> increment(<strong class="jxr_keyword">final</strong> Calendar cal, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> type, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> increment, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> modulate) {
-<a class="jxr_linenumber" name="179" href="#179">179</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> interval =  modulate ? increment - (cal.get(type) % increment) : increment;
-<a class="jxr_linenumber" name="180" href="#180">180</a>         cal.add(type, interval);
-<a class="jxr_linenumber" name="181" href="#181">181</a>     }
-<a class="jxr_linenumber" name="182" href="#182">182</a> 
-<a class="jxr_linenumber" name="183" href="#183">183</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="184" href="#184">184</a> <em class="jxr_javadoccomment">     * Format file name.</em>
-<a class="jxr_linenumber" name="185" href="#185">185</a> <em class="jxr_javadoccomment">     * @param buf string buffer to which formatted file name is appended, may not be null.</em>
-<a class="jxr_linenumber" name="186" href="#186">186</a> <em class="jxr_javadoccomment">     * @param obj object to be evaluated in formatting, may not be null.</em>
-<a class="jxr_linenumber" name="187" href="#187">187</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="188" href="#188">188</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> formatFileName(<strong class="jxr_keyword">final</strong> StringBuilder buf, <strong class="jxr_keyword">final</strong> Object obj) {
-<a class="jxr_linenumber" name="189" href="#189">189</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time = prevFileTime == 0 ? System.currentTimeMillis() : prevFileTime;
-<a class="jxr_linenumber" name="190" href="#190">190</a>         formatFileName(buf, <strong class="jxr_keyword">new</strong> Date(time), obj);
-<a class="jxr_linenumber" name="191" href="#191">191</a>     }
-<a class="jxr_linenumber" name="192" href="#192">192</a> 
-<a class="jxr_linenumber" name="193" href="#193">193</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="194" href="#194">194</a> <em class="jxr_javadoccomment">     * Format file name.</em>
-<a class="jxr_linenumber" name="195" href="#195">195</a> <em class="jxr_javadoccomment">     * @param subst The StrSubstitutor.</em>
-<a class="jxr_linenumber" name="196" href="#196">196</a> <em class="jxr_javadoccomment">     * @param buf string buffer to which formatted file name is appended, may not be null.</em>
-<a class="jxr_linenumber" name="197" href="#197">197</a> <em class="jxr_javadoccomment">     * @param obj object to be evaluated in formatting, may not be null.</em>
-<a class="jxr_linenumber" name="198" href="#198">198</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="199" href="#199">199</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> formatFileName(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/lookup/StrSubstitutor.html">StrSubstitutor</a> subst, <strong class="jxr_keyword">final</strong> StringBuilder buf, <strong class="jxr_keyword">final</strong> Object obj) {
-<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time = prevFileTime == 0 ? System.currentTimeMillis() : prevFileTime;
-<a class="jxr_linenumber" name="201" href="#201">201</a>         formatFileName(buf, <strong class="jxr_keyword">new</strong> Date(time), obj);
-<a class="jxr_linenumber" name="202" href="#202">202</a>         <a href="../../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/impl/Log4jLogEvent.html">Log4jLogEvent</a>(time);
-<a class="jxr_linenumber" name="203" href="#203">203</a>         String fileName = subst.replace(event, buf);
-<a class="jxr_linenumber" name="204" href="#204">204</a>         buf.setLength(0);
-<a class="jxr_linenumber" name="205" href="#205">205</a>         buf.append(fileName);
-<a class="jxr_linenumber" name="206" href="#206">206</a>     }
-<a class="jxr_linenumber" name="207" href="#207">207</a> 
-<a class="jxr_linenumber" name="208" href="#208">208</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="209" href="#209">209</a> <em class="jxr_javadoccomment">     * Format file name.</em>
-<a class="jxr_linenumber" name="210" href="#210">210</a> <em class="jxr_javadoccomment">     * @param buf string buffer to which formatted file name is appended, may not be null.</em>
-<a class="jxr_linenumber" name="211" href="#211">211</a> <em class="jxr_javadoccomment">     * @param objects objects to be evaluated in formatting, may not be null.</em>
-<a class="jxr_linenumber" name="212" href="#212">212</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="213" href="#213">213</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> formatFileName(<strong class="jxr_keyword">final</strong> StringBuilder buf, <strong class="jxr_keyword">final</strong> Object... objects) {
-<a class="jxr_linenumber" name="214" href="#214">214</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; patternConverters.length; i++) {
-<a class="jxr_linenumber" name="215" href="#215">215</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> fieldStart = buf.length();
-<a class="jxr_linenumber" name="216" href="#216">216</a>             patternConverters[i].format(buf, objects);
-<a class="jxr_linenumber" name="217" href="#217">217</a> 
-<a class="jxr_linenumber" name="218" href="#218">218</a>             <strong class="jxr_keyword">if</strong> (patternFields[i] != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="219" href="#219">219</a>                 patternFields[i].format(fieldStart, buf);
-<a class="jxr_linenumber" name="220" href="#220">220</a>             }
-<a class="jxr_linenumber" name="221" href="#221">221</a>         }
-<a class="jxr_linenumber" name="222" href="#222">222</a>     }
+<a class="jxr_linenumber" name="178" href="#178">178</a>     <strong class="jxr_keyword">private</strong> String format(<strong class="jxr_keyword">long</strong> time) {
+<a class="jxr_linenumber" name="179" href="#179">179</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> SimpleDateFormat(<span class="jxr_string">"yyyy/MM/dd-HH:mm:ss.SSS"</span>).format(<strong class="jxr_keyword">new</strong> Date(time));
+<a class="jxr_linenumber" name="180" href="#180">180</a>     }
+<a class="jxr_linenumber" name="181" href="#181">181</a> 
+<a class="jxr_linenumber" name="182" href="#182">182</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> increment(<strong class="jxr_keyword">final</strong> Calendar cal, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> type, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> increment, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> modulate) {
+<a class="jxr_linenumber" name="183" href="#183">183</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> interval =  modulate ? increment - (cal.get(type) % increment) : increment;
+<a class="jxr_linenumber" name="184" href="#184">184</a>         cal.add(type, interval);
+<a class="jxr_linenumber" name="185" href="#185">185</a>     }
+<a class="jxr_linenumber" name="186" href="#186">186</a> 
+<a class="jxr_linenumber" name="187" href="#187">187</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="188" href="#188">188</a> <em class="jxr_javadoccomment">     * Format file name.</em>
+<a class="jxr_linenumber" name="189" href="#189">189</a> <em class="jxr_javadoccomment">     * @param buf string buffer to which formatted file name is appended, may not be null.</em>
+<a class="jxr_linenumber" name="190" href="#190">190</a> <em class="jxr_javadoccomment">     * @param obj object to be evaluated in formatting, may not be null.</em>
+<a class="jxr_linenumber" name="191" href="#191">191</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="192" href="#192">192</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> formatFileName(<strong class="jxr_keyword">final</strong> StringBuilder buf, <strong class="jxr_keyword">final</strong> Object obj) {
+<a class="jxr_linenumber" name="193" href="#193">193</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time = prevFileTime == 0 ? System.currentTimeMillis() : prevFileTime;
+<a class="jxr_linenumber" name="194" href="#194">194</a>         formatFileName(buf, <strong class="jxr_keyword">new</strong> Date(time), obj);
+<a class="jxr_linenumber" name="195" href="#195">195</a>     }
+<a class="jxr_linenumber" name="196" href="#196">196</a> 
+<a class="jxr_linenumber" name="197" href="#197">197</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="198" href="#198">198</a> <em class="jxr_javadoccomment">     * Format file name.</em>
+<a class="jxr_linenumber" name="199" href="#199">199</a> <em class="jxr_javadoccomment">     * @param subst The StrSubstitutor.</em>
+<a class="jxr_linenumber" name="200" href="#200">200</a> <em class="jxr_javadoccomment">     * @param buf string buffer to which formatted file name is appended, may not be null.</em>
+<a class="jxr_linenumber" name="201" href="#201">201</a> <em class="jxr_javadoccomment">     * @param obj object to be evaluated in formatting, may not be null.</em>
+<a class="jxr_linenumber" name="202" href="#202">202</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="203" href="#203">203</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> formatFileName(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/lookup/StrSubstitutor.html">StrSubstitutor</a> subst, <strong class="jxr_keyword">final</strong> StringBuilder buf, <strong class="jxr_keyword">final</strong> Object obj) {
+<a class="jxr_linenumber" name="204" href="#204">204</a>         <em class="jxr_comment">// LOG4J2-628: we deliberately use System time, not the log4j.Clock time</em>
+<a class="jxr_linenumber" name="205" href="#205">205</a>         <em class="jxr_comment">// for creating the file name of rolled-over files. </em>
+<a class="jxr_linenumber" name="206" href="#206">206</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time = prevFileTime == 0 ? System.currentTimeMillis() : prevFileTime;
+<a class="jxr_linenumber" name="207" href="#207">207</a>         formatFileName(buf, <strong class="jxr_keyword">new</strong> Date(time), obj);
+<a class="jxr_linenumber" name="208" href="#208">208</a>         <a href="../../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/impl/Log4jLogEvent.html">Log4jLogEvent</a>(time);
+<a class="jxr_linenumber" name="209" href="#209">209</a>         String fileName = subst.replace(event, buf);
+<a class="jxr_linenumber" name="210" href="#210">210</a>         buf.setLength(0);
+<a class="jxr_linenumber" name="211" href="#211">211</a>         buf.append(fileName);
+<a class="jxr_linenumber" name="212" href="#212">212</a>     }
+<a class="jxr_linenumber" name="213" href="#213">213</a> 
+<a class="jxr_linenumber" name="214" href="#214">214</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="215" href="#215">215</a> <em class="jxr_javadoccomment">     * Format file name.</em>
+<a class="jxr_linenumber" name="216" href="#216">216</a> <em class="jxr_javadoccomment">     * @param buf string buffer to which formatted file name is appended, may not be null.</em>
+<a class="jxr_linenumber" name="217" href="#217">217</a> <em class="jxr_javadoccomment">     * @param objects objects to be evaluated in formatting, may not be null.</em>
+<a class="jxr_linenumber" name="218" href="#218">218</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="219" href="#219">219</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> formatFileName(<strong class="jxr_keyword">final</strong> StringBuilder buf, <strong class="jxr_keyword">final</strong> Object... objects) {
+<a class="jxr_linenumber" name="220" href="#220">220</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; patternConverters.length; i++) {
+<a class="jxr_linenumber" name="221" href="#221">221</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> fieldStart = buf.length();
+<a class="jxr_linenumber" name="222" href="#222">222</a>             patternConverters[i].format(buf, objects);
 <a class="jxr_linenumber" name="223" href="#223">223</a> 
-<a class="jxr_linenumber" name="224" href="#224">224</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RolloverFrequency.html">RolloverFrequency</a> calculateFrequency(<strong class="jxr_keyword">final</strong> String pattern) {
-<a class="jxr_linenumber" name="225" href="#225">225</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, MILLIS_CHAR)) {
-<a class="jxr_linenumber" name="226" href="#226">226</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.EVERY_MILLISECOND;
+<a class="jxr_linenumber" name="224" href="#224">224</a>             <strong class="jxr_keyword">if</strong> (patternFields[i] != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="225" href="#225">225</a>                 patternFields[i].format(fieldStart, buf);
+<a class="jxr_linenumber" name="226" href="#226">226</a>             }
 <a class="jxr_linenumber" name="227" href="#227">227</a>         }
-<a class="jxr_linenumber" name="228" href="#228">228</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, SECOND_CHAR)) {
-<a class="jxr_linenumber" name="229" href="#229">229</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.EVERY_SECOND;
-<a class="jxr_linenumber" name="230" href="#230">230</a>         }
-<a class="jxr_linenumber" name="231" href="#231">231</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, MINUTE_CHAR)) {
-<a class="jxr_linenumber" name="232" href="#232">232</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.EVERY_MINUTE;
+<a class="jxr_linenumber" name="228" href="#228">228</a>     }
+<a class="jxr_linenumber" name="229" href="#229">229</a> 
+<a class="jxr_linenumber" name="230" href="#230">230</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RolloverFrequency.html">RolloverFrequency</a> calculateFrequency(<strong class="jxr_keyword">final</strong> String pattern) {
+<a class="jxr_linenumber" name="231" href="#231">231</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, MILLIS_CHAR)) {
+<a class="jxr_linenumber" name="232" href="#232">232</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.EVERY_MILLISECOND;
 <a class="jxr_linenumber" name="233" href="#233">233</a>         }
-<a class="jxr_linenumber" name="234" href="#234">234</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, HOUR_CHARS)) {
-<a class="jxr_linenumber" name="235" href="#235">235</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.HOURLY;
+<a class="jxr_linenumber" name="234" href="#234">234</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, SECOND_CHAR)) {
+<a class="jxr_linenumber" name="235" href="#235">235</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.EVERY_SECOND;
 <a class="jxr_linenumber" name="236" href="#236">236</a>         }
-<a class="jxr_linenumber" name="237" href="#237">237</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, DAY_CHARS)) {
-<a class="jxr_linenumber" name="238" href="#238">238</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.DAILY;
+<a class="jxr_linenumber" name="237" href="#237">237</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, MINUTE_CHAR)) {
+<a class="jxr_linenumber" name="238" href="#238">238</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.EVERY_MINUTE;
 <a class="jxr_linenumber" name="239" href="#239">239</a>         }
-<a class="jxr_linenumber" name="240" href="#240">240</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, WEEK_CHARS)) {
-<a class="jxr_linenumber" name="241" href="#241">241</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.WEEKLY;
+<a class="jxr_linenumber" name="240" href="#240">240</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, HOUR_CHARS)) {
+<a class="jxr_linenumber" name="241" href="#241">241</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.HOURLY;
 <a class="jxr_linenumber" name="242" href="#242">242</a>         }
-<a class="jxr_linenumber" name="243" href="#243">243</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, MONTH_CHAR)) {
-<a class="jxr_linenumber" name="244" href="#244">244</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.MONTHLY;
+<a class="jxr_linenumber" name="243" href="#243">243</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, DAY_CHARS)) {
+<a class="jxr_linenumber" name="244" href="#244">244</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.DAILY;
 <a class="jxr_linenumber" name="245" href="#245">245</a>         }
-<a class="jxr_linenumber" name="246" href="#246">246</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, YEAR_CHAR)) {
-<a class="jxr_linenumber" name="247" href="#247">247</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.ANNUALLY;
+<a class="jxr_linenumber" name="246" href="#246">246</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, WEEK_CHARS)) {
+<a class="jxr_linenumber" name="247" href="#247">247</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.WEEKLY;
 <a class="jxr_linenumber" name="248" href="#248">248</a>         }
-<a class="jxr_linenumber" name="249" href="#249">249</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="250" href="#250">250</a>     }
-<a class="jxr_linenumber" name="251" href="#251">251</a> 
-<a class="jxr_linenumber" name="252" href="#252">252</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> createPatternParser() {
-<a class="jxr_linenumber" name="253" href="#253">253</a> 
-<a class="jxr_linenumber" name="254" href="#254">254</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a>(<strong class="jxr_keyword">null</strong>, KEY, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="255" href="#255">255</a>     }
-<a class="jxr_linenumber" name="256" href="#256">256</a> 
-<a class="jxr_linenumber" name="257" href="#257">257</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> patternContains(<strong class="jxr_keyword">final</strong> String pattern, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong>... chars) {
-<a class="jxr_linenumber" name="258" href="#258">258</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong> character : chars) {
-<a class="jxr_linenumber" name="259" href="#259">259</a>             <strong class="jxr_keyword">if</strong> (patternContains(pattern, character)) {
-<a class="jxr_linenumber" name="260" href="#260">260</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="261" href="#261">261</a>             }
-<a class="jxr_linenumber" name="262" href="#262">262</a>         }
-<a class="jxr_linenumber" name="263" href="#263">263</a>         <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="264" href="#264">264</a>     }
-<a class="jxr_linenumber" name="265" href="#265">265</a> 
-<a class="jxr_linenumber" name="266" href="#266">266</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> patternContains(<strong class="jxr_keyword">final</strong> String pattern, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong> character) {
-<a class="jxr_linenumber" name="267" href="#267">267</a>         <strong class="jxr_keyword">return</strong> pattern.indexOf(character) &gt;= 0;
-<a class="jxr_linenumber" name="268" href="#268">268</a>     }
-<a class="jxr_linenumber" name="269" href="#269">269</a> }
+<a class="jxr_linenumber" name="249" href="#249">249</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, MONTH_CHAR)) {
+<a class="jxr_linenumber" name="250" href="#250">250</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.MONTHLY;
+<a class="jxr_linenumber" name="251" href="#251">251</a>         }
+<a class="jxr_linenumber" name="252" href="#252">252</a>         <strong class="jxr_keyword">if</strong> (patternContains(pattern, YEAR_CHAR)) {
+<a class="jxr_linenumber" name="253" href="#253">253</a>             <strong class="jxr_keyword">return</strong> RolloverFrequency.ANNUALLY;
+<a class="jxr_linenumber" name="254" href="#254">254</a>         }
+<a class="jxr_linenumber" name="255" href="#255">255</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="256" href="#256">256</a>     }
+<a class="jxr_linenumber" name="257" href="#257">257</a> 
+<a class="jxr_linenumber" name="258" href="#258">258</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> createPatternParser() {
+<a class="jxr_linenumber" name="259" href="#259">259</a> 
+<a class="jxr_linenumber" name="260" href="#260">260</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a>(<strong class="jxr_keyword">null</strong>, KEY, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="261" href="#261">261</a>     }
+<a class="jxr_linenumber" name="262" href="#262">262</a> 
+<a class="jxr_linenumber" name="263" href="#263">263</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> patternContains(<strong class="jxr_keyword">final</strong> String pattern, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong>... chars) {
+<a class="jxr_linenumber" name="264" href="#264">264</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong> character : chars) {
+<a class="jxr_linenumber" name="265" href="#265">265</a>             <strong class="jxr_keyword">if</strong> (patternContains(pattern, character)) {
+<a class="jxr_linenumber" name="266" href="#266">266</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="267" href="#267">267</a>             }
+<a class="jxr_linenumber" name="268" href="#268">268</a>         }
+<a class="jxr_linenumber" name="269" href="#269">269</a>         <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="270" href="#270">270</a>     }
+<a class="jxr_linenumber" name="271" href="#271">271</a> 
+<a class="jxr_linenumber" name="272" href="#272">272</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> patternContains(<strong class="jxr_keyword">final</strong> String pattern, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong> character) {
+<a class="jxr_linenumber" name="273" href="#273">273</a>         <strong class="jxr_keyword">return</strong> pattern.indexOf(character) &gt;= 0;
+<a class="jxr_linenumber" name="274" href="#274">274</a>     }
+<a class="jxr_linenumber" name="275" href="#275">275</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
