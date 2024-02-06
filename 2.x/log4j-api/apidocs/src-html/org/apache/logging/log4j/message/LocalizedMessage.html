@@ -263,34 +263,39 @@
 <span class="sourceLineNo">255</span>        return rb;<a name="line.255"></a>
 <span class="sourceLineNo">256</span>    }<a name="line.256"></a>
 <span class="sourceLineNo">257</span><a name="line.257"></a>
-<span class="sourceLineNo">258</span>    private void writeObject(final ObjectOutputStream out) throws IOException {<a name="line.258"></a>
-<span class="sourceLineNo">259</span>        out.defaultWriteObject();<a name="line.259"></a>
-<span class="sourceLineNo">260</span>        getFormattedMessage();<a name="line.260"></a>
-<span class="sourceLineNo">261</span>        out.writeUTF(formattedMessage);<a name="line.261"></a>
-<span class="sourceLineNo">262</span>        out.writeUTF(key);<a name="line.262"></a>
-<span class="sourceLineNo">263</span>        out.writeUTF(baseName);<a name="line.263"></a>
-<span class="sourceLineNo">264</span>        out.writeInt(argArray.length);<a name="line.264"></a>
-<span class="sourceLineNo">265</span>        stringArgs = new String[argArray.length];<a name="line.265"></a>
-<span class="sourceLineNo">266</span>        int i = 0;<a name="line.266"></a>
-<span class="sourceLineNo">267</span>        for (final Object obj : argArray) {<a name="line.267"></a>
-<span class="sourceLineNo">268</span>            stringArgs[i] = obj.toString();<a name="line.268"></a>
-<span class="sourceLineNo">269</span>            ++i;<a name="line.269"></a>
-<span class="sourceLineNo">270</span>        }<a name="line.270"></a>
-<span class="sourceLineNo">271</span>        out.writeObject(stringArgs);<a name="line.271"></a>
-<span class="sourceLineNo">272</span>    }<a name="line.272"></a>
-<span class="sourceLineNo">273</span><a name="line.273"></a>
-<span class="sourceLineNo">274</span>    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {<a name="line.274"></a>
-<span class="sourceLineNo">275</span>        in.defaultReadObject();<a name="line.275"></a>
-<span class="sourceLineNo">276</span>        formattedMessage = in.readUTF();<a name="line.276"></a>
-<span class="sourceLineNo">277</span>        key = in.readUTF();<a name="line.277"></a>
-<span class="sourceLineNo">278</span>        baseName = in.readUTF();<a name="line.278"></a>
-<span class="sourceLineNo">279</span>        final int length = in.readInt();<a name="line.279"></a>
-<span class="sourceLineNo">280</span>        stringArgs = (String[]) in.readObject();<a name="line.280"></a>
-<span class="sourceLineNo">281</span>        logger = StatusLogger.getLogger();<a name="line.281"></a>
-<span class="sourceLineNo">282</span>        resourceBundle = null;<a name="line.282"></a>
-<span class="sourceLineNo">283</span>        argArray = null;<a name="line.283"></a>
-<span class="sourceLineNo">284</span>    }<a name="line.284"></a>
-<span class="sourceLineNo">285</span>}<a name="line.285"></a>
+<span class="sourceLineNo">258</span>    @Override<a name="line.258"></a>
+<span class="sourceLineNo">259</span>    public String toString() {<a name="line.259"></a>
+<span class="sourceLineNo">260</span>        return getFormattedMessage();<a name="line.260"></a>
+<span class="sourceLineNo">261</span>    }<a name="line.261"></a>
+<span class="sourceLineNo">262</span><a name="line.262"></a>
+<span class="sourceLineNo">263</span>    private void writeObject(final ObjectOutputStream out) throws IOException {<a name="line.263"></a>
+<span class="sourceLineNo">264</span>        out.defaultWriteObject();<a name="line.264"></a>
+<span class="sourceLineNo">265</span>        getFormattedMessage();<a name="line.265"></a>
+<span class="sourceLineNo">266</span>        out.writeUTF(formattedMessage);<a name="line.266"></a>
+<span class="sourceLineNo">267</span>        out.writeUTF(key);<a name="line.267"></a>
+<span class="sourceLineNo">268</span>        out.writeUTF(baseName);<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        out.writeInt(argArray.length);<a name="line.269"></a>
+<span class="sourceLineNo">270</span>        stringArgs = new String[argArray.length];<a name="line.270"></a>
+<span class="sourceLineNo">271</span>        int i = 0;<a name="line.271"></a>
+<span class="sourceLineNo">272</span>        for (final Object obj : argArray) {<a name="line.272"></a>
+<span class="sourceLineNo">273</span>            stringArgs[i] = obj.toString();<a name="line.273"></a>
+<span class="sourceLineNo">274</span>            ++i;<a name="line.274"></a>
+<span class="sourceLineNo">275</span>        }<a name="line.275"></a>
+<span class="sourceLineNo">276</span>        out.writeObject(stringArgs);<a name="line.276"></a>
+<span class="sourceLineNo">277</span>    }<a name="line.277"></a>
+<span class="sourceLineNo">278</span><a name="line.278"></a>
+<span class="sourceLineNo">279</span>    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {<a name="line.279"></a>
+<span class="sourceLineNo">280</span>        in.defaultReadObject();<a name="line.280"></a>
+<span class="sourceLineNo">281</span>        formattedMessage = in.readUTF();<a name="line.281"></a>
+<span class="sourceLineNo">282</span>        key = in.readUTF();<a name="line.282"></a>
+<span class="sourceLineNo">283</span>        baseName = in.readUTF();<a name="line.283"></a>
+<span class="sourceLineNo">284</span>        final int length = in.readInt();<a name="line.284"></a>
+<span class="sourceLineNo">285</span>        stringArgs = (String[]) in.readObject();<a name="line.285"></a>
+<span class="sourceLineNo">286</span>        logger = StatusLogger.getLogger();<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        resourceBundle = null;<a name="line.287"></a>
+<span class="sourceLineNo">288</span>        argArray = null;<a name="line.288"></a>
+<span class="sourceLineNo">289</span>    }<a name="line.289"></a>
+<span class="sourceLineNo">290</span>}<a name="line.290"></a>
 
 
 

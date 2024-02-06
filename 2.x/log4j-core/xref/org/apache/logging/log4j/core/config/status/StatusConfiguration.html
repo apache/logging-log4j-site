@@ -65,7 +65,7 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">     * Specifies how verbose the StatusLogger should be.</em>
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> enum <a href="../../../../../../../org/apache/logging/log4j/core/config/status/StatusConfiguration.html">Verbosity</a> {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">public</strong> enum <a href="../../../../../../../org/apache/logging/log4j/core/config/status/StatusConfiguration.html">Verbosity</a> {
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          QUIET, VERBOSE;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>          <em class="jxr_javadoccomment">/**</em>
@@ -205,34 +205,35 @@
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>             <strong class="jxr_keyword">if</strong> (statusListener instanceof StatusConsoleListener) {
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>                 <strong class="jxr_keyword">final</strong> StatusConsoleListener listener = (StatusConsoleListener) statusListener;
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>                 listener.setLevel(<strong class="jxr_keyword">this</strong>.status);
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>                 <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.verbosity == Verbosity.QUIET) {
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>                     listener.setFilters(<strong class="jxr_keyword">this</strong>.verboseClasses);
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>                 }
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>                 configured = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>             }
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>         }
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">return</strong> configured;
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>     }
-<a class="jxr_linenumber" name="L208" href="#L208">208</a> 
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>                 <strong class="jxr_keyword">this</strong>.logger.updateListenerLevel(<strong class="jxr_keyword">this</strong>.status);
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>                 <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.verbosity == Verbosity.QUIET) {
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>                     listener.setFilters(<strong class="jxr_keyword">this</strong>.verboseClasses);
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>                 }
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>                 configured = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>             }
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         }
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>         <strong class="jxr_keyword">return</strong> configured;
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>     }
 <a class="jxr_linenumber" name="L209" href="#L209">209</a> 
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> registerNewStatusConsoleListener() {
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>         <strong class="jxr_keyword">final</strong> StatusConsoleListener listener = <strong class="jxr_keyword">new</strong> StatusConsoleListener(<strong class="jxr_keyword">this</strong>.status, <strong class="jxr_keyword">this</strong>.destination);
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.verbosity == Verbosity.QUIET) {
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>             listener.setFilters(<strong class="jxr_keyword">this</strong>.verboseClasses);
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>         }
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>         <strong class="jxr_keyword">this</strong>.logger.registerListener(listener);
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>     }
-<a class="jxr_linenumber" name="L217" href="#L217">217</a> 
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> migrateSavedLogMessages() {
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String message : <strong class="jxr_keyword">this</strong>.errorMessages) {
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>             <strong class="jxr_keyword">this</strong>.logger.error(message);
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>         }
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>         <strong class="jxr_keyword">this</strong>.initialized = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>         <strong class="jxr_keyword">this</strong>.errorMessages.clear();
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>     }
-<a class="jxr_linenumber" name="L225" href="#L225">225</a> }
+<a class="jxr_linenumber" name="L210" href="#L210">210</a> 
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> registerNewStatusConsoleListener() {
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">final</strong> StatusConsoleListener listener = <strong class="jxr_keyword">new</strong> StatusConsoleListener(<strong class="jxr_keyword">this</strong>.status, <strong class="jxr_keyword">this</strong>.destination);
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.verbosity == Verbosity.QUIET) {
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>             listener.setFilters(<strong class="jxr_keyword">this</strong>.verboseClasses);
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>         }
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>         <strong class="jxr_keyword">this</strong>.logger.registerListener(listener);
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>     }
+<a class="jxr_linenumber" name="L218" href="#L218">218</a> 
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> migrateSavedLogMessages() {
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String message : <strong class="jxr_keyword">this</strong>.errorMessages) {
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>             <strong class="jxr_keyword">this</strong>.logger.error(message);
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>         }
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>         <strong class="jxr_keyword">this</strong>.initialized = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>         <strong class="jxr_keyword">this</strong>.errorMessages.clear();
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>     }
+<a class="jxr_linenumber" name="L226" href="#L226">226</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

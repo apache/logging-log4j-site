@@ -204,7 +204,7 @@
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> init(<strong class="jxr_keyword">final</strong> Calendar definingCalendar) {
 <a class="jxr_linenumber" name="L197" href="#L197">197</a> 
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>         <strong class="jxr_keyword">final</strong> StringBuilder regex = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">final</strong> List&lt;Strategy&gt; collector = <strong class="jxr_keyword">new</strong> ArrayList&lt;Strategy&gt;();
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">final</strong> List&lt;Strategy&gt; collector = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L200" href="#L200">200</a> 
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>         <strong class="jxr_keyword">final</strong> Matcher patternMatcher = formatPattern.matcher(pattern);
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>         <strong class="jxr_keyword">if</strong> (!patternMatcher.lookingAt()) {
@@ -650,7 +650,7 @@
 <a class="jxr_linenumber" name="L642" href="#L642">642</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ConcurrentMap&lt;Locale, Strategy&gt; getCache(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> field) {
 <a class="jxr_linenumber" name="L643" href="#L643">643</a>         <strong class="jxr_keyword">synchronized</strong> (caches) {
 <a class="jxr_linenumber" name="L644" href="#L644">644</a>             <strong class="jxr_keyword">if</strong> (caches[field] == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L645" href="#L645">645</a>                 caches[field] = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;Locale, Strategy&gt;(3);
+<a class="jxr_linenumber" name="L645" href="#L645">645</a>                 caches[field] = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;&gt;(3);
 <a class="jxr_linenumber" name="L646" href="#L646">646</a>             }
 <a class="jxr_linenumber" name="L647" href="#L647">647</a>             <strong class="jxr_keyword">return</strong> caches[field];
 <a class="jxr_linenumber" name="L648" href="#L648">648</a>         }
@@ -733,7 +733,7 @@
 <a class="jxr_linenumber" name="L725" href="#L725">725</a>             <strong class="jxr_keyword">this</strong>.field = field;
 <a class="jxr_linenumber" name="L726" href="#L726">726</a>             <strong class="jxr_keyword">this</strong>.locale = locale;
 <a class="jxr_linenumber" name="L727" href="#L727">727</a>             <strong class="jxr_keyword">final</strong> Map&lt;String, Integer&gt; keyValues = getDisplayNames(field, definingCalendar, locale);
-<a class="jxr_linenumber" name="L728" href="#L728">728</a>             <strong class="jxr_keyword">this</strong>.lKeyValues = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Integer&gt;();
+<a class="jxr_linenumber" name="L728" href="#L728">728</a>             <strong class="jxr_keyword">this</strong>.lKeyValues = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L729" href="#L729">729</a> 
 <a class="jxr_linenumber" name="L730" href="#L730">730</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, Integer&gt; entry : keyValues.entrySet()) {
 <a class="jxr_linenumber" name="L731" href="#L731">731</a>                 lKeyValues.put(entry.getKey().toLowerCase(locale), entry.getValue());
@@ -836,7 +836,7 @@
 <a class="jxr_linenumber" name="L828" href="#L828">828</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String GMT_OPTION = <span class="jxr_string">"GMT[+-]&#92;&#92;d{1,2}:&#92;&#92;d{2}"</span>;
 <a class="jxr_linenumber" name="L829" href="#L829">829</a> 
 <a class="jxr_linenumber" name="L830" href="#L830">830</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Locale locale;
-<a class="jxr_linenumber" name="L831" href="#L831">831</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, TimeZone&gt; tzNames = <strong class="jxr_keyword">new</strong> HashMap&lt;String, TimeZone&gt;();
+<a class="jxr_linenumber" name="L831" href="#L831">831</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, TimeZone&gt; tzNames = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L832" href="#L832">832</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String validTimeZoneChars;
 <a class="jxr_linenumber" name="L833" href="#L833">833</a> 
 <a class="jxr_linenumber" name="L834" href="#L834">834</a>         <em class="jxr_javadoccomment">/**</em>
@@ -966,6 +966,6 @@
 <a class="jxr_linenumber" name="L958" href="#L958">958</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

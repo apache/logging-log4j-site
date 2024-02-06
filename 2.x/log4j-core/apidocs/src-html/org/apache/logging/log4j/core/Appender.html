@@ -45,51 +45,59 @@
 <span class="sourceLineNo">037</span>public interface Appender extends LifeCycle {<a name="line.37"></a>
 <span class="sourceLineNo">038</span><a name="line.38"></a>
 <span class="sourceLineNo">039</span>    /**<a name="line.39"></a>
-<span class="sourceLineNo">040</span>     * Logs a LogEvent using whatever logic this Appender wishes to use. It is typically recommended to use a<a name="line.40"></a>
-<span class="sourceLineNo">041</span>     * bridge pattern not only for the benefits from decoupling an Appender from its implementation, but it is also<a name="line.41"></a>
-<span class="sourceLineNo">042</span>     * handy for sharing resources which may require some form of locking.<a name="line.42"></a>
-<span class="sourceLineNo">043</span>     *<a name="line.43"></a>
-<span class="sourceLineNo">044</span>     * @param event The LogEvent.<a name="line.44"></a>
-<span class="sourceLineNo">045</span>     */<a name="line.45"></a>
-<span class="sourceLineNo">046</span>    void append(LogEvent event);<a name="line.46"></a>
-<span class="sourceLineNo">047</span><a name="line.47"></a>
-<span class="sourceLineNo">048</span><a name="line.48"></a>
-<span class="sourceLineNo">049</span>    /**<a name="line.49"></a>
-<span class="sourceLineNo">050</span>     * Get the name of this Appender.<a name="line.50"></a>
+<span class="sourceLineNo">040</span>     * Main {@linkplain org.apache.logging.log4j.core.config.plugins.Plugin#elementType() plugin element type} for<a name="line.40"></a>
+<span class="sourceLineNo">041</span>     * Appender plugins.<a name="line.41"></a>
+<span class="sourceLineNo">042</span>     *<a name="line.42"></a>
+<span class="sourceLineNo">043</span>     * @since 2.6<a name="line.43"></a>
+<span class="sourceLineNo">044</span>     */<a name="line.44"></a>
+<span class="sourceLineNo">045</span>    String ELEMENT_TYPE = "appender";<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>    /**<a name="line.47"></a>
+<span class="sourceLineNo">048</span>     * Logs a LogEvent using whatever logic this Appender wishes to use. It is typically recommended to use a<a name="line.48"></a>
+<span class="sourceLineNo">049</span>     * bridge pattern not only for the benefits from decoupling an Appender from its implementation, but it is also<a name="line.49"></a>
+<span class="sourceLineNo">050</span>     * handy for sharing resources which may require some form of locking.<a name="line.50"></a>
 <span class="sourceLineNo">051</span>     *<a name="line.51"></a>
-<span class="sourceLineNo">052</span>     * @return name, may be null.<a name="line.52"></a>
+<span class="sourceLineNo">052</span>     * @param event The LogEvent.<a name="line.52"></a>
 <span class="sourceLineNo">053</span>     */<a name="line.53"></a>
-<span class="sourceLineNo">054</span>    String getName();<a name="line.54"></a>
+<span class="sourceLineNo">054</span>    void append(LogEvent event);<a name="line.54"></a>
 <span class="sourceLineNo">055</span><a name="line.55"></a>
-<span class="sourceLineNo">056</span>    /**<a name="line.56"></a>
-<span class="sourceLineNo">057</span>     * Returns the Layout used by this Appender if applicable.<a name="line.57"></a>
-<span class="sourceLineNo">058</span>     *<a name="line.58"></a>
-<span class="sourceLineNo">059</span>     * @return the Layout for this Appender or {@code null} if none is configured.<a name="line.59"></a>
-<span class="sourceLineNo">060</span>     */<a name="line.60"></a>
-<span class="sourceLineNo">061</span>    Layout&lt;? extends Serializable&gt; getLayout();<a name="line.61"></a>
-<span class="sourceLineNo">062</span><a name="line.62"></a>
-<span class="sourceLineNo">063</span>    /**<a name="line.63"></a>
-<span class="sourceLineNo">064</span>     * Some Appenders need to propagate exceptions back to the application. When {@code ignoreExceptions} is<a name="line.64"></a>
-<span class="sourceLineNo">065</span>     * {@code false} the AppenderControl will allow the exception to percolate.<a name="line.65"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>    /**<a name="line.57"></a>
+<span class="sourceLineNo">058</span>     * Gets the name of this Appender.<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     *<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     * @return name, may be null.<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     */<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    String getName();<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span>    /**<a name="line.64"></a>
+<span class="sourceLineNo">065</span>     * Returns the Layout used by this Appender if applicable.<a name="line.65"></a>
 <span class="sourceLineNo">066</span>     *<a name="line.66"></a>
-<span class="sourceLineNo">067</span>     * @return {@code true} if exceptions will be logged but not thrown, {@code false} otherwise.<a name="line.67"></a>
+<span class="sourceLineNo">067</span>     * @return the Layout for this Appender or {@code null} if none is configured.<a name="line.67"></a>
 <span class="sourceLineNo">068</span>     */<a name="line.68"></a>
-<span class="sourceLineNo">069</span>    boolean ignoreExceptions();<a name="line.69"></a>
+<span class="sourceLineNo">069</span>    Layout&lt;? extends Serializable&gt; getLayout();<a name="line.69"></a>
 <span class="sourceLineNo">070</span><a name="line.70"></a>
 <span class="sourceLineNo">071</span>    /**<a name="line.71"></a>
-<span class="sourceLineNo">072</span>     * Gets the {@link ErrorHandler} used for handling exceptions.<a name="line.72"></a>
-<span class="sourceLineNo">073</span>     *<a name="line.73"></a>
-<span class="sourceLineNo">074</span>     * @return the ErrorHandler for handling exceptions.<a name="line.74"></a>
-<span class="sourceLineNo">075</span>     */<a name="line.75"></a>
-<span class="sourceLineNo">076</span>    ErrorHandler getHandler();<a name="line.76"></a>
-<span class="sourceLineNo">077</span><a name="line.77"></a>
-<span class="sourceLineNo">078</span>    /**<a name="line.78"></a>
-<span class="sourceLineNo">079</span>     * Sets the {@link ErrorHandler} used for handling exceptions.<a name="line.79"></a>
-<span class="sourceLineNo">080</span>     *<a name="line.80"></a>
-<span class="sourceLineNo">081</span>     * @param handler the ErrorHandler to use for handling exceptions.<a name="line.81"></a>
-<span class="sourceLineNo">082</span>     */<a name="line.82"></a>
-<span class="sourceLineNo">083</span>    void setHandler(ErrorHandler handler);<a name="line.83"></a>
-<span class="sourceLineNo">084</span>}<a name="line.84"></a>
+<span class="sourceLineNo">072</span>     * Some Appenders need to propagate exceptions back to the application. When {@code ignoreExceptions} is<a name="line.72"></a>
+<span class="sourceLineNo">073</span>     * {@code false} the AppenderControl will allow the exception to percolate.<a name="line.73"></a>
+<span class="sourceLineNo">074</span>     *<a name="line.74"></a>
+<span class="sourceLineNo">075</span>     * @return {@code true} if exceptions will be logged but not thrown, {@code false} otherwise.<a name="line.75"></a>
+<span class="sourceLineNo">076</span>     */<a name="line.76"></a>
+<span class="sourceLineNo">077</span>    boolean ignoreExceptions();<a name="line.77"></a>
+<span class="sourceLineNo">078</span><a name="line.78"></a>
+<span class="sourceLineNo">079</span>    /**<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     * Gets the {@link ErrorHandler} used for handling exceptions.<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     *<a name="line.81"></a>
+<span class="sourceLineNo">082</span>     * @return the ErrorHandler for handling exceptions.<a name="line.82"></a>
+<span class="sourceLineNo">083</span>     */<a name="line.83"></a>
+<span class="sourceLineNo">084</span>    ErrorHandler getHandler();<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>    /**<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     * Sets the {@link ErrorHandler} used for handling exceptions.<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     *<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     * @param handler the ErrorHandler to use for handling exceptions.<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     */<a name="line.90"></a>
+<span class="sourceLineNo">091</span>    void setHandler(ErrorHandler handler);<a name="line.91"></a>
+<span class="sourceLineNo">092</span>}<a name="line.92"></a>
 
 
 

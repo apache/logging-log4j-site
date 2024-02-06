@@ -141,7 +141,7 @@
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>             <strong class="jxr_keyword">return</strong> SSLContext.getDefault();
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NoSuchAlgorithmException e) {
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>             LOGGER.error(<span class="jxr_string">"Failed to create an SSLContext with default configuration"</span>);
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>             LOGGER.error(<span class="jxr_string">"Failed to create an SSLContext with default configuration"</span>, e);
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>         }
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>     }
@@ -166,11 +166,11 @@
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>             <strong class="jxr_keyword">return</strong> newSslContext;
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>         }
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NoSuchAlgorithmException e) {
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>             LOGGER.error(<span class="jxr_string">"No Provider supports a TrustManagerFactorySpi implementation for the specified protocol"</span>);
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>             LOGGER.error(<span class="jxr_string">"No Provider supports a TrustManagerFactorySpi implementation for the specified protocol"</span>, e);
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/net/ssl/TrustStoreConfigurationException.html">TrustStoreConfigurationException</a>(e);
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>         }
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>         <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> KeyManagementException e) {
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>             LOGGER.error(<span class="jxr_string">"Failed to initialize the SSLContext"</span>);
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>             LOGGER.error(<span class="jxr_string">"Failed to initialize the SSLContext"</span>, e);
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/net/ssl/KeyStoreConfigurationException.html">KeyStoreConfigurationException</a>(e);
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>         }
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>     }
@@ -184,10 +184,10 @@
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">return</strong> trustStoreConfig.initTrustManagerFactory();
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>         }
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NoSuchAlgorithmException e) {
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>             LOGGER.error(<span class="jxr_string">"The specified algorithm is not available from the specified provider"</span>);
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>             LOGGER.error(<span class="jxr_string">"The specified algorithm is not available from the specified provider"</span>, e);
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/net/ssl/TrustStoreConfigurationException.html">TrustStoreConfigurationException</a>(e);
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> KeyStoreException e) {
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>             LOGGER.error(<span class="jxr_string">"Failed to initialize the TrustManagerFactory"</span>);
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>             LOGGER.error(<span class="jxr_string">"Failed to initialize the TrustManagerFactory"</span>, e);
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/net/ssl/TrustStoreConfigurationException.html">TrustStoreConfigurationException</a>(e);
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>         }
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>     }
@@ -201,13 +201,13 @@
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>             <strong class="jxr_keyword">return</strong> keyStoreConfig.initKeyManagerFactory();
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>         }
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>         <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NoSuchAlgorithmException e) {
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>             LOGGER.error(<span class="jxr_string">"The specified algorithm is not available from the specified provider"</span>);
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>             LOGGER.error(<span class="jxr_string">"The specified algorithm is not available from the specified provider"</span>, e);
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/net/ssl/KeyStoreConfigurationException.html">KeyStoreConfigurationException</a>(e);
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> KeyStoreException e) {
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>             LOGGER.error(<span class="jxr_string">"Failed to initialize the TrustManagerFactory"</span>);
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>             LOGGER.error(<span class="jxr_string">"Failed to initialize the TrustManagerFactory"</span>, e);
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/net/ssl/KeyStoreConfigurationException.html">KeyStoreConfigurationException</a>(e);
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> UnrecoverableKeyException e) {
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>             LOGGER.error(<span class="jxr_string">"The key cannot be recovered (e.g. the given password is wrong)"</span>);
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>             LOGGER.error(<span class="jxr_string">"The key cannot be recovered (e.g. the given password is wrong)"</span>, e);
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/net/ssl/KeyStoreConfigurationException.html">KeyStoreConfigurationException</a>(e);
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>         }
 <a class="jxr_linenumber" name="L205" href="#L205">205</a>     }
@@ -254,6 +254,6 @@
 <a class="jxr_linenumber" name="L246" href="#L246">246</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

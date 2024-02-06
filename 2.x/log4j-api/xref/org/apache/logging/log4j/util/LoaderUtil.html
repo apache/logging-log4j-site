@@ -36,7 +36,7 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> * &lt;em&gt;Consider this class private.&lt;/em&gt; Utility class for ClassLoaders.</em>
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> * @see ClassLoader</em>
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> * @see RuntimePermission</em>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> * @see Thread#getContextClassLoader()</em>
@@ -143,14 +143,14 @@
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">     * @throws InvocationTargetException if there was an exception whilst constructing the class</em>
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     * @since 2.1</em>
 <a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Object newInstanceOf(<strong class="jxr_keyword">final</strong> String className) <strong class="jxr_keyword">throws</strong> ClassNotFoundException, IllegalAccessException,
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;T&gt; T newInstanceOf(<strong class="jxr_keyword">final</strong> String className) <strong class="jxr_keyword">throws</strong> ClassNotFoundException, IllegalAccessException,
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>             InstantiationException, NoSuchMethodException, InvocationTargetException {
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">final</strong> Class&lt;?&gt; clazz = loadClass(className);
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>             <strong class="jxr_keyword">return</strong> clazz.getConstructor().newInstance();
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>             <strong class="jxr_keyword">return</strong> (T) clazz.getConstructor().newInstance();
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NoSuchMethodException ignored) {
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>             <em class="jxr_comment">// FIXME: looking at the code for Class.newInstance(), this seems to do the same thing as above</em>
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>             <strong class="jxr_keyword">return</strong> clazz.newInstance();
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>             <strong class="jxr_keyword">return</strong> (T) clazz.newInstance();
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>         }
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>     }
 <a class="jxr_linenumber" name="L148" href="#L148">148</a> 
@@ -237,7 +237,7 @@
 <a class="jxr_linenumber" name="L229" href="#L229">229</a>                         resources.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/util/LoaderUtil.html">UrlResource</a>(cl, resourceEnum.nextElement()));
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>                     }
 <a class="jxr_linenumber" name="L231" href="#L231">231</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException e) {
-<a class="jxr_linenumber" name="L232" href="#L232">232</a>                     e.printStackTrace();
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>                     LowLevelLogUtil.logException(e);
 <a class="jxr_linenumber" name="L233" href="#L233">233</a>                 }
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>             }
 <a class="jxr_linenumber" name="L235" href="#L235">235</a>         }
@@ -251,7 +251,7 @@
 <a class="jxr_linenumber" name="L243" href="#L243">243</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ClassLoader classLoader;
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> URL url;
 <a class="jxr_linenumber" name="L245" href="#L245">245</a> 
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../org/apache/logging/log4j/util/LoaderUtil.html">UrlResource</a>(<strong class="jxr_keyword">final</strong> ClassLoader classLoader, <strong class="jxr_keyword">final</strong> URL url) {
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <a href="../../../../../org/apache/logging/log4j/util/LoaderUtil.html">UrlResource</a>(<strong class="jxr_keyword">final</strong> ClassLoader classLoader, <strong class="jxr_keyword">final</strong> URL url) {
 <a class="jxr_linenumber" name="L247" href="#L247">247</a>             <strong class="jxr_keyword">this</strong>.classLoader = classLoader;
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>             <strong class="jxr_keyword">this</strong>.url = url;
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>         }
@@ -293,6 +293,6 @@
 <a class="jxr_linenumber" name="L285" href="#L285">285</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2015 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2016 <a href="http://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

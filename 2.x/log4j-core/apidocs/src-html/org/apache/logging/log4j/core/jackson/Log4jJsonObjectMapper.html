@@ -28,7 +28,7 @@
 <span class="sourceLineNo">020</span>import com.fasterxml.jackson.databind.ObjectMapper;<a name="line.20"></a>
 <span class="sourceLineNo">021</span><a name="line.21"></a>
 <span class="sourceLineNo">022</span>/**<a name="line.22"></a>
-<span class="sourceLineNo">023</span> * A Jackson {@link ObjectMapper} initialized for Log4j.<a name="line.23"></a>
+<span class="sourceLineNo">023</span> * A Jackson JSON {@link ObjectMapper} initialized for Log4j.<a name="line.23"></a>
 <span class="sourceLineNo">024</span> * &lt;p&gt;<a name="line.24"></a>
 <span class="sourceLineNo">025</span> * &lt;em&gt;Consider this class private.&lt;/em&gt;<a name="line.25"></a>
 <span class="sourceLineNo">026</span> * &lt;/p&gt;<a name="line.26"></a>
@@ -41,11 +41,18 @@
 <span class="sourceLineNo">033</span>     * Create a new instance using the {@link Log4jJsonModule}.<a name="line.33"></a>
 <span class="sourceLineNo">034</span>     */<a name="line.34"></a>
 <span class="sourceLineNo">035</span>    public Log4jJsonObjectMapper() {<a name="line.35"></a>
-<span class="sourceLineNo">036</span>        this.registerModule(new Log4jJsonModule());<a name="line.36"></a>
-<span class="sourceLineNo">037</span>        this.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);<a name="line.37"></a>
-<span class="sourceLineNo">038</span>    }<a name="line.38"></a>
-<span class="sourceLineNo">039</span><a name="line.39"></a>
-<span class="sourceLineNo">040</span>}<a name="line.40"></a>
+<span class="sourceLineNo">036</span>        this(false);<a name="line.36"></a>
+<span class="sourceLineNo">037</span>    }<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>    /**<a name="line.39"></a>
+<span class="sourceLineNo">040</span>     * Create a new instance using the {@link Log4jJsonModule}.<a name="line.40"></a>
+<span class="sourceLineNo">041</span>     */<a name="line.41"></a>
+<span class="sourceLineNo">042</span>    public Log4jJsonObjectMapper(final boolean encodeThreadContextAsList) {<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        this.registerModule(new Log4jJsonModule(encodeThreadContextAsList));<a name="line.43"></a>
+<span class="sourceLineNo">044</span>        this.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);<a name="line.44"></a>
+<span class="sourceLineNo">045</span>    }<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>}<a name="line.47"></a>
 
 
 
