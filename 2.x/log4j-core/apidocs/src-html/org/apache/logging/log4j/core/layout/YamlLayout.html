@@ -687,151 +687,149 @@
 <span class="sourceLineNo">679</span>endOfBatch: false<a name="line.679"></a>
 <span class="sourceLineNo">680</span>loggerFqcn: "f.q.c.n"<a name="line.680"></a>
 <span class="sourceLineNo">681</span>contextMap:<a name="line.681"></a>
-<span class="sourceLineNo">682</span>- key: "MDC.B"<a name="line.682"></a>
-<span class="sourceLineNo">683</span>  value: "B_Value"<a name="line.683"></a>
-<span class="sourceLineNo">684</span>- key: "MDC.A"<a name="line.684"></a>
-<span class="sourceLineNo">685</span>  value: "A_Value"<a name="line.685"></a>
-<span class="sourceLineNo">686</span>threadId: 1<a name="line.686"></a>
-<span class="sourceLineNo">687</span>threadPriority: 5<a name="line.687"></a>
-<span class="sourceLineNo">688</span>source:<a name="line.688"></a>
-<span class="sourceLineNo">689</span>  class: "org.apache.logging.log4j.core.layout.LogEventFixtures"<a name="line.689"></a>
-<span class="sourceLineNo">690</span>  method: "createLogEvent"<a name="line.690"></a>
-<span class="sourceLineNo">691</span>  file: "LogEventFixtures.java"<a name="line.691"></a>
-<span class="sourceLineNo">692</span>  line: 53&lt;/pre&gt;<a name="line.692"></a>
-<span class="sourceLineNo">693</span> * &lt;p&gt;<a name="line.693"></a>
-<span class="sourceLineNo">694</span> * This approach enforces the independence of the YamlLayout and the appender where you embed it.<a name="line.694"></a>
-<span class="sourceLineNo">695</span> * &lt;/p&gt;<a name="line.695"></a>
-<span class="sourceLineNo">696</span> * &lt;h3&gt;Encoding&lt;/h3&gt;<a name="line.696"></a>
-<span class="sourceLineNo">697</span> * &lt;p&gt;<a name="line.697"></a>
-<span class="sourceLineNo">698</span> * Appenders using this layout should have their {@code charset} set to {@code UTF-8} or {@code UTF-16}, otherwise<a name="line.698"></a>
-<span class="sourceLineNo">699</span> * events containing non ASCII characters could result in corrupted log files.<a name="line.699"></a>
-<span class="sourceLineNo">700</span> * &lt;/p&gt;<a name="line.700"></a>
-<span class="sourceLineNo">701</span> */<a name="line.701"></a>
-<span class="sourceLineNo">702</span>@Plugin(name = "YamlLayout", category = Node.CATEGORY, elementType = Layout.ELEMENT_TYPE, printObject = true)<a name="line.702"></a>
-<span class="sourceLineNo">703</span>public final class YamlLayout extends AbstractJacksonLayout {<a name="line.703"></a>
+<span class="sourceLineNo">682</span> MDC.B: "B_Value"<a name="line.682"></a>
+<span class="sourceLineNo">683</span> MDC.A: "A_Value"<a name="line.683"></a>
+<span class="sourceLineNo">684</span>threadId: 1<a name="line.684"></a>
+<span class="sourceLineNo">685</span>threadPriority: 5<a name="line.685"></a>
+<span class="sourceLineNo">686</span>source:<a name="line.686"></a>
+<span class="sourceLineNo">687</span>  class: "org.apache.logging.log4j.core.layout.LogEventFixtures"<a name="line.687"></a>
+<span class="sourceLineNo">688</span>  method: "createLogEvent"<a name="line.688"></a>
+<span class="sourceLineNo">689</span>  file: "LogEventFixtures.java"<a name="line.689"></a>
+<span class="sourceLineNo">690</span>  line: 53&lt;/pre&gt;<a name="line.690"></a>
+<span class="sourceLineNo">691</span> * &lt;p&gt;<a name="line.691"></a>
+<span class="sourceLineNo">692</span> * This approach enforces the independence of the YamlLayout and the appender where you embed it.<a name="line.692"></a>
+<span class="sourceLineNo">693</span> * &lt;/p&gt;<a name="line.693"></a>
+<span class="sourceLineNo">694</span> * &lt;h3&gt;Encoding&lt;/h3&gt;<a name="line.694"></a>
+<span class="sourceLineNo">695</span> * &lt;p&gt;<a name="line.695"></a>
+<span class="sourceLineNo">696</span> * Appenders using this layout should have their {@code charset} set to {@code UTF-8} or {@code UTF-16}, otherwise<a name="line.696"></a>
+<span class="sourceLineNo">697</span> * events containing non ASCII characters could result in corrupted log files.<a name="line.697"></a>
+<span class="sourceLineNo">698</span> * &lt;/p&gt;<a name="line.698"></a>
+<span class="sourceLineNo">699</span> */<a name="line.699"></a>
+<span class="sourceLineNo">700</span>@Plugin(name = "YamlLayout", category = Node.CATEGORY, elementType = Layout.ELEMENT_TYPE, printObject = true)<a name="line.700"></a>
+<span class="sourceLineNo">701</span>public final class YamlLayout extends AbstractJacksonLayout {<a name="line.701"></a>
+<span class="sourceLineNo">702</span><a name="line.702"></a>
+<span class="sourceLineNo">703</span>    private static final String DEFAULT_FOOTER = Strings.EMPTY;<a name="line.703"></a>
 <span class="sourceLineNo">704</span><a name="line.704"></a>
-<span class="sourceLineNo">705</span>    private static final String DEFAULT_FOOTER = Strings.EMPTY;<a name="line.705"></a>
+<span class="sourceLineNo">705</span>    private static final String DEFAULT_HEADER = Strings.EMPTY;<a name="line.705"></a>
 <span class="sourceLineNo">706</span><a name="line.706"></a>
-<span class="sourceLineNo">707</span>    private static final String DEFAULT_HEADER = Strings.EMPTY;<a name="line.707"></a>
+<span class="sourceLineNo">707</span>    static final String CONTENT_TYPE = "application/yaml";<a name="line.707"></a>
 <span class="sourceLineNo">708</span><a name="line.708"></a>
-<span class="sourceLineNo">709</span>    static final String CONTENT_TYPE = "application/yaml";<a name="line.709"></a>
-<span class="sourceLineNo">710</span><a name="line.710"></a>
-<span class="sourceLineNo">711</span>    protected YamlLayout(final Configuration config, final boolean locationInfo, final boolean properties,<a name="line.711"></a>
-<span class="sourceLineNo">712</span>            final boolean complete, final boolean compact, final boolean eventEol, final String headerPattern,<a name="line.712"></a>
-<span class="sourceLineNo">713</span>            final String footerPattern, final Charset charset, final boolean includeStacktrace) {<a name="line.713"></a>
-<span class="sourceLineNo">714</span>        super(config, new JacksonFactory.YAML(includeStacktrace).newWriter(locationInfo, properties, compact), charset, compact,<a name="line.714"></a>
-<span class="sourceLineNo">715</span>                complete, eventEol,<a name="line.715"></a>
-<span class="sourceLineNo">716</span>                PatternLayout.newSerializerBuilder().setConfiguration(config).setPattern(headerPattern).setDefaultPattern(DEFAULT_HEADER).build(),<a name="line.716"></a>
-<span class="sourceLineNo">717</span>                PatternLayout.newSerializerBuilder().setConfiguration(config).setPattern(footerPattern).setDefaultPattern(DEFAULT_FOOTER).build());<a name="line.717"></a>
-<span class="sourceLineNo">718</span>    }<a name="line.718"></a>
-<span class="sourceLineNo">719</span><a name="line.719"></a>
-<span class="sourceLineNo">720</span>    /**<a name="line.720"></a>
-<span class="sourceLineNo">721</span>     * Returns appropriate YAML header.<a name="line.721"></a>
-<span class="sourceLineNo">722</span>     *<a name="line.722"></a>
-<span class="sourceLineNo">723</span>     * @return a byte array containing the header, opening the YAML array.<a name="line.723"></a>
-<span class="sourceLineNo">724</span>     */<a name="line.724"></a>
-<span class="sourceLineNo">725</span>    @Override<a name="line.725"></a>
-<span class="sourceLineNo">726</span>    public byte[] getHeader() {<a name="line.726"></a>
-<span class="sourceLineNo">727</span>        if (!this.complete) {<a name="line.727"></a>
-<span class="sourceLineNo">728</span>            return null;<a name="line.728"></a>
-<span class="sourceLineNo">729</span>        }<a name="line.729"></a>
-<span class="sourceLineNo">730</span>        final StringBuilder buf = new StringBuilder();<a name="line.730"></a>
-<span class="sourceLineNo">731</span>        final String str = serializeToString(getHeaderSerializer());<a name="line.731"></a>
-<span class="sourceLineNo">732</span>        if (str != null) {<a name="line.732"></a>
-<span class="sourceLineNo">733</span>            buf.append(str);<a name="line.733"></a>
-<span class="sourceLineNo">734</span>        }<a name="line.734"></a>
-<span class="sourceLineNo">735</span>        buf.append(this.eol);<a name="line.735"></a>
-<span class="sourceLineNo">736</span>        return getBytes(buf.toString());<a name="line.736"></a>
-<span class="sourceLineNo">737</span>    }<a name="line.737"></a>
-<span class="sourceLineNo">738</span><a name="line.738"></a>
-<span class="sourceLineNo">739</span>    /**<a name="line.739"></a>
-<span class="sourceLineNo">740</span>     * Returns appropriate YAML footer.<a name="line.740"></a>
-<span class="sourceLineNo">741</span>     *<a name="line.741"></a>
-<span class="sourceLineNo">742</span>     * @return a byte array containing the footer, closing the YAML array.<a name="line.742"></a>
-<span class="sourceLineNo">743</span>     */<a name="line.743"></a>
-<span class="sourceLineNo">744</span>    @Override<a name="line.744"></a>
-<span class="sourceLineNo">745</span>    public byte[] getFooter() {<a name="line.745"></a>
-<span class="sourceLineNo">746</span>        if (!this.complete) {<a name="line.746"></a>
-<span class="sourceLineNo">747</span>            return null;<a name="line.747"></a>
-<span class="sourceLineNo">748</span>        }<a name="line.748"></a>
-<span class="sourceLineNo">749</span>        final StringBuilder buf = new StringBuilder();<a name="line.749"></a>
-<span class="sourceLineNo">750</span>        buf.append(this.eol);<a name="line.750"></a>
-<span class="sourceLineNo">751</span>        final String str = serializeToString(getFooterSerializer());<a name="line.751"></a>
-<span class="sourceLineNo">752</span>        if (str != null) {<a name="line.752"></a>
-<span class="sourceLineNo">753</span>            buf.append(str);<a name="line.753"></a>
-<span class="sourceLineNo">754</span>        }<a name="line.754"></a>
-<span class="sourceLineNo">755</span>        buf.append(this.eol);<a name="line.755"></a>
-<span class="sourceLineNo">756</span>        return getBytes(buf.toString());<a name="line.756"></a>
-<span class="sourceLineNo">757</span>    }<a name="line.757"></a>
-<span class="sourceLineNo">758</span><a name="line.758"></a>
-<span class="sourceLineNo">759</span>    @Override<a name="line.759"></a>
-<span class="sourceLineNo">760</span>    public Map&lt;String, String&gt; getContentFormat() {<a name="line.760"></a>
-<span class="sourceLineNo">761</span>        final Map&lt;String, String&gt; result = new HashMap&lt;&gt;();<a name="line.761"></a>
-<span class="sourceLineNo">762</span>        result.put("version", "2.0");<a name="line.762"></a>
-<span class="sourceLineNo">763</span>        return result;<a name="line.763"></a>
-<span class="sourceLineNo">764</span>    }<a name="line.764"></a>
-<span class="sourceLineNo">765</span><a name="line.765"></a>
-<span class="sourceLineNo">766</span>    @Override<a name="line.766"></a>
-<span class="sourceLineNo">767</span>    /**<a name="line.767"></a>
-<span class="sourceLineNo">768</span>     * @return The content type.<a name="line.768"></a>
-<span class="sourceLineNo">769</span>     */<a name="line.769"></a>
-<span class="sourceLineNo">770</span>    public String getContentType() {<a name="line.770"></a>
-<span class="sourceLineNo">771</span>        return CONTENT_TYPE + "; charset=" + this.getCharset();<a name="line.771"></a>
-<span class="sourceLineNo">772</span>    }<a name="line.772"></a>
-<span class="sourceLineNo">773</span><a name="line.773"></a>
-<span class="sourceLineNo">774</span>    /**<a name="line.774"></a>
-<span class="sourceLineNo">775</span>     * Creates a YAML Layout.<a name="line.775"></a>
-<span class="sourceLineNo">776</span>     * <a name="line.776"></a>
-<span class="sourceLineNo">777</span>     * @param config<a name="line.777"></a>
-<span class="sourceLineNo">778</span>     *            The plugin configuration.<a name="line.778"></a>
-<span class="sourceLineNo">779</span>     * @param locationInfo<a name="line.779"></a>
-<span class="sourceLineNo">780</span>     *            If "true", includes the location information in the generated YAML.<a name="line.780"></a>
-<span class="sourceLineNo">781</span>     * @param properties<a name="line.781"></a>
-<span class="sourceLineNo">782</span>     *            If "true", includes the thread context map in the generated YAML.<a name="line.782"></a>
-<span class="sourceLineNo">783</span>     * @param headerPattern<a name="line.783"></a>
+<span class="sourceLineNo">709</span>    protected YamlLayout(final Configuration config, final boolean locationInfo, final boolean properties,<a name="line.709"></a>
+<span class="sourceLineNo">710</span>            final boolean complete, final boolean compact, final boolean eventEol, final String headerPattern,<a name="line.710"></a>
+<span class="sourceLineNo">711</span>            final String footerPattern, final Charset charset, final boolean includeStacktrace) {<a name="line.711"></a>
+<span class="sourceLineNo">712</span>        super(config, new JacksonFactory.YAML(includeStacktrace).newWriter(locationInfo, properties, compact), charset, compact,<a name="line.712"></a>
+<span class="sourceLineNo">713</span>                complete, eventEol,<a name="line.713"></a>
+<span class="sourceLineNo">714</span>                PatternLayout.newSerializerBuilder().setConfiguration(config).setPattern(headerPattern).setDefaultPattern(DEFAULT_HEADER).build(),<a name="line.714"></a>
+<span class="sourceLineNo">715</span>                PatternLayout.newSerializerBuilder().setConfiguration(config).setPattern(footerPattern).setDefaultPattern(DEFAULT_FOOTER).build());<a name="line.715"></a>
+<span class="sourceLineNo">716</span>    }<a name="line.716"></a>
+<span class="sourceLineNo">717</span><a name="line.717"></a>
+<span class="sourceLineNo">718</span>    /**<a name="line.718"></a>
+<span class="sourceLineNo">719</span>     * Returns appropriate YAML header.<a name="line.719"></a>
+<span class="sourceLineNo">720</span>     *<a name="line.720"></a>
+<span class="sourceLineNo">721</span>     * @return a byte array containing the header, opening the YAML array.<a name="line.721"></a>
+<span class="sourceLineNo">722</span>     */<a name="line.722"></a>
+<span class="sourceLineNo">723</span>    @Override<a name="line.723"></a>
+<span class="sourceLineNo">724</span>    public byte[] getHeader() {<a name="line.724"></a>
+<span class="sourceLineNo">725</span>        if (!this.complete) {<a name="line.725"></a>
+<span class="sourceLineNo">726</span>            return null;<a name="line.726"></a>
+<span class="sourceLineNo">727</span>        }<a name="line.727"></a>
+<span class="sourceLineNo">728</span>        final StringBuilder buf = new StringBuilder();<a name="line.728"></a>
+<span class="sourceLineNo">729</span>        final String str = serializeToString(getHeaderSerializer());<a name="line.729"></a>
+<span class="sourceLineNo">730</span>        if (str != null) {<a name="line.730"></a>
+<span class="sourceLineNo">731</span>            buf.append(str);<a name="line.731"></a>
+<span class="sourceLineNo">732</span>        }<a name="line.732"></a>
+<span class="sourceLineNo">733</span>        buf.append(this.eol);<a name="line.733"></a>
+<span class="sourceLineNo">734</span>        return getBytes(buf.toString());<a name="line.734"></a>
+<span class="sourceLineNo">735</span>    }<a name="line.735"></a>
+<span class="sourceLineNo">736</span><a name="line.736"></a>
+<span class="sourceLineNo">737</span>    /**<a name="line.737"></a>
+<span class="sourceLineNo">738</span>     * Returns appropriate YAML footer.<a name="line.738"></a>
+<span class="sourceLineNo">739</span>     *<a name="line.739"></a>
+<span class="sourceLineNo">740</span>     * @return a byte array containing the footer, closing the YAML array.<a name="line.740"></a>
+<span class="sourceLineNo">741</span>     */<a name="line.741"></a>
+<span class="sourceLineNo">742</span>    @Override<a name="line.742"></a>
+<span class="sourceLineNo">743</span>    public byte[] getFooter() {<a name="line.743"></a>
+<span class="sourceLineNo">744</span>        if (!this.complete) {<a name="line.744"></a>
+<span class="sourceLineNo">745</span>            return null;<a name="line.745"></a>
+<span class="sourceLineNo">746</span>        }<a name="line.746"></a>
+<span class="sourceLineNo">747</span>        final StringBuilder buf = new StringBuilder();<a name="line.747"></a>
+<span class="sourceLineNo">748</span>        buf.append(this.eol);<a name="line.748"></a>
+<span class="sourceLineNo">749</span>        final String str = serializeToString(getFooterSerializer());<a name="line.749"></a>
+<span class="sourceLineNo">750</span>        if (str != null) {<a name="line.750"></a>
+<span class="sourceLineNo">751</span>            buf.append(str);<a name="line.751"></a>
+<span class="sourceLineNo">752</span>        }<a name="line.752"></a>
+<span class="sourceLineNo">753</span>        buf.append(this.eol);<a name="line.753"></a>
+<span class="sourceLineNo">754</span>        return getBytes(buf.toString());<a name="line.754"></a>
+<span class="sourceLineNo">755</span>    }<a name="line.755"></a>
+<span class="sourceLineNo">756</span><a name="line.756"></a>
+<span class="sourceLineNo">757</span>    @Override<a name="line.757"></a>
+<span class="sourceLineNo">758</span>    public Map&lt;String, String&gt; getContentFormat() {<a name="line.758"></a>
+<span class="sourceLineNo">759</span>        final Map&lt;String, String&gt; result = new HashMap&lt;&gt;();<a name="line.759"></a>
+<span class="sourceLineNo">760</span>        result.put("version", "2.0");<a name="line.760"></a>
+<span class="sourceLineNo">761</span>        return result;<a name="line.761"></a>
+<span class="sourceLineNo">762</span>    }<a name="line.762"></a>
+<span class="sourceLineNo">763</span><a name="line.763"></a>
+<span class="sourceLineNo">764</span>    @Override<a name="line.764"></a>
+<span class="sourceLineNo">765</span>    /**<a name="line.765"></a>
+<span class="sourceLineNo">766</span>     * @return The content type.<a name="line.766"></a>
+<span class="sourceLineNo">767</span>     */<a name="line.767"></a>
+<span class="sourceLineNo">768</span>    public String getContentType() {<a name="line.768"></a>
+<span class="sourceLineNo">769</span>        return CONTENT_TYPE + "; charset=" + this.getCharset();<a name="line.769"></a>
+<span class="sourceLineNo">770</span>    }<a name="line.770"></a>
+<span class="sourceLineNo">771</span><a name="line.771"></a>
+<span class="sourceLineNo">772</span>    /**<a name="line.772"></a>
+<span class="sourceLineNo">773</span>     * Creates a YAML Layout.<a name="line.773"></a>
+<span class="sourceLineNo">774</span>     * <a name="line.774"></a>
+<span class="sourceLineNo">775</span>     * @param config<a name="line.775"></a>
+<span class="sourceLineNo">776</span>     *            The plugin configuration.<a name="line.776"></a>
+<span class="sourceLineNo">777</span>     * @param locationInfo<a name="line.777"></a>
+<span class="sourceLineNo">778</span>     *            If "true", includes the location information in the generated YAML.<a name="line.778"></a>
+<span class="sourceLineNo">779</span>     * @param properties<a name="line.779"></a>
+<span class="sourceLineNo">780</span>     *            If "true", includes the thread context map in the generated YAML.<a name="line.780"></a>
+<span class="sourceLineNo">781</span>     * @param headerPattern<a name="line.781"></a>
+<span class="sourceLineNo">782</span>     *            The header pattern, defaults to {@code ""} if null.<a name="line.782"></a>
+<span class="sourceLineNo">783</span>     * @param footerPattern<a name="line.783"></a>
 <span class="sourceLineNo">784</span>     *            The header pattern, defaults to {@code ""} if null.<a name="line.784"></a>
-<span class="sourceLineNo">785</span>     * @param footerPattern<a name="line.785"></a>
-<span class="sourceLineNo">786</span>     *            The header pattern, defaults to {@code ""} if null.<a name="line.786"></a>
-<span class="sourceLineNo">787</span>     * @param charset<a name="line.787"></a>
-<span class="sourceLineNo">788</span>     *            The character set to use, if {@code null}, uses "UTF-8".<a name="line.788"></a>
-<span class="sourceLineNo">789</span>     * @param includeStacktrace<a name="line.789"></a>
-<span class="sourceLineNo">790</span>     *            If "true", includes the stacktrace of any Throwable in the generated YAML, defaults to "true".<a name="line.790"></a>
-<span class="sourceLineNo">791</span>     * @return A YAML Layout.<a name="line.791"></a>
-<span class="sourceLineNo">792</span>     */<a name="line.792"></a>
-<span class="sourceLineNo">793</span>    @PluginFactory<a name="line.793"></a>
-<span class="sourceLineNo">794</span>    public static AbstractJacksonLayout createLayout(<a name="line.794"></a>
-<span class="sourceLineNo">795</span>            // @formatter:off<a name="line.795"></a>
-<span class="sourceLineNo">796</span>            @PluginConfiguration final Configuration config,<a name="line.796"></a>
-<span class="sourceLineNo">797</span>            @PluginAttribute(value = "locationInfo") final boolean locationInfo,<a name="line.797"></a>
-<span class="sourceLineNo">798</span>            @PluginAttribute(value = "properties") final boolean properties,<a name="line.798"></a>
-<span class="sourceLineNo">799</span>            @PluginAttribute(value = "header", defaultString = DEFAULT_HEADER) final String headerPattern,<a name="line.799"></a>
-<span class="sourceLineNo">800</span>            @PluginAttribute(value = "footer", defaultString = DEFAULT_FOOTER) final String footerPattern,<a name="line.800"></a>
-<span class="sourceLineNo">801</span>            @PluginAttribute(value = "charset", defaultString = "UTF-8") final Charset charset,<a name="line.801"></a>
-<span class="sourceLineNo">802</span>            @PluginAttribute(value = "includeStacktrace", defaultBoolean = true) final boolean includeStacktrace<a name="line.802"></a>
-<span class="sourceLineNo">803</span>            // @formatter:on<a name="line.803"></a>
-<span class="sourceLineNo">804</span>    ) {<a name="line.804"></a>
-<span class="sourceLineNo">805</span>        return new YamlLayout(config, locationInfo, properties, false, false, true, headerPattern, footerPattern,<a name="line.805"></a>
-<span class="sourceLineNo">806</span>                charset, includeStacktrace);<a name="line.806"></a>
-<span class="sourceLineNo">807</span>    }<a name="line.807"></a>
-<span class="sourceLineNo">808</span><a name="line.808"></a>
-<span class="sourceLineNo">809</span>    /**<a name="line.809"></a>
-<span class="sourceLineNo">810</span>     * Creates a YAML Layout using the default settings. Useful for testing.<a name="line.810"></a>
-<span class="sourceLineNo">811</span>     *<a name="line.811"></a>
-<span class="sourceLineNo">812</span>     * @return A YAML Layout.<a name="line.812"></a>
-<span class="sourceLineNo">813</span>     */<a name="line.813"></a>
-<span class="sourceLineNo">814</span>    public static AbstractJacksonLayout createDefaultLayout() {<a name="line.814"></a>
-<span class="sourceLineNo">815</span>        return new YamlLayout(new DefaultConfiguration(), false, false, false, false, false, DEFAULT_HEADER,<a name="line.815"></a>
-<span class="sourceLineNo">816</span>                DEFAULT_FOOTER, StandardCharsets.UTF_8, true);<a name="line.816"></a>
-<span class="sourceLineNo">817</span>    }<a name="line.817"></a>
-<span class="sourceLineNo">818</span><a name="line.818"></a>
-<span class="sourceLineNo">819</span>    @Override<a name="line.819"></a>
-<span class="sourceLineNo">820</span>    public void toSerializable(final LogEvent event, final Writer writer) throws IOException {<a name="line.820"></a>
-<span class="sourceLineNo">821</span>        if (complete &amp;&amp; eventCount &gt; 0) {<a name="line.821"></a>
-<span class="sourceLineNo">822</span>            writer.append(", ");<a name="line.822"></a>
-<span class="sourceLineNo">823</span>        }<a name="line.823"></a>
-<span class="sourceLineNo">824</span>        super.toSerializable(event, writer);<a name="line.824"></a>
-<span class="sourceLineNo">825</span>    }<a name="line.825"></a>
-<span class="sourceLineNo">826</span>}<a name="line.826"></a>
+<span class="sourceLineNo">785</span>     * @param charset<a name="line.785"></a>
+<span class="sourceLineNo">786</span>     *            The character set to use, if {@code null}, uses "UTF-8".<a name="line.786"></a>
+<span class="sourceLineNo">787</span>     * @param includeStacktrace<a name="line.787"></a>
+<span class="sourceLineNo">788</span>     *            If "true", includes the stacktrace of any Throwable in the generated YAML, defaults to "true".<a name="line.788"></a>
+<span class="sourceLineNo">789</span>     * @return A YAML Layout.<a name="line.789"></a>
+<span class="sourceLineNo">790</span>     */<a name="line.790"></a>
+<span class="sourceLineNo">791</span>    @PluginFactory<a name="line.791"></a>
+<span class="sourceLineNo">792</span>    public static AbstractJacksonLayout createLayout(<a name="line.792"></a>
+<span class="sourceLineNo">793</span>            // @formatter:off<a name="line.793"></a>
+<span class="sourceLineNo">794</span>            @PluginConfiguration final Configuration config,<a name="line.794"></a>
+<span class="sourceLineNo">795</span>            @PluginAttribute(value = "locationInfo") final boolean locationInfo,<a name="line.795"></a>
+<span class="sourceLineNo">796</span>            @PluginAttribute(value = "properties") final boolean properties,<a name="line.796"></a>
+<span class="sourceLineNo">797</span>            @PluginAttribute(value = "header", defaultString = DEFAULT_HEADER) final String headerPattern,<a name="line.797"></a>
+<span class="sourceLineNo">798</span>            @PluginAttribute(value = "footer", defaultString = DEFAULT_FOOTER) final String footerPattern,<a name="line.798"></a>
+<span class="sourceLineNo">799</span>            @PluginAttribute(value = "charset", defaultString = "UTF-8") final Charset charset,<a name="line.799"></a>
+<span class="sourceLineNo">800</span>            @PluginAttribute(value = "includeStacktrace", defaultBoolean = true) final boolean includeStacktrace<a name="line.800"></a>
+<span class="sourceLineNo">801</span>            // @formatter:on<a name="line.801"></a>
+<span class="sourceLineNo">802</span>    ) {<a name="line.802"></a>
+<span class="sourceLineNo">803</span>        return new YamlLayout(config, locationInfo, properties, false, false, true, headerPattern, footerPattern,<a name="line.803"></a>
+<span class="sourceLineNo">804</span>                charset, includeStacktrace);<a name="line.804"></a>
+<span class="sourceLineNo">805</span>    }<a name="line.805"></a>
+<span class="sourceLineNo">806</span><a name="line.806"></a>
+<span class="sourceLineNo">807</span>    /**<a name="line.807"></a>
+<span class="sourceLineNo">808</span>     * Creates a YAML Layout using the default settings. Useful for testing.<a name="line.808"></a>
+<span class="sourceLineNo">809</span>     *<a name="line.809"></a>
+<span class="sourceLineNo">810</span>     * @return A YAML Layout.<a name="line.810"></a>
+<span class="sourceLineNo">811</span>     */<a name="line.811"></a>
+<span class="sourceLineNo">812</span>    public static AbstractJacksonLayout createDefaultLayout() {<a name="line.812"></a>
+<span class="sourceLineNo">813</span>        return new YamlLayout(new DefaultConfiguration(), false, false, false, false, false, DEFAULT_HEADER,<a name="line.813"></a>
+<span class="sourceLineNo">814</span>                DEFAULT_FOOTER, StandardCharsets.UTF_8, true);<a name="line.814"></a>
+<span class="sourceLineNo">815</span>    }<a name="line.815"></a>
+<span class="sourceLineNo">816</span><a name="line.816"></a>
+<span class="sourceLineNo">817</span>    @Override<a name="line.817"></a>
+<span class="sourceLineNo">818</span>    public void toSerializable(final LogEvent event, final Writer writer) throws IOException {<a name="line.818"></a>
+<span class="sourceLineNo">819</span>        if (complete &amp;&amp; eventCount &gt; 0) {<a name="line.819"></a>
+<span class="sourceLineNo">820</span>            writer.append(", ");<a name="line.820"></a>
+<span class="sourceLineNo">821</span>        }<a name="line.821"></a>
+<span class="sourceLineNo">822</span>        super.toSerializable(event, writer);<a name="line.822"></a>
+<span class="sourceLineNo">823</span>    }<a name="line.823"></a>
+<span class="sourceLineNo">824</span>}<a name="line.824"></a>
 
 
 
