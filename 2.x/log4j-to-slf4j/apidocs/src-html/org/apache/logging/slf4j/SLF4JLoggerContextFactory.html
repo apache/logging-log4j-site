@@ -19,10 +19,10 @@
 <FONT color="green">016</FONT>     */<a name="line.16"></a>
 <FONT color="green">017</FONT>    package org.apache.logging.slf4j;<a name="line.17"></a>
 <FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>    import org.apache.logging.log4j.spi.LoggerContext;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import org.apache.logging.log4j.spi.LoggerContextFactory;<a name="line.20"></a>
-<FONT color="green">021</FONT>    <a name="line.21"></a>
-<FONT color="green">022</FONT>    import java.net.URI;<a name="line.22"></a>
+<FONT color="green">019</FONT>    import java.net.URI;<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.apache.logging.log4j.spi.LoggerContext;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.apache.logging.log4j.spi.LoggerContextFactory;<a name="line.22"></a>
 <FONT color="green">023</FONT>    <a name="line.23"></a>
 <FONT color="green">024</FONT>    /**<a name="line.24"></a>
 <FONT color="green">025</FONT>     *<a name="line.25"></a>
@@ -34,10 +34,10 @@
 <FONT color="green">031</FONT>            // LOG4J2-230, LOG4J2-204 (improve error reporting when misconfigured)<a name="line.31"></a>
 <FONT color="green">032</FONT>            boolean misconfigured = false;<a name="line.32"></a>
 <FONT color="green">033</FONT>            try {<a name="line.33"></a>
-<FONT color="green">034</FONT>                Class.forName("org.slf4j.helpers.Log4JLoggerFactory");<a name="line.34"></a>
+<FONT color="green">034</FONT>                Class.forName("org.slf4j.helpers.Log4jLoggerFactory");<a name="line.34"></a>
 <FONT color="green">035</FONT>                misconfigured = true;<a name="line.35"></a>
 <FONT color="green">036</FONT>            } catch (ClassNotFoundException classNotFoundIsGood) {<a name="line.36"></a>
-<FONT color="green">037</FONT>                // org.slf4j.helpers.Log4JLoggerFactory is not on classpath. Good!<a name="line.37"></a>
+<FONT color="green">037</FONT>                // org.slf4j.helpers.Log4jLoggerFactory is not on classpath. Good!<a name="line.37"></a>
 <FONT color="green">038</FONT>            }<a name="line.38"></a>
 <FONT color="green">039</FONT>            if (misconfigured) {<a name="line.39"></a>
 <FONT color="green">040</FONT>                throw new IllegalStateException("slf4j-impl jar is mutually exclusive with log4j-to-slf4j jar "<a name="line.40"></a>
@@ -45,15 +45,21 @@
 <FONT color="green">042</FONT>            }<a name="line.42"></a>
 <FONT color="green">043</FONT>        }<a name="line.43"></a>
 <FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext) {<a name="line.45"></a>
-<FONT color="green">046</FONT>            return context;<a name="line.46"></a>
-<FONT color="green">047</FONT>        }<a name="line.47"></a>
-<FONT color="green">048</FONT>    <a name="line.48"></a>
-<FONT color="green">049</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext,<a name="line.49"></a>
-<FONT color="green">050</FONT>                                        URI configLocation) {<a name="line.50"></a>
-<FONT color="green">051</FONT>            return context;<a name="line.51"></a>
-<FONT color="green">052</FONT>        }<a name="line.52"></a>
-<FONT color="green">053</FONT>    }<a name="line.53"></a>
+<FONT color="green">045</FONT>        @Override<a name="line.45"></a>
+<FONT color="green">046</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext) {<a name="line.46"></a>
+<FONT color="green">047</FONT>            return context;<a name="line.47"></a>
+<FONT color="green">048</FONT>        }<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>        @Override<a name="line.50"></a>
+<FONT color="green">051</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext,<a name="line.51"></a>
+<FONT color="green">052</FONT>                                        URI configLocation) {<a name="line.52"></a>
+<FONT color="green">053</FONT>            return context;<a name="line.53"></a>
+<FONT color="green">054</FONT>        }<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>        @Override<a name="line.56"></a>
+<FONT color="green">057</FONT>        public void removeContext(LoggerContext context) {<a name="line.57"></a>
+<FONT color="green">058</FONT>        }<a name="line.58"></a>
+<FONT color="green">059</FONT>    }<a name="line.59"></a>
 
 
 

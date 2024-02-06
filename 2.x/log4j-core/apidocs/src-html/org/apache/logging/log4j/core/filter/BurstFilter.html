@@ -178,69 +178,71 @@
 <FONT color="green">175</FONT>                this.expireTime = delay + System.nanoTime();<a name="line.175"></a>
 <FONT color="green">176</FONT>            }<a name="line.176"></a>
 <FONT color="green">177</FONT>    <a name="line.177"></a>
-<FONT color="green">178</FONT>            public long getDelay(final TimeUnit timeUnit) {<a name="line.178"></a>
-<FONT color="green">179</FONT>                return timeUnit.convert(expireTime - System.nanoTime(), TimeUnit.NANOSECONDS);<a name="line.179"></a>
-<FONT color="green">180</FONT>            }<a name="line.180"></a>
-<FONT color="green">181</FONT>    <a name="line.181"></a>
-<FONT color="green">182</FONT>            public int compareTo(final Delayed delayed) {<a name="line.182"></a>
-<FONT color="green">183</FONT>                if (this.expireTime &lt; ((LogDelay) delayed).expireTime) {<a name="line.183"></a>
-<FONT color="green">184</FONT>                    return -1;<a name="line.184"></a>
-<FONT color="green">185</FONT>                } else if (this.expireTime &gt; ((LogDelay) delayed).expireTime) {<a name="line.185"></a>
-<FONT color="green">186</FONT>                    return 1;<a name="line.186"></a>
-<FONT color="green">187</FONT>                }<a name="line.187"></a>
-<FONT color="green">188</FONT>                return 0;<a name="line.188"></a>
-<FONT color="green">189</FONT>            }<a name="line.189"></a>
-<FONT color="green">190</FONT>    <a name="line.190"></a>
-<FONT color="green">191</FONT>            @Override<a name="line.191"></a>
-<FONT color="green">192</FONT>            public boolean equals(final Object o) {<a name="line.192"></a>
-<FONT color="green">193</FONT>                if (this == o) {<a name="line.193"></a>
-<FONT color="green">194</FONT>                    return true;<a name="line.194"></a>
-<FONT color="green">195</FONT>                }<a name="line.195"></a>
-<FONT color="green">196</FONT>                if (o == null || getClass() != o.getClass()) {<a name="line.196"></a>
-<FONT color="green">197</FONT>                    return false;<a name="line.197"></a>
-<FONT color="green">198</FONT>                }<a name="line.198"></a>
-<FONT color="green">199</FONT>    <a name="line.199"></a>
-<FONT color="green">200</FONT>                final LogDelay logDelay = (LogDelay) o;<a name="line.200"></a>
+<FONT color="green">178</FONT>            @Override<a name="line.178"></a>
+<FONT color="green">179</FONT>            public long getDelay(final TimeUnit timeUnit) {<a name="line.179"></a>
+<FONT color="green">180</FONT>                return timeUnit.convert(expireTime - System.nanoTime(), TimeUnit.NANOSECONDS);<a name="line.180"></a>
+<FONT color="green">181</FONT>            }<a name="line.181"></a>
+<FONT color="green">182</FONT>    <a name="line.182"></a>
+<FONT color="green">183</FONT>            @Override<a name="line.183"></a>
+<FONT color="green">184</FONT>            public int compareTo(final Delayed delayed) {<a name="line.184"></a>
+<FONT color="green">185</FONT>                if (this.expireTime &lt; ((LogDelay) delayed).expireTime) {<a name="line.185"></a>
+<FONT color="green">186</FONT>                    return -1;<a name="line.186"></a>
+<FONT color="green">187</FONT>                } else if (this.expireTime &gt; ((LogDelay) delayed).expireTime) {<a name="line.187"></a>
+<FONT color="green">188</FONT>                    return 1;<a name="line.188"></a>
+<FONT color="green">189</FONT>                }<a name="line.189"></a>
+<FONT color="green">190</FONT>                return 0;<a name="line.190"></a>
+<FONT color="green">191</FONT>            }<a name="line.191"></a>
+<FONT color="green">192</FONT>    <a name="line.192"></a>
+<FONT color="green">193</FONT>            @Override<a name="line.193"></a>
+<FONT color="green">194</FONT>            public boolean equals(final Object o) {<a name="line.194"></a>
+<FONT color="green">195</FONT>                if (this == o) {<a name="line.195"></a>
+<FONT color="green">196</FONT>                    return true;<a name="line.196"></a>
+<FONT color="green">197</FONT>                }<a name="line.197"></a>
+<FONT color="green">198</FONT>                if (o == null || getClass() != o.getClass()) {<a name="line.198"></a>
+<FONT color="green">199</FONT>                    return false;<a name="line.199"></a>
+<FONT color="green">200</FONT>                }<a name="line.200"></a>
 <FONT color="green">201</FONT>    <a name="line.201"></a>
-<FONT color="green">202</FONT>                if (expireTime != logDelay.expireTime) {<a name="line.202"></a>
-<FONT color="green">203</FONT>                    return false;<a name="line.203"></a>
-<FONT color="green">204</FONT>                }<a name="line.204"></a>
-<FONT color="green">205</FONT>    <a name="line.205"></a>
-<FONT color="green">206</FONT>                return true;<a name="line.206"></a>
-<FONT color="green">207</FONT>            }<a name="line.207"></a>
-<FONT color="green">208</FONT>    <a name="line.208"></a>
-<FONT color="green">209</FONT>            @Override<a name="line.209"></a>
-<FONT color="green">210</FONT>            public int hashCode() {<a name="line.210"></a>
-<FONT color="green">211</FONT>                return (int) (expireTime ^ (expireTime &gt;&gt;&gt; HASH_SHIFT));<a name="line.211"></a>
-<FONT color="green">212</FONT>            }<a name="line.212"></a>
-<FONT color="green">213</FONT>        }<a name="line.213"></a>
-<FONT color="green">214</FONT>    <a name="line.214"></a>
-<FONT color="green">215</FONT>        /**<a name="line.215"></a>
-<FONT color="green">216</FONT>         * @param levelName  The logging level.<a name="line.216"></a>
-<FONT color="green">217</FONT>         * @param rate   The average number of events per second to allow.<a name="line.217"></a>
-<FONT color="green">218</FONT>         * @param maxBurst  The maximum number of events that can occur before events are filtered for exceeding the<a name="line.218"></a>
-<FONT color="green">219</FONT>         * average rate. The default is 10 times the rate.<a name="line.219"></a>
-<FONT color="green">220</FONT>         * @param match  The Result to return when the filter matches. Defaults to Result.NEUTRAL.<a name="line.220"></a>
-<FONT color="green">221</FONT>         * @param mismatch The Result to return when the filter does not match. The default is Result.DENY.<a name="line.221"></a>
-<FONT color="green">222</FONT>         * @return A BurstFilter.<a name="line.222"></a>
-<FONT color="green">223</FONT>         */<a name="line.223"></a>
-<FONT color="green">224</FONT>        @PluginFactory<a name="line.224"></a>
-<FONT color="green">225</FONT>        public static BurstFilter createFilter(@PluginAttr("level") final String levelName,<a name="line.225"></a>
-<FONT color="green">226</FONT>                                               @PluginAttr("rate") final String rate,<a name="line.226"></a>
-<FONT color="green">227</FONT>                                               @PluginAttr("maxBurst") final String maxBurst,<a name="line.227"></a>
-<FONT color="green">228</FONT>                                               @PluginAttr("onmatch") final String match,<a name="line.228"></a>
-<FONT color="green">229</FONT>                                               @PluginAttr("onmismatch") final String mismatch) {<a name="line.229"></a>
-<FONT color="green">230</FONT>            final Result onMatch = Result.toResult(match, Result.NEUTRAL);<a name="line.230"></a>
-<FONT color="green">231</FONT>            final Result onMismatch = Result.toResult(mismatch, Result.DENY);<a name="line.231"></a>
-<FONT color="green">232</FONT>            final Level level = Level.toLevel(levelName, Level.WARN);<a name="line.232"></a>
-<FONT color="green">233</FONT>            float eventRate = rate == null ? DEFAULT_RATE : Float.parseFloat(rate);<a name="line.233"></a>
-<FONT color="green">234</FONT>            if (eventRate &lt;= 0) {<a name="line.234"></a>
-<FONT color="green">235</FONT>                eventRate = DEFAULT_RATE;<a name="line.235"></a>
-<FONT color="green">236</FONT>            }<a name="line.236"></a>
-<FONT color="green">237</FONT>            final long max = maxBurst == null ? (long) (eventRate * DEFAULT_RATE_MULTIPLE) : Long.parseLong(maxBurst);<a name="line.237"></a>
-<FONT color="green">238</FONT>            return new BurstFilter(level, eventRate, max, onMatch, onMismatch);<a name="line.238"></a>
-<FONT color="green">239</FONT>        }<a name="line.239"></a>
-<FONT color="green">240</FONT>    }<a name="line.240"></a>
+<FONT color="green">202</FONT>                final LogDelay logDelay = (LogDelay) o;<a name="line.202"></a>
+<FONT color="green">203</FONT>    <a name="line.203"></a>
+<FONT color="green">204</FONT>                if (expireTime != logDelay.expireTime) {<a name="line.204"></a>
+<FONT color="green">205</FONT>                    return false;<a name="line.205"></a>
+<FONT color="green">206</FONT>                }<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>                return true;<a name="line.208"></a>
+<FONT color="green">209</FONT>            }<a name="line.209"></a>
+<FONT color="green">210</FONT>    <a name="line.210"></a>
+<FONT color="green">211</FONT>            @Override<a name="line.211"></a>
+<FONT color="green">212</FONT>            public int hashCode() {<a name="line.212"></a>
+<FONT color="green">213</FONT>                return (int) (expireTime ^ (expireTime &gt;&gt;&gt; HASH_SHIFT));<a name="line.213"></a>
+<FONT color="green">214</FONT>            }<a name="line.214"></a>
+<FONT color="green">215</FONT>        }<a name="line.215"></a>
+<FONT color="green">216</FONT>    <a name="line.216"></a>
+<FONT color="green">217</FONT>        /**<a name="line.217"></a>
+<FONT color="green">218</FONT>         * @param levelName  The logging level.<a name="line.218"></a>
+<FONT color="green">219</FONT>         * @param rate   The average number of events per second to allow.<a name="line.219"></a>
+<FONT color="green">220</FONT>         * @param maxBurst  The maximum number of events that can occur before events are filtered for exceeding the<a name="line.220"></a>
+<FONT color="green">221</FONT>         * average rate. The default is 10 times the rate.<a name="line.221"></a>
+<FONT color="green">222</FONT>         * @param match  The Result to return when the filter matches. Defaults to Result.NEUTRAL.<a name="line.222"></a>
+<FONT color="green">223</FONT>         * @param mismatch The Result to return when the filter does not match. The default is Result.DENY.<a name="line.223"></a>
+<FONT color="green">224</FONT>         * @return A BurstFilter.<a name="line.224"></a>
+<FONT color="green">225</FONT>         */<a name="line.225"></a>
+<FONT color="green">226</FONT>        @PluginFactory<a name="line.226"></a>
+<FONT color="green">227</FONT>        public static BurstFilter createFilter(@PluginAttr("level") final String levelName,<a name="line.227"></a>
+<FONT color="green">228</FONT>                                               @PluginAttr("rate") final String rate,<a name="line.228"></a>
+<FONT color="green">229</FONT>                                               @PluginAttr("maxBurst") final String maxBurst,<a name="line.229"></a>
+<FONT color="green">230</FONT>                                               @PluginAttr("onmatch") final String match,<a name="line.230"></a>
+<FONT color="green">231</FONT>                                               @PluginAttr("onmismatch") final String mismatch) {<a name="line.231"></a>
+<FONT color="green">232</FONT>            final Result onMatch = Result.toResult(match, Result.NEUTRAL);<a name="line.232"></a>
+<FONT color="green">233</FONT>            final Result onMismatch = Result.toResult(mismatch, Result.DENY);<a name="line.233"></a>
+<FONT color="green">234</FONT>            final Level level = Level.toLevel(levelName, Level.WARN);<a name="line.234"></a>
+<FONT color="green">235</FONT>            float eventRate = rate == null ? DEFAULT_RATE : Float.parseFloat(rate);<a name="line.235"></a>
+<FONT color="green">236</FONT>            if (eventRate &lt;= 0) {<a name="line.236"></a>
+<FONT color="green">237</FONT>                eventRate = DEFAULT_RATE;<a name="line.237"></a>
+<FONT color="green">238</FONT>            }<a name="line.238"></a>
+<FONT color="green">239</FONT>            final long max = maxBurst == null ? (long) (eventRate * DEFAULT_RATE_MULTIPLE) : Long.parseLong(maxBurst);<a name="line.239"></a>
+<FONT color="green">240</FONT>            return new BurstFilter(level, eventRate, max, onMatch, onMismatch);<a name="line.240"></a>
+<FONT color="green">241</FONT>        }<a name="line.241"></a>
+<FONT color="green">242</FONT>    }<a name="line.242"></a>
 
 
 

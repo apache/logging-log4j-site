@@ -320,7 +320,7 @@
 <FONT color="green">317</FONT>         * @param stackTrace The stack trace being resolved.<a name="line.317"></a>
 <FONT color="green">318</FONT>         * @return The StackTracePackageElement array.<a name="line.318"></a>
 <FONT color="green">319</FONT>         */<a name="line.319"></a>
-<FONT color="green">320</FONT>        private StackTracePackageElement[] resolvePackageData(final Stack&lt;Class&lt;?&gt;&gt; stack, final Map&lt;String,<a name="line.320"></a>
+<FONT color="green">320</FONT>        StackTracePackageElement[] resolvePackageData(final Stack&lt;Class&lt;?&gt;&gt; stack, final Map&lt;String,<a name="line.320"></a>
 <FONT color="green">321</FONT>                                                              CacheEntry&gt; map,<a name="line.321"></a>
 <FONT color="green">322</FONT>                                                              final StackTraceElement[] rootTrace,<a name="line.322"></a>
 <FONT color="green">323</FONT>                                                              final StackTraceElement[] stackTrace) {<a name="line.323"></a>
@@ -339,19 +339,19 @@
 <FONT color="green">336</FONT>                stackLength = stackTrace.length;<a name="line.336"></a>
 <FONT color="green">337</FONT>            }<a name="line.337"></a>
 <FONT color="green">338</FONT>            final StackTracePackageElement[] packageArray = new StackTracePackageElement[stackLength];<a name="line.338"></a>
-<FONT color="green">339</FONT>            Class&lt;?&gt; clazz = stack.peek();<a name="line.339"></a>
+<FONT color="green">339</FONT>            Class&lt;?&gt; clazz = stack.isEmpty() ? null : stack.peek();<a name="line.339"></a>
 <FONT color="green">340</FONT>            ClassLoader lastLoader = null;<a name="line.340"></a>
 <FONT color="green">341</FONT>            for (int i = stackLength - 1; i &gt;= 0; --i) {<a name="line.341"></a>
 <FONT color="green">342</FONT>                final String className = stackTrace[i].getClassName();<a name="line.342"></a>
 <FONT color="green">343</FONT>                // The stack returned from getCurrentStack will be missing entries for  java.lang.reflect.Method.invoke()<a name="line.343"></a>
 <FONT color="green">344</FONT>                // and its implementation. The Throwable might also contain stack entries that are no longer<a name="line.344"></a>
 <FONT color="green">345</FONT>                // present as those methods have returned.<a name="line.345"></a>
-<FONT color="green">346</FONT>                if (className.equals(clazz.getName())) {<a name="line.346"></a>
+<FONT color="green">346</FONT>                if (clazz != null &amp;&amp; className.equals(clazz.getName())) {<a name="line.346"></a>
 <FONT color="green">347</FONT>                    final CacheEntry entry = resolvePackageElement(clazz, true);<a name="line.347"></a>
 <FONT color="green">348</FONT>                    packageArray[i] = entry.element;<a name="line.348"></a>
 <FONT color="green">349</FONT>                    lastLoader = entry.loader;<a name="line.349"></a>
 <FONT color="green">350</FONT>                    stack.pop();<a name="line.350"></a>
-<FONT color="green">351</FONT>                    clazz = stack.peek();<a name="line.351"></a>
+<FONT color="green">351</FONT>                    clazz = stack.isEmpty() ? null : stack.peek();<a name="line.351"></a>
 <FONT color="green">352</FONT>                } else {<a name="line.352"></a>
 <FONT color="green">353</FONT>                    if (map.containsKey(className)) {<a name="line.353"></a>
 <FONT color="green">354</FONT>                        final CacheEntry entry = map.get(className);<a name="line.354"></a>
@@ -489,74 +489,75 @@
 <FONT color="green">486</FONT>                final Method[] methods = clazz.getMethods();<a name="line.486"></a>
 <FONT color="green">487</FONT>                for (final Method method : methods) {<a name="line.487"></a>
 <FONT color="green">488</FONT>                    final int modifier = method.getModifiers();<a name="line.488"></a>
-<FONT color="green">489</FONT>                    if (method.getName().equals("getCallerClass") &amp;&amp; Modifier.isStatic(modifier)) {<a name="line.489"></a>
-<FONT color="green">490</FONT>                        getCallerClass = method;<a name="line.490"></a>
-<FONT color="green">491</FONT>                        return;<a name="line.491"></a>
-<FONT color="green">492</FONT>                    }<a name="line.492"></a>
-<FONT color="green">493</FONT>                }<a name="line.493"></a>
-<FONT color="green">494</FONT>            } catch (final ClassNotFoundException cnfe) {<a name="line.494"></a>
-<FONT color="green">495</FONT>                LOGGER.debug("sun.reflect.Reflection is not installed");<a name="line.495"></a>
-<FONT color="green">496</FONT>            }<a name="line.496"></a>
-<FONT color="green">497</FONT>    <a name="line.497"></a>
-<FONT color="green">498</FONT>            try {<a name="line.498"></a>
-<FONT color="green">499</FONT>                final PrivateSecurityManager mgr = new PrivateSecurityManager();<a name="line.499"></a>
-<FONT color="green">500</FONT>                if (mgr.getClasses() != null) {<a name="line.500"></a>
-<FONT color="green">501</FONT>                    securityManager = mgr;<a name="line.501"></a>
-<FONT color="green">502</FONT>                } else {<a name="line.502"></a>
-<FONT color="green">503</FONT>                    // This shouldn't happen.<a name="line.503"></a>
-<FONT color="green">504</FONT>                    LOGGER.error("Unable to obtain call stack from security manager");<a name="line.504"></a>
-<FONT color="green">505</FONT>                }<a name="line.505"></a>
-<FONT color="green">506</FONT>            } catch (final Exception ex) {<a name="line.506"></a>
-<FONT color="green">507</FONT>                LOGGER.debug("Unable to install security manager", ex);<a name="line.507"></a>
-<FONT color="green">508</FONT>            }<a name="line.508"></a>
-<FONT color="green">509</FONT>        }<a name="line.509"></a>
-<FONT color="green">510</FONT>    <a name="line.510"></a>
-<FONT color="green">511</FONT>        private ThrowableProxy[] getSuppressedProxies() {<a name="line.511"></a>
-<FONT color="green">512</FONT>            if (getSuppressed != null) {<a name="line.512"></a>
-<FONT color="green">513</FONT>                try {<a name="line.513"></a>
-<FONT color="green">514</FONT>                    return (ThrowableProxy[]) getSuppressed.invoke(this);<a name="line.514"></a>
-<FONT color="green">515</FONT>                } catch (final Exception ignore) {<a name="line.515"></a>
-<FONT color="green">516</FONT>                    return null;<a name="line.516"></a>
-<FONT color="green">517</FONT>                }<a name="line.517"></a>
-<FONT color="green">518</FONT>            }<a name="line.518"></a>
-<FONT color="green">519</FONT>            return null;<a name="line.519"></a>
-<FONT color="green">520</FONT>        }<a name="line.520"></a>
-<FONT color="green">521</FONT>    <a name="line.521"></a>
-<FONT color="green">522</FONT>        private void setSuppressed(final Throwable throwable) {<a name="line.522"></a>
-<FONT color="green">523</FONT>            if (getSuppressed != null &amp;&amp; addSuppressed != null) {<a name="line.523"></a>
-<FONT color="green">524</FONT>                try {<a name="line.524"></a>
-<FONT color="green">525</FONT>                    final Throwable[] array = (Throwable[]) getSuppressed.invoke(throwable);<a name="line.525"></a>
-<FONT color="green">526</FONT>                    for (final Throwable t : array) {<a name="line.526"></a>
-<FONT color="green">527</FONT>                        addSuppressed.invoke(this, new ThrowableProxy(t));<a name="line.527"></a>
-<FONT color="green">528</FONT>                    }<a name="line.528"></a>
-<FONT color="green">529</FONT>                } catch (final Exception ignore) {<a name="line.529"></a>
-<FONT color="green">530</FONT>                    //<a name="line.530"></a>
-<FONT color="green">531</FONT>                }<a name="line.531"></a>
-<FONT color="green">532</FONT>            }<a name="line.532"></a>
-<FONT color="green">533</FONT>        }<a name="line.533"></a>
-<FONT color="green">534</FONT>    <a name="line.534"></a>
-<FONT color="green">535</FONT>        /**<a name="line.535"></a>
-<FONT color="green">536</FONT>         * Cached StackTracePackageElement and the ClassLoader.<a name="line.536"></a>
-<FONT color="green">537</FONT>         */<a name="line.537"></a>
-<FONT color="green">538</FONT>        private class CacheEntry {<a name="line.538"></a>
-<FONT color="green">539</FONT>            private final StackTracePackageElement element;<a name="line.539"></a>
-<FONT color="green">540</FONT>            private final ClassLoader loader;<a name="line.540"></a>
-<FONT color="green">541</FONT>    <a name="line.541"></a>
-<FONT color="green">542</FONT>            public CacheEntry(final StackTracePackageElement element, final ClassLoader loader) {<a name="line.542"></a>
-<FONT color="green">543</FONT>                this.element = element;<a name="line.543"></a>
-<FONT color="green">544</FONT>                this.loader = loader;<a name="line.544"></a>
-<FONT color="green">545</FONT>            }<a name="line.545"></a>
-<FONT color="green">546</FONT>        }<a name="line.546"></a>
-<FONT color="green">547</FONT>    <a name="line.547"></a>
-<FONT color="green">548</FONT>        /**<a name="line.548"></a>
-<FONT color="green">549</FONT>         * Security Manager for accessing the call stack.<a name="line.549"></a>
-<FONT color="green">550</FONT>         */<a name="line.550"></a>
-<FONT color="green">551</FONT>        private static class PrivateSecurityManager extends SecurityManager {<a name="line.551"></a>
-<FONT color="green">552</FONT>            public Class&lt;?&gt;[] getClasses() {<a name="line.552"></a>
-<FONT color="green">553</FONT>                return getClassContext();<a name="line.553"></a>
-<FONT color="green">554</FONT>            }<a name="line.554"></a>
-<FONT color="green">555</FONT>        }<a name="line.555"></a>
-<FONT color="green">556</FONT>    }<a name="line.556"></a>
+<FONT color="green">489</FONT>                    if (method.getName().equals("getCallerClass") &amp;&amp; Modifier.isStatic(modifier) &amp;&amp;<a name="line.489"></a>
+<FONT color="green">490</FONT>                        method.getParameterTypes().length == 1) {<a name="line.490"></a>
+<FONT color="green">491</FONT>                        getCallerClass = method;<a name="line.491"></a>
+<FONT color="green">492</FONT>                        return;<a name="line.492"></a>
+<FONT color="green">493</FONT>                    }<a name="line.493"></a>
+<FONT color="green">494</FONT>                }<a name="line.494"></a>
+<FONT color="green">495</FONT>            } catch (final ClassNotFoundException cnfe) {<a name="line.495"></a>
+<FONT color="green">496</FONT>                LOGGER.debug("sun.reflect.Reflection is not installed");<a name="line.496"></a>
+<FONT color="green">497</FONT>            }<a name="line.497"></a>
+<FONT color="green">498</FONT>    <a name="line.498"></a>
+<FONT color="green">499</FONT>            try {<a name="line.499"></a>
+<FONT color="green">500</FONT>                final PrivateSecurityManager mgr = new PrivateSecurityManager();<a name="line.500"></a>
+<FONT color="green">501</FONT>                if (mgr.getClasses() != null) {<a name="line.501"></a>
+<FONT color="green">502</FONT>                    securityManager = mgr;<a name="line.502"></a>
+<FONT color="green">503</FONT>                } else {<a name="line.503"></a>
+<FONT color="green">504</FONT>                    // This shouldn't happen.<a name="line.504"></a>
+<FONT color="green">505</FONT>                    LOGGER.error("Unable to obtain call stack from security manager");<a name="line.505"></a>
+<FONT color="green">506</FONT>                }<a name="line.506"></a>
+<FONT color="green">507</FONT>            } catch (final Exception ex) {<a name="line.507"></a>
+<FONT color="green">508</FONT>                LOGGER.debug("Unable to install security manager", ex);<a name="line.508"></a>
+<FONT color="green">509</FONT>            }<a name="line.509"></a>
+<FONT color="green">510</FONT>        }<a name="line.510"></a>
+<FONT color="green">511</FONT>    <a name="line.511"></a>
+<FONT color="green">512</FONT>        private ThrowableProxy[] getSuppressedProxies() {<a name="line.512"></a>
+<FONT color="green">513</FONT>            if (getSuppressed != null) {<a name="line.513"></a>
+<FONT color="green">514</FONT>                try {<a name="line.514"></a>
+<FONT color="green">515</FONT>                    return (ThrowableProxy[]) getSuppressed.invoke(this);<a name="line.515"></a>
+<FONT color="green">516</FONT>                } catch (final Exception ignore) {<a name="line.516"></a>
+<FONT color="green">517</FONT>                    return null;<a name="line.517"></a>
+<FONT color="green">518</FONT>                }<a name="line.518"></a>
+<FONT color="green">519</FONT>            }<a name="line.519"></a>
+<FONT color="green">520</FONT>            return null;<a name="line.520"></a>
+<FONT color="green">521</FONT>        }<a name="line.521"></a>
+<FONT color="green">522</FONT>    <a name="line.522"></a>
+<FONT color="green">523</FONT>        private void setSuppressed(final Throwable throwable) {<a name="line.523"></a>
+<FONT color="green">524</FONT>            if (getSuppressed != null &amp;&amp; addSuppressed != null) {<a name="line.524"></a>
+<FONT color="green">525</FONT>                try {<a name="line.525"></a>
+<FONT color="green">526</FONT>                    final Throwable[] array = (Throwable[]) getSuppressed.invoke(throwable);<a name="line.526"></a>
+<FONT color="green">527</FONT>                    for (final Throwable t : array) {<a name="line.527"></a>
+<FONT color="green">528</FONT>                        addSuppressed.invoke(this, new ThrowableProxy(t));<a name="line.528"></a>
+<FONT color="green">529</FONT>                    }<a name="line.529"></a>
+<FONT color="green">530</FONT>                } catch (final Exception ignore) {<a name="line.530"></a>
+<FONT color="green">531</FONT>                    //<a name="line.531"></a>
+<FONT color="green">532</FONT>                }<a name="line.532"></a>
+<FONT color="green">533</FONT>            }<a name="line.533"></a>
+<FONT color="green">534</FONT>        }<a name="line.534"></a>
+<FONT color="green">535</FONT>    <a name="line.535"></a>
+<FONT color="green">536</FONT>        /**<a name="line.536"></a>
+<FONT color="green">537</FONT>         * Cached StackTracePackageElement and the ClassLoader.<a name="line.537"></a>
+<FONT color="green">538</FONT>         */<a name="line.538"></a>
+<FONT color="green">539</FONT>        class CacheEntry {<a name="line.539"></a>
+<FONT color="green">540</FONT>            private final StackTracePackageElement element;<a name="line.540"></a>
+<FONT color="green">541</FONT>            private final ClassLoader loader;<a name="line.541"></a>
+<FONT color="green">542</FONT>    <a name="line.542"></a>
+<FONT color="green">543</FONT>            public CacheEntry(final StackTracePackageElement element, final ClassLoader loader) {<a name="line.543"></a>
+<FONT color="green">544</FONT>                this.element = element;<a name="line.544"></a>
+<FONT color="green">545</FONT>                this.loader = loader;<a name="line.545"></a>
+<FONT color="green">546</FONT>            }<a name="line.546"></a>
+<FONT color="green">547</FONT>        }<a name="line.547"></a>
+<FONT color="green">548</FONT>    <a name="line.548"></a>
+<FONT color="green">549</FONT>        /**<a name="line.549"></a>
+<FONT color="green">550</FONT>         * Security Manager for accessing the call stack.<a name="line.550"></a>
+<FONT color="green">551</FONT>         */<a name="line.551"></a>
+<FONT color="green">552</FONT>        private static class PrivateSecurityManager extends SecurityManager {<a name="line.552"></a>
+<FONT color="green">553</FONT>            public Class&lt;?&gt;[] getClasses() {<a name="line.553"></a>
+<FONT color="green">554</FONT>                return getClassContext();<a name="line.554"></a>
+<FONT color="green">555</FONT>            }<a name="line.555"></a>
+<FONT color="green">556</FONT>        }<a name="line.556"></a>
+<FONT color="green">557</FONT>    }<a name="line.557"></a>
 
 
 

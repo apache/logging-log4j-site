@@ -26,11 +26,11 @@
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.taglib;
 <a class="jxr_linenumber" name="18" href="#18">18</a>  
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.Level;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.Marker;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.JspException;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.tagext.Tag;
 <a class="jxr_linenumber" name="21" href="#21">21</a>  
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.JspException;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.tagext.Tag;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.Level;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.Marker;
 <a class="jxr_linenumber" name="24" href="#24">24</a>  
 <a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment"> * This class implements the {@code &lt;log:ifEnabled&gt;} tag.</em>
@@ -51,17 +51,17 @@
 <a class="jxr_linenumber" name="41" href="#41">41</a>          <strong class="jxr_keyword">this</strong>.marker = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="42" href="#42">42</a>      }
 <a class="jxr_linenumber" name="43" href="#43">43</a>  
-<a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setLevel(Object level) {
+<a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setLevel(<strong class="jxr_keyword">final</strong> Object level) {
 <a class="jxr_linenumber" name="45" href="#45">45</a>          <strong class="jxr_keyword">this</strong>.level = level;
 <a class="jxr_linenumber" name="46" href="#46">46</a>      }
 <a class="jxr_linenumber" name="47" href="#47">47</a>  
-<a class="jxr_linenumber" name="48" href="#48">48</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setMarker(Marker marker) {
+<a class="jxr_linenumber" name="48" href="#48">48</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setMarker(<strong class="jxr_keyword">final</strong> Marker marker) {
 <a class="jxr_linenumber" name="49" href="#49">49</a>          <strong class="jxr_keyword">this</strong>.marker = marker;
 <a class="jxr_linenumber" name="50" href="#50">50</a>      }
 <a class="jxr_linenumber" name="51" href="#51">51</a>  
 <a class="jxr_linenumber" name="52" href="#52">52</a>      @Override
 <a class="jxr_linenumber" name="53" href="#53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> doStartTag() <strong class="jxr_keyword">throws</strong> JspException {
-<a class="jxr_linenumber" name="54" href="#54">54</a>          Level level = TagUtils.resolveLevel(<strong class="jxr_keyword">this</strong>.level);
+<a class="jxr_linenumber" name="54" href="#54">54</a>          <strong class="jxr_keyword">final</strong> Level level = TagUtils.resolveLevel(<strong class="jxr_keyword">this</strong>.level);
 <a class="jxr_linenumber" name="55" href="#55">55</a>          <strong class="jxr_keyword">if</strong> (level == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="56" href="#56">56</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JspException(<span class="jxr_string">"Level must be of type String or org.apache.logging.log4j.Level."</span>);
 <a class="jxr_linenumber" name="57" href="#57">57</a>          }

@@ -132,21 +132,23 @@
 <FONT color="green">129</FONT>                LOGGER.error("No filename provided for FileAppender with name "  + name);<a name="line.129"></a>
 <FONT color="green">130</FONT>                return null;<a name="line.130"></a>
 <FONT color="green">131</FONT>            }<a name="line.131"></a>
-<FONT color="green">132</FONT>    <a name="line.132"></a>
-<FONT color="green">133</FONT>            final FileManager manager = FileManager.getFileManager(fileName, isAppend, isLocking, isBuffered, advertiseURI);<a name="line.133"></a>
-<FONT color="green">134</FONT>            if (manager == null) {<a name="line.134"></a>
-<FONT color="green">135</FONT>                return null;<a name="line.135"></a>
+<FONT color="green">132</FONT>            if (layout == null) {<a name="line.132"></a>
+<FONT color="green">133</FONT>                @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})<a name="line.133"></a>
+<FONT color="green">134</FONT>                Layout&lt;S&gt; l = (Layout&lt;S&gt;)PatternLayout.createLayout(null, null, null, null, null);<a name="line.134"></a>
+<FONT color="green">135</FONT>                layout = l;<a name="line.135"></a>
 <FONT color="green">136</FONT>            }<a name="line.136"></a>
-<FONT color="green">137</FONT>            if (layout == null) {<a name="line.137"></a>
-<FONT color="green">138</FONT>                @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})<a name="line.138"></a>
-<FONT color="green">139</FONT>                Layout&lt;S&gt; l = (Layout&lt;S&gt;)PatternLayout.createLayout(null, null, null, null);<a name="line.139"></a>
-<FONT color="green">140</FONT>                layout = l;<a name="line.140"></a>
-<FONT color="green">141</FONT>            }<a name="line.141"></a>
-<FONT color="green">142</FONT>    <a name="line.142"></a>
-<FONT color="green">143</FONT>            return new FileAppender&lt;S&gt;(name, layout, filter, manager, fileName, handleExceptions, isFlush,<a name="line.143"></a>
-<FONT color="green">144</FONT>                    isAdvertise ? config.getAdvertiser() : null);<a name="line.144"></a>
-<FONT color="green">145</FONT>        }<a name="line.145"></a>
-<FONT color="green">146</FONT>    }<a name="line.146"></a>
+<FONT color="green">137</FONT>    <a name="line.137"></a>
+<FONT color="green">138</FONT>            final FileManager manager = FileManager.getFileManager(fileName, isAppend, isLocking, isBuffered, advertiseURI,<a name="line.138"></a>
+<FONT color="green">139</FONT>                layout);<a name="line.139"></a>
+<FONT color="green">140</FONT>            if (manager == null) {<a name="line.140"></a>
+<FONT color="green">141</FONT>                return null;<a name="line.141"></a>
+<FONT color="green">142</FONT>            }<a name="line.142"></a>
+<FONT color="green">143</FONT>    <a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>            return new FileAppender&lt;S&gt;(name, layout, filter, manager, fileName, handleExceptions, isFlush,<a name="line.145"></a>
+<FONT color="green">146</FONT>                    isAdvertise ? config.getAdvertiser() : null);<a name="line.146"></a>
+<FONT color="green">147</FONT>        }<a name="line.147"></a>
+<FONT color="green">148</FONT>    }<a name="line.148"></a>
 
 
 

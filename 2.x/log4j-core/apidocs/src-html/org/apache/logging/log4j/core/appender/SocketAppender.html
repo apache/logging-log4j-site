@@ -101,7 +101,7 @@
 <FONT color="green">098</FONT>                                                    @PluginAttr("advertise") final String advertise,<a name="line.98"></a>
 <FONT color="green">099</FONT>                                                    @PluginConfiguration final Configuration config) {<a name="line.99"></a>
 <FONT color="green">100</FONT>    <a name="line.100"></a>
-<FONT color="green">101</FONT>            final boolean isFlush = immediateFlush == null ? true : Boolean.valueOf(immediateFlush);<a name="line.101"></a>
+<FONT color="green">101</FONT>            boolean isFlush = immediateFlush == null ? true : Boolean.valueOf(immediateFlush);<a name="line.101"></a>
 <FONT color="green">102</FONT>            boolean isAdvertise = advertise == null ? false : Boolean.valueOf(advertise);<a name="line.102"></a>
 <FONT color="green">103</FONT>            final boolean handleExceptions = suppress == null ? true : Boolean.valueOf(suppress);<a name="line.103"></a>
 <FONT color="green">104</FONT>            final boolean fail = immediateFail == null ? true : Boolean.valueOf(immediateFail);<a name="line.104"></a>
@@ -119,29 +119,33 @@
 <FONT color="green">116</FONT>            }<a name="line.116"></a>
 <FONT color="green">117</FONT>    <a name="line.117"></a>
 <FONT color="green">118</FONT>            final String prot = protocol != null ? protocol : Protocol.TCP.name();<a name="line.118"></a>
-<FONT color="green">119</FONT>    <a name="line.119"></a>
-<FONT color="green">120</FONT>            final AbstractSocketManager manager = createSocketManager(prot, host, port, reconnectDelay, fail);<a name="line.120"></a>
-<FONT color="green">121</FONT>            if (manager == null) {<a name="line.121"></a>
-<FONT color="green">122</FONT>                return null;<a name="line.122"></a>
-<FONT color="green">123</FONT>            }<a name="line.123"></a>
-<FONT color="green">124</FONT>    <a name="line.124"></a>
-<FONT color="green">125</FONT>            return new SocketAppender&lt;S&gt;(name, layout, filter, manager, handleExceptions, isFlush,<a name="line.125"></a>
-<FONT color="green">126</FONT>                    isAdvertise ? config.getAdvertiser() : null);<a name="line.126"></a>
-<FONT color="green">127</FONT>        }<a name="line.127"></a>
+<FONT color="green">119</FONT>            final Protocol p = EnglishEnums.valueOf(Protocol.class, protocol);<a name="line.119"></a>
+<FONT color="green">120</FONT>            if (p.equals(Protocol.UDP)) {<a name="line.120"></a>
+<FONT color="green">121</FONT>                isFlush = true;<a name="line.121"></a>
+<FONT color="green">122</FONT>            }<a name="line.122"></a>
+<FONT color="green">123</FONT>    <a name="line.123"></a>
+<FONT color="green">124</FONT>            final AbstractSocketManager manager = createSocketManager(p, host, port, reconnectDelay, fail, layout);<a name="line.124"></a>
+<FONT color="green">125</FONT>            if (manager == null) {<a name="line.125"></a>
+<FONT color="green">126</FONT>                return null;<a name="line.126"></a>
+<FONT color="green">127</FONT>            }<a name="line.127"></a>
 <FONT color="green">128</FONT>    <a name="line.128"></a>
-<FONT color="green">129</FONT>        protected static AbstractSocketManager createSocketManager(final String protocol, final String host, final int port,<a name="line.129"></a>
-<FONT color="green">130</FONT>                                                                   final int delay, final boolean immediateFail) {<a name="line.130"></a>
-<FONT color="green">131</FONT>            final Protocol p = EnglishEnums.valueOf(Protocol.class, protocol);<a name="line.131"></a>
-<FONT color="green">132</FONT>            switch (p) {<a name="line.132"></a>
-<FONT color="green">133</FONT>                case TCP:<a name="line.133"></a>
-<FONT color="green">134</FONT>                    return TCPSocketManager.getSocketManager(host, port, delay, immediateFail);<a name="line.134"></a>
-<FONT color="green">135</FONT>                case UDP:<a name="line.135"></a>
-<FONT color="green">136</FONT>                    return DatagramSocketManager.getSocketManager(host, port);<a name="line.136"></a>
-<FONT color="green">137</FONT>                default:<a name="line.137"></a>
-<FONT color="green">138</FONT>                    return null;<a name="line.138"></a>
-<FONT color="green">139</FONT>            }<a name="line.139"></a>
-<FONT color="green">140</FONT>        }<a name="line.140"></a>
-<FONT color="green">141</FONT>    }<a name="line.141"></a>
+<FONT color="green">129</FONT>            return new SocketAppender&lt;S&gt;(name, layout, filter, manager, handleExceptions, isFlush,<a name="line.129"></a>
+<FONT color="green">130</FONT>                    isAdvertise ? config.getAdvertiser() : null);<a name="line.130"></a>
+<FONT color="green">131</FONT>        }<a name="line.131"></a>
+<FONT color="green">132</FONT>    <a name="line.132"></a>
+<FONT color="green">133</FONT>        protected static AbstractSocketManager createSocketManager(final Protocol p, final String host, final int port,<a name="line.133"></a>
+<FONT color="green">134</FONT>                                                                   final int delay, final boolean immediateFail,<a name="line.134"></a>
+<FONT color="green">135</FONT>                                                                   final Layout layout) {<a name="line.135"></a>
+<FONT color="green">136</FONT>            switch (p) {<a name="line.136"></a>
+<FONT color="green">137</FONT>                case TCP:<a name="line.137"></a>
+<FONT color="green">138</FONT>                    return TCPSocketManager.getSocketManager(host, port, delay, immediateFail, layout);<a name="line.138"></a>
+<FONT color="green">139</FONT>                case UDP:<a name="line.139"></a>
+<FONT color="green">140</FONT>                    return DatagramSocketManager.getSocketManager(host, port, layout);<a name="line.140"></a>
+<FONT color="green">141</FONT>                default:<a name="line.141"></a>
+<FONT color="green">142</FONT>                    return null;<a name="line.142"></a>
+<FONT color="green">143</FONT>            }<a name="line.143"></a>
+<FONT color="green">144</FONT>        }<a name="line.144"></a>
+<FONT color="green">145</FONT>    }<a name="line.145"></a>
 
 
 

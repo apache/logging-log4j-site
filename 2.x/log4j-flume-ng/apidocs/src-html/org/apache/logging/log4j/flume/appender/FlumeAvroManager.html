@@ -137,147 +137,149 @@
 <FONT color="green">134</FONT>    <a name="line.134"></a>
 <FONT color="green">135</FONT>            if (rpcClient != null) {<a name="line.135"></a>
 <FONT color="green">136</FONT>                try {<a name="line.136"></a>
-<FONT color="green">137</FONT>                    rpcClient.appendBatch(events.getEvents());<a name="line.137"></a>
-<FONT color="green">138</FONT>                } catch (final Exception ex) {<a name="line.138"></a>
-<FONT color="green">139</FONT>                    rpcClient.close();<a name="line.139"></a>
-<FONT color="green">140</FONT>                    rpcClient = null;<a name="line.140"></a>
-<FONT color="green">141</FONT>                    String msg = "Unable to write to " + getName() + " at " + agents[current].getHost() + ":" +<a name="line.141"></a>
-<FONT color="green">142</FONT>                        agents[current].getPort();<a name="line.142"></a>
-<FONT color="green">143</FONT>                    LOGGER.warn(msg, ex);<a name="line.143"></a>
-<FONT color="green">144</FONT>                    throw new AppenderRuntimeException("No Flume agents are available");<a name="line.144"></a>
-<FONT color="green">145</FONT>                }<a name="line.145"></a>
-<FONT color="green">146</FONT>            }<a name="line.146"></a>
-<FONT color="green">147</FONT>        }<a name="line.147"></a>
-<FONT color="green">148</FONT>    <a name="line.148"></a>
-<FONT color="green">149</FONT>        @Override<a name="line.149"></a>
-<FONT color="green">150</FONT>        public synchronized void send(final Event event)  {<a name="line.150"></a>
-<FONT color="green">151</FONT>            if (rpcClient == null) {<a name="line.151"></a>
-<FONT color="green">152</FONT>                rpcClient = connect(agents, retries, connectTimeout, requestTimeout);<a name="line.152"></a>
-<FONT color="green">153</FONT>            }<a name="line.153"></a>
-<FONT color="green">154</FONT>    <a name="line.154"></a>
-<FONT color="green">155</FONT>            if (rpcClient != null) {<a name="line.155"></a>
-<FONT color="green">156</FONT>                try {<a name="line.156"></a>
-<FONT color="green">157</FONT>                    rpcClient.append(event);<a name="line.157"></a>
-<FONT color="green">158</FONT>                } catch (final Exception ex) {<a name="line.158"></a>
-<FONT color="green">159</FONT>                    rpcClient.close();<a name="line.159"></a>
-<FONT color="green">160</FONT>                    rpcClient = null;<a name="line.160"></a>
-<FONT color="green">161</FONT>                    String msg = "Unable to write to " + getName() + " at " + agents[current].getHost() + ":" +<a name="line.161"></a>
-<FONT color="green">162</FONT>                        agents[current].getPort();<a name="line.162"></a>
-<FONT color="green">163</FONT>                    LOGGER.warn(msg, ex);<a name="line.163"></a>
-<FONT color="green">164</FONT>                    throw new AppenderRuntimeException("No Flume agents are available");<a name="line.164"></a>
-<FONT color="green">165</FONT>                }<a name="line.165"></a>
-<FONT color="green">166</FONT>            }<a name="line.166"></a>
-<FONT color="green">167</FONT>        }<a name="line.167"></a>
-<FONT color="green">168</FONT>    <a name="line.168"></a>
-<FONT color="green">169</FONT>        /**<a name="line.169"></a>
-<FONT color="green">170</FONT>         * There is a very good chance that this will always return the first agent even if it isn't available.<a name="line.170"></a>
-<FONT color="green">171</FONT>         * @param agents The list of agents to choose from<a name="line.171"></a>
-<FONT color="green">172</FONT>         * @return The FlumeEventAvroServer.<a name="line.172"></a>
-<FONT color="green">173</FONT>         */<a name="line.173"></a>
-<FONT color="green">174</FONT>    <a name="line.174"></a>
-<FONT color="green">175</FONT>        private RpcClient connect(final Agent[] agents, int retries, int connectTimeout, int requestTimeout) {<a name="line.175"></a>
-<FONT color="green">176</FONT>            try {<a name="line.176"></a>
-<FONT color="green">177</FONT>                Properties props = new Properties();<a name="line.177"></a>
-<FONT color="green">178</FONT>    <a name="line.178"></a>
-<FONT color="green">179</FONT>                props.put("client.type", agents.length &gt; 1 ? "default_failover" : "default");<a name="line.179"></a>
-<FONT color="green">180</FONT>    <a name="line.180"></a>
-<FONT color="green">181</FONT>                int count = 1;<a name="line.181"></a>
-<FONT color="green">182</FONT>                StringBuilder sb = new StringBuilder();<a name="line.182"></a>
-<FONT color="green">183</FONT>                for (Agent agent : agents) {<a name="line.183"></a>
-<FONT color="green">184</FONT>                    if (sb.length() &gt; 0) {<a name="line.184"></a>
-<FONT color="green">185</FONT>                        sb.append(" ");<a name="line.185"></a>
-<FONT color="green">186</FONT>                    }<a name="line.186"></a>
-<FONT color="green">187</FONT>                    String hostName = "host" + count++;<a name="line.187"></a>
-<FONT color="green">188</FONT>                    props.put("hosts." + hostName, agent.getHost() + ":" + agent.getPort());<a name="line.188"></a>
-<FONT color="green">189</FONT>                    sb.append(hostName);<a name="line.189"></a>
-<FONT color="green">190</FONT>                }<a name="line.190"></a>
-<FONT color="green">191</FONT>                props.put("hosts", sb.toString());<a name="line.191"></a>
-<FONT color="green">192</FONT>                if (batchSize &gt; 0) {<a name="line.192"></a>
-<FONT color="green">193</FONT>                    props.put("batch-size", Integer.toString(batchSize));<a name="line.193"></a>
-<FONT color="green">194</FONT>                }<a name="line.194"></a>
-<FONT color="green">195</FONT>                if (retries &gt; 1) {<a name="line.195"></a>
-<FONT color="green">196</FONT>                    if (retries &gt; MAX_RECONNECTS) {<a name="line.196"></a>
-<FONT color="green">197</FONT>                        retries = MAX_RECONNECTS;<a name="line.197"></a>
-<FONT color="green">198</FONT>                    }<a name="line.198"></a>
-<FONT color="green">199</FONT>                    props.put("max-attempts", Integer.toString(retries * agents.length));<a name="line.199"></a>
-<FONT color="green">200</FONT>                }<a name="line.200"></a>
-<FONT color="green">201</FONT>                if (requestTimeout &gt;= 1000) {<a name="line.201"></a>
-<FONT color="green">202</FONT>                    props.put("request-timeout", Integer.toString(requestTimeout));<a name="line.202"></a>
-<FONT color="green">203</FONT>                }<a name="line.203"></a>
-<FONT color="green">204</FONT>                if (connectTimeout &gt;= 1000) {<a name="line.204"></a>
-<FONT color="green">205</FONT>                    props.put("connect-timeout", Integer.toString(connectTimeout));<a name="line.205"></a>
-<FONT color="green">206</FONT>                }<a name="line.206"></a>
-<FONT color="green">207</FONT>                return RpcClientFactory.getInstance(props);<a name="line.207"></a>
-<FONT color="green">208</FONT>            } catch (Exception ex) {<a name="line.208"></a>
-<FONT color="green">209</FONT>                LOGGER.error("Unable to create Flume RPCClient: {}", ex.getMessage());<a name="line.209"></a>
-<FONT color="green">210</FONT>                return null;<a name="line.210"></a>
-<FONT color="green">211</FONT>            }<a name="line.211"></a>
-<FONT color="green">212</FONT>        }<a name="line.212"></a>
-<FONT color="green">213</FONT>    <a name="line.213"></a>
-<FONT color="green">214</FONT>        @Override<a name="line.214"></a>
-<FONT color="green">215</FONT>        protected void releaseSub() {<a name="line.215"></a>
-<FONT color="green">216</FONT>            if (rpcClient != null) {<a name="line.216"></a>
-<FONT color="green">217</FONT>                try {<a name="line.217"></a>
-<FONT color="green">218</FONT>                    rpcClient.close();<a name="line.218"></a>
-<FONT color="green">219</FONT>                } catch (final Exception ex) {<a name="line.219"></a>
-<FONT color="green">220</FONT>                    LOGGER.error("Attempt to close RPC client failed", ex);<a name="line.220"></a>
-<FONT color="green">221</FONT>                }<a name="line.221"></a>
-<FONT color="green">222</FONT>            }<a name="line.222"></a>
-<FONT color="green">223</FONT>            rpcClient = null;<a name="line.223"></a>
-<FONT color="green">224</FONT>        }<a name="line.224"></a>
-<FONT color="green">225</FONT>    <a name="line.225"></a>
-<FONT color="green">226</FONT>        /**<a name="line.226"></a>
-<FONT color="green">227</FONT>         * Factory data.<a name="line.227"></a>
-<FONT color="green">228</FONT>         */<a name="line.228"></a>
-<FONT color="green">229</FONT>        private static class FactoryData {<a name="line.229"></a>
-<FONT color="green">230</FONT>            private final String name;<a name="line.230"></a>
-<FONT color="green">231</FONT>            private final Agent[] agents;<a name="line.231"></a>
-<FONT color="green">232</FONT>            private final int batchSize;<a name="line.232"></a>
-<FONT color="green">233</FONT>            private final int retries;<a name="line.233"></a>
-<FONT color="green">234</FONT>            private final int conntectTimeout;<a name="line.234"></a>
-<FONT color="green">235</FONT>            private final int requestTimeout;<a name="line.235"></a>
-<FONT color="green">236</FONT>    <a name="line.236"></a>
-<FONT color="green">237</FONT>            /**<a name="line.237"></a>
-<FONT color="green">238</FONT>             * Constructor.<a name="line.238"></a>
-<FONT color="green">239</FONT>             * @param name The name of the Appender.<a name="line.239"></a>
-<FONT color="green">240</FONT>             * @param agents The agents.<a name="line.240"></a>
-<FONT color="green">241</FONT>             * @param batchSize The number of events to include in a batch.<a name="line.241"></a>
-<FONT color="green">242</FONT>             */<a name="line.242"></a>
-<FONT color="green">243</FONT>            public FactoryData(final String name, final Agent[] agents, final int batchSize, final int retries,<a name="line.243"></a>
-<FONT color="green">244</FONT>                               final int connectTimeout, final int requestTimeout) {<a name="line.244"></a>
-<FONT color="green">245</FONT>                this.name = name;<a name="line.245"></a>
-<FONT color="green">246</FONT>                this.agents = agents;<a name="line.246"></a>
-<FONT color="green">247</FONT>                this.batchSize = batchSize;<a name="line.247"></a>
-<FONT color="green">248</FONT>                this.retries = retries;<a name="line.248"></a>
-<FONT color="green">249</FONT>                this.conntectTimeout = connectTimeout;<a name="line.249"></a>
-<FONT color="green">250</FONT>                this.requestTimeout = requestTimeout;<a name="line.250"></a>
-<FONT color="green">251</FONT>            }<a name="line.251"></a>
-<FONT color="green">252</FONT>        }<a name="line.252"></a>
-<FONT color="green">253</FONT>    <a name="line.253"></a>
-<FONT color="green">254</FONT>        /**<a name="line.254"></a>
-<FONT color="green">255</FONT>         * Avro Manager Factory.<a name="line.255"></a>
-<FONT color="green">256</FONT>         */<a name="line.256"></a>
-<FONT color="green">257</FONT>        private static class AvroManagerFactory implements ManagerFactory&lt;FlumeAvroManager, FactoryData&gt; {<a name="line.257"></a>
-<FONT color="green">258</FONT>    <a name="line.258"></a>
-<FONT color="green">259</FONT>            /**<a name="line.259"></a>
-<FONT color="green">260</FONT>             * Create the FlumeAvroManager.<a name="line.260"></a>
-<FONT color="green">261</FONT>             * @param name The name of the entity to manage.<a name="line.261"></a>
-<FONT color="green">262</FONT>             * @param data The data required to create the entity.<a name="line.262"></a>
-<FONT color="green">263</FONT>             * @return The FlumeAvroManager.<a name="line.263"></a>
-<FONT color="green">264</FONT>             */<a name="line.264"></a>
-<FONT color="green">265</FONT>            public FlumeAvroManager createManager(final String name, final FactoryData data) {<a name="line.265"></a>
-<FONT color="green">266</FONT>                try {<a name="line.266"></a>
-<FONT color="green">267</FONT>    <a name="line.267"></a>
-<FONT color="green">268</FONT>                    return new FlumeAvroManager(name, data.name, data.agents, data.batchSize, data.retries,<a name="line.268"></a>
-<FONT color="green">269</FONT>                        data.conntectTimeout, data.requestTimeout);<a name="line.269"></a>
-<FONT color="green">270</FONT>                } catch (final Exception ex) {<a name="line.270"></a>
-<FONT color="green">271</FONT>                    LOGGER.error("Could not create FlumeAvroManager", ex);<a name="line.271"></a>
-<FONT color="green">272</FONT>                }<a name="line.272"></a>
-<FONT color="green">273</FONT>                return null;<a name="line.273"></a>
-<FONT color="green">274</FONT>            }<a name="line.274"></a>
-<FONT color="green">275</FONT>        }<a name="line.275"></a>
-<FONT color="green">276</FONT>    <a name="line.276"></a>
-<FONT color="green">277</FONT>    }<a name="line.277"></a>
+<FONT color="green">137</FONT>                    LOGGER.trace("Sending batch of {} events", events.getEvents().size());<a name="line.137"></a>
+<FONT color="green">138</FONT>                    rpcClient.appendBatch(events.getEvents());<a name="line.138"></a>
+<FONT color="green">139</FONT>                } catch (final Exception ex) {<a name="line.139"></a>
+<FONT color="green">140</FONT>                    rpcClient.close();<a name="line.140"></a>
+<FONT color="green">141</FONT>                    rpcClient = null;<a name="line.141"></a>
+<FONT color="green">142</FONT>                    String msg = "Unable to write to " + getName() + " at " + agents[current].getHost() + ":" +<a name="line.142"></a>
+<FONT color="green">143</FONT>                        agents[current].getPort();<a name="line.143"></a>
+<FONT color="green">144</FONT>                    LOGGER.warn(msg, ex);<a name="line.144"></a>
+<FONT color="green">145</FONT>                    throw new AppenderRuntimeException("No Flume agents are available");<a name="line.145"></a>
+<FONT color="green">146</FONT>                }<a name="line.146"></a>
+<FONT color="green">147</FONT>            }<a name="line.147"></a>
+<FONT color="green">148</FONT>        }<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>        @Override<a name="line.150"></a>
+<FONT color="green">151</FONT>        public synchronized void send(final Event event)  {<a name="line.151"></a>
+<FONT color="green">152</FONT>            if (rpcClient == null) {<a name="line.152"></a>
+<FONT color="green">153</FONT>                rpcClient = connect(agents, retries, connectTimeout, requestTimeout);<a name="line.153"></a>
+<FONT color="green">154</FONT>            }<a name="line.154"></a>
+<FONT color="green">155</FONT>    <a name="line.155"></a>
+<FONT color="green">156</FONT>            if (rpcClient != null) {<a name="line.156"></a>
+<FONT color="green">157</FONT>                try {<a name="line.157"></a>
+<FONT color="green">158</FONT>                    rpcClient.append(event);<a name="line.158"></a>
+<FONT color="green">159</FONT>                } catch (final Exception ex) {<a name="line.159"></a>
+<FONT color="green">160</FONT>                    rpcClient.close();<a name="line.160"></a>
+<FONT color="green">161</FONT>                    rpcClient = null;<a name="line.161"></a>
+<FONT color="green">162</FONT>                    String msg = "Unable to write to " + getName() + " at " + agents[current].getHost() + ":" +<a name="line.162"></a>
+<FONT color="green">163</FONT>                        agents[current].getPort();<a name="line.163"></a>
+<FONT color="green">164</FONT>                    LOGGER.warn(msg, ex);<a name="line.164"></a>
+<FONT color="green">165</FONT>                    throw new AppenderRuntimeException("No Flume agents are available");<a name="line.165"></a>
+<FONT color="green">166</FONT>                }<a name="line.166"></a>
+<FONT color="green">167</FONT>            }<a name="line.167"></a>
+<FONT color="green">168</FONT>        }<a name="line.168"></a>
+<FONT color="green">169</FONT>    <a name="line.169"></a>
+<FONT color="green">170</FONT>        /**<a name="line.170"></a>
+<FONT color="green">171</FONT>         * There is a very good chance that this will always return the first agent even if it isn't available.<a name="line.171"></a>
+<FONT color="green">172</FONT>         * @param agents The list of agents to choose from<a name="line.172"></a>
+<FONT color="green">173</FONT>         * @return The FlumeEventAvroServer.<a name="line.173"></a>
+<FONT color="green">174</FONT>         */<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>        private RpcClient connect(final Agent[] agents, int retries, int connectTimeout, int requestTimeout) {<a name="line.176"></a>
+<FONT color="green">177</FONT>            try {<a name="line.177"></a>
+<FONT color="green">178</FONT>                Properties props = new Properties();<a name="line.178"></a>
+<FONT color="green">179</FONT>    <a name="line.179"></a>
+<FONT color="green">180</FONT>                props.put("client.type", agents.length &gt; 1 ? "default_failover" : "default");<a name="line.180"></a>
+<FONT color="green">181</FONT>    <a name="line.181"></a>
+<FONT color="green">182</FONT>                int count = 1;<a name="line.182"></a>
+<FONT color="green">183</FONT>                StringBuilder sb = new StringBuilder();<a name="line.183"></a>
+<FONT color="green">184</FONT>                for (Agent agent : agents) {<a name="line.184"></a>
+<FONT color="green">185</FONT>                    if (sb.length() &gt; 0) {<a name="line.185"></a>
+<FONT color="green">186</FONT>                        sb.append(" ");<a name="line.186"></a>
+<FONT color="green">187</FONT>                    }<a name="line.187"></a>
+<FONT color="green">188</FONT>                    String hostName = "host" + count++;<a name="line.188"></a>
+<FONT color="green">189</FONT>                    props.put("hosts." + hostName, agent.getHost() + ":" + agent.getPort());<a name="line.189"></a>
+<FONT color="green">190</FONT>                    sb.append(hostName);<a name="line.190"></a>
+<FONT color="green">191</FONT>                }<a name="line.191"></a>
+<FONT color="green">192</FONT>                props.put("hosts", sb.toString());<a name="line.192"></a>
+<FONT color="green">193</FONT>                if (batchSize &gt; 0) {<a name="line.193"></a>
+<FONT color="green">194</FONT>                    props.put("batch-size", Integer.toString(batchSize));<a name="line.194"></a>
+<FONT color="green">195</FONT>                }<a name="line.195"></a>
+<FONT color="green">196</FONT>                if (retries &gt; 1) {<a name="line.196"></a>
+<FONT color="green">197</FONT>                    if (retries &gt; MAX_RECONNECTS) {<a name="line.197"></a>
+<FONT color="green">198</FONT>                        retries = MAX_RECONNECTS;<a name="line.198"></a>
+<FONT color="green">199</FONT>                    }<a name="line.199"></a>
+<FONT color="green">200</FONT>                    props.put("max-attempts", Integer.toString(retries * agents.length));<a name="line.200"></a>
+<FONT color="green">201</FONT>                }<a name="line.201"></a>
+<FONT color="green">202</FONT>                if (requestTimeout &gt;= 1000) {<a name="line.202"></a>
+<FONT color="green">203</FONT>                    props.put("request-timeout", Integer.toString(requestTimeout));<a name="line.203"></a>
+<FONT color="green">204</FONT>                }<a name="line.204"></a>
+<FONT color="green">205</FONT>                if (connectTimeout &gt;= 1000) {<a name="line.205"></a>
+<FONT color="green">206</FONT>                    props.put("connect-timeout", Integer.toString(connectTimeout));<a name="line.206"></a>
+<FONT color="green">207</FONT>                }<a name="line.207"></a>
+<FONT color="green">208</FONT>                return RpcClientFactory.getInstance(props);<a name="line.208"></a>
+<FONT color="green">209</FONT>            } catch (Exception ex) {<a name="line.209"></a>
+<FONT color="green">210</FONT>                LOGGER.error("Unable to create Flume RPCClient: {}", ex.getMessage());<a name="line.210"></a>
+<FONT color="green">211</FONT>                return null;<a name="line.211"></a>
+<FONT color="green">212</FONT>            }<a name="line.212"></a>
+<FONT color="green">213</FONT>        }<a name="line.213"></a>
+<FONT color="green">214</FONT>    <a name="line.214"></a>
+<FONT color="green">215</FONT>        @Override<a name="line.215"></a>
+<FONT color="green">216</FONT>        protected void releaseSub() {<a name="line.216"></a>
+<FONT color="green">217</FONT>            if (rpcClient != null) {<a name="line.217"></a>
+<FONT color="green">218</FONT>                try {<a name="line.218"></a>
+<FONT color="green">219</FONT>                    rpcClient.close();<a name="line.219"></a>
+<FONT color="green">220</FONT>                } catch (final Exception ex) {<a name="line.220"></a>
+<FONT color="green">221</FONT>                    LOGGER.error("Attempt to close RPC client failed", ex);<a name="line.221"></a>
+<FONT color="green">222</FONT>                }<a name="line.222"></a>
+<FONT color="green">223</FONT>            }<a name="line.223"></a>
+<FONT color="green">224</FONT>            rpcClient = null;<a name="line.224"></a>
+<FONT color="green">225</FONT>        }<a name="line.225"></a>
+<FONT color="green">226</FONT>    <a name="line.226"></a>
+<FONT color="green">227</FONT>        /**<a name="line.227"></a>
+<FONT color="green">228</FONT>         * Factory data.<a name="line.228"></a>
+<FONT color="green">229</FONT>         */<a name="line.229"></a>
+<FONT color="green">230</FONT>        private static class FactoryData {<a name="line.230"></a>
+<FONT color="green">231</FONT>            private final String name;<a name="line.231"></a>
+<FONT color="green">232</FONT>            private final Agent[] agents;<a name="line.232"></a>
+<FONT color="green">233</FONT>            private final int batchSize;<a name="line.233"></a>
+<FONT color="green">234</FONT>            private final int retries;<a name="line.234"></a>
+<FONT color="green">235</FONT>            private final int conntectTimeout;<a name="line.235"></a>
+<FONT color="green">236</FONT>            private final int requestTimeout;<a name="line.236"></a>
+<FONT color="green">237</FONT>    <a name="line.237"></a>
+<FONT color="green">238</FONT>            /**<a name="line.238"></a>
+<FONT color="green">239</FONT>             * Constructor.<a name="line.239"></a>
+<FONT color="green">240</FONT>             * @param name The name of the Appender.<a name="line.240"></a>
+<FONT color="green">241</FONT>             * @param agents The agents.<a name="line.241"></a>
+<FONT color="green">242</FONT>             * @param batchSize The number of events to include in a batch.<a name="line.242"></a>
+<FONT color="green">243</FONT>             */<a name="line.243"></a>
+<FONT color="green">244</FONT>            public FactoryData(final String name, final Agent[] agents, final int batchSize, final int retries,<a name="line.244"></a>
+<FONT color="green">245</FONT>                               final int connectTimeout, final int requestTimeout) {<a name="line.245"></a>
+<FONT color="green">246</FONT>                this.name = name;<a name="line.246"></a>
+<FONT color="green">247</FONT>                this.agents = agents;<a name="line.247"></a>
+<FONT color="green">248</FONT>                this.batchSize = batchSize;<a name="line.248"></a>
+<FONT color="green">249</FONT>                this.retries = retries;<a name="line.249"></a>
+<FONT color="green">250</FONT>                this.conntectTimeout = connectTimeout;<a name="line.250"></a>
+<FONT color="green">251</FONT>                this.requestTimeout = requestTimeout;<a name="line.251"></a>
+<FONT color="green">252</FONT>            }<a name="line.252"></a>
+<FONT color="green">253</FONT>        }<a name="line.253"></a>
+<FONT color="green">254</FONT>    <a name="line.254"></a>
+<FONT color="green">255</FONT>        /**<a name="line.255"></a>
+<FONT color="green">256</FONT>         * Avro Manager Factory.<a name="line.256"></a>
+<FONT color="green">257</FONT>         */<a name="line.257"></a>
+<FONT color="green">258</FONT>        private static class AvroManagerFactory implements ManagerFactory&lt;FlumeAvroManager, FactoryData&gt; {<a name="line.258"></a>
+<FONT color="green">259</FONT>    <a name="line.259"></a>
+<FONT color="green">260</FONT>            /**<a name="line.260"></a>
+<FONT color="green">261</FONT>             * Create the FlumeAvroManager.<a name="line.261"></a>
+<FONT color="green">262</FONT>             * @param name The name of the entity to manage.<a name="line.262"></a>
+<FONT color="green">263</FONT>             * @param data The data required to create the entity.<a name="line.263"></a>
+<FONT color="green">264</FONT>             * @return The FlumeAvroManager.<a name="line.264"></a>
+<FONT color="green">265</FONT>             */<a name="line.265"></a>
+<FONT color="green">266</FONT>            @Override<a name="line.266"></a>
+<FONT color="green">267</FONT>            public FlumeAvroManager createManager(final String name, final FactoryData data) {<a name="line.267"></a>
+<FONT color="green">268</FONT>                try {<a name="line.268"></a>
+<FONT color="green">269</FONT>    <a name="line.269"></a>
+<FONT color="green">270</FONT>                    return new FlumeAvroManager(name, data.name, data.agents, data.batchSize, data.retries,<a name="line.270"></a>
+<FONT color="green">271</FONT>                        data.conntectTimeout, data.requestTimeout);<a name="line.271"></a>
+<FONT color="green">272</FONT>                } catch (final Exception ex) {<a name="line.272"></a>
+<FONT color="green">273</FONT>                    LOGGER.error("Could not create FlumeAvroManager", ex);<a name="line.273"></a>
+<FONT color="green">274</FONT>                }<a name="line.274"></a>
+<FONT color="green">275</FONT>                return null;<a name="line.275"></a>
+<FONT color="green">276</FONT>            }<a name="line.276"></a>
+<FONT color="green">277</FONT>        }<a name="line.277"></a>
+<FONT color="green">278</FONT>    <a name="line.278"></a>
+<FONT color="green">279</FONT>    }<a name="line.279"></a>
 
 
 

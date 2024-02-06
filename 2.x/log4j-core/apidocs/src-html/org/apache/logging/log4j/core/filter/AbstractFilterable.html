@@ -43,82 +43,87 @@
 <FONT color="green">040</FONT>         * Returns the Filter.<a name="line.40"></a>
 <FONT color="green">041</FONT>         * @return the Filter.<a name="line.41"></a>
 <FONT color="green">042</FONT>         */<a name="line.42"></a>
-<FONT color="green">043</FONT>        public Filter getFilter() {<a name="line.43"></a>
-<FONT color="green">044</FONT>            return filter;<a name="line.44"></a>
-<FONT color="green">045</FONT>        }<a name="line.45"></a>
-<FONT color="green">046</FONT>    <a name="line.46"></a>
-<FONT color="green">047</FONT>        /**<a name="line.47"></a>
-<FONT color="green">048</FONT>         * Add a filter.<a name="line.48"></a>
-<FONT color="green">049</FONT>         * @param filter The Filter to add.<a name="line.49"></a>
-<FONT color="green">050</FONT>         */<a name="line.50"></a>
-<FONT color="green">051</FONT>        public synchronized void addFilter(final Filter filter) {<a name="line.51"></a>
-<FONT color="green">052</FONT>            if (this.filter == null) {<a name="line.52"></a>
-<FONT color="green">053</FONT>                this.filter = filter;<a name="line.53"></a>
-<FONT color="green">054</FONT>            } else if (filter instanceof CompositeFilter) {<a name="line.54"></a>
-<FONT color="green">055</FONT>                this.filter = ((CompositeFilter) this.filter).addFilter(filter);<a name="line.55"></a>
-<FONT color="green">056</FONT>            } else {<a name="line.56"></a>
-<FONT color="green">057</FONT>                final Filter[] filters = new Filter[] {this.filter, filter};<a name="line.57"></a>
-<FONT color="green">058</FONT>                this.filter = CompositeFilter.createFilters(filters);<a name="line.58"></a>
-<FONT color="green">059</FONT>            }<a name="line.59"></a>
-<FONT color="green">060</FONT>        }<a name="line.60"></a>
-<FONT color="green">061</FONT>    <a name="line.61"></a>
-<FONT color="green">062</FONT>        /**<a name="line.62"></a>
-<FONT color="green">063</FONT>         * Remove a Filter.<a name="line.63"></a>
-<FONT color="green">064</FONT>         * @param filter The Filter to remove.<a name="line.64"></a>
-<FONT color="green">065</FONT>         */<a name="line.65"></a>
-<FONT color="green">066</FONT>        public synchronized void removeFilter(final Filter filter) {<a name="line.66"></a>
-<FONT color="green">067</FONT>            if (this.filter == filter) {<a name="line.67"></a>
-<FONT color="green">068</FONT>                this.filter = null;<a name="line.68"></a>
-<FONT color="green">069</FONT>            } else if (filter instanceof CompositeFilter) {<a name="line.69"></a>
-<FONT color="green">070</FONT>                CompositeFilter composite = (CompositeFilter) filter;<a name="line.70"></a>
-<FONT color="green">071</FONT>                composite = composite.removeFilter(filter);<a name="line.71"></a>
-<FONT color="green">072</FONT>                if (composite.size() &gt; 1) {<a name="line.72"></a>
-<FONT color="green">073</FONT>                    this.filter = composite;<a name="line.73"></a>
-<FONT color="green">074</FONT>                } else if (composite.size() == 1) {<a name="line.74"></a>
-<FONT color="green">075</FONT>                    final Iterator&lt;Filter&gt; iter = composite.iterator();<a name="line.75"></a>
-<FONT color="green">076</FONT>                    this.filter = iter.next();<a name="line.76"></a>
-<FONT color="green">077</FONT>                } else {<a name="line.77"></a>
-<FONT color="green">078</FONT>                    this.filter = null;<a name="line.78"></a>
-<FONT color="green">079</FONT>                }<a name="line.79"></a>
-<FONT color="green">080</FONT>            }<a name="line.80"></a>
-<FONT color="green">081</FONT>        }<a name="line.81"></a>
-<FONT color="green">082</FONT>    <a name="line.82"></a>
-<FONT color="green">083</FONT>        /**<a name="line.83"></a>
-<FONT color="green">084</FONT>         * Determines if a Filter is present.<a name="line.84"></a>
-<FONT color="green">085</FONT>         * @return false if no Filter is present.<a name="line.85"></a>
-<FONT color="green">086</FONT>         */<a name="line.86"></a>
-<FONT color="green">087</FONT>        public boolean hasFilter() {<a name="line.87"></a>
-<FONT color="green">088</FONT>            return filter != null;<a name="line.88"></a>
-<FONT color="green">089</FONT>        }<a name="line.89"></a>
-<FONT color="green">090</FONT>    <a name="line.90"></a>
-<FONT color="green">091</FONT>        /**<a name="line.91"></a>
-<FONT color="green">092</FONT>         * Make the Filter available for use.<a name="line.92"></a>
-<FONT color="green">093</FONT>         */<a name="line.93"></a>
-<FONT color="green">094</FONT>        public void startFilter() {<a name="line.94"></a>
-<FONT color="green">095</FONT>           if (filter != null &amp;&amp; filter instanceof LifeCycle) {<a name="line.95"></a>
-<FONT color="green">096</FONT>               ((LifeCycle) filter).start();<a name="line.96"></a>
-<FONT color="green">097</FONT>           }<a name="line.97"></a>
-<FONT color="green">098</FONT>        }<a name="line.98"></a>
-<FONT color="green">099</FONT>    <a name="line.99"></a>
-<FONT color="green">100</FONT>        /**<a name="line.100"></a>
-<FONT color="green">101</FONT>         * Cleanup the Filter.<a name="line.101"></a>
-<FONT color="green">102</FONT>         */<a name="line.102"></a>
-<FONT color="green">103</FONT>        public void stopFilter() {<a name="line.103"></a>
-<FONT color="green">104</FONT>           if (filter != null &amp;&amp; filter instanceof LifeCycle) {<a name="line.104"></a>
-<FONT color="green">105</FONT>               ((LifeCycle) filter).stop();<a name="line.105"></a>
-<FONT color="green">106</FONT>           }<a name="line.106"></a>
-<FONT color="green">107</FONT>        }<a name="line.107"></a>
-<FONT color="green">108</FONT>    <a name="line.108"></a>
-<FONT color="green">109</FONT>        /**<a name="line.109"></a>
-<FONT color="green">110</FONT>         * Determine if the LogEvent should be processed or ignored.<a name="line.110"></a>
-<FONT color="green">111</FONT>         * @param event The LogEvent.<a name="line.111"></a>
-<FONT color="green">112</FONT>         * @return true if the LogEvent should be processed.<a name="line.112"></a>
-<FONT color="green">113</FONT>         */<a name="line.113"></a>
-<FONT color="green">114</FONT>        public boolean isFiltered(final LogEvent event) {<a name="line.114"></a>
-<FONT color="green">115</FONT>            return filter != null &amp;&amp; filter.filter(event) == Filter.Result.DENY;<a name="line.115"></a>
-<FONT color="green">116</FONT>        }<a name="line.116"></a>
-<FONT color="green">117</FONT>    <a name="line.117"></a>
-<FONT color="green">118</FONT>    }<a name="line.118"></a>
+<FONT color="green">043</FONT>        @Override<a name="line.43"></a>
+<FONT color="green">044</FONT>        public Filter getFilter() {<a name="line.44"></a>
+<FONT color="green">045</FONT>            return filter;<a name="line.45"></a>
+<FONT color="green">046</FONT>        }<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>        /**<a name="line.48"></a>
+<FONT color="green">049</FONT>         * Add a filter.<a name="line.49"></a>
+<FONT color="green">050</FONT>         * @param filter The Filter to add.<a name="line.50"></a>
+<FONT color="green">051</FONT>         */<a name="line.51"></a>
+<FONT color="green">052</FONT>        @Override<a name="line.52"></a>
+<FONT color="green">053</FONT>        public synchronized void addFilter(final Filter filter) {<a name="line.53"></a>
+<FONT color="green">054</FONT>            if (this.filter == null) {<a name="line.54"></a>
+<FONT color="green">055</FONT>                this.filter = filter;<a name="line.55"></a>
+<FONT color="green">056</FONT>            } else if (filter instanceof CompositeFilter) {<a name="line.56"></a>
+<FONT color="green">057</FONT>                this.filter = ((CompositeFilter) this.filter).addFilter(filter);<a name="line.57"></a>
+<FONT color="green">058</FONT>            } else {<a name="line.58"></a>
+<FONT color="green">059</FONT>                final Filter[] filters = new Filter[] {this.filter, filter};<a name="line.59"></a>
+<FONT color="green">060</FONT>                this.filter = CompositeFilter.createFilters(filters);<a name="line.60"></a>
+<FONT color="green">061</FONT>            }<a name="line.61"></a>
+<FONT color="green">062</FONT>        }<a name="line.62"></a>
+<FONT color="green">063</FONT>    <a name="line.63"></a>
+<FONT color="green">064</FONT>        /**<a name="line.64"></a>
+<FONT color="green">065</FONT>         * Remove a Filter.<a name="line.65"></a>
+<FONT color="green">066</FONT>         * @param filter The Filter to remove.<a name="line.66"></a>
+<FONT color="green">067</FONT>         */<a name="line.67"></a>
+<FONT color="green">068</FONT>        @Override<a name="line.68"></a>
+<FONT color="green">069</FONT>        public synchronized void removeFilter(final Filter filter) {<a name="line.69"></a>
+<FONT color="green">070</FONT>            if (this.filter == filter) {<a name="line.70"></a>
+<FONT color="green">071</FONT>                this.filter = null;<a name="line.71"></a>
+<FONT color="green">072</FONT>            } else if (filter instanceof CompositeFilter) {<a name="line.72"></a>
+<FONT color="green">073</FONT>                CompositeFilter composite = (CompositeFilter) filter;<a name="line.73"></a>
+<FONT color="green">074</FONT>                composite = composite.removeFilter(filter);<a name="line.74"></a>
+<FONT color="green">075</FONT>                if (composite.size() &gt; 1) {<a name="line.75"></a>
+<FONT color="green">076</FONT>                    this.filter = composite;<a name="line.76"></a>
+<FONT color="green">077</FONT>                } else if (composite.size() == 1) {<a name="line.77"></a>
+<FONT color="green">078</FONT>                    final Iterator&lt;Filter&gt; iter = composite.iterator();<a name="line.78"></a>
+<FONT color="green">079</FONT>                    this.filter = iter.next();<a name="line.79"></a>
+<FONT color="green">080</FONT>                } else {<a name="line.80"></a>
+<FONT color="green">081</FONT>                    this.filter = null;<a name="line.81"></a>
+<FONT color="green">082</FONT>                }<a name="line.82"></a>
+<FONT color="green">083</FONT>            }<a name="line.83"></a>
+<FONT color="green">084</FONT>        }<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>        /**<a name="line.86"></a>
+<FONT color="green">087</FONT>         * Determines if a Filter is present.<a name="line.87"></a>
+<FONT color="green">088</FONT>         * @return false if no Filter is present.<a name="line.88"></a>
+<FONT color="green">089</FONT>         */<a name="line.89"></a>
+<FONT color="green">090</FONT>        @Override<a name="line.90"></a>
+<FONT color="green">091</FONT>        public boolean hasFilter() {<a name="line.91"></a>
+<FONT color="green">092</FONT>            return filter != null;<a name="line.92"></a>
+<FONT color="green">093</FONT>        }<a name="line.93"></a>
+<FONT color="green">094</FONT>    <a name="line.94"></a>
+<FONT color="green">095</FONT>        /**<a name="line.95"></a>
+<FONT color="green">096</FONT>         * Make the Filter available for use.<a name="line.96"></a>
+<FONT color="green">097</FONT>         */<a name="line.97"></a>
+<FONT color="green">098</FONT>        public void startFilter() {<a name="line.98"></a>
+<FONT color="green">099</FONT>           if (filter != null &amp;&amp; filter instanceof LifeCycle) {<a name="line.99"></a>
+<FONT color="green">100</FONT>               ((LifeCycle) filter).start();<a name="line.100"></a>
+<FONT color="green">101</FONT>           }<a name="line.101"></a>
+<FONT color="green">102</FONT>        }<a name="line.102"></a>
+<FONT color="green">103</FONT>    <a name="line.103"></a>
+<FONT color="green">104</FONT>        /**<a name="line.104"></a>
+<FONT color="green">105</FONT>         * Cleanup the Filter.<a name="line.105"></a>
+<FONT color="green">106</FONT>         */<a name="line.106"></a>
+<FONT color="green">107</FONT>        public void stopFilter() {<a name="line.107"></a>
+<FONT color="green">108</FONT>           if (filter != null &amp;&amp; filter instanceof LifeCycle) {<a name="line.108"></a>
+<FONT color="green">109</FONT>               ((LifeCycle) filter).stop();<a name="line.109"></a>
+<FONT color="green">110</FONT>           }<a name="line.110"></a>
+<FONT color="green">111</FONT>        }<a name="line.111"></a>
+<FONT color="green">112</FONT>    <a name="line.112"></a>
+<FONT color="green">113</FONT>        /**<a name="line.113"></a>
+<FONT color="green">114</FONT>         * Determine if the LogEvent should be processed or ignored.<a name="line.114"></a>
+<FONT color="green">115</FONT>         * @param event The LogEvent.<a name="line.115"></a>
+<FONT color="green">116</FONT>         * @return true if the LogEvent should be processed.<a name="line.116"></a>
+<FONT color="green">117</FONT>         */<a name="line.117"></a>
+<FONT color="green">118</FONT>        @Override<a name="line.118"></a>
+<FONT color="green">119</FONT>        public boolean isFiltered(final LogEvent event) {<a name="line.119"></a>
+<FONT color="green">120</FONT>            return filter != null &amp;&amp; filter.filter(event) == Filter.Result.DENY;<a name="line.120"></a>
+<FONT color="green">121</FONT>        }<a name="line.121"></a>
+<FONT color="green">122</FONT>    <a name="line.122"></a>
+<FONT color="green">123</FONT>    }<a name="line.123"></a>
 
 
 

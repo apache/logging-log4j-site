@@ -48,7 +48,7 @@
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/jmx/gui/Client.html">Client</a> {
 <a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">private</strong> JMXConnector connector;
-<a class="jxr_linenumber" name="41" href="#41">41</a>      <strong class="jxr_keyword">private</strong> MBeanServerConnection connection;
+<a class="jxr_linenumber" name="41" href="#41">41</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> MBeanServerConnection connection;
 <a class="jxr_linenumber" name="42" href="#42">42</a>      <strong class="jxr_keyword">private</strong> StatusLoggerAdminMBean statusLoggerAdmin;
 <a class="jxr_linenumber" name="43" href="#43">43</a>      <strong class="jxr_keyword">private</strong> ContextSelectorAdminMBean contextSelectorAdmin;
 <a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">private</strong> List&lt;LoggerContextAdminMBean&gt; contextAdminList;
@@ -63,7 +63,7 @@
 <a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">     *             one of the remote mbeans</em>
 <a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment">     * @throws IOException if the connection failed</em>
 <a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/jmx/gui/Client.html">Client</a>(JMXConnector connector) <strong class="jxr_keyword">throws</strong> MalformedObjectNameException,
+<a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/jmx/gui/Client.html">Client</a>(<strong class="jxr_keyword">final</strong> JMXConnector connector) <strong class="jxr_keyword">throws</strong> MalformedObjectNameException,
 <a class="jxr_linenumber" name="57" href="#57">57</a>              IOException {
 <a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">this</strong>.connector = Assert.isNotNull(connector, <span class="jxr_string">"JMXConnector"</span>);
 <a class="jxr_linenumber" name="59" href="#59">59</a>          <strong class="jxr_keyword">this</strong>.connector.connect();
@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="71" href="#71">71</a>  <em class="jxr_javadoccomment">     *             one of the remote mbeans</em>
 <a class="jxr_linenumber" name="72" href="#72">72</a>  <em class="jxr_javadoccomment">     * @throws IOException if the connection failed</em>
 <a class="jxr_linenumber" name="73" href="#73">73</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="74" href="#74">74</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/jmx/gui/Client.html">Client</a>(MBeanServerConnection mBeanServerConnection)
+<a class="jxr_linenumber" name="74" href="#74">74</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/jmx/gui/Client.html">Client</a>(<strong class="jxr_keyword">final</strong> MBeanServerConnection mBeanServerConnection)
 <a class="jxr_linenumber" name="75" href="#75">75</a>              <strong class="jxr_keyword">throws</strong> MalformedObjectNameException, IOException {
 <a class="jxr_linenumber" name="76" href="#76">76</a>          <strong class="jxr_keyword">this</strong>.connection = mBeanServerConnection;
 <a class="jxr_linenumber" name="77" href="#77">77</a>          init();
@@ -97,11 +97,11 @@
 <a class="jxr_linenumber" name="87" href="#87">87</a>                  ContextSelectorAdminMBean.<strong class="jxr_keyword">class</strong>, false);
 <a class="jxr_linenumber" name="88" href="#88">88</a>  
 <a class="jxr_linenumber" name="89" href="#89">89</a>          contextAdminList = <strong class="jxr_keyword">new</strong> ArrayList&lt;LoggerContextAdminMBean&gt;();
-<a class="jxr_linenumber" name="90" href="#90">90</a>          String pattern = String.format(LoggerContextAdminMBean.PATTERN, <span class="jxr_string">"*"</span>);
-<a class="jxr_linenumber" name="91" href="#91">91</a>          ObjectName search = <strong class="jxr_keyword">new</strong> ObjectName(pattern);
-<a class="jxr_linenumber" name="92" href="#92">92</a>          Set&lt;ObjectName&gt; found = connection.queryNames(search, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="93" href="#93">93</a>          <strong class="jxr_keyword">for</strong> (ObjectName contextName : found) {
-<a class="jxr_linenumber" name="94" href="#94">94</a>              LoggerContextAdminMBean ctx = JMX.newMBeanProxy(connection, <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="90" href="#90">90</a>          <strong class="jxr_keyword">final</strong> String pattern = String.format(LoggerContextAdminMBean.PATTERN, <span class="jxr_string">"*"</span>);
+<a class="jxr_linenumber" name="91" href="#91">91</a>          <strong class="jxr_keyword">final</strong> ObjectName search = <strong class="jxr_keyword">new</strong> ObjectName(pattern);
+<a class="jxr_linenumber" name="92" href="#92">92</a>          <strong class="jxr_keyword">final</strong> Set&lt;ObjectName&gt; found = connection.queryNames(search, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="93" href="#93">93</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> ObjectName contextName : found) {
+<a class="jxr_linenumber" name="94" href="#94">94</a>              <strong class="jxr_keyword">final</strong> LoggerContextAdminMBean ctx = JMX.newMBeanProxy(connection, <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="95" href="#95">95</a>                      contextName, <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="96" href="#96">96</a>                      LoggerContextAdminMBean.<strong class="jxr_keyword">class</strong>, false);
 <a class="jxr_linenumber" name="97" href="#97">97</a>              contextAdminList.add(ctx);
@@ -137,7 +137,7 @@
 <a class="jxr_linenumber" name="127" href="#127">127</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> close() {
 <a class="jxr_linenumber" name="128" href="#128">128</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="129" href="#129">129</a>             connector.close();
-<a class="jxr_linenumber" name="130" href="#130">130</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="130" href="#130">130</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException e) {
 <a class="jxr_linenumber" name="131" href="#131">131</a>             e.printStackTrace();
 <a class="jxr_linenumber" name="132" href="#132">132</a>         }
 <a class="jxr_linenumber" name="133" href="#133">133</a>     }

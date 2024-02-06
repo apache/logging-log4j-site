@@ -327,7 +327,7 @@
 <a class="jxr_linenumber" name="317" href="#317">317</a> <em class="jxr_javadoccomment">     * @param stackTrace The stack trace being resolved.</em>
 <a class="jxr_linenumber" name="318" href="#318">318</a> <em class="jxr_javadoccomment">     * @return The StackTracePackageElement array.</em>
 <a class="jxr_linenumber" name="319" href="#319">319</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="320" href="#320">320</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/StackTracePackageElement.html">StackTracePackageElement</a>[] resolvePackageData(<strong class="jxr_keyword">final</strong> Stack&lt;Class&lt;?&gt;&gt; stack, <strong class="jxr_keyword">final</strong> Map&lt;String,
+<a class="jxr_linenumber" name="320" href="#320">320</a>     <a href="../../../../../../org/apache/logging/log4j/core/impl/StackTracePackageElement.html">StackTracePackageElement</a>[] resolvePackageData(<strong class="jxr_keyword">final</strong> Stack&lt;Class&lt;?&gt;&gt; stack, <strong class="jxr_keyword">final</strong> Map&lt;String,
 <a class="jxr_linenumber" name="321" href="#321">321</a>                                                           CacheEntry&gt; map,
 <a class="jxr_linenumber" name="322" href="#322">322</a>                                                           <strong class="jxr_keyword">final</strong> StackTraceElement[] rootTrace,
 <a class="jxr_linenumber" name="323" href="#323">323</a>                                                           <strong class="jxr_keyword">final</strong> StackTraceElement[] stackTrace) {
@@ -346,19 +346,19 @@
 <a class="jxr_linenumber" name="336" href="#336">336</a>             stackLength = stackTrace.length;
 <a class="jxr_linenumber" name="337" href="#337">337</a>         }
 <a class="jxr_linenumber" name="338" href="#338">338</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/StackTracePackageElement.html">StackTracePackageElement</a>[] packageArray = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/StackTracePackageElement.html">StackTracePackageElement</a>[stackLength];
-<a class="jxr_linenumber" name="339" href="#339">339</a>         Class&lt;?&gt; clazz = stack.peek();
+<a class="jxr_linenumber" name="339" href="#339">339</a>         Class&lt;?&gt; clazz = stack.isEmpty() ? <strong class="jxr_keyword">null</strong> : stack.peek();
 <a class="jxr_linenumber" name="340" href="#340">340</a>         ClassLoader lastLoader = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="341" href="#341">341</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = stackLength - 1; i &gt;= 0; --i) {
 <a class="jxr_linenumber" name="342" href="#342">342</a>             <strong class="jxr_keyword">final</strong> String className = stackTrace[i].getClassName();
 <a class="jxr_linenumber" name="343" href="#343">343</a>             <em class="jxr_comment">// The stack returned from getCurrentStack will be missing entries for  java.lang.reflect.Method.invoke()</em>
 <a class="jxr_linenumber" name="344" href="#344">344</a>             <em class="jxr_comment">// and its implementation. The Throwable might also contain stack entries that are no longer</em>
 <a class="jxr_linenumber" name="345" href="#345">345</a>             <em class="jxr_comment">// present as those methods have returned.</em>
-<a class="jxr_linenumber" name="346" href="#346">346</a>             <strong class="jxr_keyword">if</strong> (className.equals(clazz.getName())) {
+<a class="jxr_linenumber" name="346" href="#346">346</a>             <strong class="jxr_keyword">if</strong> (clazz != <strong class="jxr_keyword">null</strong> &amp;&amp; className.equals(clazz.getName())) {
 <a class="jxr_linenumber" name="347" href="#347">347</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">CacheEntry</a> entry = resolvePackageElement(clazz, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="348" href="#348">348</a>                 packageArray[i] = entry.element;
 <a class="jxr_linenumber" name="349" href="#349">349</a>                 lastLoader = entry.loader;
 <a class="jxr_linenumber" name="350" href="#350">350</a>                 stack.pop();
-<a class="jxr_linenumber" name="351" href="#351">351</a>                 clazz = stack.peek();
+<a class="jxr_linenumber" name="351" href="#351">351</a>                 clazz = stack.isEmpty() ? <strong class="jxr_keyword">null</strong> : stack.peek();
 <a class="jxr_linenumber" name="352" href="#352">352</a>             } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="353" href="#353">353</a>                 <strong class="jxr_keyword">if</strong> (map.containsKey(className)) {
 <a class="jxr_linenumber" name="354" href="#354">354</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">CacheEntry</a> entry = map.get(className);
@@ -496,74 +496,75 @@
 <a class="jxr_linenumber" name="486" href="#486">486</a>             <strong class="jxr_keyword">final</strong> Method[] methods = clazz.getMethods();
 <a class="jxr_linenumber" name="487" href="#487">487</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Method method : methods) {
 <a class="jxr_linenumber" name="488" href="#488">488</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> modifier = method.getModifiers();
-<a class="jxr_linenumber" name="489" href="#489">489</a>                 <strong class="jxr_keyword">if</strong> (method.getName().equals(<span class="jxr_string">"getCallerClass"</span>) &amp;&amp; Modifier.isStatic(modifier)) {
-<a class="jxr_linenumber" name="490" href="#490">490</a>                     getCallerClass = method;
-<a class="jxr_linenumber" name="491" href="#491">491</a>                     <strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="492" href="#492">492</a>                 }
-<a class="jxr_linenumber" name="493" href="#493">493</a>             }
-<a class="jxr_linenumber" name="494" href="#494">494</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> ClassNotFoundException cnfe) {
-<a class="jxr_linenumber" name="495" href="#495">495</a>             LOGGER.debug(<span class="jxr_string">"sun.reflect.Reflection is not installed"</span>);
-<a class="jxr_linenumber" name="496" href="#496">496</a>         }
-<a class="jxr_linenumber" name="497" href="#497">497</a> 
-<a class="jxr_linenumber" name="498" href="#498">498</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="499" href="#499">499</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">PrivateSecurityManager</a> mgr = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">PrivateSecurityManager</a>();
-<a class="jxr_linenumber" name="500" href="#500">500</a>             <strong class="jxr_keyword">if</strong> (mgr.getClasses() != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="501" href="#501">501</a>                 securityManager = mgr;
-<a class="jxr_linenumber" name="502" href="#502">502</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="503" href="#503">503</a>                 <em class="jxr_comment">// This shouldn't happen.</em>
-<a class="jxr_linenumber" name="504" href="#504">504</a>                 LOGGER.error(<span class="jxr_string">"Unable to obtain call stack from security manager"</span>);
-<a class="jxr_linenumber" name="505" href="#505">505</a>             }
-<a class="jxr_linenumber" name="506" href="#506">506</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="507" href="#507">507</a>             LOGGER.debug(<span class="jxr_string">"Unable to install security manager"</span>, ex);
-<a class="jxr_linenumber" name="508" href="#508">508</a>         }
-<a class="jxr_linenumber" name="509" href="#509">509</a>     }
-<a class="jxr_linenumber" name="510" href="#510">510</a> 
-<a class="jxr_linenumber" name="511" href="#511">511</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">ThrowableProxy</a>[] getSuppressedProxies() {
-<a class="jxr_linenumber" name="512" href="#512">512</a>         <strong class="jxr_keyword">if</strong> (getSuppressed != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="513" href="#513">513</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="514" href="#514">514</a>                 <strong class="jxr_keyword">return</strong> (ThrowableProxy[]) getSuppressed.invoke(<strong class="jxr_keyword">this</strong>);
-<a class="jxr_linenumber" name="515" href="#515">515</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ignore) {
-<a class="jxr_linenumber" name="516" href="#516">516</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="517" href="#517">517</a>             }
-<a class="jxr_linenumber" name="518" href="#518">518</a>         }
-<a class="jxr_linenumber" name="519" href="#519">519</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="520" href="#520">520</a>     }
-<a class="jxr_linenumber" name="521" href="#521">521</a> 
-<a class="jxr_linenumber" name="522" href="#522">522</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> setSuppressed(<strong class="jxr_keyword">final</strong> Throwable throwable) {
-<a class="jxr_linenumber" name="523" href="#523">523</a>         <strong class="jxr_keyword">if</strong> (getSuppressed != <strong class="jxr_keyword">null</strong> &amp;&amp; addSuppressed != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="524" href="#524">524</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="525" href="#525">525</a>                 <strong class="jxr_keyword">final</strong> Throwable[] array = (Throwable[]) getSuppressed.invoke(throwable);
-<a class="jxr_linenumber" name="526" href="#526">526</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Throwable t : array) {
-<a class="jxr_linenumber" name="527" href="#527">527</a>                     addSuppressed.invoke(<strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">ThrowableProxy</a>(t));
-<a class="jxr_linenumber" name="528" href="#528">528</a>                 }
-<a class="jxr_linenumber" name="529" href="#529">529</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ignore) {
-<a class="jxr_linenumber" name="530" href="#530">530</a>                 <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="531" href="#531">531</a>             }
-<a class="jxr_linenumber" name="532" href="#532">532</a>         }
-<a class="jxr_linenumber" name="533" href="#533">533</a>     }
-<a class="jxr_linenumber" name="534" href="#534">534</a> 
-<a class="jxr_linenumber" name="535" href="#535">535</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="536" href="#536">536</a> <em class="jxr_javadoccomment">     * Cached StackTracePackageElement and the ClassLoader.</em>
-<a class="jxr_linenumber" name="537" href="#537">537</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="538" href="#538">538</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">CacheEntry</a> {
-<a class="jxr_linenumber" name="539" href="#539">539</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/StackTracePackageElement.html">StackTracePackageElement</a> element;
-<a class="jxr_linenumber" name="540" href="#540">540</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ClassLoader loader;
-<a class="jxr_linenumber" name="541" href="#541">541</a> 
-<a class="jxr_linenumber" name="542" href="#542">542</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">CacheEntry</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/StackTracePackageElement.html">StackTracePackageElement</a> element, <strong class="jxr_keyword">final</strong> ClassLoader loader) {
-<a class="jxr_linenumber" name="543" href="#543">543</a>             <strong class="jxr_keyword">this</strong>.element = element;
-<a class="jxr_linenumber" name="544" href="#544">544</a>             <strong class="jxr_keyword">this</strong>.loader = loader;
-<a class="jxr_linenumber" name="545" href="#545">545</a>         }
-<a class="jxr_linenumber" name="546" href="#546">546</a>     }
-<a class="jxr_linenumber" name="547" href="#547">547</a> 
-<a class="jxr_linenumber" name="548" href="#548">548</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="549" href="#549">549</a> <em class="jxr_javadoccomment">     * Security Manager for accessing the call stack.</em>
-<a class="jxr_linenumber" name="550" href="#550">550</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="551" href="#551">551</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">PrivateSecurityManager</a> <strong class="jxr_keyword">extends</strong> SecurityManager {
-<a class="jxr_linenumber" name="552" href="#552">552</a>         <strong class="jxr_keyword">public</strong> Class&lt;?&gt;[] getClasses() {
-<a class="jxr_linenumber" name="553" href="#553">553</a>             <strong class="jxr_keyword">return</strong> getClassContext();
-<a class="jxr_linenumber" name="554" href="#554">554</a>         }
-<a class="jxr_linenumber" name="555" href="#555">555</a>     }
-<a class="jxr_linenumber" name="556" href="#556">556</a> }
+<a class="jxr_linenumber" name="489" href="#489">489</a>                 <strong class="jxr_keyword">if</strong> (method.getName().equals(<span class="jxr_string">"getCallerClass"</span>) &amp;&amp; Modifier.isStatic(modifier) &amp;&amp;
+<a class="jxr_linenumber" name="490" href="#490">490</a>                     method.getParameterTypes().length == 1) {
+<a class="jxr_linenumber" name="491" href="#491">491</a>                     getCallerClass = method;
+<a class="jxr_linenumber" name="492" href="#492">492</a>                     <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="493" href="#493">493</a>                 }
+<a class="jxr_linenumber" name="494" href="#494">494</a>             }
+<a class="jxr_linenumber" name="495" href="#495">495</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> ClassNotFoundException cnfe) {
+<a class="jxr_linenumber" name="496" href="#496">496</a>             LOGGER.debug(<span class="jxr_string">"sun.reflect.Reflection is not installed"</span>);
+<a class="jxr_linenumber" name="497" href="#497">497</a>         }
+<a class="jxr_linenumber" name="498" href="#498">498</a> 
+<a class="jxr_linenumber" name="499" href="#499">499</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="500" href="#500">500</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">PrivateSecurityManager</a> mgr = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">PrivateSecurityManager</a>();
+<a class="jxr_linenumber" name="501" href="#501">501</a>             <strong class="jxr_keyword">if</strong> (mgr.getClasses() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="502" href="#502">502</a>                 securityManager = mgr;
+<a class="jxr_linenumber" name="503" href="#503">503</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="504" href="#504">504</a>                 <em class="jxr_comment">// This shouldn't happen.</em>
+<a class="jxr_linenumber" name="505" href="#505">505</a>                 LOGGER.error(<span class="jxr_string">"Unable to obtain call stack from security manager"</span>);
+<a class="jxr_linenumber" name="506" href="#506">506</a>             }
+<a class="jxr_linenumber" name="507" href="#507">507</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
+<a class="jxr_linenumber" name="508" href="#508">508</a>             LOGGER.debug(<span class="jxr_string">"Unable to install security manager"</span>, ex);
+<a class="jxr_linenumber" name="509" href="#509">509</a>         }
+<a class="jxr_linenumber" name="510" href="#510">510</a>     }
+<a class="jxr_linenumber" name="511" href="#511">511</a> 
+<a class="jxr_linenumber" name="512" href="#512">512</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">ThrowableProxy</a>[] getSuppressedProxies() {
+<a class="jxr_linenumber" name="513" href="#513">513</a>         <strong class="jxr_keyword">if</strong> (getSuppressed != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="514" href="#514">514</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="515" href="#515">515</a>                 <strong class="jxr_keyword">return</strong> (ThrowableProxy[]) getSuppressed.invoke(<strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="516" href="#516">516</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ignore) {
+<a class="jxr_linenumber" name="517" href="#517">517</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="518" href="#518">518</a>             }
+<a class="jxr_linenumber" name="519" href="#519">519</a>         }
+<a class="jxr_linenumber" name="520" href="#520">520</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="521" href="#521">521</a>     }
+<a class="jxr_linenumber" name="522" href="#522">522</a> 
+<a class="jxr_linenumber" name="523" href="#523">523</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> setSuppressed(<strong class="jxr_keyword">final</strong> Throwable throwable) {
+<a class="jxr_linenumber" name="524" href="#524">524</a>         <strong class="jxr_keyword">if</strong> (getSuppressed != <strong class="jxr_keyword">null</strong> &amp;&amp; addSuppressed != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="525" href="#525">525</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="526" href="#526">526</a>                 <strong class="jxr_keyword">final</strong> Throwable[] array = (Throwable[]) getSuppressed.invoke(throwable);
+<a class="jxr_linenumber" name="527" href="#527">527</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Throwable t : array) {
+<a class="jxr_linenumber" name="528" href="#528">528</a>                     addSuppressed.invoke(<strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">ThrowableProxy</a>(t));
+<a class="jxr_linenumber" name="529" href="#529">529</a>                 }
+<a class="jxr_linenumber" name="530" href="#530">530</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ignore) {
+<a class="jxr_linenumber" name="531" href="#531">531</a>                 <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="532" href="#532">532</a>             }
+<a class="jxr_linenumber" name="533" href="#533">533</a>         }
+<a class="jxr_linenumber" name="534" href="#534">534</a>     }
+<a class="jxr_linenumber" name="535" href="#535">535</a> 
+<a class="jxr_linenumber" name="536" href="#536">536</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="537" href="#537">537</a> <em class="jxr_javadoccomment">     * Cached StackTracePackageElement and the ClassLoader.</em>
+<a class="jxr_linenumber" name="538" href="#538">538</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="539" href="#539">539</a>     <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">CacheEntry</a> {
+<a class="jxr_linenumber" name="540" href="#540">540</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/StackTracePackageElement.html">StackTracePackageElement</a> element;
+<a class="jxr_linenumber" name="541" href="#541">541</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ClassLoader loader;
+<a class="jxr_linenumber" name="542" href="#542">542</a> 
+<a class="jxr_linenumber" name="543" href="#543">543</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">CacheEntry</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/StackTracePackageElement.html">StackTracePackageElement</a> element, <strong class="jxr_keyword">final</strong> ClassLoader loader) {
+<a class="jxr_linenumber" name="544" href="#544">544</a>             <strong class="jxr_keyword">this</strong>.element = element;
+<a class="jxr_linenumber" name="545" href="#545">545</a>             <strong class="jxr_keyword">this</strong>.loader = loader;
+<a class="jxr_linenumber" name="546" href="#546">546</a>         }
+<a class="jxr_linenumber" name="547" href="#547">547</a>     }
+<a class="jxr_linenumber" name="548" href="#548">548</a> 
+<a class="jxr_linenumber" name="549" href="#549">549</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="550" href="#550">550</a> <em class="jxr_javadoccomment">     * Security Manager for accessing the call stack.</em>
+<a class="jxr_linenumber" name="551" href="#551">551</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="552" href="#552">552</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">PrivateSecurityManager</a> <strong class="jxr_keyword">extends</strong> SecurityManager {
+<a class="jxr_linenumber" name="553" href="#553">553</a>         <strong class="jxr_keyword">public</strong> Class&lt;?&gt;[] getClasses() {
+<a class="jxr_linenumber" name="554" href="#554">554</a>             <strong class="jxr_keyword">return</strong> getClassContext();
+<a class="jxr_linenumber" name="555" href="#555">555</a>         }
+<a class="jxr_linenumber" name="556" href="#556">556</a>     }
+<a class="jxr_linenumber" name="557" href="#557">557</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

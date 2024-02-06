@@ -97,73 +97,79 @@
 <FONT color="green">094</FONT>    <a name="line.94"></a>
 <FONT color="green">095</FONT>        private static final StatusLogger LOGGER = StatusLogger.getLogger();<a name="line.95"></a>
 <FONT color="green">096</FONT>    <a name="line.96"></a>
-<FONT color="green">097</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext) {<a name="line.97"></a>
-<FONT color="green">098</FONT>            return getContext(fqcn, loader, currentContext, null);<a name="line.98"></a>
-<FONT color="green">099</FONT>        }<a name="line.99"></a>
-<FONT color="green">100</FONT>    <a name="line.100"></a>
-<FONT color="green">101</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext,<a name="line.101"></a>
-<FONT color="green">102</FONT>                                        URI configLocation) {<a name="line.102"></a>
-<FONT color="green">103</FONT>    <a name="line.103"></a>
-<FONT color="green">104</FONT>            final LoggerContext lc = ContextAnchor.THREAD_CONTEXT.get();<a name="line.104"></a>
-<FONT color="green">105</FONT>            if (lc != null) {<a name="line.105"></a>
-<FONT color="green">106</FONT>                return lc;<a name="line.106"></a>
-<FONT color="green">107</FONT>            }<a name="line.107"></a>
-<FONT color="green">108</FONT>    <a name="line.108"></a>
-<FONT color="green">109</FONT>            String loggingContextName = null;<a name="line.109"></a>
+<FONT color="green">097</FONT>        @Override<a name="line.97"></a>
+<FONT color="green">098</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext) {<a name="line.98"></a>
+<FONT color="green">099</FONT>            return getContext(fqcn, loader, currentContext, null);<a name="line.99"></a>
+<FONT color="green">100</FONT>        }<a name="line.100"></a>
+<FONT color="green">101</FONT>    <a name="line.101"></a>
+<FONT color="green">102</FONT>        @Override<a name="line.102"></a>
+<FONT color="green">103</FONT>        public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext,<a name="line.103"></a>
+<FONT color="green">104</FONT>                                        URI configLocation) {<a name="line.104"></a>
+<FONT color="green">105</FONT>    <a name="line.105"></a>
+<FONT color="green">106</FONT>            final LoggerContext lc = ContextAnchor.THREAD_CONTEXT.get();<a name="line.106"></a>
+<FONT color="green">107</FONT>            if (lc != null) {<a name="line.107"></a>
+<FONT color="green">108</FONT>                return lc;<a name="line.108"></a>
+<FONT color="green">109</FONT>            }<a name="line.109"></a>
 <FONT color="green">110</FONT>    <a name="line.110"></a>
-<FONT color="green">111</FONT>            try {<a name="line.111"></a>
-<FONT color="green">112</FONT>                final Context ctx = new InitialContext();<a name="line.112"></a>
-<FONT color="green">113</FONT>                loggingContextName = (String) lookup(ctx, Constants.JNDI_CONTEXT_NAME);<a name="line.113"></a>
-<FONT color="green">114</FONT>            } catch (final NamingException ne) {<a name="line.114"></a>
-<FONT color="green">115</FONT>                LOGGER.error("Unable to lookup " + Constants.JNDI_CONTEXT_NAME, ne);<a name="line.115"></a>
-<FONT color="green">116</FONT>            }<a name="line.116"></a>
-<FONT color="green">117</FONT>    <a name="line.117"></a>
-<FONT color="green">118</FONT>            return loggingContextName == null ? CONTEXT : locateContext(loggingContextName, configLocation);<a name="line.118"></a>
-<FONT color="green">119</FONT>        }<a name="line.119"></a>
-<FONT color="green">120</FONT>    <a name="line.120"></a>
-<FONT color="green">121</FONT>        public LoggerContext locateContext(final String name, final URI configLocation) {<a name="line.121"></a>
-<FONT color="green">122</FONT>            if (name == null) {<a name="line.122"></a>
-<FONT color="green">123</FONT>                LOGGER.error("A context name is required to locate a LoggerContext");<a name="line.123"></a>
-<FONT color="green">124</FONT>                return null;<a name="line.124"></a>
-<FONT color="green">125</FONT>            }<a name="line.125"></a>
-<FONT color="green">126</FONT>            if (!CONTEXT_MAP.containsKey(name)) {<a name="line.126"></a>
-<FONT color="green">127</FONT>                final LoggerContext ctx = new LoggerContext(name, null, configLocation);<a name="line.127"></a>
-<FONT color="green">128</FONT>                CONTEXT_MAP.putIfAbsent(name, ctx);<a name="line.128"></a>
-<FONT color="green">129</FONT>            }<a name="line.129"></a>
-<FONT color="green">130</FONT>            return CONTEXT_MAP.get(name);<a name="line.130"></a>
-<FONT color="green">131</FONT>        }<a name="line.131"></a>
-<FONT color="green">132</FONT>    <a name="line.132"></a>
-<FONT color="green">133</FONT>        public void removeContext(final LoggerContext context) {<a name="line.133"></a>
-<FONT color="green">134</FONT>    <a name="line.134"></a>
-<FONT color="green">135</FONT>            for (final Map.Entry&lt;String, LoggerContext&gt; entry : CONTEXT_MAP.entrySet()) {<a name="line.135"></a>
-<FONT color="green">136</FONT>                if (entry.getValue().equals(context)) {<a name="line.136"></a>
-<FONT color="green">137</FONT>                    CONTEXT_MAP.remove(entry.getKey());<a name="line.137"></a>
-<FONT color="green">138</FONT>                }<a name="line.138"></a>
-<FONT color="green">139</FONT>            }<a name="line.139"></a>
-<FONT color="green">140</FONT>        }<a name="line.140"></a>
-<FONT color="green">141</FONT>    <a name="line.141"></a>
-<FONT color="green">142</FONT>        public LoggerContext removeContext(final String name) {<a name="line.142"></a>
-<FONT color="green">143</FONT>            return CONTEXT_MAP.remove(name);<a name="line.143"></a>
+<FONT color="green">111</FONT>            String loggingContextName = null;<a name="line.111"></a>
+<FONT color="green">112</FONT>    <a name="line.112"></a>
+<FONT color="green">113</FONT>            try {<a name="line.113"></a>
+<FONT color="green">114</FONT>                final Context ctx = new InitialContext();<a name="line.114"></a>
+<FONT color="green">115</FONT>                loggingContextName = (String) lookup(ctx, Constants.JNDI_CONTEXT_NAME);<a name="line.115"></a>
+<FONT color="green">116</FONT>            } catch (final NamingException ne) {<a name="line.116"></a>
+<FONT color="green">117</FONT>                LOGGER.error("Unable to lookup " + Constants.JNDI_CONTEXT_NAME, ne);<a name="line.117"></a>
+<FONT color="green">118</FONT>            }<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>            return loggingContextName == null ? CONTEXT : locateContext(loggingContextName, configLocation);<a name="line.120"></a>
+<FONT color="green">121</FONT>        }<a name="line.121"></a>
+<FONT color="green">122</FONT>    <a name="line.122"></a>
+<FONT color="green">123</FONT>        @Override<a name="line.123"></a>
+<FONT color="green">124</FONT>        public LoggerContext locateContext(final String name, final URI configLocation) {<a name="line.124"></a>
+<FONT color="green">125</FONT>            if (name == null) {<a name="line.125"></a>
+<FONT color="green">126</FONT>                LOGGER.error("A context name is required to locate a LoggerContext");<a name="line.126"></a>
+<FONT color="green">127</FONT>                return null;<a name="line.127"></a>
+<FONT color="green">128</FONT>            }<a name="line.128"></a>
+<FONT color="green">129</FONT>            if (!CONTEXT_MAP.containsKey(name)) {<a name="line.129"></a>
+<FONT color="green">130</FONT>                final LoggerContext ctx = new LoggerContext(name, null, configLocation);<a name="line.130"></a>
+<FONT color="green">131</FONT>                CONTEXT_MAP.putIfAbsent(name, ctx);<a name="line.131"></a>
+<FONT color="green">132</FONT>            }<a name="line.132"></a>
+<FONT color="green">133</FONT>            return CONTEXT_MAP.get(name);<a name="line.133"></a>
+<FONT color="green">134</FONT>        }<a name="line.134"></a>
+<FONT color="green">135</FONT>    <a name="line.135"></a>
+<FONT color="green">136</FONT>        @Override<a name="line.136"></a>
+<FONT color="green">137</FONT>        public void removeContext(final LoggerContext context) {<a name="line.137"></a>
+<FONT color="green">138</FONT>    <a name="line.138"></a>
+<FONT color="green">139</FONT>            for (final Map.Entry&lt;String, LoggerContext&gt; entry : CONTEXT_MAP.entrySet()) {<a name="line.139"></a>
+<FONT color="green">140</FONT>                if (entry.getValue().equals(context)) {<a name="line.140"></a>
+<FONT color="green">141</FONT>                    CONTEXT_MAP.remove(entry.getKey());<a name="line.141"></a>
+<FONT color="green">142</FONT>                }<a name="line.142"></a>
+<FONT color="green">143</FONT>            }<a name="line.143"></a>
 <FONT color="green">144</FONT>        }<a name="line.144"></a>
 <FONT color="green">145</FONT>    <a name="line.145"></a>
-<FONT color="green">146</FONT>        public List&lt;LoggerContext&gt; getLoggerContexts() {<a name="line.146"></a>
-<FONT color="green">147</FONT>            final List&lt;LoggerContext&gt; list = new ArrayList&lt;LoggerContext&gt;(CONTEXT_MAP.values());<a name="line.147"></a>
-<FONT color="green">148</FONT>            return Collections.unmodifiableList(list);<a name="line.148"></a>
+<FONT color="green">146</FONT>        @Override<a name="line.146"></a>
+<FONT color="green">147</FONT>        public LoggerContext removeContext(final String name) {<a name="line.147"></a>
+<FONT color="green">148</FONT>            return CONTEXT_MAP.remove(name);<a name="line.148"></a>
 <FONT color="green">149</FONT>        }<a name="line.149"></a>
 <FONT color="green">150</FONT>    <a name="line.150"></a>
-<FONT color="green">151</FONT>    <a name="line.151"></a>
-<FONT color="green">152</FONT>        protected static Object lookup(final Context ctx, final String name) throws NamingException {<a name="line.152"></a>
-<FONT color="green">153</FONT>            if (ctx == null) {<a name="line.153"></a>
-<FONT color="green">154</FONT>                return null;<a name="line.154"></a>
-<FONT color="green">155</FONT>            }<a name="line.155"></a>
-<FONT color="green">156</FONT>            try {<a name="line.156"></a>
-<FONT color="green">157</FONT>                return ctx.lookup(name);<a name="line.157"></a>
-<FONT color="green">158</FONT>            } catch (final NameNotFoundException e) {<a name="line.158"></a>
-<FONT color="green">159</FONT>                LOGGER.error("Could not find name [" + name + "].");<a name="line.159"></a>
-<FONT color="green">160</FONT>                throw e;<a name="line.160"></a>
+<FONT color="green">151</FONT>        @Override<a name="line.151"></a>
+<FONT color="green">152</FONT>        public List&lt;LoggerContext&gt; getLoggerContexts() {<a name="line.152"></a>
+<FONT color="green">153</FONT>            final List&lt;LoggerContext&gt; list = new ArrayList&lt;LoggerContext&gt;(CONTEXT_MAP.values());<a name="line.153"></a>
+<FONT color="green">154</FONT>            return Collections.unmodifiableList(list);<a name="line.154"></a>
+<FONT color="green">155</FONT>        }<a name="line.155"></a>
+<FONT color="green">156</FONT>    <a name="line.156"></a>
+<FONT color="green">157</FONT>    <a name="line.157"></a>
+<FONT color="green">158</FONT>        protected static Object lookup(final Context ctx, final String name) throws NamingException {<a name="line.158"></a>
+<FONT color="green">159</FONT>            if (ctx == null) {<a name="line.159"></a>
+<FONT color="green">160</FONT>                return null;<a name="line.160"></a>
 <FONT color="green">161</FONT>            }<a name="line.161"></a>
-<FONT color="green">162</FONT>        }<a name="line.162"></a>
-<FONT color="green">163</FONT>    }<a name="line.163"></a>
+<FONT color="green">162</FONT>            try {<a name="line.162"></a>
+<FONT color="green">163</FONT>                return ctx.lookup(name);<a name="line.163"></a>
+<FONT color="green">164</FONT>            } catch (final NameNotFoundException e) {<a name="line.164"></a>
+<FONT color="green">165</FONT>                LOGGER.error("Could not find name [" + name + "].");<a name="line.165"></a>
+<FONT color="green">166</FONT>                throw e;<a name="line.166"></a>
+<FONT color="green">167</FONT>            }<a name="line.167"></a>
+<FONT color="green">168</FONT>        }<a name="line.168"></a>
+<FONT color="green">169</FONT>    }<a name="line.169"></a>
 
 
 

@@ -23,75 +23,99 @@
 <FONT color="green">020</FONT>     * The MBean interface for monitoring and managing a {@code LoggerConfig}.<a name="line.20"></a>
 <FONT color="green">021</FONT>     */<a name="line.21"></a>
 <FONT color="green">022</FONT>    public interface LoggerConfigAdminMBean {<a name="line.22"></a>
-<FONT color="green">023</FONT>        /** ObjectName pattern for LoggerConfigAdmin MBeans. */<a name="line.23"></a>
-<FONT color="green">024</FONT>        String PATTERN = "org.apache.logging.log4j2:type=LoggerContext,ctx=%s,sub=LoggerConfig,name=%s";<a name="line.24"></a>
-<FONT color="green">025</FONT>    <a name="line.25"></a>
-<FONT color="green">026</FONT>        /**<a name="line.26"></a>
-<FONT color="green">027</FONT>         * Returns the name of the instrumented {@code LoggerConfig}.<a name="line.27"></a>
-<FONT color="green">028</FONT>         * <a name="line.28"></a>
-<FONT color="green">029</FONT>         * @return the name of the LoggerConfig<a name="line.29"></a>
-<FONT color="green">030</FONT>         */<a name="line.30"></a>
-<FONT color="green">031</FONT>        String getName();<a name="line.31"></a>
-<FONT color="green">032</FONT>    <a name="line.32"></a>
-<FONT color="green">033</FONT>        /**<a name="line.33"></a>
-<FONT color="green">034</FONT>         * Returns the {@code LoggerConfig} level as a String.<a name="line.34"></a>
-<FONT color="green">035</FONT>         * <a name="line.35"></a>
-<FONT color="green">036</FONT>         * @return the {@code LoggerConfig} level.<a name="line.36"></a>
-<FONT color="green">037</FONT>         */<a name="line.37"></a>
-<FONT color="green">038</FONT>        String getLevel();<a name="line.38"></a>
-<FONT color="green">039</FONT>    <a name="line.39"></a>
-<FONT color="green">040</FONT>        /**<a name="line.40"></a>
-<FONT color="green">041</FONT>         * Sets the {@code LoggerConfig} level to the specified value.<a name="line.41"></a>
-<FONT color="green">042</FONT>         * <a name="line.42"></a>
-<FONT color="green">043</FONT>         * @param level the new {@code LoggerConfig} level.<a name="line.43"></a>
-<FONT color="green">044</FONT>         * @throws IllegalArgumentException if the specified level is not one of<a name="line.44"></a>
-<FONT color="green">045</FONT>         *             "OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE",<a name="line.45"></a>
-<FONT color="green">046</FONT>         *             "ALL"<a name="line.46"></a>
+<FONT color="green">023</FONT>        /**<a name="line.23"></a>
+<FONT color="green">024</FONT>         * ObjectName pattern ({@value}) for LoggerConfigAdmin MBeans.<a name="line.24"></a>
+<FONT color="green">025</FONT>         * This pattern contains two variables, where the first is the name of the<a name="line.25"></a>
+<FONT color="green">026</FONT>         * context, the second is the name of the instrumented logger config.<a name="line.26"></a>
+<FONT color="green">027</FONT>         * &lt;p&gt;<a name="line.27"></a>
+<FONT color="green">028</FONT>         * You can find all registered LoggerConfigAdmin MBeans like this:<a name="line.28"></a>
+<FONT color="green">029</FONT>         * &lt;/p&gt;<a name="line.29"></a>
+<FONT color="green">030</FONT>         * &lt;pre&gt;<a name="line.30"></a>
+<FONT color="green">031</FONT>         * MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();<a name="line.31"></a>
+<FONT color="green">032</FONT>         * String pattern = String.format(LoggerConfigAdminMBean.PATTERN, &amp;quot;*&amp;quot;, &amp;quot;*&amp;quot;);<a name="line.32"></a>
+<FONT color="green">033</FONT>         * Set&amp;lt;ObjectName&amp;gt; loggerConfigNames = mbs.queryNames(new ObjectName(pattern), null);<a name="line.33"></a>
+<FONT color="green">034</FONT>         * &lt;/pre&gt;<a name="line.34"></a>
+<FONT color="green">035</FONT>         * &lt;p&gt;<a name="line.35"></a>
+<FONT color="green">036</FONT>         * Some characters are not allowed in ObjectNames. The logger context name<a name="line.36"></a>
+<FONT color="green">037</FONT>         * and logger config name may be quoted. When LoggerConfigAdmin MBeans are<a name="line.37"></a>
+<FONT color="green">038</FONT>         * registered, their ObjectNames are created using this pattern as follows:<a name="line.38"></a>
+<FONT color="green">039</FONT>         * &lt;/p&gt;<a name="line.39"></a>
+<FONT color="green">040</FONT>         * &lt;pre&gt;<a name="line.40"></a>
+<FONT color="green">041</FONT>         * String ctxName = Server.escape(loggerContext.getName());<a name="line.41"></a>
+<FONT color="green">042</FONT>         * String loggerConfigName = Server.escape(loggerConfig.getName());<a name="line.42"></a>
+<FONT color="green">043</FONT>         * String name = String.format(PATTERN, ctxName, loggerConfigName);<a name="line.43"></a>
+<FONT color="green">044</FONT>         * ObjectName objectName = new ObjectName(name);<a name="line.44"></a>
+<FONT color="green">045</FONT>         * &lt;/pre&gt;<a name="line.45"></a>
+<FONT color="green">046</FONT>         * @see Server#escape(String)<a name="line.46"></a>
 <FONT color="green">047</FONT>         */<a name="line.47"></a>
-<FONT color="green">048</FONT>        void setLevel(String level);<a name="line.48"></a>
+<FONT color="green">048</FONT>        String PATTERN = "org.apache.logging.log4j2:type=LoggerContext,ctx=%s,sub=LoggerConfig,name=%s";<a name="line.48"></a>
 <FONT color="green">049</FONT>    <a name="line.49"></a>
 <FONT color="green">050</FONT>        /**<a name="line.50"></a>
-<FONT color="green">051</FONT>         * Returns whether the instrumented {@code LoggerConfig} is additive.<a name="line.51"></a>
+<FONT color="green">051</FONT>         * Returns the name of the instrumented {@code LoggerConfig}.<a name="line.51"></a>
 <FONT color="green">052</FONT>         * <a name="line.52"></a>
-<FONT color="green">053</FONT>         * @return {@code true} if the LoggerConfig is additive, {@code false}<a name="line.53"></a>
-<FONT color="green">054</FONT>         *         otherwise<a name="line.54"></a>
-<FONT color="green">055</FONT>         */<a name="line.55"></a>
-<FONT color="green">056</FONT>        boolean isAdditive();<a name="line.56"></a>
-<FONT color="green">057</FONT>    <a name="line.57"></a>
-<FONT color="green">058</FONT>        /**<a name="line.58"></a>
-<FONT color="green">059</FONT>         * Sets whether the instrumented {@code LoggerConfig} should be additive.<a name="line.59"></a>
-<FONT color="green">060</FONT>         * <a name="line.60"></a>
-<FONT color="green">061</FONT>         * @param additive {@code true} if the instrumented LoggerConfig should be<a name="line.61"></a>
-<FONT color="green">062</FONT>         *            additive, {@code false} otherwise<a name="line.62"></a>
-<FONT color="green">063</FONT>         */<a name="line.63"></a>
-<FONT color="green">064</FONT>        void setAdditive(boolean additive);<a name="line.64"></a>
-<FONT color="green">065</FONT>    <a name="line.65"></a>
-<FONT color="green">066</FONT>        /**<a name="line.66"></a>
-<FONT color="green">067</FONT>         * Returns whether the instrumented {@code LoggerConfig} is configured to<a name="line.67"></a>
-<FONT color="green">068</FONT>         * include location.<a name="line.68"></a>
-<FONT color="green">069</FONT>         * <a name="line.69"></a>
-<FONT color="green">070</FONT>         * @return whether location should be passed downstream<a name="line.70"></a>
+<FONT color="green">053</FONT>         * @return the name of the LoggerConfig<a name="line.53"></a>
+<FONT color="green">054</FONT>         */<a name="line.54"></a>
+<FONT color="green">055</FONT>        String getName();<a name="line.55"></a>
+<FONT color="green">056</FONT>    <a name="line.56"></a>
+<FONT color="green">057</FONT>        /**<a name="line.57"></a>
+<FONT color="green">058</FONT>         * Returns the {@code LoggerConfig} level as a String.<a name="line.58"></a>
+<FONT color="green">059</FONT>         * <a name="line.59"></a>
+<FONT color="green">060</FONT>         * @return the {@code LoggerConfig} level.<a name="line.60"></a>
+<FONT color="green">061</FONT>         */<a name="line.61"></a>
+<FONT color="green">062</FONT>        String getLevel();<a name="line.62"></a>
+<FONT color="green">063</FONT>    <a name="line.63"></a>
+<FONT color="green">064</FONT>        /**<a name="line.64"></a>
+<FONT color="green">065</FONT>         * Sets the {@code LoggerConfig} level to the specified value.<a name="line.65"></a>
+<FONT color="green">066</FONT>         * <a name="line.66"></a>
+<FONT color="green">067</FONT>         * @param level the new {@code LoggerConfig} level.<a name="line.67"></a>
+<FONT color="green">068</FONT>         * @throws IllegalArgumentException if the specified level is not one of<a name="line.68"></a>
+<FONT color="green">069</FONT>         *             "OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE",<a name="line.69"></a>
+<FONT color="green">070</FONT>         *             "ALL"<a name="line.70"></a>
 <FONT color="green">071</FONT>         */<a name="line.71"></a>
-<FONT color="green">072</FONT>        boolean isIncludeLocation();<a name="line.72"></a>
+<FONT color="green">072</FONT>        void setLevel(String level);<a name="line.72"></a>
 <FONT color="green">073</FONT>    <a name="line.73"></a>
 <FONT color="green">074</FONT>        /**<a name="line.74"></a>
-<FONT color="green">075</FONT>         * Returns a string description of all filters configured for the<a name="line.75"></a>
-<FONT color="green">076</FONT>         * instrumented {@code LoggerConfig}.<a name="line.76"></a>
-<FONT color="green">077</FONT>         * <a name="line.77"></a>
-<FONT color="green">078</FONT>         * @return a string description of all configured filters for this<a name="line.78"></a>
-<FONT color="green">079</FONT>         *         LoggerConfig<a name="line.79"></a>
-<FONT color="green">080</FONT>         */<a name="line.80"></a>
-<FONT color="green">081</FONT>        String getFilter();<a name="line.81"></a>
-<FONT color="green">082</FONT>    <a name="line.82"></a>
-<FONT color="green">083</FONT>        /**<a name="line.83"></a>
-<FONT color="green">084</FONT>         * Returns a String array with the appender refs configured for the<a name="line.84"></a>
-<FONT color="green">085</FONT>         * instrumented {@code LoggerConfig}.<a name="line.85"></a>
-<FONT color="green">086</FONT>         * <a name="line.86"></a>
-<FONT color="green">087</FONT>         * @return the appender refs for the instrumented {@code LoggerConfig}.<a name="line.87"></a>
-<FONT color="green">088</FONT>         */<a name="line.88"></a>
-<FONT color="green">089</FONT>        String[] getAppenderRefs();<a name="line.89"></a>
-<FONT color="green">090</FONT>    <a name="line.90"></a>
-<FONT color="green">091</FONT>    }<a name="line.91"></a>
+<FONT color="green">075</FONT>         * Returns whether the instrumented {@code LoggerConfig} is additive.<a name="line.75"></a>
+<FONT color="green">076</FONT>         * <a name="line.76"></a>
+<FONT color="green">077</FONT>         * @return {@code true} if the LoggerConfig is additive, {@code false}<a name="line.77"></a>
+<FONT color="green">078</FONT>         *         otherwise<a name="line.78"></a>
+<FONT color="green">079</FONT>         */<a name="line.79"></a>
+<FONT color="green">080</FONT>        boolean isAdditive();<a name="line.80"></a>
+<FONT color="green">081</FONT>    <a name="line.81"></a>
+<FONT color="green">082</FONT>        /**<a name="line.82"></a>
+<FONT color="green">083</FONT>         * Sets whether the instrumented {@code LoggerConfig} should be additive.<a name="line.83"></a>
+<FONT color="green">084</FONT>         * <a name="line.84"></a>
+<FONT color="green">085</FONT>         * @param additive {@code true} if the instrumented LoggerConfig should be<a name="line.85"></a>
+<FONT color="green">086</FONT>         *            additive, {@code false} otherwise<a name="line.86"></a>
+<FONT color="green">087</FONT>         */<a name="line.87"></a>
+<FONT color="green">088</FONT>        void setAdditive(boolean additive);<a name="line.88"></a>
+<FONT color="green">089</FONT>    <a name="line.89"></a>
+<FONT color="green">090</FONT>        /**<a name="line.90"></a>
+<FONT color="green">091</FONT>         * Returns whether the instrumented {@code LoggerConfig} is configured to<a name="line.91"></a>
+<FONT color="green">092</FONT>         * include location.<a name="line.92"></a>
+<FONT color="green">093</FONT>         * <a name="line.93"></a>
+<FONT color="green">094</FONT>         * @return whether location should be passed downstream<a name="line.94"></a>
+<FONT color="green">095</FONT>         */<a name="line.95"></a>
+<FONT color="green">096</FONT>        boolean isIncludeLocation();<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>        /**<a name="line.98"></a>
+<FONT color="green">099</FONT>         * Returns a string description of all filters configured for the<a name="line.99"></a>
+<FONT color="green">100</FONT>         * instrumented {@code LoggerConfig}.<a name="line.100"></a>
+<FONT color="green">101</FONT>         * <a name="line.101"></a>
+<FONT color="green">102</FONT>         * @return a string description of all configured filters for this<a name="line.102"></a>
+<FONT color="green">103</FONT>         *         LoggerConfig<a name="line.103"></a>
+<FONT color="green">104</FONT>         */<a name="line.104"></a>
+<FONT color="green">105</FONT>        String getFilter();<a name="line.105"></a>
+<FONT color="green">106</FONT>    <a name="line.106"></a>
+<FONT color="green">107</FONT>        /**<a name="line.107"></a>
+<FONT color="green">108</FONT>         * Returns a String array with the appender refs configured for the<a name="line.108"></a>
+<FONT color="green">109</FONT>         * instrumented {@code LoggerConfig}.<a name="line.109"></a>
+<FONT color="green">110</FONT>         * <a name="line.110"></a>
+<FONT color="green">111</FONT>         * @return the appender refs for the instrumented {@code LoggerConfig}.<a name="line.111"></a>
+<FONT color="green">112</FONT>         */<a name="line.112"></a>
+<FONT color="green">113</FONT>        String[] getAppenderRefs();<a name="line.113"></a>
+<FONT color="green">114</FONT>    <a name="line.114"></a>
+<FONT color="green">115</FONT>    }<a name="line.115"></a>
 
 
 

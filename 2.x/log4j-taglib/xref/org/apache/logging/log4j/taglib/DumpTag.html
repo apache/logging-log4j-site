@@ -26,12 +26,12 @@
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.taglib;
 <a class="jxr_linenumber" name="18" href="#18">18</a>  
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.JspException;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.PageContext;
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.tagext.Tag;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.tagext.TagSupport;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> java.util.Enumeration;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> java.util.Enumeration;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.JspException;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.PageContext;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.tagext.Tag;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> javax.servlet.jsp.tagext.TagSupport;
 <a class="jxr_linenumber" name="25" href="#25">25</a>  
 <a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment"> * This class implements the {@code &lt;log:dump&gt;} tag.</em>
@@ -58,24 +58,24 @@
 <a class="jxr_linenumber" name="48" href="#48">48</a>          <strong class="jxr_keyword">this</strong>.scope = PageContext.PAGE_SCOPE;
 <a class="jxr_linenumber" name="49" href="#49">49</a>      }
 <a class="jxr_linenumber" name="50" href="#50">50</a>  
-<a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setScope(String scope) {
+<a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setScope(<strong class="jxr_keyword">final</strong> String scope) {
 <a class="jxr_linenumber" name="52" href="#52">52</a>          <strong class="jxr_keyword">this</strong>.scope = TagUtils.getScope(scope);
 <a class="jxr_linenumber" name="53" href="#53">53</a>      }
 <a class="jxr_linenumber" name="54" href="#54">54</a>  
 <a class="jxr_linenumber" name="55" href="#55">55</a>      @Override
 <a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> doEndTag() <strong class="jxr_keyword">throws</strong> JspException {
 <a class="jxr_linenumber" name="57" href="#57">57</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="58" href="#58">58</a>              Enumeration&lt;String&gt; names = <strong class="jxr_keyword">this</strong>.pageContext.getAttributeNamesInScope(<strong class="jxr_keyword">this</strong>.scope);
+<a class="jxr_linenumber" name="58" href="#58">58</a>              <strong class="jxr_keyword">final</strong> Enumeration&lt;String&gt; names = <strong class="jxr_keyword">this</strong>.pageContext.getAttributeNamesInScope(<strong class="jxr_keyword">this</strong>.scope);
 <a class="jxr_linenumber" name="59" href="#59">59</a>              <strong class="jxr_keyword">this</strong>.pageContext.getOut().write(<span class="jxr_string">"&lt;dl&gt;"</span>);
 <a class="jxr_linenumber" name="60" href="#60">60</a>              <strong class="jxr_keyword">while</strong> (names != <strong class="jxr_keyword">null</strong> &amp;&amp; names.hasMoreElements()) {
-<a class="jxr_linenumber" name="61" href="#61">61</a>                  String name = names.nextElement();
-<a class="jxr_linenumber" name="62" href="#62">62</a>                  Object value = <strong class="jxr_keyword">this</strong>.pageContext.getAttribute(name, <strong class="jxr_keyword">this</strong>.scope);
+<a class="jxr_linenumber" name="61" href="#61">61</a>                  <strong class="jxr_keyword">final</strong> String name = names.nextElement();
+<a class="jxr_linenumber" name="62" href="#62">62</a>                  <strong class="jxr_keyword">final</strong> Object value = <strong class="jxr_keyword">this</strong>.pageContext.getAttribute(name, <strong class="jxr_keyword">this</strong>.scope);
 <a class="jxr_linenumber" name="63" href="#63">63</a>  
 <a class="jxr_linenumber" name="64" href="#64">64</a>                  <strong class="jxr_keyword">this</strong>.pageContext.getOut().write(<span class="jxr_string">"&lt;dt&gt;&lt;code&gt;"</span> + name + <span class="jxr_string">"&lt;/code&gt;&lt;/dt&gt;"</span>);
 <a class="jxr_linenumber" name="65" href="#65">65</a>                  <strong class="jxr_keyword">this</strong>.pageContext.getOut().write(<span class="jxr_string">"&lt;dd&gt;&lt;code&gt;"</span> + value + <span class="jxr_string">"&lt;/code&gt;&lt;/dd&gt;"</span>);
 <a class="jxr_linenumber" name="66" href="#66">66</a>              }
 <a class="jxr_linenumber" name="67" href="#67">67</a>              <strong class="jxr_keyword">this</strong>.pageContext.getOut().write(<span class="jxr_string">"&lt;/dl&gt;"</span>);
-<a class="jxr_linenumber" name="68" href="#68">68</a>          } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="68" href="#68">68</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException e) {
 <a class="jxr_linenumber" name="69" href="#69">69</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JspException(<span class="jxr_string">"Could not write scope contents. Cause:  "</span> + e.toString(), e);
 <a class="jxr_linenumber" name="70" href="#70">70</a>          }
 <a class="jxr_linenumber" name="71" href="#71">71</a>  

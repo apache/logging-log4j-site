@@ -200,17 +200,17 @@
 <a class="jxr_linenumber" name="190" href="#190">190</a>                     <span class="jxr_string">"true"</span>, config);
 <a class="jxr_linenumber" name="191" href="#191">191</a>         }
 <a class="jxr_linenumber" name="192" href="#192">192</a> 
-<a class="jxr_linenumber" name="193" href="#193">193</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/FastRollingFileManager.html">FastRollingFileManager</a> manager = <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/FastRollingFileManager.html">FastRollingFileManager</a>
-<a class="jxr_linenumber" name="194" href="#194">194</a>                 .getFastRollingFileManager(fileName, filePattern, isAppend,
-<a class="jxr_linenumber" name="195" href="#195">195</a>                         isFlush, policy, strategy, advertiseURI);
-<a class="jxr_linenumber" name="196" href="#196">196</a>         <strong class="jxr_keyword">if</strong> (manager == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="197" href="#197">197</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="198" href="#198">198</a>         }
+<a class="jxr_linenumber" name="193" href="#193">193</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="194" href="#194">194</a>             @SuppressWarnings({<span class="jxr_string">"unchecked"</span>, <span class="jxr_string">"UnnecessaryLocalVariable"</span>})
+<a class="jxr_linenumber" name="195" href="#195">195</a>             Layout&lt;S&gt; l = (Layout&lt;S&gt;)PatternLayout.createLayout(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="196" href="#196">196</a>             layout = l;
+<a class="jxr_linenumber" name="197" href="#197">197</a>         }
+<a class="jxr_linenumber" name="198" href="#198">198</a> 
 <a class="jxr_linenumber" name="199" href="#199">199</a> 
-<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="201" href="#201">201</a>             @SuppressWarnings({<span class="jxr_string">"unchecked"</span>, <span class="jxr_string">"UnnecessaryLocalVariable"</span>})
-<a class="jxr_linenumber" name="202" href="#202">202</a>             Layout&lt;S&gt; l = (Layout&lt;S&gt;)PatternLayout.createLayout(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="203" href="#203">203</a>             layout = l;
+<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/FastRollingFileManager.html">FastRollingFileManager</a> manager = FastRollingFileManager.getFastRollingFileManager(fileName, filePattern,
+<a class="jxr_linenumber" name="201" href="#201">201</a>             isAppend, isFlush, policy, strategy, advertiseURI, layout);
+<a class="jxr_linenumber" name="202" href="#202">202</a>         <strong class="jxr_keyword">if</strong> (manager == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="203" href="#203">203</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="204" href="#204">204</a>         }
 <a class="jxr_linenumber" name="205" href="#205">205</a> 
 <a class="jxr_linenumber" name="206" href="#206">206</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> FastRollingFileAppender&lt;S&gt;(name, layout, filter, manager,

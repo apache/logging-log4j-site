@@ -176,16 +176,16 @@
 <a class="jxr_linenumber" name="166" href="#166">166</a>             strategy = DefaultRolloverStrategy.createStrategy(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <span class="jxr_string">"true"</span>, config);
 <a class="jxr_linenumber" name="167" href="#167">167</a>         }
 <a class="jxr_linenumber" name="168" href="#168">168</a> 
-<a class="jxr_linenumber" name="169" href="#169">169</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> manager = RollingFileManager.getFileManager(fileName, filePattern, isAppend,
-<a class="jxr_linenumber" name="170" href="#170">170</a>             isBuffered, policy, strategy, advertiseURI);
-<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">if</strong> (manager == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="172" href="#172">172</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="169" href="#169">169</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="170" href="#170">170</a>             @SuppressWarnings({<span class="jxr_string">"unchecked"</span>, <span class="jxr_string">"UnnecessaryLocalVariable"</span>})
+<a class="jxr_linenumber" name="171" href="#171">171</a>             Layout&lt;S&gt; l = (Layout&lt;S&gt;)PatternLayout.createLayout(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="172" href="#172">172</a>             layout = l;
 <a class="jxr_linenumber" name="173" href="#173">173</a>         }
 <a class="jxr_linenumber" name="174" href="#174">174</a> 
-<a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="176" href="#176">176</a>             @SuppressWarnings({<span class="jxr_string">"unchecked"</span>, <span class="jxr_string">"UnnecessaryLocalVariable"</span>})
-<a class="jxr_linenumber" name="177" href="#177">177</a>             Layout&lt;S&gt; l = (Layout&lt;S&gt;)PatternLayout.createLayout(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="178" href="#178">178</a>             layout = l;
+<a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> manager = RollingFileManager.getFileManager(fileName, filePattern, isAppend,
+<a class="jxr_linenumber" name="176" href="#176">176</a>             isBuffered, policy, strategy, advertiseURI, layout);
+<a class="jxr_linenumber" name="177" href="#177">177</a>         <strong class="jxr_keyword">if</strong> (manager == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="178" href="#178">178</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="179" href="#179">179</a>         }
 <a class="jxr_linenumber" name="180" href="#180">180</a> 
 <a class="jxr_linenumber" name="181" href="#181">181</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> RollingFileAppender&lt;S&gt;(name, layout, filter, manager, fileName, filePattern,
