@@ -48,7 +48,7 @@
 <span class="sourceLineNo">040</span><a name="line.40"></a>
 <span class="sourceLineNo">041</span>    /**<a name="line.41"></a>
 <span class="sourceLineNo">042</span>     * Constructor.<a name="line.42"></a>
-<span class="sourceLineNo">043</span>     * <a name="line.43"></a>
+<span class="sourceLineNo">043</span>     *<a name="line.43"></a>
 <span class="sourceLineNo">044</span>     * @param appender The target Appender.<a name="line.44"></a>
 <span class="sourceLineNo">045</span>     * @param level the Level to filter on.<a name="line.45"></a>
 <span class="sourceLineNo">046</span>     * @param filter the Filter(s) to apply.<a name="line.46"></a>
@@ -64,7 +64,7 @@
 <span class="sourceLineNo">056</span><a name="line.56"></a>
 <span class="sourceLineNo">057</span>    /**<a name="line.57"></a>
 <span class="sourceLineNo">058</span>     * Returns the name the appender had when this AppenderControl was constructed.<a name="line.58"></a>
-<span class="sourceLineNo">059</span>     * <a name="line.59"></a>
+<span class="sourceLineNo">059</span>     *<a name="line.59"></a>
 <span class="sourceLineNo">060</span>     * @return the appender name<a name="line.60"></a>
 <span class="sourceLineNo">061</span>     */<a name="line.61"></a>
 <span class="sourceLineNo">062</span>    public String getAppenderName() {<a name="line.62"></a>
@@ -73,7 +73,7 @@
 <span class="sourceLineNo">065</span><a name="line.65"></a>
 <span class="sourceLineNo">066</span>    /**<a name="line.66"></a>
 <span class="sourceLineNo">067</span>     * Returns the Appender.<a name="line.67"></a>
-<span class="sourceLineNo">068</span>     * <a name="line.68"></a>
+<span class="sourceLineNo">068</span>     *<a name="line.68"></a>
 <span class="sourceLineNo">069</span>     * @return the Appender.<a name="line.69"></a>
 <span class="sourceLineNo">070</span>     */<a name="line.70"></a>
 <span class="sourceLineNo">071</span>    public Appender getAppender() {<a name="line.71"></a>
@@ -82,7 +82,7 @@
 <span class="sourceLineNo">074</span><a name="line.74"></a>
 <span class="sourceLineNo">075</span>    /**<a name="line.75"></a>
 <span class="sourceLineNo">076</span>     * Call the appender.<a name="line.76"></a>
-<span class="sourceLineNo">077</span>     * <a name="line.77"></a>
+<span class="sourceLineNo">077</span>     *<a name="line.77"></a>
 <span class="sourceLineNo">078</span>     * @param event The event to process.<a name="line.78"></a>
 <span class="sourceLineNo">079</span>     */<a name="line.79"></a>
 <span class="sourceLineNo">080</span>    public void callAppender(final LogEvent event) {<a name="line.80"></a>
@@ -163,14 +163,14 @@
 <span class="sourceLineNo">155</span>        try {<a name="line.155"></a>
 <span class="sourceLineNo">156</span>            appender.append(event);<a name="line.156"></a>
 <span class="sourceLineNo">157</span>        } catch (final RuntimeException ex) {<a name="line.157"></a>
-<span class="sourceLineNo">158</span>            handleAppenderError(ex);<a name="line.158"></a>
+<span class="sourceLineNo">158</span>            handleAppenderError(event, ex);<a name="line.158"></a>
 <span class="sourceLineNo">159</span>        } catch (final Exception ex) {<a name="line.159"></a>
-<span class="sourceLineNo">160</span>            handleAppenderError(new AppenderLoggingException(ex));<a name="line.160"></a>
+<span class="sourceLineNo">160</span>            handleAppenderError(event, new AppenderLoggingException(ex));<a name="line.160"></a>
 <span class="sourceLineNo">161</span>        }<a name="line.161"></a>
 <span class="sourceLineNo">162</span>    }<a name="line.162"></a>
 <span class="sourceLineNo">163</span><a name="line.163"></a>
-<span class="sourceLineNo">164</span>    private void handleAppenderError(final RuntimeException ex) {<a name="line.164"></a>
-<span class="sourceLineNo">165</span>        appender.getHandler().error(createErrorMsg("An exception occurred processing Appender "), ex);<a name="line.165"></a>
+<span class="sourceLineNo">164</span>    private void handleAppenderError(final LogEvent event, final RuntimeException ex) {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>        appender.getHandler().error(createErrorMsg("An exception occurred processing Appender "), event, ex);<a name="line.165"></a>
 <span class="sourceLineNo">166</span>        if (!appender.ignoreExceptions()) {<a name="line.166"></a>
 <span class="sourceLineNo">167</span>            throw ex;<a name="line.167"></a>
 <span class="sourceLineNo">168</span>        }<a name="line.168"></a>

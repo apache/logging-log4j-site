@@ -65,7 +65,7 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     * Initializes the policy.</em>
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     * @param aManager</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     *            The RollingFileManager.</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     */</em>
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">     * Determines whether a rollover should occur.</em>
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">     * @param event</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">     *            A reference to the currently event.</em>
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">     * @return true if a rollover should occur.</em>
@@ -115,7 +115,7 @@
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> 
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> <em class="jxr_javadoccomment">     * Creates a ScheduledTriggeringPolicy.</em>
-<a class="jxr_linenumber" name="L110" href="#L110">110</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L111" href="#L111">111</a> <em class="jxr_javadoccomment">     * @param configuration</em>
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     *            the Configuration.</em>
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     * @param evaluateOnStartup</em>
@@ -153,38 +153,35 @@
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>     }
 <a class="jxr_linenumber" name="L146" href="#L146">146</a> 
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> rollover() {
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>         manager.getPatternProcessor().setPrevFileTime(lastRollDate.getTime());
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">final</strong> Date thisRoll = cronExpression.getPrevFireTime(<strong class="jxr_keyword">new</strong> Date());
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>         manager.getPatternProcessor().setCurrentFileTime(thisRoll.getTime());
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         manager.rollover();
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">if</strong> (future != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>             lastRollDate = future.getFireTime();
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         }
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>     }
-<a class="jxr_linenumber" name="L156" href="#L156">156</a> 
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>     @Override
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> stop(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeout, <strong class="jxr_keyword">final</strong> TimeUnit timeUnit) {
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>         setStopping();
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> stopped = stop(future);
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>         setStopped();
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>         <strong class="jxr_keyword">return</strong> stopped;
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>     }
-<a class="jxr_linenumber" name="L164" href="#L164">164</a> 
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>     @Override
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">return</strong> <span class="jxr_string">"CronTriggeringPolicy(schedule="</span> + cronExpression.getCronExpression() + <span class="jxr_string">")"</span>;
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>     }
-<a class="jxr_linenumber" name="L169" href="#L169">169</a> 
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/CronTriggeringPolicy.html">CronTrigger</a> <strong class="jxr_keyword">implements</strong> Runnable {
-<a class="jxr_linenumber" name="L171" href="#L171">171</a> 
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>         @Override
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run() {
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>             rollover();
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>         }
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>     }
-<a class="jxr_linenumber" name="L177" href="#L177">177</a> }
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>     	manager.rollover(cronExpression.getPrevFireTime(<strong class="jxr_keyword">new</strong> Date()), lastRollDate);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">if</strong> (future != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>             lastRollDate = future.getFireTime();
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         }
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>     }
+<a class="jxr_linenumber" name="L153" href="#L153">153</a> 
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>     @Override
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> stop(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeout, <strong class="jxr_keyword">final</strong> TimeUnit timeUnit) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         setStopping();
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> stopped = stop(future);
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         setStopped();
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>         <strong class="jxr_keyword">return</strong> stopped;
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>     }
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> 
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>     @Override
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>         <strong class="jxr_keyword">return</strong> <span class="jxr_string">"CronTriggeringPolicy(schedule="</span> + cronExpression.getCronExpression() + <span class="jxr_string">")"</span>;
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>     }
+<a class="jxr_linenumber" name="L166" href="#L166">166</a> 
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/CronTriggeringPolicy.html">CronTrigger</a> <strong class="jxr_keyword">implements</strong> Runnable {
+<a class="jxr_linenumber" name="L168" href="#L168">168</a> 
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         @Override
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run() {
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>             rollover();
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>         }
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>     }
+<a class="jxr_linenumber" name="L174" href="#L174">174</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

@@ -114,14 +114,14 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>     }
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> 
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ClassLoader[] getClassLoaders() {
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>         List&lt;ClassLoader&gt; classLoaders = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>         ClassLoader tcl = getThreadContextClassLoader();
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         <strong class="jxr_keyword">final</strong> List&lt;ClassLoader&gt; classLoaders = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         <strong class="jxr_keyword">final</strong> ClassLoader tcl = getThreadContextClassLoader();
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         classLoaders.add(tcl);
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         <em class="jxr_comment">// Some implementations may use null to represent the bootstrap class loader.</em>
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>         ClassLoader current = LoaderUtil.<strong class="jxr_keyword">class</strong>.getClassLoader();
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         <strong class="jxr_keyword">final</strong> ClassLoader current = LoaderUtil.<strong class="jxr_keyword">class</strong>.getClassLoader();
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">if</strong> (current != <strong class="jxr_keyword">null</strong> &amp;&amp; current != tcl) {
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>             classLoaders.add(current);
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>             ClassLoader parent = current.getParent();
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>             <strong class="jxr_keyword">final</strong> ClassLoader parent = current.getParent();
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>             <strong class="jxr_keyword">while</strong> (parent != <strong class="jxr_keyword">null</strong> &amp;&amp; !classLoaders.contains(parent)) {
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>                 classLoaders.add(parent);
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>             }
@@ -131,7 +131,7 @@
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>             classLoaders.add(parent);
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>             parent = parent.getParent();
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>         }
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>         ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">final</strong> ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
 <a class="jxr_linenumber" name="L127" href="#L127">127</a> 		<strong class="jxr_keyword">if</strong> (!classLoaders.contains(systemClassLoader)) {
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>             classLoaders.add(systemClassLoader);
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>         }
@@ -358,6 +358,6 @@
 <a class="jxr_linenumber" name="L350" href="#L350">350</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

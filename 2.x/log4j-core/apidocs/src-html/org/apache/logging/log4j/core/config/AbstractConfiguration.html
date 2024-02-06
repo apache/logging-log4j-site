@@ -130,8 +130,8 @@
 <span class="sourceLineNo">122</span>    private ConcurrentMap&lt;String, Appender&gt; appenders = new ConcurrentHashMap&lt;&gt;();<a name="line.122"></a>
 <span class="sourceLineNo">123</span>    private ConcurrentMap&lt;String, LoggerConfig&gt; loggerConfigs = new ConcurrentHashMap&lt;&gt;();<a name="line.123"></a>
 <span class="sourceLineNo">124</span>    private List&lt;CustomLevelConfig&gt; customLevels = Collections.emptyList();<a name="line.124"></a>
-<span class="sourceLineNo">125</span>    private final ConcurrentMap&lt;String, String&gt; properties = new ConcurrentHashMap&lt;&gt;();<a name="line.125"></a>
-<span class="sourceLineNo">126</span>    private final StrLookup tempLookup = new Interpolator(properties);<a name="line.126"></a>
+<span class="sourceLineNo">125</span>    private final ConcurrentMap&lt;String, String&gt; propertyMap = new ConcurrentHashMap&lt;&gt;();<a name="line.125"></a>
+<span class="sourceLineNo">126</span>    private final StrLookup tempLookup = new Interpolator(propertyMap);<a name="line.126"></a>
 <span class="sourceLineNo">127</span>    private final StrSubstitutor subst = new StrSubstitutor(tempLookup);<a name="line.127"></a>
 <span class="sourceLineNo">128</span>    private LoggerConfig root = new LoggerConfig();<a name="line.128"></a>
 <span class="sourceLineNo">129</span>    private final ConcurrentMap&lt;String, Object&gt; componentMap = new ConcurrentHashMap&lt;&gt;();<a name="line.129"></a>
@@ -150,7 +150,7 @@
 <span class="sourceLineNo">142</span>        // The loggerContext is null for the NullConfiguration class.<a name="line.142"></a>
 <span class="sourceLineNo">143</span>        // this.loggerContext = new WeakReference(Objects.requireNonNull(loggerContext, "loggerContext is null"));<a name="line.143"></a>
 <span class="sourceLineNo">144</span>        this.configurationSource = Objects.requireNonNull(configurationSource, "configurationSource is null");<a name="line.144"></a>
-<span class="sourceLineNo">145</span>        componentMap.put(Configuration.CONTEXT_PROPERTIES, properties);<a name="line.145"></a>
+<span class="sourceLineNo">145</span>        componentMap.put(Configuration.CONTEXT_PROPERTIES, propertyMap);<a name="line.145"></a>
 <span class="sourceLineNo">146</span>        pluginManager = new PluginManager(Node.CATEGORY);<a name="line.146"></a>
 <span class="sourceLineNo">147</span>        rootNode = new Node();<a name="line.147"></a>
 <span class="sourceLineNo">148</span>        setState(State.INITIALIZING);<a name="line.148"></a>
@@ -169,7 +169,7 @@
 <span class="sourceLineNo">161</span><a name="line.161"></a>
 <span class="sourceLineNo">162</span>    @Override<a name="line.162"></a>
 <span class="sourceLineNo">163</span>    public Map&lt;String, String&gt; getProperties() {<a name="line.163"></a>
-<span class="sourceLineNo">164</span>        return properties;<a name="line.164"></a>
+<span class="sourceLineNo">164</span>        return propertyMap;<a name="line.164"></a>
 <span class="sourceLineNo">165</span>    }<a name="line.165"></a>
 <span class="sourceLineNo">166</span><a name="line.166"></a>
 <span class="sourceLineNo">167</span>    @Override<a name="line.167"></a>
@@ -654,7 +654,7 @@
 <span class="sourceLineNo">646</span>    @Override<a name="line.646"></a>
 <span class="sourceLineNo">647</span>    @SuppressWarnings("unchecked")<a name="line.647"></a>
 <span class="sourceLineNo">648</span>    public &lt;T extends Appender&gt; T getAppender(final String appenderName) {<a name="line.648"></a>
-<span class="sourceLineNo">649</span>        return (T) appenders.get(appenderName);<a name="line.649"></a>
+<span class="sourceLineNo">649</span>        return appenderName != null ? (T) appenders.get(appenderName) : null;<a name="line.649"></a>
 <span class="sourceLineNo">650</span>    }<a name="line.650"></a>
 <span class="sourceLineNo">651</span><a name="line.651"></a>
 <span class="sourceLineNo">652</span>    /**<a name="line.652"></a>
@@ -674,369 +674,374 @@
 <span class="sourceLineNo">666</span>     */<a name="line.666"></a>
 <span class="sourceLineNo">667</span>    @Override<a name="line.667"></a>
 <span class="sourceLineNo">668</span>    public void addAppender(final Appender appender) {<a name="line.668"></a>
-<span class="sourceLineNo">669</span>        appenders.putIfAbsent(appender.getName(), appender);<a name="line.669"></a>
-<span class="sourceLineNo">670</span>    }<a name="line.670"></a>
-<span class="sourceLineNo">671</span><a name="line.671"></a>
-<span class="sourceLineNo">672</span>    @Override<a name="line.672"></a>
-<span class="sourceLineNo">673</span>    public StrSubstitutor getStrSubstitutor() {<a name="line.673"></a>
-<span class="sourceLineNo">674</span>        return subst;<a name="line.674"></a>
-<span class="sourceLineNo">675</span>    }<a name="line.675"></a>
-<span class="sourceLineNo">676</span><a name="line.676"></a>
-<span class="sourceLineNo">677</span>    @Override<a name="line.677"></a>
-<span class="sourceLineNo">678</span>    public void setAdvertiser(final Advertiser advertiser) {<a name="line.678"></a>
-<span class="sourceLineNo">679</span>        this.advertiser = advertiser;<a name="line.679"></a>
-<span class="sourceLineNo">680</span>    }<a name="line.680"></a>
-<span class="sourceLineNo">681</span><a name="line.681"></a>
-<span class="sourceLineNo">682</span>    @Override<a name="line.682"></a>
-<span class="sourceLineNo">683</span>    public Advertiser getAdvertiser() {<a name="line.683"></a>
-<span class="sourceLineNo">684</span>        return advertiser;<a name="line.684"></a>
-<span class="sourceLineNo">685</span>    }<a name="line.685"></a>
-<span class="sourceLineNo">686</span><a name="line.686"></a>
-<span class="sourceLineNo">687</span>    /*<a name="line.687"></a>
-<span class="sourceLineNo">688</span>     * (non-Javadoc)<a name="line.688"></a>
-<span class="sourceLineNo">689</span>     *<a name="line.689"></a>
-<span class="sourceLineNo">690</span>     * @see org.apache.logging.log4j.core.config.ReliabilityStrategyFactory#getReliabilityStrategy(org.apache.logging.log4j<a name="line.690"></a>
-<span class="sourceLineNo">691</span>     * .core.config.LoggerConfig)<a name="line.691"></a>
-<span class="sourceLineNo">692</span>     */<a name="line.692"></a>
-<span class="sourceLineNo">693</span>    @Override<a name="line.693"></a>
-<span class="sourceLineNo">694</span>    public ReliabilityStrategy getReliabilityStrategy(final LoggerConfig loggerConfig) {<a name="line.694"></a>
-<span class="sourceLineNo">695</span>        return ReliabilityStrategyFactory.getReliabilityStrategy(loggerConfig);<a name="line.695"></a>
-<span class="sourceLineNo">696</span>    }<a name="line.696"></a>
-<span class="sourceLineNo">697</span><a name="line.697"></a>
-<span class="sourceLineNo">698</span>    /**<a name="line.698"></a>
-<span class="sourceLineNo">699</span>     * Associates an Appender with a LoggerConfig. This method is synchronized in case a Logger with the same name is<a name="line.699"></a>
-<span class="sourceLineNo">700</span>     * being updated at the same time.<a name="line.700"></a>
-<span class="sourceLineNo">701</span>     *<a name="line.701"></a>
-<span class="sourceLineNo">702</span>     * Note: This method is not used when configuring via configuration. It is primarily used by unit tests.<a name="line.702"></a>
+<span class="sourceLineNo">669</span>        if (appender != null) {<a name="line.669"></a>
+<span class="sourceLineNo">670</span>            appenders.putIfAbsent(appender.getName(), appender);<a name="line.670"></a>
+<span class="sourceLineNo">671</span>        }<a name="line.671"></a>
+<span class="sourceLineNo">672</span>    }<a name="line.672"></a>
+<span class="sourceLineNo">673</span><a name="line.673"></a>
+<span class="sourceLineNo">674</span>    @Override<a name="line.674"></a>
+<span class="sourceLineNo">675</span>    public StrSubstitutor getStrSubstitutor() {<a name="line.675"></a>
+<span class="sourceLineNo">676</span>        return subst;<a name="line.676"></a>
+<span class="sourceLineNo">677</span>    }<a name="line.677"></a>
+<span class="sourceLineNo">678</span><a name="line.678"></a>
+<span class="sourceLineNo">679</span>    @Override<a name="line.679"></a>
+<span class="sourceLineNo">680</span>    public void setAdvertiser(final Advertiser advertiser) {<a name="line.680"></a>
+<span class="sourceLineNo">681</span>        this.advertiser = advertiser;<a name="line.681"></a>
+<span class="sourceLineNo">682</span>    }<a name="line.682"></a>
+<span class="sourceLineNo">683</span><a name="line.683"></a>
+<span class="sourceLineNo">684</span>    @Override<a name="line.684"></a>
+<span class="sourceLineNo">685</span>    public Advertiser getAdvertiser() {<a name="line.685"></a>
+<span class="sourceLineNo">686</span>        return advertiser;<a name="line.686"></a>
+<span class="sourceLineNo">687</span>    }<a name="line.687"></a>
+<span class="sourceLineNo">688</span><a name="line.688"></a>
+<span class="sourceLineNo">689</span>    /*<a name="line.689"></a>
+<span class="sourceLineNo">690</span>     * (non-Javadoc)<a name="line.690"></a>
+<span class="sourceLineNo">691</span>     *<a name="line.691"></a>
+<span class="sourceLineNo">692</span>     * @see org.apache.logging.log4j.core.config.ReliabilityStrategyFactory#getReliabilityStrategy(org.apache.logging.log4j<a name="line.692"></a>
+<span class="sourceLineNo">693</span>     * .core.config.LoggerConfig)<a name="line.693"></a>
+<span class="sourceLineNo">694</span>     */<a name="line.694"></a>
+<span class="sourceLineNo">695</span>    @Override<a name="line.695"></a>
+<span class="sourceLineNo">696</span>    public ReliabilityStrategy getReliabilityStrategy(final LoggerConfig loggerConfig) {<a name="line.696"></a>
+<span class="sourceLineNo">697</span>        return ReliabilityStrategyFactory.getReliabilityStrategy(loggerConfig);<a name="line.697"></a>
+<span class="sourceLineNo">698</span>    }<a name="line.698"></a>
+<span class="sourceLineNo">699</span><a name="line.699"></a>
+<span class="sourceLineNo">700</span>    /**<a name="line.700"></a>
+<span class="sourceLineNo">701</span>     * Associates an Appender with a LoggerConfig. This method is synchronized in case a Logger with the same name is<a name="line.701"></a>
+<span class="sourceLineNo">702</span>     * being updated at the same time.<a name="line.702"></a>
 <span class="sourceLineNo">703</span>     *<a name="line.703"></a>
-<span class="sourceLineNo">704</span>     * @param logger The Logger the Appender will be associated with.<a name="line.704"></a>
-<span class="sourceLineNo">705</span>     * @param appender The Appender.<a name="line.705"></a>
-<span class="sourceLineNo">706</span>     */<a name="line.706"></a>
-<span class="sourceLineNo">707</span>    @Override<a name="line.707"></a>
-<span class="sourceLineNo">708</span>    public synchronized void addLoggerAppender(final org.apache.logging.log4j.core.Logger logger,<a name="line.708"></a>
-<span class="sourceLineNo">709</span>            final Appender appender) {<a name="line.709"></a>
-<span class="sourceLineNo">710</span>        final String loggerName = logger.getName();<a name="line.710"></a>
-<span class="sourceLineNo">711</span>        appenders.putIfAbsent(appender.getName(), appender);<a name="line.711"></a>
-<span class="sourceLineNo">712</span>        final LoggerConfig lc = getLoggerConfig(loggerName);<a name="line.712"></a>
-<span class="sourceLineNo">713</span>        if (lc.getName().equals(loggerName)) {<a name="line.713"></a>
-<span class="sourceLineNo">714</span>            lc.addAppender(appender, null, null);<a name="line.714"></a>
-<span class="sourceLineNo">715</span>        } else {<a name="line.715"></a>
-<span class="sourceLineNo">716</span>            final LoggerConfig nlc = new LoggerConfig(loggerName, lc.getLevel(), lc.isAdditive());<a name="line.716"></a>
-<span class="sourceLineNo">717</span>            nlc.addAppender(appender, null, null);<a name="line.717"></a>
-<span class="sourceLineNo">718</span>            nlc.setParent(lc);<a name="line.718"></a>
-<span class="sourceLineNo">719</span>            loggerConfigs.putIfAbsent(loggerName, nlc);<a name="line.719"></a>
-<span class="sourceLineNo">720</span>            setParents();<a name="line.720"></a>
-<span class="sourceLineNo">721</span>            logger.getContext().updateLoggers();<a name="line.721"></a>
-<span class="sourceLineNo">722</span>        }<a name="line.722"></a>
-<span class="sourceLineNo">723</span>    }<a name="line.723"></a>
-<span class="sourceLineNo">724</span><a name="line.724"></a>
-<span class="sourceLineNo">725</span>    /**<a name="line.725"></a>
-<span class="sourceLineNo">726</span>     * Associates a Filter with a LoggerConfig. This method is synchronized in case a Logger with the same name is being<a name="line.726"></a>
-<span class="sourceLineNo">727</span>     * updated at the same time.<a name="line.727"></a>
-<span class="sourceLineNo">728</span>     *<a name="line.728"></a>
-<span class="sourceLineNo">729</span>     * Note: This method is not used when configuring via configuration. It is primarily used by unit tests.<a name="line.729"></a>
-<span class="sourceLineNo">730</span>     *<a name="line.730"></a>
-<span class="sourceLineNo">731</span>     * @param logger The Logger the Footer will be associated with.<a name="line.731"></a>
-<span class="sourceLineNo">732</span>     * @param filter The Filter.<a name="line.732"></a>
-<span class="sourceLineNo">733</span>     */<a name="line.733"></a>
-<span class="sourceLineNo">734</span>    @Override<a name="line.734"></a>
-<span class="sourceLineNo">735</span>    public synchronized void addLoggerFilter(final org.apache.logging.log4j.core.Logger logger, final Filter filter) {<a name="line.735"></a>
-<span class="sourceLineNo">736</span>        final String loggerName = logger.getName();<a name="line.736"></a>
-<span class="sourceLineNo">737</span>        final LoggerConfig lc = getLoggerConfig(loggerName);<a name="line.737"></a>
-<span class="sourceLineNo">738</span>        if (lc.getName().equals(loggerName)) {<a name="line.738"></a>
-<span class="sourceLineNo">739</span>            lc.addFilter(filter);<a name="line.739"></a>
-<span class="sourceLineNo">740</span>        } else {<a name="line.740"></a>
-<span class="sourceLineNo">741</span>            final LoggerConfig nlc = new LoggerConfig(loggerName, lc.getLevel(), lc.isAdditive());<a name="line.741"></a>
-<span class="sourceLineNo">742</span>            nlc.addFilter(filter);<a name="line.742"></a>
-<span class="sourceLineNo">743</span>            nlc.setParent(lc);<a name="line.743"></a>
-<span class="sourceLineNo">744</span>            loggerConfigs.putIfAbsent(loggerName, nlc);<a name="line.744"></a>
-<span class="sourceLineNo">745</span>            setParents();<a name="line.745"></a>
-<span class="sourceLineNo">746</span>            logger.getContext().updateLoggers();<a name="line.746"></a>
-<span class="sourceLineNo">747</span>        }<a name="line.747"></a>
-<span class="sourceLineNo">748</span>    }<a name="line.748"></a>
-<span class="sourceLineNo">749</span><a name="line.749"></a>
-<span class="sourceLineNo">750</span>    /**<a name="line.750"></a>
-<span class="sourceLineNo">751</span>     * Marks a LoggerConfig as additive. This method is synchronized in case a Logger with the same name is being<a name="line.751"></a>
-<span class="sourceLineNo">752</span>     * updated at the same time.<a name="line.752"></a>
-<span class="sourceLineNo">753</span>     *<a name="line.753"></a>
-<span class="sourceLineNo">754</span>     * Note: This method is not used when configuring via configuration. It is primarily used by unit tests.<a name="line.754"></a>
-<span class="sourceLineNo">755</span>     *<a name="line.755"></a>
-<span class="sourceLineNo">756</span>     * @param logger The Logger the Appender will be associated with.<a name="line.756"></a>
-<span class="sourceLineNo">757</span>     * @param additive True if the LoggerConfig should be additive, false otherwise.<a name="line.757"></a>
-<span class="sourceLineNo">758</span>     */<a name="line.758"></a>
-<span class="sourceLineNo">759</span>    @Override<a name="line.759"></a>
-<span class="sourceLineNo">760</span>    public synchronized void setLoggerAdditive(final org.apache.logging.log4j.core.Logger logger, final boolean additive) {<a name="line.760"></a>
-<span class="sourceLineNo">761</span>        final String loggerName = logger.getName();<a name="line.761"></a>
-<span class="sourceLineNo">762</span>        final LoggerConfig lc = getLoggerConfig(loggerName);<a name="line.762"></a>
-<span class="sourceLineNo">763</span>        if (lc.getName().equals(loggerName)) {<a name="line.763"></a>
-<span class="sourceLineNo">764</span>            lc.setAdditive(additive);<a name="line.764"></a>
-<span class="sourceLineNo">765</span>        } else {<a name="line.765"></a>
-<span class="sourceLineNo">766</span>            final LoggerConfig nlc = new LoggerConfig(loggerName, lc.getLevel(), additive);<a name="line.766"></a>
-<span class="sourceLineNo">767</span>            nlc.setParent(lc);<a name="line.767"></a>
-<span class="sourceLineNo">768</span>            loggerConfigs.putIfAbsent(loggerName, nlc);<a name="line.768"></a>
-<span class="sourceLineNo">769</span>            setParents();<a name="line.769"></a>
-<span class="sourceLineNo">770</span>            logger.getContext().updateLoggers();<a name="line.770"></a>
-<span class="sourceLineNo">771</span>        }<a name="line.771"></a>
-<span class="sourceLineNo">772</span>    }<a name="line.772"></a>
-<span class="sourceLineNo">773</span><a name="line.773"></a>
-<span class="sourceLineNo">774</span>    /**<a name="line.774"></a>
-<span class="sourceLineNo">775</span>     * Remove an Appender. First removes any associations between LoggerConfigs and the Appender, removes the Appender<a name="line.775"></a>
-<span class="sourceLineNo">776</span>     * from this appender list and then stops the appender. This method is synchronized in case an Appender with the<a name="line.776"></a>
-<span class="sourceLineNo">777</span>     * same name is being added during the removal.<a name="line.777"></a>
-<span class="sourceLineNo">778</span>     *<a name="line.778"></a>
-<span class="sourceLineNo">779</span>     * @param appenderName the name of the appender to remove.<a name="line.779"></a>
-<span class="sourceLineNo">780</span>     */<a name="line.780"></a>
-<span class="sourceLineNo">781</span>    public synchronized void removeAppender(final String appenderName) {<a name="line.781"></a>
-<span class="sourceLineNo">782</span>        for (final LoggerConfig logger : loggerConfigs.values()) {<a name="line.782"></a>
-<span class="sourceLineNo">783</span>            logger.removeAppender(appenderName);<a name="line.783"></a>
-<span class="sourceLineNo">784</span>        }<a name="line.784"></a>
-<span class="sourceLineNo">785</span>        final Appender app = appenders.remove(appenderName);<a name="line.785"></a>
-<span class="sourceLineNo">786</span><a name="line.786"></a>
-<span class="sourceLineNo">787</span>        if (app != null) {<a name="line.787"></a>
-<span class="sourceLineNo">788</span>            app.stop();<a name="line.788"></a>
+<span class="sourceLineNo">704</span>     * Note: This method is not used when configuring via configuration. It is primarily used by unit tests.<a name="line.704"></a>
+<span class="sourceLineNo">705</span>     *<a name="line.705"></a>
+<span class="sourceLineNo">706</span>     * @param logger The Logger the Appender will be associated with.<a name="line.706"></a>
+<span class="sourceLineNo">707</span>     * @param appender The Appender.<a name="line.707"></a>
+<span class="sourceLineNo">708</span>     */<a name="line.708"></a>
+<span class="sourceLineNo">709</span>    @Override<a name="line.709"></a>
+<span class="sourceLineNo">710</span>    public synchronized void addLoggerAppender(final org.apache.logging.log4j.core.Logger logger,<a name="line.710"></a>
+<span class="sourceLineNo">711</span>            final Appender appender) {<a name="line.711"></a>
+<span class="sourceLineNo">712</span>        if (appender == null || logger == null) {<a name="line.712"></a>
+<span class="sourceLineNo">713</span>            return;<a name="line.713"></a>
+<span class="sourceLineNo">714</span>        }<a name="line.714"></a>
+<span class="sourceLineNo">715</span>        final String loggerName = logger.getName();<a name="line.715"></a>
+<span class="sourceLineNo">716</span>        appenders.putIfAbsent(appender.getName(), appender);<a name="line.716"></a>
+<span class="sourceLineNo">717</span>        final LoggerConfig lc = getLoggerConfig(loggerName);<a name="line.717"></a>
+<span class="sourceLineNo">718</span>        if (lc.getName().equals(loggerName)) {<a name="line.718"></a>
+<span class="sourceLineNo">719</span>            lc.addAppender(appender, null, null);<a name="line.719"></a>
+<span class="sourceLineNo">720</span>        } else {<a name="line.720"></a>
+<span class="sourceLineNo">721</span>            final LoggerConfig nlc = new LoggerConfig(loggerName, lc.getLevel(), lc.isAdditive());<a name="line.721"></a>
+<span class="sourceLineNo">722</span>            nlc.addAppender(appender, null, null);<a name="line.722"></a>
+<span class="sourceLineNo">723</span>            nlc.setParent(lc);<a name="line.723"></a>
+<span class="sourceLineNo">724</span>            loggerConfigs.putIfAbsent(loggerName, nlc);<a name="line.724"></a>
+<span class="sourceLineNo">725</span>            setParents();<a name="line.725"></a>
+<span class="sourceLineNo">726</span>            logger.getContext().updateLoggers();<a name="line.726"></a>
+<span class="sourceLineNo">727</span>        }<a name="line.727"></a>
+<span class="sourceLineNo">728</span>    }<a name="line.728"></a>
+<span class="sourceLineNo">729</span><a name="line.729"></a>
+<span class="sourceLineNo">730</span>    /**<a name="line.730"></a>
+<span class="sourceLineNo">731</span>     * Associates a Filter with a LoggerConfig. This method is synchronized in case a Logger with the same name is being<a name="line.731"></a>
+<span class="sourceLineNo">732</span>     * updated at the same time.<a name="line.732"></a>
+<span class="sourceLineNo">733</span>     *<a name="line.733"></a>
+<span class="sourceLineNo">734</span>     * Note: This method is not used when configuring via configuration. It is primarily used by unit tests.<a name="line.734"></a>
+<span class="sourceLineNo">735</span>     *<a name="line.735"></a>
+<span class="sourceLineNo">736</span>     * @param logger The Logger the Footer will be associated with.<a name="line.736"></a>
+<span class="sourceLineNo">737</span>     * @param filter The Filter.<a name="line.737"></a>
+<span class="sourceLineNo">738</span>     */<a name="line.738"></a>
+<span class="sourceLineNo">739</span>    @Override<a name="line.739"></a>
+<span class="sourceLineNo">740</span>    public synchronized void addLoggerFilter(final org.apache.logging.log4j.core.Logger logger, final Filter filter) {<a name="line.740"></a>
+<span class="sourceLineNo">741</span>        final String loggerName = logger.getName();<a name="line.741"></a>
+<span class="sourceLineNo">742</span>        final LoggerConfig lc = getLoggerConfig(loggerName);<a name="line.742"></a>
+<span class="sourceLineNo">743</span>        if (lc.getName().equals(loggerName)) {<a name="line.743"></a>
+<span class="sourceLineNo">744</span>            lc.addFilter(filter);<a name="line.744"></a>
+<span class="sourceLineNo">745</span>        } else {<a name="line.745"></a>
+<span class="sourceLineNo">746</span>            final LoggerConfig nlc = new LoggerConfig(loggerName, lc.getLevel(), lc.isAdditive());<a name="line.746"></a>
+<span class="sourceLineNo">747</span>            nlc.addFilter(filter);<a name="line.747"></a>
+<span class="sourceLineNo">748</span>            nlc.setParent(lc);<a name="line.748"></a>
+<span class="sourceLineNo">749</span>            loggerConfigs.putIfAbsent(loggerName, nlc);<a name="line.749"></a>
+<span class="sourceLineNo">750</span>            setParents();<a name="line.750"></a>
+<span class="sourceLineNo">751</span>            logger.getContext().updateLoggers();<a name="line.751"></a>
+<span class="sourceLineNo">752</span>        }<a name="line.752"></a>
+<span class="sourceLineNo">753</span>    }<a name="line.753"></a>
+<span class="sourceLineNo">754</span><a name="line.754"></a>
+<span class="sourceLineNo">755</span>    /**<a name="line.755"></a>
+<span class="sourceLineNo">756</span>     * Marks a LoggerConfig as additive. This method is synchronized in case a Logger with the same name is being<a name="line.756"></a>
+<span class="sourceLineNo">757</span>     * updated at the same time.<a name="line.757"></a>
+<span class="sourceLineNo">758</span>     *<a name="line.758"></a>
+<span class="sourceLineNo">759</span>     * Note: This method is not used when configuring via configuration. It is primarily used by unit tests.<a name="line.759"></a>
+<span class="sourceLineNo">760</span>     *<a name="line.760"></a>
+<span class="sourceLineNo">761</span>     * @param logger The Logger the Appender will be associated with.<a name="line.761"></a>
+<span class="sourceLineNo">762</span>     * @param additive True if the LoggerConfig should be additive, false otherwise.<a name="line.762"></a>
+<span class="sourceLineNo">763</span>     */<a name="line.763"></a>
+<span class="sourceLineNo">764</span>    @Override<a name="line.764"></a>
+<span class="sourceLineNo">765</span>    public synchronized void setLoggerAdditive(final org.apache.logging.log4j.core.Logger logger, final boolean additive) {<a name="line.765"></a>
+<span class="sourceLineNo">766</span>        final String loggerName = logger.getName();<a name="line.766"></a>
+<span class="sourceLineNo">767</span>        final LoggerConfig lc = getLoggerConfig(loggerName);<a name="line.767"></a>
+<span class="sourceLineNo">768</span>        if (lc.getName().equals(loggerName)) {<a name="line.768"></a>
+<span class="sourceLineNo">769</span>            lc.setAdditive(additive);<a name="line.769"></a>
+<span class="sourceLineNo">770</span>        } else {<a name="line.770"></a>
+<span class="sourceLineNo">771</span>            final LoggerConfig nlc = new LoggerConfig(loggerName, lc.getLevel(), additive);<a name="line.771"></a>
+<span class="sourceLineNo">772</span>            nlc.setParent(lc);<a name="line.772"></a>
+<span class="sourceLineNo">773</span>            loggerConfigs.putIfAbsent(loggerName, nlc);<a name="line.773"></a>
+<span class="sourceLineNo">774</span>            setParents();<a name="line.774"></a>
+<span class="sourceLineNo">775</span>            logger.getContext().updateLoggers();<a name="line.775"></a>
+<span class="sourceLineNo">776</span>        }<a name="line.776"></a>
+<span class="sourceLineNo">777</span>    }<a name="line.777"></a>
+<span class="sourceLineNo">778</span><a name="line.778"></a>
+<span class="sourceLineNo">779</span>    /**<a name="line.779"></a>
+<span class="sourceLineNo">780</span>     * Remove an Appender. First removes any associations between LoggerConfigs and the Appender, removes the Appender<a name="line.780"></a>
+<span class="sourceLineNo">781</span>     * from this appender list and then stops the appender. This method is synchronized in case an Appender with the<a name="line.781"></a>
+<span class="sourceLineNo">782</span>     * same name is being added during the removal.<a name="line.782"></a>
+<span class="sourceLineNo">783</span>     *<a name="line.783"></a>
+<span class="sourceLineNo">784</span>     * @param appenderName the name of the appender to remove.<a name="line.784"></a>
+<span class="sourceLineNo">785</span>     */<a name="line.785"></a>
+<span class="sourceLineNo">786</span>    public synchronized void removeAppender(final String appenderName) {<a name="line.786"></a>
+<span class="sourceLineNo">787</span>        for (final LoggerConfig logger : loggerConfigs.values()) {<a name="line.787"></a>
+<span class="sourceLineNo">788</span>            logger.removeAppender(appenderName);<a name="line.788"></a>
 <span class="sourceLineNo">789</span>        }<a name="line.789"></a>
-<span class="sourceLineNo">790</span>    }<a name="line.790"></a>
+<span class="sourceLineNo">790</span>        final Appender app = appenderName != null ? appenders.remove(appenderName) : null;<a name="line.790"></a>
 <span class="sourceLineNo">791</span><a name="line.791"></a>
-<span class="sourceLineNo">792</span>    /*<a name="line.792"></a>
-<span class="sourceLineNo">793</span>     * (non-Javadoc)<a name="line.793"></a>
-<span class="sourceLineNo">794</span>     *<a name="line.794"></a>
-<span class="sourceLineNo">795</span>     * @see org.apache.logging.log4j.core.config.Configuration#getCustomLevels()<a name="line.795"></a>
-<span class="sourceLineNo">796</span>     */<a name="line.796"></a>
-<span class="sourceLineNo">797</span>    @Override<a name="line.797"></a>
-<span class="sourceLineNo">798</span>    public List&lt;CustomLevelConfig&gt; getCustomLevels() {<a name="line.798"></a>
-<span class="sourceLineNo">799</span>        return Collections.unmodifiableList(customLevels);<a name="line.799"></a>
-<span class="sourceLineNo">800</span>    }<a name="line.800"></a>
-<span class="sourceLineNo">801</span><a name="line.801"></a>
-<span class="sourceLineNo">802</span>    /**<a name="line.802"></a>
-<span class="sourceLineNo">803</span>     * Locates the appropriate LoggerConfig for a Logger name. This will remove tokens from the package name as<a name="line.803"></a>
-<span class="sourceLineNo">804</span>     * necessary or return the root LoggerConfig if no other matches were found.<a name="line.804"></a>
-<span class="sourceLineNo">805</span>     *<a name="line.805"></a>
-<span class="sourceLineNo">806</span>     * @param loggerName The Logger name.<a name="line.806"></a>
-<span class="sourceLineNo">807</span>     * @return The located LoggerConfig.<a name="line.807"></a>
-<span class="sourceLineNo">808</span>     */<a name="line.808"></a>
-<span class="sourceLineNo">809</span>    @Override<a name="line.809"></a>
-<span class="sourceLineNo">810</span>    public LoggerConfig getLoggerConfig(final String loggerName) {<a name="line.810"></a>
-<span class="sourceLineNo">811</span>        LoggerConfig loggerConfig = loggerConfigs.get(loggerName);<a name="line.811"></a>
-<span class="sourceLineNo">812</span>        if (loggerConfig != null) {<a name="line.812"></a>
-<span class="sourceLineNo">813</span>            return loggerConfig;<a name="line.813"></a>
-<span class="sourceLineNo">814</span>        }<a name="line.814"></a>
-<span class="sourceLineNo">815</span>        String substr = loggerName;<a name="line.815"></a>
-<span class="sourceLineNo">816</span>        while ((substr = NameUtil.getSubName(substr)) != null) {<a name="line.816"></a>
-<span class="sourceLineNo">817</span>            loggerConfig = loggerConfigs.get(substr);<a name="line.817"></a>
-<span class="sourceLineNo">818</span>            if (loggerConfig != null) {<a name="line.818"></a>
-<span class="sourceLineNo">819</span>                return loggerConfig;<a name="line.819"></a>
-<span class="sourceLineNo">820</span>            }<a name="line.820"></a>
-<span class="sourceLineNo">821</span>        }<a name="line.821"></a>
-<span class="sourceLineNo">822</span>        return root;<a name="line.822"></a>
-<span class="sourceLineNo">823</span>    }<a name="line.823"></a>
-<span class="sourceLineNo">824</span><a name="line.824"></a>
-<span class="sourceLineNo">825</span>    @Override<a name="line.825"></a>
-<span class="sourceLineNo">826</span>    public LoggerContext getLoggerContext() {<a name="line.826"></a>
-<span class="sourceLineNo">827</span>        return loggerContext.get();<a name="line.827"></a>
+<span class="sourceLineNo">792</span>        if (app != null) {<a name="line.792"></a>
+<span class="sourceLineNo">793</span>            app.stop();<a name="line.793"></a>
+<span class="sourceLineNo">794</span>        }<a name="line.794"></a>
+<span class="sourceLineNo">795</span>    }<a name="line.795"></a>
+<span class="sourceLineNo">796</span><a name="line.796"></a>
+<span class="sourceLineNo">797</span>    /*<a name="line.797"></a>
+<span class="sourceLineNo">798</span>     * (non-Javadoc)<a name="line.798"></a>
+<span class="sourceLineNo">799</span>     *<a name="line.799"></a>
+<span class="sourceLineNo">800</span>     * @see org.apache.logging.log4j.core.config.Configuration#getCustomLevels()<a name="line.800"></a>
+<span class="sourceLineNo">801</span>     */<a name="line.801"></a>
+<span class="sourceLineNo">802</span>    @Override<a name="line.802"></a>
+<span class="sourceLineNo">803</span>    public List&lt;CustomLevelConfig&gt; getCustomLevels() {<a name="line.803"></a>
+<span class="sourceLineNo">804</span>        return Collections.unmodifiableList(customLevels);<a name="line.804"></a>
+<span class="sourceLineNo">805</span>    }<a name="line.805"></a>
+<span class="sourceLineNo">806</span><a name="line.806"></a>
+<span class="sourceLineNo">807</span>    /**<a name="line.807"></a>
+<span class="sourceLineNo">808</span>     * Locates the appropriate LoggerConfig for a Logger name. This will remove tokens from the package name as<a name="line.808"></a>
+<span class="sourceLineNo">809</span>     * necessary or return the root LoggerConfig if no other matches were found.<a name="line.809"></a>
+<span class="sourceLineNo">810</span>     *<a name="line.810"></a>
+<span class="sourceLineNo">811</span>     * @param loggerName The Logger name.<a name="line.811"></a>
+<span class="sourceLineNo">812</span>     * @return The located LoggerConfig.<a name="line.812"></a>
+<span class="sourceLineNo">813</span>     */<a name="line.813"></a>
+<span class="sourceLineNo">814</span>    @Override<a name="line.814"></a>
+<span class="sourceLineNo">815</span>    public LoggerConfig getLoggerConfig(final String loggerName) {<a name="line.815"></a>
+<span class="sourceLineNo">816</span>        LoggerConfig loggerConfig = loggerConfigs.get(loggerName);<a name="line.816"></a>
+<span class="sourceLineNo">817</span>        if (loggerConfig != null) {<a name="line.817"></a>
+<span class="sourceLineNo">818</span>            return loggerConfig;<a name="line.818"></a>
+<span class="sourceLineNo">819</span>        }<a name="line.819"></a>
+<span class="sourceLineNo">820</span>        String substr = loggerName;<a name="line.820"></a>
+<span class="sourceLineNo">821</span>        while ((substr = NameUtil.getSubName(substr)) != null) {<a name="line.821"></a>
+<span class="sourceLineNo">822</span>            loggerConfig = loggerConfigs.get(substr);<a name="line.822"></a>
+<span class="sourceLineNo">823</span>            if (loggerConfig != null) {<a name="line.823"></a>
+<span class="sourceLineNo">824</span>                return loggerConfig;<a name="line.824"></a>
+<span class="sourceLineNo">825</span>            }<a name="line.825"></a>
+<span class="sourceLineNo">826</span>        }<a name="line.826"></a>
+<span class="sourceLineNo">827</span>        return root;<a name="line.827"></a>
 <span class="sourceLineNo">828</span>    }<a name="line.828"></a>
 <span class="sourceLineNo">829</span><a name="line.829"></a>
-<span class="sourceLineNo">830</span>    /**<a name="line.830"></a>
-<span class="sourceLineNo">831</span>     * Returns the root Logger.<a name="line.831"></a>
-<span class="sourceLineNo">832</span>     *<a name="line.832"></a>
-<span class="sourceLineNo">833</span>     * @return the root Logger.<a name="line.833"></a>
-<span class="sourceLineNo">834</span>     */<a name="line.834"></a>
-<span class="sourceLineNo">835</span>    @Override<a name="line.835"></a>
-<span class="sourceLineNo">836</span>    public LoggerConfig getRootLogger() {<a name="line.836"></a>
-<span class="sourceLineNo">837</span>        return root;<a name="line.837"></a>
-<span class="sourceLineNo">838</span>    }<a name="line.838"></a>
-<span class="sourceLineNo">839</span><a name="line.839"></a>
-<span class="sourceLineNo">840</span>    /**<a name="line.840"></a>
-<span class="sourceLineNo">841</span>     * Returns a Map of all the LoggerConfigs.<a name="line.841"></a>
-<span class="sourceLineNo">842</span>     *<a name="line.842"></a>
-<span class="sourceLineNo">843</span>     * @return a Map with each entry containing the name of the Logger and the LoggerConfig.<a name="line.843"></a>
-<span class="sourceLineNo">844</span>     */<a name="line.844"></a>
-<span class="sourceLineNo">845</span>    @Override<a name="line.845"></a>
-<span class="sourceLineNo">846</span>    public Map&lt;String, LoggerConfig&gt; getLoggers() {<a name="line.846"></a>
-<span class="sourceLineNo">847</span>        return Collections.unmodifiableMap(loggerConfigs);<a name="line.847"></a>
-<span class="sourceLineNo">848</span>    }<a name="line.848"></a>
-<span class="sourceLineNo">849</span><a name="line.849"></a>
-<span class="sourceLineNo">850</span>    /**<a name="line.850"></a>
-<span class="sourceLineNo">851</span>     * Returns the LoggerConfig with the specified name.<a name="line.851"></a>
-<span class="sourceLineNo">852</span>     *<a name="line.852"></a>
-<span class="sourceLineNo">853</span>     * @param loggerName The Logger name.<a name="line.853"></a>
-<span class="sourceLineNo">854</span>     * @return The LoggerConfig or null if no match was found.<a name="line.854"></a>
-<span class="sourceLineNo">855</span>     */<a name="line.855"></a>
-<span class="sourceLineNo">856</span>    public LoggerConfig getLogger(final String loggerName) {<a name="line.856"></a>
-<span class="sourceLineNo">857</span>        return loggerConfigs.get(loggerName);<a name="line.857"></a>
-<span class="sourceLineNo">858</span>    }<a name="line.858"></a>
-<span class="sourceLineNo">859</span><a name="line.859"></a>
-<span class="sourceLineNo">860</span>    /**<a name="line.860"></a>
-<span class="sourceLineNo">861</span>     * Add a loggerConfig. The LoggerConfig must already be configured with Appenders, Filters, etc. After addLogger is<a name="line.861"></a>
-<span class="sourceLineNo">862</span>     * called LoggerContext.updateLoggers must be called.<a name="line.862"></a>
-<span class="sourceLineNo">863</span>     *<a name="line.863"></a>
-<span class="sourceLineNo">864</span>     * @param loggerName The name of the Logger.<a name="line.864"></a>
-<span class="sourceLineNo">865</span>     * @param loggerConfig The LoggerConfig.<a name="line.865"></a>
-<span class="sourceLineNo">866</span>     */<a name="line.866"></a>
-<span class="sourceLineNo">867</span>    @Override<a name="line.867"></a>
-<span class="sourceLineNo">868</span>    public synchronized void addLogger(final String loggerName, final LoggerConfig loggerConfig) {<a name="line.868"></a>
-<span class="sourceLineNo">869</span>        loggerConfigs.putIfAbsent(loggerName, loggerConfig);<a name="line.869"></a>
-<span class="sourceLineNo">870</span>        setParents();<a name="line.870"></a>
-<span class="sourceLineNo">871</span>    }<a name="line.871"></a>
-<span class="sourceLineNo">872</span><a name="line.872"></a>
-<span class="sourceLineNo">873</span>    /**<a name="line.873"></a>
-<span class="sourceLineNo">874</span>     * Remove a LoggerConfig.<a name="line.874"></a>
-<span class="sourceLineNo">875</span>     *<a name="line.875"></a>
-<span class="sourceLineNo">876</span>     * @param loggerName The name of the Logger.<a name="line.876"></a>
-<span class="sourceLineNo">877</span>     */<a name="line.877"></a>
-<span class="sourceLineNo">878</span>    @Override<a name="line.878"></a>
-<span class="sourceLineNo">879</span>    public synchronized void removeLogger(final String loggerName) {<a name="line.879"></a>
-<span class="sourceLineNo">880</span>        loggerConfigs.remove(loggerName);<a name="line.880"></a>
-<span class="sourceLineNo">881</span>        setParents();<a name="line.881"></a>
-<span class="sourceLineNo">882</span>    }<a name="line.882"></a>
-<span class="sourceLineNo">883</span><a name="line.883"></a>
-<span class="sourceLineNo">884</span>    @Override<a name="line.884"></a>
-<span class="sourceLineNo">885</span>    public void createConfiguration(final Node node, final LogEvent event) {<a name="line.885"></a>
-<span class="sourceLineNo">886</span>        final PluginType&lt;?&gt; type = node.getType();<a name="line.886"></a>
-<span class="sourceLineNo">887</span>        if (type != null &amp;&amp; type.isDeferChildren()) {<a name="line.887"></a>
-<span class="sourceLineNo">888</span>            node.setObject(createPluginObject(type, node, event));<a name="line.888"></a>
-<span class="sourceLineNo">889</span>        } else {<a name="line.889"></a>
-<span class="sourceLineNo">890</span>            for (final Node child : node.getChildren()) {<a name="line.890"></a>
-<span class="sourceLineNo">891</span>                createConfiguration(child, event);<a name="line.891"></a>
-<span class="sourceLineNo">892</span>            }<a name="line.892"></a>
-<span class="sourceLineNo">893</span><a name="line.893"></a>
-<span class="sourceLineNo">894</span>            if (type == null) {<a name="line.894"></a>
-<span class="sourceLineNo">895</span>                if (node.getParent() != null) {<a name="line.895"></a>
-<span class="sourceLineNo">896</span>                    LOGGER.error("Unable to locate plugin for {}", node.getName());<a name="line.896"></a>
-<span class="sourceLineNo">897</span>                }<a name="line.897"></a>
-<span class="sourceLineNo">898</span>            } else {<a name="line.898"></a>
-<span class="sourceLineNo">899</span>                node.setObject(createPluginObject(type, node, event));<a name="line.899"></a>
-<span class="sourceLineNo">900</span>            }<a name="line.900"></a>
-<span class="sourceLineNo">901</span>        }<a name="line.901"></a>
-<span class="sourceLineNo">902</span>    }<a name="line.902"></a>
-<span class="sourceLineNo">903</span><a name="line.903"></a>
-<span class="sourceLineNo">904</span>    /**<a name="line.904"></a>
-<span class="sourceLineNo">905</span>     * Invokes a static factory method to either create the desired object or to create a builder object that creates<a name="line.905"></a>
-<span class="sourceLineNo">906</span>     * the desired object. In the case of a factory method, it should be annotated with<a name="line.906"></a>
-<span class="sourceLineNo">907</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginFactory}, and each parameter should be annotated with<a name="line.907"></a>
-<span class="sourceLineNo">908</span>     * an appropriate plugin annotation depending on what that parameter describes. Parameters annotated with<a name="line.908"></a>
-<span class="sourceLineNo">909</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginAttribute} must be a type that can be converted from a<a name="line.909"></a>
-<span class="sourceLineNo">910</span>     * string using one of the {@link org.apache.logging.log4j.core.config.plugins.convert.TypeConverter TypeConverters}<a name="line.910"></a>
-<span class="sourceLineNo">911</span>     * . Parameters with {@link org.apache.logging.log4j.core.config.plugins.PluginElement} may be any plugin class or<a name="line.911"></a>
-<span class="sourceLineNo">912</span>     * an array of a plugin class. Collections and Maps are currently not supported, although the factory method that is<a name="line.912"></a>
-<span class="sourceLineNo">913</span>     * called can create these from an array.<a name="line.913"></a>
-<span class="sourceLineNo">914</span>     *<a name="line.914"></a>
-<span class="sourceLineNo">915</span>     * Plugins can also be created using a builder class that implements<a name="line.915"></a>
-<span class="sourceLineNo">916</span>     * {@link org.apache.logging.log4j.core.util.Builder}. In that case, a static method annotated with<a name="line.916"></a>
-<span class="sourceLineNo">917</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginBuilderAttribute} should create the builder class, and<a name="line.917"></a>
-<span class="sourceLineNo">918</span>     * the various fields in the builder class should be annotated similarly to the method parameters. However, instead<a name="line.918"></a>
-<span class="sourceLineNo">919</span>     * of using PluginAttribute, one should use<a name="line.919"></a>
-<span class="sourceLineNo">920</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginBuilderAttribute} where the default value can be<a name="line.920"></a>
-<span class="sourceLineNo">921</span>     * specified as the default field value instead of as an additional annotation parameter.<a name="line.921"></a>
-<span class="sourceLineNo">922</span>     *<a name="line.922"></a>
-<span class="sourceLineNo">923</span>     * In either case, there are also annotations for specifying a<a name="line.923"></a>
-<span class="sourceLineNo">924</span>     * {@link org.apache.logging.log4j.core.config.Configuration} (<a name="line.924"></a>
-<span class="sourceLineNo">925</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginConfiguration}) or a<a name="line.925"></a>
-<span class="sourceLineNo">926</span>     * {@link org.apache.logging.log4j.core.config.Node} (<a name="line.926"></a>
-<span class="sourceLineNo">927</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginNode}).<a name="line.927"></a>
-<span class="sourceLineNo">928</span>     *<a name="line.928"></a>
-<span class="sourceLineNo">929</span>     * Although the happy path works, more work still needs to be done to log incorrect parameters. These will generally<a name="line.929"></a>
-<span class="sourceLineNo">930</span>     * result in unhelpful InvocationTargetExceptions.<a name="line.930"></a>
-<span class="sourceLineNo">931</span>     *<a name="line.931"></a>
-<span class="sourceLineNo">932</span>     * @param type the type of plugin to create.<a name="line.932"></a>
-<span class="sourceLineNo">933</span>     * @param node the corresponding configuration node for this plugin to create.<a name="line.933"></a>
-<span class="sourceLineNo">934</span>     * @param event the LogEvent that spurred the creation of this plugin<a name="line.934"></a>
-<span class="sourceLineNo">935</span>     * @return the created plugin object or {@code null} if there was an error setting it up.<a name="line.935"></a>
-<span class="sourceLineNo">936</span>     * @see org.apache.logging.log4j.core.config.plugins.util.PluginBuilder<a name="line.936"></a>
-<span class="sourceLineNo">937</span>     * @see org.apache.logging.log4j.core.config.plugins.visitors.PluginVisitor<a name="line.937"></a>
-<span class="sourceLineNo">938</span>     * @see org.apache.logging.log4j.core.config.plugins.convert.TypeConverter<a name="line.938"></a>
-<span class="sourceLineNo">939</span>     */<a name="line.939"></a>
-<span class="sourceLineNo">940</span>    private Object createPluginObject(final PluginType&lt;?&gt; type, final Node node, final LogEvent event) {<a name="line.940"></a>
-<span class="sourceLineNo">941</span>        final Class&lt;?&gt; clazz = type.getPluginClass();<a name="line.941"></a>
-<span class="sourceLineNo">942</span><a name="line.942"></a>
-<span class="sourceLineNo">943</span>        if (Map.class.isAssignableFrom(clazz)) {<a name="line.943"></a>
-<span class="sourceLineNo">944</span>            try {<a name="line.944"></a>
-<span class="sourceLineNo">945</span>                return createPluginMap(node);<a name="line.945"></a>
-<span class="sourceLineNo">946</span>            } catch (final Exception e) {<a name="line.946"></a>
-<span class="sourceLineNo">947</span>                LOGGER.warn("Unable to create Map for {} of class {}", type.getElementName(), clazz, e);<a name="line.947"></a>
-<span class="sourceLineNo">948</span>            }<a name="line.948"></a>
-<span class="sourceLineNo">949</span>        }<a name="line.949"></a>
-<span class="sourceLineNo">950</span><a name="line.950"></a>
-<span class="sourceLineNo">951</span>        if (Collection.class.isAssignableFrom(clazz)) {<a name="line.951"></a>
-<span class="sourceLineNo">952</span>            try {<a name="line.952"></a>
-<span class="sourceLineNo">953</span>                return createPluginCollection(node);<a name="line.953"></a>
-<span class="sourceLineNo">954</span>            } catch (final Exception e) {<a name="line.954"></a>
-<span class="sourceLineNo">955</span>                LOGGER.warn("Unable to create List for {} of class {}", type.getElementName(), clazz, e);<a name="line.955"></a>
-<span class="sourceLineNo">956</span>            }<a name="line.956"></a>
-<span class="sourceLineNo">957</span>        }<a name="line.957"></a>
-<span class="sourceLineNo">958</span><a name="line.958"></a>
-<span class="sourceLineNo">959</span>        return new PluginBuilder(type).withConfiguration(this).withConfigurationNode(node).forLogEvent(event).build();<a name="line.959"></a>
-<span class="sourceLineNo">960</span>    }<a name="line.960"></a>
-<span class="sourceLineNo">961</span><a name="line.961"></a>
-<span class="sourceLineNo">962</span>    private static Map&lt;String, ?&gt; createPluginMap(final Node node) {<a name="line.962"></a>
-<span class="sourceLineNo">963</span>        final Map&lt;String, Object&gt; map = new LinkedHashMap&lt;&gt;();<a name="line.963"></a>
-<span class="sourceLineNo">964</span>        for (final Node child : node.getChildren()) {<a name="line.964"></a>
-<span class="sourceLineNo">965</span>            final Object object = child.getObject();<a name="line.965"></a>
-<span class="sourceLineNo">966</span>            map.put(child.getName(), object);<a name="line.966"></a>
-<span class="sourceLineNo">967</span>        }<a name="line.967"></a>
-<span class="sourceLineNo">968</span>        return map;<a name="line.968"></a>
-<span class="sourceLineNo">969</span>    }<a name="line.969"></a>
-<span class="sourceLineNo">970</span><a name="line.970"></a>
-<span class="sourceLineNo">971</span>    private static Collection&lt;?&gt; createPluginCollection(final Node node) {<a name="line.971"></a>
-<span class="sourceLineNo">972</span>        final List&lt;Node&gt; children = node.getChildren();<a name="line.972"></a>
-<span class="sourceLineNo">973</span>        final Collection&lt;Object&gt; list = new ArrayList&lt;&gt;(children.size());<a name="line.973"></a>
-<span class="sourceLineNo">974</span>        for (final Node child : children) {<a name="line.974"></a>
-<span class="sourceLineNo">975</span>            final Object object = child.getObject();<a name="line.975"></a>
-<span class="sourceLineNo">976</span>            list.add(object);<a name="line.976"></a>
-<span class="sourceLineNo">977</span>        }<a name="line.977"></a>
-<span class="sourceLineNo">978</span>        return list;<a name="line.978"></a>
-<span class="sourceLineNo">979</span>    }<a name="line.979"></a>
-<span class="sourceLineNo">980</span><a name="line.980"></a>
-<span class="sourceLineNo">981</span>    private void setParents() {<a name="line.981"></a>
-<span class="sourceLineNo">982</span>        for (final Map.Entry&lt;String, LoggerConfig&gt; entry : loggerConfigs.entrySet()) {<a name="line.982"></a>
-<span class="sourceLineNo">983</span>            final LoggerConfig logger = entry.getValue();<a name="line.983"></a>
-<span class="sourceLineNo">984</span>            String key = entry.getKey();<a name="line.984"></a>
-<span class="sourceLineNo">985</span>            if (!key.isEmpty()) {<a name="line.985"></a>
-<span class="sourceLineNo">986</span>                final int i = key.lastIndexOf('.');<a name="line.986"></a>
-<span class="sourceLineNo">987</span>                if (i &gt; 0) {<a name="line.987"></a>
-<span class="sourceLineNo">988</span>                    key = key.substring(0, i);<a name="line.988"></a>
-<span class="sourceLineNo">989</span>                    LoggerConfig parent = getLoggerConfig(key);<a name="line.989"></a>
-<span class="sourceLineNo">990</span>                    if (parent == null) {<a name="line.990"></a>
-<span class="sourceLineNo">991</span>                        parent = root;<a name="line.991"></a>
-<span class="sourceLineNo">992</span>                    }<a name="line.992"></a>
-<span class="sourceLineNo">993</span>                    logger.setParent(parent);<a name="line.993"></a>
-<span class="sourceLineNo">994</span>                } else {<a name="line.994"></a>
-<span class="sourceLineNo">995</span>                    logger.setParent(root);<a name="line.995"></a>
-<span class="sourceLineNo">996</span>                }<a name="line.996"></a>
-<span class="sourceLineNo">997</span>            }<a name="line.997"></a>
-<span class="sourceLineNo">998</span>        }<a name="line.998"></a>
-<span class="sourceLineNo">999</span>    }<a name="line.999"></a>
-<span class="sourceLineNo">1000</span><a name="line.1000"></a>
-<span class="sourceLineNo">1001</span>    /**<a name="line.1001"></a>
-<span class="sourceLineNo">1002</span>     * Reads an InputStream using buffered reads into a byte array buffer. The given InputStream will remain open after<a name="line.1002"></a>
-<span class="sourceLineNo">1003</span>     * invocation of this method.<a name="line.1003"></a>
-<span class="sourceLineNo">1004</span>     *<a name="line.1004"></a>
-<span class="sourceLineNo">1005</span>     * @param is the InputStream to read into a byte array buffer.<a name="line.1005"></a>
-<span class="sourceLineNo">1006</span>     * @return a byte array of the InputStream contents.<a name="line.1006"></a>
-<span class="sourceLineNo">1007</span>     * @throws IOException if the {@code read} method of the provided InputStream throws this exception.<a name="line.1007"></a>
-<span class="sourceLineNo">1008</span>     */<a name="line.1008"></a>
-<span class="sourceLineNo">1009</span>    protected static byte[] toByteArray(final InputStream is) throws IOException {<a name="line.1009"></a>
-<span class="sourceLineNo">1010</span>        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();<a name="line.1010"></a>
-<span class="sourceLineNo">1011</span><a name="line.1011"></a>
-<span class="sourceLineNo">1012</span>        int nRead;<a name="line.1012"></a>
-<span class="sourceLineNo">1013</span>        final byte[] data = new byte[BUF_SIZE];<a name="line.1013"></a>
-<span class="sourceLineNo">1014</span><a name="line.1014"></a>
-<span class="sourceLineNo">1015</span>        while ((nRead = is.read(data, 0, data.length)) != -1) {<a name="line.1015"></a>
-<span class="sourceLineNo">1016</span>            buffer.write(data, 0, nRead);<a name="line.1016"></a>
-<span class="sourceLineNo">1017</span>        }<a name="line.1017"></a>
-<span class="sourceLineNo">1018</span><a name="line.1018"></a>
-<span class="sourceLineNo">1019</span>        return buffer.toByteArray();<a name="line.1019"></a>
-<span class="sourceLineNo">1020</span>    }<a name="line.1020"></a>
-<span class="sourceLineNo">1021</span><a name="line.1021"></a>
-<span class="sourceLineNo">1022</span>    @Override<a name="line.1022"></a>
-<span class="sourceLineNo">1023</span>    public NanoClock getNanoClock() {<a name="line.1023"></a>
-<span class="sourceLineNo">1024</span>        return nanoClock;<a name="line.1024"></a>
+<span class="sourceLineNo">830</span>    @Override<a name="line.830"></a>
+<span class="sourceLineNo">831</span>    public LoggerContext getLoggerContext() {<a name="line.831"></a>
+<span class="sourceLineNo">832</span>        return loggerContext.get();<a name="line.832"></a>
+<span class="sourceLineNo">833</span>    }<a name="line.833"></a>
+<span class="sourceLineNo">834</span><a name="line.834"></a>
+<span class="sourceLineNo">835</span>    /**<a name="line.835"></a>
+<span class="sourceLineNo">836</span>     * Returns the root Logger.<a name="line.836"></a>
+<span class="sourceLineNo">837</span>     *<a name="line.837"></a>
+<span class="sourceLineNo">838</span>     * @return the root Logger.<a name="line.838"></a>
+<span class="sourceLineNo">839</span>     */<a name="line.839"></a>
+<span class="sourceLineNo">840</span>    @Override<a name="line.840"></a>
+<span class="sourceLineNo">841</span>    public LoggerConfig getRootLogger() {<a name="line.841"></a>
+<span class="sourceLineNo">842</span>        return root;<a name="line.842"></a>
+<span class="sourceLineNo">843</span>    }<a name="line.843"></a>
+<span class="sourceLineNo">844</span><a name="line.844"></a>
+<span class="sourceLineNo">845</span>    /**<a name="line.845"></a>
+<span class="sourceLineNo">846</span>     * Returns a Map of all the LoggerConfigs.<a name="line.846"></a>
+<span class="sourceLineNo">847</span>     *<a name="line.847"></a>
+<span class="sourceLineNo">848</span>     * @return a Map with each entry containing the name of the Logger and the LoggerConfig.<a name="line.848"></a>
+<span class="sourceLineNo">849</span>     */<a name="line.849"></a>
+<span class="sourceLineNo">850</span>    @Override<a name="line.850"></a>
+<span class="sourceLineNo">851</span>    public Map&lt;String, LoggerConfig&gt; getLoggers() {<a name="line.851"></a>
+<span class="sourceLineNo">852</span>        return Collections.unmodifiableMap(loggerConfigs);<a name="line.852"></a>
+<span class="sourceLineNo">853</span>    }<a name="line.853"></a>
+<span class="sourceLineNo">854</span><a name="line.854"></a>
+<span class="sourceLineNo">855</span>    /**<a name="line.855"></a>
+<span class="sourceLineNo">856</span>     * Returns the LoggerConfig with the specified name.<a name="line.856"></a>
+<span class="sourceLineNo">857</span>     *<a name="line.857"></a>
+<span class="sourceLineNo">858</span>     * @param loggerName The Logger name.<a name="line.858"></a>
+<span class="sourceLineNo">859</span>     * @return The LoggerConfig or null if no match was found.<a name="line.859"></a>
+<span class="sourceLineNo">860</span>     */<a name="line.860"></a>
+<span class="sourceLineNo">861</span>    public LoggerConfig getLogger(final String loggerName) {<a name="line.861"></a>
+<span class="sourceLineNo">862</span>        return loggerConfigs.get(loggerName);<a name="line.862"></a>
+<span class="sourceLineNo">863</span>    }<a name="line.863"></a>
+<span class="sourceLineNo">864</span><a name="line.864"></a>
+<span class="sourceLineNo">865</span>    /**<a name="line.865"></a>
+<span class="sourceLineNo">866</span>     * Add a loggerConfig. The LoggerConfig must already be configured with Appenders, Filters, etc. After addLogger is<a name="line.866"></a>
+<span class="sourceLineNo">867</span>     * called LoggerContext.updateLoggers must be called.<a name="line.867"></a>
+<span class="sourceLineNo">868</span>     *<a name="line.868"></a>
+<span class="sourceLineNo">869</span>     * @param loggerName The name of the Logger.<a name="line.869"></a>
+<span class="sourceLineNo">870</span>     * @param loggerConfig The LoggerConfig.<a name="line.870"></a>
+<span class="sourceLineNo">871</span>     */<a name="line.871"></a>
+<span class="sourceLineNo">872</span>    @Override<a name="line.872"></a>
+<span class="sourceLineNo">873</span>    public synchronized void addLogger(final String loggerName, final LoggerConfig loggerConfig) {<a name="line.873"></a>
+<span class="sourceLineNo">874</span>        loggerConfigs.putIfAbsent(loggerName, loggerConfig);<a name="line.874"></a>
+<span class="sourceLineNo">875</span>        setParents();<a name="line.875"></a>
+<span class="sourceLineNo">876</span>    }<a name="line.876"></a>
+<span class="sourceLineNo">877</span><a name="line.877"></a>
+<span class="sourceLineNo">878</span>    /**<a name="line.878"></a>
+<span class="sourceLineNo">879</span>     * Remove a LoggerConfig.<a name="line.879"></a>
+<span class="sourceLineNo">880</span>     *<a name="line.880"></a>
+<span class="sourceLineNo">881</span>     * @param loggerName The name of the Logger.<a name="line.881"></a>
+<span class="sourceLineNo">882</span>     */<a name="line.882"></a>
+<span class="sourceLineNo">883</span>    @Override<a name="line.883"></a>
+<span class="sourceLineNo">884</span>    public synchronized void removeLogger(final String loggerName) {<a name="line.884"></a>
+<span class="sourceLineNo">885</span>        loggerConfigs.remove(loggerName);<a name="line.885"></a>
+<span class="sourceLineNo">886</span>        setParents();<a name="line.886"></a>
+<span class="sourceLineNo">887</span>    }<a name="line.887"></a>
+<span class="sourceLineNo">888</span><a name="line.888"></a>
+<span class="sourceLineNo">889</span>    @Override<a name="line.889"></a>
+<span class="sourceLineNo">890</span>    public void createConfiguration(final Node node, final LogEvent event) {<a name="line.890"></a>
+<span class="sourceLineNo">891</span>        final PluginType&lt;?&gt; type = node.getType();<a name="line.891"></a>
+<span class="sourceLineNo">892</span>        if (type != null &amp;&amp; type.isDeferChildren()) {<a name="line.892"></a>
+<span class="sourceLineNo">893</span>            node.setObject(createPluginObject(type, node, event));<a name="line.893"></a>
+<span class="sourceLineNo">894</span>        } else {<a name="line.894"></a>
+<span class="sourceLineNo">895</span>            for (final Node child : node.getChildren()) {<a name="line.895"></a>
+<span class="sourceLineNo">896</span>                createConfiguration(child, event);<a name="line.896"></a>
+<span class="sourceLineNo">897</span>            }<a name="line.897"></a>
+<span class="sourceLineNo">898</span><a name="line.898"></a>
+<span class="sourceLineNo">899</span>            if (type == null) {<a name="line.899"></a>
+<span class="sourceLineNo">900</span>                if (node.getParent() != null) {<a name="line.900"></a>
+<span class="sourceLineNo">901</span>                    LOGGER.error("Unable to locate plugin for {}", node.getName());<a name="line.901"></a>
+<span class="sourceLineNo">902</span>                }<a name="line.902"></a>
+<span class="sourceLineNo">903</span>            } else {<a name="line.903"></a>
+<span class="sourceLineNo">904</span>                node.setObject(createPluginObject(type, node, event));<a name="line.904"></a>
+<span class="sourceLineNo">905</span>            }<a name="line.905"></a>
+<span class="sourceLineNo">906</span>        }<a name="line.906"></a>
+<span class="sourceLineNo">907</span>    }<a name="line.907"></a>
+<span class="sourceLineNo">908</span><a name="line.908"></a>
+<span class="sourceLineNo">909</span>    /**<a name="line.909"></a>
+<span class="sourceLineNo">910</span>     * Invokes a static factory method to either create the desired object or to create a builder object that creates<a name="line.910"></a>
+<span class="sourceLineNo">911</span>     * the desired object. In the case of a factory method, it should be annotated with<a name="line.911"></a>
+<span class="sourceLineNo">912</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginFactory}, and each parameter should be annotated with<a name="line.912"></a>
+<span class="sourceLineNo">913</span>     * an appropriate plugin annotation depending on what that parameter describes. Parameters annotated with<a name="line.913"></a>
+<span class="sourceLineNo">914</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginAttribute} must be a type that can be converted from a<a name="line.914"></a>
+<span class="sourceLineNo">915</span>     * string using one of the {@link org.apache.logging.log4j.core.config.plugins.convert.TypeConverter TypeConverters}<a name="line.915"></a>
+<span class="sourceLineNo">916</span>     * . Parameters with {@link org.apache.logging.log4j.core.config.plugins.PluginElement} may be any plugin class or<a name="line.916"></a>
+<span class="sourceLineNo">917</span>     * an array of a plugin class. Collections and Maps are currently not supported, although the factory method that is<a name="line.917"></a>
+<span class="sourceLineNo">918</span>     * called can create these from an array.<a name="line.918"></a>
+<span class="sourceLineNo">919</span>     *<a name="line.919"></a>
+<span class="sourceLineNo">920</span>     * Plugins can also be created using a builder class that implements<a name="line.920"></a>
+<span class="sourceLineNo">921</span>     * {@link org.apache.logging.log4j.core.util.Builder}. In that case, a static method annotated with<a name="line.921"></a>
+<span class="sourceLineNo">922</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginBuilderAttribute} should create the builder class, and<a name="line.922"></a>
+<span class="sourceLineNo">923</span>     * the various fields in the builder class should be annotated similarly to the method parameters. However, instead<a name="line.923"></a>
+<span class="sourceLineNo">924</span>     * of using PluginAttribute, one should use<a name="line.924"></a>
+<span class="sourceLineNo">925</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginBuilderAttribute} where the default value can be<a name="line.925"></a>
+<span class="sourceLineNo">926</span>     * specified as the default field value instead of as an additional annotation parameter.<a name="line.926"></a>
+<span class="sourceLineNo">927</span>     *<a name="line.927"></a>
+<span class="sourceLineNo">928</span>     * In either case, there are also annotations for specifying a<a name="line.928"></a>
+<span class="sourceLineNo">929</span>     * {@link org.apache.logging.log4j.core.config.Configuration} (<a name="line.929"></a>
+<span class="sourceLineNo">930</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginConfiguration}) or a<a name="line.930"></a>
+<span class="sourceLineNo">931</span>     * {@link org.apache.logging.log4j.core.config.Node} (<a name="line.931"></a>
+<span class="sourceLineNo">932</span>     * {@link org.apache.logging.log4j.core.config.plugins.PluginNode}).<a name="line.932"></a>
+<span class="sourceLineNo">933</span>     *<a name="line.933"></a>
+<span class="sourceLineNo">934</span>     * Although the happy path works, more work still needs to be done to log incorrect parameters. These will generally<a name="line.934"></a>
+<span class="sourceLineNo">935</span>     * result in unhelpful InvocationTargetExceptions.<a name="line.935"></a>
+<span class="sourceLineNo">936</span>     *<a name="line.936"></a>
+<span class="sourceLineNo">937</span>     * @param type the type of plugin to create.<a name="line.937"></a>
+<span class="sourceLineNo">938</span>     * @param node the corresponding configuration node for this plugin to create.<a name="line.938"></a>
+<span class="sourceLineNo">939</span>     * @param event the LogEvent that spurred the creation of this plugin<a name="line.939"></a>
+<span class="sourceLineNo">940</span>     * @return the created plugin object or {@code null} if there was an error setting it up.<a name="line.940"></a>
+<span class="sourceLineNo">941</span>     * @see org.apache.logging.log4j.core.config.plugins.util.PluginBuilder<a name="line.941"></a>
+<span class="sourceLineNo">942</span>     * @see org.apache.logging.log4j.core.config.plugins.visitors.PluginVisitor<a name="line.942"></a>
+<span class="sourceLineNo">943</span>     * @see org.apache.logging.log4j.core.config.plugins.convert.TypeConverter<a name="line.943"></a>
+<span class="sourceLineNo">944</span>     */<a name="line.944"></a>
+<span class="sourceLineNo">945</span>    private Object createPluginObject(final PluginType&lt;?&gt; type, final Node node, final LogEvent event) {<a name="line.945"></a>
+<span class="sourceLineNo">946</span>        final Class&lt;?&gt; clazz = type.getPluginClass();<a name="line.946"></a>
+<span class="sourceLineNo">947</span><a name="line.947"></a>
+<span class="sourceLineNo">948</span>        if (Map.class.isAssignableFrom(clazz)) {<a name="line.948"></a>
+<span class="sourceLineNo">949</span>            try {<a name="line.949"></a>
+<span class="sourceLineNo">950</span>                return createPluginMap(node);<a name="line.950"></a>
+<span class="sourceLineNo">951</span>            } catch (final Exception e) {<a name="line.951"></a>
+<span class="sourceLineNo">952</span>                LOGGER.warn("Unable to create Map for {} of class {}", type.getElementName(), clazz, e);<a name="line.952"></a>
+<span class="sourceLineNo">953</span>            }<a name="line.953"></a>
+<span class="sourceLineNo">954</span>        }<a name="line.954"></a>
+<span class="sourceLineNo">955</span><a name="line.955"></a>
+<span class="sourceLineNo">956</span>        if (Collection.class.isAssignableFrom(clazz)) {<a name="line.956"></a>
+<span class="sourceLineNo">957</span>            try {<a name="line.957"></a>
+<span class="sourceLineNo">958</span>                return createPluginCollection(node);<a name="line.958"></a>
+<span class="sourceLineNo">959</span>            } catch (final Exception e) {<a name="line.959"></a>
+<span class="sourceLineNo">960</span>                LOGGER.warn("Unable to create List for {} of class {}", type.getElementName(), clazz, e);<a name="line.960"></a>
+<span class="sourceLineNo">961</span>            }<a name="line.961"></a>
+<span class="sourceLineNo">962</span>        }<a name="line.962"></a>
+<span class="sourceLineNo">963</span><a name="line.963"></a>
+<span class="sourceLineNo">964</span>        return new PluginBuilder(type).withConfiguration(this).withConfigurationNode(node).forLogEvent(event).build();<a name="line.964"></a>
+<span class="sourceLineNo">965</span>    }<a name="line.965"></a>
+<span class="sourceLineNo">966</span><a name="line.966"></a>
+<span class="sourceLineNo">967</span>    private static Map&lt;String, ?&gt; createPluginMap(final Node node) {<a name="line.967"></a>
+<span class="sourceLineNo">968</span>        final Map&lt;String, Object&gt; map = new LinkedHashMap&lt;&gt;();<a name="line.968"></a>
+<span class="sourceLineNo">969</span>        for (final Node child : node.getChildren()) {<a name="line.969"></a>
+<span class="sourceLineNo">970</span>            final Object object = child.getObject();<a name="line.970"></a>
+<span class="sourceLineNo">971</span>            map.put(child.getName(), object);<a name="line.971"></a>
+<span class="sourceLineNo">972</span>        }<a name="line.972"></a>
+<span class="sourceLineNo">973</span>        return map;<a name="line.973"></a>
+<span class="sourceLineNo">974</span>    }<a name="line.974"></a>
+<span class="sourceLineNo">975</span><a name="line.975"></a>
+<span class="sourceLineNo">976</span>    private static Collection&lt;?&gt; createPluginCollection(final Node node) {<a name="line.976"></a>
+<span class="sourceLineNo">977</span>        final List&lt;Node&gt; children = node.getChildren();<a name="line.977"></a>
+<span class="sourceLineNo">978</span>        final Collection&lt;Object&gt; list = new ArrayList&lt;&gt;(children.size());<a name="line.978"></a>
+<span class="sourceLineNo">979</span>        for (final Node child : children) {<a name="line.979"></a>
+<span class="sourceLineNo">980</span>            final Object object = child.getObject();<a name="line.980"></a>
+<span class="sourceLineNo">981</span>            list.add(object);<a name="line.981"></a>
+<span class="sourceLineNo">982</span>        }<a name="line.982"></a>
+<span class="sourceLineNo">983</span>        return list;<a name="line.983"></a>
+<span class="sourceLineNo">984</span>    }<a name="line.984"></a>
+<span class="sourceLineNo">985</span><a name="line.985"></a>
+<span class="sourceLineNo">986</span>    private void setParents() {<a name="line.986"></a>
+<span class="sourceLineNo">987</span>        for (final Map.Entry&lt;String, LoggerConfig&gt; entry : loggerConfigs.entrySet()) {<a name="line.987"></a>
+<span class="sourceLineNo">988</span>            final LoggerConfig logger = entry.getValue();<a name="line.988"></a>
+<span class="sourceLineNo">989</span>            String key = entry.getKey();<a name="line.989"></a>
+<span class="sourceLineNo">990</span>            if (!key.isEmpty()) {<a name="line.990"></a>
+<span class="sourceLineNo">991</span>                final int i = key.lastIndexOf('.');<a name="line.991"></a>
+<span class="sourceLineNo">992</span>                if (i &gt; 0) {<a name="line.992"></a>
+<span class="sourceLineNo">993</span>                    key = key.substring(0, i);<a name="line.993"></a>
+<span class="sourceLineNo">994</span>                    LoggerConfig parent = getLoggerConfig(key);<a name="line.994"></a>
+<span class="sourceLineNo">995</span>                    if (parent == null) {<a name="line.995"></a>
+<span class="sourceLineNo">996</span>                        parent = root;<a name="line.996"></a>
+<span class="sourceLineNo">997</span>                    }<a name="line.997"></a>
+<span class="sourceLineNo">998</span>                    logger.setParent(parent);<a name="line.998"></a>
+<span class="sourceLineNo">999</span>                } else {<a name="line.999"></a>
+<span class="sourceLineNo">1000</span>                    logger.setParent(root);<a name="line.1000"></a>
+<span class="sourceLineNo">1001</span>                }<a name="line.1001"></a>
+<span class="sourceLineNo">1002</span>            }<a name="line.1002"></a>
+<span class="sourceLineNo">1003</span>        }<a name="line.1003"></a>
+<span class="sourceLineNo">1004</span>    }<a name="line.1004"></a>
+<span class="sourceLineNo">1005</span><a name="line.1005"></a>
+<span class="sourceLineNo">1006</span>    /**<a name="line.1006"></a>
+<span class="sourceLineNo">1007</span>     * Reads an InputStream using buffered reads into a byte array buffer. The given InputStream will remain open after<a name="line.1007"></a>
+<span class="sourceLineNo">1008</span>     * invocation of this method.<a name="line.1008"></a>
+<span class="sourceLineNo">1009</span>     *<a name="line.1009"></a>
+<span class="sourceLineNo">1010</span>     * @param is the InputStream to read into a byte array buffer.<a name="line.1010"></a>
+<span class="sourceLineNo">1011</span>     * @return a byte array of the InputStream contents.<a name="line.1011"></a>
+<span class="sourceLineNo">1012</span>     * @throws IOException if the {@code read} method of the provided InputStream throws this exception.<a name="line.1012"></a>
+<span class="sourceLineNo">1013</span>     */<a name="line.1013"></a>
+<span class="sourceLineNo">1014</span>    protected static byte[] toByteArray(final InputStream is) throws IOException {<a name="line.1014"></a>
+<span class="sourceLineNo">1015</span>        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();<a name="line.1015"></a>
+<span class="sourceLineNo">1016</span><a name="line.1016"></a>
+<span class="sourceLineNo">1017</span>        int nRead;<a name="line.1017"></a>
+<span class="sourceLineNo">1018</span>        final byte[] data = new byte[BUF_SIZE];<a name="line.1018"></a>
+<span class="sourceLineNo">1019</span><a name="line.1019"></a>
+<span class="sourceLineNo">1020</span>        while ((nRead = is.read(data, 0, data.length)) != -1) {<a name="line.1020"></a>
+<span class="sourceLineNo">1021</span>            buffer.write(data, 0, nRead);<a name="line.1021"></a>
+<span class="sourceLineNo">1022</span>        }<a name="line.1022"></a>
+<span class="sourceLineNo">1023</span><a name="line.1023"></a>
+<span class="sourceLineNo">1024</span>        return buffer.toByteArray();<a name="line.1024"></a>
 <span class="sourceLineNo">1025</span>    }<a name="line.1025"></a>
 <span class="sourceLineNo">1026</span><a name="line.1026"></a>
 <span class="sourceLineNo">1027</span>    @Override<a name="line.1027"></a>
-<span class="sourceLineNo">1028</span>    public void setNanoClock(final NanoClock nanoClock) {<a name="line.1028"></a>
-<span class="sourceLineNo">1029</span>        this.nanoClock = Objects.requireNonNull(nanoClock, "nanoClock");<a name="line.1029"></a>
+<span class="sourceLineNo">1028</span>    public NanoClock getNanoClock() {<a name="line.1028"></a>
+<span class="sourceLineNo">1029</span>        return nanoClock;<a name="line.1029"></a>
 <span class="sourceLineNo">1030</span>    }<a name="line.1030"></a>
-<span class="sourceLineNo">1031</span>}<a name="line.1031"></a>
+<span class="sourceLineNo">1031</span><a name="line.1031"></a>
+<span class="sourceLineNo">1032</span>    @Override<a name="line.1032"></a>
+<span class="sourceLineNo">1033</span>    public void setNanoClock(final NanoClock nanoClock) {<a name="line.1033"></a>
+<span class="sourceLineNo">1034</span>        this.nanoClock = Objects.requireNonNull(nanoClock, "nanoClock");<a name="line.1034"></a>
+<span class="sourceLineNo">1035</span>    }<a name="line.1035"></a>
+<span class="sourceLineNo">1036</span>}<a name="line.1036"></a>
 
 
 

@@ -76,7 +76,7 @@
 <span class="sourceLineNo">068</span>    }<a name="line.68"></a>
 <span class="sourceLineNo">069</span><a name="line.69"></a>
 <span class="sourceLineNo">070</span>    private static Map&lt;String, Supplier&lt;Clock&gt;&gt; aliases() {<a name="line.70"></a>
-<span class="sourceLineNo">071</span>        Map&lt;String, Supplier&lt;Clock&gt;&gt; result = new HashMap&lt;&gt;();<a name="line.71"></a>
+<span class="sourceLineNo">071</span>        final Map&lt;String, Supplier&lt;Clock&gt;&gt; result = new HashMap&lt;&gt;();<a name="line.71"></a>
 <span class="sourceLineNo">072</span>        result.put("SystemClock",       new Supplier&lt;Clock&gt;() { @Override public Clock get() { return new SystemClock(); } });<a name="line.72"></a>
 <span class="sourceLineNo">073</span>        result.put("SystemMillisClock", new Supplier&lt;Clock&gt;() { @Override public Clock get() { return new SystemMillisClock(); } });<a name="line.73"></a>
 <span class="sourceLineNo">074</span>        result.put("CachedClock",       new Supplier&lt;Clock&gt;() { @Override public Clock get() { return CachedClock.instance(); } });<a name="line.74"></a>
@@ -92,7 +92,7 @@
 <span class="sourceLineNo">084</span>            LOGGER.trace("Using default SystemClock for timestamps.");<a name="line.84"></a>
 <span class="sourceLineNo">085</span>            return logSupportedPrecision(new SystemClock());<a name="line.85"></a>
 <span class="sourceLineNo">086</span>        }<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        Supplier&lt;Clock&gt; specified = aliases().get(userRequest);<a name="line.87"></a>
+<span class="sourceLineNo">087</span>        final Supplier&lt;Clock&gt; specified = aliases().get(userRequest);<a name="line.87"></a>
 <span class="sourceLineNo">088</span>        if (specified != null) {<a name="line.88"></a>
 <span class="sourceLineNo">089</span>            LOGGER.trace("Using specified {} for timestamps.", userRequest);<a name="line.89"></a>
 <span class="sourceLineNo">090</span>            return logSupportedPrecision(specified.get());<a name="line.90"></a>
@@ -108,8 +108,8 @@
 <span class="sourceLineNo">100</span>        }<a name="line.100"></a>
 <span class="sourceLineNo">101</span>    }<a name="line.101"></a>
 <span class="sourceLineNo">102</span><a name="line.102"></a>
-<span class="sourceLineNo">103</span>    private static Clock logSupportedPrecision(Clock clock) {<a name="line.103"></a>
-<span class="sourceLineNo">104</span>        String support = clock instanceof PreciseClock ? "supports" : "does not support";<a name="line.104"></a>
+<span class="sourceLineNo">103</span>    private static Clock logSupportedPrecision(final Clock clock) {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        final String support = clock instanceof PreciseClock ? "supports" : "does not support";<a name="line.104"></a>
 <span class="sourceLineNo">105</span>        LOGGER.debug("{} {} precise timestamps.", clock.getClass().getName(), support);<a name="line.105"></a>
 <span class="sourceLineNo">106</span>        return clock;<a name="line.106"></a>
 <span class="sourceLineNo">107</span>    }<a name="line.107"></a>

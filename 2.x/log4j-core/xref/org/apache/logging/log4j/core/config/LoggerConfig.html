@@ -56,8 +56,8 @@
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.lookup.StrSubstitutor;
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Booleans;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Constants;
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.message.Message;
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.LoaderUtil;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Loader;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.message.Message;
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.PerformanceSensitive;
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.PropertiesUtil;
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.Strings;
@@ -89,7 +89,7 @@
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">final</strong> String factory = PropertiesUtil.getProperties().getStringProperty(Constants.LOG4J_LOG_EVENT_FACTORY);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">if</strong> (factory != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>              <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>                  <strong class="jxr_keyword">final</strong> Class&lt;?&gt; clazz = LoaderUtil.loadClass(factory);
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>                  <strong class="jxr_keyword">final</strong> Class&lt;?&gt; clazz = Loader.loadClass(factory);
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>                  <strong class="jxr_keyword">if</strong> (clazz != <strong class="jxr_keyword">null</strong> &amp;&amp; LogEventFactory.<strong class="jxr_keyword">class</strong>.isAssignableFrom(clazz)) {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>                      LOG_EVENT_FACTORY = (LogEventFactory) clazz.newInstance();
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>                  }
@@ -450,7 +450,7 @@
 <a class="jxr_linenumber" name="L442" href="#L442">442</a>         <strong class="jxr_keyword">return</strong> reliabilityStrategy;
 <a class="jxr_linenumber" name="L443" href="#L443">443</a>     }
 <a class="jxr_linenumber" name="L444" href="#L444">444</a> 
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processLogEvent(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event, <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfigPredicate</a> predicate) {
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processLogEvent(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfigPredicate</a> predicate) {
 <a class="jxr_linenumber" name="L446" href="#L446">446</a>         event.setIncludeLocation(isIncludeLocation());
 <a class="jxr_linenumber" name="L447" href="#L447">447</a>         <strong class="jxr_keyword">if</strong> (predicate.allow(<strong class="jxr_keyword">this</strong>)) {
 <a class="jxr_linenumber" name="L448" href="#L448">448</a>             callAppenders(event);
@@ -606,19 +606,19 @@
 <a class="jxr_linenumber" name="L598" href="#L598">598</a>     <strong class="jxr_keyword">protected</strong> enum <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfigPredicate</a> {
 <a class="jxr_linenumber" name="L599" href="#L599">599</a>         ALL() {
 <a class="jxr_linenumber" name="L600" href="#L600">600</a>             @Override
-<a class="jxr_linenumber" name="L601" href="#L601">601</a>             <strong class="jxr_keyword">boolean</strong> allow(<a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> config) {
+<a class="jxr_linenumber" name="L601" href="#L601">601</a>             <strong class="jxr_keyword">boolean</strong> allow(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> config) {
 <a class="jxr_linenumber" name="L602" href="#L602">602</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L603" href="#L603">603</a>             }
 <a class="jxr_linenumber" name="L604" href="#L604">604</a>         },
 <a class="jxr_linenumber" name="L605" href="#L605">605</a>         ASYNCHRONOUS_ONLY() {
 <a class="jxr_linenumber" name="L606" href="#L606">606</a>             @Override
-<a class="jxr_linenumber" name="L607" href="#L607">607</a>             <strong class="jxr_keyword">boolean</strong> allow(<a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> config) {
+<a class="jxr_linenumber" name="L607" href="#L607">607</a>             <strong class="jxr_keyword">boolean</strong> allow(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> config) {
 <a class="jxr_linenumber" name="L608" href="#L608">608</a>                 <strong class="jxr_keyword">return</strong> config instanceof AsyncLoggerConfig;
 <a class="jxr_linenumber" name="L609" href="#L609">609</a>             }
 <a class="jxr_linenumber" name="L610" href="#L610">610</a>         },
 <a class="jxr_linenumber" name="L611" href="#L611">611</a>         SYNCHRONOUS_ONLY() {
 <a class="jxr_linenumber" name="L612" href="#L612">612</a>             @Override
-<a class="jxr_linenumber" name="L613" href="#L613">613</a>             <strong class="jxr_keyword">boolean</strong> allow(<a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> config) {
+<a class="jxr_linenumber" name="L613" href="#L613">613</a>             <strong class="jxr_keyword">boolean</strong> allow(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> config) {
 <a class="jxr_linenumber" name="L614" href="#L614">614</a>                 <strong class="jxr_keyword">return</strong> !ASYNCHRONOUS_ONLY.allow(config);
 <a class="jxr_linenumber" name="L615" href="#L615">615</a>             }
 <a class="jxr_linenumber" name="L616" href="#L616">616</a>         };
@@ -628,6 +628,6 @@
 <a class="jxr_linenumber" name="L620" href="#L620">620</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

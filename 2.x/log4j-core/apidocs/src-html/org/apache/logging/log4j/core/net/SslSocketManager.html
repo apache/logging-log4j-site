@@ -166,13 +166,13 @@
 <span class="sourceLineNo">158</span>    private static class SslSocketManagerFactory extends TcpSocketManagerFactory&lt;SslSocketManager, SslFactoryData&gt; {<a name="line.158"></a>
 <span class="sourceLineNo">159</span><a name="line.159"></a>
 <span class="sourceLineNo">160</span>        @Override<a name="line.160"></a>
-<span class="sourceLineNo">161</span>        SslSocketManager createManager(final String name, OutputStream os, Socket socket, InetAddress inetAddress,<a name="line.161"></a>
+<span class="sourceLineNo">161</span>        SslSocketManager createManager(final String name, final OutputStream os, final Socket socket, final InetAddress inetAddress,<a name="line.161"></a>
 <span class="sourceLineNo">162</span>                final SslFactoryData data) {<a name="line.162"></a>
 <span class="sourceLineNo">163</span>            return new SslSocketManager(name, os, socket, data.sslConfiguration, inetAddress, data.host, data.port,<a name="line.163"></a>
 <span class="sourceLineNo">164</span>                    data.connectTimeoutMillis, data.reconnectDelayMillis, data.immediateFail, data.layout, data.bufferSize,<a name="line.164"></a>
 <span class="sourceLineNo">165</span>                    data.socketOptions);<a name="line.165"></a>
 <span class="sourceLineNo">166</span>        }<a name="line.166"></a>
-<span class="sourceLineNo">167</span>        <a name="line.167"></a>
+<span class="sourceLineNo">167</span><a name="line.167"></a>
 <span class="sourceLineNo">168</span>        @Override<a name="line.168"></a>
 <span class="sourceLineNo">169</span>        Socket createSocket(final SslFactoryData data) throws IOException {<a name="line.169"></a>
 <span class="sourceLineNo">170</span>            return SslSocketManager.createSocket(data.host, data.port, data.connectTimeoutMillis, data.sslConfiguration,<a name="line.170"></a>
@@ -180,8 +180,8 @@
 <span class="sourceLineNo">172</span>        }<a name="line.172"></a>
 <span class="sourceLineNo">173</span>    }<a name="line.173"></a>
 <span class="sourceLineNo">174</span><a name="line.174"></a>
-<span class="sourceLineNo">175</span>    static Socket createSocket(final String host, int port, int connectTimeoutMillis,<a name="line.175"></a>
-<span class="sourceLineNo">176</span>            final SslConfiguration sslConfiguration, SocketOptions socketOptions) throws IOException {<a name="line.176"></a>
+<span class="sourceLineNo">175</span>    static Socket createSocket(final String host, final int port, final int connectTimeoutMillis,<a name="line.175"></a>
+<span class="sourceLineNo">176</span>            final SslConfiguration sslConfiguration, final SocketOptions socketOptions) throws IOException {<a name="line.176"></a>
 <span class="sourceLineNo">177</span>        final SSLSocketFactory socketFactory = createSslSocketFactory(sslConfiguration);<a name="line.177"></a>
 <span class="sourceLineNo">178</span>        final SSLSocket socket = (SSLSocket) socketFactory.createSocket();<a name="line.178"></a>
 <span class="sourceLineNo">179</span>        if (socketOptions != null) {<a name="line.179"></a>

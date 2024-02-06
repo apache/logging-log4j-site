@@ -93,7 +93,7 @@
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">private</strong> String loggerName;
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">private</strong> Message message;
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">private</strong> Throwable thrown;
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/time/MutableInstant.html">MutableInstant</a> instant = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/time/MutableInstant.html">MutableInstant</a>();
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/time/MutableInstant.html">MutableInstant</a> instant = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/time/MutableInstant.html">MutableInstant</a>();
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/ThrowableProxy.html">ThrowableProxy</a> thrownProxy;
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">private</strong> StringMap contextData = createContextData((List&lt;Property&gt;) <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">private</strong> ThreadContext.ContextStack contextStack = ThreadContext.getImmutableStack();
@@ -425,7 +425,7 @@
 <a class="jxr_linenumber" name="L417" href="#L417">417</a>             <strong class="jxr_keyword">final</strong> String threadName, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> threadPriority, <strong class="jxr_keyword">final</strong> StackTraceElement source,
 <a class="jxr_linenumber" name="L418" href="#L418">418</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timestampMillis, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> nanoOfMillisecond, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nanoTime) {
 <a class="jxr_linenumber" name="L419" href="#L419">419</a>         <strong class="jxr_keyword">this</strong>(loggerName, marker, loggerFQCN, level, message, thrown, thrownProxy, contextData, contextStack, threadId, threadName, threadPriority, source, nanoTime);
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>         <strong class="jxr_keyword">long</strong> millis = message instanceof TimestampMessage
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> millis = message instanceof TimestampMessage
 <a class="jxr_linenumber" name="L421" href="#L421">421</a>                 ? ((TimestampMessage) message).getTimestamp()
 <a class="jxr_linenumber" name="L422" href="#L422">422</a>                 : timestampMillis;
 <a class="jxr_linenumber" name="L423" href="#L423">423</a>         instant.initFromEpochMilli(millis, nanoOfMillisecond);
@@ -770,7 +770,7 @@
 <a class="jxr_linenumber" name="L762" href="#L762">762</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> createMemento(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> logEvent) {
 <a class="jxr_linenumber" name="L763" href="#L763">763</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Log4jLogEvent.Builder(logEvent).build();
 <a class="jxr_linenumber" name="L764" href="#L764">764</a>     }
-<a class="jxr_linenumber" name="L765" href="#L765">765</a>     
+<a class="jxr_linenumber" name="L765" href="#L765">765</a> 
 <a class="jxr_linenumber" name="L766" href="#L766">766</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L767" href="#L767">767</a> <em class="jxr_javadoccomment">     * Creates and returns a new immutable copy of this {@code Log4jLogEvent}.</em>
 <a class="jxr_linenumber" name="L768" href="#L768">768</a> <em class="jxr_javadoccomment">     *</em>
@@ -1014,6 +1014,6 @@
 <a class="jxr_linenumber" name="L1006" href="#L1006">1006</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

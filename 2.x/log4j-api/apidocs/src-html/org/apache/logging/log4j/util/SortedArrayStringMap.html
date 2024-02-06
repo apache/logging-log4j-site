@@ -104,7 +104,7 @@
 <span class="sourceLineNo">096</span>        Method[] methods = ObjectInputStream.class.getMethods();<a name="line.96"></a>
 <span class="sourceLineNo">097</span>        Method setMethod = null;<a name="line.97"></a>
 <span class="sourceLineNo">098</span>        Method getMethod = null;<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        for (Method method : methods) {<a name="line.99"></a>
+<span class="sourceLineNo">099</span>        for (final Method method : methods) {<a name="line.99"></a>
 <span class="sourceLineNo">100</span>            if (method.getName().equals("setObjectInputFilter")) {<a name="line.100"></a>
 <span class="sourceLineNo">101</span>                setMethod = method;<a name="line.101"></a>
 <span class="sourceLineNo">102</span>            } else if (method.getName().equals("getObjectInputFilter")) {<a name="line.102"></a>
@@ -114,16 +114,16 @@
 <span class="sourceLineNo">106</span>        Method newMethod = null;<a name="line.106"></a>
 <span class="sourceLineNo">107</span>        try {<a name="line.107"></a>
 <span class="sourceLineNo">108</span>            if (setMethod != null) {<a name="line.108"></a>
-<span class="sourceLineNo">109</span>                Class&lt;?&gt; clazz = Class.forName("org.apache.logging.log4j.util.internal.DefaultObjectInputFilter");<a name="line.109"></a>
+<span class="sourceLineNo">109</span>                final Class&lt;?&gt; clazz = Class.forName("org.apache.logging.log4j.util.internal.DefaultObjectInputFilter");<a name="line.109"></a>
 <span class="sourceLineNo">110</span>                methods = clazz.getMethods();<a name="line.110"></a>
-<span class="sourceLineNo">111</span>                for (Method method : methods) {<a name="line.111"></a>
+<span class="sourceLineNo">111</span>                for (final Method method : methods) {<a name="line.111"></a>
 <span class="sourceLineNo">112</span>                    if (method.getName().equals("newInstance") &amp;&amp; Modifier.isStatic(method.getModifiers())) {<a name="line.112"></a>
 <span class="sourceLineNo">113</span>                        newMethod = method;<a name="line.113"></a>
 <span class="sourceLineNo">114</span>                        break;<a name="line.114"></a>
 <span class="sourceLineNo">115</span>                    }<a name="line.115"></a>
 <span class="sourceLineNo">116</span>                }<a name="line.116"></a>
 <span class="sourceLineNo">117</span>            }<a name="line.117"></a>
-<span class="sourceLineNo">118</span>        } catch (ClassNotFoundException ex) {<a name="line.118"></a>
+<span class="sourceLineNo">118</span>        } catch (final ClassNotFoundException ex) {<a name="line.118"></a>
 <span class="sourceLineNo">119</span>            // Ignore the exception<a name="line.119"></a>
 <span class="sourceLineNo">120</span>        }<a name="line.120"></a>
 <span class="sourceLineNo">121</span>        newObjectInputFilter = newMethod;<a name="line.121"></a>
@@ -557,7 +557,7 @@
 <span class="sourceLineNo">549</span>        }<a name="line.549"></a>
 <span class="sourceLineNo">550</span>    }<a name="line.550"></a>
 <span class="sourceLineNo">551</span><a name="line.551"></a>
-<span class="sourceLineNo">552</span>    private static Object unmarshall(final byte[] data, ObjectInputStream inputStream)<a name="line.552"></a>
+<span class="sourceLineNo">552</span>    private static Object unmarshall(final byte[] data, final ObjectInputStream inputStream)<a name="line.552"></a>
 <span class="sourceLineNo">553</span>            throws IOException, ClassNotFoundException {<a name="line.553"></a>
 <span class="sourceLineNo">554</span>        final ByteArrayInputStream bin = new ByteArrayInputStream(data);<a name="line.554"></a>
 <span class="sourceLineNo">555</span>        Collection&lt;String&gt; allowedClasses = null;<a name="line.555"></a>
@@ -567,8 +567,8 @@
 <span class="sourceLineNo">559</span>            ois = new FilteredObjectInputStream(bin, allowedClasses);<a name="line.559"></a>
 <span class="sourceLineNo">560</span>        } else {<a name="line.560"></a>
 <span class="sourceLineNo">561</span>            try {<a name="line.561"></a>
-<span class="sourceLineNo">562</span>                Object obj = getObjectInputFilter.invoke(inputStream);<a name="line.562"></a>
-<span class="sourceLineNo">563</span>                Object filter = newObjectInputFilter.invoke(null, obj);<a name="line.563"></a>
+<span class="sourceLineNo">562</span>                final Object obj = getObjectInputFilter.invoke(inputStream);<a name="line.562"></a>
+<span class="sourceLineNo">563</span>                final Object filter = newObjectInputFilter.invoke(null, obj);<a name="line.563"></a>
 <span class="sourceLineNo">564</span>                ois = new ObjectInputStream(bin);<a name="line.564"></a>
 <span class="sourceLineNo">565</span>                setObjectInputFilter.invoke(ois, filter);<a name="line.565"></a>
 <span class="sourceLineNo">566</span>            } catch (IllegalAccessException | InvocationTargetException ex) {<a name="line.566"></a>

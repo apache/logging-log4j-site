@@ -104,7 +104,7 @@
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          Method[] methods = ObjectInputStream.<strong class="jxr_keyword">class</strong>.getMethods();
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>          Method setMethod = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          Method getMethod = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">for</strong> (Method method : methods) {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Method method : methods) {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>             <strong class="jxr_keyword">if</strong> (method.getName().equals(<span class="jxr_string">"setObjectInputFilter"</span>)) {
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>                 setMethod = method;
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (method.getName().equals(<span class="jxr_string">"getObjectInputFilter"</span>)) {
@@ -114,16 +114,16 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>         Method newMethod = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>             <strong class="jxr_keyword">if</strong> (setMethod != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>                 Class&lt;?&gt; clazz = Class.forName(<span class="jxr_string">"org.apache.logging.log4j.util.internal.DefaultObjectInputFilter"</span>);
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>                 <strong class="jxr_keyword">final</strong> Class&lt;?&gt; clazz = Class.forName(<span class="jxr_string">"org.apache.logging.log4j.util.internal.DefaultObjectInputFilter"</span>);
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>                 methods = clazz.getMethods();
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>                 <strong class="jxr_keyword">for</strong> (Method method : methods) {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Method method : methods) {
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>                     <strong class="jxr_keyword">if</strong> (method.getName().equals(<span class="jxr_string">"newInstance"</span>) &amp;&amp; Modifier.isStatic(method.getModifiers())) {
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>                         newMethod = method;
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>                         <strong class="jxr_keyword">break</strong>;
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>                     }
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>                 }
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>             }
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>         } <strong class="jxr_keyword">catch</strong> (ClassNotFoundException ex) {
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> ClassNotFoundException ex) {
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>             <em class="jxr_comment">// Ignore the exception</em>
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>         }
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         newObjectInputFilter = newMethod;
@@ -557,7 +557,7 @@
 <a class="jxr_linenumber" name="L549" href="#L549">549</a>         }
 <a class="jxr_linenumber" name="L550" href="#L550">550</a>     }
 <a class="jxr_linenumber" name="L551" href="#L551">551</a> 
-<a class="jxr_linenumber" name="L552" href="#L552">552</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Object unmarshall(<strong class="jxr_keyword">final</strong> byte[] data, ObjectInputStream inputStream)
+<a class="jxr_linenumber" name="L552" href="#L552">552</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Object unmarshall(<strong class="jxr_keyword">final</strong> byte[] data, <strong class="jxr_keyword">final</strong> ObjectInputStream inputStream)
 <a class="jxr_linenumber" name="L553" href="#L553">553</a>             <strong class="jxr_keyword">throws</strong> IOException, ClassNotFoundException {
 <a class="jxr_linenumber" name="L554" href="#L554">554</a>         <strong class="jxr_keyword">final</strong> ByteArrayInputStream bin = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(data);
 <a class="jxr_linenumber" name="L555" href="#L555">555</a>         Collection&lt;String&gt; allowedClasses = <strong class="jxr_keyword">null</strong>;
@@ -567,8 +567,8 @@
 <a class="jxr_linenumber" name="L559" href="#L559">559</a>             ois = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/util/FilteredObjectInputStream.html">FilteredObjectInputStream</a>(bin, allowedClasses);
 <a class="jxr_linenumber" name="L560" href="#L560">560</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L561" href="#L561">561</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L562" href="#L562">562</a>                 Object obj = getObjectInputFilter.invoke(inputStream);
-<a class="jxr_linenumber" name="L563" href="#L563">563</a>                 Object filter = newObjectInputFilter.invoke(<strong class="jxr_keyword">null</strong>, obj);
+<a class="jxr_linenumber" name="L562" href="#L562">562</a>                 <strong class="jxr_keyword">final</strong> Object obj = getObjectInputFilter.invoke(inputStream);
+<a class="jxr_linenumber" name="L563" href="#L563">563</a>                 <strong class="jxr_keyword">final</strong> Object filter = newObjectInputFilter.invoke(<strong class="jxr_keyword">null</strong>, obj);
 <a class="jxr_linenumber" name="L564" href="#L564">564</a>                 ois = <strong class="jxr_keyword">new</strong> ObjectInputStream(bin);
 <a class="jxr_linenumber" name="L565" href="#L565">565</a>                 setObjectInputFilter.invoke(ois, filter);
 <a class="jxr_linenumber" name="L566" href="#L566">566</a>             } <strong class="jxr_keyword">catch</strong> (IllegalAccessException | InvocationTargetException ex) {
@@ -649,6 +649,6 @@
 <a class="jxr_linenumber" name="L641" href="#L641">641</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

@@ -43,335 +43,336 @@
 <span class="sourceLineNo">035</span>import org.apache.logging.log4j.core.config.AppenderControl;<a name="line.35"></a>
 <span class="sourceLineNo">036</span>import org.apache.logging.log4j.core.config.Configuration;<a name="line.36"></a>
 <span class="sourceLineNo">037</span>import org.apache.logging.log4j.core.config.Node;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.38"></a>
-<span class="sourceLineNo">039</span>import org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory;<a name="line.39"></a>
-<span class="sourceLineNo">040</span>import org.apache.logging.log4j.core.config.plugins.PluginElement;<a name="line.40"></a>
-<span class="sourceLineNo">041</span>import org.apache.logging.log4j.core.script.AbstractScript;<a name="line.41"></a>
-<span class="sourceLineNo">042</span>import org.apache.logging.log4j.core.script.ScriptManager;<a name="line.42"></a>
-<span class="sourceLineNo">043</span>import org.apache.logging.log4j.core.util.Booleans;<a name="line.43"></a>
-<span class="sourceLineNo">044</span><a name="line.44"></a>
-<span class="sourceLineNo">045</span>/**<a name="line.45"></a>
-<span class="sourceLineNo">046</span> * This Appender "routes" between various Appenders, some of which can be references to<a name="line.46"></a>
-<span class="sourceLineNo">047</span> * Appenders defined earlier in the configuration while others can be dynamically created<a name="line.47"></a>
-<span class="sourceLineNo">048</span> * within this Appender as required. Routing is achieved by specifying a pattern on<a name="line.48"></a>
-<span class="sourceLineNo">049</span> * the Routing appender declaration. The pattern should contain one or more substitution patterns of<a name="line.49"></a>
-<span class="sourceLineNo">050</span> * the form "$${[key:]token}". The pattern will be resolved each time the Appender is called using<a name="line.50"></a>
-<span class="sourceLineNo">051</span> * the built in StrSubstitutor and the StrLookup plugin that matches the specified key.<a name="line.51"></a>
-<span class="sourceLineNo">052</span> */<a name="line.52"></a>
-<span class="sourceLineNo">053</span>@Plugin(name = "Routing", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)<a name="line.53"></a>
-<span class="sourceLineNo">054</span>public final class RoutingAppender extends AbstractAppender {<a name="line.54"></a>
-<span class="sourceLineNo">055</span><a name="line.55"></a>
-<span class="sourceLineNo">056</span>    public static final String STATIC_VARIABLES_KEY = "staticVariables";<a name="line.56"></a>
-<span class="sourceLineNo">057</span><a name="line.57"></a>
-<span class="sourceLineNo">058</span>    public static class Builder&lt;B extends Builder&lt;B&gt;&gt; extends AbstractAppender.Builder&lt;B&gt;<a name="line.58"></a>
-<span class="sourceLineNo">059</span>            implements org.apache.logging.log4j.core.util.Builder&lt;RoutingAppender&gt; {<a name="line.59"></a>
-<span class="sourceLineNo">060</span><a name="line.60"></a>
-<span class="sourceLineNo">061</span>        // Does not work unless the element is called "Script", I wanted "DefaultRounteScript"...<a name="line.61"></a>
-<span class="sourceLineNo">062</span>        @PluginElement("Script")<a name="line.62"></a>
-<span class="sourceLineNo">063</span>        private AbstractScript defaultRouteScript;<a name="line.63"></a>
-<span class="sourceLineNo">064</span><a name="line.64"></a>
-<span class="sourceLineNo">065</span>        @PluginElement("Routes")<a name="line.65"></a>
-<span class="sourceLineNo">066</span>        private Routes routes;<a name="line.66"></a>
-<span class="sourceLineNo">067</span><a name="line.67"></a>
-<span class="sourceLineNo">068</span>        @PluginElement("RewritePolicy")<a name="line.68"></a>
-<span class="sourceLineNo">069</span>        private RewritePolicy rewritePolicy;<a name="line.69"></a>
-<span class="sourceLineNo">070</span><a name="line.70"></a>
-<span class="sourceLineNo">071</span>        @PluginElement("PurgePolicy")<a name="line.71"></a>
-<span class="sourceLineNo">072</span>        private PurgePolicy purgePolicy;<a name="line.72"></a>
-<span class="sourceLineNo">073</span><a name="line.73"></a>
-<span class="sourceLineNo">074</span>        @Override<a name="line.74"></a>
-<span class="sourceLineNo">075</span>        public RoutingAppender build() {<a name="line.75"></a>
-<span class="sourceLineNo">076</span>            final String name = getName();<a name="line.76"></a>
-<span class="sourceLineNo">077</span>            if (name == null) {<a name="line.77"></a>
-<span class="sourceLineNo">078</span>                LOGGER.error("No name defined for this RoutingAppender");<a name="line.78"></a>
-<span class="sourceLineNo">079</span>                return null;<a name="line.79"></a>
-<span class="sourceLineNo">080</span>            }<a name="line.80"></a>
-<span class="sourceLineNo">081</span>            if (routes == null) {<a name="line.81"></a>
-<span class="sourceLineNo">082</span>                LOGGER.error("No routes defined for RoutingAppender {}", name);<a name="line.82"></a>
-<span class="sourceLineNo">083</span>                return null;<a name="line.83"></a>
-<span class="sourceLineNo">084</span>            }<a name="line.84"></a>
-<span class="sourceLineNo">085</span>            return new RoutingAppender(name, getFilter(), isIgnoreExceptions(), routes, rewritePolicy,<a name="line.85"></a>
-<span class="sourceLineNo">086</span>                    getConfiguration(), purgePolicy, defaultRouteScript);<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        }<a name="line.87"></a>
-<span class="sourceLineNo">088</span><a name="line.88"></a>
-<span class="sourceLineNo">089</span>        public Routes getRoutes() {<a name="line.89"></a>
-<span class="sourceLineNo">090</span>            return routes;<a name="line.90"></a>
-<span class="sourceLineNo">091</span>        }<a name="line.91"></a>
-<span class="sourceLineNo">092</span><a name="line.92"></a>
-<span class="sourceLineNo">093</span>        public AbstractScript getDefaultRouteScript() {<a name="line.93"></a>
-<span class="sourceLineNo">094</span>            return defaultRouteScript;<a name="line.94"></a>
-<span class="sourceLineNo">095</span>        }<a name="line.95"></a>
-<span class="sourceLineNo">096</span><a name="line.96"></a>
-<span class="sourceLineNo">097</span>        public RewritePolicy getRewritePolicy() {<a name="line.97"></a>
-<span class="sourceLineNo">098</span>            return rewritePolicy;<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        }<a name="line.99"></a>
-<span class="sourceLineNo">100</span><a name="line.100"></a>
-<span class="sourceLineNo">101</span>        public PurgePolicy getPurgePolicy() {<a name="line.101"></a>
-<span class="sourceLineNo">102</span>            return purgePolicy;<a name="line.102"></a>
-<span class="sourceLineNo">103</span>        }<a name="line.103"></a>
-<span class="sourceLineNo">104</span><a name="line.104"></a>
-<span class="sourceLineNo">105</span>        public B withRoutes(@SuppressWarnings("hiding") final Routes routes) {<a name="line.105"></a>
-<span class="sourceLineNo">106</span>            this.routes = routes;<a name="line.106"></a>
-<span class="sourceLineNo">107</span>            return asBuilder();<a name="line.107"></a>
-<span class="sourceLineNo">108</span>        }<a name="line.108"></a>
-<span class="sourceLineNo">109</span><a name="line.109"></a>
-<span class="sourceLineNo">110</span>        public B withDefaultRouteScript(@SuppressWarnings("hiding") final AbstractScript defaultRouteScript) {<a name="line.110"></a>
-<span class="sourceLineNo">111</span>            this.defaultRouteScript = defaultRouteScript;<a name="line.111"></a>
-<span class="sourceLineNo">112</span>            return asBuilder();<a name="line.112"></a>
-<span class="sourceLineNo">113</span>        }<a name="line.113"></a>
-<span class="sourceLineNo">114</span><a name="line.114"></a>
-<span class="sourceLineNo">115</span>        public B withRewritePolicy(@SuppressWarnings("hiding") final RewritePolicy rewritePolicy) {<a name="line.115"></a>
-<span class="sourceLineNo">116</span>            this.rewritePolicy = rewritePolicy;<a name="line.116"></a>
-<span class="sourceLineNo">117</span>            return asBuilder();<a name="line.117"></a>
-<span class="sourceLineNo">118</span>        }<a name="line.118"></a>
-<span class="sourceLineNo">119</span><a name="line.119"></a>
-<span class="sourceLineNo">120</span>        public void withPurgePolicy(@SuppressWarnings("hiding") final PurgePolicy purgePolicy) {<a name="line.120"></a>
-<span class="sourceLineNo">121</span>            this.purgePolicy = purgePolicy;<a name="line.121"></a>
-<span class="sourceLineNo">122</span>        }<a name="line.122"></a>
-<span class="sourceLineNo">123</span><a name="line.123"></a>
-<span class="sourceLineNo">124</span>    }<a name="line.124"></a>
-<span class="sourceLineNo">125</span><a name="line.125"></a>
-<span class="sourceLineNo">126</span>    @PluginBuilderFactory<a name="line.126"></a>
-<span class="sourceLineNo">127</span>    public static &lt;B extends Builder&lt;B&gt;&gt; B newBuilder() {<a name="line.127"></a>
-<span class="sourceLineNo">128</span>        return new Builder&lt;B&gt;().asBuilder();<a name="line.128"></a>
-<span class="sourceLineNo">129</span>    }<a name="line.129"></a>
-<span class="sourceLineNo">130</span><a name="line.130"></a>
-<span class="sourceLineNo">131</span>    private static final String DEFAULT_KEY = "ROUTING_APPENDER_DEFAULT";<a name="line.131"></a>
-<span class="sourceLineNo">132</span><a name="line.132"></a>
-<span class="sourceLineNo">133</span>    private final Routes routes;<a name="line.133"></a>
-<span class="sourceLineNo">134</span>    private Route defaultRoute;<a name="line.134"></a>
-<span class="sourceLineNo">135</span>    private final Configuration configuration;<a name="line.135"></a>
-<span class="sourceLineNo">136</span>    private final ConcurrentMap&lt;String, AppenderControl&gt; appenders = new ConcurrentHashMap&lt;&gt;();<a name="line.136"></a>
-<span class="sourceLineNo">137</span>    private final RewritePolicy rewritePolicy;<a name="line.137"></a>
-<span class="sourceLineNo">138</span>    private final PurgePolicy purgePolicy;<a name="line.138"></a>
-<span class="sourceLineNo">139</span>    private final AbstractScript defaultRouteScript;<a name="line.139"></a>
-<span class="sourceLineNo">140</span>    private final ConcurrentMap&lt;Object, Object&gt; scriptStaticVariables = new ConcurrentHashMap&lt;&gt;();<a name="line.140"></a>
-<span class="sourceLineNo">141</span><a name="line.141"></a>
-<span class="sourceLineNo">142</span>    private RoutingAppender(final String name, final Filter filter, final boolean ignoreExceptions, final Routes routes,<a name="line.142"></a>
-<span class="sourceLineNo">143</span>            final RewritePolicy rewritePolicy, final Configuration configuration, final PurgePolicy purgePolicy,<a name="line.143"></a>
-<span class="sourceLineNo">144</span>            final AbstractScript defaultRouteScript) {<a name="line.144"></a>
-<span class="sourceLineNo">145</span>        super(name, filter, null, ignoreExceptions);<a name="line.145"></a>
-<span class="sourceLineNo">146</span>        this.routes = routes;<a name="line.146"></a>
-<span class="sourceLineNo">147</span>        this.configuration = configuration;<a name="line.147"></a>
-<span class="sourceLineNo">148</span>        this.rewritePolicy = rewritePolicy;<a name="line.148"></a>
-<span class="sourceLineNo">149</span>        this.purgePolicy = purgePolicy;<a name="line.149"></a>
-<span class="sourceLineNo">150</span>        if (this.purgePolicy != null) {<a name="line.150"></a>
-<span class="sourceLineNo">151</span>            this.purgePolicy.initialize(this);<a name="line.151"></a>
-<span class="sourceLineNo">152</span>        }<a name="line.152"></a>
-<span class="sourceLineNo">153</span>        this.defaultRouteScript = defaultRouteScript;<a name="line.153"></a>
-<span class="sourceLineNo">154</span>        Route defRoute = null;<a name="line.154"></a>
-<span class="sourceLineNo">155</span>        for (final Route route : routes.getRoutes()) {<a name="line.155"></a>
-<span class="sourceLineNo">156</span>            if (route.getKey() == null) {<a name="line.156"></a>
-<span class="sourceLineNo">157</span>                if (defRoute == null) {<a name="line.157"></a>
-<span class="sourceLineNo">158</span>                    defRoute = route;<a name="line.158"></a>
-<span class="sourceLineNo">159</span>                } else {<a name="line.159"></a>
-<span class="sourceLineNo">160</span>                    error("Multiple default routes. Route " + route.toString() + " will be ignored");<a name="line.160"></a>
-<span class="sourceLineNo">161</span>                }<a name="line.161"></a>
-<span class="sourceLineNo">162</span>            }<a name="line.162"></a>
-<span class="sourceLineNo">163</span>        }<a name="line.163"></a>
-<span class="sourceLineNo">164</span>        defaultRoute = defRoute;<a name="line.164"></a>
-<span class="sourceLineNo">165</span>    }<a name="line.165"></a>
-<span class="sourceLineNo">166</span><a name="line.166"></a>
-<span class="sourceLineNo">167</span>    @Override<a name="line.167"></a>
-<span class="sourceLineNo">168</span>    public void start() {<a name="line.168"></a>
-<span class="sourceLineNo">169</span>        if (defaultRouteScript != null) {<a name="line.169"></a>
-<span class="sourceLineNo">170</span>            if (configuration == null) {<a name="line.170"></a>
-<span class="sourceLineNo">171</span>                error("No Configuration defined for RoutingAppender; required for Script element.");<a name="line.171"></a>
-<span class="sourceLineNo">172</span>            } else {<a name="line.172"></a>
-<span class="sourceLineNo">173</span>                final ScriptManager scriptManager = configuration.getScriptManager();<a name="line.173"></a>
-<span class="sourceLineNo">174</span>                scriptManager.addScript(defaultRouteScript);<a name="line.174"></a>
-<span class="sourceLineNo">175</span>                final Bindings bindings = scriptManager.createBindings(defaultRouteScript);<a name="line.175"></a>
-<span class="sourceLineNo">176</span>                bindings.put(STATIC_VARIABLES_KEY, scriptStaticVariables);<a name="line.176"></a>
-<span class="sourceLineNo">177</span>                final Object object = scriptManager.execute(defaultRouteScript.getName(), bindings);<a name="line.177"></a>
-<span class="sourceLineNo">178</span>                final Route route = routes.getRoute(Objects.toString(object, null));<a name="line.178"></a>
-<span class="sourceLineNo">179</span>                if (route != null) {<a name="line.179"></a>
-<span class="sourceLineNo">180</span>                    defaultRoute = route;<a name="line.180"></a>
-<span class="sourceLineNo">181</span>                }<a name="line.181"></a>
-<span class="sourceLineNo">182</span>            }<a name="line.182"></a>
-<span class="sourceLineNo">183</span>        }<a name="line.183"></a>
-<span class="sourceLineNo">184</span>        // Register all the static routes.<a name="line.184"></a>
-<span class="sourceLineNo">185</span>        for (final Route route : routes.getRoutes()) {<a name="line.185"></a>
-<span class="sourceLineNo">186</span>            if (route.getAppenderRef() != null) {<a name="line.186"></a>
-<span class="sourceLineNo">187</span>                final Appender appender = configuration.getAppender(route.getAppenderRef());<a name="line.187"></a>
-<span class="sourceLineNo">188</span>                if (appender != null) {<a name="line.188"></a>
-<span class="sourceLineNo">189</span>                    final String key = route == defaultRoute ? DEFAULT_KEY : route.getKey();<a name="line.189"></a>
-<span class="sourceLineNo">190</span>                    appenders.put(key, new AppenderControl(appender, null, null));<a name="line.190"></a>
-<span class="sourceLineNo">191</span>                } else {<a name="line.191"></a>
-<span class="sourceLineNo">192</span>                    error("Appender " + route.getAppenderRef() + " cannot be located. Route ignored");<a name="line.192"></a>
-<span class="sourceLineNo">193</span>                }<a name="line.193"></a>
-<span class="sourceLineNo">194</span>            }<a name="line.194"></a>
-<span class="sourceLineNo">195</span>        }<a name="line.195"></a>
-<span class="sourceLineNo">196</span>        super.start();<a name="line.196"></a>
-<span class="sourceLineNo">197</span>    }<a name="line.197"></a>
-<span class="sourceLineNo">198</span><a name="line.198"></a>
-<span class="sourceLineNo">199</span>    @Override<a name="line.199"></a>
-<span class="sourceLineNo">200</span>    public boolean stop(final long timeout, final TimeUnit timeUnit) {<a name="line.200"></a>
-<span class="sourceLineNo">201</span>        setStopping();<a name="line.201"></a>
-<span class="sourceLineNo">202</span>        super.stop(timeout, timeUnit, false);<a name="line.202"></a>
-<span class="sourceLineNo">203</span>        final Map&lt;String, Appender&gt; map = configuration.getAppenders();<a name="line.203"></a>
-<span class="sourceLineNo">204</span>        for (final Map.Entry&lt;String, AppenderControl&gt; entry : appenders.entrySet()) {<a name="line.204"></a>
-<span class="sourceLineNo">205</span>            final Appender appender = entry.getValue().getAppender();<a name="line.205"></a>
-<span class="sourceLineNo">206</span>            if (!map.containsKey(appender.getName())) {<a name="line.206"></a>
-<span class="sourceLineNo">207</span>                if (appender instanceof LifeCycle2) {<a name="line.207"></a>
-<span class="sourceLineNo">208</span>                    ((LifeCycle2) appender).stop(timeout, timeUnit);<a name="line.208"></a>
-<span class="sourceLineNo">209</span>                } else {<a name="line.209"></a>
-<span class="sourceLineNo">210</span>                    appender.stop();<a name="line.210"></a>
-<span class="sourceLineNo">211</span>                }<a name="line.211"></a>
-<span class="sourceLineNo">212</span>            }<a name="line.212"></a>
-<span class="sourceLineNo">213</span>        }<a name="line.213"></a>
-<span class="sourceLineNo">214</span>        setStopped();<a name="line.214"></a>
-<span class="sourceLineNo">215</span>        return true;<a name="line.215"></a>
-<span class="sourceLineNo">216</span>    }<a name="line.216"></a>
-<span class="sourceLineNo">217</span><a name="line.217"></a>
-<span class="sourceLineNo">218</span>    @Override<a name="line.218"></a>
-<span class="sourceLineNo">219</span>    public void append(LogEvent event) {<a name="line.219"></a>
-<span class="sourceLineNo">220</span>        if (rewritePolicy != null) {<a name="line.220"></a>
-<span class="sourceLineNo">221</span>            event = rewritePolicy.rewrite(event);<a name="line.221"></a>
-<span class="sourceLineNo">222</span>        }<a name="line.222"></a>
-<span class="sourceLineNo">223</span>        final String pattern = routes.getPattern(event, scriptStaticVariables);<a name="line.223"></a>
-<span class="sourceLineNo">224</span>        final String key = pattern != null ? configuration.getStrSubstitutor().replace(event, pattern) : defaultRoute.getKey();<a name="line.224"></a>
-<span class="sourceLineNo">225</span>        final AppenderControl control = getControl(key, event);<a name="line.225"></a>
-<span class="sourceLineNo">226</span>        if (control != null) {<a name="line.226"></a>
-<span class="sourceLineNo">227</span>            control.callAppender(event);<a name="line.227"></a>
-<span class="sourceLineNo">228</span>        }<a name="line.228"></a>
-<span class="sourceLineNo">229</span><a name="line.229"></a>
-<span class="sourceLineNo">230</span>        if (purgePolicy != null) {<a name="line.230"></a>
-<span class="sourceLineNo">231</span>            purgePolicy.update(key, event);<a name="line.231"></a>
-<span class="sourceLineNo">232</span>        }<a name="line.232"></a>
-<span class="sourceLineNo">233</span>    }<a name="line.233"></a>
-<span class="sourceLineNo">234</span><a name="line.234"></a>
-<span class="sourceLineNo">235</span>    private synchronized AppenderControl getControl(final String key, final LogEvent event) {<a name="line.235"></a>
-<span class="sourceLineNo">236</span>        AppenderControl control = appenders.get(key);<a name="line.236"></a>
-<span class="sourceLineNo">237</span>        if (control != null) {<a name="line.237"></a>
-<span class="sourceLineNo">238</span>            return control;<a name="line.238"></a>
-<span class="sourceLineNo">239</span>        }<a name="line.239"></a>
-<span class="sourceLineNo">240</span>        Route route = null;<a name="line.240"></a>
-<span class="sourceLineNo">241</span>        for (final Route r : routes.getRoutes()) {<a name="line.241"></a>
-<span class="sourceLineNo">242</span>            if (r.getAppenderRef() == null &amp;&amp; key.equals(r.getKey())) {<a name="line.242"></a>
-<span class="sourceLineNo">243</span>                route = r;<a name="line.243"></a>
-<span class="sourceLineNo">244</span>                break;<a name="line.244"></a>
-<span class="sourceLineNo">245</span>            }<a name="line.245"></a>
-<span class="sourceLineNo">246</span>        }<a name="line.246"></a>
-<span class="sourceLineNo">247</span>        if (route == null) {<a name="line.247"></a>
-<span class="sourceLineNo">248</span>            route = defaultRoute;<a name="line.248"></a>
-<span class="sourceLineNo">249</span>            control = appenders.get(DEFAULT_KEY);<a name="line.249"></a>
-<span class="sourceLineNo">250</span>            if (control != null) {<a name="line.250"></a>
-<span class="sourceLineNo">251</span>                return control;<a name="line.251"></a>
-<span class="sourceLineNo">252</span>            }<a name="line.252"></a>
-<span class="sourceLineNo">253</span>        }<a name="line.253"></a>
-<span class="sourceLineNo">254</span>        if (route != null) {<a name="line.254"></a>
-<span class="sourceLineNo">255</span>            final Appender app = createAppender(route, event);<a name="line.255"></a>
-<span class="sourceLineNo">256</span>            if (app == null) {<a name="line.256"></a>
-<span class="sourceLineNo">257</span>                return null;<a name="line.257"></a>
-<span class="sourceLineNo">258</span>            }<a name="line.258"></a>
-<span class="sourceLineNo">259</span>            control = new AppenderControl(app, null, null);<a name="line.259"></a>
-<span class="sourceLineNo">260</span>            appenders.put(key, control);<a name="line.260"></a>
-<span class="sourceLineNo">261</span>        }<a name="line.261"></a>
-<span class="sourceLineNo">262</span><a name="line.262"></a>
-<span class="sourceLineNo">263</span>        return control;<a name="line.263"></a>
-<span class="sourceLineNo">264</span>    }<a name="line.264"></a>
-<span class="sourceLineNo">265</span><a name="line.265"></a>
-<span class="sourceLineNo">266</span>    private Appender createAppender(final Route route, final LogEvent event) {<a name="line.266"></a>
-<span class="sourceLineNo">267</span>        final Node routeNode = route.getNode();<a name="line.267"></a>
-<span class="sourceLineNo">268</span>        for (final Node node : routeNode.getChildren()) {<a name="line.268"></a>
-<span class="sourceLineNo">269</span>            if (node.getType().getElementName().equals(Appender.ELEMENT_TYPE)) {<a name="line.269"></a>
-<span class="sourceLineNo">270</span>                final Node appNode = new Node(node);<a name="line.270"></a>
-<span class="sourceLineNo">271</span>                configuration.createConfiguration(appNode, event);<a name="line.271"></a>
-<span class="sourceLineNo">272</span>                if (appNode.getObject() instanceof Appender) {<a name="line.272"></a>
-<span class="sourceLineNo">273</span>                    final Appender app = appNode.getObject();<a name="line.273"></a>
-<span class="sourceLineNo">274</span>                    app.start();<a name="line.274"></a>
-<span class="sourceLineNo">275</span>                    return app;<a name="line.275"></a>
-<span class="sourceLineNo">276</span>                }<a name="line.276"></a>
-<span class="sourceLineNo">277</span>                error("Unable to create Appender of type " + node.getName());<a name="line.277"></a>
-<span class="sourceLineNo">278</span>                return null;<a name="line.278"></a>
-<span class="sourceLineNo">279</span>            }<a name="line.279"></a>
-<span class="sourceLineNo">280</span>        }<a name="line.280"></a>
-<span class="sourceLineNo">281</span>        error("No Appender was configured for route " + route.getKey());<a name="line.281"></a>
-<span class="sourceLineNo">282</span>        return null;<a name="line.282"></a>
-<span class="sourceLineNo">283</span>    }<a name="line.283"></a>
-<span class="sourceLineNo">284</span><a name="line.284"></a>
-<span class="sourceLineNo">285</span>    public Map&lt;String, AppenderControl&gt; getAppenders() {<a name="line.285"></a>
-<span class="sourceLineNo">286</span>        return Collections.unmodifiableMap(appenders);<a name="line.286"></a>
-<span class="sourceLineNo">287</span>    }<a name="line.287"></a>
-<span class="sourceLineNo">288</span><a name="line.288"></a>
-<span class="sourceLineNo">289</span>    /**<a name="line.289"></a>
-<span class="sourceLineNo">290</span>     * Deletes the specified appender.<a name="line.290"></a>
-<span class="sourceLineNo">291</span>     *<a name="line.291"></a>
-<span class="sourceLineNo">292</span>     * @param key The appender's key<a name="line.292"></a>
-<span class="sourceLineNo">293</span>     */<a name="line.293"></a>
-<span class="sourceLineNo">294</span>    public void deleteAppender(final String key) {<a name="line.294"></a>
-<span class="sourceLineNo">295</span>        LOGGER.debug("Deleting route with " + key + " key ");<a name="line.295"></a>
-<span class="sourceLineNo">296</span>        final AppenderControl control = appenders.remove(key);<a name="line.296"></a>
-<span class="sourceLineNo">297</span>        if (null != control) {<a name="line.297"></a>
-<span class="sourceLineNo">298</span>            LOGGER.debug("Stopping route with " + key + " key");<a name="line.298"></a>
-<span class="sourceLineNo">299</span>            control.getAppender().stop();<a name="line.299"></a>
-<span class="sourceLineNo">300</span>        } else {<a name="line.300"></a>
-<span class="sourceLineNo">301</span>            LOGGER.debug("Route with " + key + " key already deleted");<a name="line.301"></a>
-<span class="sourceLineNo">302</span>        }<a name="line.302"></a>
-<span class="sourceLineNo">303</span>    }<a name="line.303"></a>
-<span class="sourceLineNo">304</span><a name="line.304"></a>
-<span class="sourceLineNo">305</span>    /**<a name="line.305"></a>
-<span class="sourceLineNo">306</span>     * Creates a RoutingAppender.<a name="line.306"></a>
-<span class="sourceLineNo">307</span>     * @param name The name of the Appender.<a name="line.307"></a>
-<span class="sourceLineNo">308</span>     * @param ignore If {@code "true"} (default) exceptions encountered when appending events are logged; otherwise<a name="line.308"></a>
-<span class="sourceLineNo">309</span>     *               they are propagated to the caller.<a name="line.309"></a>
-<span class="sourceLineNo">310</span>     * @param routes The routing definitions.<a name="line.310"></a>
-<span class="sourceLineNo">311</span>     * @param config The Configuration (automatically added by the Configuration).<a name="line.311"></a>
-<span class="sourceLineNo">312</span>     * @param rewritePolicy A RewritePolicy, if any.<a name="line.312"></a>
-<span class="sourceLineNo">313</span>     * @param filter A Filter to restrict events processed by the Appender or null.<a name="line.313"></a>
-<span class="sourceLineNo">314</span>     * @return The RoutingAppender<a name="line.314"></a>
-<span class="sourceLineNo">315</span>     * @deprecated Since 2.7; use {@link #newBuilder()}<a name="line.315"></a>
-<span class="sourceLineNo">316</span>     */<a name="line.316"></a>
-<span class="sourceLineNo">317</span>    @Deprecated<a name="line.317"></a>
-<span class="sourceLineNo">318</span>    public static RoutingAppender createAppender(<a name="line.318"></a>
-<span class="sourceLineNo">319</span>            final String name,<a name="line.319"></a>
-<span class="sourceLineNo">320</span>            final String ignore,<a name="line.320"></a>
-<span class="sourceLineNo">321</span>            final Routes routes,<a name="line.321"></a>
-<span class="sourceLineNo">322</span>            final Configuration config,<a name="line.322"></a>
-<span class="sourceLineNo">323</span>            final RewritePolicy rewritePolicy,<a name="line.323"></a>
-<span class="sourceLineNo">324</span>            final PurgePolicy purgePolicy,<a name="line.324"></a>
-<span class="sourceLineNo">325</span>            final Filter filter) {<a name="line.325"></a>
-<span class="sourceLineNo">326</span><a name="line.326"></a>
-<span class="sourceLineNo">327</span>        final boolean ignoreExceptions = Booleans.parseBoolean(ignore, true);<a name="line.327"></a>
-<span class="sourceLineNo">328</span>        if (name == null) {<a name="line.328"></a>
-<span class="sourceLineNo">329</span>            LOGGER.error("No name provided for RoutingAppender");<a name="line.329"></a>
-<span class="sourceLineNo">330</span>            return null;<a name="line.330"></a>
-<span class="sourceLineNo">331</span>        }<a name="line.331"></a>
-<span class="sourceLineNo">332</span>        if (routes == null) {<a name="line.332"></a>
-<span class="sourceLineNo">333</span>            LOGGER.error("No routes defined for RoutingAppender");<a name="line.333"></a>
-<span class="sourceLineNo">334</span>            return null;<a name="line.334"></a>
-<span class="sourceLineNo">335</span>        }<a name="line.335"></a>
-<span class="sourceLineNo">336</span>        return new RoutingAppender(name, filter, ignoreExceptions, routes, rewritePolicy, config, purgePolicy, null);<a name="line.336"></a>
-<span class="sourceLineNo">337</span>    }<a name="line.337"></a>
-<span class="sourceLineNo">338</span><a name="line.338"></a>
-<span class="sourceLineNo">339</span>    public Route getDefaultRoute() {<a name="line.339"></a>
-<span class="sourceLineNo">340</span>        return defaultRoute;<a name="line.340"></a>
-<span class="sourceLineNo">341</span>    }<a name="line.341"></a>
-<span class="sourceLineNo">342</span><a name="line.342"></a>
-<span class="sourceLineNo">343</span>    public AbstractScript getDefaultRouteScript() {<a name="line.343"></a>
-<span class="sourceLineNo">344</span>        return defaultRouteScript;<a name="line.344"></a>
-<span class="sourceLineNo">345</span>    }<a name="line.345"></a>
-<span class="sourceLineNo">346</span><a name="line.346"></a>
-<span class="sourceLineNo">347</span>    public PurgePolicy getPurgePolicy() {<a name="line.347"></a>
-<span class="sourceLineNo">348</span>        return purgePolicy;<a name="line.348"></a>
-<span class="sourceLineNo">349</span>    }<a name="line.349"></a>
-<span class="sourceLineNo">350</span><a name="line.350"></a>
-<span class="sourceLineNo">351</span>    public RewritePolicy getRewritePolicy() {<a name="line.351"></a>
-<span class="sourceLineNo">352</span>        return rewritePolicy;<a name="line.352"></a>
-<span class="sourceLineNo">353</span>    }<a name="line.353"></a>
-<span class="sourceLineNo">354</span><a name="line.354"></a>
-<span class="sourceLineNo">355</span>    public Routes getRoutes() {<a name="line.355"></a>
-<span class="sourceLineNo">356</span>        return routes;<a name="line.356"></a>
-<span class="sourceLineNo">357</span>    }<a name="line.357"></a>
-<span class="sourceLineNo">358</span><a name="line.358"></a>
-<span class="sourceLineNo">359</span>    public Configuration getConfiguration() {<a name="line.359"></a>
-<span class="sourceLineNo">360</span>        return configuration;<a name="line.360"></a>
-<span class="sourceLineNo">361</span>    }<a name="line.361"></a>
-<span class="sourceLineNo">362</span><a name="line.362"></a>
-<span class="sourceLineNo">363</span>    public ConcurrentMap&lt;Object, Object&gt; getScriptStaticVariables() {<a name="line.363"></a>
-<span class="sourceLineNo">364</span>        return scriptStaticVariables;<a name="line.364"></a>
-<span class="sourceLineNo">365</span>    }<a name="line.365"></a>
-<span class="sourceLineNo">366</span>}<a name="line.366"></a>
+<span class="sourceLineNo">038</span>import org.apache.logging.log4j.core.config.Property;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.apache.logging.log4j.core.config.plugins.Plugin;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.apache.logging.log4j.core.config.plugins.PluginElement;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.apache.logging.log4j.core.script.AbstractScript;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.apache.logging.log4j.core.script.ScriptManager;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.apache.logging.log4j.core.util.Booleans;<a name="line.44"></a>
+<span class="sourceLineNo">045</span><a name="line.45"></a>
+<span class="sourceLineNo">046</span>/**<a name="line.46"></a>
+<span class="sourceLineNo">047</span> * This Appender "routes" between various Appenders, some of which can be references to<a name="line.47"></a>
+<span class="sourceLineNo">048</span> * Appenders defined earlier in the configuration while others can be dynamically created<a name="line.48"></a>
+<span class="sourceLineNo">049</span> * within this Appender as required. Routing is achieved by specifying a pattern on<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * the Routing appender declaration. The pattern should contain one or more substitution patterns of<a name="line.50"></a>
+<span class="sourceLineNo">051</span> * the form "$${[key:]token}". The pattern will be resolved each time the Appender is called using<a name="line.51"></a>
+<span class="sourceLineNo">052</span> * the built in StrSubstitutor and the StrLookup plugin that matches the specified key.<a name="line.52"></a>
+<span class="sourceLineNo">053</span> */<a name="line.53"></a>
+<span class="sourceLineNo">054</span>@Plugin(name = "Routing", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)<a name="line.54"></a>
+<span class="sourceLineNo">055</span>public final class RoutingAppender extends AbstractAppender {<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>    public static final String STATIC_VARIABLES_KEY = "staticVariables";<a name="line.57"></a>
+<span class="sourceLineNo">058</span><a name="line.58"></a>
+<span class="sourceLineNo">059</span>    public static class Builder&lt;B extends Builder&lt;B&gt;&gt; extends AbstractAppender.Builder&lt;B&gt;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>            implements org.apache.logging.log4j.core.util.Builder&lt;RoutingAppender&gt; {<a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span>        // Does not work unless the element is called "Script", I wanted "DefaultRounteScript"...<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        @PluginElement("Script")<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        private AbstractScript defaultRouteScript;<a name="line.64"></a>
+<span class="sourceLineNo">065</span><a name="line.65"></a>
+<span class="sourceLineNo">066</span>        @PluginElement("Routes")<a name="line.66"></a>
+<span class="sourceLineNo">067</span>        private Routes routes;<a name="line.67"></a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span>        @PluginElement("RewritePolicy")<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        private RewritePolicy rewritePolicy;<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>        @PluginElement("PurgePolicy")<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        private PurgePolicy purgePolicy;<a name="line.73"></a>
+<span class="sourceLineNo">074</span><a name="line.74"></a>
+<span class="sourceLineNo">075</span>        @Override<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        public RoutingAppender build() {<a name="line.76"></a>
+<span class="sourceLineNo">077</span>            final String name = getName();<a name="line.77"></a>
+<span class="sourceLineNo">078</span>            if (name == null) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                LOGGER.error("No name defined for this RoutingAppender");<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                return null;<a name="line.80"></a>
+<span class="sourceLineNo">081</span>            }<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            if (routes == null) {<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                LOGGER.error("No routes defined for RoutingAppender {}", name);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                return null;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>            }<a name="line.85"></a>
+<span class="sourceLineNo">086</span>            return new RoutingAppender(name, getFilter(), isIgnoreExceptions(), routes, rewritePolicy,<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                    getConfiguration(), purgePolicy, defaultRouteScript, getPropertyArray());<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        }<a name="line.88"></a>
+<span class="sourceLineNo">089</span><a name="line.89"></a>
+<span class="sourceLineNo">090</span>        public Routes getRoutes() {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>            return routes;<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        }<a name="line.92"></a>
+<span class="sourceLineNo">093</span><a name="line.93"></a>
+<span class="sourceLineNo">094</span>        public AbstractScript getDefaultRouteScript() {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>            return defaultRouteScript;<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        }<a name="line.96"></a>
+<span class="sourceLineNo">097</span><a name="line.97"></a>
+<span class="sourceLineNo">098</span>        public RewritePolicy getRewritePolicy() {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>            return rewritePolicy;<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        }<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>        public PurgePolicy getPurgePolicy() {<a name="line.102"></a>
+<span class="sourceLineNo">103</span>            return purgePolicy;<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        }<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>        public B withRoutes(@SuppressWarnings("hiding") final Routes routes) {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>            this.routes = routes;<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            return asBuilder();<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
+<span class="sourceLineNo">110</span><a name="line.110"></a>
+<span class="sourceLineNo">111</span>        public B withDefaultRouteScript(@SuppressWarnings("hiding") final AbstractScript defaultRouteScript) {<a name="line.111"></a>
+<span class="sourceLineNo">112</span>            this.defaultRouteScript = defaultRouteScript;<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            return asBuilder();<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>        public B withRewritePolicy(@SuppressWarnings("hiding") final RewritePolicy rewritePolicy) {<a name="line.116"></a>
+<span class="sourceLineNo">117</span>            this.rewritePolicy = rewritePolicy;<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            return asBuilder();<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        }<a name="line.119"></a>
+<span class="sourceLineNo">120</span><a name="line.120"></a>
+<span class="sourceLineNo">121</span>        public void withPurgePolicy(@SuppressWarnings("hiding") final PurgePolicy purgePolicy) {<a name="line.121"></a>
+<span class="sourceLineNo">122</span>            this.purgePolicy = purgePolicy;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        }<a name="line.123"></a>
+<span class="sourceLineNo">124</span><a name="line.124"></a>
+<span class="sourceLineNo">125</span>    }<a name="line.125"></a>
+<span class="sourceLineNo">126</span><a name="line.126"></a>
+<span class="sourceLineNo">127</span>    @PluginBuilderFactory<a name="line.127"></a>
+<span class="sourceLineNo">128</span>    public static &lt;B extends Builder&lt;B&gt;&gt; B newBuilder() {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        return new Builder&lt;B&gt;().asBuilder();<a name="line.129"></a>
+<span class="sourceLineNo">130</span>    }<a name="line.130"></a>
+<span class="sourceLineNo">131</span><a name="line.131"></a>
+<span class="sourceLineNo">132</span>    private static final String DEFAULT_KEY = "ROUTING_APPENDER_DEFAULT";<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span>    private final Routes routes;<a name="line.134"></a>
+<span class="sourceLineNo">135</span>    private Route defaultRoute;<a name="line.135"></a>
+<span class="sourceLineNo">136</span>    private final Configuration configuration;<a name="line.136"></a>
+<span class="sourceLineNo">137</span>    private final ConcurrentMap&lt;String, AppenderControl&gt; appenders = new ConcurrentHashMap&lt;&gt;();<a name="line.137"></a>
+<span class="sourceLineNo">138</span>    private final RewritePolicy rewritePolicy;<a name="line.138"></a>
+<span class="sourceLineNo">139</span>    private final PurgePolicy purgePolicy;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>    private final AbstractScript defaultRouteScript;<a name="line.140"></a>
+<span class="sourceLineNo">141</span>    private final ConcurrentMap&lt;Object, Object&gt; scriptStaticVariables = new ConcurrentHashMap&lt;&gt;();<a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>    private RoutingAppender(final String name, final Filter filter, final boolean ignoreExceptions, final Routes routes,<a name="line.143"></a>
+<span class="sourceLineNo">144</span>            final RewritePolicy rewritePolicy, final Configuration configuration, final PurgePolicy purgePolicy,<a name="line.144"></a>
+<span class="sourceLineNo">145</span>            final AbstractScript defaultRouteScript, final Property[] properties) {<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        super(name, filter, null, ignoreExceptions, properties);<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        this.routes = routes;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        this.configuration = configuration;<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        this.rewritePolicy = rewritePolicy;<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        this.purgePolicy = purgePolicy;<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        if (this.purgePolicy != null) {<a name="line.151"></a>
+<span class="sourceLineNo">152</span>            this.purgePolicy.initialize(this);<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        }<a name="line.153"></a>
+<span class="sourceLineNo">154</span>        this.defaultRouteScript = defaultRouteScript;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>        Route defRoute = null;<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        for (final Route route : routes.getRoutes()) {<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            if (route.getKey() == null) {<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                if (defRoute == null) {<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                    defRoute = route;<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                } else {<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                    error("Multiple default routes. Route " + route.toString() + " will be ignored");<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                }<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            }<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        }<a name="line.164"></a>
+<span class="sourceLineNo">165</span>        defaultRoute = defRoute;<a name="line.165"></a>
+<span class="sourceLineNo">166</span>    }<a name="line.166"></a>
+<span class="sourceLineNo">167</span><a name="line.167"></a>
+<span class="sourceLineNo">168</span>    @Override<a name="line.168"></a>
+<span class="sourceLineNo">169</span>    public void start() {<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        if (defaultRouteScript != null) {<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            if (configuration == null) {<a name="line.171"></a>
+<span class="sourceLineNo">172</span>                error("No Configuration defined for RoutingAppender; required for Script element.");<a name="line.172"></a>
+<span class="sourceLineNo">173</span>            } else {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                final ScriptManager scriptManager = configuration.getScriptManager();<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                scriptManager.addScript(defaultRouteScript);<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                final Bindings bindings = scriptManager.createBindings(defaultRouteScript);<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                bindings.put(STATIC_VARIABLES_KEY, scriptStaticVariables);<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                final Object object = scriptManager.execute(defaultRouteScript.getName(), bindings);<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                final Route route = routes.getRoute(Objects.toString(object, null));<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                if (route != null) {<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                    defaultRoute = route;<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                }<a name="line.182"></a>
+<span class="sourceLineNo">183</span>            }<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        }<a name="line.184"></a>
+<span class="sourceLineNo">185</span>        // Register all the static routes.<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        for (final Route route : routes.getRoutes()) {<a name="line.186"></a>
+<span class="sourceLineNo">187</span>            if (route.getAppenderRef() != null) {<a name="line.187"></a>
+<span class="sourceLineNo">188</span>                final Appender appender = configuration.getAppender(route.getAppenderRef());<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                if (appender != null) {<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                    final String key = route == defaultRoute ? DEFAULT_KEY : route.getKey();<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                    appenders.put(key, new AppenderControl(appender, null, null));<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                } else {<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                    error("Appender " + route.getAppenderRef() + " cannot be located. Route ignored");<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                }<a name="line.194"></a>
+<span class="sourceLineNo">195</span>            }<a name="line.195"></a>
+<span class="sourceLineNo">196</span>        }<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        super.start();<a name="line.197"></a>
+<span class="sourceLineNo">198</span>    }<a name="line.198"></a>
+<span class="sourceLineNo">199</span><a name="line.199"></a>
+<span class="sourceLineNo">200</span>    @Override<a name="line.200"></a>
+<span class="sourceLineNo">201</span>    public boolean stop(final long timeout, final TimeUnit timeUnit) {<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        setStopping();<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        super.stop(timeout, timeUnit, false);<a name="line.203"></a>
+<span class="sourceLineNo">204</span>        final Map&lt;String, Appender&gt; map = configuration.getAppenders();<a name="line.204"></a>
+<span class="sourceLineNo">205</span>        for (final Map.Entry&lt;String, AppenderControl&gt; entry : appenders.entrySet()) {<a name="line.205"></a>
+<span class="sourceLineNo">206</span>            final Appender appender = entry.getValue().getAppender();<a name="line.206"></a>
+<span class="sourceLineNo">207</span>            if (!map.containsKey(appender.getName())) {<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                if (appender instanceof LifeCycle2) {<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                    ((LifeCycle2) appender).stop(timeout, timeUnit);<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                } else {<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                    appender.stop();<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                }<a name="line.212"></a>
+<span class="sourceLineNo">213</span>            }<a name="line.213"></a>
+<span class="sourceLineNo">214</span>        }<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        setStopped();<a name="line.215"></a>
+<span class="sourceLineNo">216</span>        return true;<a name="line.216"></a>
+<span class="sourceLineNo">217</span>    }<a name="line.217"></a>
+<span class="sourceLineNo">218</span><a name="line.218"></a>
+<span class="sourceLineNo">219</span>    @Override<a name="line.219"></a>
+<span class="sourceLineNo">220</span>    public void append(LogEvent event) {<a name="line.220"></a>
+<span class="sourceLineNo">221</span>        if (rewritePolicy != null) {<a name="line.221"></a>
+<span class="sourceLineNo">222</span>            event = rewritePolicy.rewrite(event);<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        }<a name="line.223"></a>
+<span class="sourceLineNo">224</span>        final String pattern = routes.getPattern(event, scriptStaticVariables);<a name="line.224"></a>
+<span class="sourceLineNo">225</span>        final String key = pattern != null ? configuration.getStrSubstitutor().replace(event, pattern) : defaultRoute.getKey();<a name="line.225"></a>
+<span class="sourceLineNo">226</span>        final AppenderControl control = getControl(key, event);<a name="line.226"></a>
+<span class="sourceLineNo">227</span>        if (control != null) {<a name="line.227"></a>
+<span class="sourceLineNo">228</span>            control.callAppender(event);<a name="line.228"></a>
+<span class="sourceLineNo">229</span>        }<a name="line.229"></a>
+<span class="sourceLineNo">230</span><a name="line.230"></a>
+<span class="sourceLineNo">231</span>        if (purgePolicy != null) {<a name="line.231"></a>
+<span class="sourceLineNo">232</span>            purgePolicy.update(key, event);<a name="line.232"></a>
+<span class="sourceLineNo">233</span>        }<a name="line.233"></a>
+<span class="sourceLineNo">234</span>    }<a name="line.234"></a>
+<span class="sourceLineNo">235</span><a name="line.235"></a>
+<span class="sourceLineNo">236</span>    private synchronized AppenderControl getControl(final String key, final LogEvent event) {<a name="line.236"></a>
+<span class="sourceLineNo">237</span>        AppenderControl control = appenders.get(key);<a name="line.237"></a>
+<span class="sourceLineNo">238</span>        if (control != null) {<a name="line.238"></a>
+<span class="sourceLineNo">239</span>            return control;<a name="line.239"></a>
+<span class="sourceLineNo">240</span>        }<a name="line.240"></a>
+<span class="sourceLineNo">241</span>        Route route = null;<a name="line.241"></a>
+<span class="sourceLineNo">242</span>        for (final Route r : routes.getRoutes()) {<a name="line.242"></a>
+<span class="sourceLineNo">243</span>            if (r.getAppenderRef() == null &amp;&amp; key.equals(r.getKey())) {<a name="line.243"></a>
+<span class="sourceLineNo">244</span>                route = r;<a name="line.244"></a>
+<span class="sourceLineNo">245</span>                break;<a name="line.245"></a>
+<span class="sourceLineNo">246</span>            }<a name="line.246"></a>
+<span class="sourceLineNo">247</span>        }<a name="line.247"></a>
+<span class="sourceLineNo">248</span>        if (route == null) {<a name="line.248"></a>
+<span class="sourceLineNo">249</span>            route = defaultRoute;<a name="line.249"></a>
+<span class="sourceLineNo">250</span>            control = appenders.get(DEFAULT_KEY);<a name="line.250"></a>
+<span class="sourceLineNo">251</span>            if (control != null) {<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                return control;<a name="line.252"></a>
+<span class="sourceLineNo">253</span>            }<a name="line.253"></a>
+<span class="sourceLineNo">254</span>        }<a name="line.254"></a>
+<span class="sourceLineNo">255</span>        if (route != null) {<a name="line.255"></a>
+<span class="sourceLineNo">256</span>            final Appender app = createAppender(route, event);<a name="line.256"></a>
+<span class="sourceLineNo">257</span>            if (app == null) {<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                return null;<a name="line.258"></a>
+<span class="sourceLineNo">259</span>            }<a name="line.259"></a>
+<span class="sourceLineNo">260</span>            control = new AppenderControl(app, null, null);<a name="line.260"></a>
+<span class="sourceLineNo">261</span>            appenders.put(key, control);<a name="line.261"></a>
+<span class="sourceLineNo">262</span>        }<a name="line.262"></a>
+<span class="sourceLineNo">263</span><a name="line.263"></a>
+<span class="sourceLineNo">264</span>        return control;<a name="line.264"></a>
+<span class="sourceLineNo">265</span>    }<a name="line.265"></a>
+<span class="sourceLineNo">266</span><a name="line.266"></a>
+<span class="sourceLineNo">267</span>    private Appender createAppender(final Route route, final LogEvent event) {<a name="line.267"></a>
+<span class="sourceLineNo">268</span>        final Node routeNode = route.getNode();<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        for (final Node node : routeNode.getChildren()) {<a name="line.269"></a>
+<span class="sourceLineNo">270</span>            if (node.getType().getElementName().equals(Appender.ELEMENT_TYPE)) {<a name="line.270"></a>
+<span class="sourceLineNo">271</span>                final Node appNode = new Node(node);<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                configuration.createConfiguration(appNode, event);<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                if (appNode.getObject() instanceof Appender) {<a name="line.273"></a>
+<span class="sourceLineNo">274</span>                    final Appender app = appNode.getObject();<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                    app.start();<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                    return app;<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                }<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                error("Unable to create Appender of type " + node.getName());<a name="line.278"></a>
+<span class="sourceLineNo">279</span>                return null;<a name="line.279"></a>
+<span class="sourceLineNo">280</span>            }<a name="line.280"></a>
+<span class="sourceLineNo">281</span>        }<a name="line.281"></a>
+<span class="sourceLineNo">282</span>        error("No Appender was configured for route " + route.getKey());<a name="line.282"></a>
+<span class="sourceLineNo">283</span>        return null;<a name="line.283"></a>
+<span class="sourceLineNo">284</span>    }<a name="line.284"></a>
+<span class="sourceLineNo">285</span><a name="line.285"></a>
+<span class="sourceLineNo">286</span>    public Map&lt;String, AppenderControl&gt; getAppenders() {<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        return Collections.unmodifiableMap(appenders);<a name="line.287"></a>
+<span class="sourceLineNo">288</span>    }<a name="line.288"></a>
+<span class="sourceLineNo">289</span><a name="line.289"></a>
+<span class="sourceLineNo">290</span>    /**<a name="line.290"></a>
+<span class="sourceLineNo">291</span>     * Deletes the specified appender.<a name="line.291"></a>
+<span class="sourceLineNo">292</span>     *<a name="line.292"></a>
+<span class="sourceLineNo">293</span>     * @param key The appender's key<a name="line.293"></a>
+<span class="sourceLineNo">294</span>     */<a name="line.294"></a>
+<span class="sourceLineNo">295</span>    public void deleteAppender(final String key) {<a name="line.295"></a>
+<span class="sourceLineNo">296</span>        LOGGER.debug("Deleting route with " + key + " key ");<a name="line.296"></a>
+<span class="sourceLineNo">297</span>        final AppenderControl control = appenders.remove(key);<a name="line.297"></a>
+<span class="sourceLineNo">298</span>        if (null != control) {<a name="line.298"></a>
+<span class="sourceLineNo">299</span>            LOGGER.debug("Stopping route with " + key + " key");<a name="line.299"></a>
+<span class="sourceLineNo">300</span>            control.getAppender().stop();<a name="line.300"></a>
+<span class="sourceLineNo">301</span>        } else {<a name="line.301"></a>
+<span class="sourceLineNo">302</span>            LOGGER.debug("Route with " + key + " key already deleted");<a name="line.302"></a>
+<span class="sourceLineNo">303</span>        }<a name="line.303"></a>
+<span class="sourceLineNo">304</span>    }<a name="line.304"></a>
+<span class="sourceLineNo">305</span><a name="line.305"></a>
+<span class="sourceLineNo">306</span>    /**<a name="line.306"></a>
+<span class="sourceLineNo">307</span>     * Creates a RoutingAppender.<a name="line.307"></a>
+<span class="sourceLineNo">308</span>     * @param name The name of the Appender.<a name="line.308"></a>
+<span class="sourceLineNo">309</span>     * @param ignore If {@code "true"} (default) exceptions encountered when appending events are logged; otherwise<a name="line.309"></a>
+<span class="sourceLineNo">310</span>     *               they are propagated to the caller.<a name="line.310"></a>
+<span class="sourceLineNo">311</span>     * @param routes The routing definitions.<a name="line.311"></a>
+<span class="sourceLineNo">312</span>     * @param config The Configuration (automatically added by the Configuration).<a name="line.312"></a>
+<span class="sourceLineNo">313</span>     * @param rewritePolicy A RewritePolicy, if any.<a name="line.313"></a>
+<span class="sourceLineNo">314</span>     * @param filter A Filter to restrict events processed by the Appender or null.<a name="line.314"></a>
+<span class="sourceLineNo">315</span>     * @return The RoutingAppender<a name="line.315"></a>
+<span class="sourceLineNo">316</span>     * @deprecated Since 2.7; use {@link #newBuilder()}<a name="line.316"></a>
+<span class="sourceLineNo">317</span>     */<a name="line.317"></a>
+<span class="sourceLineNo">318</span>    @Deprecated<a name="line.318"></a>
+<span class="sourceLineNo">319</span>    public static RoutingAppender createAppender(<a name="line.319"></a>
+<span class="sourceLineNo">320</span>            final String name,<a name="line.320"></a>
+<span class="sourceLineNo">321</span>            final String ignore,<a name="line.321"></a>
+<span class="sourceLineNo">322</span>            final Routes routes,<a name="line.322"></a>
+<span class="sourceLineNo">323</span>            final Configuration config,<a name="line.323"></a>
+<span class="sourceLineNo">324</span>            final RewritePolicy rewritePolicy,<a name="line.324"></a>
+<span class="sourceLineNo">325</span>            final PurgePolicy purgePolicy,<a name="line.325"></a>
+<span class="sourceLineNo">326</span>            final Filter filter) {<a name="line.326"></a>
+<span class="sourceLineNo">327</span><a name="line.327"></a>
+<span class="sourceLineNo">328</span>        final boolean ignoreExceptions = Booleans.parseBoolean(ignore, true);<a name="line.328"></a>
+<span class="sourceLineNo">329</span>        if (name == null) {<a name="line.329"></a>
+<span class="sourceLineNo">330</span>            LOGGER.error("No name provided for RoutingAppender");<a name="line.330"></a>
+<span class="sourceLineNo">331</span>            return null;<a name="line.331"></a>
+<span class="sourceLineNo">332</span>        }<a name="line.332"></a>
+<span class="sourceLineNo">333</span>        if (routes == null) {<a name="line.333"></a>
+<span class="sourceLineNo">334</span>            LOGGER.error("No routes defined for RoutingAppender");<a name="line.334"></a>
+<span class="sourceLineNo">335</span>            return null;<a name="line.335"></a>
+<span class="sourceLineNo">336</span>        }<a name="line.336"></a>
+<span class="sourceLineNo">337</span>        return new RoutingAppender(name, filter, ignoreExceptions, routes, rewritePolicy, config, purgePolicy, null, null);<a name="line.337"></a>
+<span class="sourceLineNo">338</span>    }<a name="line.338"></a>
+<span class="sourceLineNo">339</span><a name="line.339"></a>
+<span class="sourceLineNo">340</span>    public Route getDefaultRoute() {<a name="line.340"></a>
+<span class="sourceLineNo">341</span>        return defaultRoute;<a name="line.341"></a>
+<span class="sourceLineNo">342</span>    }<a name="line.342"></a>
+<span class="sourceLineNo">343</span><a name="line.343"></a>
+<span class="sourceLineNo">344</span>    public AbstractScript getDefaultRouteScript() {<a name="line.344"></a>
+<span class="sourceLineNo">345</span>        return defaultRouteScript;<a name="line.345"></a>
+<span class="sourceLineNo">346</span>    }<a name="line.346"></a>
+<span class="sourceLineNo">347</span><a name="line.347"></a>
+<span class="sourceLineNo">348</span>    public PurgePolicy getPurgePolicy() {<a name="line.348"></a>
+<span class="sourceLineNo">349</span>        return purgePolicy;<a name="line.349"></a>
+<span class="sourceLineNo">350</span>    }<a name="line.350"></a>
+<span class="sourceLineNo">351</span><a name="line.351"></a>
+<span class="sourceLineNo">352</span>    public RewritePolicy getRewritePolicy() {<a name="line.352"></a>
+<span class="sourceLineNo">353</span>        return rewritePolicy;<a name="line.353"></a>
+<span class="sourceLineNo">354</span>    }<a name="line.354"></a>
+<span class="sourceLineNo">355</span><a name="line.355"></a>
+<span class="sourceLineNo">356</span>    public Routes getRoutes() {<a name="line.356"></a>
+<span class="sourceLineNo">357</span>        return routes;<a name="line.357"></a>
+<span class="sourceLineNo">358</span>    }<a name="line.358"></a>
+<span class="sourceLineNo">359</span><a name="line.359"></a>
+<span class="sourceLineNo">360</span>    public Configuration getConfiguration() {<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        return configuration;<a name="line.361"></a>
+<span class="sourceLineNo">362</span>    }<a name="line.362"></a>
+<span class="sourceLineNo">363</span><a name="line.363"></a>
+<span class="sourceLineNo">364</span>    public ConcurrentMap&lt;Object, Object&gt; getScriptStaticVariables() {<a name="line.364"></a>
+<span class="sourceLineNo">365</span>        return scriptStaticVariables;<a name="line.365"></a>
+<span class="sourceLineNo">366</span>    }<a name="line.366"></a>
+<span class="sourceLineNo">367</span>}<a name="line.367"></a>
 
 
 

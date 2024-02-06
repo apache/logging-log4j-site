@@ -94,7 +94,7 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>        <strong class="jxr_keyword">this</strong>.sslConfig = sslConfig;
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>    }
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SslSocketManager.html">SslFactoryData</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SmtpManager.html">FactoryData</a> {
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SslSocketManager.html">SslFactoryData</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/TcpSocketManager.html">FactoryData</a> {
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/ssl/SslConfiguration.html">SslConfiguration</a> sslConfiguration;
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SslSocketManager.html">SslFactoryData</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/ssl/SslConfiguration.html">SslConfiguration</a> sslConfiguration, <strong class="jxr_keyword">final</strong> String host, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> port,
@@ -166,13 +166,13 @@
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SslSocketManager.html">SslSocketManagerFactory</a> <strong class="jxr_keyword">extends</strong> TcpSocketManagerFactory&lt;SslSocketManager, SslFactoryData&gt; {
 <a class="jxr_linenumber" name="L159" href="#L159">159</a> 
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>         @Override
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>         <a href="../../../../../../org/apache/logging/log4j/core/net/SslSocketManager.html">SslSocketManager</a> createManager(<strong class="jxr_keyword">final</strong> String name, OutputStream os, Socket socket, InetAddress inetAddress,
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>         <a href="../../../../../../org/apache/logging/log4j/core/net/SslSocketManager.html">SslSocketManager</a> createManager(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> OutputStream os, <strong class="jxr_keyword">final</strong> Socket socket, <strong class="jxr_keyword">final</strong> InetAddress inetAddress,
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SslSocketManager.html">SslFactoryData</a> data) {
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SslSocketManager.html">SslSocketManager</a>(name, os, socket, data.sslConfiguration, inetAddress, data.host, data.port,
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>                     data.connectTimeoutMillis, data.reconnectDelayMillis, data.immediateFail, data.layout, data.bufferSize,
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>                     data.socketOptions);
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>         }
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         
+<a class="jxr_linenumber" name="L167" href="#L167">167</a> 
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>         @Override
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>         Socket createSocket(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SslSocketManager.html">SslFactoryData</a> data) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>             <strong class="jxr_keyword">return</strong> SslSocketManager.createSocket(data.host, data.port, data.connectTimeoutMillis, data.sslConfiguration,
@@ -180,8 +180,8 @@
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>         }
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>     }
 <a class="jxr_linenumber" name="L174" href="#L174">174</a> 
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>     <strong class="jxr_keyword">static</strong> Socket createSocket(<strong class="jxr_keyword">final</strong> String host, <strong class="jxr_keyword">int</strong> port, <strong class="jxr_keyword">int</strong> connectTimeoutMillis,
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/ssl/SslConfiguration.html">SslConfiguration</a> sslConfiguration, <a href="../../../../../../org/apache/logging/log4j/core/net/SocketOptions.html">SocketOptions</a> socketOptions) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>     <strong class="jxr_keyword">static</strong> Socket createSocket(<strong class="jxr_keyword">final</strong> String host, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> port, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> connectTimeoutMillis,
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/ssl/SslConfiguration.html">SslConfiguration</a> sslConfiguration, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SocketOptions.html">SocketOptions</a> socketOptions) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">final</strong> SSLSocketFactory socketFactory = createSslSocketFactory(sslConfiguration);
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">final</strong> SSLSocket socket = (SSLSocket) socketFactory.createSocket();
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>         <strong class="jxr_keyword">if</strong> (socketOptions != <strong class="jxr_keyword">null</strong>) {
@@ -198,6 +198,6 @@
 <a class="jxr_linenumber" name="L190" href="#L190">190</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

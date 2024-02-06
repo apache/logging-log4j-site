@@ -38,13 +38,13 @@
 <span class="sourceLineNo">030</span>    public static String getProcessId() {<a name="line.30"></a>
 <span class="sourceLineNo">031</span>        try {<a name="line.31"></a>
 <span class="sourceLineNo">032</span>            // LOG4J2-2126 use reflection to improve compatibility with Android Platform which does not support JMX extensions<a name="line.32"></a>
-<span class="sourceLineNo">033</span>            Class&lt;?&gt; managementFactoryClass = Class.forName("java.lang.management.ManagementFactory");<a name="line.33"></a>
-<span class="sourceLineNo">034</span>            Method getRuntimeMXBean = managementFactoryClass.getDeclaredMethod("getRuntimeMXBean");<a name="line.34"></a>
-<span class="sourceLineNo">035</span>            Class&lt;?&gt; runtimeMXBeanClass = Class.forName("java.lang.management.RuntimeMXBean");<a name="line.35"></a>
-<span class="sourceLineNo">036</span>            Method getName = runtimeMXBeanClass.getDeclaredMethod("getName");<a name="line.36"></a>
+<span class="sourceLineNo">033</span>            final Class&lt;?&gt; managementFactoryClass = Class.forName("java.lang.management.ManagementFactory");<a name="line.33"></a>
+<span class="sourceLineNo">034</span>            final Method getRuntimeMXBean = managementFactoryClass.getDeclaredMethod("getRuntimeMXBean");<a name="line.34"></a>
+<span class="sourceLineNo">035</span>            final Class&lt;?&gt; runtimeMXBeanClass = Class.forName("java.lang.management.RuntimeMXBean");<a name="line.35"></a>
+<span class="sourceLineNo">036</span>            final Method getName = runtimeMXBeanClass.getDeclaredMethod("getName");<a name="line.36"></a>
 <span class="sourceLineNo">037</span><a name="line.37"></a>
-<span class="sourceLineNo">038</span>            Object runtimeMXBean = getRuntimeMXBean.invoke(null);<a name="line.38"></a>
-<span class="sourceLineNo">039</span>            String name = (String) getName.invoke(runtimeMXBean);<a name="line.39"></a>
+<span class="sourceLineNo">038</span>            final Object runtimeMXBean = getRuntimeMXBean.invoke(null);<a name="line.38"></a>
+<span class="sourceLineNo">039</span>            final String name = (String) getName.invoke(runtimeMXBean);<a name="line.39"></a>
 <span class="sourceLineNo">040</span>            //String name = ManagementFactory.getRuntimeMXBean().getName(); //JMX not allowed on Android<a name="line.40"></a>
 <span class="sourceLineNo">041</span>            return name.split("@")[0]; // likely works on most platforms<a name="line.41"></a>
 <span class="sourceLineNo">042</span>        } catch (final Exception ex) {<a name="line.42"></a>

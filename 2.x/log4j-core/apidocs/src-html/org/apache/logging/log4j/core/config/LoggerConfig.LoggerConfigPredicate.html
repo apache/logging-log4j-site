@@ -56,8 +56,8 @@
 <span class="sourceLineNo">048</span>import org.apache.logging.log4j.core.lookup.StrSubstitutor;<a name="line.48"></a>
 <span class="sourceLineNo">049</span>import org.apache.logging.log4j.core.util.Booleans;<a name="line.49"></a>
 <span class="sourceLineNo">050</span>import org.apache.logging.log4j.core.util.Constants;<a name="line.50"></a>
-<span class="sourceLineNo">051</span>import org.apache.logging.log4j.message.Message;<a name="line.51"></a>
-<span class="sourceLineNo">052</span>import org.apache.logging.log4j.util.LoaderUtil;<a name="line.52"></a>
+<span class="sourceLineNo">051</span>import org.apache.logging.log4j.core.util.Loader;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>import org.apache.logging.log4j.message.Message;<a name="line.52"></a>
 <span class="sourceLineNo">053</span>import org.apache.logging.log4j.util.PerformanceSensitive;<a name="line.53"></a>
 <span class="sourceLineNo">054</span>import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.54"></a>
 <span class="sourceLineNo">055</span>import org.apache.logging.log4j.util.Strings;<a name="line.55"></a>
@@ -89,7 +89,7 @@
 <span class="sourceLineNo">081</span>        final String factory = PropertiesUtil.getProperties().getStringProperty(Constants.LOG4J_LOG_EVENT_FACTORY);<a name="line.81"></a>
 <span class="sourceLineNo">082</span>        if (factory != null) {<a name="line.82"></a>
 <span class="sourceLineNo">083</span>            try {<a name="line.83"></a>
-<span class="sourceLineNo">084</span>                final Class&lt;?&gt; clazz = LoaderUtil.loadClass(factory);<a name="line.84"></a>
+<span class="sourceLineNo">084</span>                final Class&lt;?&gt; clazz = Loader.loadClass(factory);<a name="line.84"></a>
 <span class="sourceLineNo">085</span>                if (clazz != null &amp;&amp; LogEventFactory.class.isAssignableFrom(clazz)) {<a name="line.85"></a>
 <span class="sourceLineNo">086</span>                    LOG_EVENT_FACTORY = (LogEventFactory) clazz.newInstance();<a name="line.86"></a>
 <span class="sourceLineNo">087</span>                }<a name="line.87"></a>
@@ -450,7 +450,7 @@
 <span class="sourceLineNo">442</span>        return reliabilityStrategy;<a name="line.442"></a>
 <span class="sourceLineNo">443</span>    }<a name="line.443"></a>
 <span class="sourceLineNo">444</span><a name="line.444"></a>
-<span class="sourceLineNo">445</span>    private void processLogEvent(final LogEvent event, LoggerConfigPredicate predicate) {<a name="line.445"></a>
+<span class="sourceLineNo">445</span>    private void processLogEvent(final LogEvent event, final LoggerConfigPredicate predicate) {<a name="line.445"></a>
 <span class="sourceLineNo">446</span>        event.setIncludeLocation(isIncludeLocation());<a name="line.446"></a>
 <span class="sourceLineNo">447</span>        if (predicate.allow(this)) {<a name="line.447"></a>
 <span class="sourceLineNo">448</span>            callAppenders(event);<a name="line.448"></a>
@@ -606,19 +606,19 @@
 <span class="sourceLineNo">598</span>    protected enum LoggerConfigPredicate {<a name="line.598"></a>
 <span class="sourceLineNo">599</span>        ALL() {<a name="line.599"></a>
 <span class="sourceLineNo">600</span>            @Override<a name="line.600"></a>
-<span class="sourceLineNo">601</span>            boolean allow(LoggerConfig config) {<a name="line.601"></a>
+<span class="sourceLineNo">601</span>            boolean allow(final LoggerConfig config) {<a name="line.601"></a>
 <span class="sourceLineNo">602</span>                return true;<a name="line.602"></a>
 <span class="sourceLineNo">603</span>            }<a name="line.603"></a>
 <span class="sourceLineNo">604</span>        },<a name="line.604"></a>
 <span class="sourceLineNo">605</span>        ASYNCHRONOUS_ONLY() {<a name="line.605"></a>
 <span class="sourceLineNo">606</span>            @Override<a name="line.606"></a>
-<span class="sourceLineNo">607</span>            boolean allow(LoggerConfig config) {<a name="line.607"></a>
+<span class="sourceLineNo">607</span>            boolean allow(final LoggerConfig config) {<a name="line.607"></a>
 <span class="sourceLineNo">608</span>                return config instanceof AsyncLoggerConfig;<a name="line.608"></a>
 <span class="sourceLineNo">609</span>            }<a name="line.609"></a>
 <span class="sourceLineNo">610</span>        },<a name="line.610"></a>
 <span class="sourceLineNo">611</span>        SYNCHRONOUS_ONLY() {<a name="line.611"></a>
 <span class="sourceLineNo">612</span>            @Override<a name="line.612"></a>
-<span class="sourceLineNo">613</span>            boolean allow(LoggerConfig config) {<a name="line.613"></a>
+<span class="sourceLineNo">613</span>            boolean allow(final LoggerConfig config) {<a name="line.613"></a>
 <span class="sourceLineNo">614</span>                return !ASYNCHRONOUS_ONLY.allow(config);<a name="line.614"></a>
 <span class="sourceLineNo">615</span>            }<a name="line.615"></a>
 <span class="sourceLineNo">616</span>        };<a name="line.616"></a>

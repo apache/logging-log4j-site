@@ -25,8 +25,8 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">package</strong> org.apache.logging.log4j.core.config;
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.status.StatusLogger;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.LoaderUtil;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.core.util.Loader;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.status.StatusLogger;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.PropertiesUtil;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <em class="jxr_javadoccomment">/**</em>
@@ -47,7 +47,7 @@
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">     * Users may also use this system property to specify the fully qualified class name of a class that implements the</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment">     * {@code ReliabilityStrategy} and has a constructor that accepts a single {@code LoggerConfig} argument.</em>
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">     * @param loggerConfig the LoggerConfig the resulting {@code ReliabilityStrategy} is associated with</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">     * @return a ReliabilityStrategy that helps the specified LoggerConfig to log events reliably during or after a</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">     *         configuration change</em>
@@ -66,7 +66,7 @@
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LockingReliabilityStrategy.html">LockingReliabilityStrategy</a>(loggerConfig);
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          }
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> ReliabilityStrategy&gt; cls = LoaderUtil.loadClass(strategy).asSubclass(
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> ReliabilityStrategy&gt; cls = Loader.loadClass(strategy).asSubclass(
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>                  ReliabilityStrategy.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>              <strong class="jxr_keyword">return</strong> cls.getConstructor(LoggerConfig.<strong class="jxr_keyword">class</strong>).newInstance(loggerConfig);
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception dynamicFailed) {
@@ -78,6 +78,6 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>

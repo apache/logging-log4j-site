@@ -93,7 +93,7 @@
 <span class="sourceLineNo">085</span>        private String loggerName;<a name="line.85"></a>
 <span class="sourceLineNo">086</span>        private Message message;<a name="line.86"></a>
 <span class="sourceLineNo">087</span>        private Throwable thrown;<a name="line.87"></a>
-<span class="sourceLineNo">088</span>        private MutableInstant instant = new MutableInstant();<a name="line.88"></a>
+<span class="sourceLineNo">088</span>        private final MutableInstant instant = new MutableInstant();<a name="line.88"></a>
 <span class="sourceLineNo">089</span>        private ThrowableProxy thrownProxy;<a name="line.89"></a>
 <span class="sourceLineNo">090</span>        private StringMap contextData = createContextData((List&lt;Property&gt;) null);<a name="line.90"></a>
 <span class="sourceLineNo">091</span>        private ThreadContext.ContextStack contextStack = ThreadContext.getImmutableStack();<a name="line.91"></a>
@@ -425,7 +425,7 @@
 <span class="sourceLineNo">417</span>            final String threadName, final int threadPriority, final StackTraceElement source,<a name="line.417"></a>
 <span class="sourceLineNo">418</span>            final long timestampMillis, final int nanoOfMillisecond, final long nanoTime) {<a name="line.418"></a>
 <span class="sourceLineNo">419</span>        this(loggerName, marker, loggerFQCN, level, message, thrown, thrownProxy, contextData, contextStack, threadId, threadName, threadPriority, source, nanoTime);<a name="line.419"></a>
-<span class="sourceLineNo">420</span>        long millis = message instanceof TimestampMessage<a name="line.420"></a>
+<span class="sourceLineNo">420</span>        final long millis = message instanceof TimestampMessage<a name="line.420"></a>
 <span class="sourceLineNo">421</span>                ? ((TimestampMessage) message).getTimestamp()<a name="line.421"></a>
 <span class="sourceLineNo">422</span>                : timestampMillis;<a name="line.422"></a>
 <span class="sourceLineNo">423</span>        instant.initFromEpochMilli(millis, nanoOfMillisecond);<a name="line.423"></a>
@@ -770,7 +770,7 @@
 <span class="sourceLineNo">762</span>    public static LogEvent createMemento(final LogEvent logEvent) {<a name="line.762"></a>
 <span class="sourceLineNo">763</span>        return new Log4jLogEvent.Builder(logEvent).build();<a name="line.763"></a>
 <span class="sourceLineNo">764</span>    }<a name="line.764"></a>
-<span class="sourceLineNo">765</span>    <a name="line.765"></a>
+<span class="sourceLineNo">765</span><a name="line.765"></a>
 <span class="sourceLineNo">766</span>    /**<a name="line.766"></a>
 <span class="sourceLineNo">767</span>     * Creates and returns a new immutable copy of this {@code Log4jLogEvent}.<a name="line.767"></a>
 <span class="sourceLineNo">768</span>     *<a name="line.768"></a>

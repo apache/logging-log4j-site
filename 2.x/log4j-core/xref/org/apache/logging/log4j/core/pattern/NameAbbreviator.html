@@ -362,25 +362,22 @@
 <a class="jxr_linenumber" name="L354" href="#L354">354</a>             <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="L355" href="#L355">355</a>             <strong class="jxr_keyword">int</strong> pos = destination.length();
 <a class="jxr_linenumber" name="L356" href="#L356">356</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> max = pos + original.length();
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>             <strong class="jxr_keyword">final</strong> StringBuilder sb = destination.append(original);<em class="jxr_comment">//new StringBuilder(original);</em>
-<a class="jxr_linenumber" name="L358" href="#L358">358</a> 
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; fragments.length - 1 &amp;&amp; pos &lt; original.length(); i++) {
-<a class="jxr_linenumber" name="L360" href="#L360">360</a>                 pos = fragments[i].abbreviate(sb, pos);
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>             }
-<a class="jxr_linenumber" name="L362" href="#L362">362</a> 
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>             <em class="jxr_comment">//   last pattern in executed repeatedly</em>
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/NameAbbreviator.html">PatternAbbreviatorFragment</a> terminalFragment = fragments[fragments.length - 1];
-<a class="jxr_linenumber" name="L367" href="#L367">367</a> 
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>             <strong class="jxr_keyword">while</strong> (pos &lt; max &amp;&amp; pos &gt;= 0) {
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>                 pos = terminalFragment.abbreviate(sb, pos);
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>             }
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>         }
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>     }
-<a class="jxr_linenumber" name="L373" href="#L373">373</a> }
+<a class="jxr_linenumber" name="L357" href="#L357">357</a> 
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>             destination.append(original);
+<a class="jxr_linenumber" name="L359" href="#L359">359</a> 
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>             <strong class="jxr_keyword">int</strong> fragmentIndex = 0;
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>             <strong class="jxr_keyword">while</strong> (pos &lt; max &amp;&amp; pos &gt;= 0) {
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>                 pos = fragments[fragmentIndex].abbreviate(destination, pos);
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>                 <em class="jxr_comment">// last pattern in executed repeatedly</em>
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>                 <strong class="jxr_keyword">if</strong> (fragmentIndex &lt; fragments.length - 1) {
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>                     fragmentIndex++;
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>                 }
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>             }
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>         }
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>     }
+<a class="jxr_linenumber" name="L370" href="#L370">370</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2018 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>
