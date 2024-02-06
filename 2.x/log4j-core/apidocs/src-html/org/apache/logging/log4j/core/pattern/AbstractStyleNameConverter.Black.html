@@ -339,59 +339,50 @@
 <span class="sourceLineNo">331</span>        try {<a name="line.331"></a>
 <span class="sourceLineNo">332</span>            final Constructor&lt;T&gt; constructor = asnConverterClass.getConstructor(List.class, String.class);<a name="line.332"></a>
 <span class="sourceLineNo">333</span>            return constructor.newInstance(formatters, AnsiEscape.createSequence(name));<a name="line.333"></a>
-<span class="sourceLineNo">334</span>        } catch (final SecurityException e) {<a name="line.334"></a>
-<span class="sourceLineNo">335</span>            LOGGER.error(e.toString(), e);<a name="line.335"></a>
-<span class="sourceLineNo">336</span>        } catch (final NoSuchMethodException e) {<a name="line.336"></a>
-<span class="sourceLineNo">337</span>            LOGGER.error(e.toString(), e);<a name="line.337"></a>
-<span class="sourceLineNo">338</span>        } catch (final IllegalArgumentException e) {<a name="line.338"></a>
-<span class="sourceLineNo">339</span>            LOGGER.error(e.toString(), e);<a name="line.339"></a>
-<span class="sourceLineNo">340</span>        } catch (final InstantiationException e) {<a name="line.340"></a>
-<span class="sourceLineNo">341</span>            LOGGER.error(e.toString(), e);<a name="line.341"></a>
-<span class="sourceLineNo">342</span>        } catch (final IllegalAccessException e) {<a name="line.342"></a>
-<span class="sourceLineNo">343</span>            LOGGER.error(e.toString(), e);<a name="line.343"></a>
-<span class="sourceLineNo">344</span>        } catch (final InvocationTargetException e) {<a name="line.344"></a>
-<span class="sourceLineNo">345</span>            LOGGER.error(e.toString(), e);<a name="line.345"></a>
-<span class="sourceLineNo">346</span>        }<a name="line.346"></a>
-<span class="sourceLineNo">347</span>        return null;<a name="line.347"></a>
-<span class="sourceLineNo">348</span>    }<a name="line.348"></a>
-<span class="sourceLineNo">349</span><a name="line.349"></a>
-<span class="sourceLineNo">350</span>    /**<a name="line.350"></a>
-<span class="sourceLineNo">351</span>     * Creates a list of PatternFormatter from the given configuration and options or null if no pattern is supplied.<a name="line.351"></a>
-<span class="sourceLineNo">352</span>     *<a name="line.352"></a>
-<span class="sourceLineNo">353</span>     * @param config A configuration.<a name="line.353"></a>
-<span class="sourceLineNo">354</span>     * @param options pattern options.<a name="line.354"></a>
-<span class="sourceLineNo">355</span>     * @return a list of PatternFormatter from the given configuration and options or null if no pattern is supplied.<a name="line.355"></a>
-<span class="sourceLineNo">356</span>     */<a name="line.356"></a>
-<span class="sourceLineNo">357</span>    private static List&lt;PatternFormatter&gt; toPatternFormatterList(final Configuration config, final String[] options) {<a name="line.357"></a>
-<span class="sourceLineNo">358</span>        if (options.length == 0 || options[0] == null) {<a name="line.358"></a>
-<span class="sourceLineNo">359</span>            LOGGER.error("No pattern supplied on style for config=" + config);<a name="line.359"></a>
-<span class="sourceLineNo">360</span>            return null;<a name="line.360"></a>
-<span class="sourceLineNo">361</span>        }<a name="line.361"></a>
-<span class="sourceLineNo">362</span>        final PatternParser parser = PatternLayout.createPatternParser(config);<a name="line.362"></a>
-<span class="sourceLineNo">363</span>        if (parser == null) {<a name="line.363"></a>
-<span class="sourceLineNo">364</span>            LOGGER.error("No PatternParser created for config=" + config + ", options=" + Arrays.toString(options));<a name="line.364"></a>
-<span class="sourceLineNo">365</span>            return null;<a name="line.365"></a>
-<span class="sourceLineNo">366</span>        }<a name="line.366"></a>
-<span class="sourceLineNo">367</span>        return parser.parse(options[0]);<a name="line.367"></a>
-<span class="sourceLineNo">368</span>    }<a name="line.368"></a>
-<span class="sourceLineNo">369</span><a name="line.369"></a>
-<span class="sourceLineNo">370</span>    /**<a name="line.370"></a>
-<span class="sourceLineNo">371</span>     * {@inheritDoc}<a name="line.371"></a>
-<span class="sourceLineNo">372</span>     */<a name="line.372"></a>
-<span class="sourceLineNo">373</span>    @Override<a name="line.373"></a>
-<span class="sourceLineNo">374</span>    @PerformanceSensitive("allocation")<a name="line.374"></a>
-<span class="sourceLineNo">375</span>    public void format(final LogEvent event, final StringBuilder toAppendTo) {<a name="line.375"></a>
-<span class="sourceLineNo">376</span>        final int start = toAppendTo.length();<a name="line.376"></a>
-<span class="sourceLineNo">377</span>        for (int i = 0; i &lt; formatters.size(); i++) {<a name="line.377"></a>
-<span class="sourceLineNo">378</span>            final PatternFormatter formatter = formatters.get(i);<a name="line.378"></a>
-<span class="sourceLineNo">379</span>            formatter.format(event, toAppendTo);<a name="line.379"></a>
-<span class="sourceLineNo">380</span>        }<a name="line.380"></a>
-<span class="sourceLineNo">381</span>        if (toAppendTo.length() &gt; start) {<a name="line.381"></a>
-<span class="sourceLineNo">382</span>            toAppendTo.insert(start, style);<a name="line.382"></a>
-<span class="sourceLineNo">383</span>            toAppendTo.append(AnsiEscape.getDefaultStyle());<a name="line.383"></a>
-<span class="sourceLineNo">384</span>        }<a name="line.384"></a>
-<span class="sourceLineNo">385</span>    }<a name="line.385"></a>
-<span class="sourceLineNo">386</span>}<a name="line.386"></a>
+<span class="sourceLineNo">334</span>        } catch (final SecurityException | NoSuchMethodException | IllegalArgumentException | InstantiationException |<a name="line.334"></a>
+<span class="sourceLineNo">335</span>            IllegalAccessException | InvocationTargetException e) {<a name="line.335"></a>
+<span class="sourceLineNo">336</span>            LOGGER.error(e.toString(), e);<a name="line.336"></a>
+<span class="sourceLineNo">337</span>        }<a name="line.337"></a>
+<span class="sourceLineNo">338</span>        return null;<a name="line.338"></a>
+<span class="sourceLineNo">339</span>    }<a name="line.339"></a>
+<span class="sourceLineNo">340</span><a name="line.340"></a>
+<span class="sourceLineNo">341</span>    /**<a name="line.341"></a>
+<span class="sourceLineNo">342</span>     * Creates a list of PatternFormatter from the given configuration and options or null if no pattern is supplied.<a name="line.342"></a>
+<span class="sourceLineNo">343</span>     *<a name="line.343"></a>
+<span class="sourceLineNo">344</span>     * @param config A configuration.<a name="line.344"></a>
+<span class="sourceLineNo">345</span>     * @param options pattern options.<a name="line.345"></a>
+<span class="sourceLineNo">346</span>     * @return a list of PatternFormatter from the given configuration and options or null if no pattern is supplied.<a name="line.346"></a>
+<span class="sourceLineNo">347</span>     */<a name="line.347"></a>
+<span class="sourceLineNo">348</span>    private static List&lt;PatternFormatter&gt; toPatternFormatterList(final Configuration config, final String[] options) {<a name="line.348"></a>
+<span class="sourceLineNo">349</span>        if (options.length == 0 || options[0] == null) {<a name="line.349"></a>
+<span class="sourceLineNo">350</span>            LOGGER.error("No pattern supplied on style for config=" + config);<a name="line.350"></a>
+<span class="sourceLineNo">351</span>            return null;<a name="line.351"></a>
+<span class="sourceLineNo">352</span>        }<a name="line.352"></a>
+<span class="sourceLineNo">353</span>        final PatternParser parser = PatternLayout.createPatternParser(config);<a name="line.353"></a>
+<span class="sourceLineNo">354</span>        if (parser == null) {<a name="line.354"></a>
+<span class="sourceLineNo">355</span>            LOGGER.error("No PatternParser created for config=" + config + ", options=" + Arrays.toString(options));<a name="line.355"></a>
+<span class="sourceLineNo">356</span>            return null;<a name="line.356"></a>
+<span class="sourceLineNo">357</span>        }<a name="line.357"></a>
+<span class="sourceLineNo">358</span>        return parser.parse(options[0]);<a name="line.358"></a>
+<span class="sourceLineNo">359</span>    }<a name="line.359"></a>
+<span class="sourceLineNo">360</span><a name="line.360"></a>
+<span class="sourceLineNo">361</span>    /**<a name="line.361"></a>
+<span class="sourceLineNo">362</span>     * {@inheritDoc}<a name="line.362"></a>
+<span class="sourceLineNo">363</span>     */<a name="line.363"></a>
+<span class="sourceLineNo">364</span>    @Override<a name="line.364"></a>
+<span class="sourceLineNo">365</span>    @PerformanceSensitive("allocation")<a name="line.365"></a>
+<span class="sourceLineNo">366</span>    public void format(final LogEvent event, final StringBuilder toAppendTo) {<a name="line.366"></a>
+<span class="sourceLineNo">367</span>        final int start = toAppendTo.length();<a name="line.367"></a>
+<span class="sourceLineNo">368</span>        for (int i = 0; i &lt; formatters.size(); i++) {<a name="line.368"></a>
+<span class="sourceLineNo">369</span>            final PatternFormatter formatter = formatters.get(i);<a name="line.369"></a>
+<span class="sourceLineNo">370</span>            formatter.format(event, toAppendTo);<a name="line.370"></a>
+<span class="sourceLineNo">371</span>        }<a name="line.371"></a>
+<span class="sourceLineNo">372</span>        if (toAppendTo.length() &gt; start) {<a name="line.372"></a>
+<span class="sourceLineNo">373</span>            toAppendTo.insert(start, style);<a name="line.373"></a>
+<span class="sourceLineNo">374</span>            toAppendTo.append(AnsiEscape.getDefaultStyle());<a name="line.374"></a>
+<span class="sourceLineNo">375</span>        }<a name="line.375"></a>
+<span class="sourceLineNo">376</span>    }<a name="line.376"></a>
+<span class="sourceLineNo">377</span>}<a name="line.377"></a>
 
 
 

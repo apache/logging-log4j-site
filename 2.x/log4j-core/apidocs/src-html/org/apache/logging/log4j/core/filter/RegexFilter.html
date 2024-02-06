@@ -150,29 +150,23 @@
 <span class="sourceLineNo">142</span>            return DEFAULT_PATTERN_FLAGS;<a name="line.142"></a>
 <span class="sourceLineNo">143</span>        }<a name="line.143"></a>
 <span class="sourceLineNo">144</span>        final Field[] fields = Pattern.class.getDeclaredFields();<a name="line.144"></a>
-<span class="sourceLineNo">145</span>        final Comparator&lt;Field&gt; comparator = new Comparator&lt;Field&gt;() {<a name="line.145"></a>
-<span class="sourceLineNo">146</span><a name="line.146"></a>
-<span class="sourceLineNo">147</span>            @Override<a name="line.147"></a>
-<span class="sourceLineNo">148</span>            public int compare(final Field f1, final Field f2) {<a name="line.148"></a>
-<span class="sourceLineNo">149</span>                return f1.getName().compareTo(f2.getName());<a name="line.149"></a>
-<span class="sourceLineNo">150</span>            }<a name="line.150"></a>
-<span class="sourceLineNo">151</span>        };<a name="line.151"></a>
-<span class="sourceLineNo">152</span>        Arrays.sort(fields, comparator);<a name="line.152"></a>
-<span class="sourceLineNo">153</span>        final String[] fieldNames = new String[fields.length];<a name="line.153"></a>
-<span class="sourceLineNo">154</span>        for (int i = 0; i &lt; fields.length; i++) {<a name="line.154"></a>
-<span class="sourceLineNo">155</span>            fieldNames[i] = fields[i].getName();<a name="line.155"></a>
-<span class="sourceLineNo">156</span>        }<a name="line.156"></a>
-<span class="sourceLineNo">157</span>        int flags = DEFAULT_PATTERN_FLAGS;<a name="line.157"></a>
-<span class="sourceLineNo">158</span>        for (final String test : patternFlags) {<a name="line.158"></a>
-<span class="sourceLineNo">159</span>            final int index = Arrays.binarySearch(fieldNames, test);<a name="line.159"></a>
-<span class="sourceLineNo">160</span>            if (index &gt;= 0) {<a name="line.160"></a>
-<span class="sourceLineNo">161</span>                final Field field = fields[index];<a name="line.161"></a>
-<span class="sourceLineNo">162</span>                flags |= field.getInt(Pattern.class);<a name="line.162"></a>
-<span class="sourceLineNo">163</span>            }<a name="line.163"></a>
-<span class="sourceLineNo">164</span>        }<a name="line.164"></a>
-<span class="sourceLineNo">165</span>        return flags;<a name="line.165"></a>
-<span class="sourceLineNo">166</span>    }<a name="line.166"></a>
-<span class="sourceLineNo">167</span>}<a name="line.167"></a>
+<span class="sourceLineNo">145</span>        final Comparator&lt;Field&gt; comparator = (f1, f2) -&gt; f1.getName().compareTo(f2.getName());<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        Arrays.sort(fields, comparator);<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        final String[] fieldNames = new String[fields.length];<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        for (int i = 0; i &lt; fields.length; i++) {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>            fieldNames[i] = fields[i].getName();<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        }<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        int flags = DEFAULT_PATTERN_FLAGS;<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        for (final String test : patternFlags) {<a name="line.152"></a>
+<span class="sourceLineNo">153</span>            final int index = Arrays.binarySearch(fieldNames, test);<a name="line.153"></a>
+<span class="sourceLineNo">154</span>            if (index &gt;= 0) {<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                final Field field = fields[index];<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                flags |= field.getInt(Pattern.class);<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            }<a name="line.157"></a>
+<span class="sourceLineNo">158</span>        }<a name="line.158"></a>
+<span class="sourceLineNo">159</span>        return flags;<a name="line.159"></a>
+<span class="sourceLineNo">160</span>    }<a name="line.160"></a>
+<span class="sourceLineNo">161</span>}<a name="line.161"></a>
 
 
 

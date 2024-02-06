@@ -42,19 +42,19 @@
 <span class="sourceLineNo">034</span>    private static final Logger LOGGER = StatusLogger.getLogger();<a name="line.34"></a>
 <span class="sourceLineNo">035</span>    private static final String PUBLIC_ID = "-//APACHE//DTD LOG4J 1.2//EN";<a name="line.35"></a>
 <span class="sourceLineNo">036</span><a name="line.36"></a>
-<span class="sourceLineNo">037</span>    public InputSource resolveEntity(String publicId, String systemId) {<a name="line.37"></a>
-<span class="sourceLineNo">038</span>        if (systemId.endsWith("log4j.dtd") || PUBLIC_ID.equals(publicId)) {<a name="line.38"></a>
-<span class="sourceLineNo">039</span>            Class clazz = getClass();<a name="line.39"></a>
-<span class="sourceLineNo">040</span>            InputStream in = clazz.getResourceAsStream("/org/apache/log4j/xml/log4j.dtd");<a name="line.40"></a>
-<span class="sourceLineNo">041</span>            if (in == null) {<a name="line.41"></a>
-<span class="sourceLineNo">042</span>                LOGGER.warn("Could not find [log4j.dtd] using [{}] class loader, parsed without DTD.",<a name="line.42"></a>
-<span class="sourceLineNo">043</span>                        clazz.getClassLoader());<a name="line.43"></a>
-<span class="sourceLineNo">044</span>                in = new ByteArrayInputStream(new byte[0]);<a name="line.44"></a>
-<span class="sourceLineNo">045</span>            }<a name="line.45"></a>
-<span class="sourceLineNo">046</span>            return new InputSource(in);<a name="line.46"></a>
-<span class="sourceLineNo">047</span>        } else {<a name="line.47"></a>
-<span class="sourceLineNo">048</span>            return null;<a name="line.48"></a>
-<span class="sourceLineNo">049</span>        }<a name="line.49"></a>
+<span class="sourceLineNo">037</span>    @Override<a name="line.37"></a>
+<span class="sourceLineNo">038</span>    public InputSource resolveEntity(String publicId, String systemId) {<a name="line.38"></a>
+<span class="sourceLineNo">039</span>        if (systemId.endsWith("log4j.dtd") || PUBLIC_ID.equals(publicId)) {<a name="line.39"></a>
+<span class="sourceLineNo">040</span>            Class&lt;?&gt; clazz = getClass();<a name="line.40"></a>
+<span class="sourceLineNo">041</span>            InputStream in = clazz.getResourceAsStream("/org/apache/log4j/xml/log4j.dtd");<a name="line.41"></a>
+<span class="sourceLineNo">042</span>            if (in == null) {<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                LOGGER.warn("Could not find [log4j.dtd] using [{}] class loader, parsed without DTD.",<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                        clazz.getClassLoader());<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                in = new ByteArrayInputStream(new byte[0]);<a name="line.45"></a>
+<span class="sourceLineNo">046</span>            }<a name="line.46"></a>
+<span class="sourceLineNo">047</span>            return new InputSource(in);<a name="line.47"></a>
+<span class="sourceLineNo">048</span>        }<a name="line.48"></a>
+<span class="sourceLineNo">049</span>        return null;<a name="line.49"></a>
 <span class="sourceLineNo">050</span>    }<a name="line.50"></a>
 <span class="sourceLineNo">051</span>}<a name="line.51"></a>
 

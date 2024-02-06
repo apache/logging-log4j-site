@@ -64,36 +64,43 @@
 <span class="sourceLineNo">056</span>    String IS_LOG4J_AUTO_INITIALIZATION_DISABLED = "isLog4jAutoInitializationDisabled";<a name="line.56"></a>
 <span class="sourceLineNo">057</span><a name="line.57"></a>
 <span class="sourceLineNo">058</span>    /**<a name="line.58"></a>
-<span class="sourceLineNo">059</span>     * The attribute key for the {@link javax.servlet.ServletContext} attribute that the singleton support instance<a name="line.59"></a>
-<span class="sourceLineNo">060</span>     * is stored in.<a name="line.60"></a>
-<span class="sourceLineNo">061</span>     */<a name="line.61"></a>
-<span class="sourceLineNo">062</span>    String SUPPORT_ATTRIBUTE = Log4jWebSupport.class.getName() + ".INSTANCE";<a name="line.62"></a>
-<span class="sourceLineNo">063</span><a name="line.63"></a>
-<span class="sourceLineNo">064</span>    /**<a name="line.64"></a>
-<span class="sourceLineNo">065</span>     * The attribute key for the {@link javax.servlet.ServletContext} attribute that the {@link LoggerContext}<a name="line.65"></a>
-<span class="sourceLineNo">066</span>     * is stored in.<a name="line.66"></a>
-<span class="sourceLineNo">067</span>     */<a name="line.67"></a>
-<span class="sourceLineNo">068</span>    String CONTEXT_ATTRIBUTE = LoggerContext.class.getName() + ".INSTANCE";<a name="line.68"></a>
-<span class="sourceLineNo">069</span><a name="line.69"></a>
-<span class="sourceLineNo">070</span>    /**<a name="line.70"></a>
-<span class="sourceLineNo">071</span>     * Sets the logger context so that code executing afterwards can easily and quickly access loggers via<a name="line.71"></a>
-<span class="sourceLineNo">072</span>     * {@link org.apache.logging.log4j.LogManager#getLogger}.<a name="line.72"></a>
-<span class="sourceLineNo">073</span>     */<a name="line.73"></a>
-<span class="sourceLineNo">074</span>    void setLoggerContext();<a name="line.74"></a>
-<span class="sourceLineNo">075</span><a name="line.75"></a>
-<span class="sourceLineNo">076</span>    /**<a name="line.76"></a>
-<span class="sourceLineNo">077</span>     * Clears the logger context set up in {@link #setLoggerContext}.<a name="line.77"></a>
-<span class="sourceLineNo">078</span>     */<a name="line.78"></a>
-<span class="sourceLineNo">079</span>    void clearLoggerContext();<a name="line.79"></a>
-<span class="sourceLineNo">080</span><a name="line.80"></a>
-<span class="sourceLineNo">081</span>    /**<a name="line.81"></a>
-<span class="sourceLineNo">082</span>     * Sets the logger context by calling {@link #setLoggerContext}, executes the runnable argument, then clears the<a name="line.82"></a>
-<span class="sourceLineNo">083</span>     * logger context by calling {@link #clearLoggerContext}.<a name="line.83"></a>
-<span class="sourceLineNo">084</span>     *<a name="line.84"></a>
-<span class="sourceLineNo">085</span>     * @param runnable The runnable to execute wrapped with a configured logger context<a name="line.85"></a>
-<span class="sourceLineNo">086</span>     */<a name="line.86"></a>
-<span class="sourceLineNo">087</span>    void wrapExecution(Runnable runnable);<a name="line.87"></a>
-<span class="sourceLineNo">088</span>}<a name="line.88"></a>
+<span class="sourceLineNo">059</span>     * The {@link javax.servlet.ServletContext} parameter name for the flag that disables Log4j's auto-shutdown<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     * in Servlet 3.0+ web applications. Set a context parameter with this name to "true" to disable<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     * auto-shutdown.<a name="line.61"></a>
+<span class="sourceLineNo">062</span>     */<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    String IS_LOG4J_AUTO_SHUTDOWN_DISABLED = "isLog4jAutoShutdownDisabled";<a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>    /**<a name="line.65"></a>
+<span class="sourceLineNo">066</span>     * The attribute key for the {@link javax.servlet.ServletContext} attribute that the singleton support instance<a name="line.66"></a>
+<span class="sourceLineNo">067</span>     * is stored in.<a name="line.67"></a>
+<span class="sourceLineNo">068</span>     */<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    String SUPPORT_ATTRIBUTE = Log4jWebSupport.class.getName() + ".INSTANCE";<a name="line.69"></a>
+<span class="sourceLineNo">070</span><a name="line.70"></a>
+<span class="sourceLineNo">071</span>    /**<a name="line.71"></a>
+<span class="sourceLineNo">072</span>     * The attribute key for the {@link javax.servlet.ServletContext} attribute that the {@link LoggerContext}<a name="line.72"></a>
+<span class="sourceLineNo">073</span>     * is stored in.<a name="line.73"></a>
+<span class="sourceLineNo">074</span>     */<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    String CONTEXT_ATTRIBUTE = LoggerContext.class.getName() + ".INSTANCE";<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>    /**<a name="line.77"></a>
+<span class="sourceLineNo">078</span>     * Sets the logger context so that code executing afterwards can easily and quickly access loggers via<a name="line.78"></a>
+<span class="sourceLineNo">079</span>     * {@link org.apache.logging.log4j.LogManager#getLogger}.<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     */<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    void setLoggerContext();<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>    /**<a name="line.83"></a>
+<span class="sourceLineNo">084</span>     * Clears the logger context set up in {@link #setLoggerContext}.<a name="line.84"></a>
+<span class="sourceLineNo">085</span>     */<a name="line.85"></a>
+<span class="sourceLineNo">086</span>    void clearLoggerContext();<a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87"></a>
+<span class="sourceLineNo">088</span>    /**<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     * Sets the logger context by calling {@link #setLoggerContext}, executes the runnable argument, then clears the<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     * logger context by calling {@link #clearLoggerContext}.<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     *<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     * @param runnable The runnable to execute wrapped with a configured logger context<a name="line.92"></a>
+<span class="sourceLineNo">093</span>     */<a name="line.93"></a>
+<span class="sourceLineNo">094</span>    void wrapExecution(Runnable runnable);<a name="line.94"></a>
+<span class="sourceLineNo">095</span>}<a name="line.95"></a>
 
 
 

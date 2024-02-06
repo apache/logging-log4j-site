@@ -288,79 +288,80 @@
 <a class="jxr_linenumber" name="L280" href="#L280">280</a> <em class="jxr_javadoccomment">     * @deprecated Use {@link #newBuilder()} to create and configure a {@link Builder} instance.</em>
 <a class="jxr_linenumber" name="L281" href="#L281">281</a> <em class="jxr_javadoccomment">     * @see Builder</em>
 <a class="jxr_linenumber" name="L282" href="#L282">282</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/SmtpAppender.html">SmtpAppender</a> createAppender(
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config,
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>             @PluginAttribute(<span class="jxr_string">"name"</span>) @Required <strong class="jxr_keyword">final</strong> String name,
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>             @PluginAttribute(<span class="jxr_string">"to"</span>) <strong class="jxr_keyword">final</strong> String to,
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>             @PluginAttribute(<span class="jxr_string">"cc"</span>) <strong class="jxr_keyword">final</strong> String cc,
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>             @PluginAttribute(<span class="jxr_string">"bcc"</span>) <strong class="jxr_keyword">final</strong> String bcc,
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>             @PluginAttribute(<span class="jxr_string">"from"</span>) <strong class="jxr_keyword">final</strong> String from,
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>             @PluginAttribute(<span class="jxr_string">"replyTo"</span>) <strong class="jxr_keyword">final</strong> String replyTo,
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>             @PluginAttribute(<span class="jxr_string">"subject"</span>) <strong class="jxr_keyword">final</strong> String subject,
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>             @PluginAttribute(<span class="jxr_string">"smtpProtocol"</span>) <strong class="jxr_keyword">final</strong> String smtpProtocol,
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>             @PluginAttribute(<span class="jxr_string">"smtpHost"</span>) <strong class="jxr_keyword">final</strong> String smtpHost,
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>             @PluginAttribute(value = <span class="jxr_string">"smtpPort"</span>, defaultString = <span class="jxr_string">"0"</span>) @ValidPort <strong class="jxr_keyword">final</strong> String smtpPortStr,
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>             @PluginAttribute(<span class="jxr_string">"smtpUsername"</span>) <strong class="jxr_keyword">final</strong> String smtpUsername,
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>             @PluginAttribute(value = <span class="jxr_string">"smtpPassword"</span>, sensitive = <strong class="jxr_keyword">true</strong>) <strong class="jxr_keyword">final</strong> String smtpPassword,
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>             @PluginAttribute(<span class="jxr_string">"smtpDebug"</span>) <strong class="jxr_keyword">final</strong> String smtpDebug,
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>             @PluginAttribute(<span class="jxr_string">"bufferSize"</span>) <strong class="jxr_keyword">final</strong> String bufferSizeStr,
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>             @PluginElement(<span class="jxr_string">"Layout"</span>) Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout,
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>             @PluginElement(<span class="jxr_string">"Filter"</span>) <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter,
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>             @PluginAttribute(<span class="jxr_string">"ignoreExceptions"</span>) <strong class="jxr_keyword">final</strong> String ignore) {
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>         <strong class="jxr_keyword">if</strong> (name == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>             LOGGER.error(<span class="jxr_string">"No name provided for SmtpAppender"</span>);
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>         }
-<a class="jxr_linenumber" name="L306" href="#L306">306</a> 
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> ignoreExceptions = Booleans.parseBoolean(ignore, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> smtpPort = AbstractAppender.parseInt(smtpPortStr, 0);
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isSmtpDebug = Boolean.parseBoolean(smtpDebug);
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize = bufferSizeStr == <strong class="jxr_keyword">null</strong> ? DEFAULT_BUFFER_SIZE : Integer.parseInt(bufferSizeStr);
-<a class="jxr_linenumber" name="L311" href="#L311">311</a> 
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>             layout = HtmlLayout.createDefaultLayout();
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>         }
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>         <strong class="jxr_keyword">if</strong> (filter == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>             filter = ThresholdFilter.createFilter(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>         }
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration = config != <strong class="jxr_keyword">null</strong> ? config : <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/DefaultConfiguration.html">DefaultConfiguration</a>();
-<a class="jxr_linenumber" name="L319" href="#L319">319</a> 
-<a class="jxr_linenumber" name="L320" href="#L320">320</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SmtpManager.html">SmtpManager</a> manager = SmtpManager.getSmtpManager(configuration, to, cc, bcc, from, replyTo, subject, smtpProtocol,
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>             smtpHost, smtpPort, smtpUsername, smtpPassword, isSmtpDebug, filter.toString(),  bufferSize, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <strong class="jxr_keyword">if</strong> (manager == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>         }
-<a class="jxr_linenumber" name="L325" href="#L325">325</a> 
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/SmtpAppender.html">SmtpAppender</a>(name, filter, layout, manager, ignoreExceptions, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>     }
-<a class="jxr_linenumber" name="L328" href="#L328">328</a> 
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L330" href="#L330">330</a> <em class="jxr_javadoccomment">     * Capture all events in CyclicBuffer.</em>
-<a class="jxr_linenumber" name="L331" href="#L331">331</a> <em class="jxr_javadoccomment">     * @param event The Log event.</em>
-<a class="jxr_linenumber" name="L332" href="#L332">332</a> <em class="jxr_javadoccomment">     * @return true if the event should be filtered.</em>
-<a class="jxr_linenumber" name="L333" href="#L333">333</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>     @Override
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isFiltered(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
-<a class="jxr_linenumber" name="L336" href="#L336">336</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> filtered = <strong class="jxr_keyword">super</strong>.isFiltered(event);
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>         <strong class="jxr_keyword">if</strong> (filtered) {
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>             manager.add(event);
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>         }
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>         <strong class="jxr_keyword">return</strong> filtered;
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>     }
-<a class="jxr_linenumber" name="L342" href="#L342">342</a> 
-<a class="jxr_linenumber" name="L343" href="#L343">343</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L344" href="#L344">344</a> <em class="jxr_javadoccomment">     * Perform SmtpAppender specific appending actions, mainly adding the event</em>
-<a class="jxr_linenumber" name="L345" href="#L345">345</a> <em class="jxr_javadoccomment">     * to a cyclic buffer and checking if the event triggers an e-mail to be</em>
-<a class="jxr_linenumber" name="L346" href="#L346">346</a> <em class="jxr_javadoccomment">     * sent.</em>
-<a class="jxr_linenumber" name="L347" href="#L347">347</a> <em class="jxr_javadoccomment">     * @param event The Log event.</em>
-<a class="jxr_linenumber" name="L348" href="#L348">348</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>     @Override
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> append(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>         manager.sendEvents(getLayout(), event);
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>     }
-<a class="jxr_linenumber" name="L353" href="#L353">353</a> }
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>     @Deprecated
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/SmtpAppender.html">SmtpAppender</a> createAppender(
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>             @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config,
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>             @PluginAttribute(<span class="jxr_string">"name"</span>) @Required <strong class="jxr_keyword">final</strong> String name,
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>             @PluginAttribute(<span class="jxr_string">"to"</span>) <strong class="jxr_keyword">final</strong> String to,
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>             @PluginAttribute(<span class="jxr_string">"cc"</span>) <strong class="jxr_keyword">final</strong> String cc,
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>             @PluginAttribute(<span class="jxr_string">"bcc"</span>) <strong class="jxr_keyword">final</strong> String bcc,
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>             @PluginAttribute(<span class="jxr_string">"from"</span>) <strong class="jxr_keyword">final</strong> String from,
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>             @PluginAttribute(<span class="jxr_string">"replyTo"</span>) <strong class="jxr_keyword">final</strong> String replyTo,
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>             @PluginAttribute(<span class="jxr_string">"subject"</span>) <strong class="jxr_keyword">final</strong> String subject,
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>             @PluginAttribute(<span class="jxr_string">"smtpProtocol"</span>) <strong class="jxr_keyword">final</strong> String smtpProtocol,
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>             @PluginAttribute(<span class="jxr_string">"smtpHost"</span>) <strong class="jxr_keyword">final</strong> String smtpHost,
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>             @PluginAttribute(value = <span class="jxr_string">"smtpPort"</span>, defaultString = <span class="jxr_string">"0"</span>) @ValidPort <strong class="jxr_keyword">final</strong> String smtpPortStr,
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>             @PluginAttribute(<span class="jxr_string">"smtpUsername"</span>) <strong class="jxr_keyword">final</strong> String smtpUsername,
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>             @PluginAttribute(value = <span class="jxr_string">"smtpPassword"</span>, sensitive = <strong class="jxr_keyword">true</strong>) <strong class="jxr_keyword">final</strong> String smtpPassword,
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>             @PluginAttribute(<span class="jxr_string">"smtpDebug"</span>) <strong class="jxr_keyword">final</strong> String smtpDebug,
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>             @PluginAttribute(<span class="jxr_string">"bufferSize"</span>) <strong class="jxr_keyword">final</strong> String bufferSizeStr,
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>             @PluginElement(<span class="jxr_string">"Layout"</span>) Layout&lt;? <strong class="jxr_keyword">extends</strong> Serializable&gt; layout,
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>             @PluginElement(<span class="jxr_string">"Filter"</span>) <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Filter</a> filter,
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>             @PluginAttribute(<span class="jxr_string">"ignoreExceptions"</span>) <strong class="jxr_keyword">final</strong> String ignore) {
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>         <strong class="jxr_keyword">if</strong> (name == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>             LOGGER.error(<span class="jxr_string">"No name provided for SmtpAppender"</span>);
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>         }
+<a class="jxr_linenumber" name="L307" href="#L307">307</a> 
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> ignoreExceptions = Booleans.parseBoolean(ignore, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> smtpPort = AbstractAppender.parseInt(smtpPortStr, 0);
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isSmtpDebug = Boolean.parseBoolean(smtpDebug);
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> bufferSize = bufferSizeStr == <strong class="jxr_keyword">null</strong> ? DEFAULT_BUFFER_SIZE : Integer.parseInt(bufferSizeStr);
+<a class="jxr_linenumber" name="L312" href="#L312">312</a> 
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>         <strong class="jxr_keyword">if</strong> (layout == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>             layout = HtmlLayout.createDefaultLayout();
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>         }
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>         <strong class="jxr_keyword">if</strong> (filter == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>             filter = ThresholdFilter.createFilter(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>         }
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration = config != <strong class="jxr_keyword">null</strong> ? config : <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/DefaultConfiguration.html">DefaultConfiguration</a>();
+<a class="jxr_linenumber" name="L320" href="#L320">320</a> 
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/net/SmtpManager.html">SmtpManager</a> manager = SmtpManager.getSmtpManager(configuration, to, cc, bcc, from, replyTo, subject, smtpProtocol,
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>             smtpHost, smtpPort, smtpUsername, smtpPassword, isSmtpDebug, filter.toString(),  bufferSize, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>         <strong class="jxr_keyword">if</strong> (manager == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>         }
+<a class="jxr_linenumber" name="L326" href="#L326">326</a> 
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/SmtpAppender.html">SmtpAppender</a>(name, filter, layout, manager, ignoreExceptions, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>     }
+<a class="jxr_linenumber" name="L329" href="#L329">329</a> 
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L331" href="#L331">331</a> <em class="jxr_javadoccomment">     * Capture all events in CyclicBuffer.</em>
+<a class="jxr_linenumber" name="L332" href="#L332">332</a> <em class="jxr_javadoccomment">     * @param event The Log event.</em>
+<a class="jxr_linenumber" name="L333" href="#L333">333</a> <em class="jxr_javadoccomment">     * @return true if the event should be filtered.</em>
+<a class="jxr_linenumber" name="L334" href="#L334">334</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>     @Override
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isFiltered(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> filtered = <strong class="jxr_keyword">super</strong>.isFiltered(event);
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>         <strong class="jxr_keyword">if</strong> (filtered) {
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>             manager.add(event);
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>         }
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>         <strong class="jxr_keyword">return</strong> filtered;
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>     }
+<a class="jxr_linenumber" name="L343" href="#L343">343</a> 
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L345" href="#L345">345</a> <em class="jxr_javadoccomment">     * Perform SmtpAppender specific appending actions, mainly adding the event</em>
+<a class="jxr_linenumber" name="L346" href="#L346">346</a> <em class="jxr_javadoccomment">     * to a cyclic buffer and checking if the event triggers an e-mail to be</em>
+<a class="jxr_linenumber" name="L347" href="#L347">347</a> <em class="jxr_javadoccomment">     * sent.</em>
+<a class="jxr_linenumber" name="L348" href="#L348">348</a> <em class="jxr_javadoccomment">     * @param event The Log event.</em>
+<a class="jxr_linenumber" name="L349" href="#L349">349</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>     @Override
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> append(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>         manager.sendEvents(getLayout(), event);
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>     }
+<a class="jxr_linenumber" name="L354" href="#L354">354</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2020 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2021 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>
