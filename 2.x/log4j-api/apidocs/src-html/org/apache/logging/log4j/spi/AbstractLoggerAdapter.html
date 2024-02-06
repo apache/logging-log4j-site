@@ -34,16 +34,16 @@
 <span class="sourceLineNo">026</span><a name="line.26"></a>
 <span class="sourceLineNo">027</span>/**<a name="line.27"></a>
 <span class="sourceLineNo">028</span> * Provides an abstract base class to use for implementing LoggerAdapter.<a name="line.28"></a>
-<span class="sourceLineNo">029</span> * @param &lt;L&gt; the Logger class to adapt<a name="line.29"></a>
-<span class="sourceLineNo">030</span> * @since 2.1<a name="line.30"></a>
-<span class="sourceLineNo">031</span> */<a name="line.31"></a>
-<span class="sourceLineNo">032</span>public abstract class AbstractLoggerAdapter&lt;L&gt; implements LoggerAdapter&lt;L&gt; {<a name="line.32"></a>
-<span class="sourceLineNo">033</span><a name="line.33"></a>
-<span class="sourceLineNo">034</span>    /**<a name="line.34"></a>
-<span class="sourceLineNo">035</span>     * A map to store loggers for their given LoggerContexts.<a name="line.35"></a>
-<span class="sourceLineNo">036</span>     */<a name="line.36"></a>
-<span class="sourceLineNo">037</span>    protected final Map&lt;LoggerContext, ConcurrentMap&lt;String, L&gt;&gt; registry =<a name="line.37"></a>
-<span class="sourceLineNo">038</span>        new WeakHashMap&lt;&gt;();<a name="line.38"></a>
+<span class="sourceLineNo">029</span> * <a name="line.29"></a>
+<span class="sourceLineNo">030</span> * @param &lt;L&gt; the Logger class to adapt<a name="line.30"></a>
+<span class="sourceLineNo">031</span> * @since 2.1<a name="line.31"></a>
+<span class="sourceLineNo">032</span> */<a name="line.32"></a>
+<span class="sourceLineNo">033</span>public abstract class AbstractLoggerAdapter&lt;L&gt; implements LoggerAdapter&lt;L&gt; {<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>    /**<a name="line.35"></a>
+<span class="sourceLineNo">036</span>     * A map to store loggers for their given LoggerContexts.<a name="line.36"></a>
+<span class="sourceLineNo">037</span>     */<a name="line.37"></a>
+<span class="sourceLineNo">038</span>    protected final Map&lt;LoggerContext, ConcurrentMap&lt;String, L&gt;&gt; registry = new WeakHashMap&lt;&gt;();<a name="line.38"></a>
 <span class="sourceLineNo">039</span><a name="line.39"></a>
 <span class="sourceLineNo">040</span>    @Override<a name="line.40"></a>
 <span class="sourceLineNo">041</span>    public L getLogger(final String name) {<a name="line.41"></a>
@@ -51,7 +51,7 @@
 <span class="sourceLineNo">043</span>        final ConcurrentMap&lt;String, L&gt; loggers = getLoggersInContext(context);<a name="line.43"></a>
 <span class="sourceLineNo">044</span>        final L logger = loggers.get(name);<a name="line.44"></a>
 <span class="sourceLineNo">045</span>        if (logger != null) {<a name="line.45"></a>
-<span class="sourceLineNo">046</span>                        return logger;<a name="line.46"></a>
+<span class="sourceLineNo">046</span>            return logger;<a name="line.46"></a>
 <span class="sourceLineNo">047</span>        }<a name="line.47"></a>
 <span class="sourceLineNo">048</span>        loggers.putIfAbsent(name, newLogger(name, context));<a name="line.48"></a>
 <span class="sourceLineNo">049</span>        return loggers.get(name);<a name="line.49"></a>
@@ -77,16 +77,16 @@
 <span class="sourceLineNo">069</span>    /**<a name="line.69"></a>
 <span class="sourceLineNo">070</span>     * Creates a new named logger for a given {@link LoggerContext}.<a name="line.70"></a>
 <span class="sourceLineNo">071</span>     *<a name="line.71"></a>
-<span class="sourceLineNo">072</span>     * @param name    the name of the logger to create<a name="line.72"></a>
+<span class="sourceLineNo">072</span>     * @param name the name of the logger to create<a name="line.72"></a>
 <span class="sourceLineNo">073</span>     * @param context the LoggerContext this logger will be associated with<a name="line.73"></a>
 <span class="sourceLineNo">074</span>     * @return the new named logger<a name="line.74"></a>
 <span class="sourceLineNo">075</span>     */<a name="line.75"></a>
 <span class="sourceLineNo">076</span>    protected abstract L newLogger(final String name, final LoggerContext context);<a name="line.76"></a>
 <span class="sourceLineNo">077</span><a name="line.77"></a>
 <span class="sourceLineNo">078</span>    /**<a name="line.78"></a>
-<span class="sourceLineNo">079</span>     * Gets the {@link LoggerContext} that should be used to look up or create loggers. This is similar in spirit to<a name="line.79"></a>
-<span class="sourceLineNo">080</span>     * the {@code ContextSelector} class in {@code log4j-core}. However, implementations can rely on their own<a name="line.80"></a>
-<span class="sourceLineNo">081</span>     * framework's separation of contexts instead (or simply use a singleton).<a name="line.81"></a>
+<span class="sourceLineNo">079</span>     * Gets the {@link LoggerContext} that should be used to look up or create loggers. This is similar in spirit to the<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     * {@code ContextSelector} class in {@code log4j-core}. However, implementations can rely on their own framework's<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     * separation of contexts instead (or simply use a singleton).<a name="line.81"></a>
 <span class="sourceLineNo">082</span>     *<a name="line.82"></a>
 <span class="sourceLineNo">083</span>     * @return the LoggerContext to be used for lookup and creation purposes<a name="line.83"></a>
 <span class="sourceLineNo">084</span>     * @see org.apache.logging.log4j.LogManager#getContext(ClassLoader, boolean)<a name="line.84"></a>

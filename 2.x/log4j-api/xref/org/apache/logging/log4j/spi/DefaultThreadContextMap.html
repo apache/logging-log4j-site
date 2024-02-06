@@ -31,15 +31,15 @@
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.util.PropertiesUtil;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment"> * The actual ThreadContext Map. A new ThreadContext Map is created each time it is updated and the Map stored</em>
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment"> * is always immutable. This means the Map can be passed to other threads without concern that it will be updated.</em>
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> * Since it is expected that the Map will be passed to many more log events than the number of keys it contains</em>
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> * the performance should be much better than if the Map was copied for each event.</em>
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment"> * The actual ThreadContext Map. A new ThreadContext Map is created each time it is updated and the Map stored is always</em>
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment"> * immutable. This means the Map can be passed to other threads without concern that it will be updated. Since it is</em>
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> * expected that the Map will be passed to many more log events than the number of keys it contains the performance</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> * should be much better than if the Map was copied for each event.</em>
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/apache/logging/log4j/spi/DefaultThreadContextMap.html">DefaultThreadContextMap</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../org/apache/logging/log4j/spi/ThreadContextMap.html">ThreadContextMap</a> {
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <em class="jxr_javadoccomment">/** </em>
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment">     * Property name ({@value}) for selecting {@code InheritableThreadLocal} (value "true")</em>
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment">     * or plain {@code ThreadLocal} (value is not "true") in the implementation.</em>
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment">     * Property name ({@value} ) for selecting {@code InheritableThreadLocal} (value "true") or plain</em>
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment">     * {@code ThreadLocal} (value is not "true") in the implementation.</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String INHERITABLE_MAP = <span class="jxr_string">"isThreadContextMapInheritable"</span>;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
@@ -50,7 +50,7 @@
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>          <strong class="jxr_keyword">this</strong>.useMap = useMap;
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">this</strong>.localMap = createThreadLocalMap(useMap);
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>      }
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>      
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <em class="jxr_comment">// LOG4J2-479: by default, use a plain ThreadLocal, only use InheritableThreadLocal if configured.</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <em class="jxr_comment">// (This method is package protected for JUnit tests.)</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">static</strong> ThreadLocal&lt;Map&lt;String, String&gt;&gt; createThreadLocalMap(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isMapEnabled) {
@@ -61,7 +61,7 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>                  @Override
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>                  <strong class="jxr_keyword">protected</strong> Map&lt;String, String&gt; childValue(<strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; parentValue) {
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>                      <strong class="jxr_keyword">return</strong> parentValue != <strong class="jxr_keyword">null</strong> &amp;&amp; isMapEnabled <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>                              ? Collections.unmodifiableMap(<strong class="jxr_keyword">new</strong> HashMap&lt;&gt;(parentValue)) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>                      ? Collections.unmodifiableMap(<strong class="jxr_keyword">new</strong> HashMap&lt;&gt;(parentValue)) <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>                              : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>                  }
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>              };
@@ -137,7 +137,7 @@
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>         <strong class="jxr_keyword">int</strong> result = 1;
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; map = <strong class="jxr_keyword">this</strong>.localMap.get();
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>         result = prime * result + ((map == <strong class="jxr_keyword">null</strong>) ? 0 : map.hashCode());
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>         result = prime * result + (<strong class="jxr_keyword">this</strong>.useMap ? 1231 : 1237);
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         result = prime * result + Boolean.valueOf(<strong class="jxr_keyword">this</strong>.useMap).hashCode();
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>         <strong class="jxr_keyword">return</strong> result;
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>     }
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> 
@@ -160,7 +160,7 @@
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>         }
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/apache/logging/log4j/spi/ThreadContextMap.html">ThreadContextMap</a> other = (ThreadContextMap) obj;
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; map = <strong class="jxr_keyword">this</strong>.localMap.get();
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; otherMap = other.getImmutableMapOrNull(); 
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; otherMap = other.getImmutableMapOrNull();
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">if</strong> (map == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>             <strong class="jxr_keyword">if</strong> (otherMap != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>                 <strong class="jxr_keyword">return</strong> false;

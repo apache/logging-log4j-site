@@ -64,8 +64,8 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  @Plugin(name = <span class="jxr_string">"logger"</span>, category = Node.CATEGORY, printObject = <strong class="jxr_keyword">true</strong>)
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/filter/AbstractFilterable.html">AbstractFilterable</a> {
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 1L;
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>  
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String ROOT = <span class="jxr_string">"root"</span>;
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 1L;
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/LogEventFactory.html">LogEventFactory</a> LOG_EVENT_FACTORY = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">private</strong> List&lt;AppenderRef&gt; appenderRefs = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
@@ -401,7 +401,7 @@
 <a class="jxr_linenumber" name="L393" href="#L393">393</a> 
 <a class="jxr_linenumber" name="L394" href="#L394">394</a>     @Override
 <a class="jxr_linenumber" name="L395" href="#L395">395</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>         <strong class="jxr_keyword">return</strong> Strings.isEmpty(name) ? <span class="jxr_string">"root"</span> : name;
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>         <strong class="jxr_keyword">return</strong> Strings.isEmpty(name) ? ROOT : name;
 <a class="jxr_linenumber" name="L397" href="#L397">397</a>     }
 <a class="jxr_linenumber" name="L398" href="#L398">398</a> 
 <a class="jxr_linenumber" name="L399" href="#L399">399</a>     <em class="jxr_javadoccomment">/**</em>
@@ -430,7 +430,7 @@
 <a class="jxr_linenumber" name="L422" href="#L422">422</a>         }
 <a class="jxr_linenumber" name="L423" href="#L423">423</a> 
 <a class="jxr_linenumber" name="L424" href="#L424">424</a>         <strong class="jxr_keyword">final</strong> List&lt;AppenderRef&gt; appenderRefs = Arrays.asList(refs);
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>         <strong class="jxr_keyword">final</strong> String name = loggerName.equals(<span class="jxr_string">"root"</span>) ? Strings.EMPTY : loggerName;
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>         <strong class="jxr_keyword">final</strong> String name = loggerName.equals(ROOT) ? Strings.EMPTY : loggerName;
 <a class="jxr_linenumber" name="L426" href="#L426">426</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> additive = Booleans.parseBoolean(additivity, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L427" href="#L427">427</a> 
 <a class="jxr_linenumber" name="L428" href="#L428">428</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a>(name, appenderRefs, filter, level, additive, properties, config,
@@ -451,7 +451,7 @@
 <a class="jxr_linenumber" name="L443" href="#L443">443</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L444" href="#L444">444</a> <em class="jxr_javadoccomment">     * The root Logger.</em>
 <a class="jxr_linenumber" name="L445" href="#L445">445</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>     @Plugin(name = <span class="jxr_string">"root"</span>, category = <span class="jxr_string">"Core"</span>, printObject = <strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>     @Plugin(name = ROOT, category = <span class="jxr_string">"Core"</span>, printObject = <strong class="jxr_keyword">true</strong>)
 <a class="jxr_linenumber" name="L447" href="#L447">447</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLoggerConfig.html">RootLogger</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> {
 <a class="jxr_linenumber" name="L448" href="#L448">448</a> 
 <a class="jxr_linenumber" name="L449" href="#L449">449</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 1L;

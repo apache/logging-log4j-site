@@ -31,15 +31,15 @@
 <span class="sourceLineNo">023</span>import org.apache.logging.log4j.util.PropertiesUtil;<a name="line.23"></a>
 <span class="sourceLineNo">024</span><a name="line.24"></a>
 <span class="sourceLineNo">025</span>/**<a name="line.25"></a>
-<span class="sourceLineNo">026</span> * The actual ThreadContext Map. A new ThreadContext Map is created each time it is updated and the Map stored<a name="line.26"></a>
-<span class="sourceLineNo">027</span> * is always immutable. This means the Map can be passed to other threads without concern that it will be updated.<a name="line.27"></a>
-<span class="sourceLineNo">028</span> * Since it is expected that the Map will be passed to many more log events than the number of keys it contains<a name="line.28"></a>
-<span class="sourceLineNo">029</span> * the performance should be much better than if the Map was copied for each event.<a name="line.29"></a>
+<span class="sourceLineNo">026</span> * The actual ThreadContext Map. A new ThreadContext Map is created each time it is updated and the Map stored is always<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * immutable. This means the Map can be passed to other threads without concern that it will be updated. Since it is<a name="line.27"></a>
+<span class="sourceLineNo">028</span> * expected that the Map will be passed to many more log events than the number of keys it contains the performance<a name="line.28"></a>
+<span class="sourceLineNo">029</span> * should be much better than if the Map was copied for each event.<a name="line.29"></a>
 <span class="sourceLineNo">030</span> */<a name="line.30"></a>
 <span class="sourceLineNo">031</span>public class DefaultThreadContextMap implements ThreadContextMap {<a name="line.31"></a>
-<span class="sourceLineNo">032</span>    /** <a name="line.32"></a>
-<span class="sourceLineNo">033</span>     * Property name ({@value}) for selecting {@code InheritableThreadLocal} (value "true")<a name="line.33"></a>
-<span class="sourceLineNo">034</span>     * or plain {@code ThreadLocal} (value is not "true") in the implementation.<a name="line.34"></a>
+<span class="sourceLineNo">032</span>    /**<a name="line.32"></a>
+<span class="sourceLineNo">033</span>     * Property name ({@value} ) for selecting {@code InheritableThreadLocal} (value "true") or plain<a name="line.33"></a>
+<span class="sourceLineNo">034</span>     * {@code ThreadLocal} (value is not "true") in the implementation.<a name="line.34"></a>
 <span class="sourceLineNo">035</span>     */<a name="line.35"></a>
 <span class="sourceLineNo">036</span>    public static final String INHERITABLE_MAP = "isThreadContextMapInheritable";<a name="line.36"></a>
 <span class="sourceLineNo">037</span><a name="line.37"></a>
@@ -50,7 +50,7 @@
 <span class="sourceLineNo">042</span>        this.useMap = useMap;<a name="line.42"></a>
 <span class="sourceLineNo">043</span>        this.localMap = createThreadLocalMap(useMap);<a name="line.43"></a>
 <span class="sourceLineNo">044</span>    }<a name="line.44"></a>
-<span class="sourceLineNo">045</span>    <a name="line.45"></a>
+<span class="sourceLineNo">045</span><a name="line.45"></a>
 <span class="sourceLineNo">046</span>    // LOG4J2-479: by default, use a plain ThreadLocal, only use InheritableThreadLocal if configured.<a name="line.46"></a>
 <span class="sourceLineNo">047</span>    // (This method is package protected for JUnit tests.)<a name="line.47"></a>
 <span class="sourceLineNo">048</span>    static ThreadLocal&lt;Map&lt;String, String&gt;&gt; createThreadLocalMap(final boolean isMapEnabled) {<a name="line.48"></a>
@@ -61,7 +61,7 @@
 <span class="sourceLineNo">053</span>                @Override<a name="line.53"></a>
 <span class="sourceLineNo">054</span>                protected Map&lt;String, String&gt; childValue(final Map&lt;String, String&gt; parentValue) {<a name="line.54"></a>
 <span class="sourceLineNo">055</span>                    return parentValue != null &amp;&amp; isMapEnabled //<a name="line.55"></a>
-<span class="sourceLineNo">056</span>                            ? Collections.unmodifiableMap(new HashMap&lt;&gt;(parentValue)) //<a name="line.56"></a>
+<span class="sourceLineNo">056</span>                    ? Collections.unmodifiableMap(new HashMap&lt;&gt;(parentValue)) //<a name="line.56"></a>
 <span class="sourceLineNo">057</span>                            : null;<a name="line.57"></a>
 <span class="sourceLineNo">058</span>                }<a name="line.58"></a>
 <span class="sourceLineNo">059</span>            };<a name="line.59"></a>
@@ -137,7 +137,7 @@
 <span class="sourceLineNo">129</span>        int result = 1;<a name="line.129"></a>
 <span class="sourceLineNo">130</span>        final Map&lt;String, String&gt; map = this.localMap.get();<a name="line.130"></a>
 <span class="sourceLineNo">131</span>        result = prime * result + ((map == null) ? 0 : map.hashCode());<a name="line.131"></a>
-<span class="sourceLineNo">132</span>        result = prime * result + (this.useMap ? 1231 : 1237);<a name="line.132"></a>
+<span class="sourceLineNo">132</span>        result = prime * result + Boolean.valueOf(this.useMap).hashCode();<a name="line.132"></a>
 <span class="sourceLineNo">133</span>        return result;<a name="line.133"></a>
 <span class="sourceLineNo">134</span>    }<a name="line.134"></a>
 <span class="sourceLineNo">135</span><a name="line.135"></a>
@@ -160,7 +160,7 @@
 <span class="sourceLineNo">152</span>        }<a name="line.152"></a>
 <span class="sourceLineNo">153</span>        final ThreadContextMap other = (ThreadContextMap) obj;<a name="line.153"></a>
 <span class="sourceLineNo">154</span>        final Map&lt;String, String&gt; map = this.localMap.get();<a name="line.154"></a>
-<span class="sourceLineNo">155</span>        final Map&lt;String, String&gt; otherMap = other.getImmutableMapOrNull(); <a name="line.155"></a>
+<span class="sourceLineNo">155</span>        final Map&lt;String, String&gt; otherMap = other.getImmutableMapOrNull();<a name="line.155"></a>
 <span class="sourceLineNo">156</span>        if (map == null) {<a name="line.156"></a>
 <span class="sourceLineNo">157</span>            if (otherMap != null) {<a name="line.157"></a>
 <span class="sourceLineNo">158</span>                return false;<a name="line.158"></a>
