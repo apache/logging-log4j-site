@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+<duplication lines="13" tokens="142">
+<file line="70" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java"/>
+<file line="88" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/config/XMLConfiguration.java"/>
+<codefragment>
+<![CDATA[
+            for (Map.Entry<String, String> entry : rootNode.getAttributes().entrySet()) {
+                if ("status".equalsIgnoreCase(entry.getKey())) {
+                    status = Level.toLevel(entry.getValue().toUpperCase(), Level.OFF);
+                } else if ("verbose".equalsIgnoreCase(entry.getKey())) {
+                    verbose = Boolean.parseBoolean(entry.getValue());
+                } else if ("packages".equalsIgnoreCase(entry.getKey())) {
+                    String[] packages = entry.getValue().split(",");
+                    for (String p : packages) {
+                        PluginManager.addPackage(p);
+                    }
+                } else if ("name".equalsIgnoreCase(entry.getKey())) {
+                    setName(entry.getValue());
+                } else if ("monitorInterval".equalsIgnoreCase(entry.getKey())) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="23" tokens="133">
+<file line="150" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/layout/HTMLLayout.java"/>
+<file line="194" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/layout/XMLLayout.java"/>
+<codefragment>
+<![CDATA[
+    private void appendThrowableAsHTML(Throwable throwable, StringBuilder sbuf) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        try {
+            throwable.printStackTrace(pw);
+        } catch (RuntimeException ex) {
+            // Ignore the exception.
+        }
+        pw.flush();
+        LineNumberReader reader = new LineNumberReader(new StringReader(sw.toString()));
+        ArrayList<String> lines = new ArrayList<String>();
+        try {
+          String line = reader.readLine();
+          while (line != null) {
+            lines.add(line);
+            line = reader.readLine();
+          }
+        } catch (IOException ex) {
+            if (ex instanceof InterruptedIOException) {
+                Thread.currentThread().interrupt();
+            }
+            lines.add(ex.toString());
+        }
+]]>
+</codefragment>
+</duplication>
+<duplication lines="39" tokens="121">
+<file line="57" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/GZCompressAction.java"/>
+<file line="58" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/ZipCompressAction.java"/>
+<codefragment>
+<![CDATA[
+    public GZCompressAction(final File source, final File destination, final boolean deleteSource) {
+        if (source == null) {
+            throw new NullPointerException("source");
+        }
+
+        if (destination == null) {
+            throw new NullPointerException("destination");
+        }
+
+        this.source = source;
+        this.destination = destination;
+        this.deleteSource = deleteSource;
+    }
+
+    /**
+     * Compress.
+     *
+     * @return true if successfully compressed.
+     * @throws IOException on IO exception.
+     */
+    public boolean execute() throws IOException {
+        return execute(source, destination, deleteSource);
+    }
+
+    /**
+     * Compress a file.
+     *
+     * @param source       file to compress, may not be null.
+     * @param destination  compressed file, may not be null.
+     * @param deleteSource if true, attempt to delete file on completion.  Failure to delete
+     *                     does not cause an exception to be thrown or affect return value.
+     * @return true if source file compressed.
+     * @throws IOException on IO exception.
+     */
+    public static boolean execute(final File source, final File destination, final boolean deleteSource)
+        throws IOException {
+        if (source.exists()) {
+            FileInputStream fis = new FileInputStream(source);
+            FileOutputStream fos = new FileOutputStream(destination);
+]]>
+</codefragment>
+</duplication>
+<duplication lines="19" tokens="115">
+<file line="66" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/pattern/ExtendedThrowablePatternConverter.java"/>
+<file line="67" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/pattern/RootThrowablePatternConverter.java"/>
+<codefragment>
+<![CDATA[
+            String trace = t.getExtendedStackTrace();
+            int len = toAppendTo.length();
+            if (len > 0 && !Character.isWhitespace(toAppendTo.charAt(len - 1))) {
+                toAppendTo.append(" ");
+            }
+            if (lines > 0) {
+                StringBuilder sb = new StringBuilder();
+                String[] array = trace.split("\n");
+                for (int i = 0; i < lines; ++i) {
+                    sb.append(array[i]).append("\n");
+                }
+                toAppendTo.append(sb.toString());
+
+            } else {
+                toAppendTo.append(trace);
+            }
+        }
+    }
+}
+]]>
+</codefragment>
+</duplication>
+<duplication lines="27" tokens="109">
+<file line="87" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/filter/BurstFilter.java"/>
+<file line="55" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/filter/DynamicThresholdFilter.java"/>
+<file line="44" path="/Users/rgoers/projects/apache/logging/log4j/log4j2/tags/log4j-2.0-alpha1/core/src/main/java/org/apache/logging/log4j/core/filter/ThresholdFilter.java"/>
+<codefragment>
+<![CDATA[
+    }
+
+    public Result filter(Logger logger, Level level, Marker marker, String msg, Object[] params) {
+        return filter(level);
+    }
+
+    public Result filter(Logger logger, Level level, Marker marker, Object msg, Throwable t) {
+        return filter(level);
+    }
+
+    public Result filter(Logger logger, Level level, Marker marker, Message msg, Throwable t) {
+        return filter(level);
+    }
+
+    @Override
+    public Result filter(LogEvent event) {
+        return filter(event.getLevel());
+    }
+
+    /**
+     * Decide if we're going to log <code>event</code> based on whether the
+     * maximum burst of log statements has been exceeded.
+     *
+     * @param level The log level.
+     * @return The onMatch value if the filter passes, onMismatch otherwise.
+     */
+    private Result filter(Level level) {
+]]>
+</codefragment>
+</duplication>
+</pmd-cpd>
