@@ -78,7 +78,7 @@
 <span class="sourceLineNo">070</span>     * @since 2.1<a name="line.70"></a>
 <span class="sourceLineNo">071</span>     */<a name="line.71"></a>
 <span class="sourceLineNo">072</span>    public Interpolator(final StrLookup defaultLookup, final List&lt;String&gt; pluginPackages) {<a name="line.72"></a>
-<span class="sourceLineNo">073</span>        this.defaultLookup = defaultLookup == null ? new MapLookup(new HashMap&lt;String, String&gt;()) : defaultLookup;<a name="line.73"></a>
+<span class="sourceLineNo">073</span>        this.defaultLookup = defaultLookup == null ? new PropertiesLookup(new HashMap&lt;String, String&gt;()) : defaultLookup;<a name="line.73"></a>
 <span class="sourceLineNo">074</span>        final PluginManager manager = new PluginManager(CATEGORY);<a name="line.74"></a>
 <span class="sourceLineNo">075</span>        manager.collectPlugins(pluginPackages);<a name="line.75"></a>
 <span class="sourceLineNo">076</span>        final Map&lt;String, PluginType&lt;?&gt;&gt; plugins = manager.getPlugins();<a name="line.76"></a>
@@ -106,37 +106,37 @@
 <span class="sourceLineNo">098</span>     * Creates the Interpolator using only Lookups that work without an event and initial properties.<a name="line.98"></a>
 <span class="sourceLineNo">099</span>     */<a name="line.99"></a>
 <span class="sourceLineNo">100</span>    public Interpolator(final Map&lt;String, String&gt; properties) {<a name="line.100"></a>
-<span class="sourceLineNo">101</span>        this.defaultLookup = new MapLookup(properties == null ? new HashMap&lt;String, String&gt;() : properties);<a name="line.101"></a>
+<span class="sourceLineNo">101</span>        this.defaultLookup = new PropertiesLookup(properties);<a name="line.101"></a>
 <span class="sourceLineNo">102</span>        // TODO: this ought to use the PluginManager<a name="line.102"></a>
 <span class="sourceLineNo">103</span>        strLookupMap.put("log4j", new Log4jLookup());<a name="line.103"></a>
 <span class="sourceLineNo">104</span>        strLookupMap.put("sys", new SystemPropertiesLookup());<a name="line.104"></a>
 <span class="sourceLineNo">105</span>        strLookupMap.put("env", new EnvironmentLookup());<a name="line.105"></a>
 <span class="sourceLineNo">106</span>        strLookupMap.put("main", MainMapLookup.MAIN_SINGLETON);<a name="line.106"></a>
-<span class="sourceLineNo">107</span>        strLookupMap.put("marker", new MarkerLookup());<a name="line.107"></a>
-<span class="sourceLineNo">108</span>        strLookupMap.put("java", new JavaLookup());<a name="line.108"></a>
-<span class="sourceLineNo">109</span>        strLookupMap.put("lower", new LowerLookup());<a name="line.109"></a>
-<span class="sourceLineNo">110</span>        strLookupMap.put("upper", new UpperLookup());<a name="line.110"></a>
-<span class="sourceLineNo">111</span>        // JNDI<a name="line.111"></a>
-<span class="sourceLineNo">112</span>        if (JndiManager.isJndiLookupEnabled()) {<a name="line.112"></a>
-<span class="sourceLineNo">113</span>            try {<a name="line.113"></a>
-<span class="sourceLineNo">114</span>                // [LOG4J2-703] We might be on Android<a name="line.114"></a>
-<span class="sourceLineNo">115</span>                strLookupMap.put(LOOKUP_KEY_JNDI,<a name="line.115"></a>
-<span class="sourceLineNo">116</span>                        Loader.newCheckedInstanceOf("org.apache.logging.log4j.core.lookup.JndiLookup", StrLookup.class));<a name="line.116"></a>
-<span class="sourceLineNo">117</span>            } catch (final LinkageError | Exception e) {<a name="line.117"></a>
-<span class="sourceLineNo">118</span>                handleError(LOOKUP_KEY_JNDI, e);<a name="line.118"></a>
-<span class="sourceLineNo">119</span>            }<a name="line.119"></a>
-<span class="sourceLineNo">120</span>        }<a name="line.120"></a>
-<span class="sourceLineNo">121</span>        // JMX input args<a name="line.121"></a>
-<span class="sourceLineNo">122</span>        try {<a name="line.122"></a>
-<span class="sourceLineNo">123</span>            // We might be on Android<a name="line.123"></a>
-<span class="sourceLineNo">124</span>            strLookupMap.put(LOOKUP_KEY_JVMRUNARGS,<a name="line.124"></a>
-<span class="sourceLineNo">125</span>                Loader.newCheckedInstanceOf("org.apache.logging.log4j.core.lookup.JmxRuntimeInputArgumentsLookup",<a name="line.125"></a>
-<span class="sourceLineNo">126</span>                        StrLookup.class));<a name="line.126"></a>
-<span class="sourceLineNo">127</span>        } catch (final LinkageError | Exception e) {<a name="line.127"></a>
-<span class="sourceLineNo">128</span>            handleError(LOOKUP_KEY_JVMRUNARGS, e);<a name="line.128"></a>
-<span class="sourceLineNo">129</span>        }<a name="line.129"></a>
-<span class="sourceLineNo">130</span>        strLookupMap.put("date", new DateLookup());<a name="line.130"></a>
-<span class="sourceLineNo">131</span>        strLookupMap.put("ctx", new ContextMapLookup());<a name="line.131"></a>
+<span class="sourceLineNo">107</span>        strLookupMap.put("map", new MapLookup(properties));<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        strLookupMap.put("marker", new MarkerLookup());<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        strLookupMap.put("java", new JavaLookup());<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        strLookupMap.put("lower", new LowerLookup());<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        strLookupMap.put("upper", new UpperLookup());<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        // JNDI<a name="line.112"></a>
+<span class="sourceLineNo">113</span>        if (JndiManager.isJndiLookupEnabled()) {<a name="line.113"></a>
+<span class="sourceLineNo">114</span>            try {<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                // [LOG4J2-703] We might be on Android<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                strLookupMap.put(LOOKUP_KEY_JNDI,<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                        Loader.newCheckedInstanceOf("org.apache.logging.log4j.core.lookup.JndiLookup", StrLookup.class));<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            } catch (final LinkageError | Exception e) {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                handleError(LOOKUP_KEY_JNDI, e);<a name="line.119"></a>
+<span class="sourceLineNo">120</span>            }<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        }<a name="line.121"></a>
+<span class="sourceLineNo">122</span>        // JMX input args<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        try {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>            // We might be on Android<a name="line.124"></a>
+<span class="sourceLineNo">125</span>            strLookupMap.put(LOOKUP_KEY_JVMRUNARGS,<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                Loader.newCheckedInstanceOf("org.apache.logging.log4j.core.lookup.JmxRuntimeInputArgumentsLookup",<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                        StrLookup.class));<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        } catch (final LinkageError | Exception e) {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>            handleError(LOOKUP_KEY_JVMRUNARGS, e);<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        }<a name="line.130"></a>
+<span class="sourceLineNo">131</span>        strLookupMap.put("date", new DateLookup());<a name="line.131"></a>
 <span class="sourceLineNo">132</span>        if (Constants.IS_WEB_APP) {<a name="line.132"></a>
 <span class="sourceLineNo">133</span>            try {<a name="line.133"></a>
 <span class="sourceLineNo">134</span>                strLookupMap.put(LOOKUP_KEY_WEB,<a name="line.134"></a>
@@ -155,7 +155,7 @@
 <span class="sourceLineNo">147</span>        }<a name="line.147"></a>
 <span class="sourceLineNo">148</span>        try {<a name="line.148"></a>
 <span class="sourceLineNo">149</span>            strLookupMap.put(LOOKUP_KEY_SPRING,<a name="line.149"></a>
-<span class="sourceLineNo">150</span>                    Loader.newCheckedInstanceOf("org.apache.logging.log4j.spring.cloud.config.client.SpringLookup", StrLookup.class));<a name="line.150"></a>
+<span class="sourceLineNo">150</span>                    Loader.newCheckedInstanceOf("org.apache.logging.log4j.spring.boot.SpringLookup", StrLookup.class));<a name="line.150"></a>
 <span class="sourceLineNo">151</span>        } catch (final Exception ignored) {<a name="line.151"></a>
 <span class="sourceLineNo">152</span>            handleError(LOOKUP_KEY_SPRING, ignored);<a name="line.152"></a>
 <span class="sourceLineNo">153</span>        }<a name="line.153"></a>

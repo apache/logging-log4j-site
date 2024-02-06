@@ -2924,39 +2924,38 @@
 <span class="sourceLineNo">2916</span>    public LogBuilder atLevel(Level level) {<a name="line.2916"></a>
 <span class="sourceLineNo">2917</span>        if (isEnabled(level)) {<a name="line.2917"></a>
 <span class="sourceLineNo">2918</span>            return getLogBuilder(level).reset(level);<a name="line.2918"></a>
-<span class="sourceLineNo">2919</span>        } else {<a name="line.2919"></a>
-<span class="sourceLineNo">2920</span>            return LogBuilder.NOOP;<a name="line.2920"></a>
-<span class="sourceLineNo">2921</span>        }<a name="line.2921"></a>
-<span class="sourceLineNo">2922</span>    }<a name="line.2922"></a>
-<span class="sourceLineNo">2923</span><a name="line.2923"></a>
-<span class="sourceLineNo">2924</span>    private DefaultLogBuilder getLogBuilder(Level level) {<a name="line.2924"></a>
-<span class="sourceLineNo">2925</span>        DefaultLogBuilder builder = logBuilder.get();<a name="line.2925"></a>
-<span class="sourceLineNo">2926</span>        return Constants.ENABLE_THREADLOCALS &amp;&amp; !builder.isInUse() ? builder : new DefaultLogBuilder(this, level);<a name="line.2926"></a>
-<span class="sourceLineNo">2927</span>    }<a name="line.2927"></a>
-<span class="sourceLineNo">2928</span><a name="line.2928"></a>
-<span class="sourceLineNo">2929</span>    private void readObject (final ObjectInputStream s) throws ClassNotFoundException, IOException {<a name="line.2929"></a>
-<span class="sourceLineNo">2930</span>        s.defaultReadObject( );<a name="line.2930"></a>
-<span class="sourceLineNo">2931</span>        try {<a name="line.2931"></a>
-<span class="sourceLineNo">2932</span>            Field f = this.getClass().getDeclaredField("logBuilder");<a name="line.2932"></a>
-<span class="sourceLineNo">2933</span>            f.setAccessible(true);<a name="line.2933"></a>
-<span class="sourceLineNo">2934</span>            f.set(this, new LocalLogBuilder(this));<a name="line.2934"></a>
-<span class="sourceLineNo">2935</span>        } catch (NoSuchFieldException | IllegalAccessException ex) {<a name="line.2935"></a>
-<span class="sourceLineNo">2936</span>            StatusLogger.getLogger().warn("Unable to initialize LogBuilder");<a name="line.2936"></a>
-<span class="sourceLineNo">2937</span>        }<a name="line.2937"></a>
-<span class="sourceLineNo">2938</span>    }<a name="line.2938"></a>
-<span class="sourceLineNo">2939</span><a name="line.2939"></a>
-<span class="sourceLineNo">2940</span>    private class LocalLogBuilder extends ThreadLocal&lt;DefaultLogBuilder&gt; {<a name="line.2940"></a>
-<span class="sourceLineNo">2941</span>        private AbstractLogger logger;<a name="line.2941"></a>
-<span class="sourceLineNo">2942</span>        LocalLogBuilder(AbstractLogger logger) {<a name="line.2942"></a>
-<span class="sourceLineNo">2943</span>            this.logger = logger;<a name="line.2943"></a>
-<span class="sourceLineNo">2944</span>        }<a name="line.2944"></a>
-<span class="sourceLineNo">2945</span><a name="line.2945"></a>
-<span class="sourceLineNo">2946</span>        @Override<a name="line.2946"></a>
-<span class="sourceLineNo">2947</span>        protected DefaultLogBuilder initialValue() {<a name="line.2947"></a>
-<span class="sourceLineNo">2948</span>            return new DefaultLogBuilder(logger);<a name="line.2948"></a>
-<span class="sourceLineNo">2949</span>        }<a name="line.2949"></a>
-<span class="sourceLineNo">2950</span>    }<a name="line.2950"></a>
-<span class="sourceLineNo">2951</span>}<a name="line.2951"></a>
+<span class="sourceLineNo">2919</span>        }<a name="line.2919"></a>
+<span class="sourceLineNo">2920</span>        return LogBuilder.NOOP;<a name="line.2920"></a>
+<span class="sourceLineNo">2921</span>    }<a name="line.2921"></a>
+<span class="sourceLineNo">2922</span><a name="line.2922"></a>
+<span class="sourceLineNo">2923</span>    private DefaultLogBuilder getLogBuilder(Level level) {<a name="line.2923"></a>
+<span class="sourceLineNo">2924</span>        DefaultLogBuilder builder = logBuilder.get();<a name="line.2924"></a>
+<span class="sourceLineNo">2925</span>        return Constants.ENABLE_THREADLOCALS &amp;&amp; !builder.isInUse() ? builder : new DefaultLogBuilder(this, level);<a name="line.2925"></a>
+<span class="sourceLineNo">2926</span>    }<a name="line.2926"></a>
+<span class="sourceLineNo">2927</span><a name="line.2927"></a>
+<span class="sourceLineNo">2928</span>    private void readObject (final ObjectInputStream s) throws ClassNotFoundException, IOException {<a name="line.2928"></a>
+<span class="sourceLineNo">2929</span>        s.defaultReadObject( );<a name="line.2929"></a>
+<span class="sourceLineNo">2930</span>        try {<a name="line.2930"></a>
+<span class="sourceLineNo">2931</span>            Field f = this.getClass().getDeclaredField("logBuilder");<a name="line.2931"></a>
+<span class="sourceLineNo">2932</span>            f.setAccessible(true);<a name="line.2932"></a>
+<span class="sourceLineNo">2933</span>            f.set(this, new LocalLogBuilder(this));<a name="line.2933"></a>
+<span class="sourceLineNo">2934</span>        } catch (NoSuchFieldException | IllegalAccessException ex) {<a name="line.2934"></a>
+<span class="sourceLineNo">2935</span>            StatusLogger.getLogger().warn("Unable to initialize LogBuilder");<a name="line.2935"></a>
+<span class="sourceLineNo">2936</span>        }<a name="line.2936"></a>
+<span class="sourceLineNo">2937</span>    }<a name="line.2937"></a>
+<span class="sourceLineNo">2938</span><a name="line.2938"></a>
+<span class="sourceLineNo">2939</span>    private class LocalLogBuilder extends ThreadLocal&lt;DefaultLogBuilder&gt; {<a name="line.2939"></a>
+<span class="sourceLineNo">2940</span>        private AbstractLogger logger;<a name="line.2940"></a>
+<span class="sourceLineNo">2941</span>        LocalLogBuilder(AbstractLogger logger) {<a name="line.2941"></a>
+<span class="sourceLineNo">2942</span>            this.logger = logger;<a name="line.2942"></a>
+<span class="sourceLineNo">2943</span>        }<a name="line.2943"></a>
+<span class="sourceLineNo">2944</span><a name="line.2944"></a>
+<span class="sourceLineNo">2945</span>        @Override<a name="line.2945"></a>
+<span class="sourceLineNo">2946</span>        protected DefaultLogBuilder initialValue() {<a name="line.2946"></a>
+<span class="sourceLineNo">2947</span>            return new DefaultLogBuilder(logger);<a name="line.2947"></a>
+<span class="sourceLineNo">2948</span>        }<a name="line.2948"></a>
+<span class="sourceLineNo">2949</span>    }<a name="line.2949"></a>
+<span class="sourceLineNo">2950</span>}<a name="line.2950"></a>
 
 
 

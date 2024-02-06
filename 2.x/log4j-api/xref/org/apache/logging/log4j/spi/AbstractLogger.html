@@ -2924,39 +2924,38 @@
 <a class="jxr_linenumber" name="L2916" href="#L2916">2916</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../org/apache/logging/log4j/LogBuilder.html">LogBuilder</a> atLevel(<a href="../../../../../org/apache/logging/log4j/Level.html">Level</a> level) {
 <a class="jxr_linenumber" name="L2917" href="#L2917">2917</a>         <strong class="jxr_keyword">if</strong> (isEnabled(level)) {
 <a class="jxr_linenumber" name="L2918" href="#L2918">2918</a>             <strong class="jxr_keyword">return</strong> getLogBuilder(level).reset(level);
-<a class="jxr_linenumber" name="L2919" href="#L2919">2919</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2920" href="#L2920">2920</a>             <strong class="jxr_keyword">return</strong> LogBuilder.NOOP;
-<a class="jxr_linenumber" name="L2921" href="#L2921">2921</a>         }
-<a class="jxr_linenumber" name="L2922" href="#L2922">2922</a>     }
-<a class="jxr_linenumber" name="L2923" href="#L2923">2923</a> 
-<a class="jxr_linenumber" name="L2924" href="#L2924">2924</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../org/apache/logging/log4j/internal/DefaultLogBuilder.html">DefaultLogBuilder</a> getLogBuilder(<a href="../../../../../org/apache/logging/log4j/Level.html">Level</a> level) {
-<a class="jxr_linenumber" name="L2925" href="#L2925">2925</a>         <a href="../../../../../org/apache/logging/log4j/internal/DefaultLogBuilder.html">DefaultLogBuilder</a> builder = logBuilder.get();
-<a class="jxr_linenumber" name="L2926" href="#L2926">2926</a>         <strong class="jxr_keyword">return</strong> Constants.ENABLE_THREADLOCALS &amp;&amp; !builder.isInUse() ? builder : <strong class="jxr_keyword">new</strong> DefaultLogBuilder(<strong class="jxr_keyword">this</strong>, level);
-<a class="jxr_linenumber" name="L2927" href="#L2927">2927</a>     }
-<a class="jxr_linenumber" name="L2928" href="#L2928">2928</a> 
-<a class="jxr_linenumber" name="L2929" href="#L2929">2929</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> readObject (<strong class="jxr_keyword">final</strong> ObjectInputStream s) <strong class="jxr_keyword">throws</strong> ClassNotFoundException, IOException {
-<a class="jxr_linenumber" name="L2930" href="#L2930">2930</a>         s.defaultReadObject( );
-<a class="jxr_linenumber" name="L2931" href="#L2931">2931</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L2932" href="#L2932">2932</a>             Field f = <strong class="jxr_keyword">this</strong>.getClass().getDeclaredField(<span class="jxr_string">"logBuilder"</span>);
-<a class="jxr_linenumber" name="L2933" href="#L2933">2933</a>             f.setAccessible(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L2934" href="#L2934">2934</a>             f.set(<strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/spi/AbstractLogger.html">LocalLogBuilder</a>(<strong class="jxr_keyword">this</strong>));
-<a class="jxr_linenumber" name="L2935" href="#L2935">2935</a>         } <strong class="jxr_keyword">catch</strong> (NoSuchFieldException | IllegalAccessException ex) {
-<a class="jxr_linenumber" name="L2936" href="#L2936">2936</a>             StatusLogger.getLogger().warn(<span class="jxr_string">"Unable to initialize LogBuilder"</span>);
-<a class="jxr_linenumber" name="L2937" href="#L2937">2937</a>         }
-<a class="jxr_linenumber" name="L2938" href="#L2938">2938</a>     }
-<a class="jxr_linenumber" name="L2939" href="#L2939">2939</a> 
-<a class="jxr_linenumber" name="L2940" href="#L2940">2940</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/apache/logging/log4j/spi/AbstractLogger.html">LocalLogBuilder</a> <strong class="jxr_keyword">extends</strong> ThreadLocal&lt;DefaultLogBuilder&gt; {
-<a class="jxr_linenumber" name="L2941" href="#L2941">2941</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../org/apache/logging/log4j/spi/AbstractLogger.html">AbstractLogger</a> logger;
-<a class="jxr_linenumber" name="L2942" href="#L2942">2942</a>         <a href="../../../../../org/apache/logging/log4j/spi/AbstractLogger.html">LocalLogBuilder</a>(<a href="../../../../../org/apache/logging/log4j/spi/AbstractLogger.html">AbstractLogger</a> logger) {
-<a class="jxr_linenumber" name="L2943" href="#L2943">2943</a>             <strong class="jxr_keyword">this</strong>.logger = logger;
-<a class="jxr_linenumber" name="L2944" href="#L2944">2944</a>         }
-<a class="jxr_linenumber" name="L2945" href="#L2945">2945</a> 
-<a class="jxr_linenumber" name="L2946" href="#L2946">2946</a>         @Override
-<a class="jxr_linenumber" name="L2947" href="#L2947">2947</a>         <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/apache/logging/log4j/internal/DefaultLogBuilder.html">DefaultLogBuilder</a> initialValue() {
-<a class="jxr_linenumber" name="L2948" href="#L2948">2948</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/internal/DefaultLogBuilder.html">DefaultLogBuilder</a>(logger);
-<a class="jxr_linenumber" name="L2949" href="#L2949">2949</a>         }
-<a class="jxr_linenumber" name="L2950" href="#L2950">2950</a>     }
-<a class="jxr_linenumber" name="L2951" href="#L2951">2951</a> }
+<a class="jxr_linenumber" name="L2919" href="#L2919">2919</a>         }
+<a class="jxr_linenumber" name="L2920" href="#L2920">2920</a>         <strong class="jxr_keyword">return</strong> LogBuilder.NOOP;
+<a class="jxr_linenumber" name="L2921" href="#L2921">2921</a>     }
+<a class="jxr_linenumber" name="L2922" href="#L2922">2922</a> 
+<a class="jxr_linenumber" name="L2923" href="#L2923">2923</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../org/apache/logging/log4j/internal/DefaultLogBuilder.html">DefaultLogBuilder</a> getLogBuilder(<a href="../../../../../org/apache/logging/log4j/Level.html">Level</a> level) {
+<a class="jxr_linenumber" name="L2924" href="#L2924">2924</a>         <a href="../../../../../org/apache/logging/log4j/internal/DefaultLogBuilder.html">DefaultLogBuilder</a> builder = logBuilder.get();
+<a class="jxr_linenumber" name="L2925" href="#L2925">2925</a>         <strong class="jxr_keyword">return</strong> Constants.ENABLE_THREADLOCALS &amp;&amp; !builder.isInUse() ? builder : <strong class="jxr_keyword">new</strong> DefaultLogBuilder(<strong class="jxr_keyword">this</strong>, level);
+<a class="jxr_linenumber" name="L2926" href="#L2926">2926</a>     }
+<a class="jxr_linenumber" name="L2927" href="#L2927">2927</a> 
+<a class="jxr_linenumber" name="L2928" href="#L2928">2928</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> readObject (<strong class="jxr_keyword">final</strong> ObjectInputStream s) <strong class="jxr_keyword">throws</strong> ClassNotFoundException, IOException {
+<a class="jxr_linenumber" name="L2929" href="#L2929">2929</a>         s.defaultReadObject( );
+<a class="jxr_linenumber" name="L2930" href="#L2930">2930</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L2931" href="#L2931">2931</a>             Field f = <strong class="jxr_keyword">this</strong>.getClass().getDeclaredField(<span class="jxr_string">"logBuilder"</span>);
+<a class="jxr_linenumber" name="L2932" href="#L2932">2932</a>             f.setAccessible(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L2933" href="#L2933">2933</a>             f.set(<strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/spi/AbstractLogger.html">LocalLogBuilder</a>(<strong class="jxr_keyword">this</strong>));
+<a class="jxr_linenumber" name="L2934" href="#L2934">2934</a>         } <strong class="jxr_keyword">catch</strong> (NoSuchFieldException | IllegalAccessException ex) {
+<a class="jxr_linenumber" name="L2935" href="#L2935">2935</a>             StatusLogger.getLogger().warn(<span class="jxr_string">"Unable to initialize LogBuilder"</span>);
+<a class="jxr_linenumber" name="L2936" href="#L2936">2936</a>         }
+<a class="jxr_linenumber" name="L2937" href="#L2937">2937</a>     }
+<a class="jxr_linenumber" name="L2938" href="#L2938">2938</a> 
+<a class="jxr_linenumber" name="L2939" href="#L2939">2939</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/apache/logging/log4j/spi/AbstractLogger.html">LocalLogBuilder</a> <strong class="jxr_keyword">extends</strong> ThreadLocal&lt;DefaultLogBuilder&gt; {
+<a class="jxr_linenumber" name="L2940" href="#L2940">2940</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../../org/apache/logging/log4j/spi/AbstractLogger.html">AbstractLogger</a> logger;
+<a class="jxr_linenumber" name="L2941" href="#L2941">2941</a>         <a href="../../../../../org/apache/logging/log4j/spi/AbstractLogger.html">LocalLogBuilder</a>(<a href="../../../../../org/apache/logging/log4j/spi/AbstractLogger.html">AbstractLogger</a> logger) {
+<a class="jxr_linenumber" name="L2942" href="#L2942">2942</a>             <strong class="jxr_keyword">this</strong>.logger = logger;
+<a class="jxr_linenumber" name="L2943" href="#L2943">2943</a>         }
+<a class="jxr_linenumber" name="L2944" href="#L2944">2944</a> 
+<a class="jxr_linenumber" name="L2945" href="#L2945">2945</a>         @Override
+<a class="jxr_linenumber" name="L2946" href="#L2946">2946</a>         <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/apache/logging/log4j/internal/DefaultLogBuilder.html">DefaultLogBuilder</a> initialValue() {
+<a class="jxr_linenumber" name="L2947" href="#L2947">2947</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/apache/logging/log4j/internal/DefaultLogBuilder.html">DefaultLogBuilder</a>(logger);
+<a class="jxr_linenumber" name="L2948" href="#L2948">2948</a>         }
+<a class="jxr_linenumber" name="L2949" href="#L2949">2949</a>     }
+<a class="jxr_linenumber" name="L2950" href="#L2950">2950</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2021 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>

@@ -78,7 +78,7 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     * @since 2.1</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/Interpolator.html">Interpolator</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/StrLookup.html">StrLookup</a> defaultLookup, <strong class="jxr_keyword">final</strong> List&lt;String&gt; pluginPackages) {
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">this</strong>.defaultLookup = defaultLookup == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/MapLookup.html">MapLookup</a>(<strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;()) : defaultLookup;
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">this</strong>.defaultLookup = defaultLookup == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/PropertiesLookup.html">PropertiesLookup</a>(<strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;()) : defaultLookup;
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/plugins/util/PluginManager.html">PluginManager</a> manager = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/plugins/util/PluginManager.html">PluginManager</a>(CATEGORY);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          manager.collectPlugins(pluginPackages);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, PluginType&lt;?&gt;&gt; plugins = manager.getPlugins();
@@ -106,37 +106,37 @@
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">     * Creates the Interpolator using only Lookups that work without an event and initial properties.</em>
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/Interpolator.html">Interpolator</a>(<strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; properties) {
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>         <strong class="jxr_keyword">this</strong>.defaultLookup = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/MapLookup.html">MapLookup</a>(properties == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;() : properties);
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>         <strong class="jxr_keyword">this</strong>.defaultLookup = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/PropertiesLookup.html">PropertiesLookup</a>(properties);
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         <em class="jxr_comment">// TODO: this ought to use the PluginManager</em>
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         strLookupMap.put(<span class="jxr_string">"log4j"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/Log4jLookup.html">Log4jLookup</a>());
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>         strLookupMap.put(<span class="jxr_string">"sys"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/SystemPropertiesLookup.html">SystemPropertiesLookup</a>());
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>         strLookupMap.put(<span class="jxr_string">"env"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/EnvironmentLookup.html">EnvironmentLookup</a>());
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>         strLookupMap.put(<span class="jxr_string">"main"</span>, MainMapLookup.MAIN_SINGLETON);
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>         strLookupMap.put(<span class="jxr_string">"marker"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/MarkerLookup.html">MarkerLookup</a>());
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>         strLookupMap.put(<span class="jxr_string">"java"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/JavaLookup.html">JavaLookup</a>());
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>         strLookupMap.put(<span class="jxr_string">"lower"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/LowerLookup.html">LowerLookup</a>());
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>         strLookupMap.put(<span class="jxr_string">"upper"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/UpperLookup.html">UpperLookup</a>());
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>         <em class="jxr_comment">// JNDI</em>
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">if</strong> (JndiManager.isJndiLookupEnabled()) {
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>                 <em class="jxr_comment">// [LOG4J2-703] We might be on Android</em>
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>                 strLookupMap.put(LOOKUP_KEY_JNDI,
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>                         Loader.newCheckedInstanceOf(<span class="jxr_string">"org.apache.logging.log4j.core.lookup.JndiLookup"</span>, StrLookup.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> LinkageError | Exception e) {
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>                 handleError(LOOKUP_KEY_JNDI, e);
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>             }
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>         }
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>         <em class="jxr_comment">// JMX input args</em>
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>             <em class="jxr_comment">// We might be on Android</em>
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>             strLookupMap.put(LOOKUP_KEY_JVMRUNARGS,
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>                 Loader.newCheckedInstanceOf(<span class="jxr_string">"org.apache.logging.log4j.core.lookup.JmxRuntimeInputArgumentsLookup"</span>,
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>                         StrLookup.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> LinkageError | Exception e) {
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>             handleError(LOOKUP_KEY_JVMRUNARGS, e);
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>         }
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>         strLookupMap.put(<span class="jxr_string">"date"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/DateLookup.html">DateLookup</a>());
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         strLookupMap.put(<span class="jxr_string">"ctx"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/ContextMapLookup.html">ContextMapLookup</a>());
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>         strLookupMap.put(<span class="jxr_string">"map"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/MapLookup.html">MapLookup</a>(properties));
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>         strLookupMap.put(<span class="jxr_string">"marker"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/MarkerLookup.html">MarkerLookup</a>());
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         strLookupMap.put(<span class="jxr_string">"java"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/JavaLookup.html">JavaLookup</a>());
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         strLookupMap.put(<span class="jxr_string">"lower"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/LowerLookup.html">LowerLookup</a>());
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         strLookupMap.put(<span class="jxr_string">"upper"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/UpperLookup.html">UpperLookup</a>());
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         <em class="jxr_comment">// JNDI</em>
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         <strong class="jxr_keyword">if</strong> (JndiManager.isJndiLookupEnabled()) {
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>                 <em class="jxr_comment">// [LOG4J2-703] We might be on Android</em>
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>                 strLookupMap.put(LOOKUP_KEY_JNDI,
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>                         Loader.newCheckedInstanceOf(<span class="jxr_string">"org.apache.logging.log4j.core.lookup.JndiLookup"</span>, StrLookup.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> LinkageError | Exception e) {
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>                 handleError(LOOKUP_KEY_JNDI, e);
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>             }
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>         }
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>         <em class="jxr_comment">// JMX input args</em>
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>             <em class="jxr_comment">// We might be on Android</em>
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>             strLookupMap.put(LOOKUP_KEY_JVMRUNARGS,
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>                 Loader.newCheckedInstanceOf(<span class="jxr_string">"org.apache.logging.log4j.core.lookup.JmxRuntimeInputArgumentsLookup"</span>,
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>                         StrLookup.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> LinkageError | Exception e) {
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>             handleError(LOOKUP_KEY_JVMRUNARGS, e);
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         }
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         strLookupMap.put(<span class="jxr_string">"date"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/lookup/DateLookup.html">DateLookup</a>());
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>         <strong class="jxr_keyword">if</strong> (Constants.IS_WEB_APP) {
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>             <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>                 strLookupMap.put(LOOKUP_KEY_WEB,
@@ -155,7 +155,7 @@
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>         }
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>             strLookupMap.put(LOOKUP_KEY_SPRING,
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>                     Loader.newCheckedInstanceOf(<span class="jxr_string">"org.apache.logging.log4j.spring.cloud.config.client.SpringLookup"</span>, StrLookup.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>                     Loader.newCheckedInstanceOf(<span class="jxr_string">"org.apache.logging.log4j.spring.boot.SpringLookup"</span>, StrLookup.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ignored) {
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>             handleError(LOOKUP_KEY_SPRING, ignored);
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         }
