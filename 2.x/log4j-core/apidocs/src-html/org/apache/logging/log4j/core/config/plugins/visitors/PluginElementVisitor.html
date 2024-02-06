@@ -71,53 +71,54 @@
 <span class="sourceLineNo">063</span>                    }<a name="line.63"></a>
 <span class="sourceLineNo">064</span>                    if (childObject.getClass().isArray()) {<a name="line.64"></a>
 <span class="sourceLineNo">065</span>                        log.append(Arrays.toString((Object[]) childObject)).append('}');<a name="line.65"></a>
-<span class="sourceLineNo">066</span>                        return childObject;<a name="line.66"></a>
-<span class="sourceLineNo">067</span>                    }<a name="line.67"></a>
-<span class="sourceLineNo">068</span>                    log.append(child.toString());<a name="line.68"></a>
-<span class="sourceLineNo">069</span>                    values.add(childObject);<a name="line.69"></a>
-<span class="sourceLineNo">070</span>                }<a name="line.70"></a>
-<span class="sourceLineNo">071</span>            }<a name="line.71"></a>
-<span class="sourceLineNo">072</span>            log.append('}');<a name="line.72"></a>
-<span class="sourceLineNo">073</span>            // note that we need to return an empty array instead of null if the types are correct<a name="line.73"></a>
-<span class="sourceLineNo">074</span>            if (!values.isEmpty() &amp;&amp; !this.conversionType.isAssignableFrom(values.get(0).getClass())) {<a name="line.74"></a>
-<span class="sourceLineNo">075</span>                LOGGER.error("Attempted to assign attribute {} to list of type {} which is incompatible with {}.",<a name="line.75"></a>
-<span class="sourceLineNo">076</span>                    name, values.get(0).getClass(), this.conversionType);<a name="line.76"></a>
-<span class="sourceLineNo">077</span>                return null;<a name="line.77"></a>
-<span class="sourceLineNo">078</span>            }<a name="line.78"></a>
-<span class="sourceLineNo">079</span>            node.getChildren().removeAll(used);<a name="line.79"></a>
-<span class="sourceLineNo">080</span>            // we need to use reflection here because values.toArray() will cause type errors at runtime<a name="line.80"></a>
-<span class="sourceLineNo">081</span>            final Object[] array = (Object[]) Array.newInstance(this.conversionType, values.size());<a name="line.81"></a>
-<span class="sourceLineNo">082</span>            for (int i = 0; i &lt; array.length; i++) {<a name="line.82"></a>
-<span class="sourceLineNo">083</span>                array[i] = values.get(i);<a name="line.83"></a>
-<span class="sourceLineNo">084</span>            }<a name="line.84"></a>
-<span class="sourceLineNo">085</span>            return array;<a name="line.85"></a>
-<span class="sourceLineNo">086</span>        }<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        final Node namedNode = findNamedNode(name, node.getChildren());<a name="line.87"></a>
-<span class="sourceLineNo">088</span>        if (namedNode == null) {<a name="line.88"></a>
-<span class="sourceLineNo">089</span>            log.append(name).append("=null");<a name="line.89"></a>
-<span class="sourceLineNo">090</span>            return null;<a name="line.90"></a>
-<span class="sourceLineNo">091</span>        }<a name="line.91"></a>
-<span class="sourceLineNo">092</span>        log.append(namedNode.getName()).append('(').append(namedNode.toString()).append(')');<a name="line.92"></a>
-<span class="sourceLineNo">093</span>        node.getChildren().remove(namedNode);<a name="line.93"></a>
-<span class="sourceLineNo">094</span>        return namedNode.getObject();<a name="line.94"></a>
-<span class="sourceLineNo">095</span>    }<a name="line.95"></a>
-<span class="sourceLineNo">096</span><a name="line.96"></a>
-<span class="sourceLineNo">097</span>    private Node findNamedNode(final String name, final Iterable&lt;Node&gt; children) {<a name="line.97"></a>
-<span class="sourceLineNo">098</span>        for (final Node child : children) {<a name="line.98"></a>
-<span class="sourceLineNo">099</span>            final PluginType&lt;?&gt; childType = child.getType();<a name="line.99"></a>
-<span class="sourceLineNo">100</span>            if (childType == null) {<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                //System.out.println();<a name="line.101"></a>
-<span class="sourceLineNo">102</span>            }<a name="line.102"></a>
-<span class="sourceLineNo">103</span>            if (name.equalsIgnoreCase(childType.getElementName()) ||<a name="line.103"></a>
-<span class="sourceLineNo">104</span>                this.conversionType.isAssignableFrom(childType.getPluginClass())) {<a name="line.104"></a>
-<span class="sourceLineNo">105</span>                // FIXME: check child.getObject() for null?<a name="line.105"></a>
-<span class="sourceLineNo">106</span>                // doing so would be more consistent with the array version<a name="line.106"></a>
-<span class="sourceLineNo">107</span>                return child;<a name="line.107"></a>
-<span class="sourceLineNo">108</span>            }<a name="line.108"></a>
-<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
-<span class="sourceLineNo">110</span>        return null;<a name="line.110"></a>
-<span class="sourceLineNo">111</span>    }<a name="line.111"></a>
-<span class="sourceLineNo">112</span>}<a name="line.112"></a>
+<span class="sourceLineNo">066</span>                        node.getChildren().removeAll(used);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                        return childObject;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                    }<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                    log.append(child.toString());<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                    values.add(childObject);<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                }<a name="line.71"></a>
+<span class="sourceLineNo">072</span>            }<a name="line.72"></a>
+<span class="sourceLineNo">073</span>            log.append('}');<a name="line.73"></a>
+<span class="sourceLineNo">074</span>            // note that we need to return an empty array instead of null if the types are correct<a name="line.74"></a>
+<span class="sourceLineNo">075</span>            if (!values.isEmpty() &amp;&amp; !this.conversionType.isAssignableFrom(values.get(0).getClass())) {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                LOGGER.error("Attempted to assign attribute {} to list of type {} which is incompatible with {}.",<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                    name, values.get(0).getClass(), this.conversionType);<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                return null;<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            }<a name="line.79"></a>
+<span class="sourceLineNo">080</span>            node.getChildren().removeAll(used);<a name="line.80"></a>
+<span class="sourceLineNo">081</span>            // we need to use reflection here because values.toArray() will cause type errors at runtime<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            final Object[] array = (Object[]) Array.newInstance(this.conversionType, values.size());<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            for (int i = 0; i &lt; array.length; i++) {<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                array[i] = values.get(i);<a name="line.84"></a>
+<span class="sourceLineNo">085</span>            }<a name="line.85"></a>
+<span class="sourceLineNo">086</span>            return array;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        }<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        final Node namedNode = findNamedNode(name, node.getChildren());<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        if (namedNode == null) {<a name="line.89"></a>
+<span class="sourceLineNo">090</span>            log.append(name).append("=null");<a name="line.90"></a>
+<span class="sourceLineNo">091</span>            return null;<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        }<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        log.append(namedNode.getName()).append('(').append(namedNode.toString()).append(')');<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        node.getChildren().remove(namedNode);<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        return namedNode.getObject();<a name="line.95"></a>
+<span class="sourceLineNo">096</span>    }<a name="line.96"></a>
+<span class="sourceLineNo">097</span><a name="line.97"></a>
+<span class="sourceLineNo">098</span>    private Node findNamedNode(final String name, final Iterable&lt;Node&gt; children) {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        for (final Node child : children) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>            final PluginType&lt;?&gt; childType = child.getType();<a name="line.100"></a>
+<span class="sourceLineNo">101</span>            if (childType == null) {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                //System.out.println();<a name="line.102"></a>
+<span class="sourceLineNo">103</span>            }<a name="line.103"></a>
+<span class="sourceLineNo">104</span>            if (name.equalsIgnoreCase(childType.getElementName()) ||<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                this.conversionType.isAssignableFrom(childType.getPluginClass())) {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                // FIXME: check child.getObject() for null?<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                // doing so would be more consistent with the array version<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                return child;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>            }<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        }<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        return null;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>    }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>}<a name="line.113"></a>
 
 
 

@@ -71,53 +71,54 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>                      }
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>                      <strong class="jxr_keyword">if</strong> (childObject.getClass().isArray()) {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>                          log.append(Arrays.toString((Object[]) childObject)).append('}');
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>                          <strong class="jxr_keyword">return</strong> childObject;
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>                      }
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>                      log.append(child.toString());
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>                      values.add(childObject);
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>                  }
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>              }
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>              log.append('}');
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>              <em class="jxr_comment">// note that we need to return an empty array instead of null if the types are correct</em>
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>              <strong class="jxr_keyword">if</strong> (!values.isEmpty() &amp;&amp; !<strong class="jxr_keyword">this</strong>.conversionType.isAssignableFrom(values.get(0).getClass())) {
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>                  LOGGER.error(<span class="jxr_string">"Attempted to assign attribute {} to list of type {} which is incompatible with {}."</span>,
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>                      name, values.get(0).getClass(), <strong class="jxr_keyword">this</strong>.conversionType);
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>              }
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>              node.getChildren().removeAll(used);
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>              <em class="jxr_comment">// we need to use reflection here because values.toArray() will cause type errors at runtime</em>
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>              <strong class="jxr_keyword">final</strong> Object[] array = (Object[]) Array.newInstance(<strong class="jxr_keyword">this</strong>.conversionType, values.size());
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>              <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; array.length; i++) {
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>                  array[i] = values.get(i);
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>              }
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>              <strong class="jxr_keyword">return</strong> array;
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>          }
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> namedNode = findNamedNode(name, node.getChildren());
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">if</strong> (namedNode == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>              log.append(name).append(<span class="jxr_string">"=null"</span>);
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>          }
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>          log.append(namedNode.getName()).append('(').append(namedNode.toString()).append(')');
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>          node.getChildren().remove(namedNode);
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">return</strong> namedNode.getObject();
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>      }
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>  
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> findNamedNode(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> Iterable&lt;Node&gt; children) {
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Node child : children) {
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">final</strong> PluginType&lt;?&gt; childType = child.getType();
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>             <strong class="jxr_keyword">if</strong> (childType == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>                 <em class="jxr_comment">//System.out.println();</em>
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>             }
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>             <strong class="jxr_keyword">if</strong> (name.equalsIgnoreCase(childType.getElementName()) ||
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>                 <strong class="jxr_keyword">this</strong>.conversionType.isAssignableFrom(childType.getPluginClass())) {
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>                 <em class="jxr_comment">// FIXME: check child.getObject() for null?</em>
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>                 <em class="jxr_comment">// doing so would be more consistent with the array version</em>
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>                 <strong class="jxr_keyword">return</strong> child;
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>             }
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>         }
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>     }
-<a class="jxr_linenumber" name="L112" href="#L112">112</a> }
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>                          node.getChildren().removeAll(used);
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>                          <strong class="jxr_keyword">return</strong> childObject;
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>                      }
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>                      log.append(child.toString());
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>                      values.add(childObject);
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>                  }
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>              }
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>              log.append('}');
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>              <em class="jxr_comment">// note that we need to return an empty array instead of null if the types are correct</em>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>              <strong class="jxr_keyword">if</strong> (!values.isEmpty() &amp;&amp; !<strong class="jxr_keyword">this</strong>.conversionType.isAssignableFrom(values.get(0).getClass())) {
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>                  LOGGER.error(<span class="jxr_string">"Attempted to assign attribute {} to list of type {} which is incompatible with {}."</span>,
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>                      name, values.get(0).getClass(), <strong class="jxr_keyword">this</strong>.conversionType);
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>              }
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>              node.getChildren().removeAll(used);
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>              <em class="jxr_comment">// we need to use reflection here because values.toArray() will cause type errors at runtime</em>
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>              <strong class="jxr_keyword">final</strong> Object[] array = (Object[]) Array.newInstance(<strong class="jxr_keyword">this</strong>.conversionType, values.size());
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>              <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; array.length; i++) {
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>                  array[i] = values.get(i);
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>              }
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>              <strong class="jxr_keyword">return</strong> array;
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>          }
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> namedNode = findNamedNode(name, node.getChildren());
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">if</strong> (namedNode == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>              log.append(name).append(<span class="jxr_string">"=null"</span>);
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>          }
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>          log.append(namedNode.getName()).append('(').append(namedNode.toString()).append(')');
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          node.getChildren().remove(namedNode);
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">return</strong> namedNode.getObject();
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>      }
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>  
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> findNamedNode(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> Iterable&lt;Node&gt; children) {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Node child : children) {
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>             <strong class="jxr_keyword">final</strong> PluginType&lt;?&gt; childType = child.getType();
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">if</strong> (childType == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>                 <em class="jxr_comment">//System.out.println();</em>
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>             }
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>             <strong class="jxr_keyword">if</strong> (name.equalsIgnoreCase(childType.getElementName()) ||
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>                 <strong class="jxr_keyword">this</strong>.conversionType.isAssignableFrom(childType.getPluginClass())) {
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>                 <em class="jxr_comment">// FIXME: check child.getObject() for null?</em>
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>                 <em class="jxr_comment">// doing so would be more consistent with the array version</em>
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>                 <strong class="jxr_keyword">return</strong> child;
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>             }
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         }
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>     }
+<a class="jxr_linenumber" name="L113" href="#L113">113</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>

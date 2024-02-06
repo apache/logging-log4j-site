@@ -74,39 +74,46 @@
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncQueueFullPolicy.html">AsyncQueueFullPolicy</a> create() {
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">final</strong> String router = PropertiesUtil.getProperties().getStringProperty(PROPERTY_NAME_ASYNC_EVENT_ROUTER);
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">if</strong> (router == <strong class="jxr_keyword">null</strong> || PROPERTY_VALUE_DEFAULT_ASYNC_EVENT_ROUTER.equals(router)
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>                  || DefaultAsyncQueueFullPolicy.<strong class="jxr_keyword">class</strong>.getSimpleName().equals(router)
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>                  || DefaultAsyncQueueFullPolicy.<strong class="jxr_keyword">class</strong>.getName().equals(router)) {
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/DefaultAsyncQueueFullPolicy.html">DefaultAsyncQueueFullPolicy</a>();
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          }
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">if</strong> (PROPERTY_VALUE_DISCARDING_ASYNC_EVENT_ROUTER.equals(router)
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>                  || DiscardingAsyncQueueFullPolicy.<strong class="jxr_keyword">class</strong>.getSimpleName().equals(router)
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>                  || DiscardingAsyncQueueFullPolicy.<strong class="jxr_keyword">class</strong>.getName().equals(router)) {
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>              <strong class="jxr_keyword">return</strong> createDiscardingAsyncQueueFullPolicy();
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          }
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">return</strong> createCustomRouter(router);
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>      }
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>  
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncQueueFullPolicy.html">AsyncQueueFullPolicy</a> createCustomRouter(<strong class="jxr_keyword">final</strong> String router) {
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>              <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> AsyncQueueFullPolicy&gt; cls = Loader.loadClass(router).asSubclass(AsyncQueueFullPolicy.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>              LOGGER.debug(<span class="jxr_string">"Creating custom AsyncQueueFullPolicy '{}'"</span>, router);
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>              <strong class="jxr_keyword">return</strong> cls.newInstance();
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>              LOGGER.debug(<span class="jxr_string">"Using DefaultAsyncQueueFullPolicy. Could not create custom AsyncQueueFullPolicy '{}': {}"</span>, router,
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>                      ex.toString());
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/DefaultAsyncQueueFullPolicy.html">DefaultAsyncQueueFullPolicy</a>();
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>          }
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>      }
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>  
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncQueueFullPolicy.html">AsyncQueueFullPolicy</a> createDiscardingAsyncQueueFullPolicy() {
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">final</strong> PropertiesUtil util = PropertiesUtil.getProperties();
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>          <strong class="jxr_keyword">final</strong> String level = util.getStringProperty(PROPERTY_NAME_DISCARDING_THRESHOLD_LEVEL, Level.INFO.name());
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">final</strong> Level thresholdLevel = Level.toLevel(level, Level.INFO);
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>          LOGGER.debug(<span class="jxr_string">"Creating custom DiscardingAsyncQueueFullPolicy(discardThreshold:{})"</span>, thresholdLevel);
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/DiscardingAsyncQueueFullPolicy.html">DiscardingAsyncQueueFullPolicy</a>(thresholdLevel);
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>     }
-<a class="jxr_linenumber" name="L101" href="#L101">101</a> }
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">if</strong> (router == <strong class="jxr_keyword">null</strong> || isRouterSelected(
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>                  router, DefaultAsyncQueueFullPolicy.<strong class="jxr_keyword">class</strong>, PROPERTY_VALUE_DEFAULT_ASYNC_EVENT_ROUTER)) {
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/DefaultAsyncQueueFullPolicy.html">DefaultAsyncQueueFullPolicy</a>();
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          }
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">if</strong> (isRouterSelected(
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  router, DiscardingAsyncQueueFullPolicy.<strong class="jxr_keyword">class</strong>, PROPERTY_VALUE_DISCARDING_ASYNC_EVENT_ROUTER)) {
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>              <strong class="jxr_keyword">return</strong> createDiscardingAsyncQueueFullPolicy();
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>          }
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">return</strong> createCustomRouter(router);
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> isRouterSelected(
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>              String propertyValue,
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>              Class&lt;? <strong class="jxr_keyword">extends</strong> AsyncQueueFullPolicy&gt; policy,
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>              String shortPropertyValue) {
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">return</strong> propertyValue != <strong class="jxr_keyword">null</strong> &amp;&amp; (shortPropertyValue.equalsIgnoreCase(propertyValue)
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>                  || policy.getName().equals(propertyValue)
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>                  || policy.getSimpleName().equals(propertyValue));
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      }
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncQueueFullPolicy.html">AsyncQueueFullPolicy</a> createCustomRouter(<strong class="jxr_keyword">final</strong> String router) {
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> AsyncQueueFullPolicy&gt; cls = Loader.loadClass(router).asSubclass(AsyncQueueFullPolicy.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              LOGGER.debug(<span class="jxr_string">"Creating custom AsyncQueueFullPolicy '{}'"</span>, router);
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">return</strong> cls.newInstance();
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>              LOGGER.debug(<span class="jxr_string">"Using DefaultAsyncQueueFullPolicy. Could not create custom AsyncQueueFullPolicy '{}': {}"</span>, router,
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>                      ex.toString());
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/DefaultAsyncQueueFullPolicy.html">DefaultAsyncQueueFullPolicy</a>();
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>          }
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>      }
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> 
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncQueueFullPolicy.html">AsyncQueueFullPolicy</a> createDiscardingAsyncQueueFullPolicy() {
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>         <strong class="jxr_keyword">final</strong> PropertiesUtil util = PropertiesUtil.getProperties();
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">final</strong> String level = util.getStringProperty(PROPERTY_NAME_DISCARDING_THRESHOLD_LEVEL, Level.INFO.name());
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>         <strong class="jxr_keyword">final</strong> Level thresholdLevel = Level.toLevel(level, Level.INFO);
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>         LOGGER.debug(<span class="jxr_string">"Creating custom DiscardingAsyncQueueFullPolicy(discardThreshold:{})"</span>, thresholdLevel);
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/DiscardingAsyncQueueFullPolicy.html">DiscardingAsyncQueueFullPolicy</a>(thresholdLevel);
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     }
+<a class="jxr_linenumber" name="L108" href="#L108">108</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
