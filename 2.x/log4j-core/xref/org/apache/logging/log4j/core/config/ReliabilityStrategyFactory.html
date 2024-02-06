@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ReliabilityStrategy.html">ReliabilityStrategy</a> getReliabilityStrategy(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> loggerConfig) {
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>          String strategy = PropertiesUtil.getProperties().getStringProperty(<span class="jxr_string">"log4j.ReliabilityStrategy"</span>,
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          <strong class="jxr_keyword">final</strong> String strategy = PropertiesUtil.getProperties().getStringProperty(<span class="jxr_string">"log4j.ReliabilityStrategy"</span>,
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>                  <span class="jxr_string">"AwaitCompletion"</span>);
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"AwaitCompletion"</span>.equals(strategy)) {
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/AwaitCompletionReliabilityStrategy.html">AwaitCompletionReliabilityStrategy</a>(loggerConfig);
@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> ReliabilityStrategy&gt; cls = LoaderUtil.loadClass(strategy).asSubclass(
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>                  ReliabilityStrategy.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>              <strong class="jxr_keyword">return</strong> cls.getConstructor(LoggerConfig.<strong class="jxr_keyword">class</strong>).newInstance(loggerConfig);
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>          } <strong class="jxr_keyword">catch</strong> (Exception dynamicFailed) {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception dynamicFailed) {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>              StatusLogger.getLogger().warn(
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>                      <span class="jxr_string">"Could not create ReliabilityStrategy for '{}', using default AwaitCompletionReliabilityStrategy: {}"</span>, strategy, dynamicFailed);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/AwaitCompletionReliabilityStrategy.html">AwaitCompletionReliabilityStrategy</a>(loggerConfig);

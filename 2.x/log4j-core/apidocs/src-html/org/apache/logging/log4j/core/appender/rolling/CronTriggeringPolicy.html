@@ -52,7 +52,7 @@
 <span class="sourceLineNo">044</span>    private final Configuration configuration;<a name="line.44"></a>
 <span class="sourceLineNo">045</span>    private final boolean checkOnStartup;<a name="line.45"></a>
 <span class="sourceLineNo">046</span><a name="line.46"></a>
-<span class="sourceLineNo">047</span>    private CronTriggeringPolicy(CronExpression schedule, boolean checkOnStartup, Configuration configuration) {<a name="line.47"></a>
+<span class="sourceLineNo">047</span>    private CronTriggeringPolicy(final CronExpression schedule, final boolean checkOnStartup, final Configuration configuration) {<a name="line.47"></a>
 <span class="sourceLineNo">048</span>        this.cronExpression = schedule;<a name="line.48"></a>
 <span class="sourceLineNo">049</span>        this.configuration = configuration;<a name="line.49"></a>
 <span class="sourceLineNo">050</span>        this.checkOnStartup = checkOnStartup;<a name="line.50"></a>
@@ -66,7 +66,7 @@
 <span class="sourceLineNo">058</span>    public void initialize(final RollingFileManager aManager) {<a name="line.58"></a>
 <span class="sourceLineNo">059</span>        this.manager = aManager;<a name="line.59"></a>
 <span class="sourceLineNo">060</span>        if (checkOnStartup) {<a name="line.60"></a>
-<span class="sourceLineNo">061</span>            Date nextDate = cronExpression.getNextValidTimeAfter(new Date(this.manager.getFileTime()));<a name="line.61"></a>
+<span class="sourceLineNo">061</span>            final Date nextDate = cronExpression.getNextValidTimeAfter(new Date(this.manager.getFileTime()));<a name="line.61"></a>
 <span class="sourceLineNo">062</span>            if (nextDate.getTime() &lt; System.currentTimeMillis()) {<a name="line.62"></a>
 <span class="sourceLineNo">063</span>                manager.rollover();<a name="line.63"></a>
 <span class="sourceLineNo">064</span>            }<a name="line.64"></a>
@@ -97,7 +97,7 @@
 <span class="sourceLineNo">089</span>     */<a name="line.89"></a>
 <span class="sourceLineNo">090</span>    @PluginFactory<a name="line.90"></a>
 <span class="sourceLineNo">091</span>    public static CronTriggeringPolicy createPolicy(<a name="line.91"></a>
-<span class="sourceLineNo">092</span>            @PluginConfiguration Configuration configuration,<a name="line.92"></a>
+<span class="sourceLineNo">092</span>            @PluginConfiguration final Configuration configuration,<a name="line.92"></a>
 <span class="sourceLineNo">093</span>            @PluginAttribute("evaluateOnStartup") final String evaluateOnStartup,<a name="line.93"></a>
 <span class="sourceLineNo">094</span>            @PluginAttribute("schedule") final String schedule) {<a name="line.94"></a>
 <span class="sourceLineNo">095</span>        CronExpression cronExpression;<a name="line.95"></a>
@@ -115,10 +115,10 @@
 <span class="sourceLineNo">107</span>        return new CronTriggeringPolicy(cronExpression, checkOnStartup, configuration);<a name="line.107"></a>
 <span class="sourceLineNo">108</span>    }<a name="line.108"></a>
 <span class="sourceLineNo">109</span><a name="line.109"></a>
-<span class="sourceLineNo">110</span>    private static CronExpression getSchedule(String expression) {<a name="line.110"></a>
+<span class="sourceLineNo">110</span>    private static CronExpression getSchedule(final String expression) {<a name="line.110"></a>
 <span class="sourceLineNo">111</span>        try {<a name="line.111"></a>
 <span class="sourceLineNo">112</span>            return new CronExpression(expression);<a name="line.112"></a>
-<span class="sourceLineNo">113</span>        } catch (ParseException pe) {<a name="line.113"></a>
+<span class="sourceLineNo">113</span>        } catch (final ParseException pe) {<a name="line.113"></a>
 <span class="sourceLineNo">114</span>            LOGGER.error("Invalid cron expression - " + expression, pe);<a name="line.114"></a>
 <span class="sourceLineNo">115</span>            return null;<a name="line.115"></a>
 <span class="sourceLineNo">116</span>        }<a name="line.116"></a>

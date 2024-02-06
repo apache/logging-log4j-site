@@ -53,7 +53,7 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>              <strong class="jxr_keyword">final</strong> Charset actual = charset != <strong class="jxr_keyword">null</strong> ? charset : Charset.defaultCharset();
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>              <strong class="jxr_keyword">try</strong> { <em class="jxr_comment">// LOG4J2-935: String.getBytes(String) gives better performance</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>                  <strong class="jxr_keyword">return</strong> str.getBytes(actual.name());
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>              } <strong class="jxr_keyword">catch</strong> (UnsupportedEncodingException e) {
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>              } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> UnsupportedEncodingException e) {
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>                  <strong class="jxr_keyword">return</strong> str.getBytes(actual);
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>              }
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>          }
@@ -67,7 +67,7 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     * @return the encoded String</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     * @see &lt;a href="https://issues.apache.org/jira/browse/LOG4J2-1151"&gt;LOG4J2-1151&lt;/a&gt;</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> byte[] encodeSingleByteChars(CharSequence s) {
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> byte[] encodeSingleByteChars(<strong class="jxr_keyword">final</strong> CharSequence s) {
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> length = s.length();
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">final</strong> byte[] result = <strong class="jxr_keyword">new</strong> byte[length];
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          encodeString(s, 0, length, result);
@@ -79,10 +79,10 @@
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_comment">     * Implementation note: this is the fast path. If the char array contains only ISO-8859-1 characters, all the work</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_comment">     * will be done here.</em>
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_comment">     */</em>
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> encodeIsoChars(CharSequence charArray, <strong class="jxr_keyword">int</strong> charIndex, byte[] byteArray, <strong class="jxr_keyword">int</strong> byteIndex, <strong class="jxr_keyword">int</strong> length) {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> encodeIsoChars(<strong class="jxr_keyword">final</strong> CharSequence charArray, <strong class="jxr_keyword">int</strong> charIndex, <strong class="jxr_keyword">final</strong> byte[] byteArray, <strong class="jxr_keyword">int</strong> byteIndex, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> length) {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">int</strong> i = 0;
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">for</strong> (; i &lt; length; i++) {
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>              <strong class="jxr_keyword">char</strong> c = charArray.charAt(charIndex++);
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong> c = charArray.charAt(charIndex++);
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>              <strong class="jxr_keyword">if</strong> (c &gt; 255) {
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>                  <strong class="jxr_keyword">break</strong>;
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>              }
@@ -92,16 +92,16 @@
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>      }
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      <em class="jxr_comment">// LOG4J2-1151</em>
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> encodeString(CharSequence charArray, <strong class="jxr_keyword">int</strong> charOffset, <strong class="jxr_keyword">int</strong> charLength, byte[] byteArray) {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> encodeString(<strong class="jxr_keyword">final</strong> CharSequence charArray, <strong class="jxr_keyword">int</strong> charOffset, <strong class="jxr_keyword">int</strong> charLength, <strong class="jxr_keyword">final</strong> byte[] byteArray) {
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">int</strong> byteOffset = 0;
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">int</strong> length = Math.min(charLength, byteArray.length);
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">int</strong> charDoneIndex = charOffset + length;
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">while</strong> (charOffset &lt; charDoneIndex) {
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">int</strong> done = encodeIsoChars(charArray, charOffset, byteArray, byteOffset, length);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> done = encodeIsoChars(charArray, charOffset, byteArray, byteOffset, length);
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>              charOffset += done;
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>              byteOffset += done;
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">if</strong> (done != length) {
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>                  <strong class="jxr_keyword">char</strong> c = charArray.charAt(charOffset++);
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>                  <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong> c = charArray.charAt(charOffset++);
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>                  <strong class="jxr_keyword">if</strong> ((Character.isHighSurrogate(c)) &amp;&amp; (charOffset &lt; charDoneIndex)
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>                          &amp;&amp; (Character.isLowSurrogate(charArray.charAt(charOffset)))) {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>                      <strong class="jxr_keyword">if</strong> (charLength &gt; byteArray.length) {

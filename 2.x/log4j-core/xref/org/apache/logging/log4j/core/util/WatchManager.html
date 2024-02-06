@@ -48,11 +48,11 @@
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">private</strong> ScheduledFuture&lt;?&gt; future;
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationScheduler.html">ConfigurationScheduler</a> scheduler;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">WatchManager</a>(<a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationScheduler.html">ConfigurationScheduler</a> scheduler) {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">WatchManager</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ConfigurationScheduler.html">ConfigurationScheduler</a> scheduler) {
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">this</strong>.scheduler = scheduler;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      }
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setIntervalSeconds(<strong class="jxr_keyword">int</strong> intervalSeconds) {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setIntervalSeconds(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> intervalSeconds) {
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">if</strong> (!isStarted()) {
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>              <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.intervalSeconds &gt; 0 &amp;&amp; intervalSeconds == 0) {
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>                  scheduler.decrementScheduledItems();
@@ -82,14 +82,14 @@
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">super</strong>.stop();
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> watchFile(File file, <a href="../../../../../../org/apache/logging/log4j/core/util/FileWatcher.html">FileWatcher</a> watcher) {
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> watchFile(<strong class="jxr_keyword">final</strong> File file, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/FileWatcher.html">FileWatcher</a> watcher) {
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          watchers.put(file, <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">FileMonitor</a>(file.lastModified(), watcher));
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      }
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">public</strong> Map&lt;File, FileWatcher&gt; getWatchers() {
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>          Map&lt;File, FileWatcher&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">for</strong> (Map.Entry&lt;File, FileMonitor&gt; entry : watchers.entrySet()) {
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">final</strong> Map&lt;File, FileWatcher&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;File, FileMonitor&gt; entry : watchers.entrySet()) {
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>              map.put(entry.getKey(), entry.getValue().fileWatcher);
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          }
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">return</strong> map;
@@ -99,10 +99,10 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          @Override
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run() {
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>              <strong class="jxr_keyword">for</strong> (Map.Entry&lt;File, FileMonitor&gt; entry : watchers.entrySet()) {
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>                  File file = entry.getKey();
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>                  <a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">FileMonitor</a> fileMonitor = entry.getValue();
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>                  <strong class="jxr_keyword">long</strong> lastModfied = file.lastModified();
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>              <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;File, FileMonitor&gt; entry : watchers.entrySet()) {
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>                  <strong class="jxr_keyword">final</strong> File file = entry.getKey();
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>                  <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">FileMonitor</a> fileMonitor = entry.getValue();
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>                  <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> lastModfied = file.lastModified();
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>                  <strong class="jxr_keyword">if</strong> (fileModified(fileMonitor, lastModfied)) {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>                      logger.info(<span class="jxr_string">"File {} was modified"</span>, file.toString());
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>                     fileMonitor.lastModified = lastModfied;
@@ -111,7 +111,7 @@
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>             }
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>         }
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> 
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> fileModified(<a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">FileMonitor</a> fileMonitor, <strong class="jxr_keyword">long</strong> lastModfied) {
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> fileModified(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">FileMonitor</a> fileMonitor, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> lastModfied) {
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>             <strong class="jxr_keyword">return</strong> lastModfied != fileMonitor.lastModified;
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         }
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>     }
@@ -120,7 +120,7 @@
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/FileWatcher.html">FileWatcher</a> fileWatcher;
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">long</strong> lastModified;
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> 
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">FileMonitor</a>(<strong class="jxr_keyword">long</strong> lastModified, <a href="../../../../../../org/apache/logging/log4j/core/util/FileWatcher.html">FileWatcher</a> fileWatcher) {
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">FileMonitor</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> lastModified, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/FileWatcher.html">FileWatcher</a> fileWatcher) {
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>             <strong class="jxr_keyword">this</strong>.fileWatcher = fileWatcher;
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>             <strong class="jxr_keyword">this</strong>.lastModified = lastModified;
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>         }

@@ -56,13 +56,13 @@
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/ConfigurationScheduler.html">ConfigurationScheduler</a> scheduler;
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">volatile</strong> ScheduledFuture&lt;?&gt; future = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/routing/IdlePurgePolicy.html">IdlePurgePolicy</a>(<strong class="jxr_keyword">long</strong> timeToLive, <a href="../../../../../../../org/apache/logging/log4j/core/config/ConfigurationScheduler.html">ConfigurationScheduler</a> scheduler) {
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/routing/IdlePurgePolicy.html">IdlePurgePolicy</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeToLive, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/ConfigurationScheduler.html">ConfigurationScheduler</a> scheduler) {
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          <strong class="jxr_keyword">this</strong>.timeToLive = timeToLive;
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          <strong class="jxr_keyword">this</strong>.scheduler = scheduler;
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      }
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      @Override
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initialize(<a href="../../../../../../../org/apache/logging/log4j/core/appender/routing/RoutingAppender.html">RoutingAppender</a> routingAppender) {
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initialize(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/routing/RoutingAppender.html">RoutingAppender</a> routingAppender) {
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">this</strong>.routingAppender = routingAppender;
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      }
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
@@ -77,8 +77,8 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      @Override
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> purge() {
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">long</strong> createTime = System.currentTimeMillis() - timeToLive;
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">for</strong> (Entry&lt;String, Long&gt; entry : appendersUsage.entrySet()) {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> createTime = System.currentTimeMillis() - timeToLive;
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Entry&lt;String, Long&gt; entry : appendersUsage.entrySet()) {
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>              <strong class="jxr_keyword">if</strong> (entry.getValue() &lt; createTime) {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>                  LOGGER.debug(<span class="jxr_string">"Removing appender "</span> + entry.getKey());
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>                  appendersUsage.remove(entry.getKey());
@@ -88,8 +88,8 @@
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      }
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      @Override
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> update(String key, <a href="../../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">long</strong> now = System.currentTimeMillis();
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> update(<strong class="jxr_keyword">final</strong> String key, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> now = System.currentTimeMillis();
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          appendersUsage.put(key, now);
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">if</strong> (future == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>              <strong class="jxr_keyword">synchronized</strong> (<strong class="jxr_keyword">this</strong>) {
@@ -109,13 +109,13 @@
 <a class="jxr_linenumber" name="L101" href="#L101">101</a> 
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> scheduleNext() {
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">long</strong> createTime = Long.MAX_VALUE;
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>         <strong class="jxr_keyword">for</strong> (Entry&lt;String, Long&gt; entry : appendersUsage.entrySet()) {
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Entry&lt;String, Long&gt; entry : appendersUsage.entrySet()) {
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>             <strong class="jxr_keyword">if</strong> (entry.getValue() &lt; createTime) {
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>                 createTime = entry.getValue();
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>             }
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         }
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>         <strong class="jxr_keyword">if</strong> (createTime &lt; Long.MAX_VALUE) {
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>             <strong class="jxr_keyword">long</strong> interval = timeToLive - (System.currentTimeMillis() - createTime);
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> interval = timeToLive - (System.currentTimeMillis() - createTime);
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>             future = scheduler.schedule(<strong class="jxr_keyword">this</strong>, interval, TimeUnit.MILLISECONDS);
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         }
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>     }
@@ -131,7 +131,7 @@
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/routing/PurgePolicy.html">PurgePolicy</a> createPurgePolicy(
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>         @PluginAttribute(<span class="jxr_string">"timeToLive"</span>) <strong class="jxr_keyword">final</strong> String timeToLive,
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>         @PluginAttribute(<span class="jxr_string">"timeUnit"</span>) <strong class="jxr_keyword">final</strong> String timeUnit,
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>         @PluginConfiguration <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration) {
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>         @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration) {
 <a class="jxr_linenumber" name="L127" href="#L127">127</a> 
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>         <strong class="jxr_keyword">if</strong> (timeToLive == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>             LOGGER.error(<span class="jxr_string">"A timeToLive  value is required"</span>);
@@ -143,7 +143,7 @@
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>             <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>                 units = TimeUnit.valueOf(timeUnit.toUpperCase());
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>             } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>                 LOGGER.error(<span class="jxr_string">"Invalid time unit {}"</span>, timeUnit);
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>                 units = TimeUnit.MINUTES;
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>             }

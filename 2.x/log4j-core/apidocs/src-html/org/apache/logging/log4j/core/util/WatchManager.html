@@ -48,11 +48,11 @@
 <span class="sourceLineNo">040</span>    private ScheduledFuture&lt;?&gt; future;<a name="line.40"></a>
 <span class="sourceLineNo">041</span>    private final ConfigurationScheduler scheduler;<a name="line.41"></a>
 <span class="sourceLineNo">042</span><a name="line.42"></a>
-<span class="sourceLineNo">043</span>    public WatchManager(ConfigurationScheduler scheduler) {<a name="line.43"></a>
+<span class="sourceLineNo">043</span>    public WatchManager(final ConfigurationScheduler scheduler) {<a name="line.43"></a>
 <span class="sourceLineNo">044</span>        this.scheduler = scheduler;<a name="line.44"></a>
 <span class="sourceLineNo">045</span>    }<a name="line.45"></a>
 <span class="sourceLineNo">046</span><a name="line.46"></a>
-<span class="sourceLineNo">047</span>    public void setIntervalSeconds(int intervalSeconds) {<a name="line.47"></a>
+<span class="sourceLineNo">047</span>    public void setIntervalSeconds(final int intervalSeconds) {<a name="line.47"></a>
 <span class="sourceLineNo">048</span>        if (!isStarted()) {<a name="line.48"></a>
 <span class="sourceLineNo">049</span>            if (this.intervalSeconds &gt; 0 &amp;&amp; intervalSeconds == 0) {<a name="line.49"></a>
 <span class="sourceLineNo">050</span>                scheduler.decrementScheduledItems();<a name="line.50"></a>
@@ -82,14 +82,14 @@
 <span class="sourceLineNo">074</span>        super.stop();<a name="line.74"></a>
 <span class="sourceLineNo">075</span>    }<a name="line.75"></a>
 <span class="sourceLineNo">076</span><a name="line.76"></a>
-<span class="sourceLineNo">077</span>    public void watchFile(File file, FileWatcher watcher) {<a name="line.77"></a>
+<span class="sourceLineNo">077</span>    public void watchFile(final File file, final FileWatcher watcher) {<a name="line.77"></a>
 <span class="sourceLineNo">078</span>        watchers.put(file, new FileMonitor(file.lastModified(), watcher));<a name="line.78"></a>
 <span class="sourceLineNo">079</span><a name="line.79"></a>
 <span class="sourceLineNo">080</span>    }<a name="line.80"></a>
 <span class="sourceLineNo">081</span><a name="line.81"></a>
 <span class="sourceLineNo">082</span>    public Map&lt;File, FileWatcher&gt; getWatchers() {<a name="line.82"></a>
-<span class="sourceLineNo">083</span>        Map&lt;File, FileWatcher&gt; map = new HashMap&lt;&gt;();<a name="line.83"></a>
-<span class="sourceLineNo">084</span>        for (Map.Entry&lt;File, FileMonitor&gt; entry : watchers.entrySet()) {<a name="line.84"></a>
+<span class="sourceLineNo">083</span>        final Map&lt;File, FileWatcher&gt; map = new HashMap&lt;&gt;();<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        for (final Map.Entry&lt;File, FileMonitor&gt; entry : watchers.entrySet()) {<a name="line.84"></a>
 <span class="sourceLineNo">085</span>            map.put(entry.getKey(), entry.getValue().fileWatcher);<a name="line.85"></a>
 <span class="sourceLineNo">086</span>        }<a name="line.86"></a>
 <span class="sourceLineNo">087</span>        return map;<a name="line.87"></a>
@@ -99,10 +99,10 @@
 <span class="sourceLineNo">091</span><a name="line.91"></a>
 <span class="sourceLineNo">092</span>        @Override<a name="line.92"></a>
 <span class="sourceLineNo">093</span>        public void run() {<a name="line.93"></a>
-<span class="sourceLineNo">094</span>            for (Map.Entry&lt;File, FileMonitor&gt; entry : watchers.entrySet()) {<a name="line.94"></a>
-<span class="sourceLineNo">095</span>                File file = entry.getKey();<a name="line.95"></a>
-<span class="sourceLineNo">096</span>                FileMonitor fileMonitor = entry.getValue();<a name="line.96"></a>
-<span class="sourceLineNo">097</span>                long lastModfied = file.lastModified();<a name="line.97"></a>
+<span class="sourceLineNo">094</span>            for (final Map.Entry&lt;File, FileMonitor&gt; entry : watchers.entrySet()) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                final File file = entry.getKey();<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                final FileMonitor fileMonitor = entry.getValue();<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                final long lastModfied = file.lastModified();<a name="line.97"></a>
 <span class="sourceLineNo">098</span>                if (fileModified(fileMonitor, lastModfied)) {<a name="line.98"></a>
 <span class="sourceLineNo">099</span>                    logger.info("File {} was modified", file.toString());<a name="line.99"></a>
 <span class="sourceLineNo">100</span>                    fileMonitor.lastModified = lastModfied;<a name="line.100"></a>
@@ -111,7 +111,7 @@
 <span class="sourceLineNo">103</span>            }<a name="line.103"></a>
 <span class="sourceLineNo">104</span>        }<a name="line.104"></a>
 <span class="sourceLineNo">105</span><a name="line.105"></a>
-<span class="sourceLineNo">106</span>        private boolean fileModified(FileMonitor fileMonitor, long lastModfied) {<a name="line.106"></a>
+<span class="sourceLineNo">106</span>        private boolean fileModified(final FileMonitor fileMonitor, final long lastModfied) {<a name="line.106"></a>
 <span class="sourceLineNo">107</span>            return lastModfied != fileMonitor.lastModified;<a name="line.107"></a>
 <span class="sourceLineNo">108</span>        }<a name="line.108"></a>
 <span class="sourceLineNo">109</span>    }<a name="line.109"></a>
@@ -120,7 +120,7 @@
 <span class="sourceLineNo">112</span>        private final FileWatcher fileWatcher;<a name="line.112"></a>
 <span class="sourceLineNo">113</span>        private long lastModified;<a name="line.113"></a>
 <span class="sourceLineNo">114</span><a name="line.114"></a>
-<span class="sourceLineNo">115</span>        public FileMonitor(long lastModified, FileWatcher fileWatcher) {<a name="line.115"></a>
+<span class="sourceLineNo">115</span>        public FileMonitor(final long lastModified, final FileWatcher fileWatcher) {<a name="line.115"></a>
 <span class="sourceLineNo">116</span>            this.fileWatcher = fileWatcher;<a name="line.116"></a>
 <span class="sourceLineNo">117</span>            this.lastModified = lastModified;<a name="line.117"></a>
 <span class="sourceLineNo">118</span>        }<a name="line.118"></a>

@@ -139,8 +139,8 @@
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>             }
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>         };
 <a class="jxr_linenumber" name="L133" href="#L133">133</a> 
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">static</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/DefaultRolloverStrategy.html">FileExtensions</a> lookup(String fileExtension) {
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>             <strong class="jxr_keyword">for</strong> (FileExtensions ext : values()) {
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">static</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/DefaultRolloverStrategy.html">FileExtensions</a> lookup(<strong class="jxr_keyword">final</strong> String fileExtension) {
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> FileExtensions ext : values()) {
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>                 <strong class="jxr_keyword">if</strong> (ext.isExtensionFor(fileExtension)) {
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>                     <strong class="jxr_keyword">return</strong> ext;
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>                 }
@@ -170,11 +170,11 @@
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>             <strong class="jxr_keyword">return</strong> extension.length();
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>         }
 <a class="jxr_linenumber" name="L164" href="#L164">164</a> 
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>         File source(String fileName) {
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         File source(<strong class="jxr_keyword">final</strong> String fileName) {
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> File(fileName);
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>         }
 <a class="jxr_linenumber" name="L168" href="#L168">168</a> 
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>         File target(String fileName) {
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         File target(<strong class="jxr_keyword">final</strong> String fileName) {
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> File(fileName);
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>         }
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>     };
@@ -545,7 +545,7 @@
 <a class="jxr_linenumber" name="L537" href="#L537">537</a>         <strong class="jxr_keyword">final</strong> String compressedName = renameTo;
 <a class="jxr_linenumber" name="L538" href="#L538">538</a>         <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/action/Action.html">Action</a> compressAction = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L539" href="#L539">539</a> 
-<a class="jxr_linenumber" name="L540" href="#L540">540</a>         <strong class="jxr_keyword">for</strong> (FileExtensions ext : FileExtensions.values()) { <em class="jxr_comment">// LOG4J2-1077 support other compression formats</em>
+<a class="jxr_linenumber" name="L540" href="#L540">540</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> FileExtensions ext : FileExtensions.values()) { <em class="jxr_comment">// LOG4J2-1077 support other compression formats</em>
 <a class="jxr_linenumber" name="L541" href="#L541">541</a>             <strong class="jxr_keyword">if</strong> (ext.isExtensionFor(renameTo)) {
 <a class="jxr_linenumber" name="L542" href="#L542">542</a>                 renameTo = renameTo.substring(0, renameTo.length() - ext.length()); <em class="jxr_comment">// LOG4J2-1135 omit extension!</em>
 <a class="jxr_linenumber" name="L543" href="#L543">543</a>                 compressAction = ext.createCompressAction(renameTo, compressedName, <strong class="jxr_keyword">true</strong>, compressionLevel);
@@ -560,7 +560,7 @@
 <a class="jxr_linenumber" name="L552" href="#L552">552</a>     }
 <a class="jxr_linenumber" name="L553" href="#L553">553</a> 
 <a class="jxr_linenumber" name="L554" href="#L554">554</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> suffixLength(<strong class="jxr_keyword">final</strong> String lowFilename) {
-<a class="jxr_linenumber" name="L555" href="#L555">555</a>         <strong class="jxr_keyword">for</strong> (FileExtensions extension : FileExtensions.values()) {
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> FileExtensions extension : FileExtensions.values()) {
 <a class="jxr_linenumber" name="L556" href="#L556">556</a>             <strong class="jxr_keyword">if</strong> (extension.isExtensionFor(lowFilename)) {
 <a class="jxr_linenumber" name="L557" href="#L557">557</a>                 <strong class="jxr_keyword">return</strong> extension.length();
 <a class="jxr_linenumber" name="L558" href="#L558">558</a>             }

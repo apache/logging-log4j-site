@@ -266,9 +266,9 @@
 <a class="jxr_linenumber" name="L258" href="#L258">258</a>         <strong class="jxr_keyword">if</strong> (ctx.getState() == LifeCycle.State.INITIALIZED) {
 <a class="jxr_linenumber" name="L259" href="#L259">259</a>             <strong class="jxr_keyword">if</strong> ((configLocations != <strong class="jxr_keyword">null</strong> &amp;&amp; !configLocations.isEmpty())) {
 <a class="jxr_linenumber" name="L260" href="#L260">260</a>                 ContextAnchor.THREAD_CONTEXT.set(ctx);
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>                 List&lt;AbstractConfiguration&gt; configurations = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(configLocations.size());
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>                 <strong class="jxr_keyword">for</strong> (URI configLocation : configLocations) {
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>                     <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> currentReadConfiguration = ConfigurationFactory.getInstance()
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>                 <strong class="jxr_keyword">final</strong> List&lt;AbstractConfiguration&gt; configurations = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(configLocations.size());
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> URI configLocation : configLocations) {
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> currentReadConfiguration = ConfigurationFactory.getInstance()
 <a class="jxr_linenumber" name="L264" href="#L264">264</a>                             .getConfiguration(name, configLocation);
 <a class="jxr_linenumber" name="L265" href="#L265">265</a>                     <strong class="jxr_keyword">if</strong> (currentReadConfiguration instanceof AbstractConfiguration) {
 <a class="jxr_linenumber" name="L266" href="#L266">266</a>                         configurations.add((AbstractConfiguration) currentReadConfiguration);
@@ -278,7 +278,7 @@
 <a class="jxr_linenumber" name="L270" href="#L270">270</a>                                 configLocation);
 <a class="jxr_linenumber" name="L271" href="#L271">271</a>                     }
 <a class="jxr_linenumber" name="L272" href="#L272">272</a>                 }
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>                 <a href="../../../../../../org/apache/logging/log4j/core/config/composite/CompositeConfiguration.html">CompositeConfiguration</a> compositeConfiguration = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/composite/CompositeConfiguration.html">CompositeConfiguration</a>(configurations);
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/composite/CompositeConfiguration.html">CompositeConfiguration</a> compositeConfiguration = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/composite/CompositeConfiguration.html">CompositeConfiguration</a>(configurations);
 <a class="jxr_linenumber" name="L274" href="#L274">274</a>                 LOGGER.debug(<span class="jxr_string">"Starting LoggerContext[name={}] from configurations at {}"</span>, ctx.getName(),
 <a class="jxr_linenumber" name="L275" href="#L275">275</a>                         configLocations);
 <a class="jxr_linenumber" name="L276" href="#L276">276</a>                 ctx.start(compositeConfiguration);

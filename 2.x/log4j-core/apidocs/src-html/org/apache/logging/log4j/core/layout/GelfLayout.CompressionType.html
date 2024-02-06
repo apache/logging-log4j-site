@@ -115,7 +115,7 @@
 <span class="sourceLineNo">107</span>    private final boolean includeStacktrace;<a name="line.107"></a>
 <span class="sourceLineNo">108</span><a name="line.108"></a>
 <span class="sourceLineNo">109</span>    public GelfLayout(final String host, final KeyValuePair[] additionalFields, final CompressionType compressionType,<a name="line.109"></a>
-<span class="sourceLineNo">110</span>                      final int compressionThreshold, boolean includeStacktrace) {<a name="line.110"></a>
+<span class="sourceLineNo">110</span>                      final int compressionThreshold, final boolean includeStacktrace) {<a name="line.110"></a>
 <span class="sourceLineNo">111</span>        super(StandardCharsets.UTF_8);<a name="line.111"></a>
 <span class="sourceLineNo">112</span>        this.host = host;<a name="line.112"></a>
 <span class="sourceLineNo">113</span>        this.additionalFields = additionalFields;<a name="line.113"></a>
@@ -151,7 +151,7 @@
 <span class="sourceLineNo">143</span><a name="line.143"></a>
 <span class="sourceLineNo">144</span>    @Override<a name="line.144"></a>
 <span class="sourceLineNo">145</span>    public byte[] toByteArray(final LogEvent event) {<a name="line.145"></a>
-<span class="sourceLineNo">146</span>        StringBuilder text = toText(event, getStringBuilder(), false);<a name="line.146"></a>
+<span class="sourceLineNo">146</span>        final StringBuilder text = toText(event, getStringBuilder(), false);<a name="line.146"></a>
 <span class="sourceLineNo">147</span>        final byte[] bytes = getBytes(text.toString());<a name="line.147"></a>
 <span class="sourceLineNo">148</span>        return compressionType != CompressionType.OFF &amp;&amp; bytes.length &gt; compressionThreshold ? compress(bytes) : bytes;<a name="line.148"></a>
 <span class="sourceLineNo">149</span>    }<a name="line.149"></a>
@@ -190,7 +190,7 @@
 <span class="sourceLineNo">182</span>        return text.toString();<a name="line.182"></a>
 <span class="sourceLineNo">183</span>    }<a name="line.183"></a>
 <span class="sourceLineNo">184</span><a name="line.184"></a>
-<span class="sourceLineNo">185</span>    private StringBuilder toText(LogEvent event, StringBuilder builder, boolean gcFree) {<a name="line.185"></a>
+<span class="sourceLineNo">185</span>    private StringBuilder toText(final LogEvent event, final StringBuilder builder, final boolean gcFree) {<a name="line.185"></a>
 <span class="sourceLineNo">186</span>        builder.append('{');<a name="line.186"></a>
 <span class="sourceLineNo">187</span>        builder.append("\"version\":\"1.1\",");<a name="line.187"></a>
 <span class="sourceLineNo">188</span>        builder.append("\"host\":\"");<a name="line.188"></a>
@@ -234,11 +234,11 @@
 <span class="sourceLineNo">226</span>        }<a name="line.226"></a>
 <span class="sourceLineNo">227</span><a name="line.227"></a>
 <span class="sourceLineNo">228</span>        builder.append("\"short_message\":\"");<a name="line.228"></a>
-<span class="sourceLineNo">229</span>        Message message = event.getMessage();<a name="line.229"></a>
+<span class="sourceLineNo">229</span>        final Message message = event.getMessage();<a name="line.229"></a>
 <span class="sourceLineNo">230</span>        if (message instanceof CharSequence) {<a name="line.230"></a>
 <span class="sourceLineNo">231</span>            JsonUtils.quoteAsString(((CharSequence)message), builder);<a name="line.231"></a>
 <span class="sourceLineNo">232</span>        } else if (gcFree &amp;&amp; message instanceof StringBuilderFormattable) {<a name="line.232"></a>
-<span class="sourceLineNo">233</span>            StringBuilder messageBuffer = getMessageStringBuilder();<a name="line.233"></a>
+<span class="sourceLineNo">233</span>            final StringBuilder messageBuffer = getMessageStringBuilder();<a name="line.233"></a>
 <span class="sourceLineNo">234</span>            ((StringBuilderFormattable)message).formatTo(messageBuffer);<a name="line.234"></a>
 <span class="sourceLineNo">235</span>            JsonUtils.quoteAsString(messageBuffer, builder);<a name="line.235"></a>
 <span class="sourceLineNo">236</span>        } else {<a name="line.236"></a>
@@ -272,7 +272,7 @@
 <span class="sourceLineNo">264</span>        if (timeMillis &lt; 1000) {<a name="line.264"></a>
 <span class="sourceLineNo">265</span>            return "0";<a name="line.265"></a>
 <span class="sourceLineNo">266</span>        }<a name="line.266"></a>
-<span class="sourceLineNo">267</span>        StringBuilder builder = getTimestampStringBuilder();<a name="line.267"></a>
+<span class="sourceLineNo">267</span>        final StringBuilder builder = getTimestampStringBuilder();<a name="line.267"></a>
 <span class="sourceLineNo">268</span>        builder.append(timeMillis);<a name="line.268"></a>
 <span class="sourceLineNo">269</span>        builder.insert(builder.length() - 3, '.');<a name="line.269"></a>
 <span class="sourceLineNo">270</span>        return builder;<a name="line.270"></a>

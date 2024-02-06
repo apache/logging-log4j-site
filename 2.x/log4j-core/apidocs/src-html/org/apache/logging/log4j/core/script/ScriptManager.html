@@ -60,7 +60,7 @@
 <span class="sourceLineNo">052</span>    private final WatchManager watchManager;<a name="line.52"></a>
 <span class="sourceLineNo">053</span>    private static final SecurityManager SECURITY_MANAGER = System.getSecurityManager();<a name="line.53"></a>
 <span class="sourceLineNo">054</span><a name="line.54"></a>
-<span class="sourceLineNo">055</span>    public ScriptManager(WatchManager watchManager) {<a name="line.55"></a>
+<span class="sourceLineNo">055</span>    public ScriptManager(final WatchManager watchManager) {<a name="line.55"></a>
 <span class="sourceLineNo">056</span>        this.watchManager = watchManager;<a name="line.56"></a>
 <span class="sourceLineNo">057</span>        final List&lt;ScriptEngineFactory&gt; factories = manager.getEngineFactories();<a name="line.57"></a>
 <span class="sourceLineNo">058</span>        if (logger.isDebugEnabled()) {<a name="line.58"></a>
@@ -116,8 +116,8 @@
 <span class="sourceLineNo">108</span>        }<a name="line.108"></a>
 <span class="sourceLineNo">109</span><a name="line.109"></a>
 <span class="sourceLineNo">110</span>        if (script instanceof ScriptFile) {<a name="line.110"></a>
-<span class="sourceLineNo">111</span>            ScriptFile scriptFile = (ScriptFile)script;<a name="line.111"></a>
-<span class="sourceLineNo">112</span>            Path path = scriptFile.getPath();<a name="line.112"></a>
+<span class="sourceLineNo">111</span>            final ScriptFile scriptFile = (ScriptFile)script;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>            final Path path = scriptFile.getPath();<a name="line.112"></a>
 <span class="sourceLineNo">113</span>            if (scriptFile.isWatched() &amp;&amp; path != null) {<a name="line.113"></a>
 <span class="sourceLineNo">114</span>                watchManager.watchFile(path.toFile(), this);<a name="line.114"></a>
 <span class="sourceLineNo">115</span>            }<a name="line.115"></a>
@@ -125,19 +125,19 @@
 <span class="sourceLineNo">117</span>    }<a name="line.117"></a>
 <span class="sourceLineNo">118</span><a name="line.118"></a>
 <span class="sourceLineNo">119</span>    public AbstractScript getScript(final String name) {<a name="line.119"></a>
-<span class="sourceLineNo">120</span>        ScriptRunner runner = scripts.get(name);<a name="line.120"></a>
+<span class="sourceLineNo">120</span>        final ScriptRunner runner = scripts.get(name);<a name="line.120"></a>
 <span class="sourceLineNo">121</span>        return runner != null ? runner.getScript() : null;<a name="line.121"></a>
 <span class="sourceLineNo">122</span>    }<a name="line.122"></a>
 <span class="sourceLineNo">123</span><a name="line.123"></a>
 <span class="sourceLineNo">124</span>    @Override<a name="line.124"></a>
 <span class="sourceLineNo">125</span>    public void fileModified(final File file) {<a name="line.125"></a>
-<span class="sourceLineNo">126</span>        ScriptRunner runner = scripts.get(file.toString());<a name="line.126"></a>
+<span class="sourceLineNo">126</span>        final ScriptRunner runner = scripts.get(file.toString());<a name="line.126"></a>
 <span class="sourceLineNo">127</span>        if (runner == null) {<a name="line.127"></a>
 <span class="sourceLineNo">128</span>            logger.info("{} is not a running script");<a name="line.128"></a>
 <span class="sourceLineNo">129</span>            return;<a name="line.129"></a>
 <span class="sourceLineNo">130</span>        }<a name="line.130"></a>
-<span class="sourceLineNo">131</span>        ScriptEngine engine = runner.getScriptEngine();<a name="line.131"></a>
-<span class="sourceLineNo">132</span>        AbstractScript script = runner.getScript();<a name="line.132"></a>
+<span class="sourceLineNo">131</span>        final ScriptEngine engine = runner.getScriptEngine();<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        final AbstractScript script = runner.getScript();<a name="line.132"></a>
 <span class="sourceLineNo">133</span>        if (engine.getFactory().getParameter(KEY_THREADING) == null) {<a name="line.133"></a>
 <span class="sourceLineNo">134</span>            scripts.put(script.getName(), new ThreadLocalScriptRunner(script));<a name="line.134"></a>
 <span class="sourceLineNo">135</span>        } else {<a name="line.135"></a>

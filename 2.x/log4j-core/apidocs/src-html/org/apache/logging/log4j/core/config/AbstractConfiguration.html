@@ -163,7 +163,7 @@
 <span class="sourceLineNo">155</span>        return scriptManager;<a name="line.155"></a>
 <span class="sourceLineNo">156</span>    }<a name="line.156"></a>
 <span class="sourceLineNo">157</span><a name="line.157"></a>
-<span class="sourceLineNo">158</span>    public void setScriptManager(ScriptManager scriptManager) {<a name="line.158"></a>
+<span class="sourceLineNo">158</span>    public void setScriptManager(final ScriptManager scriptManager) {<a name="line.158"></a>
 <span class="sourceLineNo">159</span>        this.scriptManager = scriptManager;<a name="line.159"></a>
 <span class="sourceLineNo">160</span>    }<a name="line.160"></a>
 <span class="sourceLineNo">161</span><a name="line.161"></a>
@@ -171,7 +171,7 @@
 <span class="sourceLineNo">163</span>        return pluginManager;<a name="line.163"></a>
 <span class="sourceLineNo">164</span>    }<a name="line.164"></a>
 <span class="sourceLineNo">165</span><a name="line.165"></a>
-<span class="sourceLineNo">166</span>    public void setPluginManager(PluginManager pluginManager) {<a name="line.166"></a>
+<span class="sourceLineNo">166</span>    public void setPluginManager(final PluginManager pluginManager) {<a name="line.166"></a>
 <span class="sourceLineNo">167</span>        this.pluginManager = pluginManager;<a name="line.167"></a>
 <span class="sourceLineNo">168</span>    }<a name="line.168"></a>
 <span class="sourceLineNo">169</span><a name="line.169"></a>
@@ -325,7 +325,7 @@
 <span class="sourceLineNo">317</span>        if (!async.isEmpty()) {<a name="line.317"></a>
 <span class="sourceLineNo">318</span>            // LOG4J2-511, LOG4J2-392 stop AsyncAppenders first<a name="line.318"></a>
 <span class="sourceLineNo">319</span>            LOGGER.trace("{} stopping {} AsyncAppenders.", cls, async.size());<a name="line.319"></a>
-<span class="sourceLineNo">320</span>            for (Appender appender : async) {<a name="line.320"></a>
+<span class="sourceLineNo">320</span>            for (final Appender appender : async) {<a name="line.320"></a>
 <span class="sourceLineNo">321</span>                appender.stop();<a name="line.321"></a>
 <span class="sourceLineNo">322</span>            }<a name="line.322"></a>
 <span class="sourceLineNo">323</span>        }<a name="line.323"></a>
@@ -442,20 +442,20 @@
 <span class="sourceLineNo">434</span>        componentMap.putIfAbsent(componentName, obj);<a name="line.434"></a>
 <span class="sourceLineNo">435</span>    }<a name="line.435"></a>
 <span class="sourceLineNo">436</span><a name="line.436"></a>
-<span class="sourceLineNo">437</span>    protected void preConfigure(Node node) {<a name="line.437"></a>
+<span class="sourceLineNo">437</span>    protected void preConfigure(final Node node) {<a name="line.437"></a>
 <span class="sourceLineNo">438</span>        try {<a name="line.438"></a>
 <span class="sourceLineNo">439</span>            for (final Node child : node.getChildren()) {<a name="line.439"></a>
 <span class="sourceLineNo">440</span>                if (child.getType() == null) {<a name="line.440"></a>
 <span class="sourceLineNo">441</span>                    LOGGER.error("Unable to locate plugin type for " + child.getName());<a name="line.441"></a>
 <span class="sourceLineNo">442</span>                    continue;<a name="line.442"></a>
 <span class="sourceLineNo">443</span>                }<a name="line.443"></a>
-<span class="sourceLineNo">444</span>                Class&lt;?&gt; clazz = child.getType().getPluginClass();<a name="line.444"></a>
+<span class="sourceLineNo">444</span>                final Class&lt;?&gt; clazz = child.getType().getPluginClass();<a name="line.444"></a>
 <span class="sourceLineNo">445</span>                if (clazz.isAnnotationPresent(Scheduled.class)) {<a name="line.445"></a>
 <span class="sourceLineNo">446</span>                    configurationScheduler.incrementScheduledItems();<a name="line.446"></a>
 <span class="sourceLineNo">447</span>                }<a name="line.447"></a>
 <span class="sourceLineNo">448</span>                preConfigure(child);<a name="line.448"></a>
 <span class="sourceLineNo">449</span>            }<a name="line.449"></a>
-<span class="sourceLineNo">450</span>        } catch (Exception ex) {<a name="line.450"></a>
+<span class="sourceLineNo">450</span>        } catch (final Exception ex) {<a name="line.450"></a>
 <span class="sourceLineNo">451</span>            LOGGER.error("Error capturing node data for node " + node.getName(), ex);<a name="line.451"></a>
 <span class="sourceLineNo">452</span>        }<a name="line.452"></a>
 <span class="sourceLineNo">453</span>    }<a name="line.453"></a>
@@ -489,7 +489,7 @@
 <span class="sourceLineNo">481</span>                continue;<a name="line.481"></a>
 <span class="sourceLineNo">482</span>            }<a name="line.482"></a>
 <span class="sourceLineNo">483</span>            if (child.getName().equalsIgnoreCase("Scripts")) {<a name="line.483"></a>
-<span class="sourceLineNo">484</span>                for (AbstractScript script : child.getObject(AbstractScript[].class)) {<a name="line.484"></a>
+<span class="sourceLineNo">484</span>                for (final AbstractScript script : child.getObject(AbstractScript[].class)) {<a name="line.484"></a>
 <span class="sourceLineNo">485</span>                    if (script instanceof ScriptRef) {<a name="line.485"></a>
 <span class="sourceLineNo">486</span>                        LOGGER.error("Script reference to {} not added. Scripts definition cannot contain script references",<a name="line.486"></a>
 <span class="sourceLineNo">487</span>                                script.getName());<a name="line.487"></a>
@@ -663,7 +663,7 @@
 <span class="sourceLineNo">655</span>     * .core.config.LoggerConfig)<a name="line.655"></a>
 <span class="sourceLineNo">656</span>     */<a name="line.656"></a>
 <span class="sourceLineNo">657</span>    @Override<a name="line.657"></a>
-<span class="sourceLineNo">658</span>    public ReliabilityStrategy getReliabilityStrategy(LoggerConfig loggerConfig) {<a name="line.658"></a>
+<span class="sourceLineNo">658</span>    public ReliabilityStrategy getReliabilityStrategy(final LoggerConfig loggerConfig) {<a name="line.658"></a>
 <span class="sourceLineNo">659</span>        return ReliabilityStrategyFactory.getReliabilityStrategy(loggerConfig);<a name="line.659"></a>
 <span class="sourceLineNo">660</span>    }<a name="line.660"></a>
 <span class="sourceLineNo">661</span><a name="line.661"></a>

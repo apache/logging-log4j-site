@@ -66,7 +66,7 @@
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          @Override
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEvent.html">RingBufferLogEvent</a> newInstance() {
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEvent.html">RingBufferLogEvent</a> result = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEvent.html">RingBufferLogEvent</a>();
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEvent.html">RingBufferLogEvent</a> result = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEvent.html">RingBufferLogEvent</a>();
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>              <strong class="jxr_keyword">if</strong> (Constants.ENABLE_THREADLOCALS) {
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>                  result.messageText = <strong class="jxr_keyword">new</strong> StringBuilder(Constants.INITIAL_REUSABLE_MESSAGE_SIZE);
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>                  result.parameters = <strong class="jxr_keyword">new</strong> Object[10];
@@ -100,8 +100,8 @@
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setValues(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLogger.html">AsyncLogger</a> anAsyncLogger, <strong class="jxr_keyword">final</strong> String aLoggerName, <strong class="jxr_keyword">final</strong> Marker aMarker,
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>              <strong class="jxr_keyword">final</strong> String theFqcn, <strong class="jxr_keyword">final</strong> Level aLevel, <strong class="jxr_keyword">final</strong> Message msg, <strong class="jxr_keyword">final</strong> Throwable aThrowable,
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; aMap, <strong class="jxr_keyword">final</strong> ContextStack aContextStack, <strong class="jxr_keyword">long</strong> threadId,
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>              <strong class="jxr_keyword">final</strong> String threadName, <strong class="jxr_keyword">int</strong> threadPriority, <strong class="jxr_keyword">final</strong> StackTraceElement aLocation, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> aCurrentTimeMillis, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> aNanoTime) {
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; aMap, <strong class="jxr_keyword">final</strong> ContextStack aContextStack, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> threadId,
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>              <strong class="jxr_keyword">final</strong> String threadName, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> threadPriority, <strong class="jxr_keyword">final</strong> StackTraceElement aLocation, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> aCurrentTimeMillis, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> aNanoTime) {
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">this</strong>.threadPriority = threadPriority;
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">this</strong>.threadId = threadId;
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">this</strong>.currentTimeMillis = aCurrentTimeMillis;
@@ -122,7 +122,7 @@
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> 
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> setMessage(<strong class="jxr_keyword">final</strong> Message msg) {
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>         <strong class="jxr_keyword">if</strong> (msg instanceof ReusableMessage) {
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>             ReusableMessage reusable = (ReusableMessage) msg;
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>             <strong class="jxr_keyword">final</strong> ReusableMessage reusable = (ReusableMessage) msg;
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>             reusable.formatTo(getMessageTextForWriting());
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>             <strong class="jxr_keyword">if</strong> (parameters != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>                 parameters = reusable.swapParameters(parameters);
@@ -279,7 +279,7 @@
 <a class="jxr_linenumber" name="L271" href="#L271">271</a>         <strong class="jxr_keyword">if</strong> (message != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L272" href="#L272">272</a>             <strong class="jxr_keyword">return</strong> message;
 <a class="jxr_linenumber" name="L273" href="#L273">273</a>         }
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>         Object[] params = parameters == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">new</strong> Object[0] : Arrays.copyOf(parameters, parameterCount);
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>         <strong class="jxr_keyword">final</strong> Object[] params = parameters == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">new</strong> Object[0] : Arrays.copyOf(parameters, parameterCount);
 <a class="jxr_linenumber" name="L275" href="#L275">275</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> ParameterizedMessage(messageText.toString(), params);
 <a class="jxr_linenumber" name="L276" href="#L276">276</a>     }
 <a class="jxr_linenumber" name="L277" href="#L277">277</a> 
@@ -291,12 +291,12 @@
 <a class="jxr_linenumber" name="L283" href="#L283">283</a>     }
 <a class="jxr_linenumber" name="L284" href="#L284">284</a> 
 <a class="jxr_linenumber" name="L285" href="#L285">285</a>     @Override
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">char</strong> charAt(<strong class="jxr_keyword">int</strong> index) {
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">char</strong> charAt(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> index) {
 <a class="jxr_linenumber" name="L287" href="#L287">287</a>         <strong class="jxr_keyword">return</strong> messageText.charAt(index);
 <a class="jxr_linenumber" name="L288" href="#L288">288</a>     }
 <a class="jxr_linenumber" name="L289" href="#L289">289</a> 
 <a class="jxr_linenumber" name="L290" href="#L290">290</a>     @Override
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>     <strong class="jxr_keyword">public</strong> CharSequence subSequence(<strong class="jxr_keyword">int</strong> start, <strong class="jxr_keyword">int</strong> end) {
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>     <strong class="jxr_keyword">public</strong> CharSequence subSequence(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> start, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> end) {
 <a class="jxr_linenumber" name="L292" href="#L292">292</a>         <strong class="jxr_keyword">return</strong> messageText.subSequence(start, end);
 <a class="jxr_linenumber" name="L293" href="#L293">293</a>     }
 <a class="jxr_linenumber" name="L294" href="#L294">294</a> 
@@ -447,7 +447,7 @@
 <a class="jxr_linenumber" name="L439" href="#L439">439</a> <em class="jxr_javadoccomment">     * Initializes the specified {@code Log4jLogEvent.Builder} from this {@code RingBufferLogEvent}.</em>
 <a class="jxr_linenumber" name="L440" href="#L440">440</a> <em class="jxr_javadoccomment">     * @param builder the builder whose fields to populate</em>
 <a class="jxr_linenumber" name="L441" href="#L441">441</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initializeBuilder(Log4jLogEvent.Builder builder) {
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initializeBuilder(<strong class="jxr_keyword">final</strong> Log4jLogEvent.Builder builder) {
 <a class="jxr_linenumber" name="L443" href="#L443">443</a>         builder.setContextMap(contextMap) <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="L444" href="#L444">444</a>                 .setContextStack(contextStack) <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="L445" href="#L445">445</a>                 .setEndOfBatch(endOfBatch) <em class="jxr_comment">//</em>

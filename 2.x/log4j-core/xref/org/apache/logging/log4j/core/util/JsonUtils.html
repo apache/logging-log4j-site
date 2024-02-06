@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">     * Quote text contents using JSON standard quoting, and append results to a supplied {@link StringBuilder}.</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> quoteAsString(CharSequence input, StringBuilder output) {
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> quoteAsString(<strong class="jxr_keyword">final</strong> CharSequence input, <strong class="jxr_keyword">final</strong> StringBuilder output) {
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong>[] qbuf = getQBuf();
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong>[] escCodes = CharTypes.get7BitOutputEscapes();
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> escCodeCount = escCodes.length;
@@ -65,7 +65,7 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">while</strong> (inPtr &lt; inputLen) {
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>              tight_loop:
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>              <strong class="jxr_keyword">while</strong> (<strong class="jxr_keyword">true</strong>) {
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>                  <strong class="jxr_keyword">char</strong> c = input.charAt(inPtr);
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>                  <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong> c = input.charAt(inPtr);
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>                  <strong class="jxr_keyword">if</strong> (c &lt; escCodeCount &amp;&amp; escCodes[c] != 0) {
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>                      <strong class="jxr_keyword">break</strong> tight_loop;
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>                  }
@@ -75,9 +75,9 @@
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>                  }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>              }
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>              <em class="jxr_comment">// something to escape; 2 or 6-char variant?</em>
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>              <strong class="jxr_keyword">char</strong> d = input.charAt(inPtr++);
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>              <strong class="jxr_keyword">int</strong> escCode = escCodes[d];
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>              <strong class="jxr_keyword">int</strong> length = (escCode &lt; 0)
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong> d = input.charAt(inPtr++);
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> escCode = escCodes[d];
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> length = (escCode &lt; 0)
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>                      ? _appendNumeric(d, qbuf)
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>                      : _appendNamed(escCode, qbuf);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  
@@ -85,7 +85,7 @@
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          }
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> _appendNumeric(<strong class="jxr_keyword">int</strong> value, <strong class="jxr_keyword">char</strong>[] qbuf) {
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> _appendNumeric(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> value, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong>[] qbuf) {
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          qbuf[1] = 'u';
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          <em class="jxr_comment">// We know it's a control char, so only the last 2 chars are non-0</em>
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          qbuf[4] = HC[value &gt;&gt; 4];
@@ -93,7 +93,7 @@
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">return</strong> 6;
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      }
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> _appendNamed(<strong class="jxr_keyword">int</strong> esc, <strong class="jxr_keyword">char</strong>[] qbuf) {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> _appendNamed(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> esc, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong>[] qbuf) {
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          qbuf[1] = (<strong class="jxr_keyword">char</strong>) esc;
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">return</strong> 2;
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      }

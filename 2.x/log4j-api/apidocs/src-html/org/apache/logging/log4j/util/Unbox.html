@@ -44,23 +44,23 @@
 <span class="sourceLineNo">036</span>    private static final int MASK = 16 - 1;<a name="line.36"></a>
 <span class="sourceLineNo">037</span><a name="line.37"></a>
 <span class="sourceLineNo">038</span>    private static class State {<a name="line.38"></a>
-<span class="sourceLineNo">039</span>        private final StringBuilder[] ringbuffer = new StringBuilder[16];<a name="line.39"></a>
+<span class="sourceLineNo">039</span>        private final StringBuilder[] ringBuffer = new StringBuilder[16];<a name="line.39"></a>
 <span class="sourceLineNo">040</span>        private int current;<a name="line.40"></a>
 <span class="sourceLineNo">041</span>        State() {<a name="line.41"></a>
-<span class="sourceLineNo">042</span>            for (int i = 0; i &lt; ringbuffer.length; i++) {<a name="line.42"></a>
-<span class="sourceLineNo">043</span>                ringbuffer[i] = new StringBuilder(21);<a name="line.43"></a>
+<span class="sourceLineNo">042</span>            for (int i = 0; i &lt; ringBuffer.length; i++) {<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                ringBuffer[i] = new StringBuilder(21);<a name="line.43"></a>
 <span class="sourceLineNo">044</span>            }<a name="line.44"></a>
 <span class="sourceLineNo">045</span>        }<a name="line.45"></a>
 <span class="sourceLineNo">046</span><a name="line.46"></a>
 <span class="sourceLineNo">047</span>        public StringBuilder getStringBuilder() {<a name="line.47"></a>
-<span class="sourceLineNo">048</span>            final StringBuilder result = ringbuffer[MASK &amp; current++];<a name="line.48"></a>
+<span class="sourceLineNo">048</span>            final StringBuilder result = ringBuffer[MASK &amp; current++];<a name="line.48"></a>
 <span class="sourceLineNo">049</span>            result.setLength(0);<a name="line.49"></a>
 <span class="sourceLineNo">050</span>            return result;<a name="line.50"></a>
 <span class="sourceLineNo">051</span>        }<a name="line.51"></a>
 <span class="sourceLineNo">052</span><a name="line.52"></a>
 <span class="sourceLineNo">053</span>        public boolean isBoxedPrimitive(final StringBuilder text) {<a name="line.53"></a>
-<span class="sourceLineNo">054</span>            for (int i = 0; i &lt; ringbuffer.length; i++) {<a name="line.54"></a>
-<span class="sourceLineNo">055</span>                if (text == ringbuffer[i]) {<a name="line.55"></a>
+<span class="sourceLineNo">054</span>            for (int i = 0; i &lt; ringBuffer.length; i++) {<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                if (text == ringBuffer[i]) {<a name="line.55"></a>
 <span class="sourceLineNo">056</span>                    return true;<a name="line.56"></a>
 <span class="sourceLineNo">057</span>                }<a name="line.57"></a>
 <span class="sourceLineNo">058</span>            }<a name="line.58"></a>
@@ -77,7 +77,7 @@
 <span class="sourceLineNo">069</span>     * @return a {@code StringBuilder} containing the text representation of the specified primitive value<a name="line.69"></a>
 <span class="sourceLineNo">070</span>     */<a name="line.70"></a>
 <span class="sourceLineNo">071</span>    @PerformanceSensitive("allocation")<a name="line.71"></a>
-<span class="sourceLineNo">072</span>    public static StringBuilder box(float value) {<a name="line.72"></a>
+<span class="sourceLineNo">072</span>    public static StringBuilder box(final float value) {<a name="line.72"></a>
 <span class="sourceLineNo">073</span>        return getSB().append(value);<a name="line.73"></a>
 <span class="sourceLineNo">074</span>    }<a name="line.74"></a>
 <span class="sourceLineNo">075</span><a name="line.75"></a>
@@ -89,7 +89,7 @@
 <span class="sourceLineNo">081</span>     * @return a {@code StringBuilder} containing the text representation of the specified primitive value<a name="line.81"></a>
 <span class="sourceLineNo">082</span>     */<a name="line.82"></a>
 <span class="sourceLineNo">083</span>    @PerformanceSensitive("allocation")<a name="line.83"></a>
-<span class="sourceLineNo">084</span>    public static StringBuilder box(double value) {<a name="line.84"></a>
+<span class="sourceLineNo">084</span>    public static StringBuilder box(final double value) {<a name="line.84"></a>
 <span class="sourceLineNo">085</span>        return getSB().append(value);<a name="line.85"></a>
 <span class="sourceLineNo">086</span>    }<a name="line.86"></a>
 <span class="sourceLineNo">087</span><a name="line.87"></a>
@@ -101,7 +101,7 @@
 <span class="sourceLineNo">093</span>     * @return a {@code StringBuilder} containing the text representation of the specified primitive value<a name="line.93"></a>
 <span class="sourceLineNo">094</span>     */<a name="line.94"></a>
 <span class="sourceLineNo">095</span>    @PerformanceSensitive("allocation")<a name="line.95"></a>
-<span class="sourceLineNo">096</span>    public static StringBuilder box(short value) {<a name="line.96"></a>
+<span class="sourceLineNo">096</span>    public static StringBuilder box(final short value) {<a name="line.96"></a>
 <span class="sourceLineNo">097</span>        return getSB().append(value);<a name="line.97"></a>
 <span class="sourceLineNo">098</span>    }<a name="line.98"></a>
 <span class="sourceLineNo">099</span><a name="line.99"></a>
@@ -113,7 +113,7 @@
 <span class="sourceLineNo">105</span>     * @return a {@code StringBuilder} containing the text representation of the specified primitive value<a name="line.105"></a>
 <span class="sourceLineNo">106</span>     */<a name="line.106"></a>
 <span class="sourceLineNo">107</span>    @PerformanceSensitive("allocation")<a name="line.107"></a>
-<span class="sourceLineNo">108</span>    public static StringBuilder box(int value) {<a name="line.108"></a>
+<span class="sourceLineNo">108</span>    public static StringBuilder box(final int value) {<a name="line.108"></a>
 <span class="sourceLineNo">109</span>        return getSB().append(value);<a name="line.109"></a>
 <span class="sourceLineNo">110</span>    }<a name="line.110"></a>
 <span class="sourceLineNo">111</span><a name="line.111"></a>
@@ -125,7 +125,7 @@
 <span class="sourceLineNo">117</span>     * @return a {@code StringBuilder} containing the text representation of the specified primitive value<a name="line.117"></a>
 <span class="sourceLineNo">118</span>     */<a name="line.118"></a>
 <span class="sourceLineNo">119</span>    @PerformanceSensitive("allocation")<a name="line.119"></a>
-<span class="sourceLineNo">120</span>    public static StringBuilder box(char value) {<a name="line.120"></a>
+<span class="sourceLineNo">120</span>    public static StringBuilder box(final char value) {<a name="line.120"></a>
 <span class="sourceLineNo">121</span>        return getSB().append(value);<a name="line.121"></a>
 <span class="sourceLineNo">122</span>    }<a name="line.122"></a>
 <span class="sourceLineNo">123</span><a name="line.123"></a>
@@ -137,7 +137,7 @@
 <span class="sourceLineNo">129</span>     * @return a {@code StringBuilder} containing the text representation of the specified primitive value<a name="line.129"></a>
 <span class="sourceLineNo">130</span>     */<a name="line.130"></a>
 <span class="sourceLineNo">131</span>    @PerformanceSensitive("allocation")<a name="line.131"></a>
-<span class="sourceLineNo">132</span>    public static StringBuilder box(long value) {<a name="line.132"></a>
+<span class="sourceLineNo">132</span>    public static StringBuilder box(final long value) {<a name="line.132"></a>
 <span class="sourceLineNo">133</span>        return getSB().append(value);<a name="line.133"></a>
 <span class="sourceLineNo">134</span>    }<a name="line.134"></a>
 <span class="sourceLineNo">135</span><a name="line.135"></a>
@@ -149,7 +149,7 @@
 <span class="sourceLineNo">141</span>     * @return a {@code StringBuilder} containing the text representation of the specified primitive value<a name="line.141"></a>
 <span class="sourceLineNo">142</span>     */<a name="line.142"></a>
 <span class="sourceLineNo">143</span>    @PerformanceSensitive("allocation")<a name="line.143"></a>
-<span class="sourceLineNo">144</span>    public static StringBuilder box(byte value) {<a name="line.144"></a>
+<span class="sourceLineNo">144</span>    public static StringBuilder box(final byte value) {<a name="line.144"></a>
 <span class="sourceLineNo">145</span>        return getSB().append(value);<a name="line.145"></a>
 <span class="sourceLineNo">146</span>    }<a name="line.146"></a>
 <span class="sourceLineNo">147</span><a name="line.147"></a>
@@ -161,27 +161,23 @@
 <span class="sourceLineNo">153</span>     * @return a {@code StringBuilder} containing the text representation of the specified primitive value<a name="line.153"></a>
 <span class="sourceLineNo">154</span>     */<a name="line.154"></a>
 <span class="sourceLineNo">155</span>    @PerformanceSensitive("allocation")<a name="line.155"></a>
-<span class="sourceLineNo">156</span>    public static StringBuilder box(boolean value) {<a name="line.156"></a>
+<span class="sourceLineNo">156</span>    public static StringBuilder box(final boolean value) {<a name="line.156"></a>
 <span class="sourceLineNo">157</span>        return getSB().append(value);<a name="line.157"></a>
 <span class="sourceLineNo">158</span>    }<a name="line.158"></a>
 <span class="sourceLineNo">159</span><a name="line.159"></a>
-<span class="sourceLineNo">160</span>    public static boolean isBoxedPrimitive(final StringBuilder text) {<a name="line.160"></a>
-<span class="sourceLineNo">161</span>        return getState().isBoxedPrimitive(text);<a name="line.161"></a>
-<span class="sourceLineNo">162</span>    }<a name="line.162"></a>
-<span class="sourceLineNo">163</span><a name="line.163"></a>
-<span class="sourceLineNo">164</span>    private static State getState() {<a name="line.164"></a>
-<span class="sourceLineNo">165</span>        State state = threadLocalState.get();<a name="line.165"></a>
-<span class="sourceLineNo">166</span>        if (state == null) {<a name="line.166"></a>
-<span class="sourceLineNo">167</span>            state = new State();<a name="line.167"></a>
-<span class="sourceLineNo">168</span>            threadLocalState.set(state);<a name="line.168"></a>
-<span class="sourceLineNo">169</span>        }<a name="line.169"></a>
-<span class="sourceLineNo">170</span>        return state;<a name="line.170"></a>
+<span class="sourceLineNo">160</span>    private static State getState() {<a name="line.160"></a>
+<span class="sourceLineNo">161</span>        State state = threadLocalState.get();<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        if (state == null) {<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            state = new State();<a name="line.163"></a>
+<span class="sourceLineNo">164</span>            threadLocalState.set(state);<a name="line.164"></a>
+<span class="sourceLineNo">165</span>        }<a name="line.165"></a>
+<span class="sourceLineNo">166</span>        return state;<a name="line.166"></a>
+<span class="sourceLineNo">167</span>    }<a name="line.167"></a>
+<span class="sourceLineNo">168</span><a name="line.168"></a>
+<span class="sourceLineNo">169</span>    private static StringBuilder getSB() {<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        return getState().getStringBuilder();<a name="line.170"></a>
 <span class="sourceLineNo">171</span>    }<a name="line.171"></a>
-<span class="sourceLineNo">172</span><a name="line.172"></a>
-<span class="sourceLineNo">173</span>    private static StringBuilder getSB() {<a name="line.173"></a>
-<span class="sourceLineNo">174</span>        return getState().getStringBuilder();<a name="line.174"></a>
-<span class="sourceLineNo">175</span>    }<a name="line.175"></a>
-<span class="sourceLineNo">176</span>}<a name="line.176"></a>
+<span class="sourceLineNo">172</span>}<a name="line.172"></a>
 
 
 

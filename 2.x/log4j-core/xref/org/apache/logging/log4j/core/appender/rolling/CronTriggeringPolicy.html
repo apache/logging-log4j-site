@@ -52,7 +52,7 @@
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> checkOnStartup;
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/CronTriggeringPolicy.html">CronTriggeringPolicy</a>(<a href="../../../../../../../org/apache/logging/log4j/core/util/CronExpression.html">CronExpression</a> schedule, <strong class="jxr_keyword">boolean</strong> checkOnStartup, <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration) {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/CronTriggeringPolicy.html">CronTriggeringPolicy</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/util/CronExpression.html">CronExpression</a> schedule, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> checkOnStartup, <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration) {
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">this</strong>.cronExpression = schedule;
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          <strong class="jxr_keyword">this</strong>.configuration = configuration;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">this</strong>.checkOnStartup = checkOnStartup;
@@ -66,7 +66,7 @@
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initialize(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/RollingFileManager.html">RollingFileManager</a> aManager) {
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">this</strong>.manager = aManager;
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">if</strong> (checkOnStartup) {
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>              Date nextDate = cronExpression.getNextValidTimeAfter(<strong class="jxr_keyword">new</strong> Date(<strong class="jxr_keyword">this</strong>.manager.getFileTime()));
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">final</strong> Date nextDate = cronExpression.getNextValidTimeAfter(<strong class="jxr_keyword">new</strong> Date(<strong class="jxr_keyword">this</strong>.manager.getFileTime()));
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>              <strong class="jxr_keyword">if</strong> (nextDate.getTime() &lt; System.currentTimeMillis()) {
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>                  manager.rollover();
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>              }
@@ -97,7 +97,7 @@
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      @PluginFactory
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/CronTriggeringPolicy.html">CronTriggeringPolicy</a> createPolicy(
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              @PluginConfiguration <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration,
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              @PluginConfiguration <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> configuration,
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>              @PluginAttribute(<span class="jxr_string">"evaluateOnStartup"</span>) <strong class="jxr_keyword">final</strong> String evaluateOnStartup,
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>              @PluginAttribute(<span class="jxr_string">"schedule"</span>) <strong class="jxr_keyword">final</strong> String schedule) {
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <a href="../../../../../../../org/apache/logging/log4j/core/util/CronExpression.html">CronExpression</a> cronExpression;
@@ -115,10 +115,10 @@
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/appender/rolling/CronTriggeringPolicy.html">CronTriggeringPolicy</a>(cronExpression, checkOnStartup, configuration);
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     }
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> 
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../../org/apache/logging/log4j/core/util/CronExpression.html">CronExpression</a> getSchedule(String expression) {
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../../org/apache/logging/log4j/core/util/CronExpression.html">CronExpression</a> getSchedule(<strong class="jxr_keyword">final</strong> String expression) {
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/apache/logging/log4j/core/util/CronExpression.html">CronExpression</a>(expression);
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>         } <strong class="jxr_keyword">catch</strong> (ParseException pe) {
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> ParseException pe) {
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>             LOGGER.error(<span class="jxr_string">"Invalid cron expression - "</span> + expression, pe);
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>         }

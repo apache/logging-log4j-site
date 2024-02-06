@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      @Override
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> filter(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Logger.html">Logger</a> logger, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker, <strong class="jxr_keyword">final</strong> String msg,
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>                           <strong class="jxr_keyword">final</strong> Object... params) {
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>          SimpleBindings bindings = <strong class="jxr_keyword">new</strong> SimpleBindings();
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">final</strong> SimpleBindings bindings = <strong class="jxr_keyword">new</strong> SimpleBindings();
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          bindings.put(<span class="jxr_string">"logger"</span>, logger);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          bindings.put(<span class="jxr_string">"level"</span>, level);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          bindings.put(<span class="jxr_string">"marker"</span>, marker);
@@ -78,14 +78,14 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>          bindings.put(<span class="jxr_string">"throwable"</span>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>          bindings.putAll(configuration.getProperties());
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          bindings.put(<span class="jxr_string">"substitutor"</span>, configuration.getStrSubstitutor());
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          Object object = configuration.getScriptManager().execute(script.getName(), bindings);
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">final</strong> Object object = configuration.getScriptManager().execute(script.getName(), bindings);
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">return</strong> object == <strong class="jxr_keyword">null</strong> || !Boolean.TRUE.equals(object) ? onMismatch : onMatch;
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      @Override
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> filter(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Logger.html">Logger</a> logger, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker, <strong class="jxr_keyword">final</strong> Object msg,
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>                           <strong class="jxr_keyword">final</strong> Throwable t) {
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>          SimpleBindings bindings = <strong class="jxr_keyword">new</strong> SimpleBindings();
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">final</strong> SimpleBindings bindings = <strong class="jxr_keyword">new</strong> SimpleBindings();
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          bindings.put(<span class="jxr_string">"logger"</span>, logger);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          bindings.put(<span class="jxr_string">"level"</span>, level);
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          bindings.put(<span class="jxr_string">"marker"</span>, marker);
@@ -94,14 +94,14 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          bindings.put(<span class="jxr_string">"throwable"</span>, t);
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          bindings.putAll(configuration.getProperties());
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          bindings.put(<span class="jxr_string">"substitutor"</span>, configuration.getStrSubstitutor());
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>          Object object = configuration.getScriptManager().execute(script.getName(), bindings);
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">final</strong> Object object = configuration.getScriptManager().execute(script.getName(), bindings);
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">return</strong> object == <strong class="jxr_keyword">null</strong> || !Boolean.TRUE.equals(object) ? onMismatch : onMatch;
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      }
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>      @Override
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> filter(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/Logger.html">Logger</a> logger, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Marker marker, <strong class="jxr_keyword">final</strong> Message msg,
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>                           <strong class="jxr_keyword">final</strong> Throwable t) {
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>          SimpleBindings bindings = <strong class="jxr_keyword">new</strong> SimpleBindings();
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          <strong class="jxr_keyword">final</strong> SimpleBindings bindings = <strong class="jxr_keyword">new</strong> SimpleBindings();
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>          bindings.put(<span class="jxr_string">"logger"</span>, logger);
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          bindings.put(<span class="jxr_string">"level"</span>, level);
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          bindings.put(<span class="jxr_string">"marker"</span>, marker);
@@ -110,17 +110,17 @@
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         bindings.put(<span class="jxr_string">"throwable"</span>, t);
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         bindings.putAll(configuration.getProperties());
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>         bindings.put(<span class="jxr_string">"substitutor"</span>, configuration.getStrSubstitutor());
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>         Object object = configuration.getScriptManager().execute(script.getName(), bindings);
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>         <strong class="jxr_keyword">final</strong> Object object = configuration.getScriptManager().execute(script.getName(), bindings);
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>         <strong class="jxr_keyword">return</strong> object == <strong class="jxr_keyword">null</strong> || !Boolean.TRUE.equals(object) ? onMismatch : onMatch;
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>     }
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> 
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>     @Override
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/Filter.html">Result</a> filter(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>         SimpleBindings bindings = <strong class="jxr_keyword">new</strong> SimpleBindings();
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         <strong class="jxr_keyword">final</strong> SimpleBindings bindings = <strong class="jxr_keyword">new</strong> SimpleBindings();
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         bindings.put(<span class="jxr_string">"logEvent"</span>, event);
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>         bindings.putAll(configuration.getProperties());
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>         bindings.put(<span class="jxr_string">"substitutor"</span>, configuration.getStrSubstitutor());
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>         Object object = configuration.getScriptManager().execute(script.getName(), bindings);
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         <strong class="jxr_keyword">final</strong> Object object = configuration.getScriptManager().execute(script.getName(), bindings);
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>         <strong class="jxr_keyword">return</strong> object == <strong class="jxr_keyword">null</strong> || !Boolean.TRUE.equals(object) ? onMismatch : onMatch;
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>     }
 <a class="jxr_linenumber" name="L118" href="#L118">118</a> 

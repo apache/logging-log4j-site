@@ -66,7 +66,7 @@
 <span class="sourceLineNo">058</span><a name="line.58"></a>
 <span class="sourceLineNo">059</span>        @Override<a name="line.59"></a>
 <span class="sourceLineNo">060</span>        public RingBufferLogEvent newInstance() {<a name="line.60"></a>
-<span class="sourceLineNo">061</span>            RingBufferLogEvent result = new RingBufferLogEvent();<a name="line.61"></a>
+<span class="sourceLineNo">061</span>            final RingBufferLogEvent result = new RingBufferLogEvent();<a name="line.61"></a>
 <span class="sourceLineNo">062</span>            if (Constants.ENABLE_THREADLOCALS) {<a name="line.62"></a>
 <span class="sourceLineNo">063</span>                result.messageText = new StringBuilder(Constants.INITIAL_REUSABLE_MESSAGE_SIZE);<a name="line.63"></a>
 <span class="sourceLineNo">064</span>                result.parameters = new Object[10];<a name="line.64"></a>
@@ -100,8 +100,8 @@
 <span class="sourceLineNo">092</span><a name="line.92"></a>
 <span class="sourceLineNo">093</span>    public void setValues(final AsyncLogger anAsyncLogger, final String aLoggerName, final Marker aMarker,<a name="line.93"></a>
 <span class="sourceLineNo">094</span>            final String theFqcn, final Level aLevel, final Message msg, final Throwable aThrowable,<a name="line.94"></a>
-<span class="sourceLineNo">095</span>            final Map&lt;String, String&gt; aMap, final ContextStack aContextStack, long threadId,<a name="line.95"></a>
-<span class="sourceLineNo">096</span>            final String threadName, int threadPriority, final StackTraceElement aLocation, final long aCurrentTimeMillis, final long aNanoTime) {<a name="line.96"></a>
+<span class="sourceLineNo">095</span>            final Map&lt;String, String&gt; aMap, final ContextStack aContextStack, final long threadId,<a name="line.95"></a>
+<span class="sourceLineNo">096</span>            final String threadName, final int threadPriority, final StackTraceElement aLocation, final long aCurrentTimeMillis, final long aNanoTime) {<a name="line.96"></a>
 <span class="sourceLineNo">097</span>        this.threadPriority = threadPriority;<a name="line.97"></a>
 <span class="sourceLineNo">098</span>        this.threadId = threadId;<a name="line.98"></a>
 <span class="sourceLineNo">099</span>        this.currentTimeMillis = aCurrentTimeMillis;<a name="line.99"></a>
@@ -122,7 +122,7 @@
 <span class="sourceLineNo">114</span><a name="line.114"></a>
 <span class="sourceLineNo">115</span>    private void setMessage(final Message msg) {<a name="line.115"></a>
 <span class="sourceLineNo">116</span>        if (msg instanceof ReusableMessage) {<a name="line.116"></a>
-<span class="sourceLineNo">117</span>            ReusableMessage reusable = (ReusableMessage) msg;<a name="line.117"></a>
+<span class="sourceLineNo">117</span>            final ReusableMessage reusable = (ReusableMessage) msg;<a name="line.117"></a>
 <span class="sourceLineNo">118</span>            reusable.formatTo(getMessageTextForWriting());<a name="line.118"></a>
 <span class="sourceLineNo">119</span>            if (parameters != null) {<a name="line.119"></a>
 <span class="sourceLineNo">120</span>                parameters = reusable.swapParameters(parameters);<a name="line.120"></a>
@@ -279,7 +279,7 @@
 <span class="sourceLineNo">271</span>        if (message != null) {<a name="line.271"></a>
 <span class="sourceLineNo">272</span>            return message;<a name="line.272"></a>
 <span class="sourceLineNo">273</span>        }<a name="line.273"></a>
-<span class="sourceLineNo">274</span>        Object[] params = parameters == null ? new Object[0] : Arrays.copyOf(parameters, parameterCount);<a name="line.274"></a>
+<span class="sourceLineNo">274</span>        final Object[] params = parameters == null ? new Object[0] : Arrays.copyOf(parameters, parameterCount);<a name="line.274"></a>
 <span class="sourceLineNo">275</span>        return new ParameterizedMessage(messageText.toString(), params);<a name="line.275"></a>
 <span class="sourceLineNo">276</span>    }<a name="line.276"></a>
 <span class="sourceLineNo">277</span><a name="line.277"></a>
@@ -291,12 +291,12 @@
 <span class="sourceLineNo">283</span>    }<a name="line.283"></a>
 <span class="sourceLineNo">284</span><a name="line.284"></a>
 <span class="sourceLineNo">285</span>    @Override<a name="line.285"></a>
-<span class="sourceLineNo">286</span>    public char charAt(int index) {<a name="line.286"></a>
+<span class="sourceLineNo">286</span>    public char charAt(final int index) {<a name="line.286"></a>
 <span class="sourceLineNo">287</span>        return messageText.charAt(index);<a name="line.287"></a>
 <span class="sourceLineNo">288</span>    }<a name="line.288"></a>
 <span class="sourceLineNo">289</span><a name="line.289"></a>
 <span class="sourceLineNo">290</span>    @Override<a name="line.290"></a>
-<span class="sourceLineNo">291</span>    public CharSequence subSequence(int start, int end) {<a name="line.291"></a>
+<span class="sourceLineNo">291</span>    public CharSequence subSequence(final int start, final int end) {<a name="line.291"></a>
 <span class="sourceLineNo">292</span>        return messageText.subSequence(start, end);<a name="line.292"></a>
 <span class="sourceLineNo">293</span>    }<a name="line.293"></a>
 <span class="sourceLineNo">294</span><a name="line.294"></a>
@@ -447,7 +447,7 @@
 <span class="sourceLineNo">439</span>     * Initializes the specified {@code Log4jLogEvent.Builder} from this {@code RingBufferLogEvent}.<a name="line.439"></a>
 <span class="sourceLineNo">440</span>     * @param builder the builder whose fields to populate<a name="line.440"></a>
 <span class="sourceLineNo">441</span>     */<a name="line.441"></a>
-<span class="sourceLineNo">442</span>    public void initializeBuilder(Log4jLogEvent.Builder builder) {<a name="line.442"></a>
+<span class="sourceLineNo">442</span>    public void initializeBuilder(final Log4jLogEvent.Builder builder) {<a name="line.442"></a>
 <span class="sourceLineNo">443</span>        builder.setContextMap(contextMap) //<a name="line.443"></a>
 <span class="sourceLineNo">444</span>                .setContextStack(contextStack) //<a name="line.444"></a>
 <span class="sourceLineNo">445</span>                .setEndOfBatch(endOfBatch) //<a name="line.445"></a>

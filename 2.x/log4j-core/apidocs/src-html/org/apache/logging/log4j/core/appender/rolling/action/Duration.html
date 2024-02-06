@@ -85,7 +85,7 @@
 <span class="sourceLineNo">077</span>     *<a name="line.77"></a>
 <span class="sourceLineNo">078</span>     * @param seconds the length of the duration in seconds, positive or negative<a name="line.78"></a>
 <span class="sourceLineNo">079</span>     */<a name="line.79"></a>
-<span class="sourceLineNo">080</span>    private Duration(long seconds) {<a name="line.80"></a>
+<span class="sourceLineNo">080</span>    private Duration(final long seconds) {<a name="line.80"></a>
 <span class="sourceLineNo">081</span>        super();<a name="line.81"></a>
 <span class="sourceLineNo">082</span>        this.seconds = seconds;<a name="line.82"></a>
 <span class="sourceLineNo">083</span>    }<a name="line.83"></a>
@@ -122,24 +122,24 @@
 <span class="sourceLineNo">114</span>     * @return the parsed duration, not null<a name="line.114"></a>
 <span class="sourceLineNo">115</span>     * @throws IllegalArgumentException if the text cannot be parsed to a duration<a name="line.115"></a>
 <span class="sourceLineNo">116</span>     */<a name="line.116"></a>
-<span class="sourceLineNo">117</span>    public static Duration parse(CharSequence text) {<a name="line.117"></a>
+<span class="sourceLineNo">117</span>    public static Duration parse(final CharSequence text) {<a name="line.117"></a>
 <span class="sourceLineNo">118</span>        Objects.requireNonNull(text, "text");<a name="line.118"></a>
-<span class="sourceLineNo">119</span>        Matcher matcher = PATTERN.matcher(text);<a name="line.119"></a>
+<span class="sourceLineNo">119</span>        final Matcher matcher = PATTERN.matcher(text);<a name="line.119"></a>
 <span class="sourceLineNo">120</span>        if (matcher.matches()) {<a name="line.120"></a>
 <span class="sourceLineNo">121</span>            // check for letter T but no time sections<a name="line.121"></a>
 <span class="sourceLineNo">122</span>            if ("T".equals(matcher.group(2)) == false) {<a name="line.122"></a>
-<span class="sourceLineNo">123</span>                String dayMatch = matcher.group(1);<a name="line.123"></a>
-<span class="sourceLineNo">124</span>                String hourMatch = matcher.group(3);<a name="line.124"></a>
-<span class="sourceLineNo">125</span>                String minuteMatch = matcher.group(4);<a name="line.125"></a>
-<span class="sourceLineNo">126</span>                String secondMatch = matcher.group(5);<a name="line.126"></a>
+<span class="sourceLineNo">123</span>                final String dayMatch = matcher.group(1);<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                final String hourMatch = matcher.group(3);<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                final String minuteMatch = matcher.group(4);<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                final String secondMatch = matcher.group(5);<a name="line.126"></a>
 <span class="sourceLineNo">127</span>                if (dayMatch != null || hourMatch != null || minuteMatch != null || secondMatch != null) {<a name="line.127"></a>
-<span class="sourceLineNo">128</span>                    long daysAsSecs = parseNumber(text, dayMatch, SECONDS_PER_DAY, "days");<a name="line.128"></a>
-<span class="sourceLineNo">129</span>                    long hoursAsSecs = parseNumber(text, hourMatch, SECONDS_PER_HOUR, "hours");<a name="line.129"></a>
-<span class="sourceLineNo">130</span>                    long minsAsSecs = parseNumber(text, minuteMatch, SECONDS_PER_MINUTE, "minutes");<a name="line.130"></a>
-<span class="sourceLineNo">131</span>                    long seconds = parseNumber(text, secondMatch, 1, "seconds");<a name="line.131"></a>
+<span class="sourceLineNo">128</span>                    final long daysAsSecs = parseNumber(text, dayMatch, SECONDS_PER_DAY, "days");<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                    final long hoursAsSecs = parseNumber(text, hourMatch, SECONDS_PER_HOUR, "hours");<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                    final long minsAsSecs = parseNumber(text, minuteMatch, SECONDS_PER_MINUTE, "minutes");<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                    final long seconds = parseNumber(text, secondMatch, 1, "seconds");<a name="line.131"></a>
 <span class="sourceLineNo">132</span>                    try {<a name="line.132"></a>
 <span class="sourceLineNo">133</span>                        return create(daysAsSecs, hoursAsSecs, minsAsSecs, seconds);<a name="line.133"></a>
-<span class="sourceLineNo">134</span>                    } catch (ArithmeticException ex) {<a name="line.134"></a>
+<span class="sourceLineNo">134</span>                    } catch (final ArithmeticException ex) {<a name="line.134"></a>
 <span class="sourceLineNo">135</span>                        throw new IllegalArgumentException("Text cannot be parsed to a Duration (overflow) " + text, ex);<a name="line.135"></a>
 <span class="sourceLineNo">136</span>                    }<a name="line.136"></a>
 <span class="sourceLineNo">137</span>                }<a name="line.137"></a>
@@ -189,14 +189,14 @@
 <span class="sourceLineNo">181</span>    }<a name="line.181"></a>
 <span class="sourceLineNo">182</span><a name="line.182"></a>
 <span class="sourceLineNo">183</span>    @Override<a name="line.183"></a>
-<span class="sourceLineNo">184</span>    public boolean equals(Object obj) {<a name="line.184"></a>
+<span class="sourceLineNo">184</span>    public boolean equals(final Object obj) {<a name="line.184"></a>
 <span class="sourceLineNo">185</span>        if (obj == this) {<a name="line.185"></a>
 <span class="sourceLineNo">186</span>            return true;<a name="line.186"></a>
 <span class="sourceLineNo">187</span>        }<a name="line.187"></a>
 <span class="sourceLineNo">188</span>        if (!(obj instanceof Duration)) {<a name="line.188"></a>
 <span class="sourceLineNo">189</span>            return false;<a name="line.189"></a>
 <span class="sourceLineNo">190</span>        }<a name="line.190"></a>
-<span class="sourceLineNo">191</span>        Duration other = (Duration) obj;<a name="line.191"></a>
+<span class="sourceLineNo">191</span>        final Duration other = (Duration) obj;<a name="line.191"></a>
 <span class="sourceLineNo">192</span>        return other.seconds == this.seconds;<a name="line.192"></a>
 <span class="sourceLineNo">193</span>    }<a name="line.193"></a>
 <span class="sourceLineNo">194</span><a name="line.194"></a>
@@ -259,7 +259,7 @@
 <span class="sourceLineNo">251</span>     * @see java.lang.Comparable#compareTo(java.lang.Object)<a name="line.251"></a>
 <span class="sourceLineNo">252</span>     */<a name="line.252"></a>
 <span class="sourceLineNo">253</span>    @Override<a name="line.253"></a>
-<span class="sourceLineNo">254</span>    public int compareTo(Duration other) {<a name="line.254"></a>
+<span class="sourceLineNo">254</span>    public int compareTo(final Duration other) {<a name="line.254"></a>
 <span class="sourceLineNo">255</span>        return Long.signum(toMillis() - other.toMillis());<a name="line.255"></a>
 <span class="sourceLineNo">256</span>    }<a name="line.256"></a>
 <span class="sourceLineNo">257</span>}<a name="line.257"></a>

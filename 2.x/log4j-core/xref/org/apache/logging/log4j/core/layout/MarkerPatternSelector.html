@@ -63,31 +63,31 @@
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>                                   <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> alwaysWriteExceptions, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> noConsoleNoAnsi,
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>                                   <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Configuration.html">Configuration</a> config) {
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternParser.html">PatternParser</a> parser = PatternLayout.createPatternParser(config);
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">for</strong> (PatternMatch property : properties) {
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> PatternMatch property : properties) {
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>              <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>                  List&lt;PatternFormatter&gt; list = parser.parse(property.getPattern(), alwaysWriteExceptions, noConsoleNoAnsi);
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>                  <strong class="jxr_keyword">final</strong> List&lt;PatternFormatter&gt; list = parser.parse(property.getPattern(), alwaysWriteExceptions, noConsoleNoAnsi);
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>                  formatterMap.put(property.getKey(), list.toArray(<strong class="jxr_keyword">new</strong> PatternFormatter[list.size()]));
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>                  patternMap.put(property.getKey(), property.getPattern());
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>              } <strong class="jxr_keyword">catch</strong> (RuntimeException ex) {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>              } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> RuntimeException ex) {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>                  <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"Cannot parse pattern '"</span> + property.getPattern() + <span class="jxr_string">"'"</span>, ex);
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>              }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          }
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>              List&lt;PatternFormatter&gt; list = parser.parse(defaultPattern, alwaysWriteExceptions, noConsoleNoAnsi);
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>              <strong class="jxr_keyword">final</strong> List&lt;PatternFormatter&gt; list = parser.parse(defaultPattern, alwaysWriteExceptions, noConsoleNoAnsi);
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>              defaultFormatters = list.toArray(<strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternFormatter.html">PatternFormatter</a>[list.size()]);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>              <strong class="jxr_keyword">this</strong>.defaultPattern = defaultPattern;
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          } <strong class="jxr_keyword">catch</strong> (RuntimeException ex) {
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> RuntimeException ex) {
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"Cannot parse pattern '"</span> + defaultPattern + <span class="jxr_string">"'"</span>, ex);
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>          }
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      @Override
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternFormatter.html">PatternFormatter</a>[] getFormatters(<a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          Marker marker = event.getMarker();
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/pattern/PatternFormatter.html">PatternFormatter</a>[] getFormatters(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event) {
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> Marker marker = event.getMarker();
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">if</strong> (marker == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>              <strong class="jxr_keyword">return</strong> defaultFormatters;
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          }
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">for</strong> (String key : formatterMap.keySet()) {
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String key : formatterMap.keySet()) {
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>              <strong class="jxr_keyword">if</strong> (marker.isInstanceOf(key)) {
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>                  <strong class="jxr_keyword">return</strong> formatterMap.get(key);
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>              }
@@ -114,9 +114,9 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> 
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>     @Override
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>         StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         <strong class="jxr_keyword">final</strong> StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder();
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>         <strong class="jxr_keyword">boolean</strong> first = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>         <strong class="jxr_keyword">for</strong> (Map.Entry&lt;String, String&gt; entry : patternMap.entrySet()) {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, String&gt; entry : patternMap.entrySet()) {
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>             <strong class="jxr_keyword">if</strong> (!first) {
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>                 sb.append(<span class="jxr_string">", "</span>);
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>             }

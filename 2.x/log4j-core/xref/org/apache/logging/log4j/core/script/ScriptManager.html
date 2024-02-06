@@ -60,7 +60,7 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">WatchManager</a> watchManager;
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> SecurityManager SECURITY_MANAGER = System.getSecurityManager();
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/script/ScriptManager.html">ScriptManager</a>(<a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">WatchManager</a> watchManager) {
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/script/ScriptManager.html">ScriptManager</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/util/WatchManager.html">WatchManager</a> watchManager) {
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">this</strong>.watchManager = watchManager;
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">final</strong> List&lt;ScriptEngineFactory&gt; factories = manager.getEngineFactories();
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">if</strong> (logger.isDebugEnabled()) {
@@ -116,8 +116,8 @@
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         }
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> 
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>         <strong class="jxr_keyword">if</strong> (script instanceof ScriptFile) {
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>             <a href="../../../../../../org/apache/logging/log4j/core/script/ScriptFile.html">ScriptFile</a> scriptFile = (ScriptFile)script;
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>             Path path = scriptFile.getPath();
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/script/ScriptFile.html">ScriptFile</a> scriptFile = (ScriptFile)script;
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>             <strong class="jxr_keyword">final</strong> Path path = scriptFile.getPath();
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>             <strong class="jxr_keyword">if</strong> (scriptFile.isWatched() &amp;&amp; path != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>                 watchManager.watchFile(path.toFile(), <strong class="jxr_keyword">this</strong>);
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>             }
@@ -125,19 +125,19 @@
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>     }
 <a class="jxr_linenumber" name="L118" href="#L118">118</a> 
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/script/AbstractScript.html">AbstractScript</a> getScript(<strong class="jxr_keyword">final</strong> String name) {
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>         <a href="../../../../../../org/apache/logging/log4j/core/script/ScriptManager.html">ScriptRunner</a> runner = scripts.get(name);
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/script/ScriptManager.html">ScriptRunner</a> runner = scripts.get(name);
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         <strong class="jxr_keyword">return</strong> runner != <strong class="jxr_keyword">null</strong> ? runner.getScript() : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>     }
 <a class="jxr_linenumber" name="L123" href="#L123">123</a> 
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>     @Override
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> fileModified(<strong class="jxr_keyword">final</strong> File file) {
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>         <a href="../../../../../../org/apache/logging/log4j/core/script/ScriptManager.html">ScriptRunner</a> runner = scripts.get(file.toString());
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/script/ScriptManager.html">ScriptRunner</a> runner = scripts.get(file.toString());
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>         <strong class="jxr_keyword">if</strong> (runner == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>             logger.info(<span class="jxr_string">"{} is not a running script"</span>);
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>             <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>         }
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         ScriptEngine engine = runner.getScriptEngine();
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>         <a href="../../../../../../org/apache/logging/log4j/core/script/AbstractScript.html">AbstractScript</a> script = runner.getScript();
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         <strong class="jxr_keyword">final</strong> ScriptEngine engine = runner.getScriptEngine();
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/script/AbstractScript.html">AbstractScript</a> script = runner.getScript();
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>         <strong class="jxr_keyword">if</strong> (engine.getFactory().getParameter(KEY_THREADING) == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>             scripts.put(script.getName(), <strong class="jxr_keyword">new</strong> ThreadLocalScriptRunner(script));
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         } <strong class="jxr_keyword">else</strong> {

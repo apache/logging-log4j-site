@@ -163,7 +163,7 @@
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         <strong class="jxr_keyword">return</strong> scriptManager;
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>     }
 <a class="jxr_linenumber" name="L157" href="#L157">157</a> 
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setScriptManager(<a href="../../../../../../org/apache/logging/log4j/core/script/ScriptManager.html">ScriptManager</a> scriptManager) {
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setScriptManager(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/script/ScriptManager.html">ScriptManager</a> scriptManager) {
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>         <strong class="jxr_keyword">this</strong>.scriptManager = scriptManager;
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>     }
 <a class="jxr_linenumber" name="L161" href="#L161">161</a> 
@@ -171,7 +171,7 @@
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>         <strong class="jxr_keyword">return</strong> pluginManager;
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>     }
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> 
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPluginManager(<a href="../../../../../../org/apache/logging/log4j/core/config/plugins/util/PluginManager.html">PluginManager</a> pluginManager) {
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPluginManager(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/plugins/util/PluginManager.html">PluginManager</a> pluginManager) {
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">this</strong>.pluginManager = pluginManager;
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>     }
 <a class="jxr_linenumber" name="L169" href="#L169">169</a> 
@@ -325,7 +325,7 @@
 <a class="jxr_linenumber" name="L317" href="#L317">317</a>         <strong class="jxr_keyword">if</strong> (!async.isEmpty()) {
 <a class="jxr_linenumber" name="L318" href="#L318">318</a>             <em class="jxr_comment">// LOG4J2-511, LOG4J2-392 stop AsyncAppenders first</em>
 <a class="jxr_linenumber" name="L319" href="#L319">319</a>             LOGGER.trace(<span class="jxr_string">"{} stopping {} AsyncAppenders."</span>, cls, async.size());
-<a class="jxr_linenumber" name="L320" href="#L320">320</a>             <strong class="jxr_keyword">for</strong> (Appender appender : async) {
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Appender appender : async) {
 <a class="jxr_linenumber" name="L321" href="#L321">321</a>                 appender.stop();
 <a class="jxr_linenumber" name="L322" href="#L322">322</a>             }
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>         }
@@ -442,20 +442,20 @@
 <a class="jxr_linenumber" name="L434" href="#L434">434</a>         componentMap.putIfAbsent(componentName, obj);
 <a class="jxr_linenumber" name="L435" href="#L435">435</a>     }
 <a class="jxr_linenumber" name="L436" href="#L436">436</a> 
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> preConfigure(<a href="../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> node) {
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> preConfigure(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/Node.html">Node</a> node) {
 <a class="jxr_linenumber" name="L438" href="#L438">438</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L439" href="#L439">439</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Node child : node.getChildren()) {
 <a class="jxr_linenumber" name="L440" href="#L440">440</a>                 <strong class="jxr_keyword">if</strong> (child.getType() == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L441" href="#L441">441</a>                     LOGGER.error(<span class="jxr_string">"Unable to locate plugin type for "</span> + child.getName());
 <a class="jxr_linenumber" name="L442" href="#L442">442</a>                     <strong class="jxr_keyword">continue</strong>;
 <a class="jxr_linenumber" name="L443" href="#L443">443</a>                 }
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>                 Class&lt;?&gt; clazz = child.getType().getPluginClass();
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>                 <strong class="jxr_keyword">final</strong> Class&lt;?&gt; clazz = child.getType().getPluginClass();
 <a class="jxr_linenumber" name="L445" href="#L445">445</a>                 <strong class="jxr_keyword">if</strong> (clazz.isAnnotationPresent(Scheduled.<strong class="jxr_keyword">class</strong>)) {
 <a class="jxr_linenumber" name="L446" href="#L446">446</a>                     configurationScheduler.incrementScheduledItems();
 <a class="jxr_linenumber" name="L447" href="#L447">447</a>                 }
 <a class="jxr_linenumber" name="L448" href="#L448">448</a>                 preConfigure(child);
 <a class="jxr_linenumber" name="L449" href="#L449">449</a>             }
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>         } <strong class="jxr_keyword">catch</strong> (Exception ex) {
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception ex) {
 <a class="jxr_linenumber" name="L451" href="#L451">451</a>             LOGGER.error(<span class="jxr_string">"Error capturing node data for node "</span> + node.getName(), ex);
 <a class="jxr_linenumber" name="L452" href="#L452">452</a>         }
 <a class="jxr_linenumber" name="L453" href="#L453">453</a>     }
@@ -489,7 +489,7 @@
 <a class="jxr_linenumber" name="L481" href="#L481">481</a>                 <strong class="jxr_keyword">continue</strong>;
 <a class="jxr_linenumber" name="L482" href="#L482">482</a>             }
 <a class="jxr_linenumber" name="L483" href="#L483">483</a>             <strong class="jxr_keyword">if</strong> (child.getName().equalsIgnoreCase(<span class="jxr_string">"Scripts"</span>)) {
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>                 <strong class="jxr_keyword">for</strong> (AbstractScript script : child.getObject(AbstractScript[].<strong class="jxr_keyword">class</strong>)) {
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> AbstractScript script : child.getObject(AbstractScript[].<strong class="jxr_keyword">class</strong>)) {
 <a class="jxr_linenumber" name="L485" href="#L485">485</a>                     <strong class="jxr_keyword">if</strong> (script instanceof ScriptRef) {
 <a class="jxr_linenumber" name="L486" href="#L486">486</a>                         LOGGER.error(<span class="jxr_string">"Script reference to {} not added. Scripts definition cannot contain script references"</span>,
 <a class="jxr_linenumber" name="L487" href="#L487">487</a>                                 script.getName());
@@ -663,7 +663,7 @@
 <a class="jxr_linenumber" name="L655" href="#L655">655</a> <em class="jxr_comment">     * .core.config.LoggerConfig)</em>
 <a class="jxr_linenumber" name="L656" href="#L656">656</a> <em class="jxr_comment">     */</em>
 <a class="jxr_linenumber" name="L657" href="#L657">657</a>     @Override
-<a class="jxr_linenumber" name="L658" href="#L658">658</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ReliabilityStrategy.html">ReliabilityStrategy</a> getReliabilityStrategy(<a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> loggerConfig) {
+<a class="jxr_linenumber" name="L658" href="#L658">658</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/ReliabilityStrategy.html">ReliabilityStrategy</a> getReliabilityStrategy(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/config/LoggerConfig.html">LoggerConfig</a> loggerConfig) {
 <a class="jxr_linenumber" name="L659" href="#L659">659</a>         <strong class="jxr_keyword">return</strong> ReliabilityStrategyFactory.getReliabilityStrategy(loggerConfig);
 <a class="jxr_linenumber" name="L660" href="#L660">660</a>     }
 <a class="jxr_linenumber" name="L661" href="#L661">661</a> 
