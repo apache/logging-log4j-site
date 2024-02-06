@@ -124,128 +124,127 @@
 <FONT color="green">121</FONT>                return printStream;<a name="line.121"></a>
 <FONT color="green">122</FONT>            }<a name="line.122"></a>
 <FONT color="green">123</FONT>            try {<a name="line.123"></a>
-<FONT color="green">124</FONT>                final ClassLoader loader = Loader.getClassLoader();<a name="line.124"></a>
-<FONT color="green">125</FONT>                // We type the parameter as a wildcard to avoid a hard reference to Jansi.<a name="line.125"></a>
-<FONT color="green">126</FONT>                final Class&lt;?&gt; clazz = loader.loadClass(JANSI_CLASS);<a name="line.126"></a>
-<FONT color="green">127</FONT>                final Constructor&lt;?&gt; constructor = clazz.getConstructor(OutputStream.class);<a name="line.127"></a>
-<FONT color="green">128</FONT>                return (OutputStream) constructor.newInstance(printStream);<a name="line.128"></a>
-<FONT color="green">129</FONT>            } catch (final ClassNotFoundException cnfe) {<a name="line.129"></a>
-<FONT color="green">130</FONT>                LOGGER.debug("Jansi is not installed, cannot find {}", JANSI_CLASS);<a name="line.130"></a>
-<FONT color="green">131</FONT>            } catch (final NoSuchMethodException nsme) {<a name="line.131"></a>
-<FONT color="green">132</FONT>                LOGGER.warn("{} is missing the proper constructor", JANSI_CLASS);<a name="line.132"></a>
-<FONT color="green">133</FONT>            } catch (final Exception ex) {<a name="line.133"></a>
-<FONT color="green">134</FONT>                LOGGER.warn("Unable to instantiate {}", JANSI_CLASS);<a name="line.134"></a>
-<FONT color="green">135</FONT>            }<a name="line.135"></a>
-<FONT color="green">136</FONT>            return printStream;<a name="line.136"></a>
-<FONT color="green">137</FONT>        }<a name="line.137"></a>
-<FONT color="green">138</FONT>    <a name="line.138"></a>
-<FONT color="green">139</FONT>        /**<a name="line.139"></a>
-<FONT color="green">140</FONT>         * An implementation of OutputStream that redirects to the current System.err.<a name="line.140"></a>
-<FONT color="green">141</FONT>         */<a name="line.141"></a>
-<FONT color="green">142</FONT>        private static class SystemErrStream extends OutputStream {<a name="line.142"></a>
-<FONT color="green">143</FONT>            public SystemErrStream() {<a name="line.143"></a>
-<FONT color="green">144</FONT>            }<a name="line.144"></a>
-<FONT color="green">145</FONT>    <a name="line.145"></a>
-<FONT color="green">146</FONT>            @Override<a name="line.146"></a>
-<FONT color="green">147</FONT>            public void close() {<a name="line.147"></a>
-<FONT color="green">148</FONT>                // do not close sys err!<a name="line.148"></a>
-<FONT color="green">149</FONT>            }<a name="line.149"></a>
-<FONT color="green">150</FONT>    <a name="line.150"></a>
-<FONT color="green">151</FONT>            @Override<a name="line.151"></a>
-<FONT color="green">152</FONT>            public void flush() {<a name="line.152"></a>
-<FONT color="green">153</FONT>                System.err.flush();<a name="line.153"></a>
-<FONT color="green">154</FONT>            }<a name="line.154"></a>
-<FONT color="green">155</FONT>    <a name="line.155"></a>
-<FONT color="green">156</FONT>            @Override<a name="line.156"></a>
-<FONT color="green">157</FONT>            public void write(final byte[] b) throws IOException {<a name="line.157"></a>
-<FONT color="green">158</FONT>                System.err.write(b);<a name="line.158"></a>
-<FONT color="green">159</FONT>            }<a name="line.159"></a>
-<FONT color="green">160</FONT>    <a name="line.160"></a>
-<FONT color="green">161</FONT>            @Override<a name="line.161"></a>
-<FONT color="green">162</FONT>            public void write(final byte[] b, final int off, final int len)<a name="line.162"></a>
-<FONT color="green">163</FONT>                throws IOException {<a name="line.163"></a>
-<FONT color="green">164</FONT>                System.err.write(b, off, len);<a name="line.164"></a>
-<FONT color="green">165</FONT>            }<a name="line.165"></a>
-<FONT color="green">166</FONT>    <a name="line.166"></a>
-<FONT color="green">167</FONT>            @Override<a name="line.167"></a>
-<FONT color="green">168</FONT>            public void write(final int b) {<a name="line.168"></a>
-<FONT color="green">169</FONT>                System.err.write(b);<a name="line.169"></a>
-<FONT color="green">170</FONT>            }<a name="line.170"></a>
-<FONT color="green">171</FONT>        }<a name="line.171"></a>
-<FONT color="green">172</FONT>    <a name="line.172"></a>
-<FONT color="green">173</FONT>        /**<a name="line.173"></a>
-<FONT color="green">174</FONT>         * An implementation of OutputStream that redirects to the current System.out.<a name="line.174"></a>
-<FONT color="green">175</FONT>         */<a name="line.175"></a>
-<FONT color="green">176</FONT>        private static class SystemOutStream extends OutputStream {<a name="line.176"></a>
-<FONT color="green">177</FONT>            public SystemOutStream() {<a name="line.177"></a>
-<FONT color="green">178</FONT>            }<a name="line.178"></a>
-<FONT color="green">179</FONT>    <a name="line.179"></a>
-<FONT color="green">180</FONT>            @Override<a name="line.180"></a>
-<FONT color="green">181</FONT>            public void close() {<a name="line.181"></a>
-<FONT color="green">182</FONT>                // do not close sys out!<a name="line.182"></a>
-<FONT color="green">183</FONT>            }<a name="line.183"></a>
-<FONT color="green">184</FONT>    <a name="line.184"></a>
-<FONT color="green">185</FONT>            @Override<a name="line.185"></a>
-<FONT color="green">186</FONT>            public void flush() {<a name="line.186"></a>
-<FONT color="green">187</FONT>                System.out.flush();<a name="line.187"></a>
-<FONT color="green">188</FONT>            }<a name="line.188"></a>
-<FONT color="green">189</FONT>    <a name="line.189"></a>
-<FONT color="green">190</FONT>            @Override<a name="line.190"></a>
-<FONT color="green">191</FONT>            public void write(final byte[] b) throws IOException {<a name="line.191"></a>
-<FONT color="green">192</FONT>                System.out.write(b);<a name="line.192"></a>
-<FONT color="green">193</FONT>            }<a name="line.193"></a>
-<FONT color="green">194</FONT>    <a name="line.194"></a>
-<FONT color="green">195</FONT>            @Override<a name="line.195"></a>
-<FONT color="green">196</FONT>            public void write(final byte[] b, final int off, final int len)<a name="line.196"></a>
-<FONT color="green">197</FONT>                throws IOException {<a name="line.197"></a>
-<FONT color="green">198</FONT>                System.out.write(b, off, len);<a name="line.198"></a>
-<FONT color="green">199</FONT>            }<a name="line.199"></a>
-<FONT color="green">200</FONT>    <a name="line.200"></a>
-<FONT color="green">201</FONT>            @Override<a name="line.201"></a>
-<FONT color="green">202</FONT>            public void write(final int b) throws IOException {<a name="line.202"></a>
-<FONT color="green">203</FONT>                System.out.write(b);<a name="line.203"></a>
-<FONT color="green">204</FONT>            }<a name="line.204"></a>
-<FONT color="green">205</FONT>        }<a name="line.205"></a>
-<FONT color="green">206</FONT>    <a name="line.206"></a>
-<FONT color="green">207</FONT>        /**<a name="line.207"></a>
-<FONT color="green">208</FONT>         * Data to pass to factory method.<a name="line.208"></a>
-<FONT color="green">209</FONT>         */<a name="line.209"></a>
-<FONT color="green">210</FONT>        private static class FactoryData {<a name="line.210"></a>
-<FONT color="green">211</FONT>            private final OutputStream os;<a name="line.211"></a>
-<FONT color="green">212</FONT>            private final String type;<a name="line.212"></a>
-<FONT color="green">213</FONT>            private final Layout&lt;? extends Serializable&gt; layout;<a name="line.213"></a>
-<FONT color="green">214</FONT>    <a name="line.214"></a>
-<FONT color="green">215</FONT>            /**<a name="line.215"></a>
-<FONT color="green">216</FONT>             * Constructor.<a name="line.216"></a>
-<FONT color="green">217</FONT>             * @param os The OutputStream.<a name="line.217"></a>
-<FONT color="green">218</FONT>             * @param type The name of the target.<a name="line.218"></a>
-<FONT color="green">219</FONT>             * @param layout A Serializable layout<a name="line.219"></a>
-<FONT color="green">220</FONT>             */<a name="line.220"></a>
-<FONT color="green">221</FONT>            public FactoryData(final OutputStream os, final String type, final Layout&lt;? extends Serializable&gt; layout) {<a name="line.221"></a>
-<FONT color="green">222</FONT>                this.os = os;<a name="line.222"></a>
-<FONT color="green">223</FONT>                this.type = type;<a name="line.223"></a>
-<FONT color="green">224</FONT>                this.layout = layout;<a name="line.224"></a>
-<FONT color="green">225</FONT>            }<a name="line.225"></a>
-<FONT color="green">226</FONT>        }<a name="line.226"></a>
-<FONT color="green">227</FONT>    <a name="line.227"></a>
-<FONT color="green">228</FONT>        /**<a name="line.228"></a>
-<FONT color="green">229</FONT>         * Factory to create the Appender.<a name="line.229"></a>
-<FONT color="green">230</FONT>         */<a name="line.230"></a>
-<FONT color="green">231</FONT>        private static class ConsoleManagerFactory implements ManagerFactory&lt;OutputStreamManager, FactoryData&gt; {<a name="line.231"></a>
-<FONT color="green">232</FONT>    <a name="line.232"></a>
-<FONT color="green">233</FONT>            /**<a name="line.233"></a>
-<FONT color="green">234</FONT>             * Create an OutputStreamManager.<a name="line.234"></a>
-<FONT color="green">235</FONT>             * @param name The name of the entity to manage.<a name="line.235"></a>
-<FONT color="green">236</FONT>             * @param data The data required to create the entity.<a name="line.236"></a>
-<FONT color="green">237</FONT>             * @return The OutputStreamManager<a name="line.237"></a>
-<FONT color="green">238</FONT>             */<a name="line.238"></a>
-<FONT color="green">239</FONT>            @Override<a name="line.239"></a>
-<FONT color="green">240</FONT>            public OutputStreamManager createManager(final String name, final FactoryData data) {<a name="line.240"></a>
-<FONT color="green">241</FONT>                return new OutputStreamManager(data.os, data.type, data.layout);<a name="line.241"></a>
-<FONT color="green">242</FONT>            }<a name="line.242"></a>
-<FONT color="green">243</FONT>        }<a name="line.243"></a>
-<FONT color="green">244</FONT>    <a name="line.244"></a>
-<FONT color="green">245</FONT>    }<a name="line.245"></a>
+<FONT color="green">124</FONT>                // We type the parameter as a wildcard to avoid a hard reference to Jansi.<a name="line.124"></a>
+<FONT color="green">125</FONT>                final Class&lt;?&gt; clazz = Loader.loadClass(JANSI_CLASS);<a name="line.125"></a>
+<FONT color="green">126</FONT>                final Constructor&lt;?&gt; constructor = clazz.getConstructor(OutputStream.class);<a name="line.126"></a>
+<FONT color="green">127</FONT>                return (OutputStream) constructor.newInstance(printStream);<a name="line.127"></a>
+<FONT color="green">128</FONT>            } catch (final ClassNotFoundException cnfe) {<a name="line.128"></a>
+<FONT color="green">129</FONT>                LOGGER.debug("Jansi is not installed, cannot find {}", JANSI_CLASS);<a name="line.129"></a>
+<FONT color="green">130</FONT>            } catch (final NoSuchMethodException nsme) {<a name="line.130"></a>
+<FONT color="green">131</FONT>                LOGGER.warn("{} is missing the proper constructor", JANSI_CLASS);<a name="line.131"></a>
+<FONT color="green">132</FONT>            } catch (final Exception ex) {<a name="line.132"></a>
+<FONT color="green">133</FONT>                LOGGER.warn("Unable to instantiate {}", JANSI_CLASS);<a name="line.133"></a>
+<FONT color="green">134</FONT>            }<a name="line.134"></a>
+<FONT color="green">135</FONT>            return printStream;<a name="line.135"></a>
+<FONT color="green">136</FONT>        }<a name="line.136"></a>
+<FONT color="green">137</FONT>    <a name="line.137"></a>
+<FONT color="green">138</FONT>        /**<a name="line.138"></a>
+<FONT color="green">139</FONT>         * An implementation of OutputStream that redirects to the current System.err.<a name="line.139"></a>
+<FONT color="green">140</FONT>         */<a name="line.140"></a>
+<FONT color="green">141</FONT>        private static class SystemErrStream extends OutputStream {<a name="line.141"></a>
+<FONT color="green">142</FONT>            public SystemErrStream() {<a name="line.142"></a>
+<FONT color="green">143</FONT>            }<a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>            @Override<a name="line.145"></a>
+<FONT color="green">146</FONT>            public void close() {<a name="line.146"></a>
+<FONT color="green">147</FONT>                // do not close sys err!<a name="line.147"></a>
+<FONT color="green">148</FONT>            }<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>            @Override<a name="line.150"></a>
+<FONT color="green">151</FONT>            public void flush() {<a name="line.151"></a>
+<FONT color="green">152</FONT>                System.err.flush();<a name="line.152"></a>
+<FONT color="green">153</FONT>            }<a name="line.153"></a>
+<FONT color="green">154</FONT>    <a name="line.154"></a>
+<FONT color="green">155</FONT>            @Override<a name="line.155"></a>
+<FONT color="green">156</FONT>            public void write(final byte[] b) throws IOException {<a name="line.156"></a>
+<FONT color="green">157</FONT>                System.err.write(b);<a name="line.157"></a>
+<FONT color="green">158</FONT>            }<a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>            @Override<a name="line.160"></a>
+<FONT color="green">161</FONT>            public void write(final byte[] b, final int off, final int len)<a name="line.161"></a>
+<FONT color="green">162</FONT>                throws IOException {<a name="line.162"></a>
+<FONT color="green">163</FONT>                System.err.write(b, off, len);<a name="line.163"></a>
+<FONT color="green">164</FONT>            }<a name="line.164"></a>
+<FONT color="green">165</FONT>    <a name="line.165"></a>
+<FONT color="green">166</FONT>            @Override<a name="line.166"></a>
+<FONT color="green">167</FONT>            public void write(final int b) {<a name="line.167"></a>
+<FONT color="green">168</FONT>                System.err.write(b);<a name="line.168"></a>
+<FONT color="green">169</FONT>            }<a name="line.169"></a>
+<FONT color="green">170</FONT>        }<a name="line.170"></a>
+<FONT color="green">171</FONT>    <a name="line.171"></a>
+<FONT color="green">172</FONT>        /**<a name="line.172"></a>
+<FONT color="green">173</FONT>         * An implementation of OutputStream that redirects to the current System.out.<a name="line.173"></a>
+<FONT color="green">174</FONT>         */<a name="line.174"></a>
+<FONT color="green">175</FONT>        private static class SystemOutStream extends OutputStream {<a name="line.175"></a>
+<FONT color="green">176</FONT>            public SystemOutStream() {<a name="line.176"></a>
+<FONT color="green">177</FONT>            }<a name="line.177"></a>
+<FONT color="green">178</FONT>    <a name="line.178"></a>
+<FONT color="green">179</FONT>            @Override<a name="line.179"></a>
+<FONT color="green">180</FONT>            public void close() {<a name="line.180"></a>
+<FONT color="green">181</FONT>                // do not close sys out!<a name="line.181"></a>
+<FONT color="green">182</FONT>            }<a name="line.182"></a>
+<FONT color="green">183</FONT>    <a name="line.183"></a>
+<FONT color="green">184</FONT>            @Override<a name="line.184"></a>
+<FONT color="green">185</FONT>            public void flush() {<a name="line.185"></a>
+<FONT color="green">186</FONT>                System.out.flush();<a name="line.186"></a>
+<FONT color="green">187</FONT>            }<a name="line.187"></a>
+<FONT color="green">188</FONT>    <a name="line.188"></a>
+<FONT color="green">189</FONT>            @Override<a name="line.189"></a>
+<FONT color="green">190</FONT>            public void write(final byte[] b) throws IOException {<a name="line.190"></a>
+<FONT color="green">191</FONT>                System.out.write(b);<a name="line.191"></a>
+<FONT color="green">192</FONT>            }<a name="line.192"></a>
+<FONT color="green">193</FONT>    <a name="line.193"></a>
+<FONT color="green">194</FONT>            @Override<a name="line.194"></a>
+<FONT color="green">195</FONT>            public void write(final byte[] b, final int off, final int len)<a name="line.195"></a>
+<FONT color="green">196</FONT>                throws IOException {<a name="line.196"></a>
+<FONT color="green">197</FONT>                System.out.write(b, off, len);<a name="line.197"></a>
+<FONT color="green">198</FONT>            }<a name="line.198"></a>
+<FONT color="green">199</FONT>    <a name="line.199"></a>
+<FONT color="green">200</FONT>            @Override<a name="line.200"></a>
+<FONT color="green">201</FONT>            public void write(final int b) throws IOException {<a name="line.201"></a>
+<FONT color="green">202</FONT>                System.out.write(b);<a name="line.202"></a>
+<FONT color="green">203</FONT>            }<a name="line.203"></a>
+<FONT color="green">204</FONT>        }<a name="line.204"></a>
+<FONT color="green">205</FONT>    <a name="line.205"></a>
+<FONT color="green">206</FONT>        /**<a name="line.206"></a>
+<FONT color="green">207</FONT>         * Data to pass to factory method.<a name="line.207"></a>
+<FONT color="green">208</FONT>         */<a name="line.208"></a>
+<FONT color="green">209</FONT>        private static class FactoryData {<a name="line.209"></a>
+<FONT color="green">210</FONT>            private final OutputStream os;<a name="line.210"></a>
+<FONT color="green">211</FONT>            private final String type;<a name="line.211"></a>
+<FONT color="green">212</FONT>            private final Layout&lt;? extends Serializable&gt; layout;<a name="line.212"></a>
+<FONT color="green">213</FONT>    <a name="line.213"></a>
+<FONT color="green">214</FONT>            /**<a name="line.214"></a>
+<FONT color="green">215</FONT>             * Constructor.<a name="line.215"></a>
+<FONT color="green">216</FONT>             * @param os The OutputStream.<a name="line.216"></a>
+<FONT color="green">217</FONT>             * @param type The name of the target.<a name="line.217"></a>
+<FONT color="green">218</FONT>             * @param layout A Serializable layout<a name="line.218"></a>
+<FONT color="green">219</FONT>             */<a name="line.219"></a>
+<FONT color="green">220</FONT>            public FactoryData(final OutputStream os, final String type, final Layout&lt;? extends Serializable&gt; layout) {<a name="line.220"></a>
+<FONT color="green">221</FONT>                this.os = os;<a name="line.221"></a>
+<FONT color="green">222</FONT>                this.type = type;<a name="line.222"></a>
+<FONT color="green">223</FONT>                this.layout = layout;<a name="line.223"></a>
+<FONT color="green">224</FONT>            }<a name="line.224"></a>
+<FONT color="green">225</FONT>        }<a name="line.225"></a>
+<FONT color="green">226</FONT>    <a name="line.226"></a>
+<FONT color="green">227</FONT>        /**<a name="line.227"></a>
+<FONT color="green">228</FONT>         * Factory to create the Appender.<a name="line.228"></a>
+<FONT color="green">229</FONT>         */<a name="line.229"></a>
+<FONT color="green">230</FONT>        private static class ConsoleManagerFactory implements ManagerFactory&lt;OutputStreamManager, FactoryData&gt; {<a name="line.230"></a>
+<FONT color="green">231</FONT>    <a name="line.231"></a>
+<FONT color="green">232</FONT>            /**<a name="line.232"></a>
+<FONT color="green">233</FONT>             * Create an OutputStreamManager.<a name="line.233"></a>
+<FONT color="green">234</FONT>             * @param name The name of the entity to manage.<a name="line.234"></a>
+<FONT color="green">235</FONT>             * @param data The data required to create the entity.<a name="line.235"></a>
+<FONT color="green">236</FONT>             * @return The OutputStreamManager<a name="line.236"></a>
+<FONT color="green">237</FONT>             */<a name="line.237"></a>
+<FONT color="green">238</FONT>            @Override<a name="line.238"></a>
+<FONT color="green">239</FONT>            public OutputStreamManager createManager(final String name, final FactoryData data) {<a name="line.239"></a>
+<FONT color="green">240</FONT>                return new OutputStreamManager(data.os, data.type, data.layout);<a name="line.240"></a>
+<FONT color="green">241</FONT>            }<a name="line.241"></a>
+<FONT color="green">242</FONT>        }<a name="line.242"></a>
+<FONT color="green">243</FONT>    <a name="line.243"></a>
+<FONT color="green">244</FONT>    }<a name="line.244"></a>
 
 
 

@@ -437,66 +437,70 @@
 <FONT color="green">434</FONT>                        }<a name="line.434"></a>
 <FONT color="green">435</FONT>                    }<a name="line.435"></a>
 <FONT color="green">436</FONT>                }<a name="line.436"></a>
-<FONT color="green">437</FONT>                return config != null ? config : new DefaultConfiguration();<a name="line.437"></a>
-<FONT color="green">438</FONT>            }<a name="line.438"></a>
-<FONT color="green">439</FONT>    <a name="line.439"></a>
-<FONT color="green">440</FONT>            private Configuration getConfiguration(final boolean isTest, final String name) {<a name="line.440"></a>
-<FONT color="green">441</FONT>                final boolean named = name != null &amp;&amp; name.length() &gt; 0;<a name="line.441"></a>
-<FONT color="green">442</FONT>                final ClassLoader loader = this.getClass().getClassLoader();<a name="line.442"></a>
-<FONT color="green">443</FONT>                for (final ConfigurationFactory factory : factories) {<a name="line.443"></a>
-<FONT color="green">444</FONT>                    String configName;<a name="line.444"></a>
-<FONT color="green">445</FONT>                    final String prefix = isTest ? TEST_PREFIX : DEFAULT_PREFIX;<a name="line.445"></a>
-<FONT color="green">446</FONT>                    final String [] types = factory.getSupportedTypes();<a name="line.446"></a>
-<FONT color="green">447</FONT>                    if (types == null) {<a name="line.447"></a>
-<FONT color="green">448</FONT>                        continue;<a name="line.448"></a>
-<FONT color="green">449</FONT>                    }<a name="line.449"></a>
-<FONT color="green">450</FONT>    <a name="line.450"></a>
-<FONT color="green">451</FONT>                    for (final String suffix : types) {<a name="line.451"></a>
-<FONT color="green">452</FONT>                        if (suffix.equals("*")) {<a name="line.452"></a>
-<FONT color="green">453</FONT>                            continue;<a name="line.453"></a>
-<FONT color="green">454</FONT>                        }<a name="line.454"></a>
-<FONT color="green">455</FONT>                        configName = named ? prefix + name + suffix : prefix + suffix;<a name="line.455"></a>
-<FONT color="green">456</FONT>    <a name="line.456"></a>
-<FONT color="green">457</FONT>                        final ConfigurationSource source = getInputFromResource(configName, loader);<a name="line.457"></a>
-<FONT color="green">458</FONT>                        if (source != null) {<a name="line.458"></a>
-<FONT color="green">459</FONT>                            return factory.getConfiguration(source);<a name="line.459"></a>
-<FONT color="green">460</FONT>                        }<a name="line.460"></a>
-<FONT color="green">461</FONT>                    }<a name="line.461"></a>
-<FONT color="green">462</FONT>                }<a name="line.462"></a>
-<FONT color="green">463</FONT>                return null;<a name="line.463"></a>
-<FONT color="green">464</FONT>            }<a name="line.464"></a>
-<FONT color="green">465</FONT>    <a name="line.465"></a>
-<FONT color="green">466</FONT>            @Override<a name="line.466"></a>
-<FONT color="green">467</FONT>            public String[] getSupportedTypes() {<a name="line.467"></a>
-<FONT color="green">468</FONT>                return null;<a name="line.468"></a>
-<FONT color="green">469</FONT>            }<a name="line.469"></a>
-<FONT color="green">470</FONT>    <a name="line.470"></a>
-<FONT color="green">471</FONT>            @Override<a name="line.471"></a>
-<FONT color="green">472</FONT>            public Configuration getConfiguration(final ConfigurationSource source) {<a name="line.472"></a>
-<FONT color="green">473</FONT>                if (source != null) {<a name="line.473"></a>
-<FONT color="green">474</FONT>                    final String config = source.getLocation();<a name="line.474"></a>
-<FONT color="green">475</FONT>                    for (final ConfigurationFactory factory : factories) {<a name="line.475"></a>
-<FONT color="green">476</FONT>                        final String[] types = factory.getSupportedTypes();<a name="line.476"></a>
-<FONT color="green">477</FONT>                        if (types != null) {<a name="line.477"></a>
-<FONT color="green">478</FONT>                            for (final String type : types) {<a name="line.478"></a>
-<FONT color="green">479</FONT>                                if (type.equals("*") || config != null &amp;&amp; config.endsWith(type)) {<a name="line.479"></a>
-<FONT color="green">480</FONT>                                    final Configuration c = factory.getConfiguration(source);<a name="line.480"></a>
-<FONT color="green">481</FONT>                                    if (c != null) {<a name="line.481"></a>
-<FONT color="green">482</FONT>                                        LOGGER.debug("Loaded configuration from {}", source);<a name="line.482"></a>
-<FONT color="green">483</FONT>                                        return c;<a name="line.483"></a>
-<FONT color="green">484</FONT>                                    }<a name="line.484"></a>
-<FONT color="green">485</FONT>                                    LOGGER.error("Cannot determine the ConfigurationFactory to use for {}", config);<a name="line.485"></a>
-<FONT color="green">486</FONT>                                    return null;<a name="line.486"></a>
-<FONT color="green">487</FONT>                                }<a name="line.487"></a>
-<FONT color="green">488</FONT>                            }<a name="line.488"></a>
-<FONT color="green">489</FONT>                        }<a name="line.489"></a>
-<FONT color="green">490</FONT>                    }<a name="line.490"></a>
-<FONT color="green">491</FONT>                }<a name="line.491"></a>
-<FONT color="green">492</FONT>                LOGGER.error("Cannot process configuration, input source is null");<a name="line.492"></a>
-<FONT color="green">493</FONT>                return null;<a name="line.493"></a>
-<FONT color="green">494</FONT>            }<a name="line.494"></a>
-<FONT color="green">495</FONT>        }<a name="line.495"></a>
-<FONT color="green">496</FONT>    }<a name="line.496"></a>
+<FONT color="green">437</FONT>                if (config != null) {<a name="line.437"></a>
+<FONT color="green">438</FONT>                    return config;<a name="line.438"></a>
+<FONT color="green">439</FONT>                }<a name="line.439"></a>
+<FONT color="green">440</FONT>                LOGGER.error("No log4j2 configuration file found. Using default configuration: logging only errors to the console.");<a name="line.440"></a>
+<FONT color="green">441</FONT>                return new DefaultConfiguration();<a name="line.441"></a>
+<FONT color="green">442</FONT>            }<a name="line.442"></a>
+<FONT color="green">443</FONT>    <a name="line.443"></a>
+<FONT color="green">444</FONT>            private Configuration getConfiguration(final boolean isTest, final String name) {<a name="line.444"></a>
+<FONT color="green">445</FONT>                final boolean named = name != null &amp;&amp; name.length() &gt; 0;<a name="line.445"></a>
+<FONT color="green">446</FONT>                final ClassLoader loader = this.getClass().getClassLoader();<a name="line.446"></a>
+<FONT color="green">447</FONT>                for (final ConfigurationFactory factory : factories) {<a name="line.447"></a>
+<FONT color="green">448</FONT>                    String configName;<a name="line.448"></a>
+<FONT color="green">449</FONT>                    final String prefix = isTest ? TEST_PREFIX : DEFAULT_PREFIX;<a name="line.449"></a>
+<FONT color="green">450</FONT>                    final String [] types = factory.getSupportedTypes();<a name="line.450"></a>
+<FONT color="green">451</FONT>                    if (types == null) {<a name="line.451"></a>
+<FONT color="green">452</FONT>                        continue;<a name="line.452"></a>
+<FONT color="green">453</FONT>                    }<a name="line.453"></a>
+<FONT color="green">454</FONT>    <a name="line.454"></a>
+<FONT color="green">455</FONT>                    for (final String suffix : types) {<a name="line.455"></a>
+<FONT color="green">456</FONT>                        if (suffix.equals("*")) {<a name="line.456"></a>
+<FONT color="green">457</FONT>                            continue;<a name="line.457"></a>
+<FONT color="green">458</FONT>                        }<a name="line.458"></a>
+<FONT color="green">459</FONT>                        configName = named ? prefix + name + suffix : prefix + suffix;<a name="line.459"></a>
+<FONT color="green">460</FONT>    <a name="line.460"></a>
+<FONT color="green">461</FONT>                        final ConfigurationSource source = getInputFromResource(configName, loader);<a name="line.461"></a>
+<FONT color="green">462</FONT>                        if (source != null) {<a name="line.462"></a>
+<FONT color="green">463</FONT>                            return factory.getConfiguration(source);<a name="line.463"></a>
+<FONT color="green">464</FONT>                        }<a name="line.464"></a>
+<FONT color="green">465</FONT>                    }<a name="line.465"></a>
+<FONT color="green">466</FONT>                }<a name="line.466"></a>
+<FONT color="green">467</FONT>                return null;<a name="line.467"></a>
+<FONT color="green">468</FONT>            }<a name="line.468"></a>
+<FONT color="green">469</FONT>    <a name="line.469"></a>
+<FONT color="green">470</FONT>            @Override<a name="line.470"></a>
+<FONT color="green">471</FONT>            public String[] getSupportedTypes() {<a name="line.471"></a>
+<FONT color="green">472</FONT>                return null;<a name="line.472"></a>
+<FONT color="green">473</FONT>            }<a name="line.473"></a>
+<FONT color="green">474</FONT>    <a name="line.474"></a>
+<FONT color="green">475</FONT>            @Override<a name="line.475"></a>
+<FONT color="green">476</FONT>            public Configuration getConfiguration(final ConfigurationSource source) {<a name="line.476"></a>
+<FONT color="green">477</FONT>                if (source != null) {<a name="line.477"></a>
+<FONT color="green">478</FONT>                    final String config = source.getLocation();<a name="line.478"></a>
+<FONT color="green">479</FONT>                    for (final ConfigurationFactory factory : factories) {<a name="line.479"></a>
+<FONT color="green">480</FONT>                        final String[] types = factory.getSupportedTypes();<a name="line.480"></a>
+<FONT color="green">481</FONT>                        if (types != null) {<a name="line.481"></a>
+<FONT color="green">482</FONT>                            for (final String type : types) {<a name="line.482"></a>
+<FONT color="green">483</FONT>                                if (type.equals("*") || config != null &amp;&amp; config.endsWith(type)) {<a name="line.483"></a>
+<FONT color="green">484</FONT>                                    final Configuration c = factory.getConfiguration(source);<a name="line.484"></a>
+<FONT color="green">485</FONT>                                    if (c != null) {<a name="line.485"></a>
+<FONT color="green">486</FONT>                                        LOGGER.debug("Loaded configuration from {}", source);<a name="line.486"></a>
+<FONT color="green">487</FONT>                                        return c;<a name="line.487"></a>
+<FONT color="green">488</FONT>                                    }<a name="line.488"></a>
+<FONT color="green">489</FONT>                                    LOGGER.error("Cannot determine the ConfigurationFactory to use for {}", config);<a name="line.489"></a>
+<FONT color="green">490</FONT>                                    return null;<a name="line.490"></a>
+<FONT color="green">491</FONT>                                }<a name="line.491"></a>
+<FONT color="green">492</FONT>                            }<a name="line.492"></a>
+<FONT color="green">493</FONT>                        }<a name="line.493"></a>
+<FONT color="green">494</FONT>                    }<a name="line.494"></a>
+<FONT color="green">495</FONT>                }<a name="line.495"></a>
+<FONT color="green">496</FONT>                LOGGER.error("Cannot process configuration, input source is null");<a name="line.496"></a>
+<FONT color="green">497</FONT>                return null;<a name="line.497"></a>
+<FONT color="green">498</FONT>            }<a name="line.498"></a>
+<FONT color="green">499</FONT>        }<a name="line.499"></a>
+<FONT color="green">500</FONT>    }<a name="line.500"></a>
 
 
 

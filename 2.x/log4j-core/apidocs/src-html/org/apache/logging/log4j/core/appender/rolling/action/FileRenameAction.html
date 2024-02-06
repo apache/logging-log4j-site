@@ -80,79 +80,83 @@
 <FONT color="green">077</FONT>            if (renameEmptyFiles || source.length() &gt; 0) {<a name="line.77"></a>
 <FONT color="green">078</FONT>                final File parent = destination.getParentFile();<a name="line.78"></a>
 <FONT color="green">079</FONT>                if (parent != null &amp;&amp; !parent.exists()) {<a name="line.79"></a>
-<FONT color="green">080</FONT>                    if (!parent.mkdirs()) {<a name="line.80"></a>
-<FONT color="green">081</FONT>                        LOGGER.error("Unable to create directory {}", parent.getAbsolutePath());<a name="line.81"></a>
-<FONT color="green">082</FONT>                        return false;<a name="line.82"></a>
-<FONT color="green">083</FONT>                    }<a name="line.83"></a>
-<FONT color="green">084</FONT>                }<a name="line.84"></a>
-<FONT color="green">085</FONT>                try {<a name="line.85"></a>
-<FONT color="green">086</FONT>                    if (!source.renameTo(destination)) {<a name="line.86"></a>
-<FONT color="green">087</FONT>                        try {<a name="line.87"></a>
-<FONT color="green">088</FONT>                            copyFile(source, destination);<a name="line.88"></a>
-<FONT color="green">089</FONT>                            return source.delete();<a name="line.89"></a>
-<FONT color="green">090</FONT>                        } catch (final IOException iex) {<a name="line.90"></a>
-<FONT color="green">091</FONT>                            LOGGER.error("Unable to rename file {} to {} - {}", source.getAbsolutePath(),<a name="line.91"></a>
-<FONT color="green">092</FONT>                                destination.getAbsolutePath(), iex.getMessage());<a name="line.92"></a>
-<FONT color="green">093</FONT>                        }<a name="line.93"></a>
-<FONT color="green">094</FONT>                    }<a name="line.94"></a>
-<FONT color="green">095</FONT>                    return true;<a name="line.95"></a>
-<FONT color="green">096</FONT>                } catch (final Exception ex) {<a name="line.96"></a>
-<FONT color="green">097</FONT>                    try {<a name="line.97"></a>
-<FONT color="green">098</FONT>                        copyFile(source, destination);<a name="line.98"></a>
-<FONT color="green">099</FONT>                        return source.delete();<a name="line.99"></a>
-<FONT color="green">100</FONT>                    } catch (final IOException iex) {<a name="line.100"></a>
-<FONT color="green">101</FONT>                        LOGGER.error("Unable to rename file {} to {} - {}", source.getAbsolutePath(),<a name="line.101"></a>
-<FONT color="green">102</FONT>                            destination.getAbsolutePath(), iex.getMessage());<a name="line.102"></a>
-<FONT color="green">103</FONT>                    }<a name="line.103"></a>
-<FONT color="green">104</FONT>                }<a name="line.104"></a>
-<FONT color="green">105</FONT>            } else {<a name="line.105"></a>
-<FONT color="green">106</FONT>                try {<a name="line.106"></a>
-<FONT color="green">107</FONT>                    source.delete();<a name="line.107"></a>
-<FONT color="green">108</FONT>                } catch (final Exception ex) {<a name="line.108"></a>
-<FONT color="green">109</FONT>                    LOGGER.error("Unable to delete empty file " + source.getAbsolutePath());<a name="line.109"></a>
-<FONT color="green">110</FONT>                }<a name="line.110"></a>
-<FONT color="green">111</FONT>            }<a name="line.111"></a>
-<FONT color="green">112</FONT>    <a name="line.112"></a>
-<FONT color="green">113</FONT>            return false;<a name="line.113"></a>
-<FONT color="green">114</FONT>        }<a name="line.114"></a>
-<FONT color="green">115</FONT>    <a name="line.115"></a>
-<FONT color="green">116</FONT>        private static void copyFile(final File source, final File destination) throws IOException {<a name="line.116"></a>
-<FONT color="green">117</FONT>            if (!destination.exists()) {<a name="line.117"></a>
-<FONT color="green">118</FONT>                destination.createNewFile();<a name="line.118"></a>
-<FONT color="green">119</FONT>            }<a name="line.119"></a>
-<FONT color="green">120</FONT>    <a name="line.120"></a>
-<FONT color="green">121</FONT>            FileChannel srcChannel = null;<a name="line.121"></a>
-<FONT color="green">122</FONT>            FileChannel destChannel = null;<a name="line.122"></a>
-<FONT color="green">123</FONT>            FileInputStream srcStream = null;<a name="line.123"></a>
-<FONT color="green">124</FONT>            FileOutputStream destStream = null;<a name="line.124"></a>
-<FONT color="green">125</FONT>            try {<a name="line.125"></a>
-<FONT color="green">126</FONT>                srcStream = new FileInputStream(source);<a name="line.126"></a>
-<FONT color="green">127</FONT>                destStream = new FileOutputStream(destination);<a name="line.127"></a>
-<FONT color="green">128</FONT>                srcChannel = srcStream.getChannel();<a name="line.128"></a>
-<FONT color="green">129</FONT>                destChannel = destStream.getChannel();<a name="line.129"></a>
-<FONT color="green">130</FONT>                destChannel.transferFrom(srcChannel, 0, srcChannel.size());<a name="line.130"></a>
-<FONT color="green">131</FONT>            } finally {<a name="line.131"></a>
-<FONT color="green">132</FONT>                if (srcChannel != null) {<a name="line.132"></a>
-<FONT color="green">133</FONT>                    srcChannel.close();<a name="line.133"></a>
-<FONT color="green">134</FONT>                }<a name="line.134"></a>
-<FONT color="green">135</FONT>                if (srcStream != null) {<a name="line.135"></a>
-<FONT color="green">136</FONT>                    srcStream.close();<a name="line.136"></a>
-<FONT color="green">137</FONT>                }<a name="line.137"></a>
-<FONT color="green">138</FONT>                if (destChannel != null) {<a name="line.138"></a>
-<FONT color="green">139</FONT>                    destChannel.close();<a name="line.139"></a>
-<FONT color="green">140</FONT>                }<a name="line.140"></a>
-<FONT color="green">141</FONT>                if (destStream != null) {<a name="line.141"></a>
-<FONT color="green">142</FONT>                    destStream.close();<a name="line.142"></a>
-<FONT color="green">143</FONT>                }<a name="line.143"></a>
-<FONT color="green">144</FONT>            }<a name="line.144"></a>
-<FONT color="green">145</FONT>        }<a name="line.145"></a>
-<FONT color="green">146</FONT>    <a name="line.146"></a>
-<FONT color="green">147</FONT>        @Override<a name="line.147"></a>
-<FONT color="green">148</FONT>        public String toString() {<a name="line.148"></a>
-<FONT color="green">149</FONT>            return FileRenameAction.class.getSimpleName() + '[' + source + " to " + destination //<a name="line.149"></a>
-<FONT color="green">150</FONT>                    + ", renameEmptyFiles=" + renameEmptyFiles + ']';<a name="line.150"></a>
-<FONT color="green">151</FONT>        }<a name="line.151"></a>
-<FONT color="green">152</FONT>    }<a name="line.152"></a>
+<FONT color="green">080</FONT>                    // LOG4J2-679: ignore mkdirs() result: in multithreaded scenarios,<a name="line.80"></a>
+<FONT color="green">081</FONT>                    // if one thread succeeds the other thread returns false<a name="line.81"></a>
+<FONT color="green">082</FONT>                    // even though directories have been created. Check if dir exists instead.<a name="line.82"></a>
+<FONT color="green">083</FONT>                    parent.mkdirs();<a name="line.83"></a>
+<FONT color="green">084</FONT>                    if (!parent.exists()) {<a name="line.84"></a>
+<FONT color="green">085</FONT>                        LOGGER.error("Unable to create directory {}", parent.getAbsolutePath());<a name="line.85"></a>
+<FONT color="green">086</FONT>                        return false;<a name="line.86"></a>
+<FONT color="green">087</FONT>                    }<a name="line.87"></a>
+<FONT color="green">088</FONT>                }<a name="line.88"></a>
+<FONT color="green">089</FONT>                try {<a name="line.89"></a>
+<FONT color="green">090</FONT>                    if (!source.renameTo(destination)) {<a name="line.90"></a>
+<FONT color="green">091</FONT>                        try {<a name="line.91"></a>
+<FONT color="green">092</FONT>                            copyFile(source, destination);<a name="line.92"></a>
+<FONT color="green">093</FONT>                            return source.delete();<a name="line.93"></a>
+<FONT color="green">094</FONT>                        } catch (final IOException iex) {<a name="line.94"></a>
+<FONT color="green">095</FONT>                            LOGGER.error("Unable to rename file {} to {} - {}", source.getAbsolutePath(),<a name="line.95"></a>
+<FONT color="green">096</FONT>                                destination.getAbsolutePath(), iex.getMessage());<a name="line.96"></a>
+<FONT color="green">097</FONT>                        }<a name="line.97"></a>
+<FONT color="green">098</FONT>                    }<a name="line.98"></a>
+<FONT color="green">099</FONT>                    return true;<a name="line.99"></a>
+<FONT color="green">100</FONT>                } catch (final Exception ex) {<a name="line.100"></a>
+<FONT color="green">101</FONT>                    try {<a name="line.101"></a>
+<FONT color="green">102</FONT>                        copyFile(source, destination);<a name="line.102"></a>
+<FONT color="green">103</FONT>                        return source.delete();<a name="line.103"></a>
+<FONT color="green">104</FONT>                    } catch (final IOException iex) {<a name="line.104"></a>
+<FONT color="green">105</FONT>                        LOGGER.error("Unable to rename file {} to {} - {}", source.getAbsolutePath(),<a name="line.105"></a>
+<FONT color="green">106</FONT>                            destination.getAbsolutePath(), iex.getMessage());<a name="line.106"></a>
+<FONT color="green">107</FONT>                    }<a name="line.107"></a>
+<FONT color="green">108</FONT>                }<a name="line.108"></a>
+<FONT color="green">109</FONT>            } else {<a name="line.109"></a>
+<FONT color="green">110</FONT>                try {<a name="line.110"></a>
+<FONT color="green">111</FONT>                    source.delete();<a name="line.111"></a>
+<FONT color="green">112</FONT>                } catch (final Exception ex) {<a name="line.112"></a>
+<FONT color="green">113</FONT>                    LOGGER.error("Unable to delete empty file " + source.getAbsolutePath());<a name="line.113"></a>
+<FONT color="green">114</FONT>                }<a name="line.114"></a>
+<FONT color="green">115</FONT>            }<a name="line.115"></a>
+<FONT color="green">116</FONT>    <a name="line.116"></a>
+<FONT color="green">117</FONT>            return false;<a name="line.117"></a>
+<FONT color="green">118</FONT>        }<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>        private static void copyFile(final File source, final File destination) throws IOException {<a name="line.120"></a>
+<FONT color="green">121</FONT>            if (!destination.exists()) {<a name="line.121"></a>
+<FONT color="green">122</FONT>                destination.createNewFile();<a name="line.122"></a>
+<FONT color="green">123</FONT>            }<a name="line.123"></a>
+<FONT color="green">124</FONT>    <a name="line.124"></a>
+<FONT color="green">125</FONT>            FileChannel srcChannel = null;<a name="line.125"></a>
+<FONT color="green">126</FONT>            FileChannel destChannel = null;<a name="line.126"></a>
+<FONT color="green">127</FONT>            FileInputStream srcStream = null;<a name="line.127"></a>
+<FONT color="green">128</FONT>            FileOutputStream destStream = null;<a name="line.128"></a>
+<FONT color="green">129</FONT>            try {<a name="line.129"></a>
+<FONT color="green">130</FONT>                srcStream = new FileInputStream(source);<a name="line.130"></a>
+<FONT color="green">131</FONT>                destStream = new FileOutputStream(destination);<a name="line.131"></a>
+<FONT color="green">132</FONT>                srcChannel = srcStream.getChannel();<a name="line.132"></a>
+<FONT color="green">133</FONT>                destChannel = destStream.getChannel();<a name="line.133"></a>
+<FONT color="green">134</FONT>                destChannel.transferFrom(srcChannel, 0, srcChannel.size());<a name="line.134"></a>
+<FONT color="green">135</FONT>            } finally {<a name="line.135"></a>
+<FONT color="green">136</FONT>                if (srcChannel != null) {<a name="line.136"></a>
+<FONT color="green">137</FONT>                    srcChannel.close();<a name="line.137"></a>
+<FONT color="green">138</FONT>                }<a name="line.138"></a>
+<FONT color="green">139</FONT>                if (srcStream != null) {<a name="line.139"></a>
+<FONT color="green">140</FONT>                    srcStream.close();<a name="line.140"></a>
+<FONT color="green">141</FONT>                }<a name="line.141"></a>
+<FONT color="green">142</FONT>                if (destChannel != null) {<a name="line.142"></a>
+<FONT color="green">143</FONT>                    destChannel.close();<a name="line.143"></a>
+<FONT color="green">144</FONT>                }<a name="line.144"></a>
+<FONT color="green">145</FONT>                if (destStream != null) {<a name="line.145"></a>
+<FONT color="green">146</FONT>                    destStream.close();<a name="line.146"></a>
+<FONT color="green">147</FONT>                }<a name="line.147"></a>
+<FONT color="green">148</FONT>            }<a name="line.148"></a>
+<FONT color="green">149</FONT>        }<a name="line.149"></a>
+<FONT color="green">150</FONT>    <a name="line.150"></a>
+<FONT color="green">151</FONT>        @Override<a name="line.151"></a>
+<FONT color="green">152</FONT>        public String toString() {<a name="line.152"></a>
+<FONT color="green">153</FONT>            return FileRenameAction.class.getSimpleName() + '[' + source + " to " + destination //<a name="line.153"></a>
+<FONT color="green">154</FONT>                    + ", renameEmptyFiles=" + renameEmptyFiles + ']';<a name="line.154"></a>
+<FONT color="green">155</FONT>        }<a name="line.155"></a>
+<FONT color="green">156</FONT>    }<a name="line.156"></a>
 
 
 

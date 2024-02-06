@@ -30,7 +30,7 @@
 <FONT color="green">027</FONT>    import org.apache.logging.log4j.status.StatusLogger;<a name="line.27"></a>
 <FONT color="green">028</FONT>    <a name="line.28"></a>
 <FONT color="green">029</FONT>    /**<a name="line.29"></a>
-<FONT color="green">030</FONT>     * The Interpolator is a StrLookup that acts as a proxy for all the other StrLookups.<a name="line.30"></a>
+<FONT color="green">030</FONT>     * Proxies all the other StrLookups.<a name="line.30"></a>
 <FONT color="green">031</FONT>     */<a name="line.31"></a>
 <FONT color="green">032</FONT>    public class Interpolator implements StrLookup {<a name="line.32"></a>
 <FONT color="green">033</FONT>    <a name="line.33"></a>
@@ -77,8 +77,8 @@
 <FONT color="green">074</FONT>            lookups.put("env", new EnvironmentLookup());<a name="line.74"></a>
 <FONT color="green">075</FONT>            try {<a name="line.75"></a>
 <FONT color="green">076</FONT>                // [LOG4J2-703] We might be on Android<a name="line.76"></a>
-<FONT color="green">077</FONT>                lookups.put("jndi", (StrLookup) Class.forName("org.apache.logging.log4j.core.lookup.JndiLookup")<a name="line.77"></a>
-<FONT color="green">078</FONT>                        .newInstance());<a name="line.78"></a>
+<FONT color="green">077</FONT>                lookups.put("jndi",<a name="line.77"></a>
+<FONT color="green">078</FONT>                    Loader.newCheckedInstanceOf("org.apache.logging.log4j.core.lookup.JndiLookup", StrLookup.class));<a name="line.78"></a>
 <FONT color="green">079</FONT>            } catch (Throwable e) {<a name="line.79"></a>
 <FONT color="green">080</FONT>                // java.lang.VerifyError: org/apache/logging/log4j/core/lookup/JndiLookup<a name="line.80"></a>
 <FONT color="green">081</FONT>                LOGGER.warn(<a name="line.81"></a>
