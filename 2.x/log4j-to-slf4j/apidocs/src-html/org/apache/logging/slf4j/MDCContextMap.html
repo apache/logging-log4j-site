@@ -79,39 +79,41 @@
 <span class="sourceLineNo">071</span><a name="line.71"></a>
 <span class="sourceLineNo">072</span>    @Override<a name="line.72"></a>
 <span class="sourceLineNo">073</span>    public boolean containsKey(final String key) {<a name="line.73"></a>
-<span class="sourceLineNo">074</span>        return MDC.getCopyOfContextMap().containsKey(key);<a name="line.74"></a>
-<span class="sourceLineNo">075</span>    }<a name="line.75"></a>
-<span class="sourceLineNo">076</span><a name="line.76"></a>
-<span class="sourceLineNo">077</span>    @Override<a name="line.77"></a>
-<span class="sourceLineNo">078</span>    @SuppressWarnings("unchecked") // nothing we can do about this, restricted by SLF4J API<a name="line.78"></a>
-<span class="sourceLineNo">079</span>    public Map&lt;String, String&gt; getCopy() {<a name="line.79"></a>
-<span class="sourceLineNo">080</span>        return MDC.getCopyOfContextMap();<a name="line.80"></a>
-<span class="sourceLineNo">081</span>    }<a name="line.81"></a>
-<span class="sourceLineNo">082</span><a name="line.82"></a>
-<span class="sourceLineNo">083</span>    @Override<a name="line.83"></a>
-<span class="sourceLineNo">084</span>    @SuppressWarnings("unchecked") // nothing we can do about this, restricted by SLF4J API<a name="line.84"></a>
-<span class="sourceLineNo">085</span>    public Map&lt;String, String&gt; getImmutableMapOrNull() {<a name="line.85"></a>
-<span class="sourceLineNo">086</span>        return MDC.getCopyOfContextMap();<a name="line.86"></a>
-<span class="sourceLineNo">087</span>    }<a name="line.87"></a>
-<span class="sourceLineNo">088</span><a name="line.88"></a>
-<span class="sourceLineNo">089</span>    @Override<a name="line.89"></a>
-<span class="sourceLineNo">090</span>    public boolean isEmpty() {<a name="line.90"></a>
-<span class="sourceLineNo">091</span>        return MDC.getCopyOfContextMap().isEmpty();<a name="line.91"></a>
-<span class="sourceLineNo">092</span>    }<a name="line.92"></a>
-<span class="sourceLineNo">093</span><a name="line.93"></a>
-<span class="sourceLineNo">094</span>    @Override<a name="line.94"></a>
-<span class="sourceLineNo">095</span>    public StringMap getReadOnlyContextData() {<a name="line.95"></a>
-<span class="sourceLineNo">096</span>        final Map&lt;String, String&gt; copy = getCopy();<a name="line.96"></a>
-<span class="sourceLineNo">097</span>        if (copy.isEmpty()) {<a name="line.97"></a>
-<span class="sourceLineNo">098</span>            return EMPTY_CONTEXT_DATA;<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        }<a name="line.99"></a>
-<span class="sourceLineNo">100</span>        final StringMap result = new SortedArrayStringMap();<a name="line.100"></a>
-<span class="sourceLineNo">101</span>        for (final Entry&lt;String, String&gt; entry : copy.entrySet()) {<a name="line.101"></a>
-<span class="sourceLineNo">102</span>            result.putValue(entry.getKey(), entry.getValue());<a name="line.102"></a>
-<span class="sourceLineNo">103</span>        }<a name="line.103"></a>
-<span class="sourceLineNo">104</span>        return result;<a name="line.104"></a>
-<span class="sourceLineNo">105</span>    }<a name="line.105"></a>
-<span class="sourceLineNo">106</span>}<a name="line.106"></a>
+<span class="sourceLineNo">074</span>        Map&lt;String, String&gt; map = MDC.getCopyOfContextMap();<a name="line.74"></a>
+<span class="sourceLineNo">075</span>        return map != null &amp;&amp; map.containsKey(key);<a name="line.75"></a>
+<span class="sourceLineNo">076</span>    }<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>    @Override<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    @SuppressWarnings("unchecked") // nothing we can do about this, restricted by SLF4J API<a name="line.79"></a>
+<span class="sourceLineNo">080</span>    public Map&lt;String, String&gt; getCopy() {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        return MDC.getCopyOfContextMap();<a name="line.81"></a>
+<span class="sourceLineNo">082</span>    }<a name="line.82"></a>
+<span class="sourceLineNo">083</span><a name="line.83"></a>
+<span class="sourceLineNo">084</span>    @Override<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    @SuppressWarnings("unchecked") // nothing we can do about this, restricted by SLF4J API<a name="line.85"></a>
+<span class="sourceLineNo">086</span>    public Map&lt;String, String&gt; getImmutableMapOrNull() {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        return MDC.getCopyOfContextMap();<a name="line.87"></a>
+<span class="sourceLineNo">088</span>    }<a name="line.88"></a>
+<span class="sourceLineNo">089</span><a name="line.89"></a>
+<span class="sourceLineNo">090</span>    @Override<a name="line.90"></a>
+<span class="sourceLineNo">091</span>    public boolean isEmpty() {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        Map&lt;String, String&gt; map = MDC.getCopyOfContextMap();<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        return map == null || map.isEmpty();<a name="line.93"></a>
+<span class="sourceLineNo">094</span>    }<a name="line.94"></a>
+<span class="sourceLineNo">095</span><a name="line.95"></a>
+<span class="sourceLineNo">096</span>    @Override<a name="line.96"></a>
+<span class="sourceLineNo">097</span>    public StringMap getReadOnlyContextData() {<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        final Map&lt;String, String&gt; copy = getCopy();<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        if (copy.isEmpty()) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>            return EMPTY_CONTEXT_DATA;<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        }<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        final StringMap result = new SortedArrayStringMap();<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        for (final Entry&lt;String, String&gt; entry : copy.entrySet()) {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>            result.putValue(entry.getKey(), entry.getValue());<a name="line.104"></a>
+<span class="sourceLineNo">105</span>        }<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        return result;<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    }<a name="line.107"></a>
+<span class="sourceLineNo">108</span>}<a name="line.108"></a>
 
 
 

@@ -235,141 +235,142 @@
 <span class="sourceLineNo">227</span>    public void updateTime() {<a name="line.227"></a>
 <span class="sourceLineNo">228</span>        if (nextFileTime != 0 || !isTimeBased) {<a name="line.228"></a>
 <span class="sourceLineNo">229</span>                        prevFileTime = nextFileTime;<a name="line.229"></a>
-<span class="sourceLineNo">230</span>                }<a name="line.230"></a>
-<span class="sourceLineNo">231</span>    }<a name="line.231"></a>
-<span class="sourceLineNo">232</span><a name="line.232"></a>
-<span class="sourceLineNo">233</span>    private long debugGetNextTime(final long nextTime) {<a name="line.233"></a>
-<span class="sourceLineNo">234</span>        if (LOGGER.isTraceEnabled()) {<a name="line.234"></a>
-<span class="sourceLineNo">235</span>            LOGGER.trace("PatternProcessor.getNextTime returning {}, nextFileTime={}, prevFileTime={}, current={}, freq={}", //<a name="line.235"></a>
-<span class="sourceLineNo">236</span>                    format(nextTime), format(nextFileTime), format(prevFileTime), format(System.currentTimeMillis()), frequency);<a name="line.236"></a>
-<span class="sourceLineNo">237</span>        }<a name="line.237"></a>
-<span class="sourceLineNo">238</span>        return nextTime;<a name="line.238"></a>
-<span class="sourceLineNo">239</span>    }<a name="line.239"></a>
-<span class="sourceLineNo">240</span><a name="line.240"></a>
-<span class="sourceLineNo">241</span>    private String format(final long time) {<a name="line.241"></a>
-<span class="sourceLineNo">242</span>        return new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss.SSS").format(new Date(time));<a name="line.242"></a>
-<span class="sourceLineNo">243</span>    }<a name="line.243"></a>
-<span class="sourceLineNo">244</span><a name="line.244"></a>
-<span class="sourceLineNo">245</span>    private void increment(final Calendar cal, final int type, final int increment, final boolean modulate) {<a name="line.245"></a>
-<span class="sourceLineNo">246</span>        final int interval =  modulate ? increment - (cal.get(type) % increment) : increment;<a name="line.246"></a>
-<span class="sourceLineNo">247</span>        cal.add(type, interval);<a name="line.247"></a>
-<span class="sourceLineNo">248</span>    }<a name="line.248"></a>
-<span class="sourceLineNo">249</span><a name="line.249"></a>
-<span class="sourceLineNo">250</span>    /**<a name="line.250"></a>
-<span class="sourceLineNo">251</span>     * Format file name.<a name="line.251"></a>
-<span class="sourceLineNo">252</span>     * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.252"></a>
-<span class="sourceLineNo">253</span>     * @param obj object to be evaluated in formatting, may not be null.<a name="line.253"></a>
-<span class="sourceLineNo">254</span>     */<a name="line.254"></a>
-<span class="sourceLineNo">255</span>    public final void formatFileName(final StringBuilder buf, final boolean useCurrentTime, final Object obj) {<a name="line.255"></a>
-<span class="sourceLineNo">256</span>        long time = useCurrentTime ? currentFileTime : prevFileTime;<a name="line.256"></a>
-<span class="sourceLineNo">257</span>        if (time == 0) {<a name="line.257"></a>
-<span class="sourceLineNo">258</span>            time = System.currentTimeMillis();<a name="line.258"></a>
-<span class="sourceLineNo">259</span>        }<a name="line.259"></a>
-<span class="sourceLineNo">260</span>        formatFileName(buf, new Date(time), obj);<a name="line.260"></a>
-<span class="sourceLineNo">261</span>    }<a name="line.261"></a>
-<span class="sourceLineNo">262</span><a name="line.262"></a>
-<span class="sourceLineNo">263</span>    /**<a name="line.263"></a>
-<span class="sourceLineNo">264</span>     * Formats file name.<a name="line.264"></a>
-<span class="sourceLineNo">265</span>     * @param subst The StrSubstitutor.<a name="line.265"></a>
-<span class="sourceLineNo">266</span>     * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.266"></a>
-<span class="sourceLineNo">267</span>     * @param obj object to be evaluated in formatting, may not be null.<a name="line.267"></a>
-<span class="sourceLineNo">268</span>     */<a name="line.268"></a>
-<span class="sourceLineNo">269</span>    public final void formatFileName(final StrSubstitutor subst, final StringBuilder buf, final Object obj) {<a name="line.269"></a>
-<span class="sourceLineNo">270</span>        formatFileName(subst, buf, false, obj);<a name="line.270"></a>
-<span class="sourceLineNo">271</span>    }<a name="line.271"></a>
-<span class="sourceLineNo">272</span><a name="line.272"></a>
-<span class="sourceLineNo">273</span>    /**<a name="line.273"></a>
-<span class="sourceLineNo">274</span>     * Formats file name.<a name="line.274"></a>
-<span class="sourceLineNo">275</span>     * @param subst The StrSubstitutor.<a name="line.275"></a>
-<span class="sourceLineNo">276</span>     * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.276"></a>
-<span class="sourceLineNo">277</span>     * @param obj object to be evaluated in formatting, may not be null.<a name="line.277"></a>
-<span class="sourceLineNo">278</span>     */<a name="line.278"></a>
-<span class="sourceLineNo">279</span>    public final void formatFileName(final StrSubstitutor subst, final StringBuilder buf, final boolean useCurrentTime,<a name="line.279"></a>
-<span class="sourceLineNo">280</span>                                     final Object obj) {<a name="line.280"></a>
-<span class="sourceLineNo">281</span>        // LOG4J2-628: we deliberately use System time, not the log4j.Clock time<a name="line.281"></a>
-<span class="sourceLineNo">282</span>        // for creating the file name of rolled-over files.<a name="line.282"></a>
-<span class="sourceLineNo">283</span>        LOGGER.debug("Formatting file name. useCurrentTime={}. currentFileTime={}, prevFileTime={}",<a name="line.283"></a>
-<span class="sourceLineNo">284</span>            useCurrentTime, currentFileTime, prevFileTime);<a name="line.284"></a>
-<span class="sourceLineNo">285</span>        final long time = useCurrentTime ? currentFileTime != 0 ? currentFileTime : System.currentTimeMillis() :<a name="line.285"></a>
-<span class="sourceLineNo">286</span>                prevFileTime != 0 ? prevFileTime : System.currentTimeMillis();<a name="line.286"></a>
-<span class="sourceLineNo">287</span>        formatFileName(buf, new Date(time), obj);<a name="line.287"></a>
-<span class="sourceLineNo">288</span>        final LogEvent event = new Log4jLogEvent.Builder().setTimeMillis(time).build();<a name="line.288"></a>
-<span class="sourceLineNo">289</span>        final String fileName = subst.replace(event, buf);<a name="line.289"></a>
-<span class="sourceLineNo">290</span>        buf.setLength(0);<a name="line.290"></a>
-<span class="sourceLineNo">291</span>        buf.append(fileName);<a name="line.291"></a>
-<span class="sourceLineNo">292</span>    }<a name="line.292"></a>
-<span class="sourceLineNo">293</span><a name="line.293"></a>
-<span class="sourceLineNo">294</span>    /**<a name="line.294"></a>
-<span class="sourceLineNo">295</span>     * Formats file name.<a name="line.295"></a>
-<span class="sourceLineNo">296</span>     * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.296"></a>
-<span class="sourceLineNo">297</span>     * @param objects objects to be evaluated in formatting, may not be null.<a name="line.297"></a>
-<span class="sourceLineNo">298</span>     */<a name="line.298"></a>
-<span class="sourceLineNo">299</span>    protected final void formatFileName(final StringBuilder buf, final Object... objects) {<a name="line.299"></a>
-<span class="sourceLineNo">300</span>        for (int i = 0; i &lt; patternConverters.length; i++) {<a name="line.300"></a>
-<span class="sourceLineNo">301</span>            final int fieldStart = buf.length();<a name="line.301"></a>
-<span class="sourceLineNo">302</span>            patternConverters[i].format(buf, objects);<a name="line.302"></a>
-<span class="sourceLineNo">303</span><a name="line.303"></a>
-<span class="sourceLineNo">304</span>            if (patternFields[i] != null) {<a name="line.304"></a>
-<span class="sourceLineNo">305</span>                patternFields[i].format(fieldStart, buf);<a name="line.305"></a>
-<span class="sourceLineNo">306</span>            }<a name="line.306"></a>
-<span class="sourceLineNo">307</span>        }<a name="line.307"></a>
-<span class="sourceLineNo">308</span>    }<a name="line.308"></a>
-<span class="sourceLineNo">309</span><a name="line.309"></a>
-<span class="sourceLineNo">310</span>    private RolloverFrequency calculateFrequency(final String pattern) {<a name="line.310"></a>
-<span class="sourceLineNo">311</span>        if (patternContains(pattern, MILLIS_CHAR)) {<a name="line.311"></a>
-<span class="sourceLineNo">312</span>            return RolloverFrequency.EVERY_MILLISECOND;<a name="line.312"></a>
-<span class="sourceLineNo">313</span>        }<a name="line.313"></a>
-<span class="sourceLineNo">314</span>        if (patternContains(pattern, SECOND_CHAR)) {<a name="line.314"></a>
-<span class="sourceLineNo">315</span>            return RolloverFrequency.EVERY_SECOND;<a name="line.315"></a>
-<span class="sourceLineNo">316</span>        }<a name="line.316"></a>
-<span class="sourceLineNo">317</span>        if (patternContains(pattern, MINUTE_CHAR)) {<a name="line.317"></a>
-<span class="sourceLineNo">318</span>            return RolloverFrequency.EVERY_MINUTE;<a name="line.318"></a>
-<span class="sourceLineNo">319</span>        }<a name="line.319"></a>
-<span class="sourceLineNo">320</span>        if (patternContains(pattern, HOUR_CHARS)) {<a name="line.320"></a>
-<span class="sourceLineNo">321</span>            return RolloverFrequency.HOURLY;<a name="line.321"></a>
-<span class="sourceLineNo">322</span>        }<a name="line.322"></a>
-<span class="sourceLineNo">323</span>        if (patternContains(pattern, DAY_CHARS)) {<a name="line.323"></a>
-<span class="sourceLineNo">324</span>            return RolloverFrequency.DAILY;<a name="line.324"></a>
-<span class="sourceLineNo">325</span>        }<a name="line.325"></a>
-<span class="sourceLineNo">326</span>        if (patternContains(pattern, WEEK_CHARS)) {<a name="line.326"></a>
-<span class="sourceLineNo">327</span>            return RolloverFrequency.WEEKLY;<a name="line.327"></a>
-<span class="sourceLineNo">328</span>        }<a name="line.328"></a>
-<span class="sourceLineNo">329</span>        if (patternContains(pattern, MONTH_CHAR)) {<a name="line.329"></a>
-<span class="sourceLineNo">330</span>            return RolloverFrequency.MONTHLY;<a name="line.330"></a>
-<span class="sourceLineNo">331</span>        }<a name="line.331"></a>
-<span class="sourceLineNo">332</span>        if (patternContains(pattern, YEAR_CHAR)) {<a name="line.332"></a>
-<span class="sourceLineNo">333</span>            return RolloverFrequency.ANNUALLY;<a name="line.333"></a>
-<span class="sourceLineNo">334</span>        }<a name="line.334"></a>
-<span class="sourceLineNo">335</span>        return null;<a name="line.335"></a>
-<span class="sourceLineNo">336</span>    }<a name="line.336"></a>
-<span class="sourceLineNo">337</span><a name="line.337"></a>
-<span class="sourceLineNo">338</span>    private PatternParser createPatternParser() {<a name="line.338"></a>
-<span class="sourceLineNo">339</span><a name="line.339"></a>
-<span class="sourceLineNo">340</span>        return new PatternParser(null, KEY, null);<a name="line.340"></a>
-<span class="sourceLineNo">341</span>    }<a name="line.341"></a>
-<span class="sourceLineNo">342</span><a name="line.342"></a>
-<span class="sourceLineNo">343</span>    private boolean patternContains(final String pattern, final char... chars) {<a name="line.343"></a>
-<span class="sourceLineNo">344</span>        for (final char character : chars) {<a name="line.344"></a>
-<span class="sourceLineNo">345</span>            if (patternContains(pattern, character)) {<a name="line.345"></a>
-<span class="sourceLineNo">346</span>                return true;<a name="line.346"></a>
-<span class="sourceLineNo">347</span>            }<a name="line.347"></a>
-<span class="sourceLineNo">348</span>        }<a name="line.348"></a>
-<span class="sourceLineNo">349</span>        return false;<a name="line.349"></a>
-<span class="sourceLineNo">350</span>    }<a name="line.350"></a>
-<span class="sourceLineNo">351</span><a name="line.351"></a>
-<span class="sourceLineNo">352</span>    private boolean patternContains(final String pattern, final char character) {<a name="line.352"></a>
-<span class="sourceLineNo">353</span>        return pattern.indexOf(character) &gt;= 0;<a name="line.353"></a>
-<span class="sourceLineNo">354</span>    }<a name="line.354"></a>
-<span class="sourceLineNo">355</span><a name="line.355"></a>
-<span class="sourceLineNo">356</span>    public RolloverFrequency getFrequency() {<a name="line.356"></a>
-<span class="sourceLineNo">357</span>        return frequency;<a name="line.357"></a>
-<span class="sourceLineNo">358</span>    }<a name="line.358"></a>
-<span class="sourceLineNo">359</span><a name="line.359"></a>
-<span class="sourceLineNo">360</span>    public long getNextFileTime() {<a name="line.360"></a>
-<span class="sourceLineNo">361</span>        return nextFileTime;<a name="line.361"></a>
-<span class="sourceLineNo">362</span>    }<a name="line.362"></a>
-<span class="sourceLineNo">363</span><a name="line.363"></a>
-<span class="sourceLineNo">364</span>}<a name="line.364"></a>
+<span class="sourceLineNo">230</span>            currentFileTime = 0;<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                }<a name="line.231"></a>
+<span class="sourceLineNo">232</span>    }<a name="line.232"></a>
+<span class="sourceLineNo">233</span><a name="line.233"></a>
+<span class="sourceLineNo">234</span>    private long debugGetNextTime(final long nextTime) {<a name="line.234"></a>
+<span class="sourceLineNo">235</span>        if (LOGGER.isTraceEnabled()) {<a name="line.235"></a>
+<span class="sourceLineNo">236</span>            LOGGER.trace("PatternProcessor.getNextTime returning {}, nextFileTime={}, prevFileTime={}, current={}, freq={}", //<a name="line.236"></a>
+<span class="sourceLineNo">237</span>                    format(nextTime), format(nextFileTime), format(prevFileTime), format(System.currentTimeMillis()), frequency);<a name="line.237"></a>
+<span class="sourceLineNo">238</span>        }<a name="line.238"></a>
+<span class="sourceLineNo">239</span>        return nextTime;<a name="line.239"></a>
+<span class="sourceLineNo">240</span>    }<a name="line.240"></a>
+<span class="sourceLineNo">241</span><a name="line.241"></a>
+<span class="sourceLineNo">242</span>    private String format(final long time) {<a name="line.242"></a>
+<span class="sourceLineNo">243</span>        return new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss.SSS").format(new Date(time));<a name="line.243"></a>
+<span class="sourceLineNo">244</span>    }<a name="line.244"></a>
+<span class="sourceLineNo">245</span><a name="line.245"></a>
+<span class="sourceLineNo">246</span>    private void increment(final Calendar cal, final int type, final int increment, final boolean modulate) {<a name="line.246"></a>
+<span class="sourceLineNo">247</span>        final int interval =  modulate ? increment - (cal.get(type) % increment) : increment;<a name="line.247"></a>
+<span class="sourceLineNo">248</span>        cal.add(type, interval);<a name="line.248"></a>
+<span class="sourceLineNo">249</span>    }<a name="line.249"></a>
+<span class="sourceLineNo">250</span><a name="line.250"></a>
+<span class="sourceLineNo">251</span>    /**<a name="line.251"></a>
+<span class="sourceLineNo">252</span>     * Format file name.<a name="line.252"></a>
+<span class="sourceLineNo">253</span>     * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.253"></a>
+<span class="sourceLineNo">254</span>     * @param obj object to be evaluated in formatting, may not be null.<a name="line.254"></a>
+<span class="sourceLineNo">255</span>     */<a name="line.255"></a>
+<span class="sourceLineNo">256</span>    public final void formatFileName(final StringBuilder buf, final boolean useCurrentTime, final Object obj) {<a name="line.256"></a>
+<span class="sourceLineNo">257</span>        long time = useCurrentTime ? currentFileTime : prevFileTime;<a name="line.257"></a>
+<span class="sourceLineNo">258</span>        if (time == 0) {<a name="line.258"></a>
+<span class="sourceLineNo">259</span>            time = System.currentTimeMillis();<a name="line.259"></a>
+<span class="sourceLineNo">260</span>        }<a name="line.260"></a>
+<span class="sourceLineNo">261</span>        formatFileName(buf, new Date(time), obj);<a name="line.261"></a>
+<span class="sourceLineNo">262</span>    }<a name="line.262"></a>
+<span class="sourceLineNo">263</span><a name="line.263"></a>
+<span class="sourceLineNo">264</span>    /**<a name="line.264"></a>
+<span class="sourceLineNo">265</span>     * Formats file name.<a name="line.265"></a>
+<span class="sourceLineNo">266</span>     * @param subst The StrSubstitutor.<a name="line.266"></a>
+<span class="sourceLineNo">267</span>     * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.267"></a>
+<span class="sourceLineNo">268</span>     * @param obj object to be evaluated in formatting, may not be null.<a name="line.268"></a>
+<span class="sourceLineNo">269</span>     */<a name="line.269"></a>
+<span class="sourceLineNo">270</span>    public final void formatFileName(final StrSubstitutor subst, final StringBuilder buf, final Object obj) {<a name="line.270"></a>
+<span class="sourceLineNo">271</span>        formatFileName(subst, buf, false, obj);<a name="line.271"></a>
+<span class="sourceLineNo">272</span>    }<a name="line.272"></a>
+<span class="sourceLineNo">273</span><a name="line.273"></a>
+<span class="sourceLineNo">274</span>    /**<a name="line.274"></a>
+<span class="sourceLineNo">275</span>     * Formats file name.<a name="line.275"></a>
+<span class="sourceLineNo">276</span>     * @param subst The StrSubstitutor.<a name="line.276"></a>
+<span class="sourceLineNo">277</span>     * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.277"></a>
+<span class="sourceLineNo">278</span>     * @param obj object to be evaluated in formatting, may not be null.<a name="line.278"></a>
+<span class="sourceLineNo">279</span>     */<a name="line.279"></a>
+<span class="sourceLineNo">280</span>    public final void formatFileName(final StrSubstitutor subst, final StringBuilder buf, final boolean useCurrentTime,<a name="line.280"></a>
+<span class="sourceLineNo">281</span>                                     final Object obj) {<a name="line.281"></a>
+<span class="sourceLineNo">282</span>        // LOG4J2-628: we deliberately use System time, not the log4j.Clock time<a name="line.282"></a>
+<span class="sourceLineNo">283</span>        // for creating the file name of rolled-over files.<a name="line.283"></a>
+<span class="sourceLineNo">284</span>        LOGGER.debug("Formatting file name. useCurrentTime={}. currentFileTime={}, prevFileTime={}",<a name="line.284"></a>
+<span class="sourceLineNo">285</span>            useCurrentTime, currentFileTime, prevFileTime);<a name="line.285"></a>
+<span class="sourceLineNo">286</span>        final long time = useCurrentTime ? currentFileTime != 0 ? currentFileTime : System.currentTimeMillis() :<a name="line.286"></a>
+<span class="sourceLineNo">287</span>                prevFileTime != 0 ? prevFileTime : System.currentTimeMillis();<a name="line.287"></a>
+<span class="sourceLineNo">288</span>        formatFileName(buf, new Date(time), obj);<a name="line.288"></a>
+<span class="sourceLineNo">289</span>        final LogEvent event = new Log4jLogEvent.Builder().setTimeMillis(time).build();<a name="line.289"></a>
+<span class="sourceLineNo">290</span>        final String fileName = subst.replace(event, buf);<a name="line.290"></a>
+<span class="sourceLineNo">291</span>        buf.setLength(0);<a name="line.291"></a>
+<span class="sourceLineNo">292</span>        buf.append(fileName);<a name="line.292"></a>
+<span class="sourceLineNo">293</span>    }<a name="line.293"></a>
+<span class="sourceLineNo">294</span><a name="line.294"></a>
+<span class="sourceLineNo">295</span>    /**<a name="line.295"></a>
+<span class="sourceLineNo">296</span>     * Formats file name.<a name="line.296"></a>
+<span class="sourceLineNo">297</span>     * @param buf string buffer to which formatted file name is appended, may not be null.<a name="line.297"></a>
+<span class="sourceLineNo">298</span>     * @param objects objects to be evaluated in formatting, may not be null.<a name="line.298"></a>
+<span class="sourceLineNo">299</span>     */<a name="line.299"></a>
+<span class="sourceLineNo">300</span>    protected final void formatFileName(final StringBuilder buf, final Object... objects) {<a name="line.300"></a>
+<span class="sourceLineNo">301</span>        for (int i = 0; i &lt; patternConverters.length; i++) {<a name="line.301"></a>
+<span class="sourceLineNo">302</span>            final int fieldStart = buf.length();<a name="line.302"></a>
+<span class="sourceLineNo">303</span>            patternConverters[i].format(buf, objects);<a name="line.303"></a>
+<span class="sourceLineNo">304</span><a name="line.304"></a>
+<span class="sourceLineNo">305</span>            if (patternFields[i] != null) {<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                patternFields[i].format(fieldStart, buf);<a name="line.306"></a>
+<span class="sourceLineNo">307</span>            }<a name="line.307"></a>
+<span class="sourceLineNo">308</span>        }<a name="line.308"></a>
+<span class="sourceLineNo">309</span>    }<a name="line.309"></a>
+<span class="sourceLineNo">310</span><a name="line.310"></a>
+<span class="sourceLineNo">311</span>    private RolloverFrequency calculateFrequency(final String pattern) {<a name="line.311"></a>
+<span class="sourceLineNo">312</span>        if (patternContains(pattern, MILLIS_CHAR)) {<a name="line.312"></a>
+<span class="sourceLineNo">313</span>            return RolloverFrequency.EVERY_MILLISECOND;<a name="line.313"></a>
+<span class="sourceLineNo">314</span>        }<a name="line.314"></a>
+<span class="sourceLineNo">315</span>        if (patternContains(pattern, SECOND_CHAR)) {<a name="line.315"></a>
+<span class="sourceLineNo">316</span>            return RolloverFrequency.EVERY_SECOND;<a name="line.316"></a>
+<span class="sourceLineNo">317</span>        }<a name="line.317"></a>
+<span class="sourceLineNo">318</span>        if (patternContains(pattern, MINUTE_CHAR)) {<a name="line.318"></a>
+<span class="sourceLineNo">319</span>            return RolloverFrequency.EVERY_MINUTE;<a name="line.319"></a>
+<span class="sourceLineNo">320</span>        }<a name="line.320"></a>
+<span class="sourceLineNo">321</span>        if (patternContains(pattern, HOUR_CHARS)) {<a name="line.321"></a>
+<span class="sourceLineNo">322</span>            return RolloverFrequency.HOURLY;<a name="line.322"></a>
+<span class="sourceLineNo">323</span>        }<a name="line.323"></a>
+<span class="sourceLineNo">324</span>        if (patternContains(pattern, DAY_CHARS)) {<a name="line.324"></a>
+<span class="sourceLineNo">325</span>            return RolloverFrequency.DAILY;<a name="line.325"></a>
+<span class="sourceLineNo">326</span>        }<a name="line.326"></a>
+<span class="sourceLineNo">327</span>        if (patternContains(pattern, WEEK_CHARS)) {<a name="line.327"></a>
+<span class="sourceLineNo">328</span>            return RolloverFrequency.WEEKLY;<a name="line.328"></a>
+<span class="sourceLineNo">329</span>        }<a name="line.329"></a>
+<span class="sourceLineNo">330</span>        if (patternContains(pattern, MONTH_CHAR)) {<a name="line.330"></a>
+<span class="sourceLineNo">331</span>            return RolloverFrequency.MONTHLY;<a name="line.331"></a>
+<span class="sourceLineNo">332</span>        }<a name="line.332"></a>
+<span class="sourceLineNo">333</span>        if (patternContains(pattern, YEAR_CHAR)) {<a name="line.333"></a>
+<span class="sourceLineNo">334</span>            return RolloverFrequency.ANNUALLY;<a name="line.334"></a>
+<span class="sourceLineNo">335</span>        }<a name="line.335"></a>
+<span class="sourceLineNo">336</span>        return null;<a name="line.336"></a>
+<span class="sourceLineNo">337</span>    }<a name="line.337"></a>
+<span class="sourceLineNo">338</span><a name="line.338"></a>
+<span class="sourceLineNo">339</span>    private PatternParser createPatternParser() {<a name="line.339"></a>
+<span class="sourceLineNo">340</span><a name="line.340"></a>
+<span class="sourceLineNo">341</span>        return new PatternParser(null, KEY, null);<a name="line.341"></a>
+<span class="sourceLineNo">342</span>    }<a name="line.342"></a>
+<span class="sourceLineNo">343</span><a name="line.343"></a>
+<span class="sourceLineNo">344</span>    private boolean patternContains(final String pattern, final char... chars) {<a name="line.344"></a>
+<span class="sourceLineNo">345</span>        for (final char character : chars) {<a name="line.345"></a>
+<span class="sourceLineNo">346</span>            if (patternContains(pattern, character)) {<a name="line.346"></a>
+<span class="sourceLineNo">347</span>                return true;<a name="line.347"></a>
+<span class="sourceLineNo">348</span>            }<a name="line.348"></a>
+<span class="sourceLineNo">349</span>        }<a name="line.349"></a>
+<span class="sourceLineNo">350</span>        return false;<a name="line.350"></a>
+<span class="sourceLineNo">351</span>    }<a name="line.351"></a>
+<span class="sourceLineNo">352</span><a name="line.352"></a>
+<span class="sourceLineNo">353</span>    private boolean patternContains(final String pattern, final char character) {<a name="line.353"></a>
+<span class="sourceLineNo">354</span>        return pattern.indexOf(character) &gt;= 0;<a name="line.354"></a>
+<span class="sourceLineNo">355</span>    }<a name="line.355"></a>
+<span class="sourceLineNo">356</span><a name="line.356"></a>
+<span class="sourceLineNo">357</span>    public RolloverFrequency getFrequency() {<a name="line.357"></a>
+<span class="sourceLineNo">358</span>        return frequency;<a name="line.358"></a>
+<span class="sourceLineNo">359</span>    }<a name="line.359"></a>
+<span class="sourceLineNo">360</span><a name="line.360"></a>
+<span class="sourceLineNo">361</span>    public long getNextFileTime() {<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        return nextFileTime;<a name="line.362"></a>
+<span class="sourceLineNo">363</span>    }<a name="line.363"></a>
+<span class="sourceLineNo">364</span><a name="line.364"></a>
+<span class="sourceLineNo">365</span>}<a name="line.365"></a>
 
 
 

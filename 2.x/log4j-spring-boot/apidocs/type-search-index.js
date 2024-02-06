@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"org.apache.logging.log4j.spring.boot","l":"Log4j2CloudConfigLoggingSystem"},{"p":"org.apache.logging.log4j.spring.boot","l":"SpringEnvironmentHolder"},{"p":"org.apache.logging.log4j.spring.boot","l":"SpringLookup"},{"p":"org.apache.logging.log4j.spring.boot","l":"SpringPropertySource"}]

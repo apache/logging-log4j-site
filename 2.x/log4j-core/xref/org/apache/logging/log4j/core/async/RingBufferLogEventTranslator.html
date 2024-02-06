@@ -45,7 +45,7 @@
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/RingBufferLogEventTranslator.html">RingBufferLogEventTranslator</a> <strong class="jxr_keyword">implements</strong>
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>          EventTranslator&lt;RingBufferLogEvent&gt; {
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/ContextDataInjector.html">ContextDataInjector</a> injector = ContextDataInjectorFactory.createInjector();
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/ContextDataInjector.html">ContextDataInjector</a> INJECTOR = ContextDataInjectorFactory.createInjector();
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/apache/logging/log4j/core/async/AsyncLogger.html">AsyncLogger</a> asyncLogger;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      String loggerName;
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">protected</strong> Marker marker;
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          event.setValues(asyncLogger, loggerName, marker, fqcn, level, message, thrown,
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>                  <em class="jxr_comment">// config properties are taken care of in the EventHandler thread</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>                  <em class="jxr_comment">// in the AsyncLogger#actualAsyncLog method</em>
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>                  injector.injectContextData(<strong class="jxr_keyword">null</strong>, (StringMap) event.getContextData()), contextStack,
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>                  INJECTOR.injectContextData(<strong class="jxr_keyword">null</strong>, (StringMap) event.getContextData()), contextStack,
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>                  threadId, threadName, threadPriority, location, clock, nanoClock);
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          clear(); <em class="jxr_comment">// clear the translator</em>

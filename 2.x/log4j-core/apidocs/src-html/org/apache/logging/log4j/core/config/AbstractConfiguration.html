@@ -377,26 +377,26 @@
 <span class="sourceLineNo">369</span>            asyncLoggerConfigDisruptor.stop(timeout, timeUnit);<a name="line.369"></a>
 <span class="sourceLineNo">370</span>        }<a name="line.370"></a>
 <span class="sourceLineNo">371</span><a name="line.371"></a>
-<span class="sourceLineNo">372</span>        // Stop the appenders in reverse order in case they still have activity.<a name="line.372"></a>
-<span class="sourceLineNo">373</span>        final Appender[] array = appenders.values().toArray(new Appender[appenders.size()]);<a name="line.373"></a>
-<span class="sourceLineNo">374</span>        final List&lt;Appender&gt; async = getAsyncAppenders(array);<a name="line.374"></a>
-<span class="sourceLineNo">375</span>        if (!async.isEmpty()) {<a name="line.375"></a>
-<span class="sourceLineNo">376</span>            // LOG4J2-511, LOG4J2-392 stop AsyncAppenders first<a name="line.376"></a>
-<span class="sourceLineNo">377</span>            LOGGER.trace("{} stopping {} AsyncAppenders.", cls, async.size());<a name="line.377"></a>
-<span class="sourceLineNo">378</span>            for (final Appender appender : async) {<a name="line.378"></a>
-<span class="sourceLineNo">379</span>                if (appender instanceof LifeCycle2) {<a name="line.379"></a>
-<span class="sourceLineNo">380</span>                    ((LifeCycle2) appender).stop(timeout, timeUnit);<a name="line.380"></a>
-<span class="sourceLineNo">381</span>                } else {<a name="line.381"></a>
-<span class="sourceLineNo">382</span>                    appender.stop();<a name="line.382"></a>
-<span class="sourceLineNo">383</span>                }<a name="line.383"></a>
-<span class="sourceLineNo">384</span>            }<a name="line.384"></a>
-<span class="sourceLineNo">385</span>        }<a name="line.385"></a>
-<span class="sourceLineNo">386</span><a name="line.386"></a>
-<span class="sourceLineNo">387</span>        LOGGER.trace("{} notifying ReliabilityStrategies that appenders will be stopped.", cls);<a name="line.387"></a>
-<span class="sourceLineNo">388</span>        for (final LoggerConfig loggerConfig : loggerConfigs.values()) {<a name="line.388"></a>
-<span class="sourceLineNo">389</span>            loggerConfig.getReliabilityStrategy().beforeStopAppenders();<a name="line.389"></a>
-<span class="sourceLineNo">390</span>        }<a name="line.390"></a>
-<span class="sourceLineNo">391</span>        root.getReliabilityStrategy().beforeStopAppenders();<a name="line.391"></a>
+<span class="sourceLineNo">372</span>        LOGGER.trace("{} notifying ReliabilityStrategies that appenders will be stopped.", cls);<a name="line.372"></a>
+<span class="sourceLineNo">373</span>        for (final LoggerConfig loggerConfig : loggerConfigs.values()) {<a name="line.373"></a>
+<span class="sourceLineNo">374</span>            loggerConfig.getReliabilityStrategy().beforeStopAppenders();<a name="line.374"></a>
+<span class="sourceLineNo">375</span>        }<a name="line.375"></a>
+<span class="sourceLineNo">376</span>        root.getReliabilityStrategy().beforeStopAppenders();<a name="line.376"></a>
+<span class="sourceLineNo">377</span><a name="line.377"></a>
+<span class="sourceLineNo">378</span>        // Stop the appenders in reverse order in case they still have activity.<a name="line.378"></a>
+<span class="sourceLineNo">379</span>        final Appender[] array = appenders.values().toArray(new Appender[appenders.size()]);<a name="line.379"></a>
+<span class="sourceLineNo">380</span>        final List&lt;Appender&gt; async = getAsyncAppenders(array);<a name="line.380"></a>
+<span class="sourceLineNo">381</span>        if (!async.isEmpty()) {<a name="line.381"></a>
+<span class="sourceLineNo">382</span>            // LOG4J2-511, LOG4J2-392 stop AsyncAppenders first<a name="line.382"></a>
+<span class="sourceLineNo">383</span>            LOGGER.trace("{} stopping {} AsyncAppenders.", cls, async.size());<a name="line.383"></a>
+<span class="sourceLineNo">384</span>            for (final Appender appender : async) {<a name="line.384"></a>
+<span class="sourceLineNo">385</span>                if (appender instanceof LifeCycle2) {<a name="line.385"></a>
+<span class="sourceLineNo">386</span>                    ((LifeCycle2) appender).stop(timeout, timeUnit);<a name="line.386"></a>
+<span class="sourceLineNo">387</span>                } else {<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                    appender.stop();<a name="line.388"></a>
+<span class="sourceLineNo">389</span>                }<a name="line.389"></a>
+<span class="sourceLineNo">390</span>            }<a name="line.390"></a>
+<span class="sourceLineNo">391</span>        }<a name="line.391"></a>
 <span class="sourceLineNo">392</span><a name="line.392"></a>
 <span class="sourceLineNo">393</span>        LOGGER.trace("{} stopping remaining Appenders.", cls);<a name="line.393"></a>
 <span class="sourceLineNo">394</span>        int appenderCount = 0;<a name="line.394"></a>

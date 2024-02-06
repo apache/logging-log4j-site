@@ -61,75 +61,77 @@
 <span class="sourceLineNo">053</span><a name="line.53">        }</a>
 <span class="sourceLineNo">054</span><a name="line.54">        if (baseUri == null) {</a>
 <span class="sourceLineNo">055</span><a name="line.55">            LOGGER.warn("No Docker URI provided. Docker information is unavailable");</a>
-<span class="sourceLineNo">056</span><a name="line.56">        }</a>
-<span class="sourceLineNo">057</span><a name="line.57">        Container current = null;</a>
-<span class="sourceLineNo">058</span><a name="line.58">        try {</a>
-<span class="sourceLineNo">059</span><a name="line.59">            URL url= new URL(baseUri + "/containers/json");</a>
-<span class="sourceLineNo">060</span><a name="line.60">            String hostName = NetUtils.getLocalHostname();</a>
-<span class="sourceLineNo">061</span><a name="line.61">            String macAddr = NetUtils.getMacAddressString();</a>
-<span class="sourceLineNo">062</span><a name="line.62"></a>
-<span class="sourceLineNo">063</span><a name="line.63">            if (url.getProtocol().equals(HTTP)) {</a>
-<span class="sourceLineNo">064</span><a name="line.64">                ObjectMapper objectMapper = new ObjectMapper();</a>
-<span class="sourceLineNo">065</span><a name="line.65">                List&lt;Container&gt; containerList = objectMapper.readValue(url, new TypeReference&lt;List&lt;Container&gt;&gt;(){});</a>
-<span class="sourceLineNo">066</span><a name="line.66"></a>
-<span class="sourceLineNo">067</span><a name="line.67">                for (Container container : containerList) {</a>
-<span class="sourceLineNo">068</span><a name="line.68">                    if (macAddr != null &amp;&amp; container.getNetworkSettings() != null) {</a>
-<span class="sourceLineNo">069</span><a name="line.69">                        Map&lt;String, Network&gt; networks = container.getNetworkSettings().getNetworks();</a>
-<span class="sourceLineNo">070</span><a name="line.70">                        if (networks != null) {</a>
-<span class="sourceLineNo">071</span><a name="line.71">                            for (Network network: networks.values()) {</a>
-<span class="sourceLineNo">072</span><a name="line.72">                                if (macAddr.equals(network.getMacAddress())) {</a>
-<span class="sourceLineNo">073</span><a name="line.73">                                    current = container;</a>
-<span class="sourceLineNo">074</span><a name="line.74">                                    break;</a>
-<span class="sourceLineNo">075</span><a name="line.75">                                }</a>
-<span class="sourceLineNo">076</span><a name="line.76">                            }</a>
-<span class="sourceLineNo">077</span><a name="line.77">                        }</a>
-<span class="sourceLineNo">078</span><a name="line.78">                    }</a>
-<span class="sourceLineNo">079</span><a name="line.79">                    if (current != null) {</a>
-<span class="sourceLineNo">080</span><a name="line.80">                        break;</a>
-<span class="sourceLineNo">081</span><a name="line.81">                    }</a>
-<span class="sourceLineNo">082</span><a name="line.82">                }</a>
-<span class="sourceLineNo">083</span><a name="line.83">            }</a>
-<span class="sourceLineNo">084</span><a name="line.84">            if (current == null) {</a>
-<span class="sourceLineNo">085</span><a name="line.85">                LOGGER.warn("Unable to determine current container");</a>
-<span class="sourceLineNo">086</span><a name="line.86">            }</a>
-<span class="sourceLineNo">087</span><a name="line.87">        } catch (IOException ioe) {</a>
-<span class="sourceLineNo">088</span><a name="line.88">            LOGGER.warn("Unable to read container information: " + ioe.getMessage());</a>
-<span class="sourceLineNo">089</span><a name="line.89">        }</a>
-<span class="sourceLineNo">090</span><a name="line.90">        container = current;</a>
-<span class="sourceLineNo">091</span><a name="line.91">    }</a>
-<span class="sourceLineNo">092</span><a name="line.92"></a>
-<span class="sourceLineNo">093</span><a name="line.93">    @Override</a>
-<span class="sourceLineNo">094</span><a name="line.94">    public String lookup(LogEvent event, String key) {</a>
-<span class="sourceLineNo">095</span><a name="line.95">        if (container == null) {</a>
-<span class="sourceLineNo">096</span><a name="line.96">            return null;</a>
-<span class="sourceLineNo">097</span><a name="line.97">        }</a>
-<span class="sourceLineNo">098</span><a name="line.98">        switch (key) {</a>
-<span class="sourceLineNo">099</span><a name="line.99">            case "shortContainerId": {</a>
-<span class="sourceLineNo">100</span><a name="line.100">                return container.getId().substring(0, 12);</a>
-<span class="sourceLineNo">101</span><a name="line.101">            }</a>
-<span class="sourceLineNo">102</span><a name="line.102">            case "containerId": {</a>
-<span class="sourceLineNo">103</span><a name="line.103">                return container.getId();</a>
-<span class="sourceLineNo">104</span><a name="line.104">            }</a>
-<span class="sourceLineNo">105</span><a name="line.105">            case "containerName": {</a>
-<span class="sourceLineNo">106</span><a name="line.106">                if (container.getNames().size() &gt; 1) {</a>
-<span class="sourceLineNo">107</span><a name="line.107">                    return container.getNames().toString();</a>
-<span class="sourceLineNo">108</span><a name="line.108">                }</a>
-<span class="sourceLineNo">109</span><a name="line.109">                return container.getNames().get(0);</a>
-<span class="sourceLineNo">110</span><a name="line.110">            }</a>
-<span class="sourceLineNo">111</span><a name="line.111">            case "shortImageId": {</a>
-<span class="sourceLineNo">112</span><a name="line.112">                return container.getImageId().substring(0, 12);</a>
-<span class="sourceLineNo">113</span><a name="line.113">            }</a>
-<span class="sourceLineNo">114</span><a name="line.114">            case "imageId": {</a>
-<span class="sourceLineNo">115</span><a name="line.115">                return container.getImageId();</a>
-<span class="sourceLineNo">116</span><a name="line.116">            }</a>
-<span class="sourceLineNo">117</span><a name="line.117">            case "imageName": {</a>
-<span class="sourceLineNo">118</span><a name="line.118">                return container.getImage();</a>
-<span class="sourceLineNo">119</span><a name="line.119">            }</a>
-<span class="sourceLineNo">120</span><a name="line.120">            default:</a>
-<span class="sourceLineNo">121</span><a name="line.121">                return null;</a>
-<span class="sourceLineNo">122</span><a name="line.122">        }</a>
-<span class="sourceLineNo">123</span><a name="line.123">    }</a>
-<span class="sourceLineNo">124</span><a name="line.124">}</a>
+<span class="sourceLineNo">056</span><a name="line.56">            container = null;</a>
+<span class="sourceLineNo">057</span><a name="line.57">            return;</a>
+<span class="sourceLineNo">058</span><a name="line.58">        }</a>
+<span class="sourceLineNo">059</span><a name="line.59">        Container current = null;</a>
+<span class="sourceLineNo">060</span><a name="line.60">        try {</a>
+<span class="sourceLineNo">061</span><a name="line.61">            URL url= new URL(baseUri + "/containers/json");</a>
+<span class="sourceLineNo">062</span><a name="line.62">            String hostName = NetUtils.getLocalHostname();</a>
+<span class="sourceLineNo">063</span><a name="line.63">            String macAddr = NetUtils.getMacAddressString();</a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span><a name="line.65">            if (url.getProtocol().equals(HTTP)) {</a>
+<span class="sourceLineNo">066</span><a name="line.66">                ObjectMapper objectMapper = new ObjectMapper();</a>
+<span class="sourceLineNo">067</span><a name="line.67">                List&lt;Container&gt; containerList = objectMapper.readValue(url, new TypeReference&lt;List&lt;Container&gt;&gt;(){});</a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69">                for (Container container : containerList) {</a>
+<span class="sourceLineNo">070</span><a name="line.70">                    if (macAddr != null &amp;&amp; container.getNetworkSettings() != null) {</a>
+<span class="sourceLineNo">071</span><a name="line.71">                        Map&lt;String, Network&gt; networks = container.getNetworkSettings().getNetworks();</a>
+<span class="sourceLineNo">072</span><a name="line.72">                        if (networks != null) {</a>
+<span class="sourceLineNo">073</span><a name="line.73">                            for (Network network: networks.values()) {</a>
+<span class="sourceLineNo">074</span><a name="line.74">                                if (macAddr.equals(network.getMacAddress())) {</a>
+<span class="sourceLineNo">075</span><a name="line.75">                                    current = container;</a>
+<span class="sourceLineNo">076</span><a name="line.76">                                    break;</a>
+<span class="sourceLineNo">077</span><a name="line.77">                                }</a>
+<span class="sourceLineNo">078</span><a name="line.78">                            }</a>
+<span class="sourceLineNo">079</span><a name="line.79">                        }</a>
+<span class="sourceLineNo">080</span><a name="line.80">                    }</a>
+<span class="sourceLineNo">081</span><a name="line.81">                    if (current != null) {</a>
+<span class="sourceLineNo">082</span><a name="line.82">                        break;</a>
+<span class="sourceLineNo">083</span><a name="line.83">                    }</a>
+<span class="sourceLineNo">084</span><a name="line.84">                }</a>
+<span class="sourceLineNo">085</span><a name="line.85">            }</a>
+<span class="sourceLineNo">086</span><a name="line.86">            if (current == null) {</a>
+<span class="sourceLineNo">087</span><a name="line.87">                LOGGER.warn("Unable to determine current container");</a>
+<span class="sourceLineNo">088</span><a name="line.88">            }</a>
+<span class="sourceLineNo">089</span><a name="line.89">        } catch (IOException ioe) {</a>
+<span class="sourceLineNo">090</span><a name="line.90">            LOGGER.warn("Unable to read container information: " + ioe.getMessage());</a>
+<span class="sourceLineNo">091</span><a name="line.91">        }</a>
+<span class="sourceLineNo">092</span><a name="line.92">        container = current;</a>
+<span class="sourceLineNo">093</span><a name="line.93">    }</a>
+<span class="sourceLineNo">094</span><a name="line.94"></a>
+<span class="sourceLineNo">095</span><a name="line.95">    @Override</a>
+<span class="sourceLineNo">096</span><a name="line.96">    public String lookup(LogEvent event, String key) {</a>
+<span class="sourceLineNo">097</span><a name="line.97">        if (container == null) {</a>
+<span class="sourceLineNo">098</span><a name="line.98">            return null;</a>
+<span class="sourceLineNo">099</span><a name="line.99">        }</a>
+<span class="sourceLineNo">100</span><a name="line.100">        switch (key) {</a>
+<span class="sourceLineNo">101</span><a name="line.101">            case "shortContainerId": {</a>
+<span class="sourceLineNo">102</span><a name="line.102">                return container.getId().substring(0, 12);</a>
+<span class="sourceLineNo">103</span><a name="line.103">            }</a>
+<span class="sourceLineNo">104</span><a name="line.104">            case "containerId": {</a>
+<span class="sourceLineNo">105</span><a name="line.105">                return container.getId();</a>
+<span class="sourceLineNo">106</span><a name="line.106">            }</a>
+<span class="sourceLineNo">107</span><a name="line.107">            case "containerName": {</a>
+<span class="sourceLineNo">108</span><a name="line.108">                if (container.getNames().size() &gt; 1) {</a>
+<span class="sourceLineNo">109</span><a name="line.109">                    return container.getNames().toString();</a>
+<span class="sourceLineNo">110</span><a name="line.110">                }</a>
+<span class="sourceLineNo">111</span><a name="line.111">                return container.getNames().get(0);</a>
+<span class="sourceLineNo">112</span><a name="line.112">            }</a>
+<span class="sourceLineNo">113</span><a name="line.113">            case "shortImageId": {</a>
+<span class="sourceLineNo">114</span><a name="line.114">                return container.getImageId().substring(0, 12);</a>
+<span class="sourceLineNo">115</span><a name="line.115">            }</a>
+<span class="sourceLineNo">116</span><a name="line.116">            case "imageId": {</a>
+<span class="sourceLineNo">117</span><a name="line.117">                return container.getImageId();</a>
+<span class="sourceLineNo">118</span><a name="line.118">            }</a>
+<span class="sourceLineNo">119</span><a name="line.119">            case "imageName": {</a>
+<span class="sourceLineNo">120</span><a name="line.120">                return container.getImage();</a>
+<span class="sourceLineNo">121</span><a name="line.121">            }</a>
+<span class="sourceLineNo">122</span><a name="line.122">            default:</a>
+<span class="sourceLineNo">123</span><a name="line.123">                return null;</a>
+<span class="sourceLineNo">124</span><a name="line.124">        }</a>
+<span class="sourceLineNo">125</span><a name="line.125">    }</a>
+<span class="sourceLineNo">126</span><a name="line.126">}</a>
 
 
 
