@@ -361,150 +361,154 @@
 <a class="jxr_linenumber" name="L353" href="#L353">353</a>         <strong class="jxr_keyword">return</strong> thrownProxy;
 <a class="jxr_linenumber" name="L354" href="#L354">354</a>     }
 <a class="jxr_linenumber" name="L355" href="#L355">355</a> 
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L357" href="#L357">357</a> <em class="jxr_javadoccomment">     * Returns the StackTraceElement for the caller. This will be the entry that occurs right</em>
-<a class="jxr_linenumber" name="L358" href="#L358">358</a> <em class="jxr_javadoccomment">     * before the first occurrence of FQCN as a class name.</em>
-<a class="jxr_linenumber" name="L359" href="#L359">359</a> <em class="jxr_javadoccomment">     * @return the StackTraceElement for the caller.</em>
-<a class="jxr_linenumber" name="L360" href="#L360">360</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>     @Override
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>     <strong class="jxr_keyword">public</strong> StackTraceElement getSource() {
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>         <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>             <strong class="jxr_keyword">return</strong> source;
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>         }
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>         <strong class="jxr_keyword">if</strong> (loggerFqcn == <strong class="jxr_keyword">null</strong> || !includeLocation) {
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>         }
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>         source = StackLocatorUtil.calcLocation(loggerFqcn);
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>         <strong class="jxr_keyword">return</strong> source;
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>     }
-<a class="jxr_linenumber" name="L372" href="#L372">372</a> 
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>     @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>     @Override
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>     <strong class="jxr_keyword">public</strong> ReadOnlyStringMap getContextData() {
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>         <strong class="jxr_keyword">return</strong> contextData;
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>     }
-<a class="jxr_linenumber" name="L378" href="#L378">378</a> 
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>     @Override
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>     <strong class="jxr_keyword">public</strong> Map&lt;String, String&gt; getContextMap() {
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>         <strong class="jxr_keyword">return</strong> contextData.toMap();
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>     }
-<a class="jxr_linenumber" name="L383" href="#L383">383</a> 
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setContextData(<strong class="jxr_keyword">final</strong> StringMap mutableContextData) {
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>         <strong class="jxr_keyword">this</strong>.contextData = mutableContextData;
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setSource(StackTraceElement source) {
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>         <strong class="jxr_keyword">this</strong>.source = source;
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>     }
+<a class="jxr_linenumber" name="L359" href="#L359">359</a> 
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L361" href="#L361">361</a> <em class="jxr_javadoccomment">     * Returns the StackTraceElement for the caller. This will be the entry that occurs right</em>
+<a class="jxr_linenumber" name="L362" href="#L362">362</a> <em class="jxr_javadoccomment">     * before the first occurrence of FQCN as a class name.</em>
+<a class="jxr_linenumber" name="L363" href="#L363">363</a> <em class="jxr_javadoccomment">     * @return the StackTraceElement for the caller.</em>
+<a class="jxr_linenumber" name="L364" href="#L364">364</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>     @Override
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>     <strong class="jxr_keyword">public</strong> StackTraceElement getSource() {
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>         <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>             <strong class="jxr_keyword">return</strong> source;
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>         }
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>         <strong class="jxr_keyword">if</strong> (loggerFqcn == <strong class="jxr_keyword">null</strong> || !includeLocation) {
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>         }
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>         source = StackLocatorUtil.calcLocation(loggerFqcn);
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>         <strong class="jxr_keyword">return</strong> source;
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>     }
+<a class="jxr_linenumber" name="L376" href="#L376">376</a> 
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>     @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>     @Override
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>     <strong class="jxr_keyword">public</strong> ReadOnlyStringMap getContextData() {
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>         <strong class="jxr_keyword">return</strong> contextData;
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>     }
+<a class="jxr_linenumber" name="L382" href="#L382">382</a> 
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>     @Override
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>     <strong class="jxr_keyword">public</strong> Map&lt;String, String&gt; getContextMap() {
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>         <strong class="jxr_keyword">return</strong> contextData.toMap();
 <a class="jxr_linenumber" name="L386" href="#L386">386</a>     }
 <a class="jxr_linenumber" name="L387" href="#L387">387</a> 
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>     @Override
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>     <strong class="jxr_keyword">public</strong> ThreadContext.ContextStack getContextStack() {
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>         <strong class="jxr_keyword">return</strong> contextStack;
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>     }
-<a class="jxr_linenumber" name="L392" href="#L392">392</a> 
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setContextStack(<strong class="jxr_keyword">final</strong> ThreadContext.ContextStack contextStack) {
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>         <strong class="jxr_keyword">this</strong>.contextStack = contextStack;
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setContextData(<strong class="jxr_keyword">final</strong> StringMap mutableContextData) {
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>         <strong class="jxr_keyword">this</strong>.contextData = mutableContextData;
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>     }
+<a class="jxr_linenumber" name="L391" href="#L391">391</a> 
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>     @Override
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>     <strong class="jxr_keyword">public</strong> ThreadContext.ContextStack getContextStack() {
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>         <strong class="jxr_keyword">return</strong> contextStack;
 <a class="jxr_linenumber" name="L395" href="#L395">395</a>     }
 <a class="jxr_linenumber" name="L396" href="#L396">396</a> 
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>     @Override
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getThreadId() {
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>         <strong class="jxr_keyword">return</strong> threadId;
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>     }
-<a class="jxr_linenumber" name="L401" href="#L401">401</a> 
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setThreadId(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> threadId) {
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>         <strong class="jxr_keyword">this</strong>.threadId = threadId;
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setContextStack(<strong class="jxr_keyword">final</strong> ThreadContext.ContextStack contextStack) {
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>         <strong class="jxr_keyword">this</strong>.contextStack = contextStack;
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>     }
+<a class="jxr_linenumber" name="L400" href="#L400">400</a> 
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>     @Override
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getThreadId() {
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>         <strong class="jxr_keyword">return</strong> threadId;
 <a class="jxr_linenumber" name="L404" href="#L404">404</a>     }
 <a class="jxr_linenumber" name="L405" href="#L405">405</a> 
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>     @Override
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>     <strong class="jxr_keyword">public</strong> String getThreadName() {
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>         <strong class="jxr_keyword">return</strong> threadName;
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>     }
-<a class="jxr_linenumber" name="L410" href="#L410">410</a> 
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setThreadName(<strong class="jxr_keyword">final</strong> String threadName) {
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>         <strong class="jxr_keyword">this</strong>.threadName = threadName;
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setThreadId(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> threadId) {
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>         <strong class="jxr_keyword">this</strong>.threadId = threadId;
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>     }
+<a class="jxr_linenumber" name="L409" href="#L409">409</a> 
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>     @Override
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>     <strong class="jxr_keyword">public</strong> String getThreadName() {
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>         <strong class="jxr_keyword">return</strong> threadName;
 <a class="jxr_linenumber" name="L413" href="#L413">413</a>     }
 <a class="jxr_linenumber" name="L414" href="#L414">414</a> 
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>     @Override
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> getThreadPriority() {
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>         <strong class="jxr_keyword">return</strong> threadPriority;
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>     }
-<a class="jxr_linenumber" name="L419" href="#L419">419</a> 
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setThreadPriority(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> threadPriority) {
-<a class="jxr_linenumber" name="L421" href="#L421">421</a>         <strong class="jxr_keyword">this</strong>.threadPriority = threadPriority;
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setThreadName(<strong class="jxr_keyword">final</strong> String threadName) {
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>         <strong class="jxr_keyword">this</strong>.threadName = threadName;
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>     }
+<a class="jxr_linenumber" name="L418" href="#L418">418</a> 
+<a class="jxr_linenumber" name="L419" href="#L419">419</a>     @Override
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> getThreadPriority() {
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>         <strong class="jxr_keyword">return</strong> threadPriority;
 <a class="jxr_linenumber" name="L422" href="#L422">422</a>     }
 <a class="jxr_linenumber" name="L423" href="#L423">423</a> 
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>     @Override
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isIncludeLocation() {
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>         <strong class="jxr_keyword">return</strong> includeLocation;
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>     }
-<a class="jxr_linenumber" name="L428" href="#L428">428</a> 
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>     @Override
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setIncludeLocation(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> includeLocation) {
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>         <strong class="jxr_keyword">this</strong>.includeLocation = includeLocation;
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>     }
-<a class="jxr_linenumber" name="L433" href="#L433">433</a> 
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>     @Override
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isEndOfBatch() {
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>         <strong class="jxr_keyword">return</strong> endOfBatch;
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>     }
-<a class="jxr_linenumber" name="L438" href="#L438">438</a> 
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>     @Override
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setEndOfBatch(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> endOfBatch) {
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>         <strong class="jxr_keyword">this</strong>.endOfBatch = endOfBatch;
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>     }
-<a class="jxr_linenumber" name="L443" href="#L443">443</a> 
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>     @Override
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getNanoTime() {
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>         <strong class="jxr_keyword">return</strong> nanoTime;
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>     }
-<a class="jxr_linenumber" name="L448" href="#L448">448</a> 
-<a class="jxr_linenumber" name="L449" href="#L449">449</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setNanoTime(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nanoTime) {
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>         <strong class="jxr_keyword">this</strong>.nanoTime = nanoTime;
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setThreadPriority(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> threadPriority) {
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>         <strong class="jxr_keyword">this</strong>.threadPriority = threadPriority;
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>     }
+<a class="jxr_linenumber" name="L427" href="#L427">427</a> 
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>     @Override
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isIncludeLocation() {
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>         <strong class="jxr_keyword">return</strong> includeLocation;
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>     }
+<a class="jxr_linenumber" name="L432" href="#L432">432</a> 
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>     @Override
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setIncludeLocation(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> includeLocation) {
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>         <strong class="jxr_keyword">this</strong>.includeLocation = includeLocation;
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>     }
+<a class="jxr_linenumber" name="L437" href="#L437">437</a> 
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>     @Override
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isEndOfBatch() {
+<a class="jxr_linenumber" name="L440" href="#L440">440</a>         <strong class="jxr_keyword">return</strong> endOfBatch;
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>     }
+<a class="jxr_linenumber" name="L442" href="#L442">442</a> 
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>     @Override
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setEndOfBatch(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> endOfBatch) {
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>         <strong class="jxr_keyword">this</strong>.endOfBatch = endOfBatch;
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>     }
+<a class="jxr_linenumber" name="L447" href="#L447">447</a> 
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>     @Override
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getNanoTime() {
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>         <strong class="jxr_keyword">return</strong> nanoTime;
 <a class="jxr_linenumber" name="L451" href="#L451">451</a>     }
 <a class="jxr_linenumber" name="L452" href="#L452">452</a> 
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L454" href="#L454">454</a> <em class="jxr_javadoccomment">     * Creates a LogEventProxy that can be serialized.</em>
-<a class="jxr_linenumber" name="L455" href="#L455">455</a> <em class="jxr_javadoccomment">     * @return a LogEventProxy.</em>
-<a class="jxr_linenumber" name="L456" href="#L456">456</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L457" href="#L457">457</a>     <strong class="jxr_keyword">protected</strong> Object writeReplace() {
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Log4jLogEvent.LogEventProxy(<strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">this</strong>.includeLocation);
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>     }
-<a class="jxr_linenumber" name="L460" href="#L460">460</a> 
-<a class="jxr_linenumber" name="L461" href="#L461">461</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> readObject(<strong class="jxr_keyword">final</strong> ObjectInputStream stream) <strong class="jxr_keyword">throws</strong> InvalidObjectException {
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidObjectException(<span class="jxr_string">"Proxy required"</span>);
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setNanoTime(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nanoTime) {
+<a class="jxr_linenumber" name="L454" href="#L454">454</a>         <strong class="jxr_keyword">this</strong>.nanoTime = nanoTime;
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>     }
+<a class="jxr_linenumber" name="L456" href="#L456">456</a> 
+<a class="jxr_linenumber" name="L457" href="#L457">457</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L458" href="#L458">458</a> <em class="jxr_javadoccomment">     * Creates a LogEventProxy that can be serialized.</em>
+<a class="jxr_linenumber" name="L459" href="#L459">459</a> <em class="jxr_javadoccomment">     * @return a LogEventProxy.</em>
+<a class="jxr_linenumber" name="L460" href="#L460">460</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>     <strong class="jxr_keyword">protected</strong> Object writeReplace() {
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Log4jLogEvent.LogEventProxy(<strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">this</strong>.includeLocation);
 <a class="jxr_linenumber" name="L463" href="#L463">463</a>     }
 <a class="jxr_linenumber" name="L464" href="#L464">464</a> 
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L466" href="#L466">466</a> <em class="jxr_javadoccomment">     * Creates and returns a new immutable copy of this {@code MutableLogEvent}.</em>
-<a class="jxr_linenumber" name="L467" href="#L467">467</a> <em class="jxr_javadoccomment">     * If {@link #isIncludeLocation()} is true, this will obtain caller location information.</em>
-<a class="jxr_linenumber" name="L468" href="#L468">468</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L469" href="#L469">469</a> <em class="jxr_javadoccomment">     * @return a new immutable copy of the data in this {@code MutableLogEvent}</em>
-<a class="jxr_linenumber" name="L470" href="#L470">470</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/Log4jLogEvent.html">Log4jLogEvent</a> createMemento() {
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>         <strong class="jxr_keyword">return</strong> Log4jLogEvent.deserialize(Log4jLogEvent.serialize(<strong class="jxr_keyword">this</strong>, includeLocation));
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>     }
-<a class="jxr_linenumber" name="L474" href="#L474">474</a> 
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L476" href="#L476">476</a> <em class="jxr_javadoccomment">     * Initializes the specified {@code Log4jLogEvent.Builder} from this {@code MutableLogEvent}.</em>
-<a class="jxr_linenumber" name="L477" href="#L477">477</a> <em class="jxr_javadoccomment">     * @param builder the builder whose fields to populate</em>
-<a class="jxr_linenumber" name="L478" href="#L478">478</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initializeBuilder(<strong class="jxr_keyword">final</strong> Log4jLogEvent.Builder builder) {
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>         builder.setContextData(contextData) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L481" href="#L481">481</a>                 .setContextStack(contextStack) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L482" href="#L482">482</a>                 .setEndOfBatch(endOfBatch) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L483" href="#L483">483</a>                 .setIncludeLocation(includeLocation) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>                 .setLevel(getLevel()) <em class="jxr_comment">// ensure non-null</em>
-<a class="jxr_linenumber" name="L485" href="#L485">485</a>                 .setLoggerFqcn(loggerFqcn) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>                 .setLoggerName(loggerName) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L487" href="#L487">487</a>                 .setMarker(marker) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L488" href="#L488">488</a>                 .setMessage(memento()) <em class="jxr_comment">// ensure non-null &amp; immutable</em>
-<a class="jxr_linenumber" name="L489" href="#L489">489</a>                 .setNanoTime(nanoTime) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L490" href="#L490">490</a>                 .setSource(source) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L491" href="#L491">491</a>                 .setThreadId(threadId) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L492" href="#L492">492</a>                 .setThreadName(threadName) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L493" href="#L493">493</a>                 .setThreadPriority(threadPriority) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L494" href="#L494">494</a>                 .setThrown(getThrown()) <em class="jxr_comment">// may deserialize from thrownProxy</em>
-<a class="jxr_linenumber" name="L495" href="#L495">495</a>                 .setThrownProxy(thrownProxy) <em class="jxr_comment">// avoid unnecessarily creating thrownProxy</em>
-<a class="jxr_linenumber" name="L496" href="#L496">496</a>                 .setInstant(instant) <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L497" href="#L497">497</a>         ;
-<a class="jxr_linenumber" name="L498" href="#L498">498</a>     }
-<a class="jxr_linenumber" name="L499" href="#L499">499</a> }
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> readObject(<strong class="jxr_keyword">final</strong> ObjectInputStream stream) <strong class="jxr_keyword">throws</strong> InvalidObjectException {
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidObjectException(<span class="jxr_string">"Proxy required"</span>);
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>     }
+<a class="jxr_linenumber" name="L468" href="#L468">468</a> 
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L470" href="#L470">470</a> <em class="jxr_javadoccomment">     * Creates and returns a new immutable copy of this {@code MutableLogEvent}.</em>
+<a class="jxr_linenumber" name="L471" href="#L471">471</a> <em class="jxr_javadoccomment">     * If {@link #isIncludeLocation()} is true, this will obtain caller location information.</em>
+<a class="jxr_linenumber" name="L472" href="#L472">472</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L473" href="#L473">473</a> <em class="jxr_javadoccomment">     * @return a new immutable copy of the data in this {@code MutableLogEvent}</em>
+<a class="jxr_linenumber" name="L474" href="#L474">474</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/Log4jLogEvent.html">Log4jLogEvent</a> createMemento() {
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>         <strong class="jxr_keyword">return</strong> Log4jLogEvent.deserialize(Log4jLogEvent.serialize(<strong class="jxr_keyword">this</strong>, includeLocation));
+<a class="jxr_linenumber" name="L477" href="#L477">477</a>     }
+<a class="jxr_linenumber" name="L478" href="#L478">478</a> 
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L480" href="#L480">480</a> <em class="jxr_javadoccomment">     * Initializes the specified {@code Log4jLogEvent.Builder} from this {@code MutableLogEvent}.</em>
+<a class="jxr_linenumber" name="L481" href="#L481">481</a> <em class="jxr_javadoccomment">     * @param builder the builder whose fields to populate</em>
+<a class="jxr_linenumber" name="L482" href="#L482">482</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L483" href="#L483">483</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initializeBuilder(<strong class="jxr_keyword">final</strong> Log4jLogEvent.Builder builder) {
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>         builder.setContextData(contextData) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>                 .setContextStack(contextStack) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>                 .setEndOfBatch(endOfBatch) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>                 .setIncludeLocation(includeLocation) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>                 .setLevel(getLevel()) <em class="jxr_comment">// ensure non-null</em>
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>                 .setLoggerFqcn(loggerFqcn) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L490" href="#L490">490</a>                 .setLoggerName(loggerName) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>                 .setMarker(marker) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>                 .setMessage(memento()) <em class="jxr_comment">// ensure non-null &amp; immutable</em>
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>                 .setNanoTime(nanoTime) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>                 .setSource(source) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L495" href="#L495">495</a>                 .setThreadId(threadId) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>                 .setThreadName(threadName) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L497" href="#L497">497</a>                 .setThreadPriority(threadPriority) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L498" href="#L498">498</a>                 .setThrown(getThrown()) <em class="jxr_comment">// may deserialize from thrownProxy</em>
+<a class="jxr_linenumber" name="L499" href="#L499">499</a>                 .setThrownProxy(thrownProxy) <em class="jxr_comment">// avoid unnecessarily creating thrownProxy</em>
+<a class="jxr_linenumber" name="L500" href="#L500">500</a>                 .setInstant(instant) <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L501" href="#L501">501</a>         ;
+<a class="jxr_linenumber" name="L502" href="#L502">502</a>     }
+<a class="jxr_linenumber" name="L503" href="#L503">503</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>

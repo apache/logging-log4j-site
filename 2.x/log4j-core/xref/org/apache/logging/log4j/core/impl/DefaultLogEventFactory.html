@@ -35,7 +35,7 @@
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> * Always creates new LogEvent instances.</em>
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/DefaultLogEventFactory.html">DefaultLogEventFactory</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/LogEventFactory.html">LogEventFactory</a> {
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/DefaultLogEventFactory.html">DefaultLogEventFactory</a> <strong class="jxr_keyword">implements</strong> LogEventFactory, <a href="../../../../../../org/apache/logging/log4j/core/impl/LocationAwareLogEventFactory.html">LocationAwareLogEventFactory</a> {
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/DefaultLogEventFactory.html">DefaultLogEventFactory</a> instance = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/DefaultLogEventFactory.html">DefaultLogEventFactory</a>();
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
@@ -61,7 +61,27 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>                                  <strong class="jxr_keyword">final</strong> List&lt;Property&gt; properties, <strong class="jxr_keyword">final</strong> Throwable t) {
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/Log4jLogEvent.html">Log4jLogEvent</a>(loggerName, marker, fqcn, level, data, properties, t);
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      }
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  }
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">     * Creates a log event.</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     * @param loggerName The name of the Logger.</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     * @param marker An optional Marker.</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * @param fqcn The fully qualified class name of the caller.</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     * @param location The location of the caller</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">     * @param level The event Level.</em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">     * @param data The Message.</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">     * @param properties Properties to be added to the log event.</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     * @param t An optional Throwable.</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">     * @return The LogEvent.</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      @Override
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> createEvent(<strong class="jxr_keyword">final</strong> String loggerName, <strong class="jxr_keyword">final</strong> Marker marker,
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">final</strong> String fqcn, <strong class="jxr_keyword">final</strong> StackTraceElement location, <strong class="jxr_keyword">final</strong> Level level, <strong class="jxr_keyword">final</strong> Message data,
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">final</strong> List&lt;Property&gt; properties, <strong class="jxr_keyword">final</strong> Throwable t) {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/impl/Log4jLogEvent.html">Log4jLogEvent</a>(loggerName, marker, fqcn, location, level, data, properties, t);
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 1999&#x2013;2019 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>

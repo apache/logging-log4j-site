@@ -37,165 +37,173 @@
 <span class="sourceLineNo">029</span><a name="line.29"></a>
 <span class="sourceLineNo">030</span>import org.apache.logging.log4j.core.LoggerContext;<a name="line.30"></a>
 <span class="sourceLineNo">031</span>import org.apache.logging.log4j.core.impl.ContextAnchor;<a name="line.31"></a>
-<span class="sourceLineNo">032</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>import org.apache.logging.log4j.util.StackLocatorUtil;<a name="line.33"></a>
-<span class="sourceLineNo">034</span><a name="line.34"></a>
-<span class="sourceLineNo">035</span>/**<a name="line.35"></a>
-<span class="sourceLineNo">036</span> * This ContextSelector chooses a LoggerContext based upon the ClassLoader of the caller. This allows Loggers assigned<a name="line.36"></a>
-<span class="sourceLineNo">037</span> * to static variables to be released along with the classes that own then. Other ContextSelectors will generally cause<a name="line.37"></a>
-<span class="sourceLineNo">038</span> * Loggers associated with classes loaded from different ClassLoaders to be co-mingled. This is a problem if, for<a name="line.38"></a>
-<span class="sourceLineNo">039</span> * example, a web application is undeployed as some of the Loggers being released may be associated with a Class in a<a name="line.39"></a>
-<span class="sourceLineNo">040</span> * parent ClassLoader, which will generally have negative consequences.<a name="line.40"></a>
-<span class="sourceLineNo">041</span> *<a name="line.41"></a>
-<span class="sourceLineNo">042</span> * The main downside to this ContextSelector is that Configuration is more challenging.<a name="line.42"></a>
-<span class="sourceLineNo">043</span> *<a name="line.43"></a>
-<span class="sourceLineNo">044</span> * This ContextSelector should not be used with a Servlet Filter such as the Log4jServletFilter.<a name="line.44"></a>
-<span class="sourceLineNo">045</span> */<a name="line.45"></a>
-<span class="sourceLineNo">046</span>public class ClassLoaderContextSelector implements ContextSelector {<a name="line.46"></a>
-<span class="sourceLineNo">047</span><a name="line.47"></a>
-<span class="sourceLineNo">048</span>    private static final AtomicReference&lt;LoggerContext&gt; DEFAULT_CONTEXT = new AtomicReference&lt;&gt;();<a name="line.48"></a>
-<span class="sourceLineNo">049</span><a name="line.49"></a>
-<span class="sourceLineNo">050</span>    protected static final StatusLogger LOGGER = StatusLogger.getLogger();<a name="line.50"></a>
-<span class="sourceLineNo">051</span><a name="line.51"></a>
-<span class="sourceLineNo">052</span>    protected static final ConcurrentMap&lt;String, AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt;&gt; CONTEXT_MAP =<a name="line.52"></a>
-<span class="sourceLineNo">053</span>            new ConcurrentHashMap&lt;&gt;();<a name="line.53"></a>
-<span class="sourceLineNo">054</span><a name="line.54"></a>
-<span class="sourceLineNo">055</span>    @Override<a name="line.55"></a>
-<span class="sourceLineNo">056</span>    public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext) {<a name="line.56"></a>
-<span class="sourceLineNo">057</span>        return getContext(fqcn, loader, currentContext, null);<a name="line.57"></a>
-<span class="sourceLineNo">058</span>    }<a name="line.58"></a>
-<span class="sourceLineNo">059</span><a name="line.59"></a>
-<span class="sourceLineNo">060</span>    @Override<a name="line.60"></a>
-<span class="sourceLineNo">061</span>    public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext,<a name="line.61"></a>
-<span class="sourceLineNo">062</span>            final URI configLocation) {<a name="line.62"></a>
-<span class="sourceLineNo">063</span>        if (currentContext) {<a name="line.63"></a>
-<span class="sourceLineNo">064</span>            final LoggerContext ctx = ContextAnchor.THREAD_CONTEXT.get();<a name="line.64"></a>
-<span class="sourceLineNo">065</span>            if (ctx != null) {<a name="line.65"></a>
-<span class="sourceLineNo">066</span>                return ctx;<a name="line.66"></a>
-<span class="sourceLineNo">067</span>            }<a name="line.67"></a>
-<span class="sourceLineNo">068</span>            return getDefault();<a name="line.68"></a>
-<span class="sourceLineNo">069</span>        } else if (loader != null) {<a name="line.69"></a>
-<span class="sourceLineNo">070</span>            return locateContext(loader, configLocation);<a name="line.70"></a>
-<span class="sourceLineNo">071</span>        } else {<a name="line.71"></a>
-<span class="sourceLineNo">072</span>            final Class&lt;?&gt; clazz = StackLocatorUtil.getCallerClass(fqcn);<a name="line.72"></a>
-<span class="sourceLineNo">073</span>            if (clazz != null) {<a name="line.73"></a>
-<span class="sourceLineNo">074</span>                return locateContext(clazz.getClassLoader(), configLocation);<a name="line.74"></a>
+<span class="sourceLineNo">032</span>import org.apache.logging.log4j.spi.LoggerContextShutdownAware;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.apache.logging.log4j.status.StatusLogger;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.apache.logging.log4j.util.StackLocatorUtil;<a name="line.34"></a>
+<span class="sourceLineNo">035</span><a name="line.35"></a>
+<span class="sourceLineNo">036</span>/**<a name="line.36"></a>
+<span class="sourceLineNo">037</span> * This ContextSelector chooses a LoggerContext based upon the ClassLoader of the caller. This allows Loggers assigned<a name="line.37"></a>
+<span class="sourceLineNo">038</span> * to static variables to be released along with the classes that own then. Other ContextSelectors will generally cause<a name="line.38"></a>
+<span class="sourceLineNo">039</span> * Loggers associated with classes loaded from different ClassLoaders to be co-mingled. This is a problem if, for<a name="line.39"></a>
+<span class="sourceLineNo">040</span> * example, a web application is undeployed as some of the Loggers being released may be associated with a Class in a<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * parent ClassLoader, which will generally have negative consequences.<a name="line.41"></a>
+<span class="sourceLineNo">042</span> *<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * The main downside to this ContextSelector is that Configuration is more challenging.<a name="line.43"></a>
+<span class="sourceLineNo">044</span> *<a name="line.44"></a>
+<span class="sourceLineNo">045</span> * This ContextSelector should not be used with a Servlet Filter such as the Log4jServletFilter.<a name="line.45"></a>
+<span class="sourceLineNo">046</span> */<a name="line.46"></a>
+<span class="sourceLineNo">047</span>public class ClassLoaderContextSelector implements ContextSelector, LoggerContextShutdownAware {<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>    private static final AtomicReference&lt;LoggerContext&gt; DEFAULT_CONTEXT = new AtomicReference&lt;&gt;();<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>    protected static final StatusLogger LOGGER = StatusLogger.getLogger();<a name="line.51"></a>
+<span class="sourceLineNo">052</span><a name="line.52"></a>
+<span class="sourceLineNo">053</span>    protected static final ConcurrentMap&lt;String, AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt;&gt; CONTEXT_MAP =<a name="line.53"></a>
+<span class="sourceLineNo">054</span>            new ConcurrentHashMap&lt;&gt;();<a name="line.54"></a>
+<span class="sourceLineNo">055</span><a name="line.55"></a>
+<span class="sourceLineNo">056</span>    @Override<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    public void contextShutdown(org.apache.logging.log4j.spi.LoggerContext loggerContext) {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        if (loggerContext instanceof LoggerContext) {<a name="line.58"></a>
+<span class="sourceLineNo">059</span>            removeContext((LoggerContext) loggerContext);<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        }<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    }<a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>    @Override<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext) {<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        return getContext(fqcn, loader, currentContext, null);<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    }<a name="line.66"></a>
+<span class="sourceLineNo">067</span><a name="line.67"></a>
+<span class="sourceLineNo">068</span>    @Override<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    public LoggerContext getContext(final String fqcn, final ClassLoader loader, final boolean currentContext,<a name="line.69"></a>
+<span class="sourceLineNo">070</span>            final URI configLocation) {<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        if (currentContext) {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>            final LoggerContext ctx = ContextAnchor.THREAD_CONTEXT.get();<a name="line.72"></a>
+<span class="sourceLineNo">073</span>            if (ctx != null) {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                return ctx;<a name="line.74"></a>
 <span class="sourceLineNo">075</span>            }<a name="line.75"></a>
-<span class="sourceLineNo">076</span>            final LoggerContext lc = ContextAnchor.THREAD_CONTEXT.get();<a name="line.76"></a>
-<span class="sourceLineNo">077</span>            if (lc != null) {<a name="line.77"></a>
-<span class="sourceLineNo">078</span>                return lc;<a name="line.78"></a>
-<span class="sourceLineNo">079</span>            }<a name="line.79"></a>
-<span class="sourceLineNo">080</span>            return getDefault();<a name="line.80"></a>
-<span class="sourceLineNo">081</span>        }<a name="line.81"></a>
-<span class="sourceLineNo">082</span>    }<a name="line.82"></a>
-<span class="sourceLineNo">083</span><a name="line.83"></a>
-<span class="sourceLineNo">084</span>    @Override<a name="line.84"></a>
-<span class="sourceLineNo">085</span>    public void removeContext(final LoggerContext context) {<a name="line.85"></a>
-<span class="sourceLineNo">086</span>        for (final Map.Entry&lt;String, AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt;&gt; entry : CONTEXT_MAP.entrySet()) {<a name="line.86"></a>
-<span class="sourceLineNo">087</span>            final LoggerContext ctx = entry.getValue().get().get();<a name="line.87"></a>
-<span class="sourceLineNo">088</span>            if (ctx == context) {<a name="line.88"></a>
-<span class="sourceLineNo">089</span>                CONTEXT_MAP.remove(entry.getKey());<a name="line.89"></a>
-<span class="sourceLineNo">090</span>            }<a name="line.90"></a>
-<span class="sourceLineNo">091</span>        }<a name="line.91"></a>
-<span class="sourceLineNo">092</span>    }<a name="line.92"></a>
-<span class="sourceLineNo">093</span><a name="line.93"></a>
-<span class="sourceLineNo">094</span>    @Override<a name="line.94"></a>
-<span class="sourceLineNo">095</span>    public List&lt;LoggerContext&gt; getLoggerContexts() {<a name="line.95"></a>
-<span class="sourceLineNo">096</span>        final List&lt;LoggerContext&gt; list = new ArrayList&lt;&gt;();<a name="line.96"></a>
-<span class="sourceLineNo">097</span>        final Collection&lt;AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt;&gt; coll = CONTEXT_MAP.values();<a name="line.97"></a>
-<span class="sourceLineNo">098</span>        for (final AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt; ref : coll) {<a name="line.98"></a>
-<span class="sourceLineNo">099</span>            final LoggerContext ctx = ref.get().get();<a name="line.99"></a>
-<span class="sourceLineNo">100</span>            if (ctx != null) {<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                list.add(ctx);<a name="line.101"></a>
-<span class="sourceLineNo">102</span>            }<a name="line.102"></a>
-<span class="sourceLineNo">103</span>        }<a name="line.103"></a>
-<span class="sourceLineNo">104</span>        return Collections.unmodifiableList(list);<a name="line.104"></a>
-<span class="sourceLineNo">105</span>    }<a name="line.105"></a>
-<span class="sourceLineNo">106</span><a name="line.106"></a>
-<span class="sourceLineNo">107</span>    private LoggerContext locateContext(final ClassLoader loaderOrNull, final URI configLocation) {<a name="line.107"></a>
-<span class="sourceLineNo">108</span>        // LOG4J2-477: class loader may be null<a name="line.108"></a>
-<span class="sourceLineNo">109</span>        final ClassLoader loader = loaderOrNull != null ? loaderOrNull : ClassLoader.getSystemClassLoader();<a name="line.109"></a>
-<span class="sourceLineNo">110</span>        final String name = toContextMapKey(loader);<a name="line.110"></a>
-<span class="sourceLineNo">111</span>        AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt; ref = CONTEXT_MAP.get(name);<a name="line.111"></a>
-<span class="sourceLineNo">112</span>        if (ref == null) {<a name="line.112"></a>
-<span class="sourceLineNo">113</span>            if (configLocation == null) {<a name="line.113"></a>
-<span class="sourceLineNo">114</span>                ClassLoader parent = loader.getParent();<a name="line.114"></a>
-<span class="sourceLineNo">115</span>                while (parent != null) {<a name="line.115"></a>
-<span class="sourceLineNo">116</span><a name="line.116"></a>
-<span class="sourceLineNo">117</span>                    ref = CONTEXT_MAP.get(toContextMapKey(parent));<a name="line.117"></a>
-<span class="sourceLineNo">118</span>                    if (ref != null) {<a name="line.118"></a>
-<span class="sourceLineNo">119</span>                        final WeakReference&lt;LoggerContext&gt; r = ref.get();<a name="line.119"></a>
-<span class="sourceLineNo">120</span>                        final LoggerContext ctx = r.get();<a name="line.120"></a>
-<span class="sourceLineNo">121</span>                        if (ctx != null) {<a name="line.121"></a>
-<span class="sourceLineNo">122</span>                            return ctx;<a name="line.122"></a>
-<span class="sourceLineNo">123</span>                        }<a name="line.123"></a>
-<span class="sourceLineNo">124</span>                    }<a name="line.124"></a>
-<span class="sourceLineNo">125</span>                    parent = parent.getParent();<a name="line.125"></a>
-<span class="sourceLineNo">126</span>                    /*  In Tomcat 6 the parent of the JSP classloader is the webapp classloader which would be<a name="line.126"></a>
-<span class="sourceLineNo">127</span>                    configured by the WebAppContextListener. The WebAppClassLoader is also the ThreadContextClassLoader.<a name="line.127"></a>
-<span class="sourceLineNo">128</span>                    In JBoss 5 the parent of the JSP ClassLoader is the WebAppClassLoader which is also the<a name="line.128"></a>
-<span class="sourceLineNo">129</span>                    ThreadContextClassLoader. However, the parent of the WebAppClassLoader is the ClassLoader<a name="line.129"></a>
-<span class="sourceLineNo">130</span>                    that is configured by the WebAppContextListener.<a name="line.130"></a>
-<span class="sourceLineNo">131</span><a name="line.131"></a>
-<span class="sourceLineNo">132</span>                    ClassLoader threadLoader = null;<a name="line.132"></a>
-<span class="sourceLineNo">133</span>                    try {<a name="line.133"></a>
-<span class="sourceLineNo">134</span>                        threadLoader = Thread.currentThread().getContextClassLoader();<a name="line.134"></a>
-<span class="sourceLineNo">135</span>                    } catch (Exception ex) {<a name="line.135"></a>
-<span class="sourceLineNo">136</span>                        // Ignore SecurityException<a name="line.136"></a>
-<span class="sourceLineNo">137</span>                    }<a name="line.137"></a>
-<span class="sourceLineNo">138</span>                    if (threadLoader != null &amp;&amp; threadLoader == parent) {<a name="line.138"></a>
-<span class="sourceLineNo">139</span>                        break;<a name="line.139"></a>
-<span class="sourceLineNo">140</span>                    } else {<a name="line.140"></a>
-<span class="sourceLineNo">141</span>                        parent = parent.getParent();<a name="line.141"></a>
-<span class="sourceLineNo">142</span>                    } */<a name="line.142"></a>
-<span class="sourceLineNo">143</span>                }<a name="line.143"></a>
-<span class="sourceLineNo">144</span>            }<a name="line.144"></a>
-<span class="sourceLineNo">145</span>            LoggerContext ctx = createContext(name, configLocation);<a name="line.145"></a>
-<span class="sourceLineNo">146</span>            final AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt; r = new AtomicReference&lt;&gt;();<a name="line.146"></a>
-<span class="sourceLineNo">147</span>            r.set(new WeakReference&lt;&gt;(ctx));<a name="line.147"></a>
-<span class="sourceLineNo">148</span>            CONTEXT_MAP.putIfAbsent(name, r);<a name="line.148"></a>
-<span class="sourceLineNo">149</span>            ctx = CONTEXT_MAP.get(name).get().get();<a name="line.149"></a>
-<span class="sourceLineNo">150</span>            return ctx;<a name="line.150"></a>
-<span class="sourceLineNo">151</span>        }<a name="line.151"></a>
-<span class="sourceLineNo">152</span>        final WeakReference&lt;LoggerContext&gt; weakRef = ref.get();<a name="line.152"></a>
-<span class="sourceLineNo">153</span>        LoggerContext ctx = weakRef.get();<a name="line.153"></a>
-<span class="sourceLineNo">154</span>        if (ctx != null) {<a name="line.154"></a>
-<span class="sourceLineNo">155</span>            if (ctx.getConfigLocation() == null &amp;&amp; configLocation != null) {<a name="line.155"></a>
-<span class="sourceLineNo">156</span>                LOGGER.debug("Setting configuration to {}", configLocation);<a name="line.156"></a>
-<span class="sourceLineNo">157</span>                ctx.setConfigLocation(configLocation);<a name="line.157"></a>
-<span class="sourceLineNo">158</span>            } else if (ctx.getConfigLocation() != null &amp;&amp; configLocation != null<a name="line.158"></a>
-<span class="sourceLineNo">159</span>                    &amp;&amp; !ctx.getConfigLocation().equals(configLocation)) {<a name="line.159"></a>
-<span class="sourceLineNo">160</span>                LOGGER.warn("locateContext called with URI {}. Existing LoggerContext has URI {}", configLocation,<a name="line.160"></a>
-<span class="sourceLineNo">161</span>                        ctx.getConfigLocation());<a name="line.161"></a>
-<span class="sourceLineNo">162</span>            }<a name="line.162"></a>
-<span class="sourceLineNo">163</span>            return ctx;<a name="line.163"></a>
-<span class="sourceLineNo">164</span>        }<a name="line.164"></a>
-<span class="sourceLineNo">165</span>        ctx = createContext(name, configLocation);<a name="line.165"></a>
-<span class="sourceLineNo">166</span>        ref.compareAndSet(weakRef, new WeakReference&lt;&gt;(ctx));<a name="line.166"></a>
-<span class="sourceLineNo">167</span>        return ctx;<a name="line.167"></a>
-<span class="sourceLineNo">168</span>    }<a name="line.168"></a>
-<span class="sourceLineNo">169</span><a name="line.169"></a>
-<span class="sourceLineNo">170</span>    protected LoggerContext createContext(final String name, final URI configLocation) {<a name="line.170"></a>
-<span class="sourceLineNo">171</span>        return new LoggerContext(name, null, configLocation);<a name="line.171"></a>
-<span class="sourceLineNo">172</span>    }<a name="line.172"></a>
-<span class="sourceLineNo">173</span><a name="line.173"></a>
-<span class="sourceLineNo">174</span>    protected String toContextMapKey(final ClassLoader loader) {<a name="line.174"></a>
-<span class="sourceLineNo">175</span>        return Integer.toHexString(System.identityHashCode(loader));<a name="line.175"></a>
+<span class="sourceLineNo">076</span>            return getDefault();<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        } else if (loader != null) {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>            return locateContext(loader, configLocation);<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        } else {<a name="line.79"></a>
+<span class="sourceLineNo">080</span>            final Class&lt;?&gt; clazz = StackLocatorUtil.getCallerClass(fqcn);<a name="line.80"></a>
+<span class="sourceLineNo">081</span>            if (clazz != null) {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                return locateContext(clazz.getClassLoader(), configLocation);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            }<a name="line.83"></a>
+<span class="sourceLineNo">084</span>            final LoggerContext lc = ContextAnchor.THREAD_CONTEXT.get();<a name="line.84"></a>
+<span class="sourceLineNo">085</span>            if (lc != null) {<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                return lc;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>            }<a name="line.87"></a>
+<span class="sourceLineNo">088</span>            return getDefault();<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        }<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    }<a name="line.90"></a>
+<span class="sourceLineNo">091</span><a name="line.91"></a>
+<span class="sourceLineNo">092</span>    @Override<a name="line.92"></a>
+<span class="sourceLineNo">093</span>    public void removeContext(final LoggerContext context) {<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        for (final Map.Entry&lt;String, AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt;&gt; entry : CONTEXT_MAP.entrySet()) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>            final LoggerContext ctx = entry.getValue().get().get();<a name="line.95"></a>
+<span class="sourceLineNo">096</span>            if (ctx == context) {<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                CONTEXT_MAP.remove(entry.getKey());<a name="line.97"></a>
+<span class="sourceLineNo">098</span>            }<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        }<a name="line.99"></a>
+<span class="sourceLineNo">100</span>    }<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>    @Override<a name="line.102"></a>
+<span class="sourceLineNo">103</span>    public List&lt;LoggerContext&gt; getLoggerContexts() {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        final List&lt;LoggerContext&gt; list = new ArrayList&lt;&gt;();<a name="line.104"></a>
+<span class="sourceLineNo">105</span>        final Collection&lt;AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt;&gt; coll = CONTEXT_MAP.values();<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        for (final AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt; ref : coll) {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>            final LoggerContext ctx = ref.get().get();<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            if (ctx != null) {<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                list.add(ctx);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>            }<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        }<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        return Collections.unmodifiableList(list);<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    }<a name="line.113"></a>
+<span class="sourceLineNo">114</span><a name="line.114"></a>
+<span class="sourceLineNo">115</span>    private LoggerContext locateContext(final ClassLoader loaderOrNull, final URI configLocation) {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        // LOG4J2-477: class loader may be null<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        final ClassLoader loader = loaderOrNull != null ? loaderOrNull : ClassLoader.getSystemClassLoader();<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        final String name = toContextMapKey(loader);<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt; ref = CONTEXT_MAP.get(name);<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        if (ref == null) {<a name="line.120"></a>
+<span class="sourceLineNo">121</span>            if (configLocation == null) {<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                ClassLoader parent = loader.getParent();<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                while (parent != null) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span><a name="line.124"></a>
+<span class="sourceLineNo">125</span>                    ref = CONTEXT_MAP.get(toContextMapKey(parent));<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                    if (ref != null) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                        final WeakReference&lt;LoggerContext&gt; r = ref.get();<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                        final LoggerContext ctx = r.get();<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                        if (ctx != null) {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                            return ctx;<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                        }<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                    }<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                    parent = parent.getParent();<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                    /*  In Tomcat 6 the parent of the JSP classloader is the webapp classloader which would be<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                    configured by the WebAppContextListener. The WebAppClassLoader is also the ThreadContextClassLoader.<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                    In JBoss 5 the parent of the JSP ClassLoader is the WebAppClassLoader which is also the<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                    ThreadContextClassLoader. However, the parent of the WebAppClassLoader is the ClassLoader<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                    that is configured by the WebAppContextListener.<a name="line.138"></a>
+<span class="sourceLineNo">139</span><a name="line.139"></a>
+<span class="sourceLineNo">140</span>                    ClassLoader threadLoader = null;<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                    try {<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                        threadLoader = Thread.currentThread().getContextClassLoader();<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                    } catch (Exception ex) {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                        // Ignore SecurityException<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                    }<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                    if (threadLoader != null &amp;&amp; threadLoader == parent) {<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                        break;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                    } else {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                        parent = parent.getParent();<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                    } */<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                }<a name="line.151"></a>
+<span class="sourceLineNo">152</span>            }<a name="line.152"></a>
+<span class="sourceLineNo">153</span>            LoggerContext ctx = createContext(name, configLocation);<a name="line.153"></a>
+<span class="sourceLineNo">154</span>            final AtomicReference&lt;WeakReference&lt;LoggerContext&gt;&gt; r = new AtomicReference&lt;&gt;();<a name="line.154"></a>
+<span class="sourceLineNo">155</span>            r.set(new WeakReference&lt;&gt;(ctx));<a name="line.155"></a>
+<span class="sourceLineNo">156</span>            CONTEXT_MAP.putIfAbsent(name, r);<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            ctx = CONTEXT_MAP.get(name).get().get();<a name="line.157"></a>
+<span class="sourceLineNo">158</span>            return ctx;<a name="line.158"></a>
+<span class="sourceLineNo">159</span>        }<a name="line.159"></a>
+<span class="sourceLineNo">160</span>        final WeakReference&lt;LoggerContext&gt; weakRef = ref.get();<a name="line.160"></a>
+<span class="sourceLineNo">161</span>        LoggerContext ctx = weakRef.get();<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        if (ctx != null) {<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            if (ctx.getConfigLocation() == null &amp;&amp; configLocation != null) {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                LOGGER.debug("Setting configuration to {}", configLocation);<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                ctx.setConfigLocation(configLocation);<a name="line.165"></a>
+<span class="sourceLineNo">166</span>            } else if (ctx.getConfigLocation() != null &amp;&amp; configLocation != null<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                    &amp;&amp; !ctx.getConfigLocation().equals(configLocation)) {<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                LOGGER.warn("locateContext called with URI {}. Existing LoggerContext has URI {}", configLocation,<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                        ctx.getConfigLocation());<a name="line.169"></a>
+<span class="sourceLineNo">170</span>            }<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            return ctx;<a name="line.171"></a>
+<span class="sourceLineNo">172</span>        }<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        ctx = createContext(name, configLocation);<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        ref.compareAndSet(weakRef, new WeakReference&lt;&gt;(ctx));<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        return ctx;<a name="line.175"></a>
 <span class="sourceLineNo">176</span>    }<a name="line.176"></a>
 <span class="sourceLineNo">177</span><a name="line.177"></a>
-<span class="sourceLineNo">178</span>    protected LoggerContext getDefault() {<a name="line.178"></a>
-<span class="sourceLineNo">179</span>        final LoggerContext ctx = DEFAULT_CONTEXT.get();<a name="line.179"></a>
-<span class="sourceLineNo">180</span>        if (ctx != null) {<a name="line.180"></a>
-<span class="sourceLineNo">181</span>            return ctx;<a name="line.181"></a>
-<span class="sourceLineNo">182</span>        }<a name="line.182"></a>
-<span class="sourceLineNo">183</span>        DEFAULT_CONTEXT.compareAndSet(null, createContext(defaultContextName(), null));<a name="line.183"></a>
-<span class="sourceLineNo">184</span>        return DEFAULT_CONTEXT.get();<a name="line.184"></a>
-<span class="sourceLineNo">185</span>    }<a name="line.185"></a>
-<span class="sourceLineNo">186</span><a name="line.186"></a>
-<span class="sourceLineNo">187</span>    protected String defaultContextName() {<a name="line.187"></a>
-<span class="sourceLineNo">188</span>        return "Default";<a name="line.188"></a>
-<span class="sourceLineNo">189</span>    }<a name="line.189"></a>
-<span class="sourceLineNo">190</span>}<a name="line.190"></a>
+<span class="sourceLineNo">178</span>    protected LoggerContext createContext(final String name, final URI configLocation) {<a name="line.178"></a>
+<span class="sourceLineNo">179</span>        return new LoggerContext(name, null, configLocation);<a name="line.179"></a>
+<span class="sourceLineNo">180</span>    }<a name="line.180"></a>
+<span class="sourceLineNo">181</span><a name="line.181"></a>
+<span class="sourceLineNo">182</span>    protected String toContextMapKey(final ClassLoader loader) {<a name="line.182"></a>
+<span class="sourceLineNo">183</span>        return Integer.toHexString(System.identityHashCode(loader));<a name="line.183"></a>
+<span class="sourceLineNo">184</span>    }<a name="line.184"></a>
+<span class="sourceLineNo">185</span><a name="line.185"></a>
+<span class="sourceLineNo">186</span>    protected LoggerContext getDefault() {<a name="line.186"></a>
+<span class="sourceLineNo">187</span>        final LoggerContext ctx = DEFAULT_CONTEXT.get();<a name="line.187"></a>
+<span class="sourceLineNo">188</span>        if (ctx != null) {<a name="line.188"></a>
+<span class="sourceLineNo">189</span>            return ctx;<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        }<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        DEFAULT_CONTEXT.compareAndSet(null, createContext(defaultContextName(), null));<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        return DEFAULT_CONTEXT.get();<a name="line.192"></a>
+<span class="sourceLineNo">193</span>    }<a name="line.193"></a>
+<span class="sourceLineNo">194</span><a name="line.194"></a>
+<span class="sourceLineNo">195</span>    protected String defaultContextName() {<a name="line.195"></a>
+<span class="sourceLineNo">196</span>        return "Default";<a name="line.196"></a>
+<span class="sourceLineNo">197</span>    }<a name="line.197"></a>
+<span class="sourceLineNo">198</span>}<a name="line.198"></a>
 
 
 
