@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AsyncAppender.html">AsyncAppender</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/apache/logging/log4j/core/appender/AbstractAppender.html">AbstractAppender</a> {
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> DEFAULT_QUEUE_SIZE = 128;
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> SHUTDOWN = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/AbstractLogEvent.html">AbstractLogEvent</a>() {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> SHUTDOWN_LOG_EVENT = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/apache/logging/log4j/core/AbstractLogEvent.html">AbstractLogEvent</a>() {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      };
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> AtomicLong THREAD_SEQUENCE = <strong class="jxr_keyword">new</strong> AtomicLong(1);
@@ -409,7 +409,7 @@
 <a class="jxr_linenumber" name="L401" href="#L401">401</a>                 <a href="../../../../../../org/apache/logging/log4j/core/LogEvent.html">LogEvent</a> event;
 <a class="jxr_linenumber" name="L402" href="#L402">402</a>                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L403" href="#L403">403</a>                     event = queue.take();
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>                     <strong class="jxr_keyword">if</strong> (event == SHUTDOWN) {
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>                     <strong class="jxr_keyword">if</strong> (event == SHUTDOWN_LOG_EVENT) {
 <a class="jxr_linenumber" name="L405" href="#L405">405</a>                         shutdown = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L406" href="#L406">406</a>                         <strong class="jxr_keyword">continue</strong>;
 <a class="jxr_linenumber" name="L407" href="#L407">407</a>                     }
@@ -476,7 +476,7 @@
 <a class="jxr_linenumber" name="L468" href="#L468">468</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> shutdown() {
 <a class="jxr_linenumber" name="L469" href="#L469">469</a>             shutdown = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L470" href="#L470">470</a>             <strong class="jxr_keyword">if</strong> (queue.isEmpty()) {
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>                 queue.offer(SHUTDOWN);
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>                 queue.offer(SHUTDOWN_LOG_EVENT);
 <a class="jxr_linenumber" name="L472" href="#L472">472</a>             }
 <a class="jxr_linenumber" name="L473" href="#L473">473</a>             <strong class="jxr_keyword">if</strong> (getState() == State.TIMED_WAITING || getState() == State.WAITING) {
 <a class="jxr_linenumber" name="L474" href="#L474">474</a>                 <strong class="jxr_keyword">this</strong>.interrupt(); <em class="jxr_comment">// LOG4J2-1422: if underlying appender is stuck in wait/sleep/join/park call</em>
@@ -536,6 +536,6 @@
 <a class="jxr_linenumber" name="L528" href="#L528">528</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org">Apache Software Foundation</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 1999&#x2013;2017 <a href="https://www.apache.org/">The Apache Software Foundation</a>. All rights reserved.</div>
 </body>
 </html>
