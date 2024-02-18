@@ -1,1 +1,1 @@
-log4j-3.0.0-beta1
+log4j-3.0.0-beta2
